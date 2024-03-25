@@ -12,6 +12,10 @@ build-dir = "_site"
 additional-js = ["theme/js/math.js"]
 git-repository-url = "https://github.com/SichangHe/sichanghe.github.io"
 
+[output.html.fold]
+enable = true
+level = 1
+
 [preprocessor.katex]
 after = ["links"]
 include-src = true
