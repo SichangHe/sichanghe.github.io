@@ -1,0 +1,19 @@
+[book]
+authors = ["Steven Hé (Sīchàng)"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Steven Hé (Sīchàng)"
+
+[build]
+build-dir = "_site"
+
+[output.html]
+git-repository-url = "https://github.com/SichangHe/sichanghe.github.io"
+
+[preprocessor.katex]
+after = ["links"]
+include-src = true
+
+[preprocessor.toc]
+before = ["katex"]

@@ -1,0 +1,36 @@
+name: Build and deploy mdBook site
+on:
+  push:
+    branches: ['main']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build with mdBook
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: cargo-bins/cargo-binstall@main
+    - name: Install mdBook and mdBook-KaTeX
+      run: cargo binstall -y mdbook mdbook-katex
+    - name: Build
+      run: mdbook build
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    name: Deploy the site to GitHub Pages
+    needs: build
+    if: github.event_name == 'push'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
