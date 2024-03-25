@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        lfs: true
     - uses: cargo-bins/cargo-binstall@main
     - name: Install mdBook and mdBook-KaTeX
       run: cargo binstall -y mdbook mdbook-katex
