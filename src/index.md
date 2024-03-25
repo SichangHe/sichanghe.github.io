@@ -24,13 +24,29 @@ Hello there, Steven here:
 />
 </div>
 
-# Link farm
+## Link farm
 
-- [GitHub](https://github.com/SichangHe)
-- [Unofficial Curriculum Vitae](/curriculum_vitae/)
-- [YouTube channel](https://www.youtube.com/@sichanghe)
-- [Blog](https://sichanghe.wordpress.com)
-- [Notes](/notes/)
+<style>
+.link-farm img {
+    height: 20px;
+}
+</style>
+
+<div
+    class="link-farm"
+    style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; font-size: 1.25em;"
+>
+
+[![GitHub icon](https://github.githubassets.com/favicons/favicon.svg) GitHub](https://github.com/SichangHe)
+
+[🎓 Unofficial CV](/curriculum_vitae/)
+
+[![YouTube icon](https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg) Channel](https://www.youtube.com/@sichanghe)
+
+[🧠 Blog](https://sichanghe.wordpress.com)
+
+[📓 Notes](/notes/)
+</div>
 
 <div style="display: flex; justify-content: center;">
 <button
@@ -38,6 +54,7 @@ Hello there, Steven here:
     style="background-color: red; color: var(--bg); padding: 0.5rem 1rem; border: none; border-radius: 0.75rem; cursor: pointer;"
     >Don't click</button
 >
+</div>
 
 <script>
 function duplicate() {
