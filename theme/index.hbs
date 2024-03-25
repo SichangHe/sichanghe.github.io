@@ -5,8 +5,8 @@
     <!-- Book generated using mdBook -->
     <meta charset="UTF-8">
     <title>{{ title }}</title>
-    {{#if is_print }}
-    <meta name="robots" content="noindex">
+    {{#if is_print}}
+    <meta name="robots" content="noindex" />
     {{/if}}
     {{#if base_url}}
     <base href="{{ base_url }}">
@@ -18,7 +18,8 @@
 
     <meta name="description" content="{{ description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="keywords" content="Steven He, StevenHe, Sichang He, SichangHe, StevenSichangHe, 何思畅, 何思暢">
 
     {{#if favicon_svg}}
     <link rel="icon" href="{{ path_to_root }}favicon.svg">
@@ -115,6 +116,7 @@
             <div class="sidebar-scrollbox">
                 {{#toc}}{{/toc}}
             </div>
+            <div class="sidebar-scrollbox chapter toc"></div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
@@ -151,6 +153,11 @@
                     <div class="left-buttons">
                         <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor"
                             title="Toggle Table of Contents" aria-label="Toggle Table of Contents"
+                            aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <label id="toc-toggle" class="icon-button" for="toc-toggle-anchor"
+                            title="Toggle Table of Contents of This Page" aria-label="Toggle Table of Contents of This Page"
                             aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </label>
