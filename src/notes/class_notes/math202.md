@@ -479,7 +479,7 @@ row space of *A*, $Row\\A—span\begin{Bmatrix}
 
 basis—pivot rows
 
-<img src="./media/image1.png" style="width:4.94211in;height:3.71466in"
+<img src="./media/math202image1.png" style="width:4.94211in;height:3.71466in"
 alt="Table Description automatically generated with medium confidence" />
 
 kernal/ null space of linear transformation *T*—*T*(**u**) = **0**
