@@ -105,3 +105,4 @@
         - [Spring 2024 Ideas](diary/spring_2024_ideas.md)
             - [Rethinking The Web](diary/spring_2024_ideas/rethinking_the_web.md)
             - [Rust](diary/spring_2024_ideas/rust.md)
+        - [Spring 2024 Activities](diary/spring_2024_activities/index.md)
