@@ -90,3 +90,4 @@
         - [Probability and Statistics](notes/class_notes/math205.md)
         - [Linear Algebra](notes/class_notes/math202.md)
         - [Speech Recognition](notes/class_notes/cs304.md)
+        - [Statistical Machine Learning](notes/class_notes/stats303.md)
