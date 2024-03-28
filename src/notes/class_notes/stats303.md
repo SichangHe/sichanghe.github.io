@@ -64,11 +64,22 @@ need to try different $K$
 
 $y=-1,1$
 
-objective:
+objective, maximize minimum margin:
 
 $$
-\min_{W,b}\frac{1}{2}\Vert W\Vert^2
+\argmax_{W,b}\min_{i=1\ldots N}\frac{1}{\Vert W\Vert}|W^TX_i+b|
+\text{ s.t. } y_i(W^TX_i+b)>0\\
+⇒ \argmax_{W,b}\frac{1}{\Vert W\Vert}\cdot1
+\text{ s.t. } y_i(W^TX_i+b)\ge1\\
+⇒ \argmin_{W,b}\frac{1}{2}\Vert W\Vert^2
 \text{ s.t. } y_i(W^TX_i+b)\ge1
+$$
+
+by
+
+$$
+|W^TX_i+b|=y_i(W^TX_i+b)\\
+\min_{i=1\ldots N}|W^TX_i+b|:=1
 $$
 
 apply Lagrange multiplier:
@@ -88,16 +99,57 @@ $$
     \sum_{i=1}^N\lambda_i
 $$
 
-final objective
+final objective:
 
 $$
-\argmax_{\lambda_i\ge0}\hat L
+\argmin_{\lambda_i\ge0}(-\hat L)=
+    \frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N\lambda_i\lambda_jy_iy_jX_i^TX_j-
+    \sum_{i=1}^N\lambda_i
 $$
 
 solution: sequential minimal optimization (SMO)
 
 - fix all but 2 $\lambda_i$, and iterate
 - 2 variable because $\sum_{i=1}^N\lambda_iy_i=0$
+
+### soft-margin binary SVM
+
+[hinge loss](/notes/cs/machine_learning.html#hinge-loss)
+
+### kernel SVM
+
+solve non-linear problem w/ linear classifier
+
+[kernel](notes/cs/machine_learning.html#kernel-for-support-vector-machine),
+but w/o $\varphi$ restriction
+
+objective:
+
+$$
+\argmin_{\lambda_i\ge0}(-\hat L)=
+    \frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N\lambda_i\lambda_jy_iy_jK(X_i,X_j)-
+    \sum_{i=1}^N\lambda_i
+$$
+
+#### positive-definite kernel
+
+positive-definite kernel output positive-definite matrix
+
+- positive-definite matrix:
+    pivots > 0 or eigenvalues $\lambda_i>0$ or subdeterminant > 0
+- Hilbert space: symmetric, positive-definite, linear
+
+alternative definition of kernel:
+
+- symmetric
+- positive-definite: Gram matrix $G$ semi-positive definite
+    $$
+    G:=\begin{bmatrix}
+        K(X_1,X_1)&\cdots&K(X_1,X_N)\\
+        \vdots&\ddots&\vdots\\
+        K(X_N,X_1)&\cdots&K(X_N,X_N)
+    \end{bmatrix}
+    $$
 
 ## dimensionality reduction by principal component analysis (PCA)
 
