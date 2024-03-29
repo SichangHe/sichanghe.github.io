@@ -17,11 +17,15 @@ to sponsor my trip to London, and got
 a whopping ￥3500 + ￥5000.
 
 I stayed at London from 03-13 night to 03-16 morning,
-brought [a poster about Fed Kit](fedkit_flower_summit2024poster_15.45.24.pdf), and gave $\frac{1}{3}$ of a talk.
-The talk was [live streamed on YouTube](https://youtu.be/sHfVgseQG_g?t=22339),
+brought [a poster about Fed Kit](fedkit_flower_summit2024poster_15.45.24.pdf),
+and gave $\frac{1}{3}$ of a talk.
+The talk was [live streamed on YouTube][flower_live_stream],
 together with all other Flower Summit talks.
-Though, it was one of the only talks where the audience was laughing...
-But, the live stream did not catch that sound track.
+It was one of the only talks where the audience was laughing... But,
+the live stream did not catch that sound track.
+
+[![Steven Talking on Flower AI Summit 2024 Research Day Live
+Stream](flower_summit_talk_youtube.png)][flower_live_stream]
 
 On my flight back, however,
 I had some thermal cycles, and caught what I believed to be a bacterial
@@ -52,3 +56,5 @@ I mean, FedKit is open source, and so is the code we contributed to Flower,
 but getting 0 credit is less fun than anticipated.
 I now understand why people put those corporate-style authorship and copyright
 notice in every single one of their source files.
+
+[flower_live_stream]: https://youtu.be/sHfVgseQG_g?t=22339
