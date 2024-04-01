@@ -197,3 +197,65 @@ $$
 \text{ s.t. }\vec u_k^T\vec u_k=1\\
 ⇒ S\vec u_k=\lambda\vec u_k
 $$
+
+## Markov chain Monte Carlo (MCMC) sampling method
+
+- sampling
+    - purpose: determine parameter when doing sum/integral
+    - good: from area of high probability & independent
+- does not work in high dimension
+- assume sample independence
+
+### transformation method
+
+1. assume $z ∼ p(z_0)$
+1. get sample $x$
+1. assume CDF $h(z_0=x)$
+1. solve $z_1=h^{-1}(x)$
+1. get another sample and repeat
+
+### rejection sampling
+
+1. define distribution $q(z)$ s.t. $∃ k, ∀ z,kq(z)≥p(z)$
+1. get sample $z_i ∼ q(z)$
+1. rate $α:=\frac{p(z_i)}{kq(z_i)}\in(0,1]$
+1. select random variable $x ∼ U(0,1)\in(0,1]$
+1. if $α ≥ x$, accept sample $z_i$; else reject
+
+- reject most sample when $k$ large
+- $k$ hard to determine
+- waste iteration
+
+### importance sampling
+
+for value $f$ following distribution with PDF $p$, want CDF
+
+define distribution $q(z)$ with known CDF
+
+weight (importance) $\omega_i:=\frac{p(z_i)}{q(z_i)}$
+
+$$
+E(f):=∫f(z)p(z)dz=∫f(z)\frac{p(z)}{q(z)}q(z)dz
+\approx ∫\omega_if(z)q(z)dz
+\approx \frac{1}{L}∑_{i=1}^L\omega_if(z_i)
+$$
+
+### sampling-importance-resampling
+
+1. get $L$ sample $z_i$ from $q(z)$ with known CDF
+1. $\displaystyle\omega_i:=\frac{p(z_i)}{q(z_i)}$
+1. normalize $\displaystyle\tilde\omega_i:=\frac{\omega_i}{∑_iw_i}$
+1. treat $\tilde\omega_i$ as probability for $z_i$
+
+### simulated annealing
+
+to avoid trapped in local minimum
+
+when seeking minimum, accept increase in $f$ with probability
+
+$$
+e^{-\frac{\Delta f}{T}}<1
+$$
+
+where temperature
+    $T\in(0,1),\quad T\leftarrow T\gamma,\quad \gamma=0.99\in(0,1)$
