@@ -198,13 +198,14 @@ $$
 ⇒ S\vec u_k=\lambda\vec u_k
 $$
 
-## Markov chain Monte Carlo (MCMC) sampling method
+## Monte Carlo sampling method
 
 - sampling
     - purpose: determine parameter when doing sum/integral
     - good: from area of high probability & independent
-- does not work in high dimension
-- assume sample independence
+- Monte Carlo drawback
+    - does not work in high dimension
+    - assume sample independence
 
 ### transformation method
 
@@ -259,3 +260,27 @@ $$
 
 where temperature
     $T\in(0,1),\quad T\leftarrow T\gamma,\quad \gamma=0.99\in(0,1)$
+
+## Markov chain
+
+- [transition matrix](stats210.html#transition-probability-matrix) $Q$
+    - stochastic matrix, because each row sum to 1
+        - $\{Q^n\}$ converge, stationary $\Leftarrow$
+            - all eigenvalue $|\lambda|≤1$
+            - $Q=A\Lambda A^{-1} ⇒ Q^n=A\Lambda^nA^{-1}$ 
+                where $\Lambda^n$ is diagonal with entries $\lambda_i^n$
+- $\vec\pi_t$ probability be at state $x=1\ldots N$ at time $t$
+    - [stationary distribution](stats210.html#stationary-distribution):
+        $\pi_{m+1}=\pi_m$ when $m$ large
+    - $\pi_{t+1}=\pi_tQ$
+- sampling method: given PDF $p(z)$, set $Q$ s.t. $\pi(z)=p(z)$
+
+### detailed balance
+
+Markov chain in stationary distribution if
+
+$$
+\pi(x)p_{xy}=\pi(y)p_{yx}
+$$
+
+## Markov chain Monte Carlo (MCMC)
