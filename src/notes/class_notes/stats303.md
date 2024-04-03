@@ -267,7 +267,7 @@ where temperature
     - stochastic matrix, because each row sum to 1
         - $\{Q^n\}$ converge, stationary $\Leftarrow$
             - all eigenvalue $|\lambda|≤1$
-            - $Q=A\Lambda A^{-1} ⇒ Q^n=A\Lambda^nA^{-1}$ 
+            - $Q=A\Lambda A^{-1} ⇒ Q^n=A\Lambda^nA^{-1}$
                 where $\Lambda^n$ is diagonal with entries $\lambda_i^n$
 - $\vec\pi_t$ probability be at state $x=1\ldots N$ at time $t$
     - [stationary distribution](stats210.html#stationary-distribution):
@@ -284,3 +284,41 @@ $$
 $$
 
 ## Markov chain Monte Carlo (MCMC)
+
+- work in high dimension
+- honor probability dependency between sample
+
+### metropolis hasting algorithm
+
+want to sample target distribution $p$
+
+design Markov chain w/ stationary distribution $\pi=p$:
+
+1. get Markov chain w/ $Q$ s.t. not necessarily $\pi=p$
+1. acceptance rate $\displaystyle α(x,x^*):=\min \left(
+        1, \frac{p(x^*)Q_{x^*,x}}{p(x)Q_{x,x^*}}
+    \right)$
+    - $⇒ p(x)Q_{x,x^*}α(x,x^*)=p(x^*)Q_{x^*,x}α(x^*,x)$
+1. use new Markov chain w/ $Q'_{x,x^*}:=α(x,x^*)Q_{x,x^*},\quad x^*≠x$
+    - $Q_{x,x}$ take the rest of probability
+
+- do not know when stationary
+
+### Gibbs sampling
+
+want to sample variable $x_i$ following different distribution
+
+fix $x_{-i}:=\{x_1\ldots x_{i-1},x_{i+1}\ldots\}$ to previous value
+    when sampling $x_i$
+
+a special case for metropolis hasting method $\Leftarrow$
+
+$$
+p(x_{-i}^*)=p(x_{-i})\\
+⇒ α(x,x^*)=
+\frac{p(x^*)p(x_i|x_{-i}^*)}{p(x)p(x_i^*|x_{-i})}=
+\frac{p(x_i^*|x_{-i}^*)p(x_{-i}^*)p(x_i|x_{-i}^*)}
+    {p(x_i|x_{-i})p(x_{-i})p(x_i^*|x_{-i})}=1
+\frac{p(x_i^*|x_{-i})p(x_{-i})p(x_i|x_{-i})}
+    {p(x_i|x_{-i})p(x_{-i})p(x_i^*|x_{-i})}=1
+$$
