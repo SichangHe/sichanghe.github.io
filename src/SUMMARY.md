@@ -73,6 +73,7 @@
         - [NFS](notes/server/nfs.md)
         - [SSH](notes/server/ssh.md)
     - [Soft Skill](notes/soft/index.md)
+        - [Art and Business](notes/soft/art_business.md)
         - [Housing](notes/soft/housing.md)
         - [Management](notes/soft/management.md)
     - [Storage](notes/storage/index.md)
