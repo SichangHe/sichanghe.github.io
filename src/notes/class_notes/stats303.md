@@ -229,7 +229,7 @@ $$
 
 ### importance sampling
 
-for value $f$ following distribution with PDF $p$, want CDF
+for value $f$ following distribution with PDF $p$, do not know CDF
 
 define distribution $q(z)$ with known CDF
 
@@ -246,7 +246,7 @@ $$
 1. get $L$ sample $z_i$ from $q(z)$ with known CDF
 1. $\displaystyle\omega_i:=\frac{p(z_i)}{q(z_i)}$
 1. normalize $\displaystyle\tilde\omega_i:=\frac{\omega_i}{∑_iw_i}$
-1. treat $\tilde\omega_i$ as probability for $z_i$
+1. treat $\tilde\omega_i$ as probability for $z_i$ and resample
 
 ### simulated annealing
 
@@ -288,7 +288,7 @@ $$
 - work in high dimension
 - honor probability dependency between sample
 
-### metropolis hasting algorithm
+### metropolis hasting algorithm (MH algorithm)
 
 want to sample target distribution $p$
 
@@ -318,7 +318,7 @@ p(x_{-i}^*)=p(x_{-i})\\
 ⇒ α(x,x^*)=
 \frac{p(x^*)p(x_i|x_{-i}^*)}{p(x)p(x_i^*|x_{-i})}=
 \frac{p(x_i^*|x_{-i}^*)p(x_{-i}^*)p(x_i|x_{-i}^*)}
-    {p(x_i|x_{-i})p(x_{-i})p(x_i^*|x_{-i})}=1
+    {p(x_i|x_{-i})p(x_{-i})p(x_i^*|x_{-i})}=
 \frac{p(x_i^*|x_{-i})p(x_{-i})p(x_i|x_{-i})}
     {p(x_i|x_{-i})p(x_{-i})p(x_i^*|x_{-i})}=1
 $$
