@@ -229,7 +229,8 @@ $$
 
 ### importance sampling
 
-for value $f$ following distribution with PDF $p$, do not know CDF
+for value $f$ following distribution with PDF $p$, do not know CDF,
+want expectation
 
 define distribution $q(z)$ with known CDF
 
@@ -250,7 +251,8 @@ $$
 
 ### simulated annealing
 
-to avoid trapped in local minimum
+- to avoid trapped in local minimum
+- still need to try multiple time
 
 when seeking minimum, accept increase in $f$ with probability
 
@@ -300,16 +302,19 @@ design Markov chain w/ stationary distribution $\pi=p$:
     \right)$
     - $⇒ p(x)Q_{x,x^*}α(x,x^*)=p(x^*)Q_{x^*,x}α(x^*,x)$
 1. use new Markov chain w/ $Q'_{x,x^*}:=α(x,x^*)Q_{x,x^*},\quad x^*≠x$
-    - $Q_{x,x}$ take the rest of probability
+    - $Q_{x,x}$ take the rest of probability s.t. $∑_yQ_{x,y}=1$
 
-- do not know when stationary
+- drawback: do not know when stationary/converge. sample may be dependent
 
 ### Gibbs sampling
 
 want to sample variable $x_i$ following different distribution
 
 fix $x_{-i}:=\{x_1\ldots x_{i-1},x_{i+1}\ldots\}$ to previous value
-    when sampling $x_i$
+    when sampling $x_i$:
+$$
+Q_{x,x^*}:=p(x_i^*|x_{-1})
+$$
 
 a special case for metropolis hasting method $\Leftarrow$
 
