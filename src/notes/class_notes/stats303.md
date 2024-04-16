@@ -327,3 +327,27 @@ p(x_{-i}^*)=p(x_{-i})\\
 \frac{p(x_i^*|x_{-i})p(x_{-i})p(x_i|x_{-i})}
     {p(x_i|x_{-i})p(x_{-i})p(x_i^*|x_{-i})}=1
 $$
+
+## entropy
+
+- randomness, impurity, how easy to determine
+- equal to expected surprise
+    $$
+    H=\mathbb E(\sup)=\sum_xp(x)\sup(x)=-\sum_xp(x)\ln p(x)
+    $$
+- [cross entropy loss](notes/cs/machine_learning.html#cross-entropy-loss-for-binary-classification)
+
+### surprise
+
+$$
+\sup=\ln\frac{1}{p(x)}=-\ln p(x)
+$$
+
+### decision tree based on entropy
+
+- information gain
+    $$
+    I(Y|x_i)=H(Y)-H(Y|x_i)\\
+    \text{where}\quad H(Y|x_i)=\sum_{x}p(x_i=x)H(Y|x_i=x)
+    $$
+- maximize information gain on each split
