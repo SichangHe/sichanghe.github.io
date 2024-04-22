@@ -351,3 +351,45 @@ $$
     \text{where}\quad H(Y|x_i)=\sum_{x}p(x_i=x)H(Y|x_i=x)
     $$
 - maximize information gain on each split
+
+## convergence and consistence
+
+- Bayes classifier: minimize expected risk
+- empirical risk minimization (ERM): minimize loss on training data
+
+### consistence
+
+empirical risk $R_n(f)$ close to true risk $R(f)$
+$$
+P(\sup_{f\in\mathcal F}|R_n(f)-R(f)|>ε)→0
+$$
+
+- $⇔$ uniform convergence
+- $$
+    P \left(
+        |R(f)-R_n(f)|≥ε
+    \right)≤2\exp(-2nε^2)
+    $$
+
+- generalization bound for finite class $\mathcal F=\{f_i\},i=1,…,m$
+    $$
+    P \left(
+        |R(f)-R_n(f)|≥ε
+    \right)≤2m\exp(-2nε^2)
+    $$
+    - proposition: choose $\delta\in(0,1) ⇒$ w/ at least $1-\delta$ probability
+        $$
+        |R(f)-R_n(f)|≤\sqrt{\frac{\ln(2m)-\ln\delta}{2n}}
+        $$
+        - by $\delta:=2m\exp(-2nε^2)$
+- generalization bound for infinite class $\mathcal F$
+    $$
+    P \left(
+        \sup_{f\in\mathcal F}|R(f)-R_n(f)|>ε
+    \right)≤2\mathcal N(\mathcal F,sn)\exp\left(\frac{-nε^2}{4}\right)
+    $$
+    - problem: hard to compute shattering coefficient
+
+### shattering coefficient
+
+$\mathcal N(\mathcal F,n)$
