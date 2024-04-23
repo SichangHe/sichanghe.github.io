@@ -386,10 +386,35 @@ $$
     $$
     P \left(
         \sup_{f\in\mathcal F}|R(f)-R_n(f)|>ε
-    \right)≤2\mathcal N(\mathcal F,sn)\exp\left(\frac{-nε^2}{4}\right)
+    \right)≤2\mathcal N(\mathcal F,2n)\exp\left(\frac{-nε^2}{4}\right)
     $$
+    - proof:
+        $$
+        P \left(
+            \sup_{f\in\mathcal F}|R(f)-R_n(f)|>ε
+        \right)≤P \left(
+            \sup_{f\in\mathcal F}|R(f)-R_n(f)|≥\frac{ε}{2}
+        \right)\\
+        ≤2P \left(
+            \sup_{f\in\mathcal F}|R_n(f)-R_n'(f)|≥\frac{ε}{2}
+        \right)\\
+        $$
+        where $R_n'(f)$ is empirical risk of another $n$ sample (ghost sample)
+
+        $⇒ ∃c ≤ \mathcal N(\mathcal F,2n)$ class of $f$ for sample & ghost sample
     - problem: hard to compute shattering coefficient
 
-### shattering coefficient
+### shattering coefficient $\mathcal N(\mathcal F,n)$
 
-$\mathcal N(\mathcal F,n)$
+maximum number of $\mathcal F_{X_1,…,X_n}$,
+    function we can get by restricting $\mathcal F$ to $X_1,…,X_n$
+
+## (Vapnik-Chervonenkis dimension) VC dimension
+
+maximum $n$ s.t. $\mathcal F$ can classify $X_1…,X_n$ completely correctly
+
+- for function class $\mathcal F$ w/ VC dimension $d$
+    $$
+    \mathcal N(\mathcal F,n)<{n\choose d}
+    $$
+- ERM is consistence $⇔$ VC dimension finite
