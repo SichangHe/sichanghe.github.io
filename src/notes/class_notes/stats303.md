@@ -418,3 +418,30 @@ maximum $n$ s.t. $\mathcal F$ can classify $X_1…,X_n$ completely correctly
     \mathcal N(\mathcal F,n)<{n\choose d}
     $$
 - ERM is consistence $⇔$ VC dimension finite
+
+### Rademacher complexity
+
+richness of function class $\mathcal F$ in sample set $\{X_i\}$
+
+sample label $\sigma_i=±1,i=1,…,n$
+
+$$
+Rad_n(\mathcal F)=\mathbb E\left[
+    \sup_{f\in\mathcal F}\frac{1}{n}\sum_{i=1}^n\sigma_if(X_i)
+\right]
+$$
+
+solution: for each possible set of $\sigma_i$,
+    find the function $f$ to maximize the inner sum,
+    then take weighted average
+
+- generalization bound: with ≥ $1-\delta$ probability, $∀f\in\mathcal F$,
+    $$
+    R(f)≤R_n(f)+2Rad_n(\mathcal F)+\sqrt{\frac{-\ln(δ)}{2n}}
+    $$
+
+### structural risk minimization (SRM)
+
+to balance training error and model complexity
+
+- example: SVM
