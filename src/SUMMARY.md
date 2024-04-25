@@ -59,6 +59,7 @@
         - [Lua](notes/programming/lua.md)
         - [Perl](notes/programming/perl.md)
         - [Python](notes/programming/python.md)
+            - [tqdm](notes/programming/tqdm.md)
         - [Mathematica](notes/programming/mathematica.md)
         - [MATLAB](notes/programming/matlab.md)
         - [MIPS Assembly](notes/programming/mips.md)
