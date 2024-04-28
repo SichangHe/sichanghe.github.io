@@ -386,12 +386,12 @@ $$
     $$
     P \left(
         \sup_{f\in\mathcal F}|R(f)-R_n(f)|>ε
-    \right)≤2\mathcal N(\mathcal F,2n)\exp\left(\frac{-nε^2}{4}\right)
+    \right)≤4\mathcal N(\mathcal F,2n)\exp\left(\frac{-nε^2}{4}\right)
     $$
     - proof:
         $$
         P \left(
-            \sup_{f\in\mathcal F}|R(f)-R_n(f)|>ε
+            |R(f)-R_n(f)|≥ε
         \right)≤P \left(
             \sup_{f\in\mathcal F}|R(f)-R_n(f)|≥\frac{ε}{2}
         \right)\\

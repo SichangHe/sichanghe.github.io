@@ -202,7 +202,12 @@ or
 :w !sudo tee %
 ```
 
-# text transformations
+# regex replace
+
+- `()` `[]` are escaped by `\` if used as regex
+- `\{-}` is `*?`
+- `\<…\>` is `\b…\b`
+- capture groups are `\1`, etc.
 
 capitalize first letter
 
@@ -214,4 +219,10 @@ simple camelCase to snake_case
 
 ```vim
 s/\l\zs\u/_\l&/g
+```
+
+`\( … \)` to `$…$`
+
+```vim
+s/\\( \(.\{-}\) \\)/$\1$/g
 ```
