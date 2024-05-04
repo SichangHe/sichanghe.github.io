@@ -1,7 +1,7 @@
 <!-- toc -->
 # macOS
 
-get ID of app
+get ID of app:
 
 ```bash
 osascript -e 'id of app "SomeApp"'
@@ -16,3 +16,10 @@ sudo mdutil -a -i on
 ```
 
 add big folders to Spotlight privacy ignore list
+
+flush DNS cache:
+
+```sh
+sudo dscacheutil -flushcache
+sudo killall -HUP mDNSResponder
+```
