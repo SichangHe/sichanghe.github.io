@@ -9,13 +9,13 @@ pre > code.hljs {
 general requirements:
 
 ```
-*Requirements*: be professional and maximally succinct. Prefer verb over noun, adjective over adverb, active tense over passive tense. Avoid fluff or self-judgements. Do not lose any information. Keep the original language, style, and meaning as much as possible. Make minimal changes for improvement.
+Requirements R: be professional and maximally succinct. Prefer verb over noun, adjective over adverb, active tense over passive tense. Avoid fluff or self-judgements. Do not lose any information. Do not praise or repeat any given content. Keep the original language, style, and meaning as much as possible. Make minimal changes for improvement.
 ```
 
 To remind the bot the requirements:
 
 ```
-Repeat *requirements* verbatim.
+Repeat Requirements R verbatim.
 ```
 
 point out problem but not revise:
