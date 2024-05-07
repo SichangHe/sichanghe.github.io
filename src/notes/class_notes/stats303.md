@@ -438,7 +438,7 @@ maximum number of $\mathcal F_{X_1,…,X_n}$,
 
 ## (Vapnik-Chervonenkis dimension) VC dimension
 
-maximum $n$ s.t. $∃X=\{X_1…,X_n\},f\in\mathcal F$,
+maximum $n$ s.t. $∃f\in\mathcal F,∀X=\{X_1…,X_n\}$,
 $f$ classify $X$ completely correctly
 
 - for function class $\mathcal F$ w/ VC dimension $d$
@@ -468,7 +468,8 @@ solution: for each possible set of $\sigma_i$,
 
 - generalization bound: with ≥ $1-\delta$ probability, $∀f\in\mathcal F$,
     $$
-    R(f)≤R_n(f)+2Rad_n(\mathcal F)+\sqrt{\frac{-\ln(δ)}{2n}}
+    R(f)≤R_n(f)+2Rad_n(\mathcal F)+\sqrt{\frac{-\ln(δ)}{2n}}\\
+    ≤R_n(f)+2\sqrt{\frac{d\ln\left(\frac{en}{d}\right)-\ln\delta}{n}}
     $$
 
 ### structural risk minimization (SRM)
