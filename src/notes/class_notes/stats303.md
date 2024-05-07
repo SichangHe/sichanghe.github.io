@@ -352,57 +352,84 @@ $$
     $$
 - maximize information gain on each split
 
-## convergence and consistence
+## statistical learning theory
 
-- Bayes classifier: minimize expected risk
+- Bayes classifier $f^\ast$: minimize expected risk
 - empirical risk minimization (ERM): minimize loss on training data
+- estimation error (training error): because $X$ finite, grow w/ $|\mathcal F|$
+- approximation error (model complexity): because $\mathcal F$ finite
 
-### consistence
+### consistence wrt $\mathcal F$ & $P$
 
 empirical risk $R_n(f)$ close to true risk $R(f)$
 $$
-P(\sup_{f\in\mathcal F}|R_n(f)-R(f)|>ε)→0
+P \left(
+    |R(f)-R_n(f)|≥ε
+\right)→0\text{ as }n→∞
 $$
 
+- universally consistent wrt $\mathcal F$: $\forall P$
+- Bayes-consistent wrt $P$
+    $$
+    P \left(
+        |R(f^\ast)-R_n(f)|≥ε
+    \right)→0\text{ as }n→∞
+    $$
 - $⇔$ uniform convergence
+    $$
+    P(\sup_{f\in\mathcal F}|R_n(f)-R(f)|>ε)→0
+    $$
+    - sufficiency
+        $$
+        P \left(
+            |R(f)-R_n(f)|≥ε
+        \right)≤P\left(
+            \sup_{f\in\mathcal F}|R_n(f)-R(f)|≥\frac{ε}{2}
+        \right)
+        $$
 - $$
     P \left(
         |R(f)-R_n(f)|≥ε
     \right)≤2\exp(-2nε^2)
     $$
 
-- generalization bound for finite class $\mathcal F=\{f_i\},i=1,…,m$
+#### generalization bound
+
+for finite class $\mathcal F=\{f_i\},i=1,…,m$
+$$
+P \left(
+    |R(f)-R_n(f)|≥ε
+\right)≤2m\exp(-2nε^2)
+$$
+
+- proposition: choose $\delta\in(0,1) ⇒$ w/ at least $1-\delta$ probability
+    $$
+    |R(f)-R_n(f)|≤\sqrt{\frac{\ln(2m)-\ln\delta}{2n}}
+    $$
+    - by $\delta:=2m\exp(-2nε^2)$
+
+for infinite class $\mathcal F$
+$$
+P \left(
+    \sup_{f\in\mathcal F}|R(f)-R_n(f)|>ε
+\right)≤2\mathcal N(\mathcal F,2n)\exp\left(\frac{-nε^2}{4}\right)
+$$
+
+- proof:
     $$
     P \left(
         |R(f)-R_n(f)|≥ε
-    \right)≤2m\exp(-2nε^2)
+    \right)≤P \left(
+        \sup_{f\in\mathcal F}|R(f)-R_n(f)|≥\frac{ε}{2}
+    \right)\\
+    ≤2P \left(
+        \sup_{f\in\mathcal F}|R_n(f)-R_n'(f)|≥\frac{ε}{2}
+    \right)\quad\text{by Symmetrization Lemma}\\
     $$
-    - proposition: choose $\delta\in(0,1) ⇒$ w/ at least $1-\delta$ probability
-        $$
-        |R(f)-R_n(f)|≤\sqrt{\frac{\ln(2m)-\ln\delta}{2n}}
-        $$
-        - by $\delta:=2m\exp(-2nε^2)$
-- generalization bound for infinite class $\mathcal F$
-    $$
-    P \left(
-        \sup_{f\in\mathcal F}|R(f)-R_n(f)|>ε
-    \right)≤4\mathcal N(\mathcal F,2n)\exp\left(\frac{-nε^2}{4}\right)
-    $$
-    - proof:
-        $$
-        P \left(
-            |R(f)-R_n(f)|≥ε
-        \right)≤P \left(
-            \sup_{f\in\mathcal F}|R(f)-R_n(f)|≥\frac{ε}{2}
-        \right)\\
-        ≤2P \left(
-            \sup_{f\in\mathcal F}|R_n(f)-R_n'(f)|≥\frac{ε}{2}
-        \right)\\
-        $$
-        where $R_n'(f)$ is empirical risk of another $n$ sample (ghost sample)
+    where $R_n'(f)$ is empirical risk of another $n$ sample (ghost sample)
 
-        $⇒ ∃c ≤ \mathcal N(\mathcal F,2n)$ class of $f$ for sample & ghost sample
-    - problem: hard to compute shattering coefficient
+    $⇒ ∃c ≤ \mathcal N(\mathcal F,2n)$ class of $f$ for sample & ghost sample
+- problem: hard to compute shattering coefficient
 
 ### shattering coefficient $\mathcal N(\mathcal F,n)$
 
@@ -411,12 +438,16 @@ maximum number of $\mathcal F_{X_1,…,X_n}$,
 
 ## (Vapnik-Chervonenkis dimension) VC dimension
 
-maximum $n$ s.t. $\mathcal F$ can classify $X_1…,X_n$ completely correctly
+maximum $n$ s.t. $∃X=\{X_1…,X_n\},f\in\mathcal F$,
+$f$ classify $X$ completely correctly
 
 - for function class $\mathcal F$ w/ VC dimension $d$
     $$
-    \mathcal N(\mathcal F,n)<{n\choose d}
+    \mathcal N(\mathcal F,n)≤\sum_{i=0}^d{n\choose d}
     $$
+    - for $n>d$, $\mathcal N(\mathcal F,n)≤\left(
+        \frac{en}{d}
+    \right)^d$
 - ERM is consistence $⇔$ VC dimension finite
 
 ### Rademacher complexity
@@ -444,4 +475,4 @@ solution: for each possible set of $\sigma_i$,
 
 to balance training error and model complexity
 
-- example: SVM
+- e.g. regularization, linear SVM VC $=d+1$, RBF kernel $⇒∞$
