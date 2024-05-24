@@ -1,6 +1,6 @@
 <!-- toc -->
 
-# What Does an mdBook Preprocessor Do—Code Walk-through of mdBook-KaTeX
+# What an mdBook Preprocessor Does—Code Walk-through of mdBook-KaTeX
 
 What does [mdBook-KaTeX](https://github.com/lzanini/mdbook-katex) do?
 It is an mdBook preprocessor that pre-renders math expressions.
@@ -27,7 +27,14 @@ and then feed it back to mdBook.
 
 All the HTML tags might look a bit scary,
 but this is what all HTML-based math renderers do—generate a load of
-nested tags. It enables the expressions to look nice in a browser.
+nested tags. It enables the expressions to look nice in a browser:
+
+Define $f(x)$:
+
+$$
+f(x)=x^2\\
+x\in\R
+$$
 
 Most renderers just do this in the browser after the users load the webpage.
 mdBook-KaTeX lets you pre-render upfront,
@@ -290,10 +297,10 @@ show what a preprocessor does:
 - Print the book back to StdOut.
 - Other enhancement such as option handling and parallelism.
 
-The reality, however, is that, like any other projects,
+The reality, however, is that, like many other projects,
 mdBook preprocessors get messy easily.
 We will talk about the mess mdBook-KaTeX was in next time.
 
 {{ #include footer.md }}
 
-*2023-05-27*, edited: *2023-06-11*
+*2023-05-27*, edited: *2023-06-11*, *2024-05-24*
