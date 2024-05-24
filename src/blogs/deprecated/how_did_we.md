@@ -1,3 +1,5 @@
+<!-- toc -->
+
 # How did we get here? WordPress?
 
 This was when I set up the blog in WordPress.

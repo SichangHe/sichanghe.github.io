@@ -1,3 +1,5 @@
+<!-- toc -->
+
 # What Does an mdBook Preprocessor Do—Code Walk-through of mdBook-KaTeX
 
 What does [mdBook-KaTeX](https://github.com/lzanini/mdbook-katex) do?
@@ -292,6 +294,6 @@ The reality, however, is that, like any other projects,
 mdBook preprocessors get messy easily.
 We will talk about the mess mdBook-KaTeX was in next time.
 
----
+{{ #include footer.md }}
 
 *2023-05-27*, edited: *2023-06-11*

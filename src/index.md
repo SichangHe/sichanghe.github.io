@@ -43,7 +43,7 @@ Hello there, Steven here:
 
 [![YouTube icon](https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg) Channel](https://www.youtube.com/@sichanghe)
 
-[🧠 Blog](https://sichanghe.wordpress.com)
+[🧠 Blog](/blogs/)
 
 [📓 Notes](/notes/)
 </div>
