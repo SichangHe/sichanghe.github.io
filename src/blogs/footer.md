@@ -1,3 +1,8 @@
 ---
 
-*Steven Hé (Sīchàng)'s Blog*
+<div
+    style="display: flex; justify-content: space-between;"
+>
+<em>Steven Hé (Sīchàng)'s Blog</em>
+<a href="https://github.com/SichangHe/sichanghe.github.io/discussions/new?category=general&title=Comment:%20" target="_blank">Make a comment</a>
+</div>
