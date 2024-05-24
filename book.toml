@@ -19,6 +19,7 @@ level = 1
 [preprocessor.katex]
 after = ["links"]
 include-src = true
+throw-on-error = false
 
 [preprocessor.toc]
 before = ["katex"]

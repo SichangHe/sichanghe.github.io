@@ -94,6 +94,7 @@
         - [Speech Recognition](notes/class_notes/cs304.md)
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
 - [Blogs](blogs/index.md)
+    - [Creating Perfect Grayscale-Gradient Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)
     - [Deprecated](blogs/deprecated/index.md)
         - [How did we get here? WordPress?](blogs/deprecated/how_did_we.md)
