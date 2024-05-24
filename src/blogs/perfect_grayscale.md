@@ -41,7 +41,7 @@ and figuring everything out took me the whole morning.
 
 ## Result: hand-picked hues and perfect grayscale gradient
 
-Eventually,
+After wasting an hour failing to find any implementation on the Internet,
 I rolled my own scripts to calculate RGB color values from hue and grayscale,
 which allowed hand-picking hues while still having perfect grayscale gradient:
 <div style="display: flex; justify-content: space-around;">
