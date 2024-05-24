@@ -93,6 +93,10 @@
         - [Linear Algebra](notes/class_notes/math202.md)
         - [Speech Recognition](notes/class_notes/cs304.md)
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
+- [Blogs](blogs/index.md)
+    - [What Does an mdBook Preprocessor Do](blogs/what_does_mdbook.md)
+    - [Deprecated](blogs/deprecated/index.md)
+        - [How did we get here? WordPress?](blogs/deprecated/how_did_we.md)
 
 - [Private](diary/index.md)
     - [Diary](diary/index.md)
