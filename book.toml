@@ -1,5 +1,6 @@
 [book]
 authors = ["Steven Hé (Sīchàng)"]
+description = "Steven Hé (Sīchàng)'s personal website, for notes, blogs, CV, and fun."
 language = "en"
 multilingual = false
 src = "src"

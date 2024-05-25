@@ -112,7 +112,8 @@ $$
 
 The many conditions of the hue is a source of nightmare for simplification.
 Fortunately,
-I observed the formula for $h'$ and found out only the order of
+I observed the formula for
+$h'$ and found out only the order of
 the three RGB values matters if I introduce a new variable $k$:
 
 $$
@@ -158,20 +159,19 @@ $$
 \end{align*}
 $$
 
-This is then trivial to program.
-[In the
+This is then trivial to program. [In the
 code](https://github.com/SichangHe/internet_route_verification/blob/329ce168e18096188fcf2cf5f518e19eafe0ed61/scripts/scripts/fig/colors.py),
 I first compute a potential answer using the first case,
-then fall through to the second case if the resulting $x+z≥1$,
-and then, boom! We have the RGB values from hue and grayscale.
+then fall through to the second case if the resulting $x+z≥1$, and then, boom!
+We have the RGB values from hue and grayscale.
 
 …except we don't.
 
 ## Linear RGB vs standard RGB
 
-RGB values computed from a linear grayscale gradient using the code above does not
-produce a grayscale gradient.
-In fact, I found some colors to have very similar grayscale.
+RGB values computed from
+a linear grayscale gradient using the code above does not produce a grayscale
+gradient. In fact, I found some colors to have very similar grayscale.
 
 This is because the RGB values we computed are linear RGB values,
 and monitors use standard RGB (sRGB) instead, with the conversion:
@@ -190,8 +190,7 @@ and so the curved sRGB values better reflect the perceived brightness.
 Applying this knowledge to creating a grayscale gradient colormap,
 we need to first generate the gradient in sRGB,
 then convert each grayscale to linear RGB and apply the hue-grayscale to
-linear RGB conversion, and finally convert them back to sRGB.
-And, that is it!
+linear RGB conversion, and finally convert them back to sRGB. And, that is it!
 A perfect grayscale-gradient colormap with hand-picked hues.
 <div style="display: flex; justify-content: space-around;">
     <img src="https://github.com/SichangHe/internet_route_verification/assets/84777573/6e18f178-3819-4d50-95b4-fc4a6ec46fa0"
