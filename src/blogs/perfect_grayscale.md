@@ -18,8 +18,9 @@ I was reminded that the figures in my paper need to be "accessible" when
 printed in grayscale.
 
 Usually,
-this would be done by adding shapes like triangles and circles in the plot.
+this would be done by adding patterns like triangles and circles in the plot.
 However, we were plotting stacked areas like the left one below,
+which contains dense and tiny vertical bars,
 so a grayscale gradient seems to be our only option.
 <div style="display: flex; align-items: center; justify-content: space-around;">
     <img src="https://github.com/SichangHe/internet_route_verification/assets/84777573/c3db5029-fa3c-470a-af22-feec7292f9ef"
