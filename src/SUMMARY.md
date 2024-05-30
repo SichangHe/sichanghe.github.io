@@ -7,7 +7,8 @@
         - [Command-Line Utilities](notes/automation_software/cli_util.md)
         - [Hammerspoon](notes/automation_software/hammerspoon.md)
     - [Computer Science](notes/cs/index.md)
-        - [Discrete Mathematics for Computer Science](notes/cs/discrete_math.md)
+        - [Discrete Mathematics for
+            Computer Science](notes/cs/discrete_math.md)
         - [Machine Learning](notes/cs/machine_learning.md)
         - [Networking](notes/cs/networking.md)
     - [Data Science](notes/data_science/index.md)
@@ -22,14 +23,17 @@
         - [Abstract Algebra](notes/mathematics/abstract_algebra.md)
         - [Arithmetics](notes/mathematics/arithmetics.md)
         - [Calculus](notes/mathematics/calculus.md)
-            - [Differential Equation](notes/mathematics/differential_equation.md)
+            - [Differential
+                Equation](notes/mathematics/differential_equation.md)
             - [Geometric Vector](notes/mathematics/geometric_vector.md)
-            - [Multivariate Calculus](notes/mathematics/multivariate_calculus.md)
+            - [Multivariate
+                Calculus](notes/mathematics/multivariate_calculus.md)
             - [Parametric Equation](notes/mathematics/parametric_equation.md)
             - [Sequence and Series](notes/mathematics/sequence_series.md)
         - [Complex Analysis](notes/mathematics/complex_analysis.md)
             - [Complex function](notes/mathematics/complex_function.md)
-            - [Complex Sequence and Series](notes/mathematics/complex_sequence_series.md)
+            - [Complex Sequence and
+                Series](notes/mathematics/complex_sequence_series.md)
         - [Linear Algebra](notes/mathematics/linear_algebra.md)
         - [Numerical Analysis](notes/mathematics/numerical_analysis.md)
         - [Proof](notes/mathematics/proof.md)
@@ -87,15 +91,21 @@
         - [Artificial Intelligence](notes/class_notes/cs402.md)
         - [Cloud Computing](notes/class_notes/cs401.md)
         - [Introduction to Databases](notes/class_notes/cs310.md)
-        - [Introduction to Programming and Data Structures](notes/class_notes/cs201.md)
-        - [Probability, Random Variables, and Stochastic Processes](notes/class_notes/stats210.md)
+        - [Introduction to Programming and
+            Data Structures](notes/class_notes/cs201.md)
+        - [Probability, Random Variables,
+            and Stochastic Processes](notes/class_notes/stats210.md)
         - [Probability and Statistics](notes/class_notes/math205.md)
         - [Linear Algebra](notes/class_notes/math202.md)
         - [Speech Recognition](notes/class_notes/cs304.md)
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
 - [Blogs](blogs/index.md)
-    - [Creating Perfect Grayscale-Gradient Colormaps](blogs/perfect_grayscale.md)
+    - [Creating Perfect Grayscale-Gradient
+        Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)
+    - [Drafts]()
+        - [300x Speed Up:
+            Finding Inexact Matches in Recursive Sets](blogs/300x_speed_up.md)
     - [Deprecated](blogs/deprecated/index.md)
         - [How did we get here? WordPress?](blogs/deprecated/how_did_we.md)
 
@@ -110,6 +120,7 @@
             - [Elixir Phoenix](diary/elixir_phoenix.md)
             - [`mdbook-katex`](diary/mdbook_katex.md)
         - [Spring 2024 Ideas](diary/spring_2024_ideas.md)
-            - [Rethinking The Web](diary/spring_2024_ideas/rethinking_the_web.md)
+            - [Rethinking The
+                Web](diary/spring_2024_ideas/rethinking_the_web.md)
             - [Rust](diary/spring_2024_ideas/rust.md)
         - [Spring 2024 Activities](diary/spring_2024_activities/index.md)
