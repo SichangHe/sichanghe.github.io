@@ -9,11 +9,11 @@
 
 Hello there, Steven here:
 
-- Systems programmer, invested Rustacean, Pythonista, curious Elixirist.
-- Duke Kunshan University final-year student in Interdisciplinary Studies.
-- Incoming Computer Science Ph.D. student in the University of Southern
-    California; prospective advisor:
+- Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
+- Incoming Computer Science Ph.D. student in the University of
+    Southern California; advisor:
     [Harsha Madhyastha](https://www.harsha.usc.edu/).
+- Previously Duke Kunshan University student in Interdisciplinary Studies.
 
 </div>
 <img
@@ -37,11 +37,14 @@ Hello there, Steven here:
     style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; font-size: 1.25em;"
 >
 
-[![GitHub icon](https://github.githubassets.com/favicons/favicon.svg) GitHub](https://github.com/SichangHe)
+[![GitHub icon](https://github.githubassets.com/favicons/favicon.svg)
+GitHub](https://github.com/SichangHe)
 
 [🎓 Unofficial CV](/curriculum_vitae/)
 
-[![YouTube icon](https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg) Channel](https://www.youtube.com/@sichanghe)
+[![YouTube
+icon](https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg)
+Channel](https://www.youtube.com/@sichanghe)
 
 [🧠 Blog](/blogs/)
 
