@@ -2,6 +2,7 @@
 
 - [Home](index.md)
 - [Notes](notes/index.md)
+    - [Android](notes/android/index.md)
     - [Automation Software](notes/automation_software/index.md)
         - [Chatbot Prompt](notes/automation_software/chatbot_prompt.md)
         - [Command-Line Utilities](notes/automation_software/cli_util.md)
