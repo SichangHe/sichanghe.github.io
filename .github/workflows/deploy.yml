@@ -15,9 +15,11 @@ jobs:
           lfs: true
       - uses: cargo-bins/cargo-binstall@main
       - name: Install mdBook, mdBook-KaTeX, and mdBook-ToC
-        run: cargo binstall -y mdbook mdbook-katex mdbook-toc
+        run: cargo binstall -y mdbook mdbook-katex mdbook-toc mdbook-sitemap-generator
       - name: Build
         run: mdbook build
+      - name: Generate sitemap
+        run: sh gen_sitemap.sh
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
