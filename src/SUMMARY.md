@@ -105,8 +105,8 @@
         Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)
     - [Drafts]()
-        - [300x Speed Up:
-            Finding Inexact Matches in Recursive Sets](blogs/300x_speed_up.md)
+        - [~300x Speed Up:
+            Finding Inexact Matches in Nested Sets](blogs/300x_speed_up.md)
     - [Deprecated](blogs/deprecated/index.md)
         - [How did we get here? WordPress?](blogs/deprecated/how_did_we.md)
 
