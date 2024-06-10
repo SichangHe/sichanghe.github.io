@@ -100,6 +100,7 @@
         - [Linear Algebra](notes/class_notes/math202.md)
         - [Speech Recognition](notes/class_notes/cs304.md)
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
+    - [Unstructured Reading Notes](notes/reading_notes/index.md)
 - [Blogs](blogs/index.md)
     - [Creating Perfect Grayscale-Gradient
         Colormaps](blogs/perfect_grayscale.md)
