@@ -1,6 +1,10 @@
 [book]
 authors = ["Steven Hé (Sīchàng)"]
-description = "Steven Hé (Sīchàng)'s personal website, for notes, blogs, CV, and fun."
+description = """Steven Hé (Sīchàng)'s personal website, \
+for notes, blogs, CV, and fun.
+Steven Hé (Sīchàng) is also known as Steven He, StevenHe, Sichang He, \
+SichangHe, StevenSichangHe, 何思畅, or 何思暢.
+"""
 language = "en"
 multilingual = false
 src = "src"
