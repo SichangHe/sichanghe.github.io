@@ -18,6 +18,8 @@
         - [Pandoc](notes/documentation/pandoc.md)
     - [Exams](notes/exams/index.md)
         - [TOEFL](notes/exams/toefl.md)
+    - [Government](notes/government/index.md)
+        - [United States](notes/government/us.md)
     - [macOS](notes/macos/index.md)
         - [Sucklessfy](notes/macos/sucklessfy.md)
     - [Mathematics](notes/mathematics/index.md)
