@@ -1,4 +1,4 @@
-(() => {
+function fix_toc_n_add_math_copying() {
     const toc = document.querySelector("#content > main > ul");
     const sidebar = document.querySelector("#sidebar > div.sidebar-scrollbox:not(.toc)");
     const sidebar_toc = document.querySelector("#sidebar > div.toc")
@@ -55,4 +55,6 @@
             () => navigator.clipboard.writeText(data.value),
         );
     }
-})();
+}
+fix_toc_n_add_math_copying();
+document.addEventListener("load", fix_toc_n_add_math_copying);
