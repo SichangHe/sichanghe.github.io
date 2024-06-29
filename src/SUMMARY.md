@@ -110,6 +110,8 @@
     - [Drafts]()
         - [~300x Speed Up:
             Finding Inexact Matches in Nested Sets](blogs/300x_speed_up.md)
+        - [Learn Like Machine Learning Models](blogs/learn_like_models.md)
+        - [We are Learning Async Rust Wrong](blogs/learning_async_rust_wrong.md)
     - [Deprecated](blogs/deprecated/index.md)
         - [How did we get here? WordPress?](blogs/deprecated/how_did_we.md)
 
