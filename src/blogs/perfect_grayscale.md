@@ -205,6 +205,8 @@ We fixed $s\equiv1$ above,
 but what if we want to be able to change the saturation?
 Can you solve the system for $r,g,b$ given $h,s,p$?
 
-{{ #include footer.md }}
+---
 
 *2024-05-25*
+
+{{ #include footer.md }}

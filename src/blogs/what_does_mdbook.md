@@ -301,6 +301,8 @@ The reality, however, is that, like many other projects,
 mdBook preprocessors get messy easily.
 We will talk about the mess mdBook-KaTeX was in next time.
 
-{{ #include footer.md }}
+---
 
 *2023-05-27*, edited: *2023-06-11*, *2024-05-24*
+
+{{ #include footer.md }}

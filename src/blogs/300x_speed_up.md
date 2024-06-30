@@ -170,6 +170,8 @@ check 10,000 routes on a single CPU. I ran it on a single CPU for better profile
 
 [^cpu]: Run on a server with dual EPYC 7763 64-Core processors.
 
-{{ #include footer.md }}
+---
 
 *2024-05-30*
+
+{{ #include footer.md }}
