@@ -1,72 +1,165 @@
 <!-- toc -->
 # ~300x Speed Up: Finding Inexact Matches in Nested Sets
 
-In a research project, I built a parser to analyze routes on the Internet,
-but it bottlenecked on finding inexact matches of IP address prefixes in
-nested sets.
-So, I applied various optimizations,
-and eventually made the parser around 300 times faster,
-analyzing around 800 million routes in 3hr[^cpu].
+I optimized my route analyzer and made it around 300 times faster,
+analyzing around 800 million routes within 3 hours[^cpu].
+The exact multiply of speedup does not matter; rather,
+I find it valuable to discuss the data structure changes, profiling,
+and algorithm experiments, the major gains, and the wasted effort.
+No, I did not rewrite a Python implementation to gain a trivial 50x speedup;
+I started with a multi-threaded Rust implementation.
 
-The exact multiply of speedup does not matter,
-but I find the data structure changes, profiling,
-and algorithm experiments to be valuable experiences to discuss (no,
-I did not rewrite from a Python implementation to gain a trivial 50x speedup;
-I started in Rust).
+The main bottleneck of the route analyzer lay in finding inexact matches of
+IP address prefixes in nested sets.
+In our research,
+this matching was a core functionality because we used the analyzer to
+match routes on the Internet against public routing policies.
+The technicality of the research does not matter here,
+but some basic context is needed to understand the optimizations.
 
 ## Simplified background
 
-Instead of explaining routing policies, RFC 2622, etc.,
-I construct a simplified context where we try to
-implement a method `match_as_set` on a data structure `Matcher`.
-This method should try to find if there is a match for `Matcher`'s (IP address)
-prefix $p$ in an AS Set $\mathcal A$ at the presence of a range operator $o$.
-The relationships among the data structures are as follows.
-
-$$
-\begin{alignat*}{3}
-    &\text{Route}\xrightarrow{\quad\text{specifies}\quad}\text{prefix }p\\
-    {}_{\text{goes through}}&\downarrow\qquad\qquad\qquad\qquad
-        \uparrow_{\text{is a match?}}\\
-    \text{AS Set }\mathcal A\ni&
-        \text{AS }a_i\xleftrightarrow{\text{correspond to}}
-        \text{Prefixes }\mathcal R_i,\text{ Range Operator }o
-\end{alignat*}
-$$
-
-1. A **route** basically says a **prefix**
-    $p$`:IpNet` like `193.254.30.0/24` can go through a sequence of
-    Autonomous Systems (**AS**es),
-    which are basically the stops on a route path.
-    `Matcher` stores $p$ in its `prefix` field.
-1. Each **AS** $a_i$`:usize` corresponds to one set of prefixes
-    $\mathcal R_i$`:Vec<IpNet>`$=\{p_1,p_2,\ldots\}$,
-    stored in the `as_routes` field of `Matcher`.
-1. A **range operator** $o$`:RangeOperator` can modify the prefix $p_i$,
-    and $(p_i,o)$ together can be **a match** for many different prefixes.
-    For example,
-    the prefix-operator pair `(212.5.128.0/19,^19-24)` is a match for
-    prefixes including `212.5.128.0/24` and `212.5.129.0/24`.
-    A set of prefixes $\mathcal R_i$ is a match for a prefix
-    $p$ at the presence of $o$ if there is a
-    $p_j\in\mathcal R_i$ such that $(p_i,o)$ is a match for $p$.
-1. For our analysis, we want to know if,
-    at the presence of range operator $o$,
-    $p$ has a match in an **AS Set** $\mathcal A$`:AsSet`$=\{a_1,a_2,\ldots\}$.
-    This match is defined by an
-    $a_i\in\mathcal A$ whose corresponding $\mathcal R_i$ is a match of $p$.
+My task was to implement the `match_nested_set` method on
+the `Matcher` data structure, as the pseudo code below illustrates[^real-code].
+This method should output whether the (IP address)
+prefix `self.prefix` matches a nested set of prefixes called `name`.
+Additionally,
+it should accept a Range Operator `op` that
+can modify how the prefix matching is done.
 
 ```rust
 struct Matcher {
     prefix: IpNet,
-    as_routes: BTreeMap<usize, Vec<IpNet>>,
-    as_sets: BTreeMap<String, AsSet>,
+    sets: BTreeMap<usize, Vec<IpNet>>,
+    nested_sets: BTreeMap<String, NestedSet>,
+}
+
+impl Matcher {
+    fn match_nested_set(self, name: String, op: RangeOperator) -> bool {
+        unimplemented!()
+    }
 }
 ```
 
-This matching requires more complicated implementation than
-simple lookups because:
+The example pseudo code below checks if
+the prefix `193.254.30.0/24` matches the nested set `CUSTOMERS` with
+the Range Operator `Plus`.
+The nested set `CUSTOMERS` has a member `69` that
+contains the prefix `193.254.0.0/16`.
+Since `193.254.0.0/16` contains `193.254.30.0/24` and
+`Plus` specifies the "contains" relationship,
+then the method should return `true`.
 
+```rust
+let matcher = Matcher {
+    prefix: 193.254.30.0/24,
+    sets: BTreeMap(69: 193.254.0.0/16),
+    nested_sets: BTreeMap(
+        "CUSTOMERS": NestedSet { sets: [69], nested_sets: [] }
+    ),
+};
+matcher.match_nested_set("CUSTOMERS", RangeOperator::Plus)
+// => true
+```
+
+To understand the problem, I started with a straightforward implementation.
+
+## Naive implementation
+
+```rust
+impl Matcher {
+    fn match_nested_set(
+        self,
+        name: String,
+        op: RangeOperator,
+        visited: Vec<String>,
+    ) -> bool {
+        let Some(nested_set) = self.nested_sets.get(name) else {
+            return false;
+        };
+        for set in nested_set.sets {
+            if self.match_set(set, op, visited) {
+                return true;
+            }
+        }
+        for nested_set in nested_set.nested_sets {
+            if self.match_nested_set(nested_set, op, visited) {
+                return true;
+            }
+        }
+        false
+    }
+
+    fn match_set(
+        self,
+        name: String,
+        op: RangeOperator,
+        visited: Vec<String>,
+    ) -> bool {
+        if visited.contains(name) {
+            return false;
+        }
+        visited.push(name);
+        let Some(set) = self.sets.get(name) else {
+            return false;
+        };
+        set.iter()
+            .any(|prefix| prefix_and_op_matches(prefix, op, self.prefix))
+    }
+}
+```
+
+The pseudo code above is mostly trivial for the average programmers,
+except for a few places.
+
+1. Using Rust's `let else` syntax, we look up `name` in the sets,
+    and either bind the result to the variable,
+    or return `false` early if `name` is not found.
+1. `visited` tracks the set names we have checked to
+    prevent infinite recursions from nested sets that contain each other.
+1. `prefix_and_op_matches` is a helper function that checks if
+    a prefix matches the Range Operator and another prefix.
+
+## Standard data structure changes
+
+Profiling and standard data structure changes were the lowest-handing fruit.
+Although I lost the exact performance record of early implementations,
+my benchmark code checking only 256 routes clearly took minutes to run.
+I understood that the naive implementation would not scale,
+so I immediately started profiling the benchmark code to find where most of
+the time was spent.
+
+Surprisingly, [Cargo-FlameGraph]
+showed that most of the time was spent on checking if
+set names have been visited (`visited.contains`).
+`visited` was a vector,
+and its linear search compounded with recursion to a cubic growth.
+I chose to use vectors because I thought most nested sets would have less than
+ten members, in which case linear search would be fine,
+but my assumption was clearly wrong.
+I changed `visited` to use `HashSet` and boosted the speed by perhaps 10 times.
+
+The other effective change was to replace the maps.
+`Matcher` contains two B-tree maps,
+which are amazing sorted binary trees with $O(\log n)$ lookup time complexity.
+However, hash maps have amortized $O(1)$ lookup,
+so it was a no-brainer to replace `BTreeMap` with `HashMap`.
+Although this find-replace change caused the `get` calls to
+occupy seemingly larger areas in the flame graph,
+it contributed to a 30% speedup in the benchmark, as I remember.
+
+These trivial changes turned out to be clear wins,
+and show some basics of performance optimization:
+
+- Code profiling helps check our assumptions of run-time complexities.
+- Data structure choices can greatly affect performance,
+    and both complexity analysis and benchmarking help pick them.
+
+## Repetition reduction
+
+<!-- TODO: Finish this off. -->
+
+<!--
 - Prefix matching is inexact.
     Depending on $o$, $(p_i,o)$ may be a match of $p$ if $p_i$ equals $p$,
     contains $p$, or contains but not equals $p$, or,
@@ -78,100 +171,41 @@ simple lookups because:
     So,
     finding a match for $p$ in
     $\mathcal A_i$ may require checking an *unbounded* number of sets.
-- There are too many prefix ranges.
+-->
+
+## Custom data structure
+
+## Tenable caching
+
+<!-- - There are too many prefix ranges.
     Flattening the set of all prefixes for
     each AS Set would eliminate the nesting,
     but I tried that and ran out of all 300GiB of RAM,
     causing the server to hang for a while
     (fortunately my admin did not notice it).
+-->
 
-## Naive implementation
+<!-- TODO: Maybe I should iframe this. -->
 
-To understand the problem, I started with a straightforward implementation.
-Below is the simplified mock Rust code.
+| Before flattening the nested sets                                                        | After flattening the nested sets                                                      |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [![Flamegraph before Flattening the nested sets.][flamegraph-before]][flamegraph-before] | [![Flamegraph after Flattening the nested sets.][flamegraph-after]][flamegraph-after] |
 
-```rust
-impl Matcher {
-    fn match_as_set(
-        &self,
-        name: &str,
-        op: RangeOperator,
-        visited: &mut Vec<AsName>,
-    ) -> bool {
-        let Some(as_set) = self.as_sets.get(name) else {
-            return false;
-        };
-        for as_name in as_set {
-            if match_as_name(as_name, op, visited) {
-                return true;
-            }
-        }
-        false
-    }
+[^cpu]: I ran the experiment on a server with dual EPYC 7763 64-Core processors with
+hyperthreading turned off.
 
-    fn match_as_name(
-        &self,
-        as_name: AsName,
-        op: RangeOperator,
-        visited: &mut Vec<AsName>,
-    ) -> bool {
-        if visited.contains(&as_name) {
-            return false;
-        }
-        visited.push(as_name);
-        match as_name {
-            AsName::Num(num) => self.match_as_num(num, op),
-            AsName::Set(name) => self.match_as_set(name, op, visited),
-        }
-    }
-
-    fn match_as_num(&self, num: usize, op: RangeOperator) -> bool {
-        let Some(routes) = self.as_routes.get(&num) else {
-            return false;
-        };
-        routes
-            .iter()
-            .any(|prefix| prefix_and_op_matches(prefix, op, &self.prefix))
-    }
-}
-```
-
-The three `Matcher` methods above all search for a match for
-the matcher's prefix in the presence of the range operator `op`,
-and they return true only if a match is found.
-`match_as_set` searches the AS Set called `name`;
-`match_as_name` searches `as_name`,
-which is either a number for an AS (`AsName::Num`)
-or a name for an AS Set (`AsName::Set`);
-`match_as_num` searches an AS of number `num`.
-
-- `match_as_num` and `match_as_set` use the AS `num` or AS Set `name` to
-    query the corresponding set of prefixes `routes` ($R_i$)
-    in the `Matcher`'s `self.as_routes` or the AS Set `as_set` ($\mathcal A$)
-    in `self.as_set`, respectively.
-    When the query fails, we return `false` early.
-- `match_as_set` simply checks each AS number or AS Set name in an AS Set for
-    a match.
-- The `visited` argument records all the AS numbers and
-    AS Set names we have encountered to prevent checking them again,
-    so we don't recurs infinitely.
-- `match_as_num` calls a helper function `prefix_and_op_matches` on
-    each prefix $p_i$ in the set and the `Matcher`'s `self.prefix` ($p$),
-    and returns true if any of the calls returns true.
-
-My early implementation using this naive approach was taking XXmin to
-check 10,000 routes on a single CPU. I ran it on a single CPU for better profiler output:
-
-<!-- TODO: Find the bloody flamegraph or re-generate one. -->
-
-[Cargo-FlameGraph](TODO) generated the above flame graph.
-
-<!-- TODO: Finish this off. -->
-
-[^cpu]: Run on a server with dual EPYC 7763 64-Core processors.
+[^real-code]: These are simplified pseudo Rust code based on [my real
+code](https://github.com/SichangHe/internet_route_verification/blob/752e19d1c8ab6665a67c69eeffcc9885c60a37ea/route_policy_cmp/src/bgp/filter.rs#L137).
+I removed the numerous references (`&` or `&mut`) and parsing code,
+so readers unfamiliar with Rust can still understand it.
+I also changed the names to avoid explaining the research context.
 
 ---
 
 *2024-05-30*
 
 {{ #include footer.md }}
+
+[Cargo-FlameGraph]: https://github.com/flamegraph-rs/flamegraph
+[flamegraph-after]: https://github.com/SichangHe/internet_route_verification/assets/84777573/33a7354f-a47a-4c8f-a905-c717bbd38f62
+[flamegraph-before]: https://github.com/SichangHe/internet_route_verification/assets/84777573/6a869975-a764-45f8-9f14-a27498f3e1f8
