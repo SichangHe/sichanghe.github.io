@@ -142,11 +142,20 @@ I changed `visited` to use `HashSet` and boosted the speed by perhaps 10 times.
 The other effective change was to replace the maps.
 `Matcher` contains two B-tree maps,
 which are amazing sorted binary trees with $O(\log n)$ lookup time complexity.
-However, hash maps have amortized $O(1)$ lookup,
-so it was a no-brainer to replace `BTreeMap` with `HashMap`.
-Although this find-replace change caused the `get` calls to
-occupy seemingly larger areas in the flame graph,
-it contributed to a 30% speedup in the benchmark, as I remember.
+However, hash maps have amortized $O(1)$ lookup.
+Therefore, it was a no-brainer to try replacing `BTreeMap` with `HashMap`.
+I recall this find-replace change caused the `get` calls to
+occupy seemingly larger areas in the flame graph!
+However, I also saw a 30% faster benchmark, so the hash map was faster.
+
+The hash map being only slightly faster than the B-tree map was no surprise.
+The B-tree map is cache-efficient,
+and avoids the somewhat expensive operation of hashing the number or string,
+sometimes multiple times when the hash map would be probing.
+This means, for smaller maps, the B-tree may be faster.
+Though,
+it turned out that my maps are large enough and
+my string keys are small enough, such that the hash map won.
 
 These trivial changes turned out to be clear wins,
 and show some basics of performance optimization:
@@ -185,8 +194,6 @@ and show some basics of performance optimization:
     (fortunately my admin did not notice it).
 -->
 
-<!-- TODO: Maybe I should iframe this. -->
-
 | Before flattening the nested sets                                                        | After flattening the nested sets                                                      |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [![Flamegraph before Flattening the nested sets.][flamegraph-before]][flamegraph-before] | [![Flamegraph after Flattening the nested sets.][flamegraph-after]][flamegraph-after] |
@@ -200,6 +207,22 @@ I removed the numerous references (`&` or `&mut`) and parsing code,
 so readers unfamiliar with Rust can still understand it.
 I also changed the names to avoid explaining the research context.
 
+## Appendix A: Flamegraphs
+
+<!-- TODO: Maybe I should iframe these. -->
+
+After distinguishing special cases.
+[![After distinguishing special
+cases][flamegraph-distinguish-spec]][flamegraph-distinguish-spec]
+
+After flattening prefixes of nested sets' direct members.
+[![After flattening prefixes of
+nested sets' direct
+members][flamegraph-use-as-set-routes]][flamegraph-use-as-set-routes]
+
+After flattening each set to its prefixes. [![After flattening each set to its
+prefixes][flamegraph-use-routes-for-each-as]][flamegraph-use-routes-for-each-as]
+
 ---
 
 *2024-05-30*
@@ -209,3 +232,6 @@ I also changed the names to avoid explaining the research context.
 [Cargo-FlameGraph]: https://github.com/flamegraph-rs/flamegraph
 [flamegraph-after]: https://github.com/SichangHe/internet_route_verification/assets/84777573/33a7354f-a47a-4c8f-a905-c717bbd38f62
 [flamegraph-before]: https://github.com/SichangHe/internet_route_verification/assets/84777573/6a869975-a764-45f8-9f14-a27498f3e1f8
+[flamegraph-distinguish-spec]: https://github.com/SichangHe/internet_route_verification/assets/84777573/1a7ef5c2-1727-49bf-ae99-a196a95bbfca
+[flamegraph-use-as-set-routes]: https://github.com/SichangHe/internet_route_verification/assets/84777573/095af07b-98d8-4f7a-b44f-050454a037d1
+[flamegraph-use-routes-for-each-as]: https://github.com/SichangHe/internet_route_verification/assets/84777573/8be94a7a-c913-4df7-bb99-7f095d848376
