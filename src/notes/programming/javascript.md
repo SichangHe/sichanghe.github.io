@@ -8,7 +8,8 @@
     - nullish coalescing operator `??`\
         give default value if the expression before is `null` or `undefined`
     - optional chaining `?`\
-        skip method chain and return `undefined` if expression before is `undefined`
+        skip method chain and return `undefined` if
+        expression before is `undefined`
 
 # assignment
 
@@ -68,6 +69,11 @@ function fun1(var1,…) {
 ```
 
 minimum `var1 => expression1`
+
+## variadic function
+
+- `arguments` magic variable: array-like object
+- rest parameter `(arg0, …, ...args)`: array
 
 # comparison
 
