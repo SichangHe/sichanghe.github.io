@@ -1,7 +1,7 @@
 function fix_toc_n_add_math_copying() {
     const toc = document.querySelector("#content > main > ul");
     const sidebar = document.querySelector("#sidebar > div.sidebar-scrollbox:not(.toc)");
-    const sidebar_toc = document.querySelector("#sidebar > div.toc")
+    const sidebar_toc = document.querySelector("#sidebar > div.toc");
     sidebar_toc.style.display = "none";
     sidebar_toc.appendChild(toc);
 
@@ -16,7 +16,7 @@ function fix_toc_n_add_math_copying() {
             sidebar.style.display = "none";
             sidebar_toc.style.display = "block";
         }
-    })
+    });
 
     const toc_anchors = toc.querySelectorAll("a");
     const header_anchors = document
