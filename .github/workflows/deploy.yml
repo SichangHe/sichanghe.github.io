@@ -25,12 +25,7 @@ jobs:
       - name: Generate sitemap
         run: sh gen_sitemap.sh
       - name: Minify HTML and CSS
-        run: cd _site && ../minhtml-0.15.0-x86_64-unknown-linux-gnu **.html **.css
-      - name: Minify CSS and JS
-        uses: nizarmah/auto-minify@v3
-        with:
-          directory: _site
-          overwrite: true
+        run: find _site -type f \( -name "*.html" -o -name "*.css" \) -print0 | xargs -0 ./minhtml-0.15.0-x86_64-unknown-linux-gnu
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
