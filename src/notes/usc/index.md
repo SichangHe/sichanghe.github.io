@@ -1,7 +1,7 @@
 <!-- toc -->
-# Housing
+# University of Southern California Living
 
-## USC housing
+## Housing
 
 places
 
@@ -18,7 +18,7 @@ website: Zillow
 
 careful for: heat, floor noise
 
-## JavaScript highlight keyword on page
+### JavaScript highlight keyword on page
 
 ```javascript
 function highlight(regex, classes) {
