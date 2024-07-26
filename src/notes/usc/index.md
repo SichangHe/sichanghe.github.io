@@ -1,5 +1,17 @@
 <!-- toc -->
+
 # University of Southern California Living
+
+## Banking
+
+| plan          | regst. | mon.  | US wire in | out  | intl. in    | out                  | ATM w/draw                          | Zelle |
+| ------------- | -----: | ----: | ---------: | ---: | ----------: | -------------------: | ----------------------------------- | ----- |
+| USCCU student | \$9    | \$0   | \$5        | \$20 | -2/yr, \$10 | \$40                 | Citibank branch, -2non-shared/mon   | ✅    |
+| BoA student   | \$0    | \$5-  | \$15       | \$30 | \$15        | \$0 if not USD, \$45 | BoA, \$2.5 (5) if non-BoA (intl.)   | ✅    |
+| Chase college | \$0    | \$12- | \$15       | \$25 | \$15        | \$5 if not USD, \$40 | Chase, \$3 (5) if non-Chase (intl.) | ✅    |
+
+- no international wire transfer: SoFi, Chime
+- US-citizen-only: ally
 
 ## Housing
 
@@ -62,3 +74,8 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 ```
+
+<style>#content main {
+    max-width: unset;
+}
+</style>
