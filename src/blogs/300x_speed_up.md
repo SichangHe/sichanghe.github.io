@@ -19,14 +19,15 @@ In our research,
 this matching is a core functionality because we used the analyzer to
 match routes on the Internet against public routing policies.
 The technicality of the research does not matter here,
-but some basic context is needed to understand the optimizations.
+but we need some basic context to understand the optimizations.
 
 ## Simplified background
 
-My task was to implement the `match_nested_set` method on
-the `Matcher` data structure, as the pseudo code below illustrates[^real-code].
-This method should output whether the (IP address)
-prefix `self.prefix` matches a nested set of prefixes called `name`.
+As the pseudocode below illustrates,
+our task is to implement the `match_nested_set` method on
+the `Matcher` data structure[^real-code].
+This method should output whether the Matcher's (IP address)
+prefix (`self.prefix`) matches a nested set of prefixes based on its `name`.
 Additionally,
 it should accept a Range Operator `op` that
 can modify how the prefix matching is done.
@@ -113,7 +114,7 @@ impl Matcher {
 }
 ```
 
-The pseudo code above is mostly trivial for the average programmers,
+The pseudocode above is mostly trivial for the average programmers,
 except for a few places.
 
 1. Using Rust's `let else` syntax, we look up `name` in the sets,
@@ -121,6 +122,10 @@ except for a few places.
     or return `false` early if `name` is not found.
 1. `visited` tracks the set names we have checked to
     prevent infinite recursions from nested sets that contain each other.
+1. The `set.iter().any` expression uses a common declarative pattern.
+    It loops through the `prefix` elements in `set`,
+    calls `prefix_and_op_matches` on each of them,
+    and returns true iff one of the calls returns true.
 1. `prefix_and_op_matches` is a helper function that checks if
     a prefix matches the Range Operator and another prefix.
 
@@ -128,7 +133,7 @@ except for a few places.
 
 Profiling and standard data structure changes were the lowest-handing fruit.
 Although I lost the exact performance record of early implementations,
-my benchmark code checking only 256 routes clearly took minutes to run.
+my benchmark code checked only 256 routes and clearly took minutes to run.
 I understood that the naive implementation would not scale,
 so I immediately started profiling the benchmark code to find where most of
 the time was spent.
@@ -146,16 +151,15 @@ I changed `visited` to use `HashSet` and boosted the speed by perhaps 10 times.
 The other effective change was to replace the maps.
 `Matcher` contains two B-tree maps,
 which are amazing sorted binary trees with $O(\log n)$ lookup time complexity.
-However, hash maps have amortized $O(1)$ lookup.
+However, hash maps have $\Theta(1)$ lookup.
 Therefore, it was a no-brainer to try replacing `BTreeMap` with `HashMap`.
-I recall this find-replace change caused the `get` calls to
+I recall this find-replace change causing the `get` calls to
 occupy seemingly larger areas in the flame graph!
 However, I also saw a 30% faster benchmark, so the hash map was faster.
 
 The hash map being only slightly faster than the B-tree map was no surprise.
 The B-tree map is cache-efficient,
-and avoids the somewhat expensive operation of hashing the number or string,
-sometimes multiple times when the hash map would be probing.
+and avoids the somewhat expensive string hashing.
 This means, for smaller maps, the B-tree may be faster.
 Though,
 it turned out that my maps are large enough and
@@ -168,7 +172,120 @@ and show some basics of performance optimization:
 - Data structure choices can greatly affect performance,
     and both complexity analysis and benchmarking help pick them.
 
+## Custom data structure
+
+<!-- TODO: Bloom hash table. -->
+
 ## Repetition reduction
+
+Recall the current implementation:
+
+```rust
+impl Matcher {
+    fn match_nested_set(
+        self,
+        name: String,
+        op: RangeOperator,
+        visited: HashSet<String>,
+    ) -> bool {
+        let Some(nested_set) = self.nested_sets.get(name) else {
+            return false;
+        };
+        for set in nested_set.sets {
+            if self.match_set(set, op, visited) {
+                return true;
+            }
+        }
+        for nested_set in nested_set.nested_sets {
+            if self.match_nested_set(nested_set, op, visited) {
+                return true;
+            }
+        }
+        false
+    }
+
+    fn match_set(
+        self,
+        name: String,
+        op: RangeOperator,
+        visited: HashSet<String>,
+    ) -> bool {
+        if visited.contains(name) {
+            return false;
+        }
+        visited.add(name);
+        let Some(set) = self.sets.get(name) else {
+            return false;
+        };
+        set.iter()
+            .any(|prefix| prefix_and_op_matches(prefix, op, self.prefix))
+    }
+}
+```
+
+Of course,
+it is easy to see how repeating recursion calls in nested loops can be slow,
+but it is quite tricky to flatten these loops.
+I started with an inside-out approach,
+first targeting the linear search at the end of `match_set`.
+
+I created a custom binary search to match a prefix against a set of
+prefixes with a range operator `op`.
+A regular binary search does not suffice because
+this prefix matching is not exact unless `op` is a No-op,
+therefore it made sense to check them one by one.
+However, range operators do not permit arbitrary matches;
+they at most relax the matching to specific ranges.
+Together with the fact that, once sorted,
+similar prefixes become close to each other,
+we have a much more efficient algorithm based on binary search.
+
+As shown below,
+we first obtain a starting point `center` from regular binary search,
+check for the exact match case (`op` is No-op),
+then search right and left in
+the prefix list until they are no longer siblings with `prefix`.
+
+```rust
+fn match_prefixs(prefix: IpNet, prefixs: [IpNet], op: RangeOperator) -> bool {
+    let center = prefixs.binary_search(prefix);
+
+    // Exact match.
+    if let RangeOperator::NoOp = op {
+        return center.is_ok();
+    }
+
+    let center = center.map_or_else(identity, identity);
+    // Check center.
+    if let Some(value) = prefixs.get(center) {
+        if prefix_and_op_matches(value, op, prefix) {
+            return true;
+        }
+    }
+    // Check right.
+    for value in &prefixs[(center + 1).min(prefixs.len())..] {
+        if prefix_and_op_matches(value, op, prefix) {
+            return true;
+        }
+        if !prefix.is_sibling(value) {
+            break;
+        }
+    }
+    // Check left.
+    for value in prefixs[..(center.saturating_sub(1)).max(prefixs.len())]
+        .iter()
+        .rev()
+    {
+        if prefix_and_op_matches(value, op, prefix) {
+            return true;
+        }
+        if !prefix.is_sibling(value) {
+            break;
+        }
+    }
+    false
+}
+```
 
 <!-- TODO: Finish this off. -->
 
@@ -185,8 +302,6 @@ and show some basics of performance optimization:
     finding a match for $p$ in
     $\mathcal A_i$ may require checking an *unbounded* number of sets.
 -->
-
-## Custom data structure
 
 ## Tenable caching
 
