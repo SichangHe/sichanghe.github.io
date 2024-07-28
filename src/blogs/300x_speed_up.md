@@ -1,18 +1,22 @@
 <!-- toc -->
-# ~300x Speed Up: Finding Inexact Matches in Nested Sets
+# ~300x Speed Up in Rust: Finding Inexact Matches in Nested Sets
 
-I optimized my route analyzer and made it around 300 times faster,
-analyzing around 800 million routes within 3 hours[^cpu].
+I optimized my route analyzer to 300 times faster.
+It analyzed around 800 million routes within 3 hours[^cpu].
 The exact multiply of speedup does not matter; rather,
 I find it valuable to discuss the data structure changes, profiling,
 and algorithm experiments, the major gains, and the wasted effort.
+
 No, I did not rewrite a Python implementation to gain a trivial 50x speedup;
-I started with a multi-threaded Rust implementation.
+I started with a multithreaded Rust implementation.
+In this case,
+Rust seems to have been a wise choice—much more straightforward to optimize for
+speed than those garbage-collected languages with extra pointer chasing.
 
 The main bottleneck of the route analyzer lay in finding inexact matches of
 IP address prefixes in nested sets.
 In our research,
-this matching was a core functionality because we used the analyzer to
+this matching is a core functionality because we used the analyzer to
 match routes on the Internet against public routing policies.
 The technicality of the research does not matter here,
 but some basic context is needed to understand the optimizations.

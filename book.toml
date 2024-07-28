@@ -22,6 +22,10 @@ smart-punctuation = true
 enable = true
 level = 1
 
+[output.html.playground]
+copy-js = false
+runnable = false
+
 [preprocessor.katex]
 after = ["links"]
 include-src = true

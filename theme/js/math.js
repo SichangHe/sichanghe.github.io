@@ -1,11 +1,9 @@
-function fix_toc_n_add_math_copying() {
-    const toc = document.querySelector("#content > main > ul");
-    const sidebar = document.querySelector("#sidebar > div.sidebar-scrollbox:not(.toc)");
-    const sidebar_toc = document.querySelector("#sidebar > div.toc");
-    sidebar_toc.style.display = "none";
-    sidebar_toc.appendChild(toc);
+const sidebar_toc = document.querySelector("#sidebar > div.toc");
 
+(function() {
+    const sidebar = document.querySelector("#sidebar > div.sidebar-scrollbox:not(.toc)");
     const toc_toggle_button = document.getElementById("toc-toggle");
+    sidebar_toc.style.display = "none";
     toc_toggle_button.addEventListener("click", () => {
         if (html.classList.contains("toc-shown")) {
             html.classList.remove("toc-shown");
@@ -17,6 +15,11 @@ function fix_toc_n_add_math_copying() {
             sidebar_toc.style.display = "block";
         }
     });
+})();
+
+function fix_toc_n_add_math_copying() {
+    const toc = document.querySelector("#content > main > ul");
+    sidebar_toc.replaceChildren(toc);
 
     const toc_anchors = toc.querySelectorAll("a");
     const header_anchors = document

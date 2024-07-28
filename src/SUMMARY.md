@@ -108,7 +108,7 @@
         Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)
     - [Drafts]()
-        - [~300x Speed Up:
+        - [~300x Speed Up in Rust:
             Finding Inexact Matches in Nested Sets](blogs/300x_speed_up.md)
         - [Learn Like Machine Learning Models](blogs/learn_like_models.md)
         - [We are Learning Async Rust
