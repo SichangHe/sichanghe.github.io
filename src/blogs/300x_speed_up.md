@@ -79,11 +79,15 @@ impl Matcher {
         op: RangeOperator,
         visited: Vec<String>,
     ) -> bool {
+        if visited.contains(name) {
+            return false;
+        }
+        visited.push(name);
         let Some(nested_set) = self.nested_sets.get(name) else {
             return false;
         };
         for set in nested_set.sets {
-            if self.match_set(set, op, visited) {
+            if self.match_set(set, op) {
                 return true;
             }
         }
@@ -97,15 +101,10 @@ impl Matcher {
 
     fn match_set(
         self,
-        name: String,
+        num: usize,
         op: RangeOperator,
-        visited: Vec<String>,
     ) -> bool {
-        if visited.contains(name) {
-            return false;
-        }
-        visited.push(name);
-        let Some(set) = self.sets.get(name) else {
+        let Some(set) = self.sets.get(num) else {
             return false;
         };
         set.iter()
@@ -118,8 +117,8 @@ Explanations:
 
 1. Using Rust's `let else` syntax, we look up `name` in the sets,
     and either bind the result to the variable,
-    or return `false` early if `name` is not found.
-1. `visited` tracks the set names we have checked to
+    or return `false` early if `name` is not found.[^real-unrec]
+1. `visited` tracks the nested set names we have checked to
     prevent infinite recursions from nested sets that contain each other.
 1. The `set.iter().any` expression uses a common declarative pattern.
     It loops through the `prefix` elements in `set`,
@@ -191,7 +190,7 @@ As another fact, once sorted, similar prefixes become close to each other.
 Combined, I created a much more efficient algorithm based on binary search:
 
 ```rust
-fn match_prefixs(prefix: IpNet, prefixs: &[IpNet], op: RangeOperator) -> bool {
+fn match_ips(prefix: IpNet, prefixs: [IpNet], op: RangeOperator) -> bool {
     let center = prefixs.binary_search(prefix).map_or_else(identity, identity);
     // Check center.
     if let Some(value) = prefixs.get(center) {
@@ -200,7 +199,7 @@ fn match_prefixs(prefix: IpNet, prefixs: &[IpNet], op: RangeOperator) -> bool {
         }
     }
     // Check right.
-    for value in &prefixs[(center + 1).min(prefixs.len())..] {
+    for value in prefixs[(center + 1).min(prefixs.len())..] {
         if prefix_and_op_matches(value, op, prefix) {
             return true;
         }
@@ -264,12 +263,12 @@ I was too impatient to wait more than one day when
 analyzing 800 million routes.
 
 After reading about Bloom filters,
-it was tempting for me to eliminate more bottleneck from the `visited` set.
-Recall that `visited` is a `HashMap` that stores the checked set names to
+it was tempting for me to eliminate more bottlenecks from the `visited` set.
+Recall that `visited` is a `HashSet` that stores the checked set names to
 prevent infinite recursion:
 
 ```rust
-# fn match_set(
+# fn match_nested_set(
 #     self,
     name: String,
 #     op: RangeOperator,
@@ -339,22 +338,47 @@ I realized my initial hypothesis makes little sense:
 Lessons learned:
 
 - When profiling your dependencies,
-    try to understand the performance bottleneck on a finer granularity.
+    try to understand performance bottlenecks on a finer granularity.
     This involves carefully investigating the profiling results and
     checking out the dependencies' source code.
 - Preallocate your data structures. This brings easy wins.
 
 ## Tenable caching
 
-<!-- TODO: Finish this off. -->
+We have gone a long way removing performance bottlenecks, however,
+the overall algorithm remains—we are still calling recursive functions in
+a loop:
 
-<!-- - There are too many prefix ranges.
-    Flattening the set of all prefixes for
-    each AS Set would eliminate the nesting,
-    but I tried that and ran out of all 300GiB of RAM,
-    causing the server to hang for a while
-    (fortunately my admin did not notice it).
--->
+```rust
+fn match_nested_set(/* … */) -> bool {
+    // …
+#     for set in nested_set.sets {
+#         if self.match_set(set, op) {
+#             return true;
+#         }
+#     }
+    for nested_set in nested_set.nested_sets {
+        if self.match_nested_set(nested_set, op, visited) {
+            return true;
+        }
+    }
+#     false
+}
+```
+
+Effectively, this flattens each nested set on the fly.
+When I talked to Prof. Harsha Madhyastha,
+I explained that caching the flattened sets is untenable because of
+their massive sizes.
+Indeed,
+attempting to flatten every nested set to their prefixes consumed all 300GiB of
+RAM and caused the server to hang.
+Hence, further flattening prefix sets is clearly infeasible.
+
+However, when I considered the problem from another perspective,
+such caching becomes tenable.
+
+<!-- TODO: Finish this off. -->
 
 | Before flattening the nested sets                                                        | After flattening the nested sets                                                      |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -363,11 +387,13 @@ Lessons learned:
 [^cpu]: I ran the experiments on a server with dual EPYC 7763 64-Core processors with
 hyperthreading turned off.
 
-[^real-code]: These are simplified pseudo Rust code based on [my real
+[^real-code]: These are simplified Rust-like pseudocode based on [my real
 code](https://github.com/SichangHe/internet_route_verification/blob/752e19d1c8ab6665a67c69eeffcc9885c60a37ea/route_policy_cmp/src/bgp/filter.rs#L137).
-I removed the numerous references (`&` or `&mut`) and parsing code,
-so readers unfamiliar with Rust can still understand it.
-I also changed the names to avoid explaining the research context.
+I removed the inessential references (`&` or `&mut`)
+and parsing code to be friendly to readers unfamiliar with
+Rust. I also changed the names to avoid explaining the research context.
+
+[^real-unrec]: In the real code, we record any missing entries instead of ignoring them.
 
 [^trie-slow]: This Pull Request shows the trie is slower:
 [Replace `Vec<IpNet>` with trie `IpTrie` to
@@ -380,9 +406,8 @@ once](https://github.com/SichangHe/internet_route_verification/blob/db614215017a
 [^bloom-code]: Here is [the real code for integrating
 `BloomHashSet`](https://github.com/SichangHe/internet_route_verification/blob/bac23c12ae6732246add5d56ac4ed91710eff38d/route_policy_cmp/src/bgp/filter.rs#L125).
 
+<!--
 ## Appendix A: Flamegraphs
-
-<!-- TODO: Maybe I should iframe these. -->
 
 After distinguishing special cases.
 [![After distinguishing special
@@ -395,16 +420,20 @@ members][flamegraph-use-as-set-routes]][flamegraph-use-as-set-routes]
 
 After flattening each set to its prefixes. [![After flattening each set to its
 prefixes][flamegraph-use-routes-for-each-as]][flamegraph-use-routes-for-each-as]
+-->
 
 ---
 
-*2024-05-30*
+Started *2024-05-30*, finished *2024-07-29*.
 
 {{ #include footer.md }}
 
 [Cargo-FlameGraph]: https://github.com/flamegraph-rs/flamegraph
 [flamegraph-after]: https://github.com/SichangHe/internet_route_verification/assets/84777573/33a7354f-a47a-4c8f-a905-c717bbd38f62
 [flamegraph-before]: https://github.com/SichangHe/internet_route_verification/assets/84777573/6a869975-a764-45f8-9f14-a27498f3e1f8
+
+<!--
 [flamegraph-distinguish-spec]: https://github.com/SichangHe/internet_route_verification/assets/84777573/1a7ef5c2-1727-49bf-ae99-a196a95bbfca
 [flamegraph-use-as-set-routes]: https://github.com/SichangHe/internet_route_verification/assets/84777573/095af07b-98d8-4f7a-b44f-050454a037d1
 [flamegraph-use-routes-for-each-as]: https://github.com/SichangHe/internet_route_verification/assets/84777573/8be94a7a-c913-4df7-bb99-7f095d848376
+-->
