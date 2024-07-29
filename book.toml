@@ -14,6 +14,7 @@ title = "Steven Hé (Sīchàng)"
 build-dir = "_site"
 
 [output.html]
+additional-css = ["theme/css/override.css"]
 additional-js = ["theme/js/math.js"]
 git-repository-url = "https://github.com/SichangHe/sichanghe.github.io"
 smart-punctuation = true

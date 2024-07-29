@@ -1,0 +1,7 @@
+html {
+    font-family: "KaTeX_Main", "Times New Roman"
+}
+
+:root {
+    --mono-font: "JetBrainsMono NL", "JetBrains Mono", "Source Code Pro", Consolas, "Ubuntu Mono", Menlo, "DejaVu Sans Mono", monospace, monospace
+}

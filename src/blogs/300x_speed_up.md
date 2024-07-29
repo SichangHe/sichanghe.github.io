@@ -2,7 +2,7 @@
 # ~300x Speed Up in Rust: Finding Inexact Matches in Nested Sets
 
 I optimized my route analyzer to 300 times faster.
-It analyzed around 800 million routes within 3 hours[^cpu].
+It analyzed around 800 million routes within 3 hours.[^cpu]
 The exact multiply of speedup does not matter; rather,
 I find it valuable to discuss the data structure changes, profiling,
 and algorithm experiments, the major gains, and the wasted effort.
@@ -25,7 +25,7 @@ but we need some basic context to understand the optimizations.
 
 As the pseudocode below illustrates,
 our task is to implement the `match_nested_set` method on
-the `Matcher` data structure[^real-code].
+the `Matcher` data structure.[^real-code]
 This method should output whether the Matcher's (IP address)
 prefix (`self.prefix`) matches a nested set of prefixes based on its `name`.
 Additionally,
@@ -172,90 +172,28 @@ and show some basics of performance optimization:
 - Data structure choices can greatly affect performance,
     and both complexity analysis and benchmarking help pick them.
 
-## Custom data structure
+## Avoiding redundant work
 
-<!-- TODO: Bloom hash table. -->
-
-## Repetition reduction
-
-Recall the current implementation:
+Further profiling showed our recursion calls all end up at a slow expression:
 
 ```rust
-impl Matcher {
-    fn match_nested_set(
-        self,
-        name: String,
-        op: RangeOperator,
-        visited: HashSet<String>,
-    ) -> bool {
-        let Some(nested_set) = self.nested_sets.get(name) else {
-            return false;
-        };
-        for set in nested_set.sets {
-            if self.match_set(set, op, visited) {
-                return true;
-            }
-        }
-        for nested_set in nested_set.nested_sets {
-            if self.match_nested_set(nested_set, op, visited) {
-                return true;
-            }
-        }
-        false
-    }
-
-    fn match_set(
-        self,
-        name: String,
-        op: RangeOperator,
-        visited: HashSet<String>,
-    ) -> bool {
-        if visited.contains(name) {
-            return false;
-        }
-        visited.add(name);
-        let Some(set) = self.sets.get(name) else {
-            return false;
-        };
-        set.iter()
-            .any(|prefix| prefix_and_op_matches(prefix, op, self.prefix))
-    }
-}
+set.iter()
+    .any(|prefix| prefix_and_op_matches(prefix, op, self.prefix))
 ```
 
-Of course,
-it is easy to see how repeating recursion calls in nested loops can be slow,
-but it is quite tricky to flatten these loops.
-I started with an inside-out approach,
-first targeting the linear search at the end of `match_set`.
-
-I created a custom binary search to match a prefix against a set of
-prefixes with a range operator `op`.
-A regular binary search does not suffice because
-this prefix matching is not exact unless `op` is a No-op,
+This familiar linear search naturally reminds me of binary search.
+A regular binary search does not suffice because prefix matching with
+range operators may not be exact,
 therefore it made sense to check them one by one.
+
 However, range operators do not permit arbitrary matches;
 they at most relax the matching to specific ranges.
-Together with the fact that, once sorted,
-similar prefixes become close to each other,
-we have a much more efficient algorithm based on binary search.
-
-As shown below,
-we first obtain a starting point `center` from regular binary search,
-check for the exact match case (`op` is No-op),
-then search right and left in
-the prefix list until they are no longer siblings with `prefix`.
+As another fact, once sorted, similar prefixes become close to each other.
+Combined, I created a much more efficient algorithm based on binary search:
 
 ```rust
-fn match_prefixs(prefix: IpNet, prefixs: [IpNet], op: RangeOperator) -> bool {
-    let center = prefixs.binary_search(prefix);
-
-    // Exact match.
-    if let RangeOperator::NoOp = op {
-        return center.is_ok();
-    }
-
-    let center = center.map_or_else(identity, identity);
+fn match_prefixs(prefix: IpNet, prefixs: &[IpNet], op: RangeOperator) -> bool {
+    let center = prefixs.binary_search(prefix).map_or_else(identity, identity);
     // Check center.
     if let Some(value) = prefixs.get(center) {
         if prefix_and_op_matches(value, op, prefix) {
@@ -287,21 +225,41 @@ fn match_prefixs(prefix: IpNet, prefixs: [IpNet], op: RangeOperator) -> bool {
 }
 ```
 
+In this implementation,
+we first obtain a starting point `center` from a regular binary search on
+the sorted `prefixes`; the prefix at `center` is the most similar to `prefix`.
+From there, we search rightward and then leftward in the prefix list,
+until they are no longer siblings with `prefix`,
+a necessary condition to matches.
+
+Although this custom binary search is rather a hack out of intuition than
+a provable workflow,
+I verified it against 26 million prefixes and got the same results as
+using linear search. Hence, I deem it probably correct.
+
+Prof. Italo Cunha also suggested using an prefix
+[trie](https://en.wikipedia.org/wiki/Trie) in place of the vector,
+but benchmarks indicated it was only about half as fast as
+the binary search,[^trie-slow] so I stuck with what we have.
+In theory, the trie may be imbalanced,
+causing long cache-unfriendly traversals, especially for large prefix sets.
+Vectors are obviously the most cache-friendly,
+which brings up another motivation.
+
+Conceptually,
+our custom binary search saves us from checking the prefixes far from `center`,
+thus we should gain more efficiency with larger, flattened prefix sets.
+However,
+flattening nested prefix sets results in large vectors a duplicated prefixes,
+which bloats memory and hurts cache efficiency.
+I used an empirical approach,
+and found that flattening the nested sets once yielded the fastest results.
+
 <!-- TODO: Finish this off. -->
 
-<!--
-- Prefix matching is inexact.
-    Depending on $o$, $(p_i,o)$ may be a match of $p$ if $p_i$ equals $p$,
-    contains $p$, or contains but not equals $p$, or,
-    $p$ itself must satisfy some condition.
-    So, simple lookups like hash table lookup and binary search do not suffice.
-- AS Sets can be nested.
-    $\mathcal A_i=\{a_1,a_2,\ldots,\mathcal A_{i1},\mathcal A_{i2},\ldots\}$
-    may contain both ASes $a_j$ and other AS Sets $\mathcal A_{ij}$.
-    So,
-    finding a match for $p$ in
-    $\mathcal A_i$ may require checking an *unbounded* number of sets.
--->
+## Custom data structure
+
+<!-- TODO: Bloom hash table. -->
 
 ## Tenable caching
 
@@ -325,6 +283,11 @@ code](https://github.com/SichangHe/internet_route_verification/blob/752e19d1c8ab
 I removed the numerous references (`&` or `&mut`) and parsing code,
 so readers unfamiliar with Rust can still understand it.
 I also changed the names to avoid explaining the research context.
+
+[^trie-slow]: This Pull Request shows the trie is slower:
+[Replace `Vec<IpNet>` with trie `IpTrie` to
+improve `filter_as_set`
+bottleneck](https://github.com/SichangHe/internet_route_verification/pull/18).
 
 ## Appendix A: Flamegraphs
 
