@@ -1,5 +1,5 @@
 <!-- toc -->
-# ~300x Speed Up in Rust: Finding Inexact Matches in Nested Sets
+# ~300× Speed Up in Rust: Finding Inexact Matches in Nested Sets
 
 I optimized my route analyzer to get 300× faster.
 It analyzed around 800 million routes within 3 hours.[^cpu]

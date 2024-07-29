@@ -104,12 +104,12 @@
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
     - [Unstructured Reading Notes](notes/reading_notes/index.md)
 - [Blogs](blogs/index.md)
+    - [~300× Speed Up in Rust:
+        Finding Inexact Matches in Nested Sets](blogs/300x_speed_up.md)
     - [Creating Perfect Grayscale-Gradient
         Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)
     - [Drafts]()
-        - [~300x Speed Up in Rust:
-            Finding Inexact Matches in Nested Sets](blogs/300x_speed_up.md)
         - [Learn Like Machine Learning Models](blogs/learn_like_models.md)
         - [We are Learning Async Rust
             Wrong](blogs/learning_async_rust_wrong.md)
