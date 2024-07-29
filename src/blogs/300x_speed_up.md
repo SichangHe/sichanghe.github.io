@@ -14,10 +14,10 @@ Rust seems to have been a wise choice—much more straightforward to optimize fo
 speed than those garbage-collected languages with extra pointer chasing.
 
 The main bottleneck of the route analyzer lay in finding inexact matches of
-IP address prefixes in nested sets.
+routes' IP address prefixes in nested sets.
 In our research,
-this matching is a core functionality because we used the analyzer to
-match routes on the Internet against public routing policies.
+this matching is a core functionality for matching routes on
+the Internet against public routing policies.
 The technicality of the research does not matter here,
 but we need some basic context to understand the optimizations.
 
@@ -46,7 +46,7 @@ impl Matcher {
 }
 ```
 
-The example pseudo code below checks if
+The example pseudocode below checks if
 the prefix `193.254.30.0/24` matches the nested set `CUSTOMERS` with
 the Range Operator `Plus`.
 The nested set `CUSTOMERS` has a member `69` that
@@ -114,8 +114,7 @@ impl Matcher {
 }
 ```
 
-The pseudocode above is mostly trivial for the average programmers,
-except for a few places.
+Explanations:
 
 1. Using Rust's `let else` syntax, we look up `name` in the sets,
     and either bind the result to the variable,
@@ -141,8 +140,8 @@ the time was spent.
 Surprisingly, [Cargo-FlameGraph]
 showed that most of the time was spent on checking if
 set names have been visited (`visited.contains`).
-`visited` was a vector,
-and its linear search compounded with recursion to a cubic growth.
+`visited` was a vector (a.k.a.
+array list), and its linear search compounded with recursion to a cubic growth.
 I chose to use vectors because I thought most nested sets would have less than
 ten members, in which case linear search would be fine,
 but my assumption was clearly wrong.
@@ -182,8 +181,8 @@ set.iter()
 ```
 
 This familiar linear search naturally reminds me of binary search.
-A regular binary search does not suffice because prefix matching with
-range operators may not be exact,
+A regular binary search does not suffice because
+the range operators makes prefix matching inexact,
 therefore it made sense to check them one by one.
 
 However, range operators do not permit arbitrary matches;
@@ -234,7 +233,7 @@ a necessary condition to matches.
 
 Although this custom binary search is rather a hack out of intuition than
 a provable workflow,
-I verified it against 26 million prefixes and got the same results as
+I verified it against 26 million routes and got the same results as
 using linear search. Hence, I deem it probably correct.
 
 Prof. Italo Cunha also suggested using an prefix
@@ -250,18 +249,104 @@ Conceptually,
 our custom binary search saves us from checking the prefixes far from `center`,
 thus we should gain more efficiency with larger, flattened prefix sets.
 However,
-flattening nested prefix sets results in large vectors a duplicated prefixes,
+flattening nested prefix sets results in large vectors and duplicated prefixes,
 which bloats memory and hurts cache efficiency.
-I used an empirical approach,
-and found that flattening the nested sets once yielded the fastest results.
-
-<!-- TODO: Finish this off. -->
+After empirical testing, I chose to flatten the nested prefix sets once,
+which yielded a 2× speedup, the fastest result.[^flatten-code]
 
 ## Custom data structure
 
-<!-- TODO: Bloom hash table. -->
+At this point,
+the analyzer was processing 26 million routes in 48 minutes,[^trie-slow]
+a tolerable speed.
+However,
+I was too impatient to wait more than one day when
+analyzing 800 million routes.
+
+After reading about Bloom filters,
+it was tempting for me to eliminate more bottleneck from the `visited` set.
+Recall that `visited` is a `HashMap` that stores the checked set names to
+prevent infinite recursion:
+
+```rust
+# fn match_set(
+#     self,
+    name: String,
+#     op: RangeOperator,
+    visited: HashSet<String>,
+# ) -> bool {
+    if visited.contains(name) {
+        return false;
+    }
+    visited.insert(name);
+    // …
+# }
+```
+
+This proves expensive in profiling because of hashing and memory access.
+First, `visited.contains` hashes `name` and looks for it in the hash table,
+which would probably fail because cyclic nested sets are rare.
+Then,
+`visited.insert` hashes `name` again and finds a bucket in the hash table to
+store it.
+
+With this analysis,
+I initially hypothesized that the repeated probing could be a major bottleneck.
+I knew that Rust's standard library `HashSet` does quadratic probing, i.e.,
+when a hash collision occurs in either lookup or insertion,
+it hops around the hash table until it finds an empty slot.
+As we encounter numerous names,
+I guessed that `visited` often gets somewhat full when looking up unseen names,
+causing it to probe around until it finds an empty slot,
+which seems inefficient.
+Thus,
+I thought a Bloom filter could help by providing an early rejection when
+a name is not in `visited`.
+
+Therefore, I implemented
+[BloomHashSet](https://docs.rs/route_verification_bloom/latest/route_verification_bloom/struct.BloomHashSet.html)
+for a faster insertion-oriented set.
+Implementing data structures in Rust turned out to be quite an effort,
+but I will be brief here.
+I got the hash table from
+[HashBrown's "raw"
+module](https://docs.rs/hashbrown/latest/hashbrown/raw/index.html),
+and added a bit vector for the Bloom filter.
+Initially,
+I hashed each name four times to set multiple bits in the Bloom filter,
+but soon realized hashing is slow.
+Thus, I only hash once ($k=1$)
+and reuse the hash for both the Bloom filter and the hash table.
+To achieve a false positive rate of $\varepsilon=6\%$,
+I gave the Bloom filters 16× capacity compared to the hash table ($m/n=16$).
+Experiments revealed that I need to preallocate an astonishing size of
+$2^{14}$ for the hash tables to hold all the prefixes in large nested sets.
+Finally,
+I also reuse the same hash for both the lookup and the insertion.[^bloom-code]
+
+These efforts provided an around 30% speedup,
+which is not worth it in my opinion.
+The preallocation and hash reuse, the trivial parts,
+probably provided most of the speedup, not the Bloom filter, the tricky part.
+After wasting more time reading HashBrown's source code,
+I realized my initial hypothesis makes little sense:
+
+- hash collision is extremely rare with preallocation,
+- HashBrown provides multiple buckets for the same hash, and
+- HashBrown's quadratic probing is basically adding $1,2,3,\cdots$,
+    so it is inexpensive and cache-friendly.
+
+Lessons learned:
+
+- When profiling your dependencies,
+    try to understand the performance bottleneck on a finer granularity.
+    This involves carefully investigating the profiling results and
+    checking out the dependencies' source code.
+- Preallocate your data structures. This brings easy wins.
 
 ## Tenable caching
+
+<!-- TODO: Finish this off. -->
 
 <!-- - There are too many prefix ranges.
     Flattening the set of all prefixes for
@@ -275,7 +360,7 @@ and found that flattening the nested sets once yielded the fastest results.
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [![Flamegraph before Flattening the nested sets.][flamegraph-before]][flamegraph-before] | [![Flamegraph after Flattening the nested sets.][flamegraph-after]][flamegraph-after] |
 
-[^cpu]: I ran the experiment on a server with dual EPYC 7763 64-Core processors with
+[^cpu]: I ran the experiments on a server with dual EPYC 7763 64-Core processors with
 hyperthreading turned off.
 
 [^real-code]: These are simplified pseudo Rust code based on [my real
@@ -288,6 +373,12 @@ I also changed the names to avoid explaining the research context.
 [Replace `Vec<IpNet>` with trie `IpTrie` to
 improve `filter_as_set`
 bottleneck](https://github.com/SichangHe/internet_route_verification/pull/18).
+
+[^flatten-code]: Here is [the real code for flattening nested sets
+once](https://github.com/SichangHe/internet_route_verification/blob/db614215017aeb616526d13d211c24ab0dfa9719/route_policy_cmp/src/bgp/query.rs#L85).
+
+[^bloom-code]: Here is [the real code for integrating
+`BloomHashSet`](https://github.com/SichangHe/internet_route_verification/blob/bac23c12ae6732246add5d56ac4ed91710eff38d/route_policy_cmp/src/bgp/filter.rs#L125).
 
 ## Appendix A: Flamegraphs
 
