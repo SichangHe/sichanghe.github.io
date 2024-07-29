@@ -11,7 +11,13 @@ No, I did not rewrite a Python implementation to gain a trivial 50x speedup;
 I started with a multithreaded Rust implementation.
 In this case,
 Rust seems to have been a wise choice—much more straightforward to optimize for
-speed than those garbage-collected languages with extra pointer chasing.
+speed than garbage-collected languages with extra pointer chasing.
+
+Note that I aim this article at any programmer at the intermediate level or
+above.
+Although I use Rust-like pseudocode,
+you should feel at home if you are familiar with the syntax of Python or
+any other C-family language.
 
 The main bottleneck of the route analyzer lay in finding inexact matches of
 routes' IP address prefixes in nested sets.
@@ -24,10 +30,10 @@ but we need some basic context to understand the optimizations.
 ## Simplified background
 
 As the pseudocode below illustrates,
-our task is to implement the `match_nested_set` method on
-the `Matcher` data structure.[^real-code]
+our task is to `impl`ement the `match_nested_set` method (`fn`)
+on the `Matcher` data structure.[^real-code]
 This method should output whether the Matcher's (IP address)
-prefix (`self.prefix`) matches a nested set of prefixes based on its `name`.
+prefix (`self.prefix`) matches a nested set of prefixes called `name`.
 Additionally,
 it should accept a Range Operator `op` that
 can modify how the prefix matching is done.
@@ -35,7 +41,7 @@ can modify how the prefix matching is done.
 ```rust
 struct Matcher {
     prefix: IpNet,
-    sets: BTreeMap<usize, Vec<IpNet>>,
+    sets: BTreeMap<u32, Vec<IpNet>>,
     nested_sets: BTreeMap<String, NestedSet>,
 }
 
@@ -91,8 +97,8 @@ impl Matcher {
                 return true;
             }
         }
-        for nested_set in nested_set.nested_sets {
-            if self.match_nested_set(nested_set, op, visited) {
+        for nested2_set in nested_set.nested_sets {
+            if self.match_nested_set(nested2_set, op, visited) {
                 return true;
             }
         }
@@ -101,7 +107,7 @@ impl Matcher {
 
     fn match_set(
         self,
-        num: usize,
+        num: u32,
         op: RangeOperator,
     ) -> bool {
         let Some(set) = self.sets.get(num) else {
@@ -257,7 +263,7 @@ which yielded a 2× speedup, the fastest result.[^flatten-code]
 
 At this point,
 the analyzer was processing 26 million routes in 48 minutes,[^trie-slow]
-a tolerable speed.
+or 9.3 routes per millisecond, a tolerable speed.
 However,
 I was too impatient to wait more than one day when
 analyzing 800 million routes.
@@ -323,15 +329,15 @@ $2^{14}$ for the hash tables to hold all the prefixes in large nested sets.
 Finally,
 I also reuse the same hash for both the lookup and the insertion.[^bloom-code]
 
-These efforts provided an around 30% speedup,
+These efforts provided an around 10% speedup,
 which is not worth it in my opinion.
 The preallocation and hash reuse, the trivial parts,
 probably provided most of the speedup, not the Bloom filter, the tricky part.
-After wasting more time reading HashBrown's source code,
-I realized my initial hypothesis makes little sense:
+After further reading HashBrown's source code,
+I realized my initial probing hypothesis makes little sense:
 
 - hash collision is extremely rare with preallocation,
-- HashBrown provides multiple buckets for the same hash, and
+- HashBrown reveals multiple buckets for the same hash, and
 - HashBrown's quadratic probing is basically adding $1,2,3,\cdots$,
     so it is inexpensive and cache-friendly.
 
@@ -339,9 +345,9 @@ Lessons learned:
 
 - When profiling your dependencies,
     try to understand performance bottlenecks on a finer granularity.
-    This involves carefully investigating the profiling results and
+    This involves investigating deeper into the profiling results and
     checking out the dependencies' source code.
-- Preallocate your data structures. This brings easy wins.
+- Preallocate your data structures for easy and significant gains.
 
 ## Tenable caching
 
@@ -357,8 +363,8 @@ fn match_nested_set(/* … */) -> bool {
 #             return true;
 #         }
 #     }
-    for nested_set in nested_set.nested_sets {
-        if self.match_nested_set(nested_set, op, visited) {
+    for nested2_set in nested_set.nested_sets {
+        if self.match_nested_set(nested2_set, op, visited) {
             return true;
         }
     }
@@ -366,26 +372,83 @@ fn match_nested_set(/* … */) -> bool {
 }
 ```
 
-Effectively, this flattens each nested set on the fly.
-When I talked to Prof. Harsha Madhyastha,
-I explained that caching the flattened sets is untenable because of
+Effectively, this recursion flattens each nested set on the fly.
+When talking to Prof. Harsha Madhyastha,
+I explained how caching the flattened prefix sets is untenable because of
 their massive sizes.
 Indeed,
 attempting to flatten every nested set to their prefixes consumed all 300GiB of
-RAM and caused the server to hang.
-Hence, further flattening prefix sets is clearly infeasible.
+RAM and caused our server to hang.
+Hence,
+further flattening prefix sets is clearly infeasible—not a satisfying answer!
 
-However, when I considered the problem from another perspective,
-such caching becomes tenable.
+However, when I consider flattening from outside-in instead of inside-out,
+caching becomes tenable.
+Flattening prefixes takes too much memory because each prefix (`IpNet`)
+is 18 bytes and they are numerous,
+but sets are represented with 32-bit numbers and are much fewer.
+Although flattening nested sets to
+their set numbers does not leverage our custom binary search,
+it eliminates the recursion calls,
+along with the major overhead of tracking `visited` (R.I.P.
+`BloomHashSet`),
+thus achieving the effect of partially caching the set flattening process.
 
-<!-- TODO: Finish this off. -->
+Below are two of the few surviving flame graphs that shows the differences in
+profiling. `match_nested_set` is called `filter_as_set`.
+The monolithic bar on the left of each graph is data loading,
+and clearly shows the left graph took much more time outside of data loading.
 
 | Before flattening the nested sets                                                        | After flattening the nested sets                                                      |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [![Flamegraph before Flattening the nested sets.][flamegraph-before]][flamegraph-before] | [![Flamegraph after Flattening the nested sets.][flamegraph-after]][flamegraph-after] |
 
+With this caching,
+the analyzer achieved its current performance of
+processing 779 million routes in 2 hour 49 minutes,[^current-perf]
+or 76.9 routes per millisecond.
+This speed is 8× that of the first version using binary search,
+and over 300× that of the initial version if you do the arithmetics.
+
+Notice how most current optimizations are very basic:
+
+- using faster standard data structures,
+- binary search, and
+- flattening nested loops.
+
+So are the ideas behind them:
+
+- profiling-guided optimization (PGO),
+- asymptotic run-time complexity analysis, and
+- caching.
+
+Last but not least, the moderate CPU, memory,
+and conceptual overhead of Rust enabled these somewhat easy optimizations.
+
+## About this article
+
+I procrastinated on finishing this article for two whole months because
+it is quite non-trivial to write!
+My goal is to separate out the optimization experience from
+the research context and Rust programming, but, as you can see,
+they are tightly coupled.
+
+I started by trying to lay down a simplified explanation of
+the routing analysis problem with several mathematical definitions,
+and even drew a diagram to illustrate their relationships.
+However,
+I soon realized that few people would want to read such textbook-like text.
+Therefore,
+I resorted to throw away most of the routing context by
+renaming the variables and functions.
+For ease of reading,
+I converted the topic to a programming problem and explained it with
+pseudocode.
+
+I am moderately happy about the outcome of these efforts.
+
 [^cpu]: I ran the experiments on a server with dual EPYC 7763 64-Core processors with
-hyperthreading turned off.
+hyper-threading turned off to avoid IOMMU issues.
 
 [^real-code]: These are simplified Rust-like pseudocode based on [my real
 code](https://github.com/SichangHe/internet_route_verification/blob/752e19d1c8ab6665a67c69eeffcc9885c60a37ea/route_policy_cmp/src/bgp/filter.rs#L137).
@@ -399,12 +462,17 @@ Rust. I also changed the names to avoid explaining the research context.
 [Replace `Vec<IpNet>` with trie `IpTrie` to
 improve `filter_as_set`
 bottleneck](https://github.com/SichangHe/internet_route_verification/pull/18).
+I ran these experiments on the same server but with hyper-threading turned on,
+which may yield higher speed.
 
 [^flatten-code]: Here is [the real code for flattening nested sets
 once](https://github.com/SichangHe/internet_route_verification/blob/db614215017aeb616526d13d211c24ab0dfa9719/route_policy_cmp/src/bgp/query.rs#L85).
 
 [^bloom-code]: Here is [the real code for integrating
 `BloomHashSet`](https://github.com/SichangHe/internet_route_verification/blob/bac23c12ae6732246add5d56ac4ed91710eff38d/route_policy_cmp/src/bgp/filter.rs#L125).
+
+[^current-perf]: Here is the Issue that records the current performance: [RIBs processing
+performance](https://github.com/SichangHe/internet_route_verification/issues/157).
 
 <!--
 ## Appendix A: Flamegraphs
