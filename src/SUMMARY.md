@@ -88,6 +88,7 @@
     - [USC Living](notes/usc/index.md)
     - [Text Editor](notes/text_editor/index.md)
         - [Vim](notes/text_editor/vim.md)
+        - [Visual Studio Code](notes/text_editor/vscode.md)
         - [Xcode](notes/text_editor/xcode.md)
     - [Unstructured Class Notes](notes/class_notes/index.md)
         - [Algorithms and Databases](notes/class_notes/cs301.md)

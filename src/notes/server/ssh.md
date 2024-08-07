@@ -10,7 +10,7 @@ kitty +kitten ssh …
 port forwarding
 
 ```shell
-ssh -N -L 8080:127.0.0.1:8080 username@host
+ssh -L 8080:127.0.0.1:8080 username@host
 ```
 
 ## rsync
