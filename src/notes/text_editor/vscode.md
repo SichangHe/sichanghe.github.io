@@ -77,3 +77,9 @@ note: replace variable starting with `$` with actual value
         it should say link copied to clipboard (if not,
         click bottom Live Share button again to copy again).
         get link in console as printed out
+
+---
+
+Enabling discussion for feedback from people trying this out:
+
+{{ #include ../../giscus.md }}
