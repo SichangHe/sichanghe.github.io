@@ -1,3 +1,4 @@
+<!-- TOC -->
 # Visual Studio Code (VSCode)
 
 note: replace variable starting with `$` with actual value
@@ -10,6 +11,8 @@ note: replace variable starting with `$` with actual value
     ssh -L $FORWARD_PORT:localhost:$FORWARD_PORT $USER@$SERVER
     tmux new -s $SESSION_NAME
     ```
+
+    alternatives to `screen` would work
 
 1. run [Code Tunnels](https://code.visualstudio.com/docs/remote/tunnels)
     in Tmux on server. needed to get headless VSCode running on server
@@ -33,8 +36,8 @@ note: replace variable starting with `$` with actual value
     1. download chrome and install on server: [Google Chrome Web
         Browser](https://www.google.com/chrome/next-steps.html?platform=linux&statcb=0&installdataindex=empty&defaultbrowser=0).
         to do this w/o sudo on debian,
-        only extract the `.deb` to somewhere you own and symlink in
-        local bin on `PATH`, something like:
+        only extract the `.deb` to somewhere you own and
+        symlink into local bin on `PATH`, something like:
 
         ```sh
         mkdir $LOCAL_BIN/chrome
@@ -71,12 +74,16 @@ note: replace variable starting with `$` with actual value
         click <kbd>Live Share</kbd> button at the bottom to start it,
         choose log in.
     1. complete login from remote popup tab by going back to
-        `chrome://inspect/#devices`. find login tab, complete login
+        `chrome://inspect/#devices`. (wait a bit).
+        find login tab, complete login
     1. get Live Share link.
         return to UI tab, Live Share should be on,
         it should say link copied to clipboard (if not,
         click bottom Live Share button again to copy again).
         get link in console as printed out
+1. use the Live Share link yourself and send it to others.
+    you can close your local browser and SSH connection now.
+    the session remains up as long as your Tmux session on the server is up
 
 ---
 
