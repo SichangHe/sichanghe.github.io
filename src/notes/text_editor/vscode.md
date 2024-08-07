@@ -81,6 +81,9 @@ note: replace variable starting with `$` with actual value
         it should say link copied to clipboard (if not,
         click bottom Live Share button again to copy again).
         get link in console as printed out
+1. (optional) to manage `Shared Terminals`, in the UI,
+    open the `Live Share` panel in the sidebar.
+    needed for participants to use terminal
 1. use the Live Share link yourself and send it to others.
     you can close your local browser and SSH connection now.
     the session remains up as long as your Tmux session on the server is up
