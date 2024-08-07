@@ -1,5 +1,6 @@
 <!-- toc -->
 # We are Learning Async Rust Wrong
+<!-- TODO: Change to "I was?" -->
 
 A Rust conference talk recommended beginners to slap `async` on
 every function and `.await` on every function call when
@@ -55,7 +56,7 @@ These valuable resources teach you additional important "caveats", including:
 However, you probably also miss several fundamental ideas of async Rust,
 which would bite you in the future either in programming or performance.
 
-## The missing lessons
+## The missing context for async
 
 As async Rust becomes more prominent,
 more and more people start doubting whether it brings more value than troubles.
@@ -87,46 +88,94 @@ Although yielding is an overhead, it enables two superb features:
     check other branches of `select!`, etc.
 
 Now, to understand the nicety of these features,
-let's consider Erlang's preemptive scheduling.
+let's consider Erlang's preemptive scheduling,
+since async Rust shares many goals with it.
 Erlang powered soft massive-scale real-time systems such as
 telephone services and WhatsApp.
-It has OS-like preemptive scheduling over green threads called Erlang
-processes. Therefore, every Erlang process soon gets a chance to run.
+It has OS-like preemptive scheduling over lightweight green threads called
+Erlang processes. Therefore, every Erlang process soon gets a chance to run.
 Bad Erlang processes never block the whole system.
 These guarantees enable services like telephone to
-function during massive overload periods, albeit with slower speed.
+function during massive overload periods, albeit slower.
 Additionally, you can terminate any Erlang process,
 and it would exit immediately unless it traps exit
-(in which case you can "brutal kill" it).
-Erlang process killing provides the ultimate developer-friendly and
-reliable cancellation.
-In summary,
-Erlang's preemptive scheduling optimizes for minimum latency and
-reliability for a massively concurrent system.
+(in which case you can "brutal kill" it),
+providing the ultimate developer-friendly and reliable cancellation.
+In summary, to support massively concurrent real-time systems,
+Erlang's OS-like preemptive scheduling optimizes for minimum latency and
+reliability.
 
----
+Now, comparing Erlang's scheduling to Rust without async,
+you would see the significant gap in between.
+While Erlang is built from the ground up to
+achieve preemptive scheduling using a virtual machine,
+Rust cannot even afford a runtime in the language.
+Additionally,
+Rust offers heavyweight OS threads that cannot be terminated from
+other threads, a big sucker!
+Hence, to get the niceties of async scheduling,
+Rust's users are bound to make some sacrifices in terms of ease of development.
 
-In async Rust, some of the goals are similar to Erlang's—minimize latency,
-allow cancellation, but the implementation has to be different since,
-unlike Erlang, Rust cannot leverage a virtual machine for preemption.
-<!-- TODO: Finish describing Rust implementation. -->
+## The missing lessons
+
+If Rust fundamentally does not support preemptive scheduling or
+thread termination in the language,
+how can it achieve features similar to Erlang's?
+This brings the core idea of async Rust: you, the programmer,
+bears the responsibility to make your program suitable for
+cooperative scheduling!
+
+- Using data structures that implement the `Future` trait,
+    you specify tasks that can be suspended.
+- To complete these tasks, you continuously try to execute ("poll") them.
+
+That is the core of async Rust programming!
+`Future` provides a common interface for tasks that can be suspended,
+so that your code can yield control back to its caller, usually a runtime;
+only then, the runtime retains control for cooperative scheduling, suspension,
+and cancellation.
+
+The runtime cannot achieve these features if your code does not yield!
+This fact brings several often missing yet important lessons:
+
+- The benefits async Rust brings are not for free.\
+    To emulate preemptive scheduling and immediate cancellation,
+    each yield point must be close to each other.
+    Thus,
+    you need to meticulously insert yield points in suitable places of
+    your async code, a daunting task that demands experience.
+- A single blocking function can break the benefits of async Rust!\
+    If you have a sucker async function that runs for
+    a whole millisecond before it yields,
+    it surely will eat a whole millisecond as soon as it starts.
+
+The async/await syntactic sugar, albeit eases programming,
+obfuscates async Rust's actual underlying mechanism for beginners.
+In handwritten structures that implements `Future`,
+yield points are obvious—they are when you return `Poll::Pending`.
+In contrast, the async/await syntax hides yield points from programmers.
+Consequently, most beginners have no idea what a yield point is;
+even those who know the concept often hold this mistake that
+calling `.await` creates a yield point, presumably from JavaScript knowledge.
+
+<!-- TODO: This part is WIP. -->
+
+The lack of understanding in
+async Rust among beginners causes widespread mistakes that
+visibly hurt their performance.
+Many beginners thoughtlessly slap `async` on their functions,
+and call them like regular functions but with `.await`,
+just like the aforementioned conference talk depicts.
 
 <!-- TODO: Below is in one of my email drafts. Revision needed. -->
 
 It also revealed why Rust would always suck compared to
 Erlang—cancellation is not free.
 
-- In Erlang, when you kill a process,
-    it dies immediately or runs the traps-exit code.
-- In Rust, you cannot kill a thread (big sucker!),
-    so you need to code the thread to constantly check whether it should stop.
 - In Tokio, you can "cancel" a task,
     but it only *may* get stopped when it yields the control back to
     the runtime.
 
-If you have a sucker async function that runs for
-a whole millisecond before it yields,
-it surely will eat a whole millisecond as soon as it starts.
 This means any async function needs to be carefully written,
 with lots of yield points inserted (using `yield_now()`),
 and all heavy sync functions need to be wrapped in either `spawn_blocking` or
