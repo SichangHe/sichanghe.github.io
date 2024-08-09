@@ -12,3 +12,9 @@ extract all images from PDF
 ```sh
 pdfimages -all PDF_FILE "$(pwd)/"
 ```
+
+convert PDF to HTML and preserve layout
+
+```sh
+docker run -t --rm -v $(pwd):/pdf -w /pdf pdf2htmlex/pdf2htmlex:0.18.8.rc2-master-20200820-alpine-3.12.0-x86_64 PDF_FILE
+```
