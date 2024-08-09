@@ -40,7 +40,7 @@ Hello there, Steven here:
 [![GitHub icon](https://github.githubassets.com/favicons/favicon.svg)
 GitHub](https://github.com/SichangHe)
 
-[🎓 Unofficial CV](/curriculum_vitae/)
+[🎓 CV](/curriculum_vitae/) & [PDF](/curriculum_vitae/cv-sichang_he.pdf)
 
 [![YouTube
 icon](https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg)

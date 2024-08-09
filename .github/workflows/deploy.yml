@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          submodules: true
           lfs: true
       - uses: cargo-bins/cargo-binstall@main
       - name: Install mdBook, mdBook-KaTeX, and mdBook-ToC
@@ -24,6 +25,8 @@ jobs:
         run: mdbook build
       - name: Generate sitemap
         run: sh gen_sitemap.sh
+      - name: Remove dummy CV for search indexing, making clicks fall through to the other repository's pages
+        run: rm _site/curriculum_vitae/index.html
       - name: Minify HTML and CSS
         run: find _site -type f \( -name "*.html" -o -name "*.css" \) -print0 | xargs -0 ./minhtml-0.15.0-x86_64-unknown-linux-gnu
       - name: Upload artifact

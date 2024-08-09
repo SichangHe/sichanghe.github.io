@@ -1,6 +1,7 @@
 # Summary
 
 - [Home](index.md)
+- [Curriculum Vitae](curriculum_vitae/index.md)
 - [Notes](notes/index.md)
     - [Android](notes/android/index.md)
     - [Automation Software](notes/automation_software/index.md)
