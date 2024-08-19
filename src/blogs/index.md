@@ -7,5 +7,7 @@
 
 # Steven Hé (Sīchàng)'s Blog
 
+> Segmentation fault (brain dumped).
+
 </div>
 </div>
