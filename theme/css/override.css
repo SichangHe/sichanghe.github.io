@@ -14,3 +14,7 @@ p, ol, ul {
 code {
     hyphens: none;
 }
+
+sup {
+    line-height: 0;
+}
