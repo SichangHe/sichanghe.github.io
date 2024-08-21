@@ -6,7 +6,7 @@ html {
     --mono-font: "JetBrains Mono NL", "JetBrains Mono", "Source Code Pro", Consolas, "Ubuntu Mono", Menlo, "DejaVu Sans Mono", monospace, monospace
 }
 
-p {
+p, ol, ul {
     text-align: justify;
     hyphens: auto;
 }

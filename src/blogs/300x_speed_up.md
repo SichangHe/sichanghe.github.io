@@ -248,7 +248,7 @@ a mathematically proven algorithm,
 I verified it against 26 million routes and got the same results as that of
 linear search. Hence, I deem it correct.
 
-Prof. Italo Cunha also suggested using an prefix
+Prof. Italo Cunha also suggested using a prefix
 [trie](https://en.wikipedia.org/wiki/Trie) in place of the vector,
 but benchmarks indicated it was only about half as fast as
 the binary search,[^trie-slow] so I stuck with what we have.
