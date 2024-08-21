@@ -6,9 +6,14 @@ html {
     --mono-font: "JetBrains Mono NL", "JetBrains Mono", "Source Code Pro", Consolas, "Ubuntu Mono", Menlo, "DejaVu Sans Mono", monospace, monospace
 }
 
-p, ol, ul {
-    text-align: justify;
-    hyphens: auto;
+@media (min-width: 640px) {
+
+    p,
+    ol,
+    ul {
+        text-align: justify;
+        hyphens: auto;
+    }
 }
 
 code {
