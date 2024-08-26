@@ -79,3 +79,58 @@ document.head.appendChild(style);
     max-width: unset;
 }
 </style>
+
+## PEMS
+
+Staying safe:
+
+```javascript
+function clickAll() {
+    const down = document.getElementsByClassName("lesson-nav-link__link")[1];
+    if (down) {
+        console.log(down);
+        down.click();
+    }
+    const cont = document.getElementsByClassName("continue-btn")[0];
+    if (cont) {
+        console.log(cont);
+        cont.click();
+    }
+    for (const expand of document.getElementsByClassName("blocks-accordion__header")) {
+        if (expand.ariaExpanded === "false") {
+            expand.click();
+        }
+    }
+    for (const select of document.getElementsByClassName("blocks-tabs__header-item--after-active")) {
+        if (select.ariaSelected === "false") {
+            select.click();
+        }
+    }
+    setTimeout(clickAll, 200);
+}
+clickAll();
+```
+
+Diversity, Equity and Inclusion for Students:
+
+```javascript
+function clickAll() {
+    const next = document.getElementById("next");
+    if (next) {
+        console.log(next);
+        next.click();
+    }
+    const cont = document.getElementsByClassName("ng-binding")[0];
+    if (cont) {
+        console.log(cont);
+        cont.click();
+    }
+    for (const expand of document.getElementsByClassName("accordian-btn")) {
+        if (expand.ariaExpanded === "false") {
+            expand.click();
+        }
+    }
+    setTimeout(clickAll, 200);
+}
+clickAll();
+```
