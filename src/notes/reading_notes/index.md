@@ -20,3 +20,14 @@
     - Falcon-7B LLM: used in demo, said to have cleaned training data,
         open-source
     - fine tuning demo done on V100 in Colab
+- [Optimal Protocols for Studying & Learning,
+    Andrew Huberman](https://www.youtube.com/watch?v=ddq8JIMhz7c)
+    - neuroplasticity apply during fast eye movement sleep
+    - focus & alertness is how remember; sleep is prerequisite; meditation,
+        NSDR are tool
+    - testing help remember; test ASAP after exposure
+        - best be open-ended, short answer, minimal prompt,
+            require critical thinking
+        - do not matter for memory if wrong
+    - perceived familiarity hinder memory
+    - gap effect: pause in talk greatly reinforce memory
