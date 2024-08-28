@@ -10,7 +10,7 @@
 Hello there, Steven here:
 
 - Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
-- Incoming Computer Science Ph.D. student in the University of
+- 1st-year Computer Science Ph.D. student in the University of
     Southern California; advisor:
     [Harsha Madhyastha](https://www.harsha.usc.edu/).
 - Previously Duke Kunshan University student in Interdisciplinary Studies.
