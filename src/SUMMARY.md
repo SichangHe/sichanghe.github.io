@@ -1,7 +1,6 @@
 # Summary
 
 - [Home](index.md)
-- [Curriculum Vitae](curriculum_vitae/index.md)
 - [Notes](notes/index.md)
     - [Android](notes/android/index.md)
     - [Automation Software](notes/automation_software/index.md)
@@ -122,6 +121,9 @@
             Systems](blogs/design_patterns_unsuitable.md)
     - [Deprecated](blogs/deprecated/index.md)
         - [How did we get here? WordPress?](blogs/deprecated/how_did_we.md)
+<!-- The CV is here because it would be replaced by a fallthrough page and
+the "right button" would not work. -->
+- [Curriculum Vitae](curriculum_vitae/index.md)
 
 - [Private](diary/index.md)
     - [Diary](diary/index.md)
