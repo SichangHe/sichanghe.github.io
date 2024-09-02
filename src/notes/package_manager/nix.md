@@ -15,10 +15,10 @@ install package
 nix-env -iA <PACKAGE>
 ```
 
-update all nix package
+update nix and all nix package
 
 ```shell
-sudo nix-channel --update && nix-env -ub
+sudo nix-channel --update && nix-env -ibA nixpkgs.nix && nix-env -ub
 ```
 
 check and fix nix store
