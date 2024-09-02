@@ -16,7 +16,7 @@ jobs:
           lfs: true
       - uses: cargo-bins/cargo-binstall@main
       - name: Install mdBook, mdBook-KaTeX, and mdBook-ToC
-        run: cargo binstall -y mdbook mdbook-katex mdbook-toc mdbook-sitemap-generator
+        run: cargo binstall -y mdbook mdbook-katex mdbook-toc
       - name: Install minify-html
         run: |
           curl -LO https://github.com/wilsonzlin/minify-html/releases/download/v0.15.0/minhtml-0.15.0-x86_64-unknown-linux-gnu
@@ -24,7 +24,10 @@ jobs:
       - name: Build
         run: mdbook build
       - name: Generate sitemap
-        run: sh gen_sitemap.sh
+        uses: cicirello/generate-sitemap@v1
+        with:
+          path-to-root: _site
+          base-url-path: https://sichanghe.github.io/
       - name: Remove dummy CV for search indexing, making clicks fall through to the other repository's pages
         run: rm _site/curriculum_vitae/index.html
       - name: Minify HTML and CSS
