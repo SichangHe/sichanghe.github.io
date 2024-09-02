@@ -10,8 +10,9 @@
 Hello there, Steven here:
 
 - Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
-- 1st-year Computer Science Ph.D. student in the University of
-    Southern California.
+- 1st-year Computer Science Ph.D. student in the
+    [Networked Systems Lab (NSL)](https://nsl.usc.edu/),
+    University of Southern California.
     - Advisor: [Harsha Madhyastha](https://www.harsha.usc.edu/).
     - Interests: Rethinking the Web, Networking, SE, PL, HPC.
 - For experiences, publications, etc., please see the CV linked below.
@@ -59,6 +60,8 @@ Channel](https://www.youtube.com/@sichanghe)
     >Don't click</button
 >
 </div>
+
+Press <kbd>s</kbd> to search!
 
 <script>
 function duplicate() {
