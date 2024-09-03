@@ -16,7 +16,7 @@ brew install <package>
 update
 
 ```shell
-brew update \
+brew update --force \
 && brew upgrade --greedy \
 && brew cleanup \
 && brew autoremove
