@@ -18,3 +18,12 @@
     - when designing, did not anticipate actual challenge
 - protocol loose → realization determine what goes
 - datagram is the basis of Internet flexibility
+
+*End-to-end arguments in system design*, J. H. Saltzer, D. P. Reed, and
+D. D. Clark.
+
+- handling failure in middle do not void need to do so
+    at end—no fundamental effect
+- low level check help performance, but need not be perfect
+- example: checksum, encryption, dedup, FIFO, transaction
+- what end mean depend on application
