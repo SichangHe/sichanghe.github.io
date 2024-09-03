@@ -78,6 +78,11 @@
         - [R lang](notes/programming/rlang.md)
         - [Shell](notes/programming/shell.md)
         - [Trail](notes/programming/trail.md)
+    - [Research Notes](notes/research/index.md)
+        - [JSphere](notes/research/JSphere/sketch.md)
+            - [Literature](notes/research/JSphere/literature.md)
+        - [Photo Crypto Auth](notes/research/photo_crypto_auth.md)
+        - [Web Atoms](notes/research/web_atoms.md)
     - [Server](notes/server/index.md)
         - [NFS](notes/server/nfs.md)
         - [SSH](notes/server/ssh.md)
@@ -100,16 +105,16 @@
         - [Introduction to Databases](notes/class_notes/cs310.md)
         - [Introduction to Programming and
             Data Structures](notes/class_notes/cs201.md)
-        - [Probability, Random Variables,
-            and Stochastic Processes](notes/class_notes/stats210.md)
+        - [Probability, Random Variables, and
+            Stochastic Processes](notes/class_notes/stats210.md)
         - [Probability and Statistics](notes/class_notes/math205.md)
         - [Linear Algebra](notes/class_notes/math202.md)
         - [Speech Recognition](notes/class_notes/cs304.md)
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
     - [Unstructured Reading Notes](notes/reading_notes/index.md)
 - [Blogs](blogs/index.md)
-    - [~300× Speed Up in Rust:
-        Finding Inexact Matches in Nested Sets](blogs/300x_speed_up.md)
+    - [~300× Speed Up in Rust: Finding Inexact Matches in
+        Nested Sets](blogs/300x_speed_up.md)
     - [Creating Perfect Grayscale-Gradient
         Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)

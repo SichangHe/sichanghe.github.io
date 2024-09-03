@@ -2,3 +2,6 @@
 	path = src/curriculum_vitae
 	url = git@github.com:SichangHe/curriculum_vitae.git
 	branch = artifacts
+[submodule "src/notes/research/JSphere"]
+	path = src/notes/research/JSphere
+	url = git@github.com:SichangHe/JSphere.git
