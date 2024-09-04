@@ -3,8 +3,9 @@
 
 40 paper + 20hr+ programming project + similar research project
 
-*The design philosophy of the DARPA Internet protocols*, David D. Clark.
+## *The design philosophy of the DARPA Internet protocols*, David D. Clark
 
+- Internet: multiplexed utilization of existing interconnected networks
 - Internet was for military
     - anticipate failure
         - fate-sharing: endpoint deal with failure.
@@ -19,8 +20,7 @@
 - protocol loose → realization determine what goes
 - datagram is the basis of Internet flexibility
 
-*End-to-end arguments in system design*, J. H. Saltzer, D. P. Reed, and
-D. D. Clark.
+## *End-to-end arguments in system design*, J. H. Saltzer, D. P. Reed, D. D. Clark
 
 - handling failure in middle do not void need to do so
     at end—no fundamental effect

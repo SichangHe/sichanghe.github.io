@@ -1,1 +1,2 @@
+<!-- toc -->
 # Research Notes
