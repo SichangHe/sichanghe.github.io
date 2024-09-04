@@ -3,6 +3,10 @@
 
 40 paper + 20hr+ programming project + similar research project
 
+flow: same src/dest
+
+NABC for research: need, approach, benefit, competition
+
 ## *The design philosophy of the DARPA Internet protocols*, David D. Clark
 
 - Internet: multiplexed utilization of existing interconnected networks
