@@ -36,8 +36,8 @@ binary search $[1:n]$ (go to middle)\
 - want: $k$-th smallest
 - algorithm:
     1. pick $a_{t_1}$ with random $t_1$
-    1. split by $a_{t_1}$ to $l_L$, $l_R$,
-        throw away impossible list and shrink $k$
+    1. split by $a_{t_1}$ to $l_L$, $l_R$, throw away impossible list and
+        shrink $k$
     - power of randomization: $O(n^2)$ but $\Theta(n)$ wrt randomness:\
         $\frac{1}{2}$ of
         the time we pick element ranked $\frac{n}{4}\sim\frac{3n}{4}$,
@@ -50,19 +50,49 @@ binary search $[1:n]$ (go to middle)\
         ⇒ \mathbb ET(n)\sim O(n)
         $$
 
-⇒ graph $G=(V,E),E\subseteq V × V$
+⇒ distance graph $G=(V,E),E\subseteq V × V$
 
 - $\ell(e),e\in E$
 - binary search is graph w/ $\ell(e)\equiv 1$,
     each number node has edge w/ next number
     - local info, e.g., $m-1$ is closer
-- generalized undirected graph "binary search" for target
-    $t\in V$ from $q_i\in V$
-    - $N_G(v),v\in V$
-    - iteration: $q=t$ or give $q'\in N_G(v)$ closer to $t$
+- generalized undirected graph "binary search" for target $t\in V$ from
+    $q_i\in V$
+    - $N_P(v,t)=\{z\in P|(v,z)\text{ on shortest path to }t\}$
+        - $z$ on shortest path $d_G(u,v)$ if:
+
+            $$
+            d_G(z,v)+\ell(u,z)=d_G(u,v)
+            $$
+    - condition: will give set of vertex on shortest path
+    - iteration: $q=t$ or give $q'\in N_G(v,t)$ closer to $t$
     - theorem: ∃ algorithm to find $t$ in $O(\log n)$ question
-    - where to start
-        - want: shrink possible answer set $P_i$,
-            set of node on shortest path from $q_i$ to $t$
-        - ⇒ middle:
-            $\displaystyle\argmin_u\Phi_{P_0}(u)=∑_{v\in P_0}d_G(u,v)$
+    - want: shrink possible answer set $P_i≤V$, set of node on
+        shortest path from $q_i$ to $t$
+    - $P_0=V$
+    - ⇒ medium:
+        lowest potential function
+        $\displaystyle\argmin_u\Phi_{P_0}(u)=∑_{v\in P_0}d_G(u,v)$
+    - update w/ hint $v_t$:
+
+        $$
+        P_{t+1}=P_t\cap N_{P_t}(q_t,v_t)
+        $$
+
+        - claim: $|P_{t+1}|≤\frac{1}{2}|P_t|$
+        - proof:
+
+            $$
+            \Phi_{P_t}(u)≤
+            \Phi_{P_t}(q_t)-(|P_{t+1}|-|P_t/P_{t+1}|)-\ell(q_t,v_t),\\
+            \Phi_{P_t}(u)≥\Phi_{P_t}(q_t)\\
+            ⇒ -|P_{t+1}|+|P_t/P_{t+1}|≥\ell(q_t,v_t)≥0\\
+            ⇒ |P_{t+1}|≤\frac{1}{2}|P_t|
+            $$
+
+## interactive learning
+
+given hypercube $X$, search space $H$, find $h\in H$ s.t. $h≤X$
+
+- [VC dimention](stats303.html#vapnik-chervonenkis-dimension-vc-dimension)
+    - $n$ hyperplane in $d$-dimensional space can split $n^d$ cell
