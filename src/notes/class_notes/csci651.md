@@ -31,3 +31,10 @@ NABC for research: need, approach, benefit, competition
 - low level check help performance, but need not be perfect
 - example: checksum, encryption, dedup, FIFO, transaction
 - what end mean depend on application
+
+## *Tussle in Cyberspace: Defining Tomorrow's Internet*, David D. Clark, John Wroclawski, Karen R. Sollins, Robert Braden
+
+- tussle: conflict of interest among party
+- need to allow various outcome for place w/ tussle
+- should modularize design to separate tussle
+- design for choice
