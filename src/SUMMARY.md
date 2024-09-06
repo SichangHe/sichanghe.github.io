@@ -1,6 +1,9 @@
 # Summary
 
-- [Home](index.md)
+- [Introduction](index.md)
+    - [About](about.md)
+- [News](news/2024fall.md)
+    - [2024 Spring](news/2024spring.md)
 - [Notes](notes/index.md)
     - [Android](notes/android/index.md)
     - [Automation Software](notes/automation_software/index.md)

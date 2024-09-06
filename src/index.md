@@ -11,8 +11,8 @@ Hello there, Steven here:
 
 - Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
 - 1st-year Computer Science Ph.D. student in the
-    [Networked Systems Lab (NSL)](https://nsl.usc.edu/),
-    University of Southern California.
+    [Networked Systems Lab (NSL)](https://nsl.usc.edu/), University of
+    Southern California.
     - Advisor: [Harsha Madhyastha](https://www.harsha.usc.edu/).
     - Interests: Rethinking the Web, Networking, SE, PL, HPC.
 - For experiences, publications, etc., please see the CV linked below.
@@ -76,3 +76,7 @@ dontClick?.addEventListener("contextmenu", (e) => {
     duplicate();
 });
 </script>
+
+## Recent news
+
+{{ #include news/2024fall.md }}
