@@ -8,9 +8,9 @@ html {
 
 @media (min-width: 640px) {
 
-    p,
-    ol,
-    ul {
+    #content>p,
+    #content>ol,
+    #content>ul {
         text-align: justify;
         hyphens: auto;
     }
