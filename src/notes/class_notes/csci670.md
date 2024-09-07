@@ -92,6 +92,9 @@ binary search $[1:n]$ (go to middle)\
 
 ## interactive learning
 
+*A General Framework for Robust Interactive Learning*, Ehsan Emamjomeh-Zadeh,
+David Kempe
+
 given hypercube $X$, search space $H$, find $h\in H$ s.t. $h≤X$
 
 - [VC dimention](stats303.html#vapnik-chervonenkis-dimension-vc-dimension)
