@@ -38,3 +38,12 @@ NABC for research: need, approach, benefit, competition
 - need to allow various outcome for place w/ tussle
 - should modularize design to separate tussle
 - design for choice
+
+## *Congestion Avoidance and Control*, Van Jacobson, Michael J. Karels, SIGCOMM 1988
+
+- obvious window-based transport protocol implementation cause 100x slowdown
+- need to get to connection equilibrium → slow start
+- preserve equilibrium → round trip timing consider variance
+- resource limit:
+    congestion avoidance w/
+    [AI/MD](../cs/networking.html#congestion-window-cwnd)
