@@ -99,3 +99,64 @@ given hypercube $X$, search space $H$, find $h\in H$ s.t. $h≤X$
 
 - [VC dimention](stats303.html#vapnik-chervonenkis-dimension-vc-dimension)
     - $n$ hyperplane in $d$-dimensional space can split $n^d$ cell
+
+## greedy algorithm
+
+- can deal with NP-hard problem
+- optimality:
+    - argument of staying ahead
+    - exchange argument
+
+### Huffman Codes
+
+- prefix code: no code is prefix of another, $∑ → \{0,1\}^*$
+- ⇒ binary tree w/ $n$ leaf, each leaf's parents not usable
+    - optimum is trivial when tree is given
+    - tree w/ same number of leaf of each length are equivalent
+    - has to be proper: each node is either leaf or parent of 2
+    - substructure optimality: bottom 2 children must map to
+        2 least frequency
+- induction: merge 2 least frequency, treat it as one letter to
+    find mapping for the rest
+
+### minimum spanning tree (MST)
+
+- cut: split graph $V$ to $S$ and $\bar S$
+
+    $$
+    \text{cut}(S)=\{(u,v)\in E|u\in S,v\in\bar S\}
+    $$
+
+- affinity: inverse distance, closeness
+
+#### Kruskal's algorithm
+
+traditional Kruskal
+
+1. sort $E$ ascending
+1. from no node, add edge from small, w/o cycle
+
+revised Kruskal
+
+1. sort $E$ ascending
+1. from $G$, remove edge from big, w/o disconnecting
+
+#### Prim's algorithm
+
+1. choose arbitrary node "home town" $v_0$. $S_0:=\{v_0\}$
+1. repeat: find closest node $v_{i+1}$ w/ edge form $S_i$.
+    $S_{i+1}:=S_i\cup\{v_{i+1}\}$
+
+- why: cut property: shortest cut edge is in MST
+    - reverse cut property: longest edge in cycle is not in MST
+
+### clustering
+
+given $G=(V,E,\ell), k$, want $(S_1,\cdots,S_k)$ s.t.
+
+1. $S_i\subseteq V$
+1. $∀i≠j,S_i\cap S_j = ∅$
+1. $\bigcup_i S_i=V$
+1. maximize shortest inter-cluster edge
+
+- idea: for tree $G$, just need to cut $k-1$ longest edge
