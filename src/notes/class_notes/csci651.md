@@ -44,6 +44,26 @@ NABC for research: need, approach, benefit, competition
 - obvious window-based transport protocol implementation cause 100x slowdown
 - need to get to connection equilibrium → slow start
 - preserve equilibrium → round trip timing consider variance
+    - goal: keep bottleneck full
+    - self-clocking: packet spacing follow ACK → follow bottleneck
 - resource limit:
     congestion avoidance w/
     [AI/MD](../cs/networking.html#congestion-window-cwnd)
+    - congestion detection: packet loss, ~~delay~~
+    - congestion recovery
+
+## *A Binary Feedback Scheme for Congestion Avoidance in Computer Networks*, Kadangode K. Ramakrishnan, Raj Jain, SIGCOMM 1988
+
+- explicit congestion notification (ECN) router add congestion bit to packet,
+    returned later in ack
+- fair share
+- avoid oscillation & congestion collapse
+- math model & simulation for policy
+
+## *BBR: Congestion-Based Congestion Control*, Neal Cardwell, Yuchung Cheng, C. Stephen Gunn, Soheil Hassas Yeganeh, Van Jacobson
+
+- TCP need to measure ideal window size = bottleneck RTT × bandwidth
+- measure RTT: exponential weighted moving average
+    (EWMA)—ACK time - sent time
+- measure bandwidth: window size & packet loss & ACK rate
+- TCP keep probing at equilibrium → oscillation

@@ -43,8 +43,8 @@
     e.g. internet checksum
     - easy in software
     - miss many error
-- cyclic redundancy check (CRC):
-    divide message as a polynomial by generator polynomial
+- cyclic redundancy check (CRC): divide message as a polynomial by
+    generator polynomial
 
     e.g. BISYNC, DDCMP, HDLC, ethernet, Wi-Fi
     - easy in hardware with shift register
@@ -297,8 +297,8 @@ enable computer in network share same globally routed public address
 
 ## IP forwarding by router
 
-- if interface is connected to destination network,
-    translate to link-layer address (e.g. MAC) and deliver over local network
+- if interface is connected to destination network, translate to
+    link-layer address (e.g. MAC) and deliver over local network
 - else, find a router nearer to destination and do the above to it
 
 ### address translation
@@ -478,22 +478,24 @@ functionality should be provided at a layer only if it can be complete there
     - AdvertisedWindow has 16 bit, maximum sliding window size is 64KiB
     - option flag to multiply value in AdvertisedWindow
 - Nagle's algorithm: sender wait for ACK if cannot send full frame
-    - silly window syndrome: sender send tiny frame due to tiny AdvertisedWindow
+    - silly window syndrome: sender send tiny frame due to
+        tiny AdvertisedWindow
 - adaptive transmission: EstimatedRTT $t_e$, MeasuredRTT $t_m$, Timeout $t_o$
     - Karn/Partridge algorithm with parameter $a$:
 
-        $$
-        t_e=a\cdot t_e+(1-a)\cdot t_m\\
-        t_o=2\cdot t_e
-        $$
+            $$
+            t_e=a\cdot t_e+(1-a)\cdot t_m\\
+            t_o=2\cdot t_e
+            $$
 
-    - Jacobson/Karels algorithm with DeviationRTT $\sigma$, parameter $\delta$:
+    - Jacobson/Karels algorithm with DeviationRTT $\sigma$,
+        parameter $\delta$:
 
-        $$
-        t_e=t_e+(\delta\cdot (t_m-t_e))\\
-        \sigma=\sigma+\delta\cdot(|t_m-t_e|-\sigma)\\
-        t_o=t_e+4\cdot\sigma
-        $$
+            $$
+            t_e=t_e+(\delta\cdot (t_m-t_e))\\
+            \sigma=\sigma+\delta\cdot(|t_m-t_e|-\sigma)\\
+            t_o=t_e+4\cdot\sigma
+            $$
 
     - ignore retransmitted packet
 
@@ -564,8 +566,8 @@ popular example: REST/gRPC
 
 ## traffic flow
 
-- defined as (Source IP, Destination IP) or
-    (Source IP, Source Port, Destination IP, Destination Port)
+- defined as (Source IP, Destination IP) or (Source IP, Source Port,
+    Destination IP, Destination Port)
 - aid router track soft state
 
 ## resource allocation fairness
@@ -613,10 +615,11 @@ additive increase/ multiplicative decrease (AI/MD)
 
 ### TCP slow start
 
-- exponentially increase `cwnd` at start
+- exponentially increase `cwnd` at start: each ACK: `cwnd += 1`
 - when dropped
-- `SSthresh = cwnd / 2`
-- `cwnd = packet_size`
+    - slow start threshold `SSthresh = cwnd / 2`
+    - each RTT: `cwnd = packet_size`
+        - actual: each ACK: `cwnd += packet_size / cwnd`
 - slow start while `cwnd < SSthresh`, do AI/MD afterwards
 
 ### TCP fast retransmit
