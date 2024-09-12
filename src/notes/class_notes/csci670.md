@@ -38,17 +38,17 @@ binary search $[1:n]$ (go to middle)\
     1. pick $a_{t_1}$ with random $t_1$
     1. split by $a_{t_1}$ to $l_L$, $l_R$, throw away impossible list and
         shrink $k$
-    - power of randomization: $O(n^2)$ but $\Theta(n)$ wrt randomness:\
-        $\frac{1}{2}$ of
-        the time we pick element ranked $\frac{n}{4}\sim\frac{3n}{4}$,
-        can throw away $\frac{n}{4}$ of the list
 
-        $$
-        ⇒ \mathbb ET(n) ≤ n+\frac{1}{2}\mathbb ET\left(\frac{3n}{4}\right)+
-        \frac{1}{2}\mathbb ET(n)\\
-        ⇒ \mathbb ET(n) ≤ 2n + \mathbb ET\left(\frac{3n}{4}\right)\\
-        ⇒ \mathbb ET(n)\sim O(n)
-        $$
+power of randomization: $O(n^2)$ but $\Theta(n)$ wrt randomness:\
+$\frac{1}{2}$ of the time we pick element ranked $\frac{n}{4}\sim\frac{3n}{4}$,
+can throw away $\frac{n}{4}$ of the list
+
+$$
+⇒ \mathbb ET(n) ≤ n+\frac{1}{2}\mathbb ET\left(\frac{3n}{4}\right)+
+\frac{1}{2}\mathbb ET(n)\\
+⇒ \mathbb ET(n) ≤ 2n + \mathbb ET\left(\frac{3n}{4}\right)\\
+⇒ \mathbb ET(n)\sim O(n)
+$$
 
 ⇒ distance graph $G=(V,E),E\subseteq V × V$
 
@@ -59,11 +59,7 @@ binary search $[1:n]$ (go to middle)\
 - generalized undirected graph "binary search" for target $t\in V$ from
     $q_i\in V$
     - $N_P(v,t)=\{z\in P|(v,z)\text{ on shortest path to }t\}$
-        - $z$ on shortest path $d_G(u,v)$ if:
-
-            $$
-            d_G(z,v)+\ell(u,z)=d_G(u,v)
-            $$
+        - $z$ on shortest path $d_G(u,v)$ if: $d_G(z,v)+\ell(u,z)=d_G(u,v)$
     - condition: will give set of vertex on shortest path
     - iteration: $q=t$ or give $q'\in N_G(v,t)$ closer to $t$
     - theorem: ∃ algorithm to find $t$ in $O(\log n)$ question
@@ -73,22 +69,17 @@ binary search $[1:n]$ (go to middle)\
     - ⇒ medium:
         lowest potential function
         $\displaystyle\argmin_u\Phi_{P_0}(u)=∑_{v\in P_0}d_G(u,v)$
-    - update w/ hint $v_t$:
+    - update w/ hint $v_t$: $P_{t+1}=P_t\cap N_{P_t}(q_t,v_t)$
+- claim: $|P_{t+1}|≤\frac{1}{2}|P_t|$
+- proof:
 
-        $$
-        P_{t+1}=P_t\cap N_{P_t}(q_t,v_t)
-        $$
-
-        - claim: $|P_{t+1}|≤\frac{1}{2}|P_t|$
-        - proof:
-
-            $$
-            \Phi_{P_t}(u)≤
-            \Phi_{P_t}(q_t)-(|P_{t+1}|-|P_t/P_{t+1}|)-\ell(q_t,v_t),\\
-            \Phi_{P_t}(u)≥\Phi_{P_t}(q_t)\\
-            ⇒ -|P_{t+1}|+|P_t/P_{t+1}|≥\ell(q_t,v_t)≥0\\
-            ⇒ |P_{t+1}|≤\frac{1}{2}|P_t|
-            $$
+    $$
+    \Phi_{P_t}(u)≤
+    \Phi_{P_t}(q_t)-(|P_{t+1}|-|P_t/P_{t+1}|)-\ell(q_t,v_t),\\
+    \Phi_{P_t}(u)≥\Phi_{P_t}(q_t)\\
+    ⇒ -|P_{t+1}|+|P_t/P_{t+1}|≥\ell(q_t,v_t)≥0\\
+    ⇒ |P_{t+1}|≤\frac{1}{2}|P_t|
+    $$
 
 ## interactive learning
 
@@ -106,6 +97,10 @@ given hypercube $X$, search space $H$, find $h\in H$ s.t. $h≤X$
 - optimality:
     - argument of staying ahead
     - exchange argument
+- proving optimality
+    - optimum must exist for finite problem
+    - compare to imaginary optimum
+    - focus on simple local consistency that eliminate bad possibility
 
 ### Huffman Codes
 
@@ -152,7 +147,7 @@ revised Kruskal
 
 ### clustering
 
-given $G=(V,E,\ell), k$, want $(S_1,\cdots,S_k)$ s.t.
+given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
 
 1. $S_i\subseteq V$
 1. $∀i≠j,S_i\cap S_j = ∅$
@@ -160,3 +155,39 @@ given $G=(V,E,\ell), k$, want $(S_1,\cdots,S_k)$ s.t.
 1. maximize shortest inter-cluster edge
 
 - idea: for tree $G$, just need to cut $k-1$ longest edge
+- ⇒ algorithm: for graph $G$, cut $k-1$ longest edge in MST for
+    optimal clustering
+- proof: denote greedy solution cluster $V_1,\cdots,V_k$,
+    optimum cluster $C_1,\cdots,C_k$
+    1. if $\{V\}≠\{C\}$, ∃ node $v_1≠v_2\in V_i$ s.t.
+        $v_1\in C_p,v_2\in C_q,C_i\neq C_j$
+    1. $⇒ ∃e$ in MST on path from $v_1$ to $v_2$,
+        within $V_i$ s.t. $e$ cross $C_p$ boundary
+    1. by reverse Kruskal, in MST, longest edge that
+        do not disconnect graph are gone\
+        $⇒$ by greedy algorithm, $\ell(e)≤d_{k-1}$ the $k-1$th longest edge in
+        MST
+    1. $⇒$ optimum solution has shortest inter-cluster edge $≤d_{k-1}$,
+        same or smaller than greedy solution ⇒ contradiction
+
+## approximation algorithm
+
+### set cover
+
+- given: input ground set $V=\{1,\cdots,n\}$,
+    $S_1,\cdots,S_i\subset V$ w/ $w_i,i\in I=[1,\cdots,m]$
+
+- want: $T\subset I$ s.t. $∪_{i\in T}S_i=V$ and $|T|$ minimized
+
+    $$
+    \argmin_{T\subset I\\∪_{i\in T}S_i=V}∑_{i\in T}w_i
+    $$
+
+- idea: minimize average cost $\frac{w_i}{|S_i|}$
+- algorithm:
+    1. $U:=V$
+    1. while $U≠∅$, pick $\displaystyle\argmin_{i}\frac{w_i}{|S_i\cap U|}$,
+        set $U=U/S_i$
+- not optimal when many large $S_i$ also cover small $S_j$
+- claim: greedy is within $\log n$ of optimum
+    - doing consistently better than $\log n$ of optimum is NP-hard
