@@ -1,4 +1,3 @@
-<!-- toc -->
 # Shell
 
 switch user to root and do

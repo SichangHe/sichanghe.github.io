@@ -1,4 +1,3 @@
-<!-- toc -->
 # Photo Crypto Auth
 
 - cameras will sign photo cryptographically

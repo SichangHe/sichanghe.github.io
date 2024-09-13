@@ -1,4 +1,3 @@
-<!-- toc -->
 # Probability, Random Variables, and Stochastic Processes
 
 ## joint distribution: discrete

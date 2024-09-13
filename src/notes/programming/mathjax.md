@@ -1,4 +1,3 @@
-<!-- toc -->
 # MathJax
 
 enable `$…$` inline math

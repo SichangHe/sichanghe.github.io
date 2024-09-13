@@ -1,4 +1,3 @@
-<!-- toc -->
 # Rethinking The Web
 
 ## Browser space

@@ -1,4 +1,3 @@
-<!-- toc -->
 # Geometric Vector
 
 # vector

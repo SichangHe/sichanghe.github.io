@@ -1,4 +1,3 @@
-<!-- toc -->
 # Complex function
 
 # logarithm

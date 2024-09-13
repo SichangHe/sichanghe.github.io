@@ -1,4 +1,3 @@
-<!-- toc -->
 # Rails
 
 ## new rails project

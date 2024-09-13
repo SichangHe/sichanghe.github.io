@@ -1,4 +1,3 @@
-<!-- toc -->
 # ~300× Speed Up in Rust: Finding Inexact Matches in Nested Sets
 
 I optimized my route analyzer to get 300× faster.
@@ -500,8 +499,6 @@ prefixes][flamegraph-use-routes-for-each-as]][flamegraph-use-routes-for-each-as]
 ---
 
 Started *2024-05-30*, finished *2024-07-29*.
-
-{{ #include footer.md }}
 
 [Cargo-FlameGraph]: https://github.com/flamegraph-rs/flamegraph
 [flamegraph-after]: https://github.com/SichangHe/internet_route_verification/assets/84777573/33a7354f-a47a-4c8f-a905-c717bbd38f62

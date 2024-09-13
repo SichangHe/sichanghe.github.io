@@ -1,4 +1,3 @@
-<!-- toc -->
 # JavaScript
 
 # data type

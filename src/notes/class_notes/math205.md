@@ -1,4 +1,3 @@
-<!-- toc -->
 # Probability and Statistics
 
 ⌊*x*⌋= the greatest integer smaller than *x*

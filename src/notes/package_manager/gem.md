@@ -1,4 +1,3 @@
-<!-- toc -->
 # Gem
 
 install a_gem

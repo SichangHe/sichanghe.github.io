@@ -1,4 +1,3 @@
-<!-- toc -->
 # Linear Algebra
 
 linear system: $\left\{\begin{array}{r}

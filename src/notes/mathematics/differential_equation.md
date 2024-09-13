@@ -1,4 +1,3 @@
-<!-- toc -->
 # Differential Equation
 
 an equation that contains an unknown function and one or more of its derivatives.

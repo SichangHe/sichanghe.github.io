@@ -1,2 +1,1 @@
-<!-- toc -->
 # Package Manager

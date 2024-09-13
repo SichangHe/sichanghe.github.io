@@ -1,4 +1,3 @@
-<!-- toc -->
 # Complex Sequence and Series
 
 # sequence

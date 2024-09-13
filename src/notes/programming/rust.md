@@ -1,4 +1,3 @@
-<!-- toc -->
 # Rust
 
 # function `fn`

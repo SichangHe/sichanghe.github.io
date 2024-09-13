@@ -1,4 +1,3 @@
-<!-- toc -->
 # Mathematica
 
 - space is seen as $\times$

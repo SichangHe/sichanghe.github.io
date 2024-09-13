@@ -1,4 +1,3 @@
-<!-- toc -->
 # clang
 
 usually what you do

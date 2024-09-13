@@ -1,4 +1,3 @@
-<!-- toc -->
 # Multivariate Calculus
 
 # multivariate function

@@ -1,4 +1,3 @@
-<!-- toc -->
 # Complex Analysis
 
 # complex number $\mathbb C$

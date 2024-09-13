@@ -1,4 +1,3 @@
-<!-- toc -->
 # Numerical Analysis
 
 # gradient descent

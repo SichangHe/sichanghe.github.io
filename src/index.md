@@ -1,5 +1,3 @@
-<!-- toc -->
-
 # Steven Hé (Sīchàng)
 
 <div

@@ -1,4 +1,3 @@
-<!-- toc -->
 # pip
 
 always use `python3 -m pip` instead of `pip`

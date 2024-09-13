@@ -1,4 +1,3 @@
-<!-- toc -->
 # Unstructured Reading Notes
 
 - [How Smartphones Shrink Our

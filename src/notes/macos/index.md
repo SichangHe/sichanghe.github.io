@@ -1,4 +1,3 @@
-<!-- toc -->
 # macOS
 
 get ID of app:

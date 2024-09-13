@@ -1,2 +1,1 @@
-<!-- toc -->
 # Automation Software
