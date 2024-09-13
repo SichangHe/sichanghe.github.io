@@ -63,7 +63,8 @@ NABC for research: need, approach, benefit, competition
 ## *BBR: Congestion-Based Congestion Control*, Neal Cardwell, Yuchung Cheng, C. Stephen Gunn, Soheil Hassas Yeganeh, Van Jacobson
 
 - avoid timeout
-- TCP need to measure ideal window size = bottleneck RTT × bandwidth
+- TCP need to measure ideal window size: bandwidth-delay product (BDP)
+    = bottleneck RTT × bandwidth
 - measure RTT: exponential weighted moving average
     (EWMA)—ACK time - sent time
 - measure bandwidth: window size & packet loss & ACK rate
