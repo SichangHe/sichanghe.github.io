@@ -1,4 +1,3 @@
-<!-- toc -->
 # Hammerspoon
 
 add stuff: open config, type in LaTeX, save, reload config

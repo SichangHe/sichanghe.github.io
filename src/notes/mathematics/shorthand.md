@@ -1,4 +1,3 @@
-<!-- toc -->
 # Shorthand
 
 DNE = doesn’t exist

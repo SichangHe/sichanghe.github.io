@@ -1,4 +1,3 @@
-<!-- toc -->
 # Visualization
 
 # data type

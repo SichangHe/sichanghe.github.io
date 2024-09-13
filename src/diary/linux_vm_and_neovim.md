@@ -1,4 +1,3 @@
-<!-- toc -->
 # Linux VM And Neovim
 
 20220806

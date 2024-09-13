@@ -1,4 +1,3 @@
-<!-- toc -->
 # Spring 2024 Activities
 
 *2023-03-28*

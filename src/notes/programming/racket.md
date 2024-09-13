@@ -1,4 +1,3 @@
-<!-- toc -->
 # Racket
 
 ## language type

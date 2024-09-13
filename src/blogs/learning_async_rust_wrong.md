@@ -1,4 +1,3 @@
-<!-- toc -->
 # We are Learning Async Rust Wrong
 <!-- TODO: Change to "I was?" -->
 

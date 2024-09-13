@@ -1,5 +1,3 @@
-<!-- toc -->
-
 # Creating Perfect Grayscale-Gradient Colormaps
 
 <style>
@@ -208,5 +206,3 @@ Can you solve the system for $r,g,b$ given $h,s,p$?
 ---
 
 *2024-05-25*
-
-{{ #include footer.md }}

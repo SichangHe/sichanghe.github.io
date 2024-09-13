@@ -1,4 +1,3 @@
-<!-- toc -->
 # Sucklessfy
 
 allow apps from anywhere

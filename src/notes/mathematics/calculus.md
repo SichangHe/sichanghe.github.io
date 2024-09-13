@@ -1,4 +1,3 @@
-<!-- toc -->
 # Calculus
 
 # function

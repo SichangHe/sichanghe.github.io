@@ -1,5 +1,3 @@
-<!-- toc -->
-
 # University of Southern California Living
 
 ## Banking

@@ -1,4 +1,3 @@
-<!-- toc -->
 # Elixir Phoenix
 
 I need a back end technology.

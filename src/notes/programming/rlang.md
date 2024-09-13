@@ -1,4 +1,3 @@
-<!-- toc -->
 # R lang
 
 # naming

@@ -1,4 +1,3 @@
-<!-- toc -->
 # Networking
 
 # encoding/decoding

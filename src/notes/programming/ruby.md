@@ -1,4 +1,3 @@
-<!-- toc -->
 # Ruby
 
 # string

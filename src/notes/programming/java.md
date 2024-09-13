@@ -1,4 +1,3 @@
-<!-- toc -->
 # Java
 
 # built-in data type

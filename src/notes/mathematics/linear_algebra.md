@@ -1,4 +1,3 @@
-<!-- toc -->
 # Linear Algebra
 
 # determinant

@@ -1,4 +1,3 @@
-<!-- toc -->
 # Back from Duke
 
 20230313

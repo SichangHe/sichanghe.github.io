@@ -1,5 +1,3 @@
-<!-- toc -->
-
 <!-- TODO: This is a draft. -->
 
 # Why Was mdBook-KaTeX in a Mess and How did I Clean It Up—Celebrating mdBook-KaTeX v0.5

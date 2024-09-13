@@ -1,4 +1,3 @@
-<!-- toc -->
 # NPM
 
 help node find global module (change the path if necessary)

@@ -1,4 +1,3 @@
-<!-- toc -->
 # Advanced Analysis of Algorithms
 
 6hw + 3qz + 2 theoretical thinking project

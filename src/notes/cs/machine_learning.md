@@ -1,4 +1,3 @@
-<!-- toc -->
 # Machine Learning
 
 ## general problem format

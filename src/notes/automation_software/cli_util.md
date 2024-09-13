@@ -1,4 +1,3 @@
-<!-- toc -->
 # Command-Line Utilities
 
 wrap lines to a maximum width of 80 in FILE

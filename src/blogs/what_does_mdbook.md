@@ -1,4 +1,3 @@
-<!-- toc -->
 
 # What an mdBook Preprocessor Does—Code Walk-through of mdBook-KaTeX
 
@@ -304,5 +303,3 @@ We will talk about the mess mdBook-KaTeX was in next time.
 ---
 
 *2023-05-27*, edited: *2023-06-11*, *2024-05-24*
-
-{{ #include footer.md }}

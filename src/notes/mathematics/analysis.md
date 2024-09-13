@@ -1,4 +1,3 @@
-<!-- toc -->
 # Real Analysis
 
 # set

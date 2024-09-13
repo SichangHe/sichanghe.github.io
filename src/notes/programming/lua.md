@@ -1,4 +1,3 @@
-<!-- toc -->
 # Lua
 
 ## data type

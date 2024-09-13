@@ -1,4 +1,3 @@
-<!-- toc -->
 # Julia
 
 ## use latex symbol
