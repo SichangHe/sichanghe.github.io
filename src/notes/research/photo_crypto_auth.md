@@ -7,7 +7,13 @@
 
 problem:
 
-- what about photo without signature?
+- ~~what about photo without signature?~~don't care
+
+steps:
+
+1. What in photo from C2PA camera?
+1. Post-processing on social media site preserve signature?
+1. Extract info from posts' text
 
 ## literature
 
