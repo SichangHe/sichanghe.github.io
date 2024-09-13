@@ -84,6 +84,7 @@
     - [Research Notes](notes/research/index.md)
         - [JSphere](notes/research/JSphere/sketch.md)
             - [Literature](notes/research/JSphere/literature.md)
+            - [Execution](notes/research/JSphere/execution.md)
         - [Photo Crypto Auth](notes/research/photo_crypto_auth.md)
         - [Web Atoms](notes/research/web_atoms.md)
     - [Server](notes/server/index.md)
