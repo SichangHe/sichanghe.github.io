@@ -68,3 +68,11 @@ NABC for research: need, approach, benefit, competition
     (EWMA)—ACK time - sent time
 - measure bandwidth: window size & packet loss & ACK rate
 - TCP keep probing at equilibrium → oscillation
+
+## *BGP Routing Policies in ISP Networks*, Matthew Caesar, Jennifer Rexford
+
+- BPG not designed to do policy
+- many hack for business relationship & traffic engineering: Pref, MED,
+    community
+- manual & unscalable configuration
+- trick to enhance security, no systematic solution
