@@ -2,7 +2,12 @@
 
 40 paper + 20hr+ programming project + similar research project
 
-flow: same src/dest
+## Misc
+
+flow: same source&destination (IP&port) & protocol
+
+- important: most traffic point-to-point
+- concrete & fine-grained
 
 NABC for research: need, approach, benefit, competition
 
@@ -27,8 +32,9 @@ NABC for research: need, approach, benefit, competition
 
 - handling failure in middle do not void need to do so
     at end—no fundamental effect
+    - cost of duplication
 - low level check help performance, but need not be perfect
-- example: checksum, encryption, dedup, FIFO, transaction
+- example: checksum, encryption, dedup, FIFO, transaction, RISC
 - what end mean depend on application
 
 ## *Tussle in Cyberspace: Defining Tomorrow's Internet*, David D. Clark, John Wroclawski, Karen R. Sollins, Robert Braden
@@ -54,24 +60,39 @@ NABC for research: need, approach, benefit, competition
 ## *A Binary Feedback Scheme for Congestion Avoidance in Computer Networks*, Kadangode K. Ramakrishnan, Raj Jain, SIGCOMM 1988
 
 - explicit congestion notification (ECN) router add congestion bit to packet,
-    returned later in ack
-- fair share
+    returned later in ACK
+    - DEC bit/congestion indication (CI)
+    - router: use average queue length over regeneration cycle
+        (turns out not good)
+- power: throughput${}^\alpha$ / delay
+- efficiency
+- fair share per flow
+    - Jain fairness $\frac{(∑x_i)^2}{n∑x_i^2}$ where
+        $x_i$ is bit rate per flow
 - avoid oscillation & congestion collapse
+    - performance knee vs cliff, hysteresis
+    - change slowly: per RTT
+    - feedback filter & averaging: more consistent
+    - no source quench: avoid more work
 - math model & simulation for policy
+- congestion control challenge: hard to predict, changing, delay in control
 
 ## *BBR: Congestion-Based Congestion Control*, Neal Cardwell, Yuchung Cheng, C. Stephen Gunn, Soheil Hassas Yeganeh, Van Jacobson
 
 - avoid timeout
 - TCP need to measure ideal window size: bandwidth-delay product (BDP)
-    = bottleneck RTT × bandwidth
+    = bottleneck bandwidth (BtlBw) × RTT (RTprop)
 - measure RTT: exponential weighted moving average
     (EWMA)—ACK time - sent time
 - measure bandwidth: window size & packet loss & ACK rate
 - TCP keep probing at equilibrium → oscillation
+- router has larger queue now
+    - clear queue periodically
+- pacing: additional to ACK clocking
 
 ## *BGP Routing Policies in ISP Networks*, Matthew Caesar, Jennifer Rexford
 
-- BPG not designed to do policy
+- BGP not designed to do policy
 - many hack for business relationship & traffic engineering: Pref, MED,
     community
 - manual & unscalable configuration
@@ -106,3 +127,27 @@ NABC for research: need, approach, benefit, competition
 - circumvention:
     - trivial: prepend exempt start byte
     - sophisticated and extensible: pad popcount & shuffle
+
+## *Routing Stability in Congested Networks: Experimentation and Analysis*, Aman Shaikh, Anujan Varma, Lampros Kalampoukas, Rohit Dube
+
+- simulate & Markov model OSPF & BGP up-to-down & down-to-up timing when
+    overload
+- OSPF: only overload factor matter, not packet size
+- BGP: screwed by TCP reliability
+
+## *Why Is It Taking So Long to Secure Internet Routing?*, Sharon Goldberg
+
+- BGP is easy to attack
+    - prefix hijack: bogus BGP announcement; subprefix hijack:
+        announce more specific prefix
+    - route leak: announce route to too many
+    - blackhole: route to nowhere
+    - interception: route through eavesdropper
+- defense
+    - prefix filtering
+        - problem: no incentive P2P or P2C
+    - Resource Public Key Infrastructure (RPKI): sign prefix ownership
+        - prevent hijack → incentive, but not leak; can be attacked
+    - Border Gateway Protocol Security (BGPsec): sign BGP announcement
+        - need online crypto → need new router
+        - little useful unless all adopt
