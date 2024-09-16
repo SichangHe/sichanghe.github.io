@@ -76,3 +76,33 @@ NABC for research: need, approach, benefit, competition
     community
 - manual & unscalable configuration
 - trick to enhance security, no systematic solution
+
+## *How the Great Firewall of China detects and blocks fully encrypted traffic*, Wu, Mingshi, Jackson Sippe, Danesh Sivakumar, Jack Burg, Peter Anderson, Xiaokang Wang, Kevin Bock, Amir Houmansadr, Dave Levin, Eric Wustrow
+
+- censorship circumvention traffic type
+    - steganograpic: look like allowed → mimicking: flawed
+    - polymorphic: not look like forbidden → tunneling: need to
+        align fingerprint w/ popular implementation
+- GFW active probing: send carefully-crafted packet to server & see if
+    it let me use as proxy → block residually for 180s. solved
+- fully encrypted traffic look like random
+    - research method: send random packet to detect censorship
+- GFW passive detection
+    - allow if average #set bit in each byte (popcount) is at least 0.6
+        (30% of 8) from 4: random enough
+    - allow if enough printable ASCII (`[0x20,0x7e]`): in first 6 byte of
+        packet, or > 50%, or > 20
+    - allow if match fingerprint of TLS/HTTP
+- GFW blocking characteristics
+    - limit #residual block: more blocked connection → shorter blocking
+    - only block client immediately, ignore server
+    - only examine first packet in TCP connection
+    - only check packet to specific PI range (popular VPS provider AS, but
+        not CDN)
+    - only check packet w/ probability \~26%.
+        know because #successful successive sending fit geometric distribution.
+        → reduce false positive
+- 0.6% false positive rate from empirical real traffic
+- circumvention:
+    - trivial: prepend exempt start byte
+    - sophisticated and extensible: pad popcount & shuffle
