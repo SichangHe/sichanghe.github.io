@@ -188,5 +188,54 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
     1. while $U≠∅$, pick $\displaystyle\argmin_{i}\frac{w_i}{|S_i\cap U|}$,
         set $U=U/S_i$
 - not optimal when many large $S_i$ also cover small $S_j$
-- claim: greedy is within $\log n$ of optimum
+- claim: greedy is within $\log n$ of optimum, where $n=\max_j|S_j|$
     - doing consistently better than $\log n$ of optimum is NP-hard
+    - greedy cost
+
+        $$
+        c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
+        $$
+
+        where
+        [harmonic series](../mathematics/sequence_series.html#harmonic-series)
+        $H(k)=∑_{i=1}^k\frac{1}{i}$
+
+        - when $h$th (starting from 0) element $V_{\pi_h}$ in
+            $S_j$ is covered,
+            $\displaystyle c_G(\pi_n)≤\frac{w_j}{|S_j|-h}$ because at most
+            $h$ element is covered in $S_j$
+
+### set function
+
+$f:\{S|S\subseteq V\} → R$
+
+- salary for group in society
+- hypergraph: indicator set function determine if each subset is hyperedge
+
+property:
+
+1. grounded: $f(∅)=0$
+1. monotone: $∀ S\subseteq T,f(S) ≤ f(T)$
+1. submodular: $∀ S\subseteq T,∀ v\notin T$
+
+    $$
+    \nabla f_S(v) ≥ \nabla f_T(v)
+    $$
+
+    - diminishing return: less happier when having more and more chocolate
+    - discrete derivative: $\nabla f_S(v)=f(S\cup \{v\})-f(S)$
+        - how much value can $v$ add to $S$
+    - complementarity: $1 + 1 > 2$
+    - $f,g$ submodular $⇒ ∀\alpha\in[0,1], \alpha f+(1+\alpha)g$ submodular
+
+### reachability
+
+$\text{Reach}(S):=\{v|\text{can reach }v\text{ from }S\}$
+
+$f(S)=|\text{Reach}(S)|$
+
+- $f$ submodular:
+
+    $$
+    \nabla f_S(v)=|\{x|\text{can reach }x\text{ from }v\text{ but not }S\}|
+    $$
