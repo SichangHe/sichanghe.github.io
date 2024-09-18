@@ -11,6 +11,17 @@ flow: same source&destination (IP&port) & protocol
 
 NABC for research: need, approach, benefit, competition
 
+## *Some Reflections on Innovation and Invention*, George H. Heilmeier
+
+- think about where field is going, not where it is
+- involve researcher throughout deployment & business
+- technology transfer: focus on what people "care about", what help people,
+    not mathematical beauty
+    - overcome existing benefit haver; marketing
+    - everything need to work, or else fail
+- catechism for DARPA funding/ startup: goal, existing solution,
+    improvement & novelty, expected outcome, cost estimate
+
 ## *The design philosophy of the DARPA Internet protocols*, David D. Clark
 
 - Internet: multiplexed utilization of existing interconnected networks
@@ -79,16 +90,28 @@ NABC for research: need, approach, benefit, competition
 
 ## *BBR: Congestion-Based Congestion Control*, Neal Cardwell, Yuchung Cheng, C. Stephen Gunn, Soheil Hassas Yeganeh, Van Jacobson
 
-- avoid timeout
+- better for WAN, cellular, large bandwidth+delay link
+    - adapt to larger queue routers have now
+    - avoid timeout & retransmission
+    - CUBIC struggle to keep many packet in flight because of
+        long feedback loop
+    - BBR try to run at performance knee not cliff
 - TCP need to measure ideal window size: bandwidth-delay product (BDP)
     = bottleneck bandwidth (BtlBw) × RTT (RTprop)
 - measure RTT: exponential weighted moving average
     (EWMA)—ACK time - sent time
-- measure bandwidth: window size & packet loss & ACK rate
-- TCP keep probing at equilibrium → oscillation
-- router has larger queue now
-    - clear queue periodically
-- pacing: additional to ACK clocking
+- measure bandwidth periodically: window size & packet loss & ACK rate
+    - pacing: additional to ACK self-clocking
+    - try-faster (ProbeBW state, 98%): send 5/4 pace to
+        probe bandwidth (multiplicative increase), then send 3/4 to drain queue
+        - CUBIC keep probing at equilibrium → oscillation
+        - BBR more aggressive ⇒ dominate bandwidth when sharing
+    - try-slower (ProbeRTT state): send few packet to clear queue;
+        probe RTprop by taking minimum
+- startup state (slow start)
+    - exit startup when BtlBw stay same for 3 RTT
+    - drain mode to clear queue
+- converge to fair share
 
 ## *BGP Routing Policies in ISP Networks*, Matthew Caesar, Jennifer Rexford
 
@@ -97,6 +120,9 @@ NABC for research: need, approach, benefit, competition
     community
 - manual & unscalable configuration
 - trick to enhance security, no systematic solution
+- when can avoid BGP: connect to single network, default routing
+- BGP multihoming goal: reachability, cost, performance, latency,
+    reliability, load balancing
 
 ## *How the Great Firewall of China detects and blocks fully encrypted traffic*, Wu, Mingshi, Jackson Sippe, Danesh Sivakumar, Jack Burg, Peter Anderson, Xiaokang Wang, Kevin Bock, Amir Houmansadr, Dave Levin, Eric Wustrow
 
