@@ -18,6 +18,11 @@ P space: $∃x_1, ∀x_2, ∃x_3, \cdots\text{ s.t.
 - P time $\in$ P space (equal?)
 - PPAD
 
+\#P: account #solution to NP problem
+
+- each NP problem has \#P problem
+- \#P-complete $\subseteq$ P space
+
 linear programming: proved P
 
 learning problem
@@ -196,10 +201,9 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
         c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
         $$
 
-        where
-        [harmonic series](../mathematics/sequence_series.html#harmonic-series)
-        $H(k)=∑_{i=1}^k\frac{1}{i}$
-
+        - [harmonic
+            series](../mathematics/sequence_series.html#harmonic-series)
+            $H(k)=∑_{i=1}^k\frac{1}{i}$
         - when $h$th (starting from 0) element $V_{\pi_h}$ in
             $S_j$ is covered,
             $\displaystyle c_G(\pi_n)≤\frac{w_j}{|S_j|-h}$ because at most
@@ -207,7 +211,7 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
 
 ### set function
 
-$f:\{S|S\subseteq V\} → R$
+$f:\{S|S\subseteq V\} → \R$
 
 - salary for group in society
 - hypergraph: indicator set function determine if each subset is hyperedge
@@ -216,17 +220,56 @@ property:
 
 1. grounded: $f(∅)=0$
 1. monotone: $∀ S\subseteq T,f(S) ≤ f(T)$
-1. submodular: $∀ S\subseteq T,∀ v\notin T$
+1. submodular
 
-    $$
-    \nabla f_S(v) ≥ \nabla f_T(v)
-    $$
+#### submodular function
 
-    - diminishing return: less happier when having more and more chocolate
-    - discrete derivative: $\nabla f_S(v)=f(S\cup \{v\})-f(S)$
-        - how much value can $v$ add to $S$
-    - complementarity: $1 + 1 > 2$
-    - $f,g$ submodular $⇒ ∀\alpha\in[0,1], \alpha f+(1+\alpha)g$ submodular
+$∀ S\subseteq T,∀ v\notin T$
+
+$$
+\nabla f_S(v) ≥ \nabla f_T(v)
+$$
+
+- diminishing return: less happier when having more and more chocolate
+- discrete derivative: $\nabla f_S(v)=f(S\cup \{v\})-f(S)$
+    - how much value can $v$ add to $S$
+- complementarity: $1 + 1 > 2$
+- $f,g$ submodular $⇒ ∀\alpha\in[0,1], \alpha f+(1+\alpha)g$ submodular
+
+problem
+
+- input: submodular $f:\{S|S\subseteq V\} → \R^*$, $k$
+- output: $S\subset V$, s.t. $|S|=k$, $\max f(S)$
+- oracle model: can get $f(T)$
+
+- example: max cover: for mapping $f:V → B$ choose $k$ element from $V$ to
+    maximize $|f(S)|$
+- greedy algorithm $S'$: at time $t$, add $u_t$ that maximize
+    $\nabla f_{u_t}(S_{t-1}')$
+
+theorem: $∀f$ monotone & submodular, $∀k$, $f(S')≥(1-\frac{1}{e})f(S^*)$
+
+proof:
+
+$$
+S^*=:\{v_1,\cdots,v_k\};\\
+f(S^*)≤f(S^*\cup S_t')=f(S_t')+[f(S^*\cup S_t')-f(S_t')];\\
+f(S^*\cup S_t')-f(S_t')=
+∑_{i=1}^k[f(\{v_1,\cdots,v_i\}\cup S_t')-f(\{v_1,\cdots,v_{i-1}\}\cup S_t')]\\=
+∑_{i=1}^k\nabla f_{v_i}(\{v_1,\cdots,v_{i-1}\}\cup S_t')≤
+∑_{i=1}^k\nabla f_{v_i}(S_t')=
+k\nabla f_{v_i}(S_t')\\≤
+k\nabla f_{u_{t+1}}(S_t')=
+k[f(S_{t+1}')-f(S_t)]\\
+⇒ \delta_t:=f(S^*)-f(S_t')≤k[f(S_{t+1}')-f(S_t)]\\=
+k[(f(S_{t+1}')-f(S^*))+(f(S^*)-f(S_t))]\\=
+k[-\delta_{t+1}+\delta_t]\\
+⇒ \delta_{t+1}≤\frac{k-1}{k}\delta_t≤\cdots≤
+\left(1-\frac{1}{k}\right)^{t+1}\delta_0\\=
+\left(1-\frac{1}{k}\right)^{t+1}f(S^*)≤
+e^{-\frac{t+1}{k}}f(S^*)\\
+⇒ f(S'_k)=f(S^*)-\delta_k≥\left(1-e^-\frac{k}{k}\right)f(S^*)
+$$
 
 ### reachability
 
@@ -239,3 +282,25 @@ $f(S)=|\text{Reach}(S)|$
     $$
     \nabla f_S(v)=|\{x|\text{can reach }x\text{ from }v\text{ but not }S\}|
     $$
+
+### network influence
+
+input $G=(V,E),p_e;t=1,\cdots,T$
+
+- dynamic & complex compared to traditional static graph
+- network influence maximization: often submodular
+
+#### independent cascade (IC)
+
+each node has probability $p$ to influence
+
+- stochastic network influence; e.g., pandemic
+- $S_t=S_{t-1}\cup N(S_{t-1})$
+- influence spread $\sigma(S)=∑_{W\in 2^V}\Pr_W[S → W]|W|$
+    - generally \#P-complete
+
+#### threshold model
+
+each node $v$ has threshold $\theta_v$ to be influenced by neighbor
+
+- deterministic/ stochastic by $\theta_v$, e.g., idea spreading
