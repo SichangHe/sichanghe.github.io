@@ -1,5 +1,33 @@
 # Unstructured Reading Notes
 
+- Defense: *Real-time Multi-Resolution Neural Networks for Hand Simulation*,
+    Mianlun Zheng (Advisor: Jernej Barbič)
+    - from joint angle, simulate bone, tendon, muscle, vein, nerve, fascia, …
+    - application: medical education, robotics, Metaverse,
+        physical therapy (committee)
+    - average (interpolate) 6 MRI scan of hand pose by
+        calculating plastic strain & min energy function for equilibrium
+    - pattern matching bad: need huge data; no anatomy (dumb)
+    - tendon simulation: rod model; attach bone; emulate force from forearm;
+        hook → tunnel to slide through
+    - fascia: triangle mesh + cloth solver; fat: FEM simulation; nail:
+        rigid point cloud in skin
+    - high accuracy: < 1mm error against MRI
+    - real-time neural net challenge: nets in graphics slow;
+        real-world usage need < 1ms; existing libraries overlook small model
+    - need: change level of detail (LOD) for Metaverse
+    - animation: deform character to vertices
+    - joint angle → linear blend skinning → net to
+        reduce residue → real-time output
+    - LOD support: more vertex each level; restriction vs prolongation to
+        downsample & upsample
+        - go up & down by level
+        - each level each region (by unity construction)
+            separate net → small net → efficient
+    - further performance: reduce joint by perturbation simulation;
+        PCA reduction for each region
+    - hot cache performance: lower output dimension & faster than prior work;
+        much faster on high level
 - [Measuring context switching and memory overheads for Linux
     threads](https://eli.thegreenplace.net/2018/measuring-context-switching-and-memory-overheads-for-linux-threads/)
     - Native POSIX Thread Library (NPTL) & futex several times faster than
