@@ -9,7 +9,7 @@ flow: same source&destination (IP&port) & protocol
 - important: most traffic point-to-point
 - concrete & fine-grained
 
-NABC for research: need, approach, benefit, competition
+NABC for research: (hook), need, approach, benefit, competition
 
 ## *Some Reflections on Innovation and Invention*, George H. Heilmeier
 
@@ -21,6 +21,13 @@ NABC for research: need, approach, benefit, competition
     - everything need to work, or else fail
 - catechism for DARPA funding/ startup: goal, existing solution,
     improvement & novelty, expected outcome, cost estimate
+
+## *An Evaluation of The Ninth SOSP Submissions or How (and How Not) to Write A Good Systems Paper*, Roy Levin, David D. Redell
+
+- paper category: implementation, theory, idea, measurement, survey,
+    simulation
+- know related work: old & new, peer-reviewed
+- not readily solved by existing approach (or w/ tweak)
 
 ## *The design philosophy of the DARPA Internet protocols*, David D. Clark
 
@@ -34,10 +41,15 @@ NABC for research: need, approach, benefit, competition
 - to connect existing network, bar is low
     - adopt packet switching; gateway: packet switch
 - distributed management was lower goal → the BGP mess
-- IP was split from TCP—TCP was too specific and bad for latency
+- UDP/TCP/IP was split from network control protocol
+    (NCP)—NCP was too specific and bad for latency
+    - goal to support different application
     - when designing, did not anticipate actual challenge
 - protocol loose → realization determine what goes
 - datagram is the basis of Internet flexibility
+    - high utilization: statistical multiplexing
+    - drawback: no guarantee, header overhead, difficult to
+        manage & troubleshoot
 
 ## *End-to-end arguments in system design*, J. H. Saltzer, D. P. Reed, D. D. Clark
 
@@ -84,7 +96,7 @@ NABC for research: need, approach, benefit, competition
     - performance knee vs cliff, hysteresis
     - change slowly: per RTT
     - feedback filter & averaging: more consistent
-    - no source quench: avoid more work
+    - no choke/ source quench: avoid more work
 - math model & simulation for policy
 - congestion control challenge: hard to predict, changing, delay in control
 
