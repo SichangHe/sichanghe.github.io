@@ -25,3 +25,16 @@ split photo into public and private part, encrypt private part
 proposal:
 compare photo crypto metadata time+location w/ social media post text before
 manipulative post go viral. good for news. need to balance privacy
+
+## C2PA
+
+points from Perplexity (not to be trusted):
+
+- nesting: manifest (metadata) > claim (statement) > assertion (field)
+- claim generator: create & sign claim
+- public key encryption (ECDSA/EdDSA/RSA) to sign claim; SHA-2 hash to
+    bind manifest to content
+    - need public key infrastructure (PKI)
+- cryptographic assumption: encryption & hash work; secure RNG;
+    secure private key; trust certificate authority (CA for PKI)
+    - can attack from getting private key/ CA
