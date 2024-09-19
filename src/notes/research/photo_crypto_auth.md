@@ -34,6 +34,7 @@ points from Perplexity (not to be trusted):
 - claim generator: create & sign claim
 - public key encryption (ECDSA/EdDSA/RSA) to sign claim; SHA-2 hash to
     bind manifest to content
+    - private key in camera hardware security module (HSM)
     - need public key infrastructure (PKI)
 - cryptographic assumption: encryption & hash work; secure RNG;
     secure private key; trust certificate authority (CA for PKI)
