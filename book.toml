@@ -42,7 +42,7 @@ footers = [
 """ },
     { regex = "^news/", padding = """
 
-[*News | Steven Hé (Sīchàng)*](/news/)
+[*News | Steven Hé (Sīchàng)*](/news/2024fall.html)
 
 <script src="https://giscus.app/client.js" data-repo="SichangHe/sichanghe.github.io" data-repo-id="R_kgDOJoD14g"
     data-category="General" data-category-id="DIC_kwDOJoD14s4CflYo" data-mapping="title" data-strict="1"
