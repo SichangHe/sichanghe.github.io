@@ -28,14 +28,20 @@ manipulative post go viral. good for news. need to balance privacy
 
 ## C2PA
 
+- nesting: manifest (metadata) > claim (wrapper) > assertion (statement)
+    ![Example C2PA Manifest of a
+    Photograph](https://c2pa.org/specifications/specifications/2.1/specs/_images/Photo_Manifest.svg)
+- claim generator: create & sign claim
+- manifest consumer, e.g., C2PA validator
+- public key encryption (ECDSA/EdDSA/RSA) to sign claim; SHA-2 hash for
+    hard binding of manifest & content
+
 points from Perplexity (not to be trusted):
 
-- nesting: manifest (metadata) > claim (statement) > assertion (field)
-- claim generator: create & sign claim
-- public key encryption (ECDSA/EdDSA/RSA) to sign claim; SHA-2 hash to
-    bind manifest to content
+- encryption:
     - private key in camera hardware security module (HSM)
     - need public key infrastructure (PKI)
 - cryptographic assumption: encryption & hash work; secure RNG;
     secure private key; trust certificate authority (CA for PKI)
     - can attack from getting private key/ CA
+        - get Photoshop private key?
