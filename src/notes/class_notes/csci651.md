@@ -51,6 +51,15 @@ NABC for research: (hook), need, approach, benefit, competition
     - drawback: no guarantee, header overhead, difficult to
         manage & troubleshoot
 
+## *On the Naming and Binding of Network Destinations*, Jerome H. Saltzer
+
+- type of name
+    - name: the thing
+    - address: where
+    - binding: mapping name to address
+    - route/path: how to get there
+- movable; mnemonic; identity
+
 ## *End-to-end arguments in system design*, J. H. Saltzer, D. P. Reed, D. D. Clark
 
 - handling failure in middle do not void need to do so
@@ -74,11 +83,17 @@ NABC for research: (hook), need, approach, benefit, competition
 - preserve equilibrium → round trip timing consider variance
     - goal: keep bottleneck full
     - self-clocking: packet spacing follow ACK → follow bottleneck
-- resource limit:
-    congestion avoidance w/
-    [AI/MD](../cs/networking.html#congestion-window-cwnd)
+    - avoid retransmission too soon
+- resource limit: congestion avoidance w/
+    [additive increase (AI)](../cs/networking.html#congestion-window-cwnd)
     - congestion detection: packet loss, ~~delay~~
-    - congestion recovery
+    - congestion recovery: multiplicative decrease (MD)
+- measure RTT: exponential weighted moving average
+    (EWMA)—ACK time - sent time
+- retransmission timeout (RTO)
+    - TCP fast retransmit: retransmit when 3 duplicate ACK (TCP Reno)
+    - TCP fast recovery: half `cwnd` instead of slow start
+    - selective ACK (SACK): for missing packet
 
 ## *A Binary Feedback Scheme for Congestion Avoidance in Computer Networks*, Kadangode K. Ramakrishnan, Raj Jain, SIGCOMM 1988
 
@@ -88,10 +103,12 @@ NABC for research: (hook), need, approach, benefit, competition
     - router: use average queue length over regeneration cycle
         (turns out not good)
 - power: throughput${}^\alpha$ / delay
-- efficiency
+- efficiency: not retransmit unnecessarily
+    - (throughput / knee throughput) / (delay / knee delay)
 - fair share per flow
     - Jain fairness $\frac{(∑x_i)^2}{n∑x_i^2}$ where
-        $x_i$ is bit rate per flow
+        $x_i=\frac{A_i}{D}$ is allocation (bit rate) by demand per flow
+    - can cheat by opening many flow
 - avoid oscillation & congestion collapse
     - performance knee vs cliff, hysteresis
     - change slowly: per RTT
@@ -110,8 +127,6 @@ NABC for research: (hook), need, approach, benefit, competition
     - BBR try to run at performance knee not cliff
 - TCP need to measure ideal window size: bandwidth-delay product (BDP)
     = bottleneck bandwidth (BtlBw) × RTT (RTprop)
-- measure RTT: exponential weighted moving average
-    (EWMA)—ACK time - sent time
 - measure bandwidth periodically: window size & packet loss & ACK rate
     - pacing: additional to ACK self-clocking
     - try-faster (ProbeBW state, 98%): send 5/4 pace to
