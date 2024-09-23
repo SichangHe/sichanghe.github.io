@@ -482,19 +482,19 @@ functionality should be provided at a layer only if it can be complete there
 - adaptive transmission: EstimatedRTT $t_e$, MeasuredRTT $t_m$, Timeout $t_o$
     - Karn/Partridge algorithm with parameter $a$:
 
-            $$
-            t_e=a\cdot t_e+(1-a)\cdot t_m\\
-            t_o=2\cdot t_e
-            $$
+        $$
+        t_e=a\cdot t_e+(1-a)\cdot t_m\\
+        t_o=2\cdot t_e
+        $$
 
     - Jacobson/Karels algorithm with DeviationRTT $\sigma$,
         parameter $\delta$:
 
-            $$
-            t_e=t_e+(\delta\cdot (t_m-t_e))\\
-            \sigma=\sigma+\delta\cdot(|t_m-t_e|-\sigma)\\
-            t_o=t_e+4\cdot\sigma
-            $$
+        $$
+        t_e=t_e+(\delta\cdot (t_m-t_e))\\
+        \sigma=\sigma+\delta\cdot(|t_m-t_e|-\sigma)\\
+        t_o=t_e+4\cdot\sigma
+        $$
 
     - ignore retransmitted packet
 
