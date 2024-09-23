@@ -383,12 +383,12 @@ message type
 
 ## autonomous system (AS)
 
-a.k.a domain
+set of router following same policy, a.k.a domain
 
 - distinct operator
 - transit traffic: traffic across two AS
 - stub AS: on the border, no transit trafic
-    - transit AS: opposite
+    - transit AS: opposite; promise to route you anywhere
 - multihoming: network with multiple provider
 - peering point: host network equipment
 
