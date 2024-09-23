@@ -142,7 +142,7 @@ NABC for research: (hook), need, approach, benefit, competition
 
 ## *BGP Routing Policies in ISP Networks*, Matthew Caesar, Jennifer Rexford
 
-- BGP not designed to do policy
+- BGP not designed to do business policy
 - many hack for business relationship & traffic engineering: Pref, MED,
     community
 - manual & unscalable configuration
@@ -150,6 +150,28 @@ NABC for research: (hook), need, approach, benefit, competition
 - when can avoid BGP: connect to single network, default routing
 - BGP multihoming goal: reachability, cost, performance, latency,
     reliability, load balancing
+- interior gateway protocol (IGP, e.g., OSPF)
+    vs external gateway protocol (EGP)
+    - internal BGP (iBGP): share BGP policy among an AS's router
+- peering: link between router in 2 AS
+    (any relationship)/ exchange traffic w/o money (peer-to-peer)
+- internet exchange point (IXP): physical place where ISP swap traffic
+    - e.g., AMS-IX (Amsterdam), One Wilshire (LA), LINX (London),
+        DE-IX (Frankfurt)
+    - network access point (NAP)
+    - point of presence (POP)
+- private network interconnect (PNI): 2 AS connect directly
+    - may be fast/cheap/secure
+- routing information base (RIB): BGP routing table
+- BGP UPDATE message: announce/withdraw route
+    - route = address prefix + next-hop router IP + AS path + policy
+    - BGP attribute: LocalPref, multi-exit discriminator (MED),
+        community string
+    - selection:
+        filter → highest LocalPref → shortest AS path → lowest origin ID →
+        lowest MED → lowest IGP ID → lowest ID
+    - AS path purpose: avoid loop (originally); assume fewer AS hop faster
+        - AS path prepending (duplicate AS) → traffic engineering
 
 ## *How the Great Firewall of China detects and blocks fully encrypted traffic*, Wu, Mingshi, Jackson Sippe, Danesh Sivakumar, Jack Burg, Peter Anderson, Xiaokang Wang, Kevin Bock, Amir Houmansadr, Dave Levin, Eric Wustrow
 
