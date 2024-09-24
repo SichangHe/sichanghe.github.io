@@ -4,6 +4,8 @@
 
 RTH505
 
+quiz 1 up to greedy
+
 ## theory overview
 
 NP&P → **decision problem** on `&[u1]` (language)\
@@ -234,7 +236,8 @@ $$
 - discrete derivative: $\nabla f_S(v)=f(S\cup \{v\})-f(S)$
     - how much value can $v$ add to $S$
 - complementarity: $1 + 1 > 2$
-- $f,g$ submodular $⇒ ∀\alpha\in[0,1], \alpha f+(1+\alpha)g$ submodular
+- $f,g$ submodular $⇒ ∀a,b≥0, af+bg$ submodular
+- "or" is fundamentally submodular
 
 problem
 
@@ -268,7 +271,13 @@ k[-\delta_{t+1}+\delta_t]\\
 \left(1-\frac{1}{k}\right)^{t+1}\delta_0\\=
 \left(1-\frac{1}{k}\right)^{t+1}f(S^*)≤
 e^{-\frac{t+1}{k}}f(S^*)\\
-⇒ f(S'_k)=f(S^*)-\delta_k≥\left(1-e^-\frac{k}{k}\right)f(S^*)
+⇒ f(S'_k)=f(S^*)-\delta_k≥\left(1-e^{-\frac{k}{k}}\right)f(S^*)
+$$
+
+alternative definition for submodular function (equivalent):
+
+$$
+∀A,B\subseteq V,f(A)+f(B) ≥ f(A\cap B)+f(A\cup B)
 $$
 
 ### reachability
@@ -298,9 +307,34 @@ each node has probability $p$ to influence
 - $S_t=S_{t-1}\cup N(S_{t-1})$
 - influence spread $\sigma(S)=∑_{W\in 2^V}\Pr_W[S → W]|W|$
     - generally \#P-complete
+- roughly stochastic "or" process; distribution of reachability model
 
 #### threshold model
 
 each node $v$ has threshold $\theta_v$ to be influenced by neighbor
 
 - deterministic/ stochastic by $\theta_v$, e.g., idea spreading
+
+## iterative algorithm
+
+### polynomial local search (PLS)
+
+- e.g., simplex algorithm, bubble sort
+- polynomial number of viable option at each step
+- always improve because know potential function
+- will stop because define direct acyclic graph (DAG)
+
+#### Lloyd's algorithm (K-means clustering)
+
+input: $P=\{p_1,\cdots,p_n\}\subseteq\R^d$\
+want: cluster into $P_1,\cdots,P_k$
+
+- representation (center) $c_i$ of $P_i$
+    - mean of cluster minimize variance of distance
+- algorithm:
+    1. randomly initialize $P_i^0$
+    1. calculate $c_i^t$
+    1. regroup $P_i^t$ by $\min(p_j,c_i^{t-1})$
+- Voronoi diagram: zip code
+- exponential time to converge, but polynomial time to
+    get $\frac{1}{\varepsilon}$ close
