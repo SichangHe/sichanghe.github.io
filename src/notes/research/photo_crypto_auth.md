@@ -39,9 +39,15 @@ manipulative post go viral. good for news. need to balance privacy
     Multiple Claims | Content Credentials : C2PA Technical Specification ::
     C2PA
     Specifications](https://c2pa.org/specifications/specifications/2.1/specs/C2PA_Specification.html#_multiple_claims)
+    - PhotoShop seem to keep private key on cloud, see
+        [Content credentials in
+        Photoshop](https://helpx.adobe.com/photoshop/using/content-credentials.html)
 - attack: see [Threat | C2PA Security Considerations :: C2PA
     Specifications](https://c2pa.org/specifications/specifications/1.0/security/Security_Considerations.html#_threat_spoofing_signed_c2pa_metadata_via_stolen_key)
     onward
     - steal private key/ trick claim generator/ make key → penetrate
     - security guidance: "best practice"
         - hardware security module (HSM); revoke
+    - Canon signing key leak from 2010: [Analyst Finds Flaws in
+        Canon Image Verification System |
+        PCWorld](https://www.pcworld.com/article/499056/article-2356.html)
