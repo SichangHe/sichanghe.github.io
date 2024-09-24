@@ -51,3 +51,12 @@ manipulative post go viral. good for news. need to balance privacy
     - Canon signing key leak from 2010: [Analyst Finds Flaws in
         Canon Image Verification System |
         PCWorld](https://www.pcworld.com/article/499056/article-2356.html)
+    - no transitive trust; probably whack-a-mole security patching
+- how actually done
+    - [ ] check out C2PA editing software
+    - [ ] check out C2PA image
+
+## idea
+
+- get something then reach out to C2PA people
+- RGBD camera to combat taking photo of photo
