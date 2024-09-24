@@ -35,13 +35,9 @@ manipulative post go viral. good for news. need to balance privacy
 - manifest consumer, e.g., C2PA validator
 - public key encryption (ECDSA/EdDSA/RSA) to sign claim; SHA-2 hash for
     hard binding of manifest & content
-
-points from Perplexity (not to be trusted):
-
-- encryption:
-    - private key in camera hardware security module (HSM)
-    - need public key infrastructure (PKI)
-- cryptographic assumption: encryption & hash work; secure RNG;
-    secure private key; trust certificate authority (CA for PKI)
-    - can attack from getting private key/ CA
-        - get Photoshop private key?
+- attack: see [Threat | C2PA Security Considerations :: C2PA
+    Specifications](https://c2pa.org/specifications/specifications/1.0/security/Security_Considerations.html#_threat_spoofing_signed_c2pa_metadata_via_stolen_key)
+    onward
+    - steal private key/ trick claim generator/ make key → penetrate
+    - security guidance: "best practice"
+        - hardware security module (HSM); revoke
