@@ -338,3 +338,45 @@ want: cluster into $P_1,\cdots,P_k$
 - Voronoi diagram: zip code
 - exponential time to converge, but polynomial time to
     get $\frac{1}{\varepsilon}$ close
+
+## geometric space
+
+### 1-dimensional space
+
+- nice because: can sort, minimal neighborhood, point = hyperplane
+- mean: not statistically robust; median: robust
+
+#### approximate median
+
+$(\frac{1}{2}-\varepsilon)$-median
+
+algorithm, use 2-way tree of height $h$:
+
+1. uniformly sample $H=∑_{i=0}^h3^i$ point
+1. find median of every 3 point
+1. find median of every 3 median on the last level, recursively
+
+proof:
+
+- define $\Pr_h(x)$ probability that median algorithm w/ height
+    $h$ yield result $<x$
+- $\Pr_0(x)=x$ because only 1 point
+- at least 2 point among 3 need to be $<x$ to get $<x$ median:
+
+$$
+    \Pr_{h+1}(x)={3\choose 2}\Pr_h(x)^2(1-\Pr_h(x))+{3\choose 2}\Pr_h(x)^2\\
+    ⇒ \Pr_{h+1}(x)=3\Pr_h(x)^2-2\Pr_h(x)^3
+$$
+
+- by induction,
+    $\Pr_h(\frac{1}{2}-\varepsilon)≤\frac{1}{2}-(\frac{11}{8})^h\varepsilon$ if
+    $\varepsilon≤\frac{1}{4}$
+
+### median 2-dimensional space
+
+- $\delta$-centerpoint: for any projection, at approximate median
+- theorem: $∀P\subseteq\R^d$, $∃\frac{1}{d+1}$-centerpoint
+    - intuition: need $d+1$ point to trap 1 point
+- VC dimension theory: need $\frac{d}{\varepsilon^2}$ sample to estimate well
+- $\varepsilon$-good sample $S\subset P$: $∀$ half space $H$,
+    $|\frac{|P\cap H^+|}{|P|}-\frac{|S\cap H^+|}{|S|}|≤\varepsilon$
