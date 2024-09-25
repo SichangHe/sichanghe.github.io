@@ -143,8 +143,9 @@ NABC for research: (hook), need, approach, benefit, competition
 ## *BGP Routing Policies in ISP Networks*, Matthew Caesar, Jennifer Rexford
 
 - BGP not designed to do business policy
-- many hack for business relationship & traffic engineering: Pref, MED,
-    community
+    - many hack for business relationship & traffic engineering: Pref, MED,
+        community
+    - BGP not designed to do real-time load balancing
 - manual & unscalable configuration
 - trick to enhance security, no systematic solution
 - when can avoid BGP: connect to single network, default routing
@@ -155,6 +156,7 @@ NABC for research: (hook), need, approach, benefit, competition
     - internal BGP (iBGP): share BGP policy among an AS's router
 - peering: link between router in 2 AS
     (any relationship)/ exchange traffic w/o money (peer-to-peer)
+- no valley rule
 - internet exchange point (IXP): physical place where ISP swap traffic
     - e.g., AMS-IX (Amsterdam), One Wilshire (LA), LINX (London),
         DE-IX (Frankfurt)
@@ -172,6 +174,8 @@ NABC for research: (hook), need, approach, benefit, competition
         lowest MED → lowest IGP ID → lowest ID
     - AS path purpose: avoid loop (originally); assume fewer AS hop faster
         - AS path prepending (duplicate AS) → traffic engineering
+    - equal cost multi-path (ECMP): load balancing
+        - primitive alternative: manually split prefix
 
 ## *How the Great Firewall of China detects and blocks fully encrypted traffic*, Wu, Mingshi, Jackson Sippe, Danesh Sivakumar, Jack Burg, Peter Anderson, Xiaokang Wang, Kevin Bock, Amir Houmansadr, Dave Levin, Eric Wustrow
 
@@ -205,10 +209,13 @@ NABC for research: (hook), need, approach, benefit, competition
 
 ## *Routing Stability in Congested Networks: Experimentation and Analysis*, Aman Shaikh, Anujan Varma, Lampros Kalampoukas, Rohit Dube
 
-- simulate & Markov model OSPF & BGP up-to-down & down-to-up timing when
-    overload
+- simulate & Markov model OSPF & BGP up-to-down (U2D) & down-to-up (D2U)
+    timing when overload
 - OSPF: only overload factor matter, not packet size
-- BGP: screwed by TCP reliability
+- BGP: helped&screwed by TCP reliability (slower U2D & D2U)
+- routing can fail because, in IP, they go through same link as data
+- queuing theory & Markov chain
+- both detect failure by periodically sending hello (OSPF)/ keepalive (BGP)
 
 ## *Why Is It Taking So Long to Secure Internet Routing?*, Sharon Goldberg
 
@@ -226,3 +233,5 @@ NABC for research: (hook), need, approach, benefit, competition
     - Border Gateway Protocol Security (BGPsec): sign BGP announcement
         - need online crypto → need new router
         - little useful unless all adopt
+
+## *In Search of the Elusive Ground Truth: The Internet’s AS-level Connectivity Structure*, Ricardo Oliveira, Dan Pei, Walter Willinger, Beichuan Zhang, Lixia Zhang
