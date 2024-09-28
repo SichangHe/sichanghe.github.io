@@ -7,7 +7,12 @@
     - Ping me if I do not reply in three days.
 - GitHub: Ping me for code-related discussions. I get emails.
 
-## Name pronunciation
+## Name
+
+The legal name and name used in publications is "Sichang He" (何思畅, or 何思暢).
+Steven is the preferred English name.
+
+### Name pronunciation
 
 [Google
 Translate](https://translate.google.com/?text=%E4%BD%95%E6%80%9D%E7%95%85)
