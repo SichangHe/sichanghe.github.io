@@ -52,9 +52,17 @@ manipulative post go viral. good for news. need to balance privacy
         Canon Image Verification System |
         PCWorld](https://www.pcworld.com/article/499056/article-2356.html)
     - no transitive trust; probably whack-a-mole security patching
+    - could add any author name during editing:
+        [blog](https://hackerfactor.com/blog/index.php?/archives/1044-From-VIDA-to-SEAL.html)
 - how actually done
     - [ ] check out C2PA editing software
+        - few options.
+        - Adobe is biggest; PixelStream is vaporware; Photo Mechanic is for
+            camera; Cloudinary is for design;
+            Microsoft Designer is not advertised
     - [ ] check out C2PA image
+        - [generated cat picture signed
+            later](https://fotoforensics.com/analysis.php?id=b2d0ed23d2bdf3170d8a7a8ac06617569665a2b1.5429555&fmt=orig)
 
 ## idea
 
