@@ -227,11 +227,32 @@ NABC for research: (hook), need, approach, benefit, competition
     - interception: route through eavesdropper
 - defense
     - prefix filtering
-        - problem: no incentive P2P or P2C
+        - problem: no incentive P2P or P2C or Tier-1
     - Resource Public Key Infrastructure (RPKI): sign prefix ownership
-        - prevent hijack → incentive, but not leak; can be attacked
+        - sign route origin authorization (ROA); put in
+            regional internet registry (RIR)
+        - prevent hijack → incentive, but not leak
+        - PKI can be attacked; failing check break routing
     - Border Gateway Protocol Security (BGPsec): sign BGP announcement
         - need online crypto → need new router
         - little useful unless all adopt
 
 ## *In Search of the Elusive Ground Truth: The Internet’s AS-level Connectivity Structure*, Ricardo Oliveira, Dan Pei, Walter Willinger, Beichuan Zhang, Lixia Zhang
+
+- AS topology graph: node = AS, edge = BGP session
+    - essential for understanding connectivity/routing for, e.g., simulation
+    - reveal business dispute, policy/sanction (de-peering)
+- business relationship: customer-provider (C2P), peer-to-peer (P2P),
+    sibling (same organization)
+- invisible link
+    - C2P link show up eventually in routing table
+    - P2P link may never show up
+    - hard to see on lower hierarchy; good measurement on
+        Tier-1 after a while
+    - hidden link, e.g., backup link only show up when primary fail
+- Internet flattening:
+    eyeball ISP & hypergiant & content provider peer everywhere
+- measure routing ground truth
+    - BGP table & BGP update from RouteViews, RIPE RIS
+    - topology from R&E network (research & education)
+    - private router config & syslog from Tier-1
