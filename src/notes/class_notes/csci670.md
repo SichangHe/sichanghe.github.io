@@ -137,7 +137,7 @@ traditional Kruskal
 1. sort $E$ ascending
 1. from no node, add edge from small, w/o cycle
 
-revised Kruskal
+reversed Kruskal
 
 1. sort $E$ ascending
 1. from $G$, remove edge from big, w/o disconnecting
