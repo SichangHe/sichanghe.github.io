@@ -57,12 +57,26 @@ manipulative post go viral. good for news. need to balance privacy
 - how actually done
     - [ ] check out C2PA editing software
         - few options.
-        - Adobe is biggest; PixelStream is vaporware; Photo Mechanic is for
-            camera; Cloudinary is for design;
-            Microsoft Designer is not advertised
+        - Adobe is biggest
+        - PixelStream seems vaporware. blog from CAI: [Community story:
+            Pixelstream](https://contentauthenticity.org/blog/community-story-pixelstream).
+            but dead GitHub and website
+        - Photo Mechanic is for camera
+        - Cloudinary is for design
+            - [ ] Try after sign up
+        - Microsoft Designer is not advertised
     - [ ] check out C2PA image
         - [generated cat picture signed
             later](https://fotoforensics.com/analysis.php?id=b2d0ed23d2bdf3170d8a7a8ac06617569665a2b1.5429555&fmt=orig)
+    - [ ] Check out C2PA SDK
+- [ ] Note down potential issues
+    - Camera private key leak
+    - Editing software lose track
+    - Taking photo of photo
+        - [ ] ❗Literatures? Difference between photo of photo and photo
+    - PKI: long term verification support?
+        - [ ] ❗Literatures? Trusting signed document long term
+            - [ ] Check out signed digest standard
 
 ## idea
 
