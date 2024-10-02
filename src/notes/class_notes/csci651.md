@@ -11,6 +11,10 @@ flow: same source&destination (IP&port) & protocol
 
 NABC for research: (hook), need, approach, benefit, competition
 
+dynamic host configuration protocol (DHCP): automatic IP address assignment
+
+multiprotocol label switching (MPLS): show up on BGP
+
 ## *Some Reflections on Innovation and Invention*, George H. Heilmeier
 
 - think about where field is going, not where it is
@@ -244,15 +248,44 @@ NABC for research: (hook), need, approach, benefit, competition
     - reveal business dispute, policy/sanction (de-peering)
 - business relationship: customer-provider (C2P), peer-to-peer (P2P),
     sibling (same organization)
-- invisible link
+- invisible link: never show up
+    - P2P link never show up unless either peer has vantage point
+    - Internet flattening:
+        eyeball ISP & hypergiant & content provider peer everywhere via IXP
+- hidden link: show up gradually
+    - backup link only show up when primary fail
     - C2P link show up eventually in routing table
-    - P2P link may never show up
     - hard to see on lower hierarchy; good measurement on
         Tier-1 after a while
-    - hidden link, e.g., backup link only show up when primary fail
-- Internet flattening:
-    eyeball ISP & hypergiant & content provider peer everywhere
 - measure routing ground truth
-    - BGP table & BGP update from RouteViews, RIPE RIS
+    - BGP table & BGP update from RouteViews, RIPE RIS → reliable
     - topology from R&E network (research & education)
     - private router config & syslog from Tier-1
+    - traceroute problematic: map IP to AS
+    - AS topology is never complete
+
+## *Trinocular: Understanding Internet Reliability Through Adaptive Probing*, Lin Quan, John Heidemann, Yuri Pradkin
+
+- detect Internet outage: reachability to /24 block
+    - parsimonious: adaptive probing by Bayesian inference
+        - minimize unsolicited traffic (background radiation) to < 1% by
+            sending only when necessary
+        - use block history to bootstrap
+        - belief: increase a lot when probe success, decrease a bit when fail
+            - go outside threshold → conclude
+        - availability (priori of #IP that always replied): $A(E(b))$
+            - need to probe more to be confident if low availability
+    - send at regular interval (11min) for freshness
+        - predictable: probability for correct conclusion for
+            outage is proportional outage duration when shorter than interval
+    - internet control message protocol (ICMP) echo request (ping)
+        - positive reply
+        - error reply: unreachable
+        - no reply: firewall, routing/transmission failure (outage),
+            IP not used any more, computer sleep
+        - probe whole block to distinguish outage
+    - combine multiple vantage point (VP) → avoid interference from
+        failure near VP
+- internet outage
+    - cause: cable cut (shark/backhoe), routing/DDoS attack,
+        configuration error, power outage
