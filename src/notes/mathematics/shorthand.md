@@ -11,3 +11,5 @@ thm = theorem
 WLOG = without loss of generality
 
 WTS = want to show
+
+WHP = with high probability

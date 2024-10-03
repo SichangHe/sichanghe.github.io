@@ -339,7 +339,7 @@ want: cluster into $P_1,\cdots,P_k$
 - exponential time to converge, but polynomial time to
     get $\frac{1}{\varepsilon}$ close
 
-## geometric space
+## divide and conquer in geometric space
 
 ### 1-dimensional space
 
@@ -380,3 +380,66 @@ $$
 - VC dimension theory: need $\frac{d}{\varepsilon^2}$ sample to estimate well
 - $\varepsilon$-good sample $S\subset P$: $∀$ half space $H$,
     $|\frac{|P\cap H^+|}{|P|}-\frac{|S\cap H^+|}{|S|}|≤\varepsilon$
+
+### nearest neighbor
+
+$P=\{p_1,\cdots,p_n\}\subseteq\R^d$
+
+- ball: smallest ball $B(p_i)$ that contain $k$ neighbor define "nearest"
+    - ball shape depend on metric (no necessary round)
+- k-NN graph: edge from $p_i$ and $p_j$ if $p_j$ is in $B(p_i)$
+- point location, e.g., cell phone connect to tower
+- nearest-pair problem: find nearest pair of point among set of point
+    - $n\log n$ algorithm for 2D:
+        1. divide by median on one axis to $P_L,P_R$, find nearest pair in
+            each half
+        1. take minimum distance $\delta$ for $\min(P_L,P_R)$
+        1. find nearest pair within $\delta$ around the boundary ($O(n)$)
+            \- only need to check a series of $\delta$-hypercube
+        1. take the minimum, recurs
+    - Bentley: $O(n(\log n)^{d-1})$ in d-dimension
+
+### $d$-dimensional convex geometry
+
+#### Helly's theorem (projection lemma)
+
+in $d$-dimension, with ∞ convex point set, if
+$∀d+1$ convex set $C_{\pi_1},\cdots,C_{\pi_{d+1}}$, all them intersect, then
+all ∞ of these set intersect
+
+- in 1D, 3 interval intersect pairwise ⇒ ∃1 point in all 3 interval
+- $⇒ \frac{1}{d+1}$-centerpoint [exist](#median-2-dimensional-space)
+
+#### Radon theorem: median in convex geometry definition
+
+in $d$-dimension\
+$∀d+2$ point $X=\{x_1,\cdots,x_{d+2}\}\subseteq\R^d$,\
+can be divided into 2 set $X_1,X_2$ s.t convex hull of $X_1$ and
+$X_2$ intersect
+
+- i.e. $∃X_1,X_2$ s.t.
+    - $X_1\cap X_2=∅$
+    - $X_1\cup X_2=X$
+    - $\text{convex hull}(X_1)\cap\text{convex hull}(X_2)≠∅$
+
+proof:
+
+$$
+\begin{cases}
+    ∑_{i=1}^{d+2}a_ix_i=0\\
+    ∑_{i=1}^{d+2}a_i=0
+\end{cases}
+$$
+
+has $d+1$ linear equation ⇒ has non-trivial solution, i.e., $a_i≠0$
+
+$$
+W:=∑_{i=1,a_i>0}^{i=d+2}a_i=∑_{i=1,a_i<0}^{i=d+2}(-a_i) ⇒
+\left|\frac{a_i}{W}\right|\in(0,1]\ ∀a_i\\
+⇒ p=∑_{i=1,a_i>0}^{i=d+2}\frac{a_i}{W}x_i=∑_{i=1,a_i<0}^{i=d+2}\frac{-a_i}{W}x_i
+$$
+
+is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
+
+- $⇒ ∃$ intersection point as median
+- can get $\frac{1}{d^2}$-median WHP, $O(d^3)$ time via $(d+2)$-tree
