@@ -289,3 +289,20 @@ multiprotocol label switching (MPLS): show up on BGP
 - internet outage
     - cause: cable cut (shark/backhoe), routing/DDoS attack,
         configuration error, power outage
+
+## *Analysis and Simulation of a Fair Queueing Algorithm*, Alan Demers, Srinivasan Keshavt, Scott Shenker
+
+- queueing algorithm do not control congestion, but fairness
+- allocating bandwidth & promptness & buffer space separately
+- need to work w/ different source flow control & routing
+- first-come-first-serve (FCFS): source determine bandwidth
+    - why not: cannot assume everyone cooperate
+- round-robin (Nagle): fair, but not efficient
+    - source over-sending cause long queue for them
+    - ignore packet size
+- prerequisite for fair queueing
+    - protection against ill-behaved source
+    - continuous wrt packet arrival time, on average
+- fair queueing (FQ): max-min fairness
+    - per source-destination pair (conversation)
+    - lower delay for link using less bandwidth
