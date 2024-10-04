@@ -62,8 +62,9 @@ manipulative post go viral. good for news. need to balance privacy
             Pixelstream](https://contentauthenticity.org/blog/community-story-pixelstream).
             but dead GitHub and website
         - Photo Mechanic is for camera
-        - Cloudinary is for design
-            - [ ] Try after sign up
+        - Cloudinary is for content delivery
+            - [x] Try after sign up: only preserve existing, do not add new;
+                need to [join beta program](https://cloudinary.com/contact)
         - Microsoft Designer is not advertised
     - [ ] check out C2PA image
         - [generated cat picture signed
