@@ -83,3 +83,4 @@
 # Specific
 _site
 *_files/
+!src/robots.txt
