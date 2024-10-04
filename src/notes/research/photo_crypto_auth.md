@@ -78,6 +78,11 @@ manipulative post go viral. good for news. need to balance privacy
     - PKI: long term verification support?
         - [ ] ❗Literatures? Trusting signed document long term
             - [ ] Check out signed digest standard
+- use case: prove my photo is real
+    - news, social media
+    - legal, forensic
+    - artwork
+    - research proof
 
 ## idea
 
