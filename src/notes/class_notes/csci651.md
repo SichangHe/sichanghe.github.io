@@ -290,11 +290,21 @@ multiprotocol label switching (MPLS): show up on BGP
     - cause: cable cut (shark/backhoe), routing/DDoS attack,
         configuration error, power outage
 
+## *How the Internet reacted to Covid-19 – A perspective from Facebook’s Edge Network*, Timm Böttger, Ghida Ibrahim, Ben Vallis
+
+- when lockdown hit, Internet usage grew a lot but did well
+- broadband traffic increased much more than mobile
+- massive effort to get capacity, i.e., build more broadband
+- bad session rate: indicate congestion
+    - India more affected: less infrastructure, more population
+- traffic overflow: go through transit provider instead of peer (PNI, IXP)
+
 ## *Analysis and Simulation of a Fair Queueing Algorithm*, Alan Demers, Srinivasan Keshavt, Scott Shenker
 
 - queueing algorithm do not control congestion, but fairness
 - allocating bandwidth & promptness & buffer space separately
 - need to work w/ different source flow control & routing
+- difficulty: distributed, different RTT, per-flow state
 - first-come-first-serve (FCFS): source determine bandwidth
     - why not: cannot assume everyone cooperate
 - round-robin (Nagle): fair, but not efficient
@@ -305,4 +315,11 @@ multiprotocol label switching (MPLS): show up on BGP
     - continuous wrt packet arrival time, on average
 - fair queueing (FQ): max-min fairness
     - per source-destination pair (conversation)
-    - lower delay for link using less bandwidth
+    - emulate bit-by-bit round-robin (surely fair)
+        - bit-by-bit impossible: packet size differ
+    - bidding: lower delay for link using less bandwidth
+    - preempt: stop sending current packet to send newly arrived short packet
+
+## *Controlling Queue Delay*, Kathleen Nichols, Van Jacobson
+
+## *Congestion Control for High Bandwidth-Delay Product Networks*, Dina Katabi, Mark Handley, Charlie Rohrsy
