@@ -55,7 +55,7 @@ manipulative post go viral. good for news. need to balance privacy
     - could add any author name during editing:
         [blog](https://hackerfactor.com/blog/index.php?/archives/1044-From-VIDA-to-SEAL.html)
 - how actually done
-    - [ ] check out C2PA editing software
+    - [x] check out C2PA editing software
         - few options.
         - Adobe is biggest
         - PixelStream seems vaporware. blog from CAI: [Community story:
@@ -66,7 +66,7 @@ manipulative post go viral. good for news. need to balance privacy
             - [x] Try after sign up: only preserve existing, do not add new;
                 need to [join beta program](https://cloudinary.com/contact)
         - Microsoft Designer is not advertised
-    - [ ] check out C2PA image
+    - [x] check out C2PA image
         - [generated cat picture signed
             later](https://fotoforensics.com/analysis.php?id=b2d0ed23d2bdf3170d8a7a8ac06617569665a2b1.5429555&fmt=orig)
     - [ ] Check out C2PA SDK
@@ -75,6 +75,8 @@ manipulative post go viral. good for news. need to balance privacy
     - Editing software lose track
     - Taking photo of photo
         - [ ] ❗Literatures? Difference between photo of photo and photo
+            - Bad search term.
+                Only found paper on distinguishing manipulated photo.
     - PKI: long term verification support?
         - [ ] ❗Literatures? Trusting signed document long term
             - [ ] Check out signed digest standard
