@@ -372,7 +372,7 @@ $$
     $\Pr_h(\frac{1}{2}-\varepsilon)≤\frac{1}{2}-(\frac{11}{8})^h\varepsilon$ if
     $\varepsilon≤\frac{1}{4}$
 
-### median 2-dimensional space
+### median in 2-dimensional space
 
 - $\delta$-centerpoint: for any projection, at approximate median
 - theorem: $∀P\subseteq\R^d$, $∃\frac{1}{d+1}$-centerpoint
@@ -387,7 +387,8 @@ $P=\{p_1,\cdots,p_n\}\subseteq\R^d$
 
 - ball: smallest ball $B(p_i)$ that contain $k$ neighbor define "nearest"
     - ball shape depend on metric (no necessary round)
-- k-NN graph: edge from $p_i$ and $p_j$ if $p_j$ is in $B(p_i)$
+    - locality: a point is not covered by many ball
+- k-NN graph (k-NNG): edge from $p_i$ and $p_j$ if $p_j$ is in $B(p_i)$
 - point location, e.g., cell phone connect to tower
 - nearest-pair problem: find nearest pair of point among set of point
     - $n\log n$ algorithm for 2D:
@@ -395,9 +396,67 @@ $P=\{p_1,\cdots,p_n\}\subseteq\R^d$
             each half
         1. take minimum distance $\delta$ for $\min(P_L,P_R)$
         1. find nearest pair within $\delta$ around the boundary ($O(n)$)
-            \- only need to check a series of $\delta$-hypercube
+            - only need to check a series of $\delta$-hypercube
         1. take the minimum, recurs
     - Bentley: $O(n(\log n)^{d-1})$ in d-dimension
+
+### disk packing
+
+non-overlapping 2D ball set
+
+- problem: given point, find ball containing it
+- planar graph: node for each ball, edge for intersection
+- Koebe embedding: reverse is true
+- e.g., prof Teng saw 100 lake in Minnesota (which has 10000) when
+    driving across
+
+condition: if can dig $n$ round lake on the spherical, then charge \$1 for
+each lake on tour though great circle
+
+- maximum expected charge: $2\sqrt n$
+- $n^{1-\frac{1}{d}}$ in $d$-dimension
+
+proof:
+
+1. assume the globe has radius 1
+1. each lake $i$ define a belt of width $2r_i$ perpendicular to
+    great circle passing through it ⇒ expectation of charge:
+
+    $$
+    ∑_i\frac{2\pi\cdot 2r_i}{4\pi 1^2}=∑_ir_i
+    $$
+
+1. lake area cannot exceed globe area:
+
+    $$
+    ∑_i\pi r_i^2≤4\pi 1^2 ⇒ ∑_ir_i^2≤4
+    $$
+
+1. clearly want equal $r_i=r_0$ by convexity
+
+    $$
+    ⇒ ∑_ir_i ≤ nr_0 = \sqrt n\sqrt{nr_0^2} ≤ \sqrt n\sqrt 4 = 2\sqrt n
+    $$
+
+#### kissing number
+
+max number of non-overlapping ball to touch one ball
+
+- $\tau_1=2$ in 1D, $\tau_2=6$ in 2D, $\tau_3=12$ in 3D
+- $\tau_i ≤ \frac{(3r)^d}{r^d} = 3^d$
+
+#### 3-dimensional binary search via disk
+
+- a great circle divide disk into $B^N,B^S,B^{ON}$
+- can have conformal map s.t. median of all disk center is center of globe
+
+    $$
+    ⇒ |B^N|,|B^S| ≤ \left(1-\frac{1}{d+1}\right)n = \frac{3}{4}n\\
+    |B^{ON}| ≤ 2k^{\frac{1}{d}}n^{1-\frac{1}{d}} = 2\sqrt n
+    $$
+
+    - dilate point by projecting globe to plane via tangent, scaling up on
+        plane, then projecting back
 
 ### $d$-dimensional convex geometry
 
