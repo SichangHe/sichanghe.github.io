@@ -322,4 +322,40 @@ multiprotocol label switching (MPLS): show up on BGP
 
 ## *Controlling Queue Delay*, Kathleen Nichols, Van Jacobson
 
+- problem: competition among user of network; router want high bandwidth but
+    user want low delay
+- bufferbloat: large standing queue → high delay
+    - e.g., in router before bottleneck, when
+        sending rate match bottleneck rate, may have a standing queue
+    - cause: lots of cheap memory, sustained & large traffic
+- active queue management (AQM) in router
+- random early detection (RED)
+    - impossibly hard to configure
+    - low utilization when high delay
+    - cannot adapt different bit rate
+- CoDel: new AQM to succeed RED
+    - easy to deploy
+    - track minimum queue size over 1 RTT
+        - to see if queue drain
+            (queue size < maximum transmission unit (MTU))
+        - MTU: determined by hardware
+        - RTT: just use maximum RTT on Earth (300ms)
+- packet-sojourn time: how long packet stay
+    - drop packet/ set ECN early to slow sender down
+    - good queue vs bad queue: compare to 1 RTT
+
 ## *Congestion Control for High Bandwidth-Delay Product Networks*, Dina Katabi, Mark Handley, Charlie Rohrsy
+
+- design transport protocol & router from scratch
+- router tell transport layer what to do
+    - router give positive/negative feedback ($T_p,T_n$) when sender want to
+        send more than router can handle
+    - receiver copy congestion header and send to sender
+- necessary: future link will have high BDP
+- separate efficiency controller (EC) & fairness controller (FC)
+    - do not want per-flow state in router
+        - packet tell router sender's `cwnd` & RTT
+        - $\xi_n$, etc.
+    - add EC and FC result together for feedback
+- FC: AIMD for fairness
+    - shuffle to avoid stuck in unfair steady state
