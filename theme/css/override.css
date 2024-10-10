@@ -23,3 +23,7 @@ code {
 sup {
     line-height: 0;
 }
+
+.content main:has(pre > code) {
+    max-width: fit-content;
+}
