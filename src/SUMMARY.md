@@ -85,6 +85,11 @@
         - [JSphere](notes/research/JSphere/sketch.md)
             - [Literature](notes/research/JSphere/literature.md)
             - [Execution](notes/research/JSphere/execution.md)
+            - [Analysis of
+                popular API
+                calls](notes/research/JSphere/popular_api_calls_analysis.md)
+            - [Analysis of selected YouTube scripts API
+                calls](notes/research/JSphere/youtube_scripts_api_calls_overview.md)
         - [Photo Crypto Auth](notes/research/photo_crypto_auth.md)
         - [Web Atoms](notes/research/web_atoms.md)
     - [Server](notes/server/index.md)
