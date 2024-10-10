@@ -199,9 +199,9 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
     - doing consistently better than $\log n$ of optimum is NP-hard
     - greedy cost
 
-        $$
-        c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
-        $$
+                                              $$
+                                              c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
+                                              $$
 
         - [harmonic
             series](../mathematics/sequence_series.html#harmonic-series)
@@ -393,12 +393,22 @@ $P=\{p_1,\cdots,p_n\}\subseteq\R^d$
 - nearest-pair problem: find nearest pair of point among set of point
     - $n\log n$ algorithm for 2D:
         1. divide by median on one axis to $P_L,P_R$, find nearest pair in
-            each half
+        each half
         1. take minimum distance $\delta$ for $\min(P_L,P_R)$
         1. find nearest pair within $\delta$ around the boundary ($O(n)$)
-            - only need to check a series of $\delta$-hypercube
+        \- only need to check a series of $\delta$-hypercube
         1. take the minimum, recurs
     - Bentley: $O(n(\log n)^{d-1})$ in d-dimension
+
+construct k-NNG: divide and conquer ($O(n(\log n)^2)$)
+
+1. split $P$ into $P_0,P_1$ by median from $x_1$ (could also split arbitrary)
+1. build k-NNG for each half ($O(n\log n)$)
+    - point location problem: ball too big iff point from other half in ball
+    - need binary search tree for $O(\log n)$ query
+    - max overlapping ball $≤ \tau_d k$
+1. shrink all ball in $P_0$ w/ point in $P_1$
+1. recurs
 
 ### disk packing
 
@@ -438,12 +448,12 @@ proof:
     ⇒ ∑_ir_i ≤ nr_0 = \sqrt n\sqrt{nr_0^2} ≤ \sqrt n\sqrt 4 = 2\sqrt n
     $$
 
-#### kissing number
+#### kissing number $\tau_d$
 
 max number of non-overlapping ball to touch one ball
 
 - $\tau_1=2$ in 1D, $\tau_2=6$ in 2D, $\tau_3=12$ in 3D
-- $\tau_i ≤ \frac{(3r)^d}{r^d} = 3^d$
+- $\tau_d ≤ \frac{(3r)^d}{r^d} = 3^d$
 
 #### 3-dimensional binary search via disk
 
@@ -451,12 +461,13 @@ max number of non-overlapping ball to touch one ball
 - can have conformal map s.t. median of all disk center is center of globe
 
     $$
-    ⇒ |B^N|,|B^S| ≤ \left(1-\frac{1}{d+1}\right)n = \frac{3}{4}n\\
+    ⇒ |B^N|,|B^S| ≤ \left(1-\frac{1}{d+2}\right)n = \frac{3}{4}n\\
     |B^{ON}| ≤ 2k^{\frac{1}{d}}n^{1-\frac{1}{d}} = 2\sqrt n
     $$
 
     - dilate point by projecting globe to plane via tangent, scaling up on
         plane, then projecting back
+- can build binary search tree by successive random split through median
 
 ### $d$-dimensional convex geometry
 
@@ -502,3 +513,13 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
 
 - $⇒ ∃$ intersection point as median
 - can get $\frac{1}{d^2}$-median WHP, $O(d^3)$ time via $(d+2)$-tree
+
+### Lipton-Tarjan separator theorem for planar graph
+
+#### Alan George nested dissection
+
+- numerical system beat Gaussian elimination
+    - in Gaussian elimination, removing 1 node connect all its neighbor
+- remove $O(\sqrt n)$ separator node to separate graph into 2 (or 3)
+    - eliminate think separator last, so
+        eliminating each node incur small cost
