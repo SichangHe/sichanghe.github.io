@@ -85,6 +85,7 @@
         - [JSphere](notes/research/JSphere/sketch.md)
             - [Literature](notes/research/JSphere/literature.md)
             - [Execution](notes/research/JSphere/execution.md)
+            - [Notable APIs](notes/research/JSphere/notable_apis.md)
             - [Analysis of
                 popular API
                 calls](notes/research/JSphere/popular_api_calls_analysis.md)
