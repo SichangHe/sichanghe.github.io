@@ -199,9 +199,9 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
     - doing consistently better than $\log n$ of optimum is NP-hard
     - greedy cost
 
-                                              $$
-                                              c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
-                                              $$
+                                                                  $$
+                                                                  c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
+                                                                  $$
 
         - [harmonic
             series](../mathematics/sequence_series.html#harmonic-series)
@@ -393,10 +393,10 @@ $P=\{p_1,\cdots,p_n\}\subseteq\R^d$
 - nearest-pair problem: find nearest pair of point among set of point
     - $n\log n$ algorithm for 2D:
         1. divide by median on one axis to $P_L,P_R$, find nearest pair in
-        each half
+            each half
         1. take minimum distance $\delta$ for $\min(P_L,P_R)$
         1. find nearest pair within $\delta$ around the boundary ($O(n)$)
-        \- only need to check a series of $\delta$-hypercube
+            \- only need to check a series of $\delta$-hypercube
         1. take the minimum, recurs
     - Bentley: $O(n(\log n)^{d-1})$ in d-dimension
 
@@ -523,3 +523,60 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
 - remove $O(\sqrt n)$ separator node to separate graph into 2 (or 3)
     - eliminate think separator last, so
         eliminating each node incur small cost
+
+## fast Fourier transform (FFT)
+
+### integer multiplication
+
+- classic algorithm: $O(n^2)$—not scalable
+    - $2n$ output size
+- can divide each number into high and low half
+
+    $$
+    x\cdot y = x_H\cdot y_H\cdot 2^n +
+    (x_H\cdot y_L+x_L\cdot y_H)\cdot 2^{\frac{n}{2}}+x_L\cdot y_L
+    $$
+
+    - $T(n)=4T(n/2)+O(n) = O(n^2)$
+- can save one smaller multiplication by:
+
+    $$
+    x_H\cdot y_L+x_L\cdot y_H=(x_H+x_L)(y_H+y_L)-x_H\cdot y_H-x_L\cdot y_L
+    $$
+
+    - $T(n)=3T(n/2)+O(n) = O(n^{\log_23}) = O(n^{1.58})$
+- FFT make multiplication $O(n\log n)$, nearly as easy as addition
+
+### polynomial multiplication
+
+- number are special case of polynomial
+- better than number because continuous
+- convolution:
+    $f(z)g(z)=(∑_{i=0}^{n}a_iz^i)(∑_{i=0}^{n}b_iz^i)$ is sequence of
+    diagonal sum in $AB^T$
+- polynomial $f(z)=∑_{i=0}^{n}a_iz^i$ can be recovered by any
+    $n+1$ distinct data point
+    - realizable data
+    - recover from $(x_1,\ell_1),\cdots,(x_L,\ell_L)$ by solving
+
+        $$
+        \begin{bmatrix}
+            1 & x_1 & x_1^2 & \cdots & x_1^n\\
+            1 & x_2 & x_2^2 & \cdots & x_2^n\\
+            \vdots & \vdots & \vdots & \ddots & \vdots\\
+            1 & x_L & x_L^2 & \cdots & x_L^n
+        \end{bmatrix}\begin{bmatrix}
+            a_0\\ a_1\\ \vdots\\ a_n
+        \end{bmatrix} = \begin{bmatrix}
+            \ell_1\\ \ell_2\\ \vdots\\ \ell_L
+        \end{bmatrix}
+        $$
+
+    - easy to multiple $(x_i,f(x_i))$ and $(x_i,g(x_i))$: $O(1)$
+    - need $2n+1$ data point to recover $f\cdot g$
+    - active learning: can pick nice data point as wished
+- unit root in complex space: $x^n=1$
+    - divide unit circle evenly ⇒ all in form $e^{i\theta}$
+    - ⇒ sample $z_j=w_n^j:=e^{i\frac{j\pi}{n}}$ for $j=0,\cdots,2n-1$
+    - can save computation by $w_n^{2j}=(w_n^j)^{2}$, etc.
+        ⇒ calculate all in $O(n\log n)$
