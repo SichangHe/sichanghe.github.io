@@ -160,7 +160,7 @@ multiprotocol label switching (MPLS): show up on BGP
     - internal BGP (iBGP): share BGP policy among an AS's router
 - peering: link between router in 2 AS
     (any relationship)/ exchange traffic w/o money (peer-to-peer)
-- no valley rule
+- no-valley rule (valley-free routing)
 - internet exchange point (IXP): physical place where ISP swap traffic
     - e.g., AMS-IX (Amsterdam), One Wilshire (LA), LINX (London),
         DE-IX (Frankfurt)
@@ -347,7 +347,7 @@ multiprotocol label switching (MPLS): show up on BGP
 ## *Congestion Control for High Bandwidth-Delay Product Networks*, Dina Katabi, Mark Handley, Charlie Rohrsy
 
 - design transport protocol & router from scratch
-- router tell transport layer what to do
+- explicit feedback: router tell transport layer what to do
     - router give positive/negative feedback ($T_p,T_n$) when sender want to
         send more than router can handle
     - receiver copy congestion header and send to sender
@@ -359,3 +359,33 @@ multiprotocol label switching (MPLS): show up on BGP
     - add EC and FC result together for feedback
 - FC: AIMD for fairness
     - shuffle to avoid stuck in unfair steady state
+- very good performance in simulation
+    - few drop
+    - high throughput, fast convergence
+        - TCP probe slowly, expensive drop
+    - low delay
+- cannot deploy: firewall, modify router & kernel
+- use case: (between) data center, satellite, CDN/WAN
+    - doable in software-defined network (SDN)
+
+## *Directed Diffusion: A Scalable and Robust Communication Paradigm for Sensor Networks*, Chalermek Intanagonwiwat, Ramesh Govindan, Deborah Estrin
+
+- wireless/mobile network tricky
+    - device move
+    - bit rate & bandwidth change
+    - less capacity
+    - difficult security, jamming
+    - different MAC protocol
+    - power constraint
+- sensor network: cheap & numerous—how to communicate
+- protocol for sensor network
+    - peer-to-peer: no IP address, use attribute/ named data
+    - where to send: interest, gradient → flood/multicast
+        - respond w/ data if we have
+        - reinforcement: become faster by sending via preferred path
+    - process in the network: reduce traffic, save energy (battery)
+- compared to BGP: smaller scale, more dynamic, on-demand (not ahead of time)
+
+## *An In-depth Study of LTE: Effect of Network Protocol and Application Behavior on Performance*, Junxian Huang, Feng Qian, Yihua Guo, Yuanyuan Zhou, Subhabrata Sen, Qiang Xu, Z. Morley Mao, Oliver Spatscheck
+
+## *A Variegated Look at 5G in the Wild: Performance, Power, and QoE Implications*, Arvind Narayanan, Xumiao Zhang, Ruiyang Zhu, Ahmad Hassan, Shuowei Jin, Xiao Zhu, Xiaoxuan Zhang, Denis Rybkin, Zhengxuan Yang, Z. Morley Mao, Feng Qian, Zhi-Li Zhang
