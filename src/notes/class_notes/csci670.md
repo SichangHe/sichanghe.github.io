@@ -199,9 +199,9 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
     - doing consistently better than $\log n$ of optimum is NP-hard
     - greedy cost
 
-                                                                  $$
-                                                                  c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
-                                                                  $$
+                                                                                              $$
+                                                                                              c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
+                                                                                              $$
 
         - [harmonic
             series](../mathematics/sequence_series.html#harmonic-series)
@@ -580,3 +580,44 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
     - ⇒ sample $z_j=w_n^j:=e^{i\frac{j\pi}{n}}$ for $j=0,\cdots,2n-1$
     - can save computation by $w_n^{2j}=(w_n^j)^{2}$, etc.
         ⇒ calculate all in $O(n\log n)$
+
+## linear programming (LP)
+
+- maximization standard form: maximize, $m$≤ constraint, non-negative entry
+    - e.g., use limited material to make product for profit
+    - minimization standard form: opposite
+- polyhedron $P$
+    - polytope (bounded)
+    - vertex: ∃ vector, stay in if added, not in if subtracted
+    - face
+- optimal solution: convex (a face), tight (constraint reach equality)
+    - feasible solution
+    - DNE when unbounded/ infeasible
+    - fundamental theorem of linear programming: optimal solution, if exist,
+        contain vertex
+        - ⇒ if optimal solution exist, exist optimal solution w/ at most
+            $m$ non-zero variable
+    - complementary slackness: $x_i>0⇒y_i=0$, only a few constraint active
+- dual LP
+    - variable become constraint, each row of
+        constraint become 1 dual variable $y_i$
+    - persuade not to make product by offering to
+        buy raw material at higher price
+    - essentially finding upper bound for value
+    - finding the force on a ball in force field in a cage when
+        it is stable against corner, then try to find path to
+        origin w/ least work
+    - involution
+    - lenient primal form ⇒ tight dual form, vice versa
+- weak duality theorem: primal value $a^Tx$ ≤ $b^Ty$ dual value
+    - looking for optimum from opposite direction
+    - one is unbounded $\Leftrightarrow$ the other is infeasible
+    - optimal if $a^Tx=b^Ty$
+- strong duality theorem: if either feasible and bounded, then
+    the other is feasible and bounded and optimal value equal
+    - hold for LP, not for general convex optimization
+- method
+    - simplex method (George Dantzig): polynomial in practice
+    - duality (John von Neumann)
+    - engineering method (polynomial): ellipsoid method,
+        interior point method
