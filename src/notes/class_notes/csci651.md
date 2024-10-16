@@ -382,10 +382,46 @@ multiprotocol label switching (MPLS): show up on BGP
     - peer-to-peer: no IP address, use attribute/ named data
     - where to send: interest, gradient → flood/multicast
         - respond w/ data if we have
-        - reinforcement: become faster by sending via preferred path
-    - process in the network: reduce traffic, save energy (battery)
-- compared to BGP: smaller scale, more dynamic, on-demand (not ahead of time)
+        - reinforcement: become faster by sending via low-delay path
+        - negative reinforcement: shut down slow path if have multiple path
+    - process in the network to reduce traffic
+        - constrain flooding (expensive) by location
+        - reinforce single path
+        - duplicate suppression respond w/ cache
+        - → save energy (battery)
+        - do better than omniscient multicast (idealized)
+        - lose advantage if listening is more expensive than sending
+            (802.11 radio vs TDMA-MAC)
+- compared to in-network processing in Internet
+    - different from BGP: smaller scale, more dynamic, on-demand
+        (not ahead of time)
+    - firewall
+    - 5G edge computing
+    - not much, bc not collaborative
+- naming in sensor net: attribute-based, key-value pair
+    - not IP bc dynamic—do not know who to talk to
+    - application level info (location, sensor type) in network to optimize
+    - not end-to-end bc trust participant, care only about data
 
 ## *An In-depth Study of LTE: Effect of Network Protocol and Application Behavior on Performance*, Junxian Huang, Feng Qian, Yihua Guo, Yuanyuan Zhou, Subhabrata Sen, Qiang Xu, Z. Morley Mao, Oliver Spatscheck
+
+- inefficient 4G application
+    - video streaming: periodic short request burst, lose throughput
+        - battery inefficient: turn off and on radio
+- protocol inefficiency
+    - high BDP: TCP receive window too small
+        - low bandwidth utilization
+    - HTTP keep TCP connection alive: waste battery
+        - need to wake up radio when closing connection
+- LTE different from wired: radio sleep, battery
+    - 400ms delay when radio wake up
+- performance enhancing proxy (PEP): compression, caching,
+    split TCP connection into 2
+- long lingering flow: last payload byte to flow end similar to
+    TCP flow duration
+    - many longer than LTE tail time (radio sleep timeout)
+- main latency source: wired part of network
+    - cause: big queue (buffer bloat)
+    - passive bandwidth estimation in middle of network
 
 ## *A Variegated Look at 5G in the Wild: Performance, Power, and QoE Implications*, Arvind Narayanan, Xumiao Zhang, Ruiyang Zhu, Ahmad Hassan, Shuowei Jin, Xiao Zhu, Xiaoxuan Zhang, Denis Rybkin, Zhengxuan Yang, Z. Morley Mao, Feng Qian, Zhi-Li Zhang
