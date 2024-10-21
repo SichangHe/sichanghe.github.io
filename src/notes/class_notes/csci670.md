@@ -199,9 +199,9 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
     - doing consistently better than $\log n$ of optimum is NP-hard
     - greedy cost
 
-                                                                                              $$
-                                                                                              c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
-                                                                                              $$
+                                                                                                            $$
+                                                                                                            c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
+                                                                                                            $$
 
         - [harmonic
             series](../mathematics/sequence_series.html#harmonic-series)
@@ -578,8 +578,22 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
 - unit root in complex space: $x^n=1$
     - divide unit circle evenly ⇒ all in form $e^{i\theta}$
     - ⇒ sample $z_j=w_n^j:=e^{i\frac{j\pi}{n}}$ for $j=0,\cdots,2n-1$
+    - $∀w≠1,w^n=1,$
+
+        $$
+        ∑_{i=0}^{n-1}w^i=\frac{1-w^n}{1-w}=0
+        $$
+
     - can save computation by $w_n^{2j}=(w_n^j)^{2}$, etc.
-        ⇒ calculate all in $O(n\log n)$
+        - divide recursively:
+
+            $$
+            f(x)=∑_{j=0}^{n-1}a_jx^j=
+            ∑_{j=0}^{\frac{n}{2}}a_{2j}(x^2)^j+
+            x∑_{j=0}^{\frac{n}{2}}a_{2j+1}(x^2)^j
+            $$
+
+        - ⇒ calculate all in $O(n\log n)$
 
 ## linear programming (LP)
 
@@ -621,3 +635,22 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
     - duality (John von Neumann)
     - engineering method (polynomial): ellipsoid method,
         interior point method
+
+## randomization
+
+- Andy Yao's theorem: random data + deterministic algorithm (algorithm min)
+    is the same as deterministic data + random algorithm (data min)
+    - min of max = max of min
+    - convert worst case analysis to average case analysis
+
+## network flow
+
+- designed to attack USSR supply chain
+- Ford-Fulkerson max flow: send most from source to sink
+    - simple greedy not optimal: find path w/ max min flow recursively
+    - optimal: include reverse flow from chosen flow in residual graph
+        - proof by duality
+- min cut: sum of weight of edge that separate source and sink
+    - max flow ≤ min cut
+    - for each forward cut, ∃ flow that saturate it
+    - each backward cut is empty
