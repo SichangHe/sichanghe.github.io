@@ -425,3 +425,42 @@ multiprotocol label switching (MPLS): show up on BGP
     - passive bandwidth estimation in middle of network
 
 ## *A Variegated Look at 5G in the Wild: Performance, Power, and QoE Implications*, Arvind Narayanan, Xumiao Zhang, Ruiyang Zhu, Ahmad Hassan, Shuowei Jin, Xiao Zhu, Xiaoxuan Zhang, Denis Rybkin, Zhengxuan Yang, Z. Morley Mao, Feng Qian, Zhi-Li Zhang
+
+- 5G vs 4G
+    - millimeter wave (mmWave) frequency: many bandwidth, high throughput
+        - shorter range, more interference
+    - new radio transition state
+    - edge computing
+- deployment: stand alone (SA) vs non-stand alone (NSA)
+    - use 4G signaling & control plane vs use 5G
+- challenges: interference from Internet measurement, difference in device
+    - complex & proprietary infrastructure
+- latency: linear to device-server distance
+    - mmWave slightly better than low-band & 4G
+    - NSA worse than SA
+- throughput: drop by distance if single connection bc CUBIC
+    - stay fast if multiple connection
+    - NSA worse than SA
+    - uplink much slower than downlink (2x or 10x)
+- handoff: switch radio while driving
+    - vertical vs horizontal: different technology vs same
+    - many handoff, many vertical
+- idle transition: latency spike when radio sleep
+    - mmWave high energy cost
+- quality of experience (QoE)
+    - video streaming: more stall & less throughput on 5G
+    - web browsing: lower latency on 5G, but cost more energy
+        - not worth it for battery if not need higher speed
+
+## *On the Self-Similar Nature of Ethernet Traffic*, Will E. Leland, Murad S. Taqqu, Walter Willinger, Daniel V. Wilson
+
+- network traffic self-similar (fractal) on different time scale
+    - Poisson model not fit, not busty at large time scale
+    - bursty, packet dependent on each other
+- better model
+    - only parameter: hurst value $H$
+    - what is self-similarity
+- who care: understand real-world performance when designing network
+    - how big buffer: BDP
+
+## *Self-Similarity in World Wide Web Traffic: Evidence and Possible Causes*, Mark E. Crovella, Azer Bestavros
