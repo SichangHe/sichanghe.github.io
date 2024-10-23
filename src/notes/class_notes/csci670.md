@@ -199,9 +199,9 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
     - doing consistently better than $\log n$ of optimum is NP-hard
     - greedy cost
 
-                                                                                                            $$
-                                                                                                            c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
-                                                                                                            $$
+                                                                                                                      $$
+                                                                                                                      c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
+                                                                                                                      $$
 
         - [harmonic
             series](../mathematics/sequence_series.html#harmonic-series)
@@ -636,13 +636,6 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
     - engineering method (polynomial): ellipsoid method,
         interior point method
 
-## randomization
-
-- Andy Yao's theorem: random data + deterministic algorithm (algorithm min)
-    is the same as deterministic data + random algorithm (data min)
-    - min of max = max of min
-    - convert worst case analysis to average case analysis
-
 ## network flow
 
 - designed to attack USSR supply chain
@@ -654,3 +647,35 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
     - max flow ≤ min cut
     - for each forward cut, ∃ flow that saturate it
     - each backward cut is empty
+
+## randomization
+
+- Andy Yao's theorem: random data + deterministic algorithm (algorithm min)
+    is the same as deterministic data + random algorithm (data min)
+    - min of max = max of min
+    - convert worst case analysis to average case analysis
+
+### Markov chain
+
+- Markovian matrix $M$: [stochastic matrix](stats303.html#markov-chain)
+    - doubly-stochastic matrix: both row & column sum to one
+    - spectral radius: largest dilation by vector
+
+#### PageRank
+
+- network centrality
+
+$O(|V|+|E|)$ approximation:
+
+$$
+P=\alpha\frac{\vec 1}{n}+(1-\alpha)M^TP\\
+⇒ (I-\alpha M^T)P=\alpha\frac{\vec 1}{n}\\
+⇒ P=(I-(1-\alpha) M^T)^{-1}\alpha\frac{\vec 1}{n}=
+\left(∑_{t=0}^{\infty}\alpha((1-\alpha) M^T)^t\right)\frac{\vec 1}{n}\\
+∑_{i=0}^{\infty}\alpha(1-\alpha)^t=1
+$$
+
+$⇒ (M^T)^t\frac{\vec 1}{n}$: start random and walk $t$ round
+
+- significant PageRank problem: want all page w/ PageRank $≥\epsilon$
+    - approximately find page w/ PageRank $≥\frac{\epsilon}{2}$
