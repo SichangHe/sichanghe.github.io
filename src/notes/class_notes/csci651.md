@@ -454,13 +454,38 @@ multiprotocol label switching (MPLS): show up on BGP
 
 ## *On the Self-Similar Nature of Ethernet Traffic*, Will E. Leland, Murad S. Taqqu, Walter Willinger, Daniel V. Wilson
 
+<!-- TODO: clean up -->
 - network traffic self-similar (fractal) on different time scale
     - Poisson model not fit, not busty at large time scale
     - bursty, packet dependent on each other
+- superposition: many sending in this distribution
+    - web traffic more heavy-tailed
 - better model
-    - only parameter: hurst value $H$
+    - only parameter: Hurst parameter $H\in(\frac{1}{2},1)$
     - what is self-similarity
 - who care: understand real-world performance when designing network
     - how big buffer: BDP
+- macroscopic traffic analysis
+- burstiness: time scale matter
+    - very different mean & variance on different time scale
+    - not smooth
+- significance: people go at the same time, burst sometimes long
+    - need over-provision, will fail
+- random process
+    - CDF $a(t)$, PDF $A(t)$
+    - memoryless: exponential distribution (Poission process)
+        - smooth when large scale → not accurate model
+- long-range dependence: current value matter long into future
+    - self-similar: variance decrease very slowly as time scale grow
+    - auto-correlation: how much I look like myself
+        - convolution of $f(t)$ and $f(t+\tau)$
+        - large auto-correlation → self-similar
+    - show up on time-variance, range/std, periodigram
 
 ## *Self-Similarity in World Wide Web Traffic: Evidence and Possible Causes*, Mark E. Crovella, Azer Bestavros
+
+- why self-similar: heavy-tailed Pareto distribution
+    - linear in log-log CDF plot
+    - transfer time
+    - distribution of file size
+        - few very large file

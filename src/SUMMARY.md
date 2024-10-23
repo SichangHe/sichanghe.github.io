@@ -99,6 +99,7 @@
     - [Soft Skill](notes/soft/index.md)
         - [Art and Business](notes/soft/art_business.md)
         - [Management](notes/soft/management.md)
+        - [Paper Presentation](notes/soft/paper_presentation.md)
     - [Storage](notes/storage/index.md)
         - [GitHub](notes/storage/github.md)
     - [USC Living](notes/usc/index.md)
