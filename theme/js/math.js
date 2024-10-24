@@ -1,4 +1,6 @@
 const sidebar_toc = document.querySelector("#sidebar > div.toc");
+const storageKey = "lastY";
+let lastY = localStorage.getItem(storageKey) || 0;
 
 (function() {
     const sidebar = document.querySelector("#sidebar > div.sidebar-scrollbox:not(.toc)");
@@ -16,6 +18,12 @@ const sidebar_toc = document.querySelector("#sidebar > div.toc");
         }
     });
 })();
+
+function resumeScroll() {
+    if (lastY) {
+        window.scrollTo(0, lastY);
+    }
+}
 
 function fix_toc_n_add_math_copying() {
     const toc = document.querySelector("#content > main > ul");
@@ -61,8 +69,20 @@ function fix_toc_n_add_math_copying() {
             () => navigator.clipboard.writeText(data.value),
         );
     }
+    resumeScroll();
     return true;
 }
+
+function saveScroll() {
+    const diff = Math.abs(lastY - window.scrollY);
+    if (diff > 100) {
+        localStorage.setItem(storageKey, window.scrollY);
+        lastY = window.scrollY;
+    }
+}
+
 if (!fix_toc_n_add_math_copying()) {
     document.addEventListener("DOMContentLoaded", fix_toc_n_add_math_copying);
 }
+document.addEventListener("load", resumeScroll);
+document.addEventListener("scrollend", saveScroll);
