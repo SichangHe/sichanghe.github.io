@@ -19,6 +19,9 @@ const sidebar_toc = document.querySelector("#sidebar > div.toc");
 
 function fix_toc_n_add_math_copying() {
     const toc = document.querySelector("#content > main > ul");
+    if (!toc) {
+        return false;
+    }
     sidebar_toc.replaceChildren(toc);
 
     const toc_anchors = toc.querySelectorAll("a");
@@ -58,6 +61,8 @@ function fix_toc_n_add_math_copying() {
             () => navigator.clipboard.writeText(data.value),
         );
     }
+    return true;
 }
-fix_toc_n_add_math_copying();
-document.addEventListener("load", fix_toc_n_add_math_copying);
+if (!fix_toc_n_add_math_copying()) {
+    document.addEventListener("DOMContentLoaded", fix_toc_n_add_math_copying);
+}

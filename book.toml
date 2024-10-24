@@ -15,7 +15,7 @@ build-dir = "_site"
 
 [output.html]
 additional-css = ["theme/css/override.css"]
-additional-js = ["theme/js/math.js"]
+additional-js = ["theme/js/math.js", "theme/js/keyboard.js"]
 git-repository-url = "https://github.com/SichangHe/sichanghe.github.io"
 smart-punctuation = true
 

@@ -1,6 +1,6 @@
-let a = ["a"];
+let a = [];
 for (; ;) {
-    let b = ["a"];
+    let b = [String.new("a")];
     a.push(b);
     a = b;
 }

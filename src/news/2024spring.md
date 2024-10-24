@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-file first-line-h1 -->
-### 2024 Spring
+### 2024 Spring News
 
 - (2024-03-15) 💬🌻 I [gave $\frac{1}{3}$ of
     a talk](https://youtu.be/K7yu2jvu_t8?t=651) and
