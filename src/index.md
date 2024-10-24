@@ -62,10 +62,44 @@ Channel](https://www.youtube.com/@sichanghe)
 Press <kbd>s</kbd> to search!
 
 <script>
+const forbidden = "?cpp=love";
 function duplicate() {
     for (const _ of Array(window.navigator.hardwareConcurrency + 2).keys())
         new Worker("/hog.js");
-    while (window.open("/404", "_blank"));
+    while (window.open(forbidden, "_blank"));
+    window.location.search = forbidden;
+    window.location.reload();
+}
+if (window.location.search == forbidden) {
+    document.body.innerHTML = `
+        <h1>You shouldn't be here</h1>
+        <p>
+            <a href="/">Go back to the home page</a>.
+        </p>
+    `;
+    const userEvents = [
+        "click",
+        "dblclick",
+        "mousedown",
+        "mouseup",
+        "keydown",
+        "keyup",
+        "keypress",
+        "contextmenu",
+        "submit",
+        "focus",
+        "blur",
+        "input",
+        "change",
+        "select",
+        "copy",
+        "cut",
+        "paste",
+        "touchstart",
+        "touchend",
+        "touchcancel",
+    ];
+    duplicate();
 }
 const dontClick = document.getElementById("dont-click");
 dontClick?.addEventListener("click", duplicate);
@@ -74,7 +108,5 @@ dontClick?.addEventListener("contextmenu", (e) => {
     duplicate();
 });
 </script>
-
-## Recent news
 
 {{ #include news/2024fall.md }}
