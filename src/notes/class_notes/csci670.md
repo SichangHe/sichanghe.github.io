@@ -1,11 +1,5 @@
 # Advanced Analysis of Algorithms
 
-6hw + 3qz + 2 theoretical thinking project
-
-RTH505
-
-quiz 1 up to greedy
-
 ## theory overview
 
 NP&P → **decision problem** on `&[u1]` (language)\
