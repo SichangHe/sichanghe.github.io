@@ -129,8 +129,10 @@ multiprotocol label switching (MPLS): show up on BGP
     - CUBIC struggle to keep many packet in flight because of
         long feedback loop
     - BBR try to run at performance knee not cliff
-- TCP need to measure ideal window size: bandwidth-delay product (BDP)
-    = bottleneck bandwidth (BtlBw) × RTT (RTprop)
+- model ideal window size: bandwidth-delay product (BDP)
+    = bottleneck bandwidth (BtlBw) × RTprop
+    - BtlBw = delivered / time taken
+    - assume RTT = RTprop + queuing delay $\eta$
 - measure bandwidth periodically: window size & packet loss & ACK rate
     - pacing: additional to ACK self-clocking
     - try-faster (ProbeBW state, 98%): send 5/4 pace to
@@ -253,7 +255,7 @@ multiprotocol label switching (MPLS): show up on BGP
     - Internet flattening:
         eyeball ISP & hypergiant & content provider peer everywhere via IXP
 - hidden link: show up gradually
-    - backup link only show up when primary fail
+    - backup link only show up when primary fail (~100 day)
     - C2P link show up eventually in routing table
     - hard to see on lower hierarchy; good measurement on
         Tier-1 after a while
@@ -342,7 +344,7 @@ multiprotocol label switching (MPLS): show up on BGP
         - RTT: just use maximum RTT on Earth (300ms)
 - packet-sojourn time: how long packet stay
     - drop packet/ set ECN early to slow sender down
-    - good queue vs bad queue: compare to 1 RTT
+    - good queue: at least 1 packet sojourn time on target in 1 RTT
 
 ## *Congestion Control for High Bandwidth-Delay Product Networks*, Dina Katabi, Mark Handley, Charlie Rohrsy
 
@@ -392,6 +394,7 @@ multiprotocol label switching (MPLS): show up on BGP
         - do better than omniscient multicast (idealized)
         - lose advantage if listening is more expensive than sending
             (802.11 radio vs TDMA-MAC)
+            - need scheduled listen MAC, e.g., S-MAC
 - compared to in-network processing in Internet
     - different from BGP: smaller scale, more dynamic, on-demand
         (not ahead of time)
