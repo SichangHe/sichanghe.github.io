@@ -492,3 +492,17 @@ multiprotocol label switching (MPLS): show up on BGP
     - transfer time
     - distribution of file size
         - few very large file
+- active/inactive regime: two separate power law
+    - disagreed and modeled w/ Poisson
+
+## *Internet Inter-Domain Traffic*, Craig Labovitz, Scott Iekel-Johnson, Danny McPherson, Jon Oberheide, Farnam Jahanian
+
+- flattened Internet: more CDN, hypergiant, eyeball ISP, P2P go down
+    - data centralization: cloud, big player dominate
+        - lots of content
+    - Google shifted to own data center & bought YouTube
+    - Comcast merged w/ other & started CDN
+    - P2P made downloading easier & got better at hiding bc legal
+- data: security appliance in ISP
+    - many big ISP
+    - cannot share proprietary
