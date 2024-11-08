@@ -110,3 +110,5 @@ dontClick?.addEventListener("contextmenu", (e) => {
 </script>
 
 {{ #include news/2024fall.md }}
+
+To comment on the news, please [go to the news page](/news/2024fall.html).
