@@ -71,6 +71,7 @@ manipulative post go viral. good for news. need to balance privacy
             later](https://fotoforensics.com/analysis.php?id=b2d0ed23d2bdf3170d8a7a8ac06617569665a2b1.5429555&fmt=orig)
     - [ ] Check out C2PA SDK
 - [ ] Note down potential issues
+    - Removing metadata rids hard binding. Soft binding improvements?
     - Camera private key leak
     - Editing software lose track
     - Taking photo of photo
