@@ -27,3 +27,8 @@ sup {
 .content main:has(pre > code) {
     max-width: fit-content;
 }
+
+.content a.active {
+    color: var(--sidebar-active);
+    text-decoration: underline;
+}
