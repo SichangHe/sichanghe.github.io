@@ -91,6 +91,7 @@
                 calls](notes/research/JSphere/popular_api_calls_analysis.md)
             - [Analysis of selected YouTube scripts API
                 calls](notes/research/JSphere/youtube_scripts_api_calls_overview.md)
+            - [The `eval` Trick](notes/research/JSphere/eval_trick.md)
         - [Photo Crypto Auth](notes/research/photo_crypto_auth.md)
         - [Web Atoms](notes/research/web_atoms.md)
     - [Server](notes/server/index.md)
