@@ -506,3 +506,43 @@ multiprotocol label switching (MPLS): show up on BGP
 - data: security appliance in ISP
     - many big ISP
     - cannot share proprietary
+
+## *VL2: A Scalable and Flexible Data Center Network*, Albert Greenberg, Srikanth Kandula, David A. Maltz, James R. Hamilton, Changhoon Kim, Parveen Patel, Navendu Jain, Parantap Lahiri, Sudipta Sengupta
+
+- build data center for cloud provider
+- goal for future
+    - agile: run any app on any server ⇒ high utilization
+    - performance isolation:
+        no CPU/network interference between app (virtualization, VLAN);
+        QoS ⇒ security, keep abstraction in service level agreement (SLA)
+    - flat addressing (LAN, layer-2 semantics): address isolation,
+        migrate w/o changing IP, cheap switch
+        - layer-2.5 shim
+    - hardware: cheap, commodity
+- topology: valiant load balancing (VLB), equal cost multi-path (ECMP),
+    - high utilization in core network even when router fail
+    - Clos: full bisection bandwidth
+- network switch: top-of-rack (ToR), aggregating switch
+    (join different rack), core switch
+- power, cooling
+- provide abstraction: infinite compute capacity, isolated resource,
+    flat network (LAN)
+- traffic analysis
+    - most flow small; most byte in big flow
+    - somewhat random by design
+
+## *Engineering Egress with Edge Fabric Steering Oceans of Content to the World*, Brandon Schlinker, Hyojeong Kim, Timothy Cui, Ethan Katz-Bassett, Harsha V. Madhyastha, Italo Cunha, James Quinn, Saif Hasan, Petr Lapukhov, Hongyi Zeng
+
+- BGP not ideal for large content provider:
+    not capacity-aware/performance-aware
+- Edge Fabric solution: forecast how much traffic will go through each link
+    - look at latency
+    - run in each point of presence (PoP)
+- components: aggregation switch (ASW), peer router (PR, core router)
+- capacity-aware
+    - goal: shift traffic from overloaded peering
+    - algorithm: compute alternative path for overloaded
+    - output: override BGP route w/ LocalPref&MED
+- performance-aware
+    - goal: shift traffic to low-latency path
+    - algorithm: reroute if alternative path has lower latency
