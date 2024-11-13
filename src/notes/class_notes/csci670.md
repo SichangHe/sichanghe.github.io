@@ -193,9 +193,9 @@ given $G=(V,E,d)$ w/ metric $d$, $k$, want $(S_1,\cdots,S_k)$ s.t.
     - doing consistently better than $\log n$ of optimum is NP-hard
     - greedy cost
 
-                                                                                                                      $$
-                                                                                                                      c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
-                                                                                                                      $$
+                                                                                                                                $$
+                                                                                                                                c_G(i_t)=\frac{w_{i_t}}{|S_{i_t}\cap U_t|} ≤ H(|S_{j_t}|)w_{j_t}
+                                                                                                                                $$
 
         - [harmonic
             series](../mathematics/sequence_series.html#harmonic-series)
@@ -651,7 +651,8 @@ is both in convex hull of $\{x_i|a_i>0\}$ and $\{x_i|a_i<0\}$
 
 ### Markov chain
 
-- Markovian matrix $M$: [stochastic matrix](stats303.html#markov-chain)
+- Markovian matrix $M=D^{-1}A$:
+    [stochastic matrix](stats303.html#markov-chain)
     - doubly-stochastic matrix: both row & column sum to one
     - spectral radius: largest dilation by vector
 
@@ -673,3 +674,33 @@ $⇒ (M^T)^t\frac{\vec 1}{n}$: start random and walk $t$ round
 
 - significant PageRank problem: want all page w/ PageRank $≥\epsilon$
     - approximately find page w/ PageRank $≥\frac{\epsilon}{2}$
+
+## spectral graph theory
+
+- simplest: undirected graph
+- spectral graph partitioning: heuristics
+
+### Laplacian matrix $L=D-A$
+
+- $D$: degree matrix, diagonal, $D_{ii}$ is degree of node $i$
+- $A$: adjacency matrix
+- $L\vec 1=\vec 0,\vec 1L=\vec 0$
+- additive decomposition: can add edge one at a time and sum the $L$,
+    $L=∑_{i,j\in E}L_{ij}$
+- $\vec x^TL\vec x=∑_{(i,j)\in E}(x_i-x_j)^2$
+    - ⇒ $L$ is positive semi-definite
+    - eigenvalue $\lambda_1=0$
+    - Fiedler: $\lambda_2=0 \Leftrightarrow$ graph connected
+
+### min cut
+
+- convention: $|S|≤|\bar S|$
+- conductance $\frac{|cut(S,\bar S)|}{|S|}$
+    - want min conductance → NP-hard
+- algorithm
+    1. find Fiedler vector $\vec u_2$ (corresponding to $\lambda_2$)
+    1. sort $\vec u_2$ entries ascending $z_{\pi(i)}$
+        - $z_{\pi(1)}≤\cdots≤0≤z_{\pi(n)}$
+    1. $V:=\{\pi(i)\}$
+        - only need to check cut between $\pi(i)$ and $\pi(i+1)$
+        - dimensionality reduction $2^n → n-1$
