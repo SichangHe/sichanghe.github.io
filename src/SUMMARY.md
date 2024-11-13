@@ -157,3 +157,4 @@ the "right button" would not work. -->
                 Web](diary/spring_2024_ideas/rethinking_the_web.md)
             - [Rust](diary/spring_2024_ideas/rust.md)
         - [Spring 2024 Activities](diary/spring_2024_activities/index.md)
+        - [IMC '24](diary/imc_24.md)
