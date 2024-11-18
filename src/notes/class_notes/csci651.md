@@ -1,7 +1,5 @@
 # Advanced Computer Networking
 
-40 paper + 20hr+ programming project + similar research project
-
 ## Misc
 
 flow: same source&destination (IP&port) & protocol
@@ -535,6 +533,7 @@ multiprotocol label switching (MPLS): show up on BGP
 
 - BGP not ideal for large content provider:
     not capacity-aware/performance-aware
+- Facebook want high QoE, low cost
 - Edge Fabric solution: forecast how much traffic will go through each link
     - look at latency
     - run in each point of presence (PoP)
@@ -546,3 +545,37 @@ multiprotocol label switching (MPLS): show up on BGP
 - performance-aware
     - goal: shift traffic to low-latency path
     - algorithm: reroute if alternative path has lower latency
+        - split some traffic to test
+    - use tunneling to reroute
+- central load balancer: use DNS to map user to PoP
+
+## *B4: Experience with a Globally-Deployed Software Defined WAN*, Sushant Jain, Alok Kumar, Subhasree Mandal, Joon Ong, Leon Poutievski, Arjun Singh, Subbaiah Venkata, Jim Wanderer, Junlan Zhou, Min Zhu, Jonathan Zolla, Urs Hölzle, Stephen Stuart, Amin Vahdat
+
+- goal: avoid over-provisioning WAN (30%), high utilization (90%)
+    - avoid loss/congestion; handle link failure
+    - high priority user traffic
+    - low cost: commodity switch & router
+    - support traffic growth
+- solution: SDN (OpenFlow)
+    - traffic engineering (TE)
+    - replicated centralized controller: efficient, optimal
+    - per data center OpenFlow controller (OFC) & redundant routing (Quagga)
+        - fault tolerance
+        - app control
+- why Google can do
+    - control everything: traffic generation, access router, backbone
+    - classify source: low priority for
+        latency-insensitive large data transfer
+- assumption:
+    - elastic bandwidth (different priority), app control
+    - few dozen data center: limited scale
+- custom per-site software
+    - customer OFC: replicated, synchronized w/ Paxos
+    - custom routing w/ Quagga & BGP/ISIS
+- group app into flow group (FG): better QoS
+- TE map FG to tunnel group (TG): reduce #group for scalability
+    - rate limit incoming traffic to router bandwidth: avoid drop in
+        backbone; predictable traffic
+- TE fail open: still can send traffic
+- no drop for high priority traffic; drop low priority
+- failure if many thing go wrong
