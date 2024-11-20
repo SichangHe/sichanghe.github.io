@@ -579,3 +579,39 @@ multiprotocol label switching (MPLS): show up on BGP
 - TE fail open: still can send traffic
 - no drop for high priority traffic; drop low priority
 - failure if many thing go wrong
+
+## *Networking Named Content*, Van Jacobson, Diana K. Smetters, James D. Thornton, Michael Plass, Nick Briggs, Rebecca Braynard
+
+- content-centric network (CCN): content as primitive, not identity, host,
+    etc.
+    - protocol: request w/ interest, respond w/ data
+    - support multicast by default
+    - hierarchical, variable-length name instead of IP address
+- content-based security: SHA256 checksum on content, not host
+    - pertinence: answer to what question; in the name
+    - provenance: who say it; by public key signature
+- efficiency: get from nearest router cache
+    - larger header for interest → 20% overhead;
+        higher performance w/ more packet in flight
+    - fast handover
+- reliability: multiple source; data provenance/origination/integrity from
+    security
+    - receiver responsible to clarify
+- stability: interest/data ACK-clock
+- CCN naming: no location, say what content is
+    - hash, signed, maybe human-readable (meaningful)
+- is routing protocol: send interest around; interest data 1:1
+    - window of interest; pipelining
+- DDoS protection: caching; aggregation; block those w/ random interest
+- policy & filtering (content firewall): signature-based
+
+## *Fundamental Design Issues for the Future Internet*, Scott Shenker
+
+- revisit Internet architecture in 1995
+- can we do QoS? yes
+    - app do not have real QoS
+    - QoS give guarantee of performance
+- how to do QoS
+- goal of Internet is user satisfaction: utility & efficacy
+    - utility: often step function
+- best effort: maybe do not want guarantee; avoid high cost
