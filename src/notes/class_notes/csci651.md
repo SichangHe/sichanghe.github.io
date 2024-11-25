@@ -613,5 +613,52 @@ multiprotocol label switching (MPLS): show up on BGP
     - QoS give guarantee of performance
 - how to do QoS
 - goal of Internet is user satisfaction: utility & efficacy
-    - utility: often step function
+    - utility: often step function: linear, fixed-rate, elastic,
+        semi-adaptive
 - best effort: maybe do not want guarantee; avoid high cost
+- inelastic traffic, all or nothing: maybe QoS
+    - admission control: block some flow when congestion
+        - make sense if utility convex near origin
+- solution choice; service model: what app ask from network
+    - overprovisioning: way enough bandwidth so no worry, but waste money
+    - integrated service (IntServ), QoS: reserve bandwidth, but
+        expensive router
+    - differentiated service: prioritize
+    - user adapt
+    - parallel network (e.g., cellular + WiFi): fault tolerance,
+        optimize each, but double cost
+- service model may have QoE, but may be abused, depended; app need to
+    know what it want
+- network neutrality: should ISP have special deal w/ content provider to
+    prioritize
+    - "zero rating": content provider pay for user data
+
+## *Click Trajectories: End-to-End Analysis of the Spam Value Chain*, Kirill Levchenko, Andreas Pitsillidis, Neha Chachra, Brandon Enright, Mark Felegyhazi, Chris Grier, Tristan Halvorson, Chris Kanich, Christian Kreibich, He Liu, Damon McCoy, Nicholas Weaver, Vern Paxson, Geoffrey M. Voelker, Stefan Savage
+
+- characterize spam
+    - domain: sell similar product
+    - ordering product, where from, how paid
+- motivation: spam bad, shady product, high cost anti-spam
+- bottleneck in spam
+- observation: global, big business, speciality
+- spam franchise:
+    1. send many "attractive" message, (botnet)
+    1. bulletproof hosting service
+    1. payment
+    1. deliver product
+- data collection: parse spam, crawl website, cluster & tag content,
+    buy product
+- most spamming service use only a few DNS server/registrar/AS, but hard to
+    take down all
+- 95% service use a few bank: good target bc bank slow
+
+## *Investigating Large Scale HTTPS Interception in Kazakhstan*, Ram Sundara Raman, Leonid Evdokimov, Eric Wurstrow, J. Alex Halderman, Roya Ensafi
+
+- nation-state man-in-the-middle intercept encrypted HTTPS
+- can intercept TLS a.l.a.
+    let people use your key by controlling certificate authority (CA)
+- measure: visit sensitive website from VP within Kazakhstan
+    - probe from outside: visit forbidden website at HTTPS server in
+        Kazakhstan; work bc Kazakhstan not care direction
+
+## *Tor: The Second-Generation Onion Router*, Roger Dingledine, Nick Mathewson, Paul Syverson
