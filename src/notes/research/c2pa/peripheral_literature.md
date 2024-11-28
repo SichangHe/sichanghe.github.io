@@ -21,6 +21,22 @@
 - [Partnership on AI Unveils New Case Studies from Supporters of
     Synthetic Media Framework: Meta, Microsoft, Thorn, and
     Truepic](https://partnershiponai.org/nov-2024-synthetic-media-case-studies-announcement/)
+    - [*How Truepic used disclosures to
+        help authenticate cultural heritage imagery in
+        conflict
+        zones*](https://partnershiponai.org/truepic-framework-case-study/):
+        Project Providence: gather evidence from image of attacks to Ukraine to
+        prove war crime
+        - rotate certificate frequently "for granular invalidation"
+        - hardware-backed keystore
+        - opt-in for various metadata for creator for privacy & safety
+        - importance to stay secure & credible
+        - future: election monitoring
+        - acknowledge C2PA need to be widely adopted & problem of
+            metadata removal
+        - polities to come in place to mandate disclosure in AI output
+        - need to display info w/o clicking
+        - tiered AI content labeling, e.g., AI-generated vs AI-modified
 
 ## Fake image detection
 
