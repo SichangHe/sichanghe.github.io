@@ -6,12 +6,15 @@
 
 problem:
 
-- ~~what about photo without signature?~~don't care
+- ~~what about photo without signature?~~ don't care
 
 steps:
 
 1. What in photo from C2PA camera?
 1. Post-processing on social media site preserve signature?
+    - X remove C2PA
+    - [LinkedIn display C2PA
+        info](https://www.linkedin.com/help/linkedin/answer/a6282984)
 1. Extract info from posts' text
 
 ### *P3: Toward Privacy-Preserving Photo Sharing*, Moo-Ryong Ra, Ramesh Govindan, Antonio Ortega, NSDI 13
@@ -58,7 +61,7 @@ manipulative post go viral. good for news. need to balance privacy
         - Adobe is biggest
         - PixelStream seems vaporware. blog from CAI: [Community story:
             Pixelstream](https://contentauthenticity.org/blog/community-story-pixelstream).
-            but dead GitHub and website
+            but dead GitHub and website; cannot register
         - Photo Mechanic is for camera
         - Cloudinary is for content delivery
             - [x] Try after sign up: only preserve existing, do not add new;
@@ -84,6 +87,7 @@ manipulative post go viral. good for news. need to balance privacy
     - legal, forensic
     - artwork
     - research proof
+- [ ] figure out concrete use case
 
 ## idea
 

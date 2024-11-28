@@ -95,6 +95,8 @@
             - [Classification
                 Results](notes/research/JSphere/classification_results.md)
         - [Photo Crypto Auth](notes/research/photo_crypto_auth.md)
+            - [Peripheral
+                Literature](notes/research/c2pa/peripheral_literature.md)
         - [Web Atoms](notes/research/web_atoms.md)
     - [Server](notes/server/index.md)
         - [NFS](notes/server/nfs.md)
