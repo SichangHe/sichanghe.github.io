@@ -27,7 +27,8 @@
         zones*](https://partnershiponai.org/truepic-framework-case-study/):
         Project Providence: gather evidence from image of attacks to Ukraine to
         prove war crime
-        - rotate certificate frequently "for granular invalidation"
+        - rotate certificate daily "for granular invalidation"
+            - [ ] how??
         - hardware-backed keystore
         - opt-in for various metadata for creator for privacy & safety
         - importance to stay secure & credible
@@ -37,6 +38,12 @@
         - polities to come in place to mandate disclosure in AI output
         - need to display info w/o clicking
         - tiered AI content labeling, e.g., AI-generated vs AI-modified
+    - [*How Microsoft and LinkedIn gave users detailed context about media on
+        the professional networking
+        platform*](https://partnershiponai.org/microsoft-framework-case-study/):
+        - LinkedIn shows "CR" watermark by images with C2PA
+        - use "synthetic media detectors" when C2PA is missing
+        - technically not verify, but know signer
 
 ## Fake image detection
 
