@@ -95,6 +95,7 @@
             - [Classification
                 Results](notes/research/JSphere/classification_results.md)
         - [Photo Crypto Auth](notes/research/photo_crypto_auth.md)
+            - [C2PA-Related Papers](notes/research/c2pa/papers.md)
             - [Peripheral
                 Literature](notes/research/c2pa/peripheral_literature.md)
         - [Web Atoms](notes/research/web_atoms.md)

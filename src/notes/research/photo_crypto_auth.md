@@ -14,7 +14,8 @@ steps:
 1. Post-processing on social media site preserve signature?
     - X remove C2PA
     - [LinkedIn display C2PA
-        info](https://www.linkedin.com/help/linkedin/answer/a6282984)
+        info](https://www.linkedin.com/help/linkedin/answer/a6282984).
+        probably the only platform, because of Microsoft
 1. Extract info from posts' text
 
 ## literature
@@ -68,7 +69,7 @@ manipulative post go viral. good for news. need to balance privacy
         - Cloudinary is for content delivery
             - [x] Try after sign up: only preserve existing, do not add new;
                 need to [join beta program](https://cloudinary.com/contact)
-        - Microsoft Designer is not advertised
+        - Microsoft Designer is not advertised; MS Paint
     - [x] check out C2PA image
         - [generated cat picture signed
             later](https://fotoforensics.com/analysis.php?id=b2d0ed23d2bdf3170d8a7a8ac06617569665a2b1.5429555&fmt=orig)
