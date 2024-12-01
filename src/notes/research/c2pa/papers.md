@@ -16,6 +16,14 @@
     training](https://openfuture.eu/wp-content/uploads/2023/09/Best-_practices_for_optout_ML_training.pdf),
     Paul Keller, Zuzanna Warso, Open Future policy brief, 2023
     - C2PA has entry to opt out of ML training
+- [AI-Generated Images as
+    an Emergent Record
+    Format](https://ieeexplore.ieee.org/abstract/document/10386946),
+    Jessica Bushey, IEEE BigData, 2023
+    - literature review by computational archival science (CAS) people,
+        ITrustAI
+    - GenAI literature in medicine & law enforcement & journalism
+    - copyright attribution; public trust in democracy
 - ⭐ [Solutions to Deepfakes: Can Camera Hardware, Cryptography, and
     Deep Learning Verify Real Images?](https://arxiv.org/abs/2407.04169),
     Alexander Vilesov, Yuan Tian, Nader Sehatbakhsh, Achuta Kadambi, arXiV,
@@ -103,7 +111,11 @@
     An Introduction To The Upcoming IsoJpegTrust
     Standard](https://ieeexplore.ieee.org/abstract/document/10353009),
     Jiayun Mo, Xin Kang, Ziyuan Hu, Haibo Zhou, Tieyan Li, Xiaojun Gu,
-    IEEE COMSTD, 2023
+    IEEE COMSTD, 2023;
+    [An International Standard For Assessing Trustworthiness In
+    Media](https://ieeexplore.ieee.org/abstract/document/10647585),
+    Deepayan Bhowmik, Sabrina Caldwell, Jaime Delgado, Touradj Ebrahimi,
+    Nikolaos Fotos, Xiaojun Gu, IEEE ICIP, 2024
     - ISO JPEG Trust: "trust profile" vs "trust credential"
         question-answer validation
     - emphasis on trustworthiness
@@ -113,3 +125,10 @@
     James Rainey, Mohamed Elawady, Charith Abhayartne, Deepayan Bhowmik,
     IEEE DSP, 2023
     - blockchain to detect media manipulation
+
+## Adoption of C2PA-like standards
+
+- [Is The Web HTTP/2 Yet?](https://davidtnaylor.com/http2-pam16.pdf),
+    Matteo Varvello, Kyle Schomp, David Naylor, Jeremy Blackburn,
+    Alessandro Finamore, Konstantina Papagiannaki, PAM, 2016
+    - crawl & track HTTP 2 usage

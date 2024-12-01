@@ -45,6 +45,17 @@
         - use "synthetic media detectors" when C2PA is missing
         - technically not verify, but know signer
 
+## C2PA implementation
+
+- Truepic
+    - claims to do [software-based on-device signing securely on
+        smartphone](https://www.truepic.com/c2pa/capture)
+        - secure boot & verify device integrity
+        - hardware-backed keystore on phone
+        - no implementation details
+    - [need to sign up](https://www.truepic.com/signup);
+        [ludicrous pricing ($499+/mon)](https://www.truepic.com/pricing/c2pa)
+
 ## Fake image detection
 
 - [Can people identify original and manipulated photos of
