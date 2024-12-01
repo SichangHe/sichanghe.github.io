@@ -31,6 +31,17 @@
             sparse polarization-sensitive pixel sampling
         - useless if object is already flat
     - new file format for "real" images
+- [Global content revocation on the internet: a case study in
+    technology ecosystem
+    transformation](https://dl.acm.org/doi/abs/10.1145/3563766.3564099),
+    Narek Galstyan, James McCauley, Hany Farid, Sylvia Ratnasamy,
+    Scott Shenker, HotNets, 2022
+    - wild new idea to rethink content revocation
+- [Deepfake Fraud Detection: Safeguarding Trust in
+    Generative
+    Ai](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5031627),
+    Felipe Romero-Moreno, SSRN Preprint, 2024
+    - from law person perspective, C2PA and other tools to combat deepfake
 
 ## Enhance or extend C2PA
 
