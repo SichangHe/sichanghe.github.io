@@ -660,5 +660,9 @@ multiprotocol label switching (MPLS): show up on BGP
 - measure: visit sensitive website from VP within Kazakhstan
     - probe from outside: visit forbidden website at HTTPS server in
         Kazakhstan; work bc Kazakhstan not care direction
+- interception trigger: targeted domain in TLS Server Name Indication (SNI)
+    header
+- countermeasure: TLS 1.3 encrypt SNI, server or
+    browser reject government certificate
 
 ## *Tor: The Second-Generation Onion Router*, Roger Dingledine, Nick Mathewson, Paul Syverson
