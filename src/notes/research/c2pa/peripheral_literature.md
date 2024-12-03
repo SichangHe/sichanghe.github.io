@@ -55,6 +55,17 @@
         - no implementation details
     - [need to sign up](https://www.truepic.com/signup);
         [ludicrous pricing ($499+/mon)](https://www.truepic.com/pricing/c2pa)
+- [Panel 1: AI and Image Authenticity](https://youtu.be/4q7iBkRLCMQ),
+    Leonard Rosenthol, Dennis Walker, Neal Krawetz, Bofu Chen, Adobe, C2PA,
+    Camera Bits, FotoForensics, Numbers Protocol, IPTC, 2024
+    - browser extension to find C2PA data from
+        embedded watermark & fingerprint (photo search)
+        - disclosed watermark can be easily erased
+        - fingerprint can be forged
+    - metadata for "do not train"
+    - implementation bug: demo changing date w/o invalidating C2PA
+    - C2PA agnostic: work w/ cloud & blockchain
+    - trust list will include anyone w/ okay implementation
 
 ## Fake image detection
 
