@@ -85,12 +85,23 @@ manipulative post go viral. good for news. need to balance privacy
     - PKI: long term verification support?
         - [ ] ❗Literatures? Trusting signed document long term
             - [ ] Check out signed digest standard
+    - [Vilesov arXiv paper](c2pa/papers.html#introduce-c2pa)
 - use case: prove my photo is real
     - news, social media
     - legal, forensic
     - artwork
     - research proof
 - [ ] figure out concrete use case
+- vision: want C2PA be like TLS
+    - need phone to do C2PA; doable similarly to Apple Pay
+    - provider companies charging high margin hinder adoption
+        - **build open-source solution for mobile?**
+- enhancement
+    - privacy by choosing metadata to include
+    - prove one image is manipulation of another
+- surrounding
+    - blockchain
+    - opting out of ML training
 
 ## idea
 
