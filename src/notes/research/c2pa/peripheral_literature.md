@@ -44,6 +44,14 @@
         - LinkedIn shows "CR" watermark by images with C2PA
         - use "synthetic media detectors" when C2PA is missing
         - technically not verify, but know signer
+- [Use of C2PA in real-world workflows](https://youtu.be/KdbP0xcWcoM),
+    Brendan Quinn, Jay Li, David Beaulieu, Jonathan Dupras, Nigel Earnshaw,
+    Charlie Halford, Gavin Peacock, Pia Blumenthal,
+    IPTC Photo Metadata Conference 2022
+    - Azure Media Services use C2PA during video encoding
+        (unclear what exactly)
+    - CBC/Radio-Canada use C2PA for news
+    - BBC JavaScript library to edit/show C2PA
 
 ## C2PA implementation
 
