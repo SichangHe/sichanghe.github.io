@@ -678,7 +678,8 @@ $⇒ (M^T)^t\frac{\vec 1}{n}$: start random and walk $t$ round
 ## spectral graph theory
 
 - simplest: undirected graph
-- spectral graph partitioning: heuristics
+- spectral graph partitioning/ clustering: heuristics
+- reduce search space from $2^n$ w/ Laplacian matrix
 
 ### Laplacian matrix $L=D-A$
 
@@ -690,15 +691,19 @@ $⇒ (M^T)^t\frac{\vec 1}{n}$: start random and walk $t$ round
 - $\vec x^TL\vec x=∑_{(i,j)\in E}(x_i-x_j)^2$
     - ⇒ $L$ is positive semi-definite
     - eigenvalue $\lambda_1=0$
-    - Fiedler: $\lambda_2=0 \Leftrightarrow$ graph connected
+    - Fiedler: $\lambda_2=0 \Leftrightarrow$ graph disconnected
 
 ### min cut
 
 - convention: $|S|≤|\bar S|$
-- conductance $\frac{|cut(S,\bar S)|}{|S|}$
+- quality of cut: conductance $\frac{|cut(S,\bar S)|}{|S|}$
     - want min conductance → NP-hard
+    - Cheeger's inequality:
+        $\frac{\lambda_2}{2}≤\min_S\Phi(S)≤\sqrt{2\lambda_2}$
 - algorithm
-    1. find Fiedler vector $\vec u_2$ (corresponding to $\lambda_2$)
+    1. find Fiedler vector $\vec u_2$ (eigenvector corresponding to
+        $\lambda_2$)
+        - $\vec u_2\perp \vec u_1=\vec 1$
     1. sort $\vec u_2$ entries ascending $z_{\pi(i)}$
         - $z_{\pi(1)}≤\cdots≤0≤z_{\pi(n)}$
     1. $V:=\{\pi(i)\}$
