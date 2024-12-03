@@ -93,6 +93,7 @@ manipulative post go viral. good for news. need to balance privacy
     - research proof
 - [ ] figure out concrete use case
 - vision: want C2PA be like TLS
+    - "three-legged approach": C2PA, watermark, fingerprint
     - need phone to do C2PA; doable similarly to Apple Pay
     - provider companies charging high margin hinder adoption
         - **build open-source solution for mobile?**
