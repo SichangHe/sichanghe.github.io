@@ -13,6 +13,12 @@ steps:
 1. What in photo from C2PA camera?
 1. Post-processing on social media site preserve signature?
     - X remove C2PA
+        - [Twitter joined C2PA](https://c2pa.org/post/twitter_pr/) in
+            2021 but [X quit
+            C2PA](https://ipcloseup.com/2024/05/21/tiktok-and-google-join-adobe-led-initiative-that-makes-image-and-content-changes-transparent/)
+            in 2024 after Elon Musk
+    - Facebook remove C2PA
+        - although Meta is in C2PA steering committee
     - [LinkedIn display C2PA
         info](https://www.linkedin.com/help/linkedin/answer/a6282984).
         probably the only platform, because of Microsoft

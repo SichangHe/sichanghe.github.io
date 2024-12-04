@@ -665,4 +665,38 @@ multiprotocol label switching (MPLS): show up on BGP
 - countermeasure: TLS 1.3 encrypt SNI, server or
     browser reject government certificate
 
+## *The Menlo Report: Ethical Principles Guiding Information and Communication Technology Research*, David Dittrich, Erin Kenneally
+
+- information and communications technology research (ICTR)
+    - Belmont principles: respect for person (informed consent),
+        beneficence (min harm max benefit), justice (unbiased subject)
+    - respect law & public interest
+- current institutional review board (IRB) should apply to ICTR
+- respect for person hard bc networking is indirect & large-scale
+- beneficence hard bc hard to predict outcome
+- justice hard bc lack control of demography
+
 ## *Tor: The Second-Generation Onion Router*, Roger Dingledine, Nick Mathewson, Paul Syverson
+
+- deployable low-latency anonymous web browsing
+    - circuit: reduce latency, avoid congestion
+    - relatively simple
+    - want anonymity among crowd
+    - TCP-only bc mainly for web browsing
+- non-goal: peer-to-peer, end-to-end attack security, sender anonymity from
+    receiver, conceal user identity (steganographic)
+- anonymity: receiver & proxy do not know who sender is
+    - proxy only know previous & next hop
+    - perfect forward secrecy: nested encryption so that
+        each hop can only decode enough for next hop
+    - backward anonymity: remap IP
+- threat: proxy compromised, traffic visible, timing (not addressed)
+- onion proxy (OP): first hop, know sender & see content
+- onion router (OR): middle hop
+- exit node (EN): last hop, know sender & see content
+- circuit: ??
+- incremental circuit building: establish encrypted tunnel to next hop from
+    public key encryption, one by one
+- application-level anonymity: need separate proxy (e.g., Privoxy)
+- rendezvous point of location-hidden service
+    - directory of server for Tor path to server

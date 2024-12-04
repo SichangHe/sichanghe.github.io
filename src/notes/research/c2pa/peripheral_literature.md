@@ -28,7 +28,6 @@
         Project Providence: gather evidence from image of attacks to Ukraine to
         prove war crime
         - rotate certificate daily "for granular invalidation"
-            - [ ] how??
         - hardware-backed keystore
         - opt-in for various metadata for creator for privacy & safety
         - importance to stay secure & credible
