@@ -24,6 +24,11 @@
         ITrustAI
     - GenAI literature in medicine & law enforcement & journalism
     - copyright attribution; public trust in democracy
+- [Confidence-Building Measures for Artificial Intelligence:
+    Workshop Proceedings](https://arxiv.org/abs/2308.00862), Sarah Shoker,
+    Andrew Reddie, et al., arXiv, 2023
+    - foundational models can be used for insecure things
+    - watermarking has tempering and adoption problems
 - ⭐ [Solutions to Deepfakes: Can Camera Hardware, Cryptography, and
     Deep Learning Verify Real Images?](https://arxiv.org/abs/2407.04169),
     Alexander Vilesov, Yuan Tian, Nader Sehatbakhsh, Achuta Kadambi, arXiV,
