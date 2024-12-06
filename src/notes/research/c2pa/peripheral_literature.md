@@ -51,6 +51,10 @@
         (unclear what exactly)
     - CBC/Radio-Canada use C2PA for news
     - BBC JavaScript library to edit/show C2PA
+- [Ongoing by
+    Tim Bray ·
+    C2PA](https://www.tbray.org/ongoing/When/202x/2023/10/28/C2PA-Workflows)
+    - public education of C2PA & attack & defense
 
 ## C2PA implementation
 
@@ -73,6 +77,22 @@
     - implementation bug: demo changing date w/o invalidating C2PA
     - C2PA agnostic: work w/ cloud & blockchain
     - trust list will include anyone w/ okay implementation
+- [How Click Camera App Brings Content Credentials to
+    Phones](https://contentauthenticity.org/blog/community-story-click)
+    - [Click](https://clickapp.com/), 👍 free C2PA camera (photo + video)
+        app on Android & iOS
+    - [proprietary](https://clickapp.com/eula) app and ContentSign
+    - 👎 require Internet to sign, store on Ethereum blockchain
+    - 👎 no privacy: no way to choose what metadata to include;
+        associate public key; everything on chain
+        - counter argument: no association between person & public key;
+            can use approximate location
+    - no defense against photo of photo
+    - ❗ can [post C2PA photo to public channel](https://clickapp.com/zk/c)
+        ⇒ reservoir of C2PA photo
+    - ❗ mention difficulty of scaling PKI & help w/ blockchain
+        - lie? blockchain reference does not imply same level of trust as
+            certificate
 
 ## Fake image detection
 
@@ -91,3 +111,12 @@
     media](https://ieeexplore.ieee.org/abstract/document/6997500), IEEE CNS,
     2014
     - hide message in pixels, survive image manipulation
+
+## Phone keystore security
+
+- phones are claimed to have hardware-backed keystore considered secure for
+    private key
+    [Android Keystore system  |  Security  |  Android
+    Developers](https://developer.android.com/privacy-and-security/keystore)
+    & [Keychain data protection - Apple
+    Support](https://support.apple.com/guide/security/keychain-data-protection-secb0694df1a/web)
