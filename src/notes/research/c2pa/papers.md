@@ -90,6 +90,11 @@
     zkSNARKs](https://eprint.iacr.org/2024/1063), Stefan Dziembowski,
     Shahriar Ebrahimi, Parisa Hassanizadeh, Cryptology ePrint Archive, 2024
     - zero-knowledge proof that an image is transformation of another
+- [To Authenticity, and Beyond!
+    Building Safe and Fair Generative AI Upon the Three Pillars of
+    Provenance](https://personalpages.surrey.ac.uk/j.collomosse/pubs/Collomosse-IEEECGA-2024.pdf),
+    John Collomosse, Andy Parsons, IEEE CGA, 2024
+    - three pillars: metadata, fingerprint, watermark
 
 ## Applying C2PA
 

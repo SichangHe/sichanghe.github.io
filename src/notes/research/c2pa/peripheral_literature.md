@@ -55,6 +55,11 @@
     Tim Bray ·
     C2PA](https://www.tbray.org/ongoing/When/202x/2023/10/28/C2PA-Workflows)
     - public education of C2PA & attack & defense
+- [How Wrapt’s end-to-end platform protects creative workflows with
+    Content
+    Credentials](https://contentauthenticity.org/blog/community-story-wrapt)
+    - platform to sign C2PA for content creator for
+        intellectual right & charge them
 
 ## C2PA implementation
 
@@ -91,8 +96,13 @@
     - ❗ can [post C2PA photo to public channel](https://clickapp.com/zk/c)
         ⇒ reservoir of C2PA photo
     - ❗ mention difficulty of scaling PKI & help w/ blockchain
-        - lie? blockchain reference does not imply same level of trust as
+        - lie?
+            blockchain reference does not imply same level of trust as
             certificate
+- [Three pillars of provenance that make up durable Content
+    Credentials](https://contentauthenticity.org/blog/three-pillars-of-provenance)
+    - [TrustMark](https://github.com/adobe/trustmark):
+        open-source watermark & removal (useless?)
 
 ## Fake image detection
 
