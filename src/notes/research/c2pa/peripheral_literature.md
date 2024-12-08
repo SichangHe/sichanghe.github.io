@@ -103,6 +103,34 @@
     Credentials](https://contentauthenticity.org/blog/three-pillars-of-provenance)
     - [TrustMark](https://github.com/adobe/trustmark):
         open-source watermark & removal (useless?)
+- [simple-c2pa](https://gitlab.com/guardianproject/proofmode/simple-c2pa)
+    - [SimpleC2PA Audio
+        Credentials](https://ngengesenior.medium.com/adding-content-credentials-c2pa-to-audio-recordings-using-simplec2pa-3ce64033a93c)
+    - [do not use hardware protection for private
+        key](https://gitlab.com/guardianproject/proofmode/simple-c2pa/-/blob/58c8e77fb34a53b428961faaa7e03f0ea09ae8d7/src/certificates.rs#L17)
+    - self-signed certificate
+- [Capture Cam app](https://docs.captureapp.xyz/faq/general) by Numbers
+    - claim to preserve ownership by C2PA + blockchain + NFT
+    - 👎 sign C2PA after capture after request
+    - 👎 no privacy: no way to choose what metadata to include;
+        can see all photo of user if know one
+    - 👎 require Internet to sign; store on blockchain (their own)
+    - inactive
+        [open-source Android app
+        repo](https://github.com/numbersprotocol/starling-capture)
+- [Starling Lab Framework](https://www.starlinglab.org/)
+    - Stanford EE & USC Shoah Foundation
+    - [blog from Filecoin Foundation for
+        the Decentralized
+        Web](https://ffdweb.org/blog/the-starling-lab-framework/)
+        - claim to use Numbers Protocol
+    - [Inside Starling Lab, a moonshot project to
+        preserve the world's most important information - Fast
+        Company](https://www.fastcompany.com/90731729/inside-starling-lab-a-moonshot-project-to-preserve-the-worlds-most-important-information)
+        - claim blockchain is for preserving data
+        - [78 Days archive](https://www.starlinglab.org/78daysarchive/)
+            photo claim to use "Numbers Protocol" but show no C2PA in "verify"
+    - all verify link broken
 
 ## Fake image detection
 
