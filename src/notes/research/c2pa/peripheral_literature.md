@@ -99,6 +99,7 @@
         - lie?
             blockchain reference does not imply same level of trust as
             certificate
+        - mention joining C2PA working group to integrate blockchain
 - [Three pillars of provenance that make up durable Content
     Credentials](https://contentauthenticity.org/blog/three-pillars-of-provenance)
     - [TrustMark](https://github.com/adobe/trustmark):
@@ -111,13 +112,19 @@
     - self-signed certificate
 - [Capture Cam app](https://docs.captureapp.xyz/faq/general) by Numbers
     - claim to preserve ownership by C2PA + blockchain + NFT
+    - company seems hacked up
     - 👎 sign C2PA after capture after request
     - 👎 no privacy: no way to choose what metadata to include;
         can see all photo of user if know one
     - 👎 require Internet to sign; store on blockchain (their own)
-    - inactive
-        [open-source Android app
-        repo](https://github.com/numbersprotocol/starling-capture)
+        - [probably sign on
+            server bc reuse pubkey](camera_apps.html#signers-and-public-key)
+    - active
+        [open-source Capacitor
+        app](https://github.com/numbersprotocol/capture-lite)
+        - inactive
+            [open-source Android app
+            repo](https://github.com/numbersprotocol/starling-capture)
 - [Starling Lab Framework](https://www.starlinglab.org/)
     - Stanford EE & USC Shoah Foundation
     - [blog from Filecoin Foundation for

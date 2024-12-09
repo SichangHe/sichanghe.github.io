@@ -98,6 +98,8 @@
             - [C2PA-Related Papers](notes/research/c2pa/papers.md)
             - [Peripheral
                 Literature](notes/research/c2pa/peripheral_literature.md)
+            - [C2PA Camera Apps
+                Investigation](notes/research/c2pa/camera_apps.md)
         - [Web Atoms](notes/research/web_atoms.md)
     - [Server](notes/server/index.md)
         - [NFS](notes/server/nfs.md)
