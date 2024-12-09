@@ -110,6 +110,18 @@ manipulative post go viral. good for news. need to balance privacy
     - blockchain
     - opting out of ML training
 
+## PKI & blockchain
+
+- cannot scale to 1 certificate per user per period?
+    - share pubkey, sign on server
+    - blockchain reference instead of certificate, but not same level of
+        trust
+- current pubkey may eventually be cracked
+    - quantum algorithm crack RSA & ECC in quadratic time;
+        quantum-safe crypto not adopted
+    - 💡 need time interval for key validity → content/hash on blockchain
+        - but current blockchain may be cracked too
+
 ## idea
 
 - get something then reach out to C2PA people

@@ -136,6 +136,15 @@
     IEEE DSP, 2023
     - blockchain to detect media manipulation
 
+## Scaling PKI
+
+- [A Blockchain-Based PKI Management
+    Framework](https://orbilu.uni.lu/handle/10993/35468), Alexander Yakubov,
+    Wazen M. Shbair, Anders Wallbom, David Sanda, Radu State,
+    IEEE/IFIP Man2Block, 2018
+    - PKI insecure when CA compromised
+    - blockchain-based PKI
+
 ## Adoption of C2PA-like standards
 
 - [Is The Web HTTP/2 Yet?](https://davidtnaylor.com/http2-pam16.pdf),
