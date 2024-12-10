@@ -85,7 +85,7 @@
 - [How Click Camera App Brings Content Credentials to
     Phones](https://contentauthenticity.org/blog/community-story-click)
     - [Click](https://clickapp.com/), 👍 free C2PA camera (photo + video)
-        app on Android & iOS
+        app on Android & iOS by Nodle
     - [proprietary](https://clickapp.com/eula) app and ContentSign
     - 👎 require Internet to sign, store on Ethereum blockchain
     - 👎 no privacy: no way to choose what metadata to include;
