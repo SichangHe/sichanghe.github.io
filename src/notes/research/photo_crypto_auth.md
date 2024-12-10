@@ -126,3 +126,8 @@ manipulative post go viral. good for news. need to balance privacy
 
 - get something then reach out to C2PA people
 - RGBD camera to combat taking photo of photo
+
+### difficulties implementing C2PA on mobile
+
+- performance: slow to sign?
+- PKI: get certificate? scaling? revocation?
