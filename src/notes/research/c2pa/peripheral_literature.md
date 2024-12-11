@@ -82,6 +82,8 @@
     - implementation bug: demo changing date w/o invalidating C2PA
     - C2PA agnostic: work w/ cloud & blockchain
     - trust list will include anyone w/ okay implementation
+        - [How to add a certificate to the
+            list](https://opensource.contentauthenticity.org/docs/verify-known-cert-list/#how-to-add-a-certificate-to-the-list)
 - [How Click Camera App Brings Content Credentials to
     Phones](https://contentauthenticity.org/blog/community-story-click)
     - [Click](https://clickapp.com/), 👍 free C2PA camera (photo + video)
@@ -109,10 +111,12 @@
 - [simple-c2pa](https://gitlab.com/guardianproject/proofmode/simple-c2pa)
     - [SimpleC2PA Audio
         Credentials](https://ngengesenior.medium.com/adding-content-credentials-c2pa-to-audio-recordings-using-simplec2pa-3ce64033a93c)
+    - ProofMode app
     - [do not use hardware protection for private
         key](https://gitlab.com/guardianproject/proofmode/simple-c2pa/-/blob/58c8e77fb34a53b428961faaa7e03f0ea09ae8d7/src/certificates.rs#L17)
     - self-signed certificate
-- [Capture Cam app](https://docs.captureapp.xyz/faq/general) by Numbers
+- [Capture Cam app](https://docs.captureapp.xyz/faq/general) by
+    Numbers Protocol
     - claim to preserve ownership by C2PA + blockchain + NFT
     - company seems hacked up
     - 👎 sign C2PA after capture after request
