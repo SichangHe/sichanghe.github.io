@@ -104,7 +104,8 @@
     John Collomosse, IEEE CVPR, 2023;
     [DECORAIT - DECentralized Opt-in/out Registry for AI Training, Kar Balan,
     Andrew Gilbert, Alexander Black, Simon Jenni, Andy Parsons,
-    John Collomosse, ACM CVMP, 2023]
+    John Collomosse, ACM CVMP,
+    2023](https://dl.acm.org/doi/abs/10.1145/3626495.3626506)
     - blockchain to index & attribute GenAI contribution by fingerprinting
     - C2PA to express consent & payment preference
 - [Interoperable Provenance Authentication of

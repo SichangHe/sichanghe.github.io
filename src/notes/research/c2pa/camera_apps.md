@@ -1,11 +1,11 @@
 # C2PA Camera Apps Investigation
 
-"Click" and "Capture Cam" in [Peripheral Literature for
-C2PA](peripheral_literature.html#c2pa-implementation).
+"Click", "Capture Cam" and "ProofMode" in [Peripheral Literature for
+C2PA](peripheral_literature.html#c2pa-implementation). Photos taken:
 
-| Photo taken w/ Click | Photo taken w/ Capture Cam                                        |
-| -------------------- | ----------------------------------------------------------------- |
-| [1733499304.jpg]     | [bafybeiaq7b5fyime2l3lb6niajrmksfipe26r2rycxius3twog7vcarjma.jpg] |
+| Click        | Capture Cam                                                   | ProofMode  |
+| ------------ | ------------------------------------------------------------- | ---------- |
+| [1733499304] | [bafybeiaq7b5fyime2l3lb6niajrmksfipe26r2rycxius3twog7vcarjma] | [IMG_4717] |
 
 ## Signers and public key
 
@@ -137,13 +137,66 @@ Certificate:
 - probably sign after upload, same as Photoshop
 - single point of failure
 
+<details><summary>
+ProofMode issued a certificate for me.
+</summary>
+
+```sh
+$ c2patool --certs IMG_4717.JPG | openssl x509 -text -noout
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            f7:13:e2:f6:79:17:45:63:f2:e5:ba:bd:75:b3:90:c8:37:9f:9e:cf
+        Signature Algorithm: ecdsa-with-SHA512
+        Issuer: CN=ProofMode-Root Offline Root CA, O=ProofMode-Root
+        Validity
+            Not Before: Dec 11 16:39:28 2024 GMT
+            Not After : Dec 11 16:39:28 2025 GMT
+        Subject: CN=ProofMode-User Content Credentials, O=ProofMode-User
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:ae:7a:c2:b2:1a:81:58:d6:d6:fd:30:32:56:d9:
+                    5b:f1:69:ce:a9:48:c1:98:bf:99:78:97:00:ac:25:
+                    3d:26:d4:fe:38:17:35:8a:98:38:f1:c2:f9:20:dc:
+                    d3:b7:72:ca:a6:d4:dd:cd:b9:ce:46:c6:87:be:c1:
+                    d1:a6:62:ef:4b
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Key Usage: 
+                Digital Signature
+            X509v3 Subject Key Identifier: 
+                8C:96:6B:28:0A:89:16:C1:2F:6C:32:98:12:23:99:3D:0C:8B:4E:42
+            X509v3 Authority Key Identifier: 
+                8C:96:6B:28:0A:89:16:C1:2F:6C:32:98:12:23:99:3D:0C:8B:4E:42
+            X509v3 Extended Key Usage: 
+                E-mail Protection
+    Signature Algorithm: ecdsa-with-SHA512
+    Signature Value:
+        30:45:02:21:00:99:cf:eb:9a:f1:76:c6:65:5c:44:b9:ae:e2:
+        a1:a0:69:d3:9d:57:d8:e8:7c:ef:e6:97:8e:be:dd:9d:5e:95:
+        57:02:20:54:10:b2:e7:9d:a1:f0:a4:43:a7:f1:5a:43:bd:9e:
+        3e:af:f2:85:cc:45:88:93:35:4d:28:80:3e:8a:b6:63:c0
+```
+
+</details>
+
+- their own CA
+
 ## Verify
 
-"Verify" page is happy w/ both photo
+"Verify" page is happy w/ Click & Capture Cam photo, but show
+`The Content Credential issuer couldn’t be recognized.
+This file may not come from where it claims to.` for ProofMode photo
 
-`c2patool` by default is happy w/ both photo
+`c2patool` by default is happy w/ all photo
 
-`c2patool` not happy w/ Click photo after supplying
+`c2patool` not happy w/ Click & ProofMode photo after supplying
 [Verify known certificate trust
 list](https://github.com/contentauth/c2pa-rs/blob/main/cli/docs/usage.md#using-the-verify-known-certificate-list),
 but happy w/ Capture Cam photo
@@ -366,9 +419,122 @@ $ RUST_LOG=trace cargo r -- bafybeiaq7b5fyime2l3lb6niajrmksfipe26r2rycxius3twog7
     }
   }
 }
+
+$ RUST_LOG=trace cargo r -- IMG_4717.JPG trust
+[2024-12-11T18:10:15Z DEBUG c2patool] Using trust anchors from Url(Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("contentcredentials.org")), port: None, path: "/trust/anchors.pem", query: None, fragment: None })
+[2024-12-11T18:10:16Z DEBUG c2patool] Using allowed list from Url(Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("contentcredentials.org")), port: None, path: "/trust/allowed.sha256.txt", query: None, fragment: None })
+[2024-12-11T18:10:16Z TRACE c2pa::cose_validator] verify_cose: cert_check=true
+[2024-12-11T18:10:16Z TRACE c2pa::cose_validator] check_cert: Extended key usage=ExtendedKeyUsage { any: false, server_auth: false, client_auth: false, code_signing: false, email_protection: true, time_stamping: false, ocsp_signing: false, other: [] }
+[2024-12-11T18:10:16Z TRACE c2pa::cose_validator] check_trust: signing_time_epoc=Some(1733935458)
+[2024-12-11T18:10:16Z TRACE c2pa::openssl::openssl_trust_handler] verify_trust: allowed_list={"eS7xBJoBUu4SJmCjg3gY4h1mlzwNGECqcBkaAMmlAGc=", "RYiv7AH1j4iSgkRM0m9CyFnvXPDZQbUTQW5C2RWlX7k=", "czGRID6tAPpW8H+BtsxRZ38Y1cSRqebzg+MCjpBT1f4=", "MFcAt2slSc/tA2sbjMNYRu26khsUmjqZ4xaQ+pfw4eI=", "igPZ4cQ+ElHb3Jagyp4o4LMVwkBicDWpm+oVuT9ctx0=", "U2h3hfYy4GRIk7KCpu819C3nLko6A/NRn5xND2jYIng=", "5Obdx/KBgUxCpnrN1FVKm8TxKCGVUeJaFN7jh09SnOA=", "SwJmKrvd0a561mMCdmrEhSGIj9tda8HjaTsTy8CCjRo=", "J3TPotkZdPCd2iOdX4wmkudA821oz621eT/CAT2Zasc=", "qskM23c5D9ZOelxRn8ZHfBPJVMPcpDmp53TAXUTGlVY=", "Z2O9JqjrmFVXI61XVcNlsodMzG1466HYQVyf+BkfWD8=", "28qM81MvRsS8Il4OhoYfzSQ1dnSIgepF9/553j2+MTc=", "oAhDShFP/R0lcjRXxIaZLfLd9FrSLCmBe76XCbfssjE=", "lVK0M1Sn1rq0KUvDqIo8/Py5MWBpb6t/T0SWgUWyWHE=", "ad8hM2xz531vByVp8Hovpqv78qY0zV9zrLnRTYYdxB0=", "r8Ozpwn+U+j6fjWGiikhChvVXhGFZuMjyxgJq2S53EM=", "h72o9aSy/NjDN4dD8xdtlX28dm4c0ERupBgVuKCCltw=", "vLyqdFQcIV1wOdjZvMD9rAQnvcrtOgjRRjxOF7HcyIw=", "XCYKS7pr8jrDLX7NeUXrldi1pAsDm6aqovGCO4iPY0Q=", "fPAhO8QbeH8RUyk2673iIIoNFor6tZi8Fsshu07ieHI=", "xXs/IWgBBAatf7AEbsXZNwgiV2zViVZFqbtqFgc0uXA=", "9qobPTVKRcOkldyUHSqN47xQN/V8tWrnW15DlUEco14=", "En07oVKGfm1psGJNDXqzHouLz3sjQ22uehYhHfLztQc=", "QSa4RsH9d5KTNMx0WlXh+VHj5NAhcj6tHtluLmNySdM=", "I7jqB0noPFAMx3l69LFaThD+G2/WVivV8N4Z6EW/NFM=", "UkQdwe7X8cO+Pj1Sb+VXxqkozHwXgC5YEqeiM42eA9w=", "OVkKb9nszYa6YpVdVfOEv481CrHaeaRnTbXM7zQC5KA=", "CaJnmoY4M0Rc4VO/v/v5diZCx/JlohwsDLm9RHOG6JI=", "K9mtOEK4IaaomtzodP9jNUKxeWXb/VmZnYg7wCGG7r0=", "Jcv4yjJRVoH3zT76I7PzNY4cGDsT+jKNfRwu+mDLrpA=", "xay/SRpiM24PoQ0V12PB8NmSdFt0X78ummtUmiUca7E=", "AVVAhHuItD0yCby1WTAOFQOGPwiXwsgvTVbc/vlpSK0=", "rAnk74zT9+yxSkgHRFbaMC7mi/FprjBvnaeFGAroSac=", "6wtSrm8Zm4xkIqkI9GB1lMhW90dzJVZPhOdSUL4lRTk=", "jko53/VSR3DMMb1nWmNx2+C+eh4U6CMV3BCw6tOgEVE=", "9xnJg+oMcadqQCUtdEhBAt22rBInCbqyaaK3V3jaJmc=", "o6uXNf1TKvSiNUL15CTvrGpfKEjCxpYrawNpYrfpkxc=", "ONSIhEwHVB2K7a9RcPnBdcw2l+h4QHQLCA1OlSd7zFQ=", "mfYmsZ1px3Bo+ZUvcttATyzVa9Pj8nNtHzsj99JgLwE=", "9heOFnvHjLz/iSNA37kqvnA40LDfSnr0UnyqZUECx7w=", "opQNg+Qgg7MwDSY7PEcBCMpP5V9qJkF3BZp97MENFcQ=", "QyrjnZlBhV+F2xAeNsb30KgVqD4QAQ+00rUtIfdXIzo="}
+[2024-12-11T18:10:16Z TRACE c2pa::openssl::openssl_trust_handler] verify_trust: chain=[]
+{
+  "active_manifest": "urn:uuid:c24dd69c-8c9b-4a0e-8469-b93ceb93543f",
+  "manifests": {
+    "urn:uuid:c24dd69c-8c9b-4a0e-8469-b93ceb93543f": {
+      "claim_generator": "ProofMode/43 c2pa-rs/0.28.4",
+      "title": "1733935453751_c2pa.jpg",
+      "format": "image/jpeg",
+      "instance_id": "xmp:iid:00fd7d9d-77d5-4180-88eb-2077b985d477",
+      "thumbnail": {
+        "format": "image/jpeg",
+        "identifier": "self#jumbf=/c2pa/urn:uuid:c24dd69c-8c9b-4a0e-8469-b93ceb93543f/c2pa.assertions/c2pa.thumbnail.claim.jpeg"
+      },
+      "ingredients": [
+        {
+          "title": "1733935453751.jpg",
+          "format": "image/jpeg",
+          "instance_id": "xmp:iid:c5ed606e-8b9f-4bd0-8eff-46a201f5d68f",
+          "thumbnail": {
+            "format": "image/jpeg",
+            "identifier": "self#jumbf=c2pa.assertions/c2pa.thumbnail.ingredient.jpeg"
+          },
+          "relationship": "parentOf"
+        }
+      ],
+      "assertions": [
+        {
+          "label": "c2pa.actions",
+          "data": {
+            "actions": [
+              {
+                "action": "c2pa.created"
+              }
+            ]
+          }
+        },
+        {
+          "label": "c2pa.ai_training",
+          "data": {
+            "constraintInfo": null,
+            "use": "notAllowed"
+          }
+        },
+        {
+          "label": "c2pa.ai_generative_training",
+          "data": {
+            "constraintInfo": null,
+            "use": "notAllowed"
+          }
+        },
+        {
+          "label": "c2pa.data_mining",
+          "data": {
+            "constraintInfo": null,
+            "use": "notAllowed"
+          }
+        },
+        {
+          "label": "c2pa.inference",
+          "data": {
+            "constraintInfo": null,
+            "use": "notAllowed"
+          }
+        },
+        {
+          "label": "stds.schema-org.CreativeWork",
+          "data": {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            "author": [
+              {
+                "@context": "https://schema.org",
+                "@id": "https://keys.openpgp.org",
+                "@type": "Person",
+                "identifier": "ae1a4c380d43bfb2",
+                "name": "ae1a4c380d43bfb2"
+              }
+            ]
+          },
+          "kind": "Json"
+        }
+      ],
+      "signature_info": {
+        "alg": "Es256",
+        "issuer": "ProofMode-User",
+        "cert_serial_number": "1410564205799300702414624826233507026152462458575",
+        "time": "2024-12-11T16:44:18+00:00"
+      },
+      "label": "urn:uuid:c24dd69c-8c9b-4a0e-8469-b93ceb93543f"
+    }
+  },
+  "validation_status": [
+    {
+      "code": "signingCredential.untrusted",
+      "url": "Cose_Sign1",
+      "explanation": "signing certificate untrusted"
+    },
+    {
+      "code": "general.error",
+      "url": "self#jumbf=/c2pa/urn:uuid:c24dd69c-8c9b-4a0e-8469-b93ceb93543f/c2pa.signature",
+      "explanation": "claim signature is not valid"
+    }
+  ]
+}
 ```
 
 </details>
 
-[1733499304.jpg]: https://github.com/user-attachments/assets/d9504a4b-8b46-4b66-bb09-9518305a341d
-[bafybeiaq7b5fyime2l3lb6niajrmksfipe26r2rycxius3twog7vcarjma.jpg]: https://github.com/user-attachments/assets/0a561df7-272d-40ab-9990-17cd620b4752
+[1733499304]: https://github.com/user-attachments/assets/d9504a4b-8b46-4b66-bb09-9518305a341d
+[bafybeiaq7b5fyime2l3lb6niajrmksfipe26r2rycxius3twog7vcarjma]: https://github.com/user-attachments/assets/0a561df7-272d-40ab-9990-17cd620b4752
+[IMG_4717]: https://github.com/user-attachments/assets/f8bd31f3-4cfe-43b5-ba70-5f0fc6529a87
