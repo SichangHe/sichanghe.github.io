@@ -99,6 +99,8 @@
         - lie?
             blockchain reference does not imply same level of trust as
             certificate
+        - 👎 can verify by default, but [cannot verify if
+            using certificate trust list](camera_apps.html#verify)
         - mention joining C2PA working group to integrate blockchain
 - [Three pillars of provenance that make up durable Content
     Credentials](https://contentauthenticity.org/blog/three-pillars-of-provenance)
