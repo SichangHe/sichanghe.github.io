@@ -9,6 +9,18 @@ pre > code.hljs {
 general requirements:
 
 ```
+I am a computer scientist working on systems. Follow Clear Writing Principles, avoid any repetition, be complete and succinct.
+```
+
+summarize paper w/ focus on FOCUS
+
+```
+What does this paper talk about in terms of FOCUS? Quote specific phrases or sentences when talking about each related point. Try your best to summarize every aspect mentioned in the paper.
+```
+
+general requirements (old):
+
+```
 Requirements R: be professional and maximally succinct. Prefer verb over noun, adjective over adverb, active tense over passive tense. Avoid fluff or self-judgements. Do not lose any information. Do not praise or repeat any given content. Keep the original language, style, and meaning as much as possible. Make minimal changes for improvement.
 ```
 
