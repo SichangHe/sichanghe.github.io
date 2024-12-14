@@ -171,6 +171,14 @@
     - ML detector trained on specific generator not good at new generator
     - human expert better than ordinary human
 
+## Anti-training
+
+- [GLAZE: Protecting Artists from Style Mimicry by Text-to-Image
+    Models](https://people.cs.uchicago.edu/~ravenben/publications/pdf/glaze-usenix23.pdf),
+    Shawn Shan, Jenna Cryan, Emily Wenger, Haitao Zheng, Rana Hanocka,
+    Ben Y. Zhao USENIX Security, 2023
+    - add noise to image to brick ML model from generating similar image
+
 ## Adoption of C2PA-like standards
 
 - [Is The Web HTTP/2 Yet?](https://davidtnaylor.com/http2-pam16.pdf),
