@@ -34,7 +34,7 @@
         - future: election monitoring
         - acknowledge C2PA need to be widely adopted & problem of
             metadata removal
-        - polities to come in place to mandate disclosure in AI output
+        - policies to come in place to mandate disclosure in AI output
         - need to display info w/o clicking
         - tiered AI content labeling, e.g., AI-generated vs AI-modified
     - [*How Microsoft and LinkedIn gave users detailed context about media on
@@ -144,17 +144,6 @@
         - [78 Days archive](https://www.starlinglab.org/78daysarchive/)
             photo claim to use "Numbers Protocol" but show no C2PA in "verify"
     - all verify link broken
-
-## Fake image detection
-
-- [Can people identify original and manipulated photos of
-    real-world scenes?](https://pmc.ncbi.nlm.nih.gov/articles/PMC5514174/),
-    Springer Cognitive Research, 2017
-    - people can hardly tell if and how image manipulated
-- [Explaining Why Fake Photos are Fake:
-    Does It Work?](https://dl.acm.org/doi/abs/10.1145/3567558), ACM HCI, 2022
-    - people cannot tell if image manipulated
-    - explaining manipulation does not always help
 
 ## Image metadata
 
