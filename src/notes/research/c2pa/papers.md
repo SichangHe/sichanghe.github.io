@@ -102,10 +102,10 @@
     Art](https://openaccess.thecvf.com/content/CVPR2023W/WMF/papers/Balan_EKILA_Synthetic_Media_Provenance_and_Attribution_for_Generative_Art_CVPRW_2023_paper.pdf),
     Kar Balan, Shruti Agarwal, Simon Jenni, Andy Parsons, Andrew Gilbert,
     John Collomosse, IEEE CVPR, 2023;
-    [DECORAIT - DECentralized Opt-in/out Registry for AI Training, Kar Balan,
-    Andrew Gilbert, Alexander Black, Simon Jenni, Andy Parsons,
-    John Collomosse, ACM CVMP,
-    2023](https://dl.acm.org/doi/abs/10.1145/3626495.3626506)
+    [DECORAIT - DECentralized Opt-in/out Registry for
+    AI Training](https://dl.acm.org/doi/abs/10.1145/3626495.3626506),
+    Kar Balan, Andrew Gilbert, Alexander Black, Simon Jenni, Andy Parsons,
+    John Collomosse, ACM CVMP, 2023
     - blockchain to index & attribute GenAI contribution by fingerprinting
     - C2PA to express consent & payment preference
 - [Interoperable Provenance Authentication of
@@ -145,6 +145,31 @@
     IEEE/IFIP Man2Block, 2018
     - PKI insecure when CA compromised
     - blockchain-based PKI
+
+## Fake image detection
+
+- [Can people identify original and manipulated photos of
+    real-world scenes?](https://pmc.ncbi.nlm.nih.gov/articles/PMC5514174/),
+    Sophie J Nightingale, Kimberley A Wade, Derrick G Watson,
+    Springer Cognitive Research, 2017
+    - people can hardly tell if and how image manipulated
+- [Explaining Why Fake Photos are Fake:
+    Does It Work?](https://dl.acm.org/doi/abs/10.1145/3567558), Margie Ruffin,
+    Gang Wang, Kirill Levchenko, ACM HCI, 2022
+    - people cannot tell if image manipulated
+    - explaining manipulation does not always help
+- [AI-synthesized faces are indistinguishable from real faces and
+    more trustworthy](https://www.pnas.org/doi/10.1073/pnas.2120481119),
+    Sophie J. Nightingale, Hany Farid, PNAS, 2022
+    - people cannot tell if face is AI-generated
+- [Organic or Diffused: Can We Distinguish Human Art from AI-generated
+    Images?](https://people.cs.uchicago.edu/~ravenben/publications/pdf/organic-ccs24.pdf),
+    Anna Yoo Jeong Ha, Josephine Passananti, Ronik Bhaskar, Shawn Shan,
+    Reid Southen, Haitao Zheng, Ben Y. Zhao, ACM CCS, 2024
+    - ML detector & human cannot tell if image is AI-generated
+    - ways to trick ML detector
+    - ML detector trained on specific generator not good at new generator
+    - human expert better than ordinary human
 
 ## Adoption of C2PA-like standards
 
