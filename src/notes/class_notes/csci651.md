@@ -455,27 +455,24 @@ multiprotocol label switching (MPLS): show up on BGP
 
 ## *On the Self-Similar Nature of Ethernet Traffic*, Will E. Leland, Murad S. Taqqu, Walter Willinger, Daniel V. Wilson
 
-<!-- TODO: clean up -->
 - network traffic self-similar (fractal) on different time scale
-    - Poisson model not fit, not busty at large time scale
     - bursty, packet dependent on each other
-- superposition: many sending in this distribution
-    - web traffic more heavy-tailed
+    - time scale matter
+        - very different mean & variance on different time scale
+        - not smooth
+- Poisson process model not fit, not bursty at large time scale
+    - memoryless → smooth when large scale
 - better model
     - only parameter: Hurst parameter $H\in(\frac{1}{2},1)$
-    - what is self-similarity
+    - measure self-similarity: evaluate R/S over different time scale
+        - R/S: range/standard deviation; $H$ is slope
+    - spectral density power law near origin
+    - generate from fractional Gaussian noise
 - who care: understand real-world performance when designing network
     - how big buffer: BDP
-- macroscopic traffic analysis
-- burstiness: time scale matter
-    - very different mean & variance on different time scale
-    - not smooth
+    - macroscopic traffic analysis
 - significance: people go at the same time, burst sometimes long
     - need over-provision, will fail
-- random process
-    - CDF $a(t)$, PDF $A(t)$
-    - memoryless: exponential distribution (Poission process)
-        - smooth when large scale → not accurate model
 - long-range dependence: current value matter long into future
     - self-similar: variance decrease very slowly as time scale grow
     - auto-correlation: how much I look like myself
@@ -486,24 +483,65 @@ multiprotocol label switching (MPLS): show up on BGP
 ## *Self-Similarity in World Wide Web Traffic: Evidence and Possible Causes*, Mark E. Crovella, Azer Bestavros
 
 - why self-similar: heavy-tailed Pareto distribution
-    - linear in log-log CDF plot
+    - superposition: many sending in this distribution
+        - web traffic heavy-tailed
+    - linear in log-log CCDF plot
+    - infinite variance when $\beta<2$, infinite mean when $\beta<1$
     - transfer time
     - distribution of file size
         - few very large file
-- active/inactive regime: two separate power law
+- web active/inactive regime (on/off): two separate power law
     - disagreed and modeled w/ Poisson
 
 ## *Internet Inter-Domain Traffic*, Craig Labovitz, Scott Iekel-Johnson, Danny McPherson, Jon Oberheide, Farnam Jahanian
 
-- flattened Internet: more CDN, hypergiant, eyeball ISP, P2P go down
+- flattened Internet: more CDN, hypergiant, eyeball ISP, P2P reduce
     - data centralization: cloud, big player dominate
         - lots of content
     - Google shifted to own data center & bought YouTube
     - Comcast merged w/ other & started CDN
-    - P2P made downloading easier & got better at hiding bc legal
+    - P2P: direct downloading easier & got better at hiding bc legal
+- consolidation to few AS
+    - big get bigger; migration to cloud
 - data: security appliance in ISP
     - many big ISP
     - cannot share proprietary
+
+## *MapReduce: Simplified Data Processing on Large Clusters*, Jeffrey Dean, Sanjay Ghemawat
+
+- fault tolerance: task as intermediate abstraction
+    - re-execute failed task; redundant task; straggler elimination
+- Hadoop, Dryad, Spark, Zookeeper, Hive, Pig, HBase
+
+## *The Tail at Scale*, JeffRey Dean, Luiz André Barroso
+
+- tail matter: worst get remembered; parallel computing
+- countermeasure: micro-partitioning, partial result
+    - hedged queries: send task to multiple server, cancel slow
+
+## *Rethinking Enterprise Network Control*, Mart ́ın Casado, Michael J. Freedman, Justin Pettit, Jianying Luo, Natasha Gude, Nick McKeown, Scott Shenker
+
+- Ethane: SDN to control switch centrally for enterprise
+    - evaluate flow → accept/drop/waypoint
+    - cheaper than layer 2 for security change
+- goal: survivability, multiple link layer, multiple app, accountability,
+    manageability
+    - support enterprise security, authentication, law enforcement, logging
+- smart controller, dumb switch
+    - switch send first flow to controller, get policy
+    - centralize: easy to manage, but latency & single point of failure
+    - switch watch for per-package cost; controller per-flow
+- flow security language (FSL): define name-based flow policy
+    - dynamic group
+    - compile to C++
+- commercialized as OpenFlow & Nicira
+
+## *P4: Programming Protocol-Independent Packet Processors*, Pat Bosshart, Dan Daly, Glen Gibb, Martin Izzard, Nick McKeown, Jennifer Rexford, Cole Schlesinger, Dan Talayco, Amin Vahdat, George Varghese, David Walker
+
+- protocol-independent language (P4): generalize forwarding plane policy
+    - OpenFlow getting more and more header field
+- run on switch w/ ASIC/NPU at line rate
+- header, parser, table, action
 
 ## *VL2: A Scalable and Flexible Data Center Network*, Albert Greenberg, Srikanth Kandula, David A. Maltz, James R. Hamilton, Changhoon Kim, Parveen Patel, Navendu Jain, Parantap Lahiri, Sudipta Sengupta
 
@@ -514,7 +552,7 @@ multiprotocol label switching (MPLS): show up on BGP
         no CPU/network interference between app (virtualization, VLAN);
         QoS ⇒ security, keep abstraction in service level agreement (SLA)
     - flat addressing (LAN, layer-2 semantics): address isolation,
-        migrate w/o changing IP, cheap switch
+        migrate w/o changing IP, cheap switch w/ small table
         - layer-2.5 shim
     - hardware: cheap, commodity
 - topology: valiant load balancing (VLB), equal cost multi-path (ECMP),
@@ -541,11 +579,13 @@ multiprotocol label switching (MPLS): show up on BGP
 - capacity-aware
     - goal: shift traffic from overloaded peering
     - algorithm: compute alternative path for overloaded
-    - output: override BGP route w/ LocalPref&MED
+    - output: override BGP route w/ LocalPref&MED to detour traffic
 - performance-aware
     - goal: shift traffic to low-latency path
+    - input: traffic w/ differentiated service code point (DSCP) to
+        indicate QoS expectation
     - algorithm: reroute if alternative path has lower latency
-        - split some traffic to test
+        - split some traffic to A/B test
     - use tunneling to reroute
 - central load balancer: use DNS to map user to PoP
 
@@ -559,7 +599,7 @@ multiprotocol label switching (MPLS): show up on BGP
 - solution: SDN (OpenFlow)
     - traffic engineering (TE)
     - replicated centralized controller: efficient, optimal
-    - per data center OpenFlow controller (OFC) & redundant routing (Quagga)
+    - per datacenter OpenFlow controller (OFC) & redundant routing (Quagga)
         - fault tolerance
         - app control
 - why Google can do
@@ -574,9 +614,11 @@ multiprotocol label switching (MPLS): show up on BGP
     - custom routing w/ Quagga & BGP/ISIS
 - group app into flow group (FG): better QoS
 - TE map FG to tunnel group (TG): reduce #group for scalability
+    - max-min priority of FG into TG
     - rate limit incoming traffic to router bandwidth: avoid drop in
         backbone; predictable traffic
 - TE fail open: still can send traffic
+- multiple path for each tunnel for link fault tolerance
 - no drop for high priority traffic; drop low priority
 - failure if many thing go wrong
 
@@ -598,12 +640,15 @@ multiprotocol label switching (MPLS): show up on BGP
     security
     - receiver responsible to clarify
 - stability: interest/data ACK-clock
+- new waist in network stack above IP
 - CCN naming: no location, say what content is
     - hash, signed, maybe human-readable (meaningful)
 - is routing protocol: send interest around; interest data 1:1
     - window of interest; pipelining
 - DDoS protection: caching; aggregation; block those w/ random interest
 - policy & filtering (content firewall): signature-based
+- low throughput & high latency bc large header ⇒ need pipelining
+- automatic failover: fault tolerant
 
 ## *Fundamental Design Issues for the Future Internet*, Scott Shenker
 
@@ -679,7 +724,8 @@ multiprotocol label switching (MPLS): show up on BGP
 ## *Tor: The Second-Generation Onion Router*, Roger Dingledine, Nick Mathewson, Paul Syverson
 
 - deployable low-latency anonymous web browsing
-    - circuit: reduce latency, avoid congestion
+    - circuit: amortize setup cost, reduce latency, avoid congestion
+    - easy to use
     - relatively simple
     - want anonymity among crowd
     - TCP-only bc mainly for web browsing
@@ -694,7 +740,7 @@ multiprotocol label switching (MPLS): show up on BGP
 - onion proxy (OP): first hop, know sender & see content
 - onion router (OR): middle hop
 - exit node (EN): last hop, know sender & see content
-- circuit: ??
+- circuit: path through OR
 - incremental circuit building: establish encrypted tunnel to next hop from
     public key encryption, one by one
 - application-level anonymity: need separate proxy (e.g., Privoxy)
