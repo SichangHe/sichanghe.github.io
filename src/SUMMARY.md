@@ -82,6 +82,7 @@
         - [Shell](notes/programming/shell.md)
         - [Trail](notes/programming/trail.md)
     - [Research Notes](notes/research/index.md)
+        - [Generative AI](notes/research/JSphere/gen_ai.md)
         - [JSphere](notes/research/JSphere/sketch.md)
             - [Literature](notes/research/JSphere/literature.md)
             - [Execution](notes/research/JSphere/execution.md)
@@ -100,7 +101,9 @@
                 Literature](notes/research/c2pa/peripheral_literature.md)
             - [C2PA Camera Apps
                 Investigation](notes/research/c2pa/camera_apps.md)
+        - [Removal Services](notes/research/removal_services.md)
         - [Web Atoms](notes/research/web_atoms.md)
+        - [Web User-Facing](notes/research/web_user_facing.md)
     - [Server](notes/server/index.md)
         - [NFS](notes/server/nfs.md)
         - [SSH](notes/server/ssh.md)
