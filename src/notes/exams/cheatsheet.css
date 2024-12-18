@@ -1,0 +1,49 @@
+html body {
+    font-size: 12.5px;
+}
+
+* {
+    line-height: 1 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: 1em !important;
+}
+
+main,
+div,
+section {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+:not(span, code, pre) {
+    font-family: Arial Narrow !important;
+}
+
+main {
+    display: block !important;
+}
+
+a.anchor {
+    display: none;
+}
+
+section.markdown-body {
+    column-count: 3;
+    column-gap: 0;
+}
+
+html body ul,
+html body ol {
+    padding-left: 1em;
+}

@@ -31,7 +31,7 @@
     - watermarking has tempering and adoption problems
 - ⭐ [Solutions to Deepfakes: Can Camera Hardware, Cryptography, and
     Deep Learning Verify Real Images?](https://arxiv.org/abs/2407.04169),
-    Alexander Vilesov, Yuan Tian, Nader Sehatbakhsh, Achuta Kadambi, arXiV,
+    Alexander Vilesov, Yuan Tian, Nader Sehatbakhsh, Achuta Kadambi, arXiv,
     2024
     - ways to verify images, including C2PA
     - need every camera to support C2PA

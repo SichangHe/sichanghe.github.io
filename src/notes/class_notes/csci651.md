@@ -729,8 +729,8 @@ multiprotocol label switching (MPLS): show up on BGP
     - relatively simple
     - want anonymity among crowd
     - TCP-only bc mainly for web browsing
-- non-goal: peer-to-peer, end-to-end attack security, sender anonymity from
-    receiver, conceal user identity (steganographic)
+- non-goal: peer-to-peer, end-to-end attack security,
+    conceal user identity (steganographic)
 - anonymity: receiver & proxy do not know who sender is
     - proxy only know previous & next hop
     - perfect forward secrecy: nested encryption so that
