@@ -57,17 +57,31 @@ paper:
     - perplexity / cross-perplexity after "performer" model generation
     - dedicated prompt can boost perplexity of generation when
         observed w/o the prompt
-    - ❗ use Falcon-7B by default—need big GPU (16GB vRAM) and slow
-        (7s per input on A100)
+    - ❗ use Falcon-7B by default—need big GPU (16GB vRAM) and
+        slow ~~(7s per input on A100)~~
+        - quantization can lower to 6GB, <100ms prefill/autoregression
 
 ## Issues from AI-generated text
 
 - bot account on social media
 - fake product review
 - academic plagiarism
+    - peer review validity
 
 paper on AI-generated text:
 
+- [Monitoring AI-Modified Content at Scale: A Case Study on the Impact of
+    ChatGPT on AI Conference Peer Reviews](https://arxiv.org/abs/2403.07183),
+    Weixin Liang, Zachary Izzo, Yaohui Zhang, Haley Lepp, Hancheng Cao,
+    Xuandong Zhao, Lingjiao Chen, Haotian Ye, Sheng Liu, Zhi Huang,
+    Daniel A. McFarland, James Y. Zou, ICML, 2024;
+    [Mapping the Increasing Use of LLMs in
+    Scientific Papers](https://arxiv.org/abs/2404.01268), Weixin Liang,
+    Yaohui Zhang, Zhengxuan Wu, Haley Lepp, Wenlong Ji, Xuandong Zhao,
+    Hancheng Cao, Sheng Liu, Siyu He, Zhi Huang, Diyi Yang, Christopher Potts,
+    Christopher D Manning, James Y. Zou, arXiv, 2024
+    - efficient statistical batch detection
+    - review w/ generation seem rushed
 - [The Rise of AI-Generated Content in
     Wikipedia](https://arxiv.org/abs/2410.08044), Creston Brooks,
     Samuel Eggert, Denis Peskoff, arXiv, 2024
@@ -75,3 +89,34 @@ paper on AI-generated text:
     - Wikipedia article before & after GPT-3.5
     - get lower bound of generation by subtracting previous positive rate
     - people likely believe repeated statement
+- [The AI Review Lottery:
+    Widespread AI-Assisted Peer Reviews Boost Paper Scores and
+    Acceptance Rates](https://arxiv.org/abs/2405.02150), Giuseppe Russo Latona,
+    Manoel Horta Ribeiro, Tim R. Davidson, Veniamin Veselovsky, Robert West,
+    arXiv, 2024
+    - \> 16% of 28,000 ICLR 2024 review used AI, w/ higher score
+        - threat to peer review process
+    - use GPTZero
+    - 30 word that predict generation by ~70% accuracy
+        - can such word use for screening
+
+news:
+
+- [Some of
+    Substack’s Biggest Newsletters Rely On AI Writing Tools |
+    WIRED](https://www.wired.com/story/substacks-writers-use-ai-chatgpt/)
+    - 10% of 25 Substack sample seem generated, even by prominent author
+        - GPTZero paid to view article
+        - ❗ really small sample size
+    - some author claim to use LLM to polish not create
+    - predict that badge asserting human-made will be common
+- [AI Slop Is Flooding Medium |
+    WIRED](https://www.wired.com/story/ai-generated-medium-posts-content-moderation/)
+    - 40% of $2.7 × 10^5$ post seem generated
+        - done by Pangram & Originality separately
+        - ❓ how do we compete w/ company
+    - ∃ misinformation tracking company, e.g.
+        NewsGuard, that scan for generated text
+    - Medium CEO claim most generated post was hardly being read
+        - argue generated post are bad writing
+    - mention of YouTube get-rich-quick tutorial on generating post/book
