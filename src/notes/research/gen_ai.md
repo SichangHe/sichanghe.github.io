@@ -61,6 +61,14 @@ paper:
         slow ~~(7s per input on A100)~~
         - quantization can lower to 6GB, <100ms prefill/autoregression
 
+testing:
+
+- Binoculars & GPTZero work well on my text & short prompt generation
+    - ✅ classify paraphrase as human
+    - ❓ classify long prompt generation as human
+    - around 15GB, 1s per context window on
+        A6000 competing w/ another workload
+
 ## Issues from AI-generated text
 
 - bot account on social media
@@ -80,14 +88,26 @@ paper on AI-generated text:
     Yaohui Zhang, Zhengxuan Wu, Haley Lepp, Wenlong Ji, Xuandong Zhao,
     Hancheng Cao, Sheng Liu, Siyu He, Zhi Huang, Diyi Yang, Christopher Potts,
     Christopher D Manning, James Y. Zou, arXiv, 2024
-    - efficient statistical batch detection
-    - review w/ generation seem rushed
+    - vastly efficient statistical batch detection via MLE of
+        adjective appearance, i.e., word choice
+        - trained on human & ChatGPT-generated review from paper & prompt
+        - ❓ what prompt for us? generalize to other model?
+    - somewhat resistant to paraphrasing
+    - inference on 40k review from ICLR 2024, NeurIPS 2023, CoRL 2023,
+        EMNLP 2023
+    - review w/ generation seem rushed, cite (use `et al.`) less
+    - ❗ what would set us apart from them?
+    - criticism
+        - validation unscientific: AI dataset generated same way as
+            training data
+        - human may learn word from AI
 - [The Rise of AI-Generated Content in
     Wikipedia](https://arxiv.org/abs/2410.08044), Creston Brooks,
     Samuel Eggert, Denis Peskoff, arXiv, 2024
     - use GPTZero & Binoculars w/ Falcon-7B
     - Wikipedia article before & after GPT-3.5
     - get lower bound of generation by subtracting previous positive rate
+        - ❗ unscientific bc assume paper i.i.d.
     - people likely believe repeated statement
 - [The AI Review Lottery:
     Widespread AI-Assisted Peer Reviews Boost Paper Scores and
@@ -120,3 +140,34 @@ news:
     - Medium CEO claim most generated post was hardly being read
         - argue generated post are bad writing
     - mention of YouTube get-rich-quick tutorial on generating post/book
+
+## Browser extension/add-on
+
+display info on search result/ webpage itself
+
+extension to automatically detect AI-generated text:
+
+- [Hive AI
+    Detector](https://chromewebstore.google.com/detail/hive-ai-detector/cmeikcgfecnhojcbfapbmpbjgllklcbi):
+    free
+- [Originality.ai](https://chromewebstore.google.com/detail/ai-detector-and-human-wri/kdngfaamkbbkdbemejnlkmjfpmndjdmb)
+- [Winston
+    AI](https://addons.mozilla.org/en-US/firefox/addon/ai-detector-winston-ai/):
+    need account
+
+why extension for human to vote DNE:
+
+- user privacy
+    - but can be solved like [have I been
+        pwned?](https://www.troyhunt.com/ive-just-launched-pwned-passwords-version-2/#cloudflareprivacyandkanonymity)
+        using hash
+- scale and cost
+    - peer-to-peer?
+- adversarial attack like click farm
+    - can require voter to verify & pass CAPTCHA
+    - how other extension like SponsorBlock/ crowdsourcing website handle
+        this?
+- voting is subjective
+    - specific tagging instead, e.g., "Ad", "AI", "Scam"
+- (abandoned) similar project
+    [Dissenter browser](https://github.com/gab-ai-inc/gab-dissenter-extension)
