@@ -1,5 +1,66 @@
 # Unstructured Reading Notes
 
+- [I Slept With 100 Men in
+    One Day | Documentary](https://www.youtube.com/watch?v=mFySAh0g-MI)
+    - many man would do anything to have sex
+    - OnlyFans is a huge money printer but also a slippery slope
+- [The Creator Of Elixir - Top Shelf
+    7](https://www.youtube.com/watch?v=-mFJ5rPbY_w)
+    - Go has huge foot gun in exchange for ability to write lower level code
+    - most problem are solved; should just use library
+    - Jose Valim see Rust as functional bc explicit mutability
+    - Jose think loop hard in immutable language
+    - Jose was bitten by PL paper w/ slow implementation, and
+        still does not understand the math in his paper as a coauthor
+    - library that
+        cannot evolve w/o breaking backward compatibility is either a lie or
+        poorly designed
+- [Credit card interest and
+    interchange fees](https://www.youtube.com/watch?v=OceYCEexDqQ)
+    - credit card companies make most money from charging merchant percentage
+    - ordinary people pay for the benefit high-end card user get
+- [Saagar Enjeti: Trump, MAGA, DOGE, Obama, FDR, JFK,
+    History & Politics | Lex Fridman Podcast
+    \#454](https://www.youtube.com/watch?v=9xz8i90Hp2A)
+    - America spirit highly influenced by
+        Scottish-Irish about not trusting authority, fighting, freedom
+    - performance as politician is not very correlated with personal life
+    - Washington DC is itself a creature not caring about even the president
+    - personnel selection is key bc many decision are made by them
+    - lower down can brick president order by delaying
+    - US immigration is crowded by relative of citizen
+    - managerial revolution (virus): not known what is going on lower down
+    - true power show when ruling w/o having the position
+    - mainstream media ask dummy question at white house
+    - stealing election was common and unhinged in US in the last century
+- [Dario Amodei: Anthropic CEO on Claude, AGI & the Future of
+    AI & Humanity | Lex Fridman Podcast
+    \#452](https://www.youtube.com/watch?v=ugvHCXCOmm4)
+    - scaling law: model do better w/ bigger network & training time & data;
+        not seem to stop
+    - model learn local pattern, larger scale pattern, then
+        long range correlation, etc. as they grow
+    - model feeling dumber likely bc different system prompt, user prompt,
+        luck, or perception
+    - hard to make model both helpful/polite and concise/safe
+    - targeted regulation is needed to
+        not have people radically against regulation
+    - mechanistic interpretability is a green field in AI
+    - constitutional AI for RL: AI to rate AI response based on
+        prompt about principle
+    - important thing is what ultra good AI can do
+    - Amanda Askell is likely the human who talked most to Claude
+    - goal is for Claude to be helpful in front of million of people
+    - model try to please as many people by default, instead to
+        get best result, encourage it to not care
+    - clear prompting: explain concept to model when
+        talking about what you want, w/ example
+    - anthropomorphize w/ model: can ask why model refuse to answer
+    - use strong word to make model do something, e.g., never ever vs do not
+    - not failing signal failure bc not trying hard enough, but need to
+        understand high-risk failure
+    - interesting idea: model refuse to talk if boring and just quit
+    - best way to measure model ability is bleeding edge research you do
 - Defense: *Real-time Multi-Resolution Neural Networks for Hand Simulation*,
     Mianlun Zheng (Advisor: Jernej Barbič)
     - from joint angle, simulate bone, tendon, muscle, vein, nerve, fascia, …
