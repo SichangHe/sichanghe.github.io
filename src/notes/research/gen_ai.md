@@ -49,12 +49,19 @@ paper:
     Sidi Lu, Lei Zheng, Jiaxian Guo, Weinan Zhang, Jun Wang, Yong Yu,
     ACM SIGIR, 2018
     - propose Self-BLEU for repetitiveness
+- [Fast-DetectGPT: Efficient Zero-Shot Detection of
+    Machine-Generated Text via Conditional Probability Curvature,
+    Guangsheng Bao, Yanbin Zhao, Zhiyang Teng, Linyi Yang, Yue Zhang, ICLR,
+    2024](https://arxiv.org/abs/2310.05130)
+    - compare perplexity after perturbation; zero-shot
+    - improvement in speed and accuracy on
+        prior DetectGPT w/ conditional probability curvature sampling
 - [Spotting LLMs With Binoculars: Zero-Shot Detection of
     Machine-Generated Text](https://arxiv.org/abs/2401.12070), Abhimanyu Hans,
     Avi Schwarzschild, Valeriia Cherepanova, Hamid Kazemi, Aniruddha Saha,
     Micah Goldblum, Jonas Geiping, Tom Goldstein, ICML, 2024
     - model-agnostic
-    - perplexity / cross-perplexity after "performer" model generation
+    - perplexity / cross-perplexity between "observer" & "performer" model
     - dedicated prompt can boost perplexity of generation when
         observed w/o the prompt
     - ❗ use Falcon-7B by default—need big GPU (16GB vRAM) and
@@ -66,8 +73,7 @@ testing:
 - Binoculars & GPTZero work well on my text & short prompt generation
     - ✅ classify paraphrase as human
     - ❓ classify long prompt generation as human
-    - around 15GB, 1s per context window on
-        A6000 competing w/ another workload
+    - around 15GB × 2, 0.5s per context window (around 300 token) on A6000
 
 ## Issues from AI-generated text
 

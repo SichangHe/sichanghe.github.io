@@ -103,6 +103,7 @@
                 Investigation](notes/research/c2pa/camera_apps.md)
         - [Removal Services](notes/research/removal_services.md)
         - [Web Atoms](notes/research/web_atoms.md)
+        - [Web Crawling](notes/research/web_crawling.md)
         - [Web User-Facing](notes/research/web_user_facing.md)
     - [Server](notes/server/index.md)
         - [NFS](notes/server/nfs.md)
