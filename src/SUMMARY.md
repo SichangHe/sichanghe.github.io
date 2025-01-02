@@ -82,7 +82,7 @@
         - [Shell](notes/programming/shell.md)
         - [Trail](notes/programming/trail.md)
     - [Research Notes](notes/research/index.md)
-        - [Generative AI](notes/research/JSphere/gen_ai.md)
+        - [Generative AI](notes/research/gen_ai.md)
         - [JSphere](notes/research/JSphere/sketch.md)
             - [Literature](notes/research/JSphere/literature.md)
             - [Execution](notes/research/JSphere/execution.md)
@@ -142,6 +142,9 @@
         Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)
     - [Drafts]()
+        - [My Programming Language Journey: How I Ended Up Using Rust and
+            Python Most After Trying A Dozen
+            Languages](blogs/programming_language_journey.md)
         - [Learn Like Machine Learning Models](blogs/learn_like_models.md)
         - [We are Learning Async Rust
             Wrong](blogs/learning_async_rust_wrong.md)
