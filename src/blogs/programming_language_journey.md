@@ -110,7 +110,7 @@ making a custom search engine.
 I did not grasp Python concurrency and
 had speed problems crawling the websites. I blamed this on Python being slow.
 
-## I fell into the crab hole 🦀🕳️
+## Falling into the crab hole 🦀🕳️
 
 Since Python was so slow, my logical choice was to speed it up, but
 I ended up in a completely different rabbit—or rather "crab" hole.
@@ -150,8 +150,8 @@ Rust is definitely not a language you can hack around; you need to
 understand the concepts behind what you are doing.
 
 The instructor advising the search engine project, however,
-liked hacking around and disliked Rust. "I think it is beyond you,"
-he even suggested. I was pissed.
+found Rust too complicated. "I think it is beyond you," he even suggested.
+I was pissed.
 That drove me to finish the [Tokio book](https://tokio.rs/tokio/tutorial) and
 later learn more advanced topics in Rust. One thing he said was true, though:
 having to wait for the code to compile sucks.
@@ -203,6 +203,12 @@ other languages I tried did not stick:
 - Zig and Mojo sounded nice, but neither of them had pattern matching and
     neither are stabilized (1.0) yet.
 
+I realize it has become very difficult for me to adopt another language for
+general purposes.
+For any language, I would want a supportive development environment,
+"functional programming features" like pattern matching, potential for
+high performance, and a large ecosystem. I have been vendor-locked in…
+
 ---
 
-*Started 2024-12-27*
+*Started 2024-12-27, finished 2025-01-03*
