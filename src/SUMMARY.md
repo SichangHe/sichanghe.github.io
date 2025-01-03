@@ -81,6 +81,7 @@
         - [R lang](notes/programming/rlang.md)
         - [Shell](notes/programming/shell.md)
         - [Trail](notes/programming/trail.md)
+    - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
         - [Generative AI](notes/research/gen_ai.md)
         - [JSphere](notes/research/JSphere/sketch.md)
