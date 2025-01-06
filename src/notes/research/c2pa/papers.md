@@ -162,6 +162,15 @@
     more trustworthy](https://www.pnas.org/doi/10.1073/pnas.2120481119),
     Sophie J. Nightingale, Hany Farid, PNAS, 2022
     - people cannot tell if face is AI-generated
+- [Seeing is not always believing: Benchmarking Human and Model Perception of
+    AI-Generated
+    Images](https://proceedings.neurips.cc/paper_files/paper/2023/hash/505df5ea30f630661074145149274af0-Abstract-Datasets_and_Benchmarks.html),
+    Zeyu Lu, Di Huang, Lei Bai, Jingjing Qu, Chengyue Wu, Xihui Liu,
+    Wanli Ouyang, NeurIPS, 2023
+    - accuracy detecting fake photorealistic image: human 60%,
+        best open model 87%
+        - but model high false positive; best overall accuracy 83%
+    - 2 million fake image for model benchmark
 - [Organic or Diffused: Can We Distinguish Human Art from AI-generated
     Images?](https://people.cs.uchicago.edu/~ravenben/publications/pdf/organic-ccs24.pdf),
     Anna Yoo Jeong Ha, Josephine Passananti, Ronik Bhaskar, Shawn Shan,
@@ -170,6 +179,18 @@
     - ways to trick ML detector
     - ML detector trained on specific generator not good at new generator
     - human expert better than ordinary human
+- [Fake It Until You Break It: On the Adversarial Robustness of
+    AI-generated Image Detectors](https://arxiv.org/abs/2410.01574),
+    Sina Mavali, Jonas Ricker, David Pape, Yash Sharma, Asja Fischer,
+    Lea Schönherr, arXiv, 2024
+    - perturbation can make forensic classifier useless
+    - best model DRCT-CLIP has 88% accuracy
+        - [DRCT:
+            Diffusion Reconstruction Contrastive Training towards Universal
+            Detection of
+            Diffusion Generated
+            Images](https://openreview.net/forum?id=oRLwyayrh1), Baoying Chen,
+            Jishen Zeng, Jianquan Yang, Rui Yang, ICML, 2024
 
 ## Anti-training
 

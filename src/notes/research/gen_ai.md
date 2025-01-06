@@ -147,6 +147,21 @@ news:
         - argue generated post are bad writing
     - mention of YouTube get-rich-quick tutorial on generating post/book
 
+## Human detection of AI-generated content
+
+- [A Representative Study on Human Detection of
+    Artificially Generated Media Across
+    Countries](https://ieeexplore.ieee.org/abstract/document/10646666),
+    Joel Frank, Franziska Herbert, Jonas Ricker, Lea Schönherr,
+    Thorsten Eisenhofer, Asja Fischer, IEEE S&P, 2024
+    - human in
+        USC&Germany&China cannot distinguish generated audio&image&text
+- [Blind and Low-Vision Individuals' Detection of
+    Audio Deepfakes](https://dl.acm.org/doi/abs/10.1145/3658644.3690305),
+    Filipo Sharevski, Aziz Zeidieh, Jennifer Vander Loop, Peter Jachim,
+    ACM CCS, 2024
+    - low-vision/blind people cannot detect audio deepfake
+
 ## Browser extension/add-on
 
 display info on search result/ webpage itself
@@ -171,9 +186,10 @@ why extension for human to vote DNE:
     - peer-to-peer?
 - adversarial attack like click farm
     - can require voter to verify & pass CAPTCHA
-    - how other extension like SponsorBlock/ crowdsourcing website handle
-        this?
+    - solution from crowdsourcing platform: moderator on Reddit, VIP on
+        SponsorBlock
 - voting is subjective
     - specific tagging instead, e.g., "Ad", "AI", "Scam"
 - (abandoned) similar project
     [Dissenter browser](https://github.com/gab-ai-inc/gab-dissenter-extension)
+    let user comment on any webpage
