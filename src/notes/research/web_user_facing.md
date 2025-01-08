@@ -44,6 +44,13 @@
         - > They are also indicators of lower-quality,
             > possibly mass-produced, or even AI-generated content.
     - comparison w/ BM25 search engine ChatNoir: much more affiliate link
+- [Adversarial Search Engine Optimization for
+    Large Language Models](https://arxiv.org/abs/2406.18382), Fredrik Nestaas,
+    Edoardo Debenedetti, Florian Tramèr, arXiv, 2024
+    - embed instruction/defamation in web content to
+        manipulate RAG LLM search engine (answer engine)
+        - can imply other content is bad
+    - test by searching w/ `site:` for owned domain
 
 examples:
 
