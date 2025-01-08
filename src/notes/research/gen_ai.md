@@ -109,12 +109,15 @@ paper on AI-generated text:
         - human may learn word from AI
 - [The Rise of AI-Generated Content in
     Wikipedia](https://arxiv.org/abs/2410.08044), Creston Brooks,
-    Samuel Eggert, Denis Peskoff, arXiv, 2024
+    Samuel Eggert, Denis Peskoff, EMNLP workshop, 2024
     - use GPTZero & Binoculars w/ Falcon-7B
     - Wikipedia article before & after GPT-3.5
+        - Reddit data from Kaggle
     - get lower bound of generation by subtracting previous positive rate
         - ❗ unscientific bc assume paper i.i.d.
     - people likely believe repeated statement
+    - did not use Ghostbuster bc need training,
+        Fast-DetectGPT bc lower accuracy
 - [The AI Review Lottery:
     Widespread AI-Assisted Peer Reviews Boost Paper Scores and
     Acceptance Rates](https://arxiv.org/abs/2405.02150), Giuseppe Russo Latona,
@@ -155,7 +158,7 @@ news:
     Joel Frank, Franziska Herbert, Jonas Ricker, Lea Schönherr,
     Thorsten Eisenhofer, Asja Fischer, IEEE S&P, 2024
     - human in
-        USC&Germany&China cannot distinguish generated audio&image&text
+        USA&Germany&China cannot distinguish generated audio&image&text
 - [Blind and Low-Vision Individuals' Detection of
     Audio Deepfakes](https://dl.acm.org/doi/abs/10.1145/3658644.3690305),
     Filipo Sharevski, Aziz Zeidieh, Jennifer Vander Loop, Peter Jachim,
