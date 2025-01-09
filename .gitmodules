@@ -5,3 +5,6 @@
 [submodule "linked/JSphere"]
 	path = linked/JSphere
 	url = git@github.com:SichangHe/JSphere.git
+[submodule "linked/DeGenTWeb"]
+	path = linked/DeGenTWeb
+	url = git@github.com:SichangHe/DeGenTWeb.git
