@@ -7,4 +7,4 @@
 	url = git@github.com:SichangHe/JSphere.git
 [submodule "linked/DeGenTWeb"]
 	path = linked/DeGenTWeb
-	url = git@github.com:SichangHe/DeGenTWeb.git
+	url = git@github.com:SichangHe/DeGenTWeb_docs.git
