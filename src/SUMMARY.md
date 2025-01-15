@@ -128,6 +128,7 @@
     - [Unstructured Class Notes](notes/class_notes/index.md)
         - [Advanced Analysis of Algorithms](notes/class_notes/csci670.md)
         - [Advanced Computer Networking](notes/class_notes/csci651.md)
+        - [Advanced Operating Systems](notes/class_notes/csci655.md)
         - [Algorithms and Databases](notes/class_notes/cs301.md)
         - [Artificial Intelligence](notes/class_notes/cs402.md)
         - [Cloud Computing](notes/class_notes/cs401.md)

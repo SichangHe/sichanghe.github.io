@@ -24,13 +24,6 @@ multiprotocol label switching (MPLS): show up on BGP
 - catechism for DARPA funding/ startup: goal, existing solution,
     improvement & novelty, expected outcome, cost estimate
 
-## *An Evaluation of The Ninth SOSP Submissions or How (and How Not) to Write A Good Systems Paper*, Roy Levin, David D. Redell
-
-- paper category: implementation, theory, idea, measurement, survey,
-    simulation
-- know related work: old & new, peer-reviewed
-- not readily solved by existing approach (or w/ tweak)
-
 ## *The design philosophy of the DARPA Internet protocols*, David D. Clark
 
 - Internet: multiplexed utilization of existing interconnected networks
