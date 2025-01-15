@@ -7,8 +7,8 @@
     - scrape YouTube & analyze video
 - [Evolving Bots: The New Generation of Comment Bots and
     their Underlying Scam Campaigns in
-    YouTube](https://dl-acm-org.libproxy2.usc.edu/doi/abs/10.1145/3618257.3624822),
-    Seung Ho Na, Sumin Cho, Seungwon Shin, IMC, 2023
+    YouTube](https://dl.acm.org/doi/abs/10.1145/3618257.3624822), Seung Ho Na,
+    Sumin Cho, Seungwon Shin, IMC, 2023
     - scrape YouTube comment & cluster to find user w/ URL in profile
         - fine-tune BERT variant to generate embedding for DBSCAN clustering
         - filter URL: discard most common domain (twitter) and
@@ -38,6 +38,12 @@
     Janek Bevendorff, Matti Wiegmann, Martin Potthast, Benno Stein,
     Springer ECIR, 2024
     - search result on product review & spot affiliate link
+        - query: `best <category>` where `<category>` is in
+            GS1 Global Product Classification/ Google Product Taxonomy
+        - filter review based on keyword regex, but 80% accuracy in test
+        - manual classification of top 30 domain:
+            authentic review/ magazine&news/ content farm/ spam/ shop/ social
+            media/ other
     - top SEO content: repetitive, less readable, shallower URL,
         longer content, more heading, less heading-content overlap
         - lots of SEO metric based on HTML
