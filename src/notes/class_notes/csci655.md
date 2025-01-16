@@ -29,6 +29,11 @@
 
 ## [RAID: High-Performance, Reliable Secondary Storage](https://dl.acm.org/doi/pdf/10.1145/176979.176981), Peter M. Chen, Edward K. Lee, Garth A. Gibson, Randy H. Katz, David A. Patterson, ACM Computing Surveys, 1994
 
+- disk array for performance&reliability&cost
+- compare architecture: RAID level 0-6
+- motivation: processor much faster but disk is bottleneck of overall perf
+    - large disk array exponentially likely to fail
+
 ## [The Recovery Manager of the System R Database Manager](https://dl.acm.org/doi/pdf/10.1145/356842.356847), Jim Gray, Paul McJones, Mike Blasgen, Bruce Lindsay, Raymond Lorie, Tom Price, Franco Putzolu, Irving Traiger, ACM Computing Surveys, 1981
 
 ## [Disconnected Operation in the Coda File System](https://dl.acm.org/doi/pdf/10.1145/146941.146942), James J. Kistler M. Satyanarayanan, ACM Transactions on Computer Systems, 1992
