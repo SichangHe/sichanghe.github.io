@@ -1,5 +1,18 @@
 # Unstructured Reading Notes
 
+- Defense: *Efficiency in Privacy-Preserving Computation via
+    Domain Knowledge*, Weizhao Jin (advisor: Srivatsan Ravi)
+    - homomorphic encryption on selective model parameters (vis mask) to
+        reduce overhead
+        - filter by commonly-used formula for parameter sensitivity
+        - optimize privacy budget, computed via integration
+    - entity resolution: dedup point in 2 dataset
+    - simulate ReLU via polynomial function bc HE only support + ×
+        - balance degree (slow) and accuracy
+    - network path validation: avoid sending info on all node
+        - backward propagation to validate path for
+            forward speed assuming few malicious
+        - XOR hash w/ zero-knowledge proof each pair
 - [I Slept With 100 Men in
     One Day | Documentary](https://www.youtube.com/watch?v=mFySAh0g-MI)
     - many man would do anything to have sex
