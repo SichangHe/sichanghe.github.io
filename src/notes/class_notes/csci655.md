@@ -33,6 +33,30 @@
 - compare architecture: RAID level 0-6
 - motivation: processor much faster but disk is bottleneck of overall perf
     - large disk array exponentially likely to fail
+    - array of disk improve bandwidth for big I/O & latency for small I/O
+- data striping: distribute data across multiple disk for parallel
+- data interleaving granularity
+    - fine-grained: every I/O use all disk, but is blocking & cause seek for
+        all disk
+    - coarse-grained: parallel request
+- method to handle redundant info
+    - compute: parity, e.g., Hamming/Reed-Solomon code
+        - bottleneck on disk storing parity bit
+        - P+Q redundancy (Reed-Solomon): 2 parity disk to
+            defend against ≥2 disk failure
+    - distribution: whether concentrate redundant info on few disk
+- memory-style ECC not assume controller know which disk bad
+- RAID 3&5&6 do inversely better on big I/O, poorer in small I/O (but,
+    5&6 are capped)
+    - can read fewer disk if write large
+        - improve small I/O perf by batching&caching
+- block interleaving cannot handle some system crash unless w/ hardware like
+    nonvolatile RAM
+    - system crash more frequent
+    - track if each parity block consistent for recovery perf
+- bit rot hard to handle; solution: predict disk about to fail & replace
+- correlated disk failure, system crash,
+    bit rot greatly increase data loss probability in RAID 5
 
 ## [The Recovery Manager of the System R Database Manager](https://dl.acm.org/doi/pdf/10.1145/356842.356847), Jim Gray, Paul McJones, Mike Blasgen, Bruce Lindsay, Raymond Lorie, Tom Price, Franco Putzolu, Irving Traiger, ACM Computing Surveys, 1981
 
