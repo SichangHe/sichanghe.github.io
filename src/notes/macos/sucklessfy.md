@@ -2,7 +2,7 @@
 
 allow apps from anywhere
 
-```shell
+```sh
 sudo spctl --master-disable
 ```
 
@@ -10,7 +10,7 @@ sudo spctl --master-disable
 
 remove all .DS_Store in subfolder
 
-```shell
+```sh
 find . -name '.DS_Store' -type f -delete
 ```
 
@@ -18,6 +18,14 @@ find . -name '.DS_Store' -type f -delete
 
 disable alternate character and enable key repeat for `APP_NAME`
 
-```bash
+```sh
 defaults write APP_NAME ApplePressAndHoldEnabled -bool false
+```
+
+## disable bloat daemon
+
+
+```sh
+cd /System/Library/LaunchDaemons
+sudo launchctl unload com.apple.mobile.softwareupdated.plist
 ```
