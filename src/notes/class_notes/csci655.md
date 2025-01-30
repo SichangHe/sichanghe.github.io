@@ -60,7 +60,29 @@
 
 ## [The Recovery Manager of the System R Database Manager](https://dl.acm.org/doi/pdf/10.1145/356842.356847), Jim Gray, Paul McJones, Mike Blasgen, Bruce Lindsay, Raymond Lorie, Tom Price, Franco Putzolu, Irving Traiger, ACM Computing Surveys, 1981
 
+- concurrent SQL database failure recovery
+- transaction: ACD (no I)
+    - only way to undo transaction is another
+- shadowing: CoW, point to new copy at commit
+- transaction log for recovery
+    - include update value to be idempotent
+    - checkpoint to avoid log big
+        - recovery: redo forward from checkpoint for committed (winner),
+            undo backward for loser
+
 ## [Disconnected Operation in the Coda File System](https://dl.acm.org/doi/pdf/10.1145/146941.146942), James J. Kistler M. Satyanarayanan, ACM Transactions on Computer Systems, 1992
+
+- offline access to remote file system
+    - shared file for collaboration & larger storage
+- local caching for availability
+    - prioritize user-specified, recently used; fetch periodically
+    - cache entire file instead of block
+- reconcile conflict thru replay of log of update
+    - aggregate log periodically, only save last update, rm inverse operation
+- detect conflict by version number
+    - impossible to automatically resolve conflict
+- evaluation: benchmark & user trace
+    - little conflict during in CMU usage bc not editing same file
 
 ## [Eraser: A Dynamic Data Race Detector for Multithreaded Programs](https://dl.acm.org/doi/pdf/10.1145/265924.265927), Stefan Savage, Michael Burrows, Greg Nelson, and Patrick Sobalvarro, Thomas Anderson, ACM Transactions on Computer Systems, 1997
 
