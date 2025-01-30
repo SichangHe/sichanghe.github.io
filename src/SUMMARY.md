@@ -83,8 +83,9 @@
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
-        - [DeGenTWeb](notes/research/DeGenTWeb/execution.md)
+        - [Decent Web](notes/research/DeGenTWeb/execution.md)
             - [Arguments](notes/research/DeGenTWeb/arguments.md)
+            - [Literature](notes/research/DeGenTWeb/literature.md)
             - [Google Trends](notes/research/DeGenTWeb/google_trends.md)
             - [Preliminary Binoculars
                 Evaluation](notes/research/DeGenTWeb/preliminary_binoculars_eval.md)
