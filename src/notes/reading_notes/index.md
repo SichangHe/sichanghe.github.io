@@ -1,5 +1,20 @@
 # Unstructured Reading Notes
 
+- *What uniform symmetric distro can a shallow circuit produce*, Kewen Wu
+    - circuit: combination of logic gate mapping $m$ input bit to
+        $n$ output bit
+    - symmetric: output w/ same Hamming weight are equally likely
+    - motivation: compute parity (or something else) of
+        $n-1$ bit w/ shallow circuit → distro sample
+        - parity (xor): only e.g. where computation hard but sampling easy
+    - impossible to read 1 bit to decode compressed data
+    - only 6 case of shallow circuit (local function) mapping from
+        uniform distro to uniform distro
+        - equal to at most 2-local
+        - cannot output 1 only on 1/3 majority bc deviation from 1/3
+        - cannot do majority bc lack of
+            cutoff among either independent group (neighborhood) or
+            independent bit
 - Defense: *Efficiency in Privacy-Preserving Computation via
     Domain Knowledge*, Weizhao Jin (advisor: Srivatsan Ravi)
     - homomorphic encryption on selective model parameters (vis mask) to
