@@ -1,28 +1,48 @@
 # Git
 
-start using git
-
-```shell
-git init
-```
-
-check status
-
-```shell
-git status
-```
-
-show all difference since last commit
-
-```shell
-git diff
-```
+## Checkout
 
 git clone without downloading
 
 ```shell
 git clone <repo> --no-checkout
 ```
+
+check what are the branches
+
+```shell
+git fetch && git branch
+```
+
+force sync from origin
+
+```shell
+git reset --hard origin/main
+```
+
+pull main without checking out main
+
+```sh
+git fetch origin main:main
+```
+
+fetch only 1 commit
+
+```sh
+git fetch --depth 1 git@github.com:username/repo.git FULL_SHA_FOR_COMMIT
+```
+
+## Config
+
+sane config
+
+```sh
+git config --global pull.rebase true # rebase on pull conflict
+git config --global rebase.autoStash true # stash before rebase
+git config --global submodule.recurse true # always recur submodule
+```
+
+## Commit
 
 commit with message
 
@@ -54,41 +74,13 @@ change the last commit
 --amend
 ```
 
-add repo as submodule
+create orphan branch
 
 ```shell
-git submodule add <repo>
+git switch --orphan <branch>
 ```
 
-push `book` folder to GitHub gh-pages to publish pages
-
-```shell
-git subtree push --prefix book origin gh-pages
-```
-
-push all branch to all remote
-
-```shell
-git remote | xargs -L1 git push --all
-```
-
-push master to all remote
-
-```shell
-git remote | xargs -L1 -I R git push R master
-```
-
-pull every repo under the current folder
-
-```shell
-fd .git -H -t d -x git --git-dir={} pull
-```
-
-fetch and status every repo under the current folder
-
-```shell
-fd .git -H -t d -x git --git-dir={} fetch \; -x git --git-dir={} --work-tree {}/.. status
-```
+## Bookkeeping
 
 delete all history of a certain file (*deprecated*)
 
@@ -109,30 +101,6 @@ ignore all symlink
 find * -type l -not -exec grep -q "^{}$" .gitignore \; -print >> .gitignore
 ```
 
-check what are the branches
-
-```shell
-git fetch && git branch
-```
-
-check out another branch
-
-```shell
-git checkout <branch>
-```
-
-create orphan branch
-
-```shell
-git switch --orphan <branch>
-```
-
-force sync from origin
-
-```shell
-git reset --hard origin/master
-```
-
 git commit sizes
 
 ```sh
@@ -150,18 +118,6 @@ verify no change since commit
 git diff --exit-code HEAD
 ```
 
-pull main without checking out main
-
-```sh
-git fetch origin main:main
-```
-
-fetch only 1 commit
-
-```sh
-git fetch --depth 1 git@github.com:username/repo.git FULL_SHA_FOR_COMMIT
-```
-
 remove uncommitted files
 
 ```sh
@@ -172,4 +128,38 @@ remove ignored files
 
 ```sh
 git clean -fX
+```
+
+## Multiple repo
+
+add repo as submodule
+
+```shell
+git submodule add <repo>
+```
+
+pull every repo under the current folder
+
+```shell
+fd .git -H -t d -x git --git-dir={} pull
+```
+
+fetch and status every repo under the current folder
+
+```shell
+fd .git -H -t d -x git --git-dir={} fetch \; -x git --git-dir={} --work-tree {}/.. status
+```
+
+## Multiple origin
+
+push all branch to all remote
+
+```shell
+git remote | xargs -L1 git push --all
+```
+
+push main to all remote
+
+```shell
+git remote | xargs -L1 -I R git push R main
 ```
