@@ -86,6 +86,17 @@
 
 ## [Eraser: A Dynamic Data Race Detector for Multithreaded Programs](https://dl.acm.org/doi/pdf/10.1145/265924.265927), Stefan Savage, Michael Burrows, Greg Nelson, and Patrick Sobalvarro, Thomas Anderson, ACM Transactions on Computer Systems, 1997
 
+- monitor: force all access to acquire lock, but
+    cannot handle dynamic allocation
+- happens-before problem: cannot catch when separate access by chance
+    - detect synchronization between variable access across thread
+- lock set intersection to track all lock held when accessing each variable
+    - allow initialization w/o locking, RW lock, reuse allocation
+    - high overhead, but optimize by deduplicating lock set to track
+    - mechanism to opt out of checking bc false positive
+- binary modification to track set of lock held when
+    accessing each static/heap variable
+
 ## [Improving the reliability of commodity operating systems](https://dl.acm.org/doi/abs/10.1145/945445.945466), Michael M. Swift, Brian N. Bershad, Henry M. Levy, SOSP, 2003
 
 ## [Cores that don’t count](https://dl.acm.org/doi/pdf/10.1145/3458336.3465297), Peter H. Hochschild, Paul Turner, Jeffrey C. Mogul, Rama Govindaraju, Parthasarathy, Ranganathan, David E. Culler, Amin Vahdat, HotOS, 2021
