@@ -182,3 +182,4 @@ the "right button" would not work. -->
             - [Rust](diary/spring_2024_ideas/rust.md)
         - [Spring 2024 Activities](diary/spring_2024_activities/index.md)
         - [IMC '24](diary/imc_24.md)
+        - [Recovering Files on Exxact](diary/recovering_exxact_files.md)
