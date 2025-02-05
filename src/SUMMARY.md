@@ -85,7 +85,7 @@
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
-        - [Decent Web](notes/research/DeGenTWeb/execution.md)
+        - [DeGenTWeb](notes/research/DeGenTWeb/execution.md)
             - [Arguments](notes/research/DeGenTWeb/arguments.md)
             - [Literature](notes/research/DeGenTWeb/literature.md)
             - [Google Trends](notes/research/DeGenTWeb/google_trends.md)
