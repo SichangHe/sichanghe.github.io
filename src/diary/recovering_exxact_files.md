@@ -76,7 +76,7 @@ I tried Ext4magic, but it also did produce recovery with file paths:
 % du -sh nvme0n1.journal 
 1.1G	nvme0n1.journal
 % sudo apt-get install ext4magic
-% ext4magic -M -j /hdd1/nvme0n1.journal -d /hdd1/DeGenTWeb_recovery/ /dev/nvme0n1
+% sudo ext4magic -M -j /hdd1/nvme0n1.journal -d /hdd1/DeGenTWeb_recovery/ /dev/nvme0n1
 ```
 
 I now have a bunch of files I do not know where they belonged.
