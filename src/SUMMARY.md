@@ -91,6 +91,7 @@
             - [Google Trends](notes/research/DeGenTWeb/google_trends.md)
             - [Preliminary Binoculars
                 Evaluation](notes/research/DeGenTWeb/preliminary_binoculars_eval.md)
+            - [Ad Extraction](notes/research/DeGenTWeb/ad_extraction.md)
         - [Generative AI](notes/research/gen_ai.md)
         - [JSphere](notes/research/JSphere/sketch.md)
             - [Literature](notes/research/JSphere/literature.md)
