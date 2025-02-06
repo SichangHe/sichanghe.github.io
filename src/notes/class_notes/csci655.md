@@ -99,6 +99,21 @@
 
 ## [Improving the reliability of commodity operating systems](https://dl.acm.org/doi/abs/10.1145/945445.945466), Michael M. Swift, Brian N. Bershad, Henry M. Levy, SOSP, 2003
 
+- device driver/ kernel module responsible for many OS crash
+- need backward compatibility → cannot separate address space
+- why possible: well-defined OS-driver interface
+- extension procedure call (XPC): wrapper of kernel call that
+    copy argument/ return value memory back and forth (interpose)
+    - assume extension/driver not malicious; not defensive
+- recovery: deallocate based on object tracking; restart driver
+    - page tracking to avoid double free
+- reliable: avoid almost all crash
+- overhead: higher CPU utilization/ lower performance
+    - packet sending higher overhead than receiving bc no batching
+    - XPC is main bottleneck bc page table switch cause TLB flush, close to
+        page tracking & object tracking
+- extensible: lots of shared code among different driver
+
 ## [Cores that don’t count](https://dl.acm.org/doi/pdf/10.1145/3458336.3465297), Peter H. Hochschild, Paul Turner, Jeffrey C. Mogul, Rama Govindaraju, Parthasarathy, Ranganathan, David E. Culler, Amin Vahdat, HotOS, 2021
 
 ## [The Design and Implementation of a Log-Structured File System](https://dl.acm.org/doi/pdf/10.1145/146941.146943), Mendel Rosenblum, John K. Ousterh, ACM Transactions on Computer Systems, 1992
