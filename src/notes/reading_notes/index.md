@@ -1,5 +1,26 @@
 # Unstructured Reading Notes
 
+- *Full Proportional Justified Representation*, Jiasen Liu
+    - representative selection: majority vs cohesion
+    - approval-based multi-winner election
+    - justified representation (JR):
+        large cohesive group should have a winner
+        - large cohesive group: portion deserve a winner, has common approval
+        - but not fair; too weak
+    - strong cohesiveness ($\ell$-cohesive): portion deserve $\ell$ winner,
+        has common approval of $\ell$ candidate
+    - weak cohesiveness (weakly $(\alpha,\ell)$-cohesive), common approval of
+        $\alpha$ candidate; stronger guarantee
+    - non-transferable vs transferable (collective) utility: some voter in
+        group satisfied (stronger) vs all
+    - 4 combination of (strong/weak cohesiveness)
+        × (non-transferable/transferable utility)
+    - harder (coNP) to verify than finding one solution
+    - priceability: voter pay for
+        candidate they approve under constant budget
+        - priceability imply FPJR
+            (full proportional justified representation,
+            weak cohesion + transferable utility) by bounding
 - *What uniform symmetric distro can a shallow circuit produce*, Kewen Wu
     - circuit: combination of logic gate mapping $m$ input bit to
         $n$ output bit
