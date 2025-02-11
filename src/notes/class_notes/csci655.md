@@ -89,7 +89,8 @@
 - monitor: force all access to acquire lock, but
     cannot handle dynamic allocation
 - happens-before problem: cannot catch when separate access by chance
-    - detect synchronization between variable access across thread
+    - detect synchronization between variable access across thread by
+        transitive happens-before
 - lock set intersection to track all lock held when accessing each variable
     - allow initialization w/o locking, RW lock, reuse allocation
     - high overhead, but optimize by deduplicating lock set to track
@@ -104,6 +105,7 @@
 - why possible: well-defined OS-driver interface
 - extension procedure call (XPC): wrapper of kernel call that
     copy argument/ return value memory back and forth (interpose)
+    - separate address space/ page table for driver
     - assume extension/driver not malicious; not defensive
 - recovery: deallocate based on object tracking; restart driver
     - page tracking to avoid double free
@@ -115,6 +117,15 @@
 - extensible: lots of shared code among different driver
 
 ## [Cores that don’t count](https://dl.acm.org/doi/pdf/10.1145/3458336.3465297), Peter H. Hochschild, Paul Turner, Jeffrey C. Mogul, Rama Govindaraju, Parthasarathy, Ranganathan, David E. Culler, Amin Vahdat, HotOS, 2021
+
+- CPU certain ("mercurial") core certain instruction silent failure
+- e.g., faulty encryption cause data loss, mutex malfunction
+- storage/network redundancy trick do not apply
+- detection: proactive/ passive/ live with
+    - hard: intermittent, specific core, after aging,
+        under specific frequency&voltage&temperature
+    - infeasible overhead: need triple computation to verify
+- no known solution
 
 ## [The Design and Implementation of a Log-Structured File System](https://dl.acm.org/doi/pdf/10.1145/146941.146943), Mendel Rosenblum, John K. Ousterh, ACM Transactions on Computer Systems, 1992
 
