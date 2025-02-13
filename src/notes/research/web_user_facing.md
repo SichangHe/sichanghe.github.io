@@ -21,6 +21,12 @@
     Influencer VPN Ads](https://arxiv.org/abs/2406.13017), Omer Akgul,
     Richard Roberts, Emma Shroyer, Dave Levin, Michelle L. Mazurek,
     USENIX Security, 2025
+- [Reviving Dead Links on the Web with
+    Fable](https://dl.acm.org/doi/abs/10.1145/3618257.3624832), Jingyuan Zhu,
+    Anish Nyayachavadi, Jiangchen Zhu, Vaspol Ruamviboonsuk,
+    Harsha V. Madhyastha, IMC, 2023
+    - heuristic to find mapping between dead link and
+        new link after page moved
 
 ## Search Engine Optimization (SEO)
 

@@ -86,3 +86,8 @@ While I [reported this bug to
 NeoTree](https://github.com/nvim-neo-tree/neo-tree.nvim/issues/1682),
 I found more issues where people lost their whole work directory.
 I should not have trusted NeoTree for deleting files.
+
+*Update*: I threw gave up on recovering the files and crawled all data again.
+The recovered files have their path and name lost, and
+the contents are mangled, so they would have required much effort to sort out.
+So, I chose to rerun the scripts instead.

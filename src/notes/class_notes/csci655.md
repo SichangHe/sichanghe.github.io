@@ -129,6 +129,18 @@
 
 ## [The Design and Implementation of a Log-Structured File System](https://dl.acm.org/doi/pdf/10.1145/146941.146943), Mendel Rosenblum, John K. Ousterh, ACM Transactions on Computer Systems, 1992
 
+- motivation: disk seek slow → slow read/write slow; RAM cheap; want to
+    utilize write speed
+- store all data in append-only log
+- cache read & inode map in memory
+- metric: write cost: disk access time per storage vs theoretical time
+    - superlinear: write cost vs fraction alive in segment cleaned
+- segment & clean disk by group of block
+    - distinguish hot & cold data;
+        prioritize cleaning cold segment bc they may squat segment for long
+    - assume temporal locality: factor youngest file age in segment
+- evaluation: user trace & micro benchmark
+
 ## [Rethink the sync](https://dl.acm.org/doi/abs/10.1145/1394441.1394442), Edmund B. Nightingale, Kaushik Veeraraghavan, Peter M. Chen, Jason Flinn, TOCS, 2008
 
 ## [Caching in the Sprite Network File System](https://dl.acm.org/doi/pdf/10.1145/35037.42183), Michael N. Nelson, Brent B. Welch, John K. Ousterho, ACM Transactions on Computer Systems, 1988
