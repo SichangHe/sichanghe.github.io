@@ -13,3 +13,8 @@
     IMC, 2020
     - landing page different from internal page
     - method to find representative internal page
+- [System to Identify and Elide Superfluous JavaScript Code for
+    Faster Webpage Loads](https://arxiv.org/pdf/2003.07396), Utkarsh Goel,
+    Moritz Steiner, arXiv, 2020
+    - passive real user monitoring system (RUM) in CDN proxy
+    - on median page, 31% JS code superfluous, can rm for 5% speedup
