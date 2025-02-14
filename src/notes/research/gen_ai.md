@@ -67,6 +67,8 @@ paper:
     - ❗ use Falcon-7B by default—need big GPU (16GB vRAM) and
         slow ~~(7s per input on A100)~~
         - quantization can lower to 6GB, <100ms prefill/autoregression
+    - ❗ memorize some training data
+        - not any of the training data in my few test
     - [Not all tokens are created equal:
         Perplexity Attention Weighted Networks for
         AI generated text detection](https://arxiv.org/abs/2501.03940),

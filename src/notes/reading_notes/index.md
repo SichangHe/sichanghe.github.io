@@ -1,5 +1,21 @@
 # Unstructured Reading Notes
 
+- *Scalable $k$-Means Clustering for Large $k$ via
+    Seeded Approximate Nearest-Neighbor Search*, Jack Spalding-Jamieson
+    - k-nearest neighbor w/ approximate radius
+        - metric: recall; impossible to guarantee
+        - ∃ sublinear heuristic
+        - search graph almost universally best
+        - other application: quantization, space partitioning
+        - initialization does not matter if $n$ and $k$ large, running Lloyds
+    - $k$-means do nearest neighbor search each iteration
+    - hierarchical navigable small world (HNSW) perform well
+        - start w/ approximate nearest neighbor graph of centroid
+        - prune edge to sparsify; randomly sample centroid for higher layer
+        - start from highest layer, do greedy local beam search to
+            find best centroid on each layer
+        - "seed point" to start search: choosing from
+            previous assignment give big speedup
 - *Full Proportional Justified Representation*, Jiasen Liu
     - representative selection: majority vs cohesion
     - approval-based multi-winner election
