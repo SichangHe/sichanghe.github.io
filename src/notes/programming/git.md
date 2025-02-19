@@ -130,6 +130,12 @@ remove ignored files
 git clean -fX
 ```
 
+go back and clean up history
+
+```sh
+git rebase -i COMMIT_BEFORE_CHANGES
+```
+
 ## Multiple repo
 
 add repo as submodule
