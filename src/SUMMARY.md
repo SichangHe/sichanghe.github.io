@@ -58,6 +58,7 @@
         - [Pacman](notes/package_manager/pacman.md)
         - [Pip](notes/package_manager/pip.md)
         - [TeXLive Manager (tlmgr)](notes/package_manager/tlmgr.md)
+        - [Rye](notes/package_manager/rye.md)
     - [Programming](notes/programming/index.md)
         - [C](notes/programming/c.md)
             - [clang](notes/programming/clang.md)

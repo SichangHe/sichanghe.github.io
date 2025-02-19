@@ -67,9 +67,6 @@ function fix_toc_n_add_math_copying() {
 if (document.readyState === "complete") {
     fix_toc_n_add_math_copying();
 } else {
-    document.addEventListener("DOMContentLoaded", () => {
-        if (!fix_toc_n_add_math_copying()) {
-            document.addEventListener("load", fix_toc_n_add_math_copying);
-        }
-    });
+    document.addEventListener("DOMContentLoaded", fix_toc_n_add_math_copying);
 }
+document.addEventListener("load", fix_toc_n_add_math_copying);
