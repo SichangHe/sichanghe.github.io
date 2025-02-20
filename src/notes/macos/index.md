@@ -22,3 +22,9 @@ flush DNS cache:
 sudo dscacheutil -flushcache
 sudo killall -HUP mDNSResponder
 ```
+
+restart audio control, useful when audio is not working:
+
+```sh
+sudo killall coreaudiod
+```
