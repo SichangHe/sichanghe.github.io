@@ -130,6 +130,7 @@
         - [Vim](notes/text_editor/vim.md)
         - [Visual Studio Code](notes/text_editor/vscode.md)
         - [Xcode](notes/text_editor/xcode.md)
+    - [Unstructured Bug Notes](notes/bug_notes/index.md)
     - [Unstructured Class Notes](notes/class_notes/index.md)
         - [Advanced Analysis of Algorithms](notes/class_notes/csci670.md)
         - [Advanced Computer Networking](notes/class_notes/csci651.md)

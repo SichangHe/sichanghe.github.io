@@ -1,5 +1,15 @@
 # Unstructured Reading Notes
 
+- *Intelligent, Robust and Trustworthy AI: Managing GenAI Challenges,
+    Next Phase of Hybrid AI Models and Enterprise AI for
+    Mission-Critical Applications*, Amit Sheth
+    - difficult to detect if text generated
+    - RLHF reduce hallucination
+    - tweak model to avoid hateful generation
+    - neurosymbolic: neural AI combined w/ symbolic cognition AI
+        - knowledge graph auxiliary to DL, bring explainability
+        - deep infusion
+    - what do you have what other do not
 - *Scalable $k$-Means Clustering for Large $k$ via
     Seeded Approximate Nearest-Neighbor Search*, Jack Spalding-Jamieson
     - k-nearest neighbor w/ approximate radius

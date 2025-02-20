@@ -95,6 +95,13 @@
     Provenance](https://personalpages.surrey.ac.uk/j.collomosse/pubs/Collomosse-IEEECGA-2024.pdf),
     John Collomosse, Andy Parsons, IEEE CGA, 2024
     - three pillars: metadata, fingerprint, watermark
+- [Pseudorandom Error-Correcting Codes](https://eprint.iacr.org/2024/235),
+    Miranda Christ, Sam Gunn, IACR, 2024
+    - robust codeword appear random w/o decoding key
+        - $2^{O(\sqrt{n})}$-hardness from learning parity with noise (LPN)
+            problem (NP-hard)
+    - undetectable watermark & tolerate alternation
+    - steganography
 
 ## Applying C2PA
 
