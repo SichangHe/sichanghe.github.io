@@ -1,5 +1,20 @@
 # Unstructured Reading Notes
 
+- Thesis proposal: *Incentivizing Efficient Delegation without Payments*,
+    Curtis Bechtel
+    - delegation motivation: outside contractor (agent) may not optimize for
+        employer's (principal) need
+    - probing constraint: cost, combination limit, etc.
+    - game: principal set constraint; agent probe, propose solution;
+        principal accept one best proposal iff satisfy constraint or reject all
+    - delegate utility vs non-delegate utility: use agent vs as if
+        principal doing task themselves
+        - $\alpha$-fraction delegation gap: fraction between utility
+    - goal: $\alpha → 1$ w/ more agent in
+        competitive delegation w/ stochastic probing
+    - if probing has cost (Pandora's Box problem), generally no constant $\alpha$ bound
+    - strategic delegation reduce to adversarial delegation (agent want to
+        minimize principal utility)
 - *Intelligent, Robust and Trustworthy AI: Managing GenAI Challenges,
     Next Phase of Hybrid AI Models and Enterprise AI for
     Mission-Critical Applications*, Amit Sheth
