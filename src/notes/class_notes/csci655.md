@@ -143,7 +143,28 @@
 
 ## [Rethink the sync](https://dl.acm.org/doi/abs/10.1145/1394441.1394442), Edmund B. Nightingale, Kaushik Veeraraghavan, Peter M. Chen, Jason Flinn, TOCS, 2008
 
+- synchronous: guarantee durability, ordering; but unacceptably slow
+- Ext3 only write to disk cache even in synchronous mode
+- externally synchronous: appear to user & device to be synchronous
+    - user-centric: does not matter if user cannot see
+    - async inside app
+    - force commit on effect, e.g., pipe/device write
+        - low enough delay for user, hardly noticeable
+- 10x faster than Ext3 sync mode in IO benchmark, but slightly slower in
+    web server benchmark
+
 ## [Caching in the Sprite Network File System](https://dl.acm.org/doi/pdf/10.1145/35037.42183), Michael N. Nelson, Brent B. Welch, John K. Ousterho, ACM Transactions on Computer Systems, 1988
+
+- client disk caching is slower than server memory caching
+    - predict (maybe incorrectly) that client won't need disk
+- write-back cache for lower write latency & less server/network load
+    - defer work: eliminate some overwrite of data
+- handle concurrent write conflict: disable cache; versioning
+    - writer block other writer until write finish
+- handle sequential write share: track last writer & force flush cache on
+    new open
+    - versioning to avoid stale cache on reopen
+- metric: performance, scalability (server&network utilization)
 
 ## [Outatime: Using Speculation to Enable Low-Latency Continuous Interaction for Mobile Cloud Gaming](https://dl.acm.org/doi/abs/10.1145/2742647.2742656), Kyungmin Lee, David Chu, Eduardo Cuervo, Johannes Kopf, Yury Degtyarev, Sergey Grizan, Alec Wolman, Jason Flinn, MobiSys, 2015
 

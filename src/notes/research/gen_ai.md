@@ -69,12 +69,37 @@ paper:
         - quantization can lower to 6GB, <100ms prefill/autoregression
     - ❗ memorize some training data
         - not any of the training data in my few test
-    - [Not all tokens are created equal:
-        Perplexity Attention Weighted Networks for
-        AI generated text detection](https://arxiv.org/abs/2501.03940),
-        Pablo Miralles-González, Javier Huertas-Tato, Alejandro Martín,
-        David Camacho, arXiv, 2025
-        - Binoculars poor accuracy in MAGE&M4
+- [Not all tokens are created equal:
+    Perplexity Attention Weighted Networks for
+    AI generated text detection](https://arxiv.org/abs/2501.03940),
+    Pablo Miralles-González, Javier Huertas-Tato, Alejandro Martín,
+    David Camacho, arXiv, 2025
+    - Binoculars poor accuracy in MAGE&M4
+    - [MAGE: Machine-generated Text Detection in
+        the Wild](https://arxiv.org/abs/2305.13242), Yafu Li, Qintong Li,
+        Leyang Cui, Wei Bi, Zhilin Wang, Longyue Wang, Linyi Yang, Shuming Shi,
+        Yue Zhang, ACL, 2024
+        - old human text
+        - prompt 27 LLM to generate text: continue story; write on topic;
+            write on topic w/ source
+        - paraphrase both human&machine text as machine text
+            - ❌ paraphrased human text should not be machine text
+        - [Hugging Face dataset](https://huggingface.co/datasets/yaful/MAGE)
+    - [M4: Multi-generator, Multi-domain, and
+        Multi-lingual Black-Box Machine-Generated Text
+        Detection](https://arxiv.org/abs/2305.14902), Yuxia Wang,
+        Jonibek Mansurov, Petar Ivanov, Jinyan Su, Artem Shelmanov,
+        Akim Tsvigun, Chenxi Whitehouse, Osama Mohammed Afzal, Tarek Mahmoud,
+        Toru Sasaki, Thomas Arnold, Alham Fikri Aji, Nizar Habash,
+        Iryna Gurevych, Preslav Nakov, EACL, 2024
+- [MOSAIC:
+    Multiple Observers Spotting AI
+    Content](https://arxiv.org/abs/2409.07615v2), a Robust Approach to
+    Machine-Generated Text Detection, Matthieu Dubois, François Yvon,
+    Pablo Piantanida, arXiv, 2025
+    - use multiple LLM perplexity to automatically choose best
+    - rejected by ICLR 2025 bc not consistently better empirically
+        - probably bc model need same tokenizer and are similar
 
 testing:
 

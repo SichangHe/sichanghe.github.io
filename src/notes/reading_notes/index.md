@@ -1,5 +1,20 @@
 # Unstructured Reading Notes
 
+- [How to Enhance Your Immune System | Dr. Roger Seheult](https://www.youtube.com/watch?v=N5DAW8mkJ6Y), Andrew Huberman
+    - long-wavelength light in sun benefit health
+        - they penetrate skin
+        - trigger mitochondria to produce melatonin, antioxidant
+        - mitochondria produce less ATP as we age
+- [The Science of Scientific
+    Writing](https://www.usenix.org/sites/default/files/gopen_and_swan_science_of_scientific_writing.pdf),
+    George D. Gopen, Judith A. Swan, American Scientist, 1990
+    - writer responsible to make reader understand
+    - use structure reader expect
+        - verb immediately after subject
+        - each unit of discourse should serve single point
+        - put emphasized stuff at "stress position", like end of sentence
+    - put context & known stuff at "topic position", like beginning
+    - use strong action verb
 - Thesis proposal: *Incentivizing Efficient Delegation without Payments*,
     Curtis Bechtel
     - delegation motivation: outside contractor (agent) may not optimize for
@@ -12,7 +27,8 @@
         - $\alpha$-fraction delegation gap: fraction between utility
     - goal: $\alpha → 1$ w/ more agent in
         competitive delegation w/ stochastic probing
-    - if probing has cost (Pandora's Box problem), generally no constant $\alpha$ bound
+    - if probing has cost (Pandora's Box problem),
+        generally no constant $\alpha$ bound
     - strategic delegation reduce to adversarial delegation (agent want to
         minimize principal utility)
 - *Intelligent, Robust and Trustworthy AI: Managing GenAI Challenges,
