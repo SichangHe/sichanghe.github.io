@@ -94,6 +94,7 @@
                 Evaluation](notes/research/DeGenTWeb/preliminary_binoculars_eval.md)
             - [Ad Extraction](notes/research/DeGenTWeb/ad_extraction.md)
             - [Filter out Non-Article](notes/research/DeGenTWeb/filter_non_article.md)
+            - [Baseline Websites](notes/research/DeGenTWeb/baseline_sites.md)
         - [Generative AI](notes/research/gen_ai.md)
         - [JSphere](notes/research/JSphere/sketch.md)
             - [Literature](notes/research/JSphere/literature.md)
