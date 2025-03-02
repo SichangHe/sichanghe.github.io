@@ -161,6 +161,20 @@ paper on AI-generated text:
     - use GPTZero
     - 30 word that predict generation by ~70% accuracy
         - can such word use for screening
+- [AI models collapse when trained on
+    recursively generated
+    data](https://www.nature.com/articles/s41586-024-07566-y), Ilia Shumailov,
+    Zakhar Shumaylov, Yiren Zhao, Nicolas Papernot, Ross Anderson, Yarin Gal,
+    Nature, 2024
+    - fine tune Meta's OPT-125m causal LM w/ generated text based on
+        wikitext, recursively
+    - model collapse: generate gibberish
+- [DataComp-LM: In search of the next generation of training sets for
+    language
+    models](https://proceedings.neurips.cc/paper_files/paper/2024/file/19e4ea30dded58259665db375885e412-Paper-Datasets_and_Benchmarks_Track.pdf),
+    Jeffrey Li, Alex Fang, Georgios Smyrnis, Maor Ivgi, et al., Achal Dave,
+    Ludwig Schmidt, Vaishaal Shankar, NeurIPS, 2024
+    - mentioning of synthetic data literature
 
 news:
 
