@@ -168,6 +168,21 @@
 
 ## [Outatime: Using Speculation to Enable Low-Latency Continuous Interaction for Mobile Cloud Gaming](https://dl.acm.org/doi/abs/10.1145/2742647.2742656), Kyungmin Lee, David Chu, Eduardo Cuervo, Johannes Kopf, Yury Degtyarev, Sergey Grizan, Alec Wolman, Jason Flinn, MobiSys, 2015
 
+- run game on server bc better hardware & compatibility & security update
+- high delay bc edge computing expensive&less capable, high last mile latency
+- target: 30 FPS, or 32ms to reflect user input
+- approach: predict future frame for RTT
+- navigation prediction
+    - Markov chain to predict next action → state → frame
+    - server send clipped cube of scene for possible future frame
+- impulsive event (e.g., gun fire) speculation
+    - subsample all possible state on triggering
+    - time-shift trigger to nearby checkpoint tick
+- checkpoint: save state object for rollback when prediction wrong
+- evaluation
+    - user play game, opinion score, game performance
+    - frame time, frame rate, bitrate
+
 ## [A low-bandwidth network file system](https://dl.acm.org/doi/abs/10.1145/502034.502052), Athicha Muthitacharoen, Benjie Chen, David Mazières, SOSP, 2001
 
 ## [Coz: finding code that counts with causal profiling](https://dl.acm.org/doi/abs/10.1145/2815400.2815409), Charlie Curtsinger, Emery D. Berger, SOSP, 2015
