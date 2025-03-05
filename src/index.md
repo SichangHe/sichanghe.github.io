@@ -109,6 +109,9 @@ dontClick?.addEventListener("contextmenu", (e) => {
 });
 </script>
 
+{{ #include news/2025spring.md }}
 {{ #include news/2024fall.md }}
 
-To comment on the news, please [go to the news page](/news/2024fall.html).
+[Older news](/news/2024spring.html)
+
+To comment on the news, please [go to the news page](/news/2025spring.html).
