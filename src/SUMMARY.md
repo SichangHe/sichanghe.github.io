@@ -2,7 +2,8 @@
 
 - [Introduction](index.md)
     - [About](about.md)
-- [News](news/2024fall.md)
+- [News](news/2025spring.md)
+    - [2024 Fall](news/2024fall.md)
     - [2024 Spring](news/2024spring.md)
 - [Notes](notes/index.md)
     - [Android](notes/android/index.md)
@@ -114,6 +115,7 @@
                 Literature](notes/research/c2pa/peripheral_literature.md)
             - [C2PA Camera Apps
                 Investigation](notes/research/c2pa/camera_apps.md)
+            - [GenAI: Problems Introduced and Countermeasures](notes/research/c2pa/gen_ai_problems.md)
         - [Removal Services](notes/research/removal_services.md)
         - [Web Atoms](notes/research/web_atoms.md)
         - [Web Crawling](notes/research/web_crawling.md)
