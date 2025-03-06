@@ -185,6 +185,24 @@
 
 ## [A low-bandwidth network file system](https://dl.acm.org/doi/abs/10.1145/502034.502052), Athicha Muthitacharoen, Benjie Chen, David Mazières, SOSP, 2001
 
+- need: access file across slow link
+- upload changed file on close; multi-edit last client to close file win
+- inadequate option
+    - compression not exploit small diff
+    - log like Coda not handle conflict, not reduce download workload
+- variable-size chunking w/ Rabin fingerprint to maximize chunk reuse
+    - declare end of chunk when least significant 13 bit of
+        fingerprint is certain value
+        - 13 bit to aim for 8kB
+        - impose max&min chunk size to avoid edge case
+- check hash-chunk database before reading/writing
+    - write tempfile when starting upload
+        - client specify tempfile descriptor for pipelining
+- evaluation: run Emacs, Word, GCC, etc.
+    - network bandwidth usage
+    - app performance
+- problem: side channel attack; cache miss if file encrypted
+
 ## [Coz: finding code that counts with causal profiling](https://dl.acm.org/doi/abs/10.1145/2815400.2815409), Charlie Curtsinger, Emery D. Berger, SOSP, 2015
 
 ## [Horcrux: Automatic JavaScript Parallelism for Resource-Efficient Web Computation](https://www.usenix.org/system/files/osdi21-mardani.pdf), Shaghayegh Mardani, Ayush Goel, Ronny Ko, Harsha V. Madhyastha, Ravi Netravali, OSDI, 2021
