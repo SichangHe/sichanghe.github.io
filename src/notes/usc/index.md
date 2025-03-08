@@ -13,14 +13,16 @@
 
 ## Housing
 
+(from Haodong)
+
 places
 
 - DPS
 - downtown
 - farther: Santa Monica and Culver City (closer to the beach and Hollywood);
     Monterey Park and San Gabriel (tons of Chinese food and markets);
-    Koreatown (many Korean food, markets and great hair saloons);
-    Pasadena (a bit far but peaceful and beautiful)
+    Koreatown (many Korean food, markets and great hair saloons); Pasadena
+    (a bit far but peaceful and beautiful)
 
 house vs apartment: house old, apartment expensive & small & have maintenance
 
@@ -78,7 +80,19 @@ document.head.appendChild(style);
 }
 </style>
 
+## Health insurance
+
+PhD student are automatically silently enrolled in
+USC Aetna Student Health Insurance Plan (SHIP)
+
+- health portal for question/appointment <https://www.usc.edu/myshr>
+- Delta Dental <https://www.deltadentalins.com/usc> (800-765-6003)
+    - policy/enrollee number is 10-digit USC ID number
+    - benefit list <https://www1.deltadentalins.com/group-sites/usc/ppo.html>
+
 ## PEMS
+
+(for automatically completing part of the "training")
 
 Staying safe:
 
