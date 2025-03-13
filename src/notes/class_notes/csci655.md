@@ -185,7 +185,7 @@
 
 ## [A low-bandwidth network file system](https://dl.acm.org/doi/abs/10.1145/502034.502052), Athicha Muthitacharoen, Benjie Chen, David Mazières, SOSP, 2001
 
-- need: access file across slow link
+- need: access file across slow link like WAN
 - upload changed file on close; multi-edit last client to close file win
 - inadequate option
     - compression not exploit small diff
@@ -205,7 +205,23 @@
 
 ## [Coz: finding code that counts with causal profiling](https://dl.acm.org/doi/abs/10.1145/2815400.2815409), Charlie Curtsinger, Emery D. Berger, SOSP, 2015
 
+- profiling&speeding up multi-threaded program
+    - ↗️ longest-running function may not ↗️ program bc not on critical path
+- causal profile: what overall impact if speed up certain function by
+    certain amount
+    - virtual speedup, pause other thread
+- track throughput&latency through progress point
+- evaluation: profile different program & get speedup like predicted
+
 ## [Horcrux: Automatic JavaScript Parallelism for Resource-Efficient Web Computation](https://www.usenix.org/system/files/osdi21-mardani.pdf), Shaghayegh Mardani, Ayush Goel, Ronny Ko, Harsha V. Madhyastha, Ravi Netravali, OSDI, 2021
+
+- motivation: phone have many CPU core, but
+    browser JS use 1 core & bottleneck page load
+- concolic execution to find every possible control flow
+    - fall back to sequential if timeout
+- automatically parallelize JS
+- metric: total computation time (TCT), page load time (PLT),
+    speed index (SI, integrate \#pixel by time)
 
 ## [Shielding Applications from an Untrusted Cloud with Haven](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-baumann.pdf), Andrew Baumann, Marcus Peinado, Galen Hunt, OSDI, 2014
 
@@ -226,3 +242,9 @@
 ## [Hints for Computer System Design](https://dl.acm.org/doi/pdf/10.1145/800217.806614), Butler W. Lampson, SOSP, 1983
 
 ## [On system design](https://dl.acm.org/doi/10.1145/1167515.1167513), Jim Waldo, SIGPLAN Notices, 2006
+
+---
+
+external paper
+
+## [Triangulating Python Performance Issues with Scalene](https://www.usenix.org/system/files/osdi23-berger.pdf), Emery D. Berger, Sam Stern, Juan Altmayer Pizzorno, OSDI, 2023
