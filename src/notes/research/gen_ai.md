@@ -92,6 +92,12 @@ paper:
         Akim Tsvigun, Chenxi Whitehouse, Osama Mohammed Afzal, Tarek Mahmoud,
         Toru Sasaki, Thomas Arnold, Alham Fikri Aji, Nizar Habash,
         Iryna Gurevych, Preslav Nakov, EACL, 2024
+    - [Fighting Fire with Fire:
+        Can ChatGPT Detect AI-generated
+        Text?](https://dl.acm.org/doi/abs/10.1145/3655103.3655106),
+        Amrita Bhattacharjee, Huan Liu, SIGKDD, 2024
+        - ChatGPT as detector high FNR
+
 - [MOSAIC:
     Multiple Observers Spotting AI
     Content](https://arxiv.org/abs/2409.07615v2), a Robust Approach to
