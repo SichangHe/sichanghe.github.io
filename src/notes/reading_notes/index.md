@@ -1,6 +1,18 @@
 # Unstructured Reading Notes
 
-- [How to Enhance Your Immune System | Dr. Roger Seheult](https://www.youtube.com/watch?v=N5DAW8mkJ6Y), Andrew Huberman
+- Guest Talk: *Computational Homogenization for Inverse Design of
+    Surface-based Inflatables*, Yingying (Samara) Ren, ISTA
+    - goal: simple fabrication state, transform to
+        complex&stable target state
+    - surface-based inflatable: flat to 3D
+    - analyze property of infinite sheet for
+        periodic unit cell w/ different parameter using periodic homogenization
+        w/ mesh
+    - use X/Y scale factor & bending stiffness to
+        reverse engineer the pattern needed
+- [How to
+    Enhance Your Immune System | Dr. Roger
+    Seheult](https://www.youtube.com/watch?v=N5DAW8mkJ6Y), Andrew Huberman
     - long-wavelength light in sun benefit health
         - they penetrate skin
         - trigger mitochondria to produce melatonin, antioxidant
