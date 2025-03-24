@@ -227,6 +227,14 @@
 
 ## [Difference Engine: Harnessing Memory Redundancy in Virtual Machines](https://dl.acm.org/doi/pdf/10.1145/1831407.1831429), Diwaker Gupta, Sangmin Lee, Michael Vrable, Stefan Savage, Alex C. Snoeren, George Varghese, Geoffrey M. Voelker, Amin Vahdat, Communications of the ACM, 2010
 
+- modify virtual machine monitor (VMM, or hypervisor) to share memory subpage
+- page sharing: point identical memory page at same CoW physical page
+- page patching: store a patch (diff) for another similar page, then point to
+    it
+    - choose not-recently-written-to as reference page
+    - choose not-recently-accessed page to patch
+- page compression of infrequently accessed page
+
 ## [Deciding when to forget in the Elephant file system](https://dl.acm.org/doi/pdf/10.1145/319151.319159), Douglas S. Santry, Michael J. Feeley, Norman C. Hutchinson, Alistair C. Veitch, Ross W. Carton, Jacob Ofir, SOSP, 2017
 
 ## [Energy-aware adaptation for mobile applications](https://dl.acm.org/doi/pdf/10.1145/319344.319155), Jason Flinn, M. Satyanarayanan, SOSP, 1999
