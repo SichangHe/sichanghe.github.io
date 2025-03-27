@@ -1,5 +1,17 @@
 # Unstructured Reading Notes
 
+- Theory Lunch: *Vote Delegation through the Lens of Metric Distortion*,
+    Alan Grayson York
+    - delegating vote to informed voter reduce metric distortion from
+        $\theta(\alpha)$ to $\theta(\sqrt{\alpha})$
+        - assume 2 candidate for linear preference spectrum
+        - if
+            informed voter among total is uniformly distributed among
+            preference spectrum
+        - not if informedness is i.i.d.
+    - assume voter delegate vote to informed neighbor voter if expect them to
+        vote better
+    - limitation: unrealistic assumption
 - Guest Talk: *Computational Homogenization for Inverse Design of
     Surface-based Inflatables*, Yingying (Samara) Ren, ISTA
     - goal: simple fabrication state, transform to
