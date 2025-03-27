@@ -234,8 +234,19 @@
     - choose not-recently-written-to as reference page
     - choose not-recently-accessed page to patch
 - page compression of infrequently accessed page
+- track page access+write w/ 2 bit
 
-## [Deciding when to forget in the Elephant file system](https://dl.acm.org/doi/pdf/10.1145/319151.319159), Douglas S. Santry, Michael J. Feeley, Norman C. Hutchinson, Alistair C. Veitch, Ross W. Carton, Jacob Ofir, SOSP, 2017
+## [Deciding when to forget in the Elephant file system](https://dl.acm.org/doi/pdf/10.1145/319151.319159), Douglas S. Santry, Michael J. Feeley, Norman C. Hutchinson, Alistair C. Veitch, Ross W. Carton, Jacob Ofir, SOSP, 1999
+
+- want to avoid accidental deletion/overwrite of important file
+- trash/ recycle bin not good enough: inadequate checkpoint & less useful if
+    soon cleared
+- not checkpoint entire file system bc too much overhead & cannot roll back
+    to between checkpoint
+- feasible bc disk bigger & only some file need tracking
+- minimize space overhead: CoW;
+    - landmark: user-specified/ heuristic-determined version to keep
+- garbage collection: keep one/ keep all/ keep safe
 
 ## [Energy-aware adaptation for mobile applications](https://dl.acm.org/doi/pdf/10.1145/319344.319155), Jason Flinn, M. Satyanarayanan, SOSP, 1999
 
