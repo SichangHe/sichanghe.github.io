@@ -173,7 +173,7 @@
 the "right button" would not work. -->
 - [Curriculum Vitae](curriculum_vitae/index.md)
 
-- [Private](diary/index.md)
+- [Private]()
     - [Diary](diary/index.md)
         - [start](diary/start.md)
             - [VSCodium](diary/vscodium.md)
