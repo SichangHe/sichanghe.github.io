@@ -250,6 +250,13 @@
 
 ## [Energy-aware adaptation for mobile applications](https://dl.acm.org/doi/pdf/10.1145/319344.319155), Jason Flinn, M. Satyanarayanan, SOSP, 1999
 
+- need: more mobile device, not bigger battery
+- more energy-saving technique bring lower energy consumption
+- reducing fidelity hardly reduce energy consumption when "think time" high
+- system to decrease fidelity as energy deplete
+    - exponential smoothing of power consumption expectation based on
+        expected half life of battery
+
 ## [Wide-area cooperative storage with CFS](https://dl.acm.org/doi/abs/10.1145/502059.502054), Frank Dabek, M. Frans Kaashoek, David Karger, Robert Morris, Ion Stoica, SIGOPS OSR, 2001
 
 ## [Cluster-Based Scalable Network Services](https://dl.acm.org/doi/pdf/10.1145/268998.266662), Armando Fox, Steven D. Gribble, Yatin Chawathe, Eric A. Brewer, Paul Gauthier, SOSP, 1997

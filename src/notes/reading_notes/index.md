@@ -1,5 +1,18 @@
 # Unstructured Reading Notes
 
+- *Job talk: Expectation vs Reality:
+    How Network Abstractions Impact Internet Security*, Paul Pearce
+    - routing is abstraction for Internet scanning
+        - e.g., different route when using HTTP vs HTTPS
+    - ECMP cause packet to go thru different AS → country → censorship
+        - ⇒ need to build exact packet for traceroute
+        - censorship/ no censorship due to routing bc source IP/port, etc.
+    - IPv6 impact overlooked in security community
+    - LSTM RL system to generate IPv6 address upper-64 bit
+        - domain knowledge for lower-64 bit
+        - IMCP6 port scan show many home router
+            - accidentally public IP due to no NAT; many CVE
+        - ⇒ abstraction change: default deny → default allow
 - Theory Lunch: *Vote Delegation through the Lens of Metric Distortion*,
     Alan Grayson York
     - delegating vote to informed voter reduce metric distortion from
