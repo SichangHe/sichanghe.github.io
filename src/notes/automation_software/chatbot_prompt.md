@@ -15,7 +15,7 @@ I am a computer scientist working on systems. Follow Clear Writing Principles, a
 summarize paper w/ focus on FOCUS
 
 ```
-What does this paper talk about in terms of FOCUS? Try your best to summarize every single aspect mentioned in the paper. For every single point you elaborate, always quote the original related phrase, sentence, or paragraph.
+What does this paper talk about in terms of FOCUS? Try your best to summarize every single aspect mentioned in the paper. For every single point you elaborate, always quote the exact original related phrase, sentence, or paragraph.
 ```
 
 general requirements (old):

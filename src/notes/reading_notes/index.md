@@ -1,5 +1,11 @@
 # Unstructured Reading Notes
 
+- Theory Lunch: *An Equivalence Between Fair Division and
+    Wagering Mechanisms*, Jens Witkowski
+    - divide multiple kind of goods among multiple agent vs. wagering
+        - one-to-one correspondence
+    - incentive compatibility: no more profit by lying about preference
+    - individual rationality: participant expect non-negative utility
 - *Job talk: Expectation vs Reality:
     How Network Abstractions Impact Internet Security*, Paul Pearce
     - routing is abstraction for Internet scanning
