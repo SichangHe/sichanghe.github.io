@@ -257,6 +257,17 @@
     - exponential smoothing of power consumption expectation based on
         expected half life of battery
 
+## [MAUI: Making Smartphones Last Longer with Code Offload](https://dl.acm.org/doi/pdf/10.1145/1814433.1814441), Eduardo Cuervo, Aruna Balasubramanian, Dae-ki Cho, Alec Wolman, Stefan Saroiu, Ranveer Chandra, Paramvir Bahl, MobiSys, 2010
+
+- motivation: offload code to cloud to increase battery life
+    - developer partitioning is manual & static
+    - full VM migration transfer too much data especially if task small
+- continuously profile & offload .NET function
+    - developer annotate pure function "remoteable"
+- communication overhead increase dramatically w/ transfer size & RTT
+- measure overhead&benefit: linear pre-built model to estimate energy cost
+- send state diff to reduce bandwidth
+
 ## [Wide-area cooperative storage with CFS](https://dl.acm.org/doi/abs/10.1145/502059.502054), Frank Dabek, M. Frans Kaashoek, David Karger, Robert Morris, Ion Stoica, SIGOPS OSR, 2001
 
 ## [Cluster-Based Scalable Network Services](https://dl.acm.org/doi/pdf/10.1145/268998.266662), Armando Fox, Steven D. Gribble, Yatin Chawathe, Eric A. Brewer, Paul Gauthier, SOSP, 1997
