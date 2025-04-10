@@ -1,5 +1,15 @@
 # Unstructured Reading Notes
 
+- Theory Lunch: *Proper Learnability and the Role of Unlabeled Data*,
+    Julian Asilis
+    - proper learning: learned fn $h$ not in hypothesis class $\mathcal H$
+        - e.g., majority vote for binary classification,
+            multiclass classification
+        - why limited hypothesis class: learnablility
+    - in PAC learning, having infinite unlabeled data does not change statistical difficulty of learning
+        - but make learnability always proper
+    - distributional SRM: regularize distribution of $h\in\mathcal H$
+        - e.g., Bayesian learner
 - Theory Lunch: *An Equivalence Between Fair Division and
     Wagering Mechanisms*, Jens Witkowski
     - divide multiple kind of goods among multiple agent vs. wagering
