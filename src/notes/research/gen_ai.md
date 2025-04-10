@@ -97,7 +97,6 @@ paper:
         Text?](https://dl.acm.org/doi/abs/10.1145/3655103.3655106),
         Amrita Bhattacharjee, Huan Liu, SIGKDD, 2024
         - ChatGPT as detector high FNR
-
 - [MOSAIC:
     Multiple Observers Spotting AI
     Content](https://arxiv.org/abs/2409.07615v2), a Robust Approach to
@@ -106,6 +105,14 @@ paper:
     - use multiple LLM perplexity to automatically choose best
     - rejected by ICLR 2025 bc not consistently better empirically
         - probably bc model need same tokenizer and are similar
+- [MLSDET: Multi-LLM Statistical Deep Ensemble for
+    Chinese AI-Generated Text
+    Detection](https://ieeexplore.ieee.org/abstract/document/10888686),
+    Dianhui Mao, Denghui Zhang, Ao Zhang, Zhihua Zhao, ICASSP, 2025
+    - combine multiple statistical property from
+        multiple LLM w/ ML classifier
+    - ❌ low quality: wrong use of word "MoE";
+        plagiarized Binoculars cross-perplexity as LLMs-crossEntropy
 
 testing:
 

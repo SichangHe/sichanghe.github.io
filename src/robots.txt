@@ -1,2 +1,4 @@
+Sitemap: https://sichanghe.github.io/sitemap.xml
+
 User-agent: *
 Disallow: /diary/
