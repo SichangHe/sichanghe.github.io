@@ -270,9 +270,15 @@
 
 ## [Wide-area cooperative storage with CFS](https://dl.acm.org/doi/abs/10.1145/502059.502054), Frank Dabek, M. Frans Kaashoek, David Karger, Robert Morris, Ion Stoica, SIGOPS OSR, 2001
 
+- chord: circle to determine node responsible for data
+
 ## [Cluster-Based Scalable Network Services](https://dl.acm.org/doi/pdf/10.1145/268998.266662), Armando Fox, Steven D. Gribble, Yatin Chawathe, Eric A. Brewer, Paul Gauthier, SOSP, 1997
 
+- replace ACID w/ BASE
+
 ## [Improving MapReduce Performance in Heterogeneous Environments](https://www.usenix.org/legacy/event/osdi08/tech/full_papers/zaharia/zaharia.pdf), Matei Zaharia, Andy Konwinski, Anthony D. Joseph, Randy Katz, Ion Stoica, OSDI, 2008
+
+- deal with straggler in MapReduce w/ heterogeneous machine
 
 ## [Efficient Memory Disaggregation with Infnswap](https://www.usenix.org/system/files/conference/nsdi17/nsdi17-gu.pdf), Juncheng Gu, Youngmoon Lee, Yiwen Zhang, Mosharaf Chowdhury, Kang G. Shin, NSDI, 2017
 

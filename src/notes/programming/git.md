@@ -136,6 +136,12 @@ go back and clean up history
 git rebase -i COMMIT_BEFORE_CHANGES
 ```
 
+squash merge
+
+```sh
+git merge --squash <branch>
+```
+
 ## Multiple repo
 
 add repo as submodule

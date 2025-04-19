@@ -1,12 +1,27 @@
 # Unstructured Reading Notes
 
+- Theory Lunch: *Towards Publicly Verifiable Cryptography: Obfuscation,
+    Fully Homomorphic Encryption, and Proof Carrying State*, Miryam Huang
+    - computationally impossible to obfuscate a circuit $C$ in
+        plain setting s.t.
+        new circuit $C'$ reveal no information about $C$'s implementation
+        - even w/ quantum computing/state
+        - workaround: weaker as indistinguishable obfuscation;
+            oracle model to help obfuscater; restrict circuit class
+    - in quantum setting, obfuscate $Q:=(C,\psi)$ w/ auxiliary state $\psi$
+    - proof for fully homomorphic encryption (FHE)
+        - succinct non-interactive argument (SNARG)
+    - proof-carrying state (PCS): quantum proof-carrying data (PCD)
+        - useful bc quantum state not cloneable
 - Theory Lunch: *Proper Learnability and the Role of Unlabeled Data*,
     Julian Asilis
     - proper learning: learned fn $h$ not in hypothesis class $\mathcal H$
         - e.g., majority vote for binary classification,
             multiclass classification
         - why limited hypothesis class: learnablility
-    - in PAC learning, having infinite unlabeled data does not change statistical difficulty of learning
+    - in PAC learning,
+        having infinite unlabeled data does not change statistical difficulty
+        of learning
         - but make learnability always proper
     - distributional SRM: regularize distribution of $h\in\mathcal H$
         - e.g., Bayesian learner
