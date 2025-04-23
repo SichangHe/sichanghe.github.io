@@ -282,6 +282,11 @@
 
 ## [Efficient Memory Disaggregation with Infnswap](https://www.usenix.org/system/files/conference/nsdi17/nsdi17-gu.pdf), Juncheng Gu, Youngmoon Lee, Yiwen Zhang, Mosharaf Chowdhury, Kang G. Shin, NSDI, 2017
 
+- tend on more blurry machine boundary: abstraction of shared CPU&memory
+    - possible bc RDMA fast
+- motivation: huge performance impact if working set data not all in memory
+- write swap memory to remote machine; async write to disk for backup
+
 ## [Hints for Computer System Design](https://dl.acm.org/doi/pdf/10.1145/800217.806614), Butler W. Lampson, SOSP, 1983
 
 ## [On system design](https://dl.acm.org/doi/10.1145/1167515.1167513), Jim Waldo, SIGPLAN Notices, 2006

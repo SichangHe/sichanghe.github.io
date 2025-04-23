@@ -49,14 +49,14 @@ paper:
     Sidi Lu, Lei Zheng, Jiaxian Guo, Weinan Zhang, Jun Wang, Yong Yu,
     ACM SIGIR, 2018
     - propose Self-BLEU for repetitiveness
-- [Fast-DetectGPT: Efficient Zero-Shot Detection of
+- ⭐️ [Fast-DetectGPT: Efficient Zero-Shot Detection of
     Machine-Generated Text via Conditional Probability Curvature,
     Guangsheng Bao, Yanbin Zhao, Zhiyang Teng, Linyi Yang, Yue Zhang, ICLR,
     2024](https://arxiv.org/abs/2310.05130)
     - compare perplexity after perturbation; zero-shot
     - improvement in speed and accuracy on
         prior DetectGPT w/ conditional probability curvature sampling
-- [Spotting LLMs With Binoculars: Zero-Shot Detection of
+- ⭐️ [Spotting LLMs With Binoculars: Zero-Shot Detection of
     Machine-Generated Text](https://arxiv.org/abs/2401.12070), Abhimanyu Hans,
     Avi Schwarzschild, Valeriia Cherepanova, Hamid Kazemi, Aniruddha Saha,
     Micah Goldblum, Jonas Geiping, Tom Goldstein, ICML, 2024
@@ -69,6 +69,12 @@ paper:
         - quantization can lower to 6GB, <100ms prefill/autoregression
     - ❗ memorize some training data
         - not any of the training data in my few test
+- [The Impact of Prompts on Zero-Shot Detection of
+    AI-Generated Text](https://ceur-ws.org/Vol-3856/paper_11.pdf),
+    Kouichi Sakurai, Kaito Taguchi, Yujie Gu, IJCAI, 2024
+    - not having prompt info cause big detector accuracy drop
+    - ran Binoculars w/ Phi1.5 and still got decent result
+        - 0.88 accuracy in black-box test; outcompete other
 - [Not all tokens are created equal:
     Perplexity Attention Weighted Networks for
     AI generated text detection](https://arxiv.org/abs/2501.03940),

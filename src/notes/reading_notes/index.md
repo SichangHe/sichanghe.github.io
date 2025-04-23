@@ -1,5 +1,9 @@
 # Unstructured Reading Notes
 
+- WinCC: *A step by step guide for a successful proposal*, Tamim Ahmed
+    - find application of thing you worked a lot on
+    - can reuse stuff; do not reinvent the wheel
+    - proper timeline & cost (talk to financial expert)
 - Theory Lunch: *Towards Publicly Verifiable Cryptography: Obfuscation,
     Fully Homomorphic Encryption, and Proof Carrying State*, Miryam Huang
     - computationally impossible to obfuscate a circuit $C$ in

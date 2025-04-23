@@ -33,3 +33,5 @@ install xcode-select w/o using the garbage CLI that hangs: find the version for
 the corresponding Xcode version here
 <https://developer.apple.com/download/all/?q=command%20line%20tools%20for%20Xcode>,
 download the `.dmg` file, and install
+
+MagSafe not working: reboot
