@@ -1,5 +1,13 @@
 # Unstructured Reading Notes
 
+- Defense: *Automated Reproduction of Bug Reports for Mobile Applications*,
+    Zhaoxu Zhang
+    - bug report have missing/wrong step
+    - split & reorder actions in sentences for steps
+    - Markov decision process (MDP) + Q-learning for globally optimal steps
+        - ignore hidden state; only consider UI state
+    - optional: search w/ Markov chain from UI transition graph (UTG)
+    - intermediate representation to help validate non-crash bug reproduction
 - WinCC: *A step by step guide for a successful proposal*, Tamim Ahmed
     - find application of thing you worked a lot on
     - can reuse stuff; do not reinvent the wheel

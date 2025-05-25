@@ -8,12 +8,13 @@
 Hello there, Steven here:
 
 - Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
-- 1st-year Computer Science Ph.D. student in the
+- Computer Science Ph.D. student,
     [Networked Systems Lab (NSL)](https://nsl.usc.edu/), University of
     Southern California (USC).
     - Advisor: [Harsha Madhyastha](https://www.harsha.usc.edu/).
     - Interests: the Web, Networking, SE, PL, HPC.
-- For experiences, publications, etc., please see the CV linked below.
+- For experiences, publications, contact, etc.,
+    please see the CV linked below.
 
 </div>
 <img
@@ -110,6 +111,7 @@ dontClick?.addEventListener("contextmenu", (e) => {
 </script>
 
 {{ #include news/2025spring.md }}
+
 {{ #include news/2024fall.md }}
 
 [Older news](/news/2024spring.html)

@@ -75,6 +75,7 @@ paper:
     - not having prompt info cause big detector accuracy drop
     - ran Binoculars w/ Phi1.5 and still got decent result
         - 0.88 accuracy in black-box test; outcompete other
+        - ❓ code does not reveal use of Phi for Binoculars
 - [Not all tokens are created equal:
     Perplexity Attention Weighted Networks for
     AI generated text detection](https://arxiv.org/abs/2501.03940),
@@ -119,6 +120,11 @@ paper:
         multiple LLM w/ ML classifier
     - ❌ low quality: wrong use of word "MoE";
         plagiarized Binoculars cross-perplexity as LLMs-crossEntropy
+- 🖥️ [Detecting AI-Generated Code Assignments Using Perplexity of
+    Large Language
+    Models](https://ojs.aaai.org/index.php/AAAI/article/view/30361/32410),
+    Zhenyu Xu, Victor S. Sheng, AAAI, 2024
+    - detect ChatGPT-generated code assignment; 👎 AUC 0.87
 
 testing:
 
@@ -194,6 +200,23 @@ paper on AI-generated text:
     Jeffrey Li, Alex Fang, Georgios Smyrnis, Maor Ivgi, et al., Achal Dave,
     Ludwig Schmidt, Vaishaal Shankar, NeurIPS, 2024
     - mentioning of synthetic data literature
+- [Prevalence, Sharing Patterns, and Spreaders of
+    Multimodal AI-Generated Content on
+    X during the 2024 U.S. Presidential
+    Election](https://arxiv.org/abs/2502.11248), Zhiyi Chen, Jinyi Ye,
+    Emilio Ferrara, Luca Luceri, arXiv, 2025
+    - ❌ lack literature review: claim there exist "scarce" studies on AI text
+    - 3 months of 24.7M tweet before election
+    - 12% AI image by GPT-4o
+    - 1.4% AI text by fine-tuned RoBERTa
+        - ❌ but only 0.96 F1 score in testing, so could just be error
+    - a few radical "superspreader" account for most AI content
+- [Extended: Navigating Today, Shaping Tomorrow: Studying the Role of LLMs on
+    Wikipedia](https://openreview.net/pdf?id=R2bp8xLLao), Manoel Horta Ribeiro,
+    Andrés Monroy-Hernandez, Wikimedia Research Fund Research Proposal, 2025
+    - propose to analyze use & user impact of LLM content on Wikipedia
+    - methods unclear
+    - has Binoculars in reference list w/o citing it
 
 news:
 
