@@ -49,6 +49,15 @@ paper:
     Sidi Lu, Lei Zheng, Jiaxian Guo, Weinan Zhang, Jun Wang, Yong Yu,
     ACM SIGIR, 2018
     - propose Self-BLEU for repetitiveness
+- [LLM-as-a-Coauthor: Can Mixed Human-Written and
+    Machine-Generated Text Be Detected?](https://arxiv.org/abs/2401.05952),
+    Qihui Zhang, Chujie Gao, Dongping Chen, Yue Huang, Yixin Huang,
+    Zhenyang Sun, Shilin Zhang, Weiye Li, Zhengyan Fu, Yao Wan, Lichao Sun,
+    NAACL, 2024
+    - dataset of mixed human+machine text
+    - GLTR, DetectGPT, etc. classify inconsistently in the middle
+        - RADAR best F1 score: 0.88
+    - [GitHub](https://github.com/Dongping-Chen/MixSet)
 - ⭐️ [Fast-DetectGPT: Efficient Zero-Shot Detection of
     Machine-Generated Text via Conditional Probability Curvature,
     Guangsheng Bao, Yanbin Zhao, Zhiyang Teng, Linyi Yang, Yue Zhang, ICLR,
@@ -125,6 +134,27 @@ paper:
     Models](https://ojs.aaai.org/index.php/AAAI/article/view/30361/32410),
     Zhenyu Xu, Victor S. Sheng, AAAI, 2024
     - detect ChatGPT-generated code assignment; 👎 AUC 0.87
+- [Learning to Rewrite:
+    Generalized LLM-Generated Text
+    Detection](https://arxiv.org/abs/2408.04237), Wei Hao, Ran Li,
+    Weiliang Zhao, Junfeng Yang, Chengzhi Mao, ACL, 2025
+    - finetune Llama to rewrite text, minimizing edit distance for AI text
+        - Levenshtein distance
+    - generalize better across domain than RAIDAR
+    - better 0.90 AUROC than Fast-DetectGPT, but not compared w/ Binoculars
+- [Almost AI, Almost Human: The Challenge of
+    Detecting AI-Polished Writing](https://arxiv.org/abs/2502.15666),
+    Shoumik Saha, Soheil Feizi, arXiv, 2025
+    - AI-polished text in various degree tend to be classified as AI text
+        - small sample size: 15k polished from 300 human text
+        - ✅ Binoculars <10% FPR on GPT-4o/DeepSeek-V3 polished text
+            - Fast-DetectGPT <20%
+            - higher FPR on Llama, but such smaller model unlikely used IRL
+    - 😕 poor figure, wrong label: not (\%) but ratio
+    - [GitHub](https://github.com/ShoumikSaha/ai-polished-text)
+    - related news: [A New Headache for Honest Students:
+        Proving They Didn’t Use
+        A.I.](https://www.nytimes.com/2025/05/17/style/ai-chatgpt-turnitin-students-cheating.html)
 
 testing:
 
@@ -217,6 +247,18 @@ paper on AI-generated text:
     - propose to analyze use & user impact of LLM content on Wikipedia
     - methods unclear
     - has Binoculars in reference list w/o citing it
+- ⭐️ Preprint: Do Spammers Dream of Electric Sheep?
+    Characterizing the Prevalence of LLM-Generated Malicious Emails, Wei Hao,
+    Van Tran, Vincent Rideout, Zixi Wang, AnMei Dasbach-Prisk, M. H. Afifi,
+    Junfeng Yang, Ethan Katz-Bassett, Grant Ho, Asaf Cidon, IMC, 2025
+    - \~240k×2 Baracuda flagged spam/business email compromise (BEC)
+        - replace link w/ `[link]`, filter <250 character
+    - used RoBERTa, Fast-DetectGPT, DAIDAR, very different results
+        - train/test on pre-GPT + self-generated sample
+        - RoBERTa very low FPR/FNR on testing
+    - clear increase trend
+    - Latent Dirichlet Allocation (LDA) topic modeling; linguistic analysis
+    - case study: many similar email w/ different wording
 
 news:
 
