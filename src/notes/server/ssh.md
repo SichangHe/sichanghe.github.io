@@ -14,7 +14,7 @@ ssh -L 8080:127.0.0.1:8080 username@host
 
 ## rsync
 
-general usage
+general usage\
 `-P` give a progress bar
 
 ```shell
@@ -32,3 +32,24 @@ copy file from client to ssh server
 ```shell
 rsync -P local_dir username@host:dir
 ```
+
+## mosh
+
+faster bc use UDP, but no port forwarding
+
+official version buggy for TUI app; need to
+compile <git@github.com:jdrouhard/mosh.git> from scratch on both client and
+server:
+
+```sh
+sudo apt install autoconf automake libprotobuf-dev pkg-config # for Debian
+brew install autoconf automake protobuf pkg-config # for Mac
+git clone git@github.com:jdrouhard/mosh.git && cd mosh
+./autogen.sh
+./configure
+make
+make install # May need sudo.
+```
+
+another newer fork may be better, but haven't tried:
+<git@github.com:alphallc/mosh.git>

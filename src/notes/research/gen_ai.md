@@ -155,6 +155,11 @@ paper:
     - related news: [A New Headache for Honest Students:
         Proving They Didn’t Use
         A.I.](https://www.nytimes.com/2025/05/17/style/ai-chatgpt-turnitin-students-cheating.html)
+- [Detecting Machine-Generated Texts: Not Just "AI vs Humans" and
+    Explainability is Complicated](https://arxiv.org/abs/2406.18259),
+    Jiazhou Ji, Ruizhe Li, Shujun Li, Jie Guo, Weidong Qiu, Zheng Huang,
+    Chiyu Chen, Xiaoyu Jiang, Xinru Lu, arXiv, 2024
+    - there should be an "undecided" category
 
 testing:
 
