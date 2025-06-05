@@ -2,14 +2,20 @@
 
 kitty ssh
 
-```shell
+```sh
 kitty +kitten ssh …
 ```
 
 port forwarding
 
-```shell
+```sh
 ssh -L 8080:127.0.0.1:8080 username@host
+```
+
+ClashX Socks proxy (`-C` to compress and save bandwidth)
+
+```sh
+ssh -C -o "ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p" username@host
 ```
 
 ## rsync
@@ -17,19 +23,19 @@ ssh -L 8080:127.0.0.1:8080 username@host
 general usage\
 `-P` give a progress bar
 
-```shell
+```sh
 rsync -P source destination
 ```
 
 copy file from ssh server to client
 
-```shell
+```sh
 rsync -P username@host:dir local_dir
 ```
 
 copy file from client to ssh server
 
-```shell
+```sh
 rsync -P local_dir username@host:dir
 ```
 
