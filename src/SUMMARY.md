@@ -94,9 +94,11 @@
             - [Preliminary Binoculars
                 Evaluation](notes/research/DeGenTWeb/preliminary_binoculars_eval.md)
             - [Ad Extraction](notes/research/DeGenTWeb/ad_extraction.md)
-            - [Filter out Non-Article](notes/research/DeGenTWeb/filter_non_article.md)
+            - [Filter out
+                Non-Article](notes/research/DeGenTWeb/filter_non_article.md)
             - [Baseline Websites](notes/research/DeGenTWeb/baseline_sites.md)
-            - [Classifying Websites](notes/research/DeGenTWeb/classifying_site.md)
+            - [Classifying
+                Websites](notes/research/DeGenTWeb/classifying_site.md)
             - [Common Crawl](notes/research/DeGenTWeb/common_crawl.md)
         - [Generative AI](notes/research/gen_ai.md)
         - [JSphere](notes/research/JSphere/sketch.md)
@@ -117,7 +119,8 @@
                 Literature](notes/research/c2pa/peripheral_literature.md)
             - [C2PA Camera Apps
                 Investigation](notes/research/c2pa/camera_apps.md)
-            - [GenAI: Problems Introduced and Countermeasures](notes/research/c2pa/gen_ai_problems.md)
+            - [GenAI: Problems Introduced and
+                Countermeasures](notes/research/c2pa/gen_ai_problems.md)
         - [Removal Services](notes/research/removal_services.md)
         - [Web Atoms](notes/research/web_atoms.md)
         - [Web Crawling](notes/research/web_crawling.md)
@@ -176,6 +179,10 @@ the "right button" would not work. -->
 - [Curriculum Vitae](curriculum_vitae/index.md)
 
 - [Private]()
+    - [Business](business/index.md)
+        - [Auction Package
+            Redirection](business/auction_package_redirection.md)
+        - [Phone Screen Protector](business/phone_screen_protector.md)
     - [Diary](diary/index.md)
         - [start](diary/start.md)
             - [VSCodium](diary/vscodium.md)
