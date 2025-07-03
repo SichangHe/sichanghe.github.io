@@ -85,6 +85,12 @@ paper:
     - ran Binoculars w/ Phi1.5 and still got decent result
         - 0.88 accuracy in black-box test; outcompete other
         - ❓ code does not reveal use of Phi for Binoculars
+    - best accuracy in black-box setting:
+        - Binoculars 0.877
+        - FastDetectGPT 0.819
+        - FastNPR 0.768
+    - propose FastNPR as a faster NPR??
+        - but do not claim to have proposed it and do not list formula
 - [Not all tokens are created equal:
     Perplexity Attention Weighted Networks for
     AI generated text detection](https://arxiv.org/abs/2501.03940),
@@ -160,6 +166,28 @@ paper:
     Jiazhou Ji, Ruizhe Li, Shujun Li, Jie Guo, Weidong Qiu, Zheng Huang,
     Chiyu Chen, Xiaoyu Jiang, Xinru Lu, arXiv, 2024
     - there should be an "undecided" category
+- [Glimpse: Enabling White-Box Methods to Use Proprietary Models for
+    Zero-Shot LLM-Generated Text Detection, Guangsheng Bao, Yanbin Zhao,
+    Juncai He, Yue Zhang, ICLR, 2025](https://arxiv.org/pdf/2412.11506)
+    - use Fast-DetectGPT w/ proprietary model logit
+    - much better performance on proprietary model outputs:
+        0.95 AUROC vs 0.79 on Mix3 dataset
+
+- [MAGRET: Machine-generated Text Detection with
+    Rewritten Texts](https://aclanthology.org/2025.coling-main.557/),
+    Yifei Huang, Jingxin Cao, Hanyu Luo, Xin Guan, Bo Liu, ACL, 2025
+- [Analyzing register variation in web texts through
+    automatic segmentation](https://aclanthology.org/2025.nlp4dh-1.2.pdf),
+    Erik Henriksson, Saara Hellström, Veronika Laippala, ICNLP, 2025
+- [Deciphering Textual Authenticity: A Generalized Strategy through
+    the Lens of Large Language Semantics for Detecting Human vs.
+    Machine-Generated
+    Text](https://www.usenix.org/conference/usenixsecurity24/presentation/bethany),
+    Mazal Bethany, Brandon Wherry, Emet Bethany, Nishant Vishwamitra,
+    Anthony Rios, Peyman Najafirad, USENIX Security, 2024
+- [A Comprehensive Survey of Fake Text Detection on Misinformation and
+    LM-Generated Texts](https://ieeexplore.ieee.org/document/10870239),
+    Soonchan Kwon, Beakcheol Jang, IEEE Access, 2025
 
 testing:
 

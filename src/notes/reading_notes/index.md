@@ -1,5 +1,22 @@
 # Unstructured Reading Notes
 
+- [Steve Jobs President & CEO, NeXT Computer Corp and
+    Apple. MIT Sloan Distinguished Speaker
+    Series](https://www.youtube.com/watch?v=Gk-9Fd2mEnI), 1992
+    - attack operational productivity w/ software, not management
+    - "object"
+        reusability made NeXTSTEP attractive bc programmer could write 20% code
+        to make the same "mission critical" application
+        - translate to "package" reuse today
+    - bright people produce stuff reused by others
+    - all decision maker should buy into the decision
+        - when hiring high-level people: expect them to tell you what to do,
+            not the other way around
+    - take long term view on people: tolerate short-term mistakes to
+        build team
+    - view manufacturing as competitive advantage
+        - view manufacturing as software engineering but w/ hardware
+        - start from the software to design hardware
 - Defense: *Automated Reproduction of Bug Reports for Mobile Applications*,
     Zhaoxu Zhang
     - bug report have missing/wrong step
