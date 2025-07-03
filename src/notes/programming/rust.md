@@ -56,7 +56,7 @@ literal */
 
 enumeration with variant `Ok` or `Err`
 
-- handle error and convert to `Option`: 
+- handle error and convert to `Option`:
 
     ```rust
     result.map_err(|e|/*…*/).ok()`
@@ -91,9 +91,9 @@ end with `;`
 
 # expression
 
-represent a value
-end without `;`
-can be used as return statement
+- represent a value
+- end without `;`
+- can be used as return statement
 
 # reference
 
@@ -263,10 +263,15 @@ where
 
 ## capture environment
 
-- borrow by default *implement `Fn` trait*,
-    mutable as needed *implement `FnMut` trait*
+- borrow by default *implement `Fn` trait*, mutable as
+    needed *implement `FnMut` trait*
 - adopt ownership using `move`
 
     ```rust
     `move |var1,…| {return_value}`
     ```
+
+# misc
+
+rustc limitation: returning a non-`'static` variable `var0` in
+any branch keep borrowing what `var0` borrows, even in other branch

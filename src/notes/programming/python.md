@@ -69,8 +69,7 @@ del var1
     return string consisting of `string1[index1]` to `string1[index2 - 1]`\
     leaving `index1` or `index2` empty means `0` or `-1` by default\
     exceeding string length return empty string `''` for those parts\
-- multiplication `string1 * n`
-    repeat `n` time
+- multiplication `string1 * n` repeat `n` time
 
 ### immutability
 
@@ -82,8 +81,8 @@ del var1
     `lstript()` from the left\
     `stript()` both side
 - check start/ end `.startswith()` `.endswith()` → *boolean*
-- find substring `.find(substring1)` → *int* index of the first found;
-    `-1` if not found
+- find substring `.find(substring1)` → *int* index of the first found; `-1`
+    if not found
 - replace `.replace(string1,string2)`
 
 ### input
@@ -115,11 +114,11 @@ del var1
 ### arithmetic operation
 
 - operand and operator
-- addition `+` subtraction `-` multiplication `*` → *int* iff both operand int,
-    else *float*
+- addition `+` subtraction `-` multiplication `*`
+    → *int* iff both operand int, else *float*
 - division `/` → *float*
-- integer division `//` → *int* iff both operand int,
-    else *float*, round down\
+- integer division `//` → *int* iff both operand int, else *float*,
+    round down\
     no `0` denominator allowed regardless of type
 - exponent `**` → *int* iff both operand positive int, else *float
 - modulus `%` → *int* iff both operand int, else *float
@@ -128,8 +127,8 @@ del var1
 
 - round tie to even `round(num1,n)`\
     by default, blank precision → *int* with `None` precision\
-    with int `n` → *int* iff both int, else *float* with `n` floating digit
-    (negative precision go beyond decimal)
+    with int `n` → *int* iff both int, else *float* with `n`
+    floating digit (negative precision go beyond decimal)
 - absolute value `abs()` return same type
 - power `pow(base1,exponent1) = base1 ** exponent1`,
     `pow(base1,exponent1,mod1) = (base1 ** exponent1) % mod1`
@@ -137,14 +136,14 @@ del var1
 
 ### number conversion
 
-- string to int `int(string1)`
-can only take string in integer form
+- string to int `int(string1)` can only take string in integer form
 
 ### output
 
 #### fixed-point number `f"{num1:format}"`
 
-[format language](https://docs.python.org/3/library/string.html#format-specification-mini-language)
+[format
+language](https://docs.python.org/3/library/string.html#format-specification-mini-language)
 format
 
 - `.pt` precision `p` type `t` e.g. `.2f`
@@ -212,7 +211,8 @@ no data
 - slice replace `list1[index1:index2] = list2` *not necessarily same length*
 - insert `list1.insert(index1,elem1)`\
     index too big is seen as last index
-- append `list1.append(elem1)` append to last space, equivalent to `list1.insert(list1.__len__(),elem1)`
+- append `list1.append(elem1)` append to last space, equivalent to
+    `list1.insert(list1.__len__(),elem1)`
 - extend `list1.extend(iterable1)` append an iterable
 - pop `list1.pop(index1)` return and remove `list1[index1]`
 
@@ -259,8 +259,8 @@ set(a) # or
 
 #### set method
 
-some method map to arithmetic operator but those only work on other set
-instead of any iterable
+some method map to arithmetic operator but those only work on
+other set instead of any iterable
 
 - `.union(iter1)` ≈ `|`
 - `.difference(iter1)` ≈ `-`
@@ -317,6 +317,13 @@ automatically return `None` if no return statement
 - define first and then call
 - docstring—triple-quoted above function body
 
+## closure
+
+- foot gun: defining closure in
+    a loop only capture variable value at the last iteration of the loop
+    - ⇒ need to call another function to
+        return different closure every iteration
+
 ---
 
 # loop
@@ -339,7 +346,7 @@ automatically return `None` if no return statement
 
 ## break out
 
-exit loop `break`
+exit loop `break`\
 next iteration `continue`
 
 ---
@@ -394,7 +401,8 @@ defined right under the class structure
 ### instance attribute
 
 - initialize method `.__init__()`
-`def __init__(self,para1,…):`
+
+    `def __init__(self,para1,…):`
 
 ### access `object1.attribute1` *dot notation*
 
@@ -489,7 +497,7 @@ start from cwd
 
 #### path component
 
-all level of directory from low to high `path1.parents` → *iterable*
+all level of directory from low to high `path1.parents` → *iterable*\
 one level up `path1.parent` → *Path*
 
 #### manipulation
@@ -552,12 +560,14 @@ both `pathlib` and `shutil` are implemented using `os`
     - write header `DictWriter1.writeheader()` → *int of character written*
     - write one line `DictWriter1.writerow(dict1)`
     - write multiple line`DictWriter1.writerows(list_of_dict1)`
-*it in fact work with any object with `write()` method*
+
+        *it in fact work with any object with `write()` method*
 
 #### read
 
 - reader object `csv.reader(file1)` → *iterable of list of str*
-- dictionary reader object `csv.DictReader(file1)` → *iterable of dict of `header:val`
+- dictionary reader object `csv.DictReader(file1)` → *iterable of dict of
+    `header:val`
 
 ## binary file
 
