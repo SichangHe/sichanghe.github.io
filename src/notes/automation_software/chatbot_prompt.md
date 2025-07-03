@@ -30,6 +30,12 @@ To remind the bot the requirements:
 Repeat Requirements R verbatim.
 ```
 
+requires for coding:
+
+```
+Write compact, clean code. Avoid code that confuses static analyzers. Never ever add new lines for no reason; only use them to indicate significant structural separations. Never ever use inline comments unless for documenting extraordinary assumptions or tricks; always try to use docstring instead.
+```
+
 point out problem but not revise:
 
 ```
