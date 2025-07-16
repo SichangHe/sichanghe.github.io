@@ -360,3 +360,11 @@ why extension for human to vote DNE:
 - (abandoned) similar project
     [Dissenter browser](https://github.com/gab-ai-inc/gab-dissenter-extension)
     let user comment on any webpage
+
+# Benchmark paper
+
+- [MAVIS: Mathematical Visual Instruction Tuning with
+    An Automatic Data Engine](https://arxiv.org/pdf/2407.08739), Renrui Zhang,
+    Xinyu Wei, Dongzhi Jiang, Ziyu Guo, Shicheng Li, Yichi Zhang,
+    Chengzhuo Tong, Jiaming Liu, Aojun Zhou, Bin Wei, Shanghang Zhang,
+    Peng Gao, Chunyuan Li, Hongsheng Li, ICLR, 2025

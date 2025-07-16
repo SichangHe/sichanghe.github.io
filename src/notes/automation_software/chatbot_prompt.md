@@ -21,13 +21,19 @@ What does this paper talk about in terms of FOCUS? Try your best to summarize ev
 general requirements (old):
 
 ```
-Requirements R: be professional and maximally succinct. Prefer verb over noun, adjective over adverb, active tense over passive tense. Avoid fluff or self-judgements. Do not lose any information. Do not praise or repeat any given content. Keep the original language, style, and meaning as much as possible. Make minimal changes for improvement.
+Requirements R: write prose that is clear and coherent, professional and complete yet approachable and natural, as succinct and simple as possible but not too simple. Prefer verb over noun, adjective over adverb, active tense over passive tense. Avoid fluff or self-judgements. Never lose any information, or praise or repeat any given content. Keep the original language, style, and meaning as much as possible. Make minimal changes for improvement.
 ```
 
 To remind the bot the requirements:
 
 ```
 Repeat Requirements R verbatim.
+```
+
+requirements for writing outlines:
+
+```
+keep the whole outline as one big nested unordered list of short items and never number the items, never write complete sentences and always only use simple keywords, never capitalize non-special words and always use lower case for ordinary words, and never use bold or other styling on texts.
 ```
 
 requires for coding:
