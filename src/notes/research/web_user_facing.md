@@ -75,3 +75,12 @@ ideas:
 
 - ranking based on user feedback
 - measuring retrieval of Perplexity, ChatGPT, etc. in search mode
+
+## Phishing
+
+- [Phishing in the Free Waters: A Study of
+    Phishing Attacks Created using Free Website Building
+    Services](https://dl.acm.org/doi/pdf/10.1145/3618257.3624812),
+    Sayak Saha Roy, Unique Karanjit, Shirin Nilizadeh, IMC, 2023
+    - description of free website building service
+    - much pressure on detecting phishing domain ⇒ costly to buy frequently

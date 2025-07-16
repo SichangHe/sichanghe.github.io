@@ -80,6 +80,14 @@ create orphan branch
 git switch --orphan <branch>
 ```
 
+add coauthor to commit
+
+```sh
+git commit -m "Commit message.
+
+Co-authored-by: Name <email@example.com>"
+```
+
 ## Bookkeeping
 
 delete all history of a certain file (*deprecated*)
@@ -148,6 +156,18 @@ add repo as submodule
 
 ```shell
 git submodule add <repo>
+```
+
+clone all submodules
+
+```sh
+git submodule update --init --recursive
+```
+
+after changing `.gitmodule`
+
+```sh
+git submodule sync --recursive
 ```
 
 pull every repo under the current folder
