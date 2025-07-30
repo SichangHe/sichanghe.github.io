@@ -20,6 +20,11 @@ commercial:
         GPTZero](https://iscap.us/proceedings/2024/pdf/6184.pdf),
         Karen Paullet, Jamie Pinchot, Evan Kinney, Tyler Stewart, ISCAP, 2024
         - claim to be highly accurate, but paper seem not robust
+- [Copyleaks](https://copyleaks.com/ai-content-detector): \$10/month
+    - list of junk or misrepresented papers supporting its "best" accuracy:
+        [Third-Party Studies Continue to Confirm Copyleaks AI Detector as
+        the Most
+        Accurate](https://copyleaks.com/blog/ai-detector-continues-top-accuracy-third-party)
 
 paper:
 
@@ -205,7 +210,7 @@ testing:
 
 paper on AI-generated text:
 
-- [Monitoring AI-Modified Content at Scale: A Case Study on the Impact of
+- ❗️ [Monitoring AI-Modified Content at Scale: A Case Study on the Impact of
     ChatGPT on AI Conference Peer Reviews](https://arxiv.org/abs/2403.07183),
     Weixin Liang, Zachary Izzo, Yaohui Zhang, Haley Lepp, Hancheng Cao,
     Xuandong Zhao, Lingjiao Chen, Haotian Ye, Sheng Liu, Zhi Huang,
@@ -228,7 +233,7 @@ paper on AI-generated text:
         - validation unscientific: AI dataset generated same way as
             training data
         - human may learn word from AI
-- [The Rise of AI-Generated Content in
+- ❗️ [The Rise of AI-Generated Content in
     Wikipedia](https://arxiv.org/abs/2410.08044), Creston Brooks,
     Samuel Eggert, Denis Peskoff, EMNLP workshop, 2024
     - use GPTZero & Binoculars w/ Falcon-7B
