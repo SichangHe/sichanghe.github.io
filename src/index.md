@@ -12,7 +12,10 @@ Hello there, Steven here:
     [Networked Systems Lab (NSL)](https://nsl.usc.edu/), University of
     Southern California (USC).
     - Advisor: [Harsha Madhyastha](https://www.harsha.usc.edu/).
-    - Interests: the Web, Networking, SE, PL, HPC.
+    - [**Research Interests**](about.html#research-interests): the Web,
+        Networking, SE, PL, HPC.
+        - 👉 [**For USC undergrads/MS students**](about.html#for-undergradsms)
+            interested in CS/EE/DS research.
 - For experiences, publications, contact, etc.,
     please see the CV linked below.
 
@@ -52,6 +55,16 @@ Channel](https://www.youtube.com/@sichanghe)
 [📓 Notes](/notes/)
 </div>
 
+{{ #include news/2025spring.md }}
+
+{{ #include news/2024fall.md }}
+
+[Older news](/news/2024spring.html)
+
+To comment on the news, please [go to the news page](/news/2025spring.html).
+
+Press <kbd>s</kbd> to search!
+
 <div style="display: flex; justify-content: center;">
 <button
     id="dont-click"
@@ -59,8 +72,6 @@ Channel](https://www.youtube.com/@sichanghe)
     >Don't click</button
 >
 </div>
-
-Press <kbd>s</kbd> to search!
 
 <script>
 const forbidden = "?cpp=love";
@@ -109,11 +120,3 @@ dontClick?.addEventListener("contextmenu", (e) => {
     duplicate();
 });
 </script>
-
-{{ #include news/2025spring.md }}
-
-{{ #include news/2024fall.md }}
-
-[Older news](/news/2024spring.html)
-
-To comment on the news, please [go to the news page](/news/2025spring.html).
