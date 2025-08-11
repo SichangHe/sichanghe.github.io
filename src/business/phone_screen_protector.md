@@ -1,5 +1,7 @@
 # Phone Screen Protector
 
+- Jieyi: should directly mail to buyer wholesale
+
 ## Popularity
 
 - Peter: most USC student have latest 2 gen iPhone
@@ -30,3 +32,10 @@
         Anti-Reflective Technology, Graphene Reinforced, InvisibleShield,
         Easy Dust-Free
         Installation](https://www.amazon.com/ZAGG-Filtration-Anti-Reflective-InvisibleShield-Installation/dp/B0D54SQGCY?sr=8-10)
+
+## Specs
+
+| brand     | style   | box dim. (cm) | box dim. (inch) | wholesale |
+| --------- | ------- | ------------- | --------------- | --------- |
+| Magic Box | smooth  | 21.8x11.8x2   | 8.6x4.6x0.8     | 7.5       |
+| Magic Box | privacy | 21.8x11.8x2   | 8.6x4.6x0.8     | 10        |
