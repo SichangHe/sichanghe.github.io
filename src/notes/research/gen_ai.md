@@ -100,7 +100,7 @@ paper:
     Perplexity Attention Weighted Networks for
     AI generated text detection](https://arxiv.org/abs/2501.03940),
     Pablo Miralles-González, Javier Huertas-Tato, Alejandro Martín,
-    David Camacho, arXiv, 2025
+    David Camacho, Information Fusion, Elsevier, 2025
     - Binoculars poor accuracy in MAGE&M4
     - [MAGE: Machine-generated Text Detection in
         the Wild](https://arxiv.org/abs/2305.13242), Yafu Li, Qintong Li,
@@ -155,7 +155,7 @@ paper:
     - better 0.90 AUROC than Fast-DetectGPT, but not compared w/ Binoculars
 - [Almost AI, Almost Human: The Challenge of
     Detecting AI-Polished Writing](https://arxiv.org/abs/2502.15666),
-    Shoumik Saha, Soheil Feizi, arXiv, 2025
+    Shoumik Saha, Soheil Feizi, ACL Findings, 2025
     - AI-polished text in various degree tend to be classified as AI text
         - small sample size: 15k polished from 300 human text
         - ✅ Binoculars <10% FPR on GPT-4o/DeepSeek-V3 polished text
@@ -233,7 +233,7 @@ paper on AI-generated text:
         - validation unscientific: AI dataset generated same way as
             training data
         - human may learn word from AI
-- ❗️ [The Rise of AI-Generated Content in
+- [The Rise of AI-Generated Content in
     Wikipedia](https://arxiv.org/abs/2410.08044), Creston Brooks,
     Samuel Eggert, Denis Peskoff, EMNLP workshop, 2024
     - use GPTZero & Binoculars w/ Falcon-7B
@@ -333,6 +333,13 @@ news:
     Filipo Sharevski, Aziz Zeidieh, Jennifer Vander Loop, Peter Jachim,
     ACM CCS, 2024
     - low-vision/blind people cannot detect audio deepfake
+- [The Turing Test Is More Relevant Than
+    Ever](https://arxiv.org/pdf/2505.02558), Avraham Rahimov, Orel Zamler,
+    Amos Azaria, arXiv, 2025
+    - TODO: not gone through this yet
+    - mention "Human or Not" website's human 60% accuracy detecting AI in
+        chat
+        - criticism: instruction unclear; interaction too short
 
 ## Browser extension/add-on
 
