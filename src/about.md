@@ -10,7 +10,9 @@ Current:
 Wider areas:
 
 - Understanding the Web's structures and contents.
+- Intersections with sciences.
 - Efficient and high-performance computing with CPU cache optimization.
+- Automation for software engineering tasks with LLMs.
 - Robust and user-friendly distributed computing like for websites and
     databases.
 - Programming language infrastructure to enable robust static analysis.
@@ -26,9 +28,9 @@ Previous: Federated learning, Internet routing, content provenance (C2PA).
 
 ## For Undergrads/MS
 
-**I am looking for you if** you want to **1) participate in
-PhD-level research** (≠ want to do a PhD) and **b) are suitable** for
-working on something we are both interested in.
+**I am looking for you if** you want to **1) participate in research**
+(≠ want to do a PhD) and **b) are suitable** for working on
+something we are both interested in.
 I teach, so don't worry about lacking specific skills.
 
 **You are welcome to email me *succinctly* to discuss your interests and
@@ -69,3 +71,17 @@ Translate](https://translate.google.com/?text=%E4%BD%95%E6%80%9D%E7%95%85)
 pronounces it correctly (Click <kbd>Listen</kbd>).
 Serializing it into English is impossible; the best you can get is H-err?
 Sii↑ chung↓.
+
+## Prior Mentees
+
+At [Edge Intelligence Lab](https://sites.duke.edu/edgeintelligence/), DKU:
+
+- [Qingning Zeng](https://addw1.github.io/) when we worked on
+    the FedCampus App. He got his ECE MS at Duke and went to Snowflake.
+- [Luyao Wang](https://www.linkedin.com/in/1uyao-wang/) when we worked on
+    the FedCampus App. He went to UCI for a CS MS.
+- [Aicha Slaitane](https://www.linkedin.com/in/aicha-slaitane/) (briefly)
+    when she explored research directions. She went to KAUST for a CS PhD.
+- [Beilong Tang](https://beilong-tang.github.io/) when we worked on
+    the FedCampus App and campus-wide federated analytics experiments.
+    He went to NCSU for an ECE PhD.
