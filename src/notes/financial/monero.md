@@ -7,3 +7,5 @@
     ```sh
     --zmq-pub tcp://127.0.0.1:18083
     ```
+
+    - save space by pruning blockchain: `--prune-blockchain`

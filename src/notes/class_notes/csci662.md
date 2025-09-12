@@ -16,11 +16,25 @@
 
 ## paper to present
 
-- [Learning to Rewrite: Generalized LLM-Generated Text Detection](https://aclanthology.org/2025.acl-long.322/), Wei Hao, Ran Li, Weiliang Zhao, Junfeng Yang, Chengzhi Mao, ACL, 2025
-- [MultiSocial: Multilingual Benchmark of Machine-Generated Text Detection of Social-Media Texts](https://aclanthology.org/2025.acl-long.36/), Dominik Macko, Jakub Kopál, Robert Moro, Ivan Srba, ACL, 2025
-- [MIND: A Multi-agent Framework for Zero-shot Harmful Meme Detection](https://aclanthology.org/2025.acl-long.46/), Ziyan Liu, Chunxiao Fan, Haoran Lou, Yuexin Wu, Kaiwei Deng, ACL, 2025
-- [UTBoost: Rigorous Evaluation of Coding Agents on SWE-Bench](https://aclanthology.org/2025.acl-long.189/), Boxi Yu, Yuxuan Zhu, Pinjia He, Daniel Kang, ACL, 2025
-- [CompileAgent: Automated Real-World Repo-Level Compilation with Tool-Integrated LLM-based Agent System](https://aclanthology.org/2025.acl-long.103/), Li Hu, Guoqiang Chen, Xiuwei Shang, Shaoyin Cheng, Benlong Wu, LiGangyang LiGangyang, Xu Zhu, Weiming Zhang, Nenghai Yu, ACL, 2025
+- [Learning to Rewrite:
+    Generalized LLM-Generated Text
+    Detection](https://aclanthology.org/2025.acl-long.322/), Wei Hao, Ran Li,
+    Weiliang Zhao, Junfeng Yang, Chengzhi Mao, ACL, 2025
+- [MultiSocial: Multilingual Benchmark of Machine-Generated Text Detection of
+    Social-Media Texts](https://aclanthology.org/2025.acl-long.36/),
+    Dominik Macko, Jakub Kopál, Robert Moro, Ivan Srba, ACL, 2025
+- [MIND: A Multi-agent Framework for
+    Zero-shot Harmful Meme
+    Detection](https://aclanthology.org/2025.acl-long.46/), Ziyan Liu,
+    Chunxiao Fan, Haoran Lou, Yuexin Wu, Kaiwei Deng, ACL, 2025
+- [UTBoost: Rigorous Evaluation of Coding Agents on
+    SWE-Bench](https://aclanthology.org/2025.acl-long.189/), Boxi Yu,
+    Yuxuan Zhu, Pinjia He, Daniel Kang, ACL, 2025
+- [CompileAgent: Automated Real-World Repo-Level Compilation with
+    Tool-Integrated LLM-based Agent
+    System](https://aclanthology.org/2025.acl-long.103/), Li Hu, Guoqiang Chen,
+    Xiuwei Shang, Shaoyin Cheng, Benlong Wu, LiGangyang LiGangyang, Xu Zhu,
+    Weiming Zhang, Nenghai Yu, ACL, 2025
 
 ## linear model
 
@@ -34,9 +48,40 @@
     - need to subtract expected agreement (by chance) $P(e)=$ sum of
         products of raw rates
     - good rate vary by opinion: 0.8 very good; 0.4 some consider good
+- perceptron: linear gradient lost
+    - loss only on argmax y
+- logistic regression: softmax on all y instead of just argmax y
+    - more stable than perceptron
 
 ### naive Bayes
 
 - assuming (wrongly) $P(w_1,w_2,…|y)=P(w_1|y)P(w_2|y)…$
 
+## non-linear model
+
+- need: non-linearly-separable feature
+- activation function
+    - old & bad: sigmoid, tanh
+    - contemporary: ReLU, GELU, Swish, SwiGLU (used in SoTA LLM)
+
 ## [Thumbs up? Sentiment Classification using Machine Learning Techniques](https://aclanthology.org/W02-1011.pdf), Bo Pang, Lillian Lee, Shivakumar Vaithyanathan, EMNLP, 2002
+
+## distributional feature representations
+
+- embedding: arbitrary vector representation of word sequence
+- distributional hypothesis: word meaning determined by where they are used
+- pointwise mutual information (PMI) for words: p(word, context)
+- positive PMI (PPMI): max(PMI, 0)
+    - very sparse matrix
+    - ⇒ singular value decomposition (SVD)
+- word2vec
+
+## language model (LM)
+
+- can generate: assume what came before determine what comes next
+- n-gram: "windowed" Bayes
+    - backoff
+    - smoothing
+    - surprisingly good smallish model
+- perplexity: how well LM predict real text by entropy
+- feed forward neural network n-gram

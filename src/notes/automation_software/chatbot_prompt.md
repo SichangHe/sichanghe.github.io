@@ -60,3 +60,9 @@ refine prompt based on result I do not like:
 I do not like how you PROBLEM.
 What could I have said instead so that you would never ever say that?
 ```
+
+ask to find official sources:
+
+```
+Do not trust random strangers and blogs on the Internet. Try to find the official sources and quote them.
+```
