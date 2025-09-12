@@ -70,7 +70,7 @@ The name used in publications is Sichang "Steven" He.
 Translate](https://translate.google.com/?text=%E4%BD%95%E6%80%9D%E7%95%85)
 pronounces it correctly (Click <kbd>Listen</kbd>).
 Serializing it into English is impossible; the best you can get is H-err?
-Sii↑ chung↓.
+Sii↑ ch-ah-ng↓.
 
 ## Prior Mentees
 
@@ -80,6 +80,8 @@ At [Edge Intelligence Lab](https://sites.duke.edu/edgeintelligence/), DKU:
     the FedCampus App. He got his ECE MS at Duke and went to Snowflake.
 - [Luyao Wang](https://www.linkedin.com/in/1uyao-wang/) when we worked on
     the FedCampus App. He went to UCI for a CS MS.
+- [Boyan Zhang (Johnny)](https://github.com/johnnybyzhang) when we worked on
+    FedCampus. He had been an undergrad at DKU.
 - [Aicha Slaitane](https://www.linkedin.com/in/aicha-slaitane/) (briefly)
     when she explored research directions. She went to KAUST for a CS PhD.
 - [Beilong Tang](https://beilong-tang.github.io/) when we worked on
