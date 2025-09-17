@@ -36,6 +36,13 @@
     Xiuwei Shang, Shaoyin Cheng, Benlong Wu, LiGangyang LiGangyang, Xu Zhu,
     Weiming Zhang, Nenghai Yu, ACL, 2025
 
+## replication project
+
+- [Zero-Shot Detection of
+    LLM-Generated Text using Token
+    Cohesiveness](https://aclanthology.org/2024.emnlp-main.971/), Shixuan Ma,
+    Quan Wang, EMNLP, 2024
+
 ## linear model
 
 - inter-agreement rate: human annotator may disagree
@@ -85,3 +92,66 @@
     - surprisingly good smallish model
 - perplexity: how well LM predict real text by entropy
 - feed forward neural network n-gram
+
+### tokenization
+
+reuse frequent letter sequence
+
+- byte pair encoding (BPE)
+    1. start w/ character-level tokens
+    1. count most frequent token pair & greedily replace w/ single token
+    - space sometimes part of token
+    - not semantically meaningful
+        - Reddit cause weird token e.g. user name
+- small vocabulary cause long context
+
+### recurrent neural network (RNN)
+
+- each layer: feed new embedding + old hidden state to get new hidden state
+- strong emphasis on last token
+- problem: vanishing gradient bc long chain of hidden state
+- long short-term memory (LSTM)
+    - forget/input/output gate
+    - multiply cell state by forget gate, add input gate,
+        finally multiply output gate
+    - Bidirectional LSTM (BiLSTM)
+        - go both backward & forward, then concatenate
+    - residual: directly add input to output
+- attention: how much to attend to each hidden state
+- minibatching: concatenate & broadcast multiple sequences for GPU efficiency
+- major problem: cannot parallelize; inherently sequential
+
+### self-attention
+
+- of each token to every token: parallelizable
+- idea: soft weighted lookup (of "query") in key-value store
+
+step-by-step:
+
+1. for each token, compute query $q_i$ of this token, key $k_j$ for
+    every token
+1. compute attention score $\alpha_{i,j}$ using e.g.
+    dot product $q_i\cdot k_j$
+1. softmax over all $\alpha_{i,j}$ to get $\alpha'_{i,j}$
+1. compute value $v_j$ for every token, multiply by $\alpha'_{i,j}$ and sum
+
+problem & solution:
+
+- no sequence order
+    - ⇒ position embedding: add a vector $p_i$ representing position e.g.
+        Sinusoidal (OG)/ rope
+- no element-wise nonlinearity
+    - ⇒ feed forward network (FFN) after attention layer
+- not looking into future
+    - ⇒ attention mask: set attention score to $-\infty$ for future token
+
+### transformer
+
+- residual (add): smoothen loss landscape
+- layer normalization (norm): speed up training by
+    normalizing mean & variance
+- multi-head attention: multiple attention & concatenation
+- optimizer: basic SGD
+    - Adam: momentum, per-parameter normalize adjustment by std of output
+    - AdamW: de facto in 2025
+- checkpoint/restart
