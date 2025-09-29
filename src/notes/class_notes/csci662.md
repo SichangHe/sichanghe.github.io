@@ -155,3 +155,31 @@ problem & solution:
     - Adam: momentum, per-parameter normalize adjustment by std of output
     - AdamW: de facto in 2025
 - checkpoint/restart
+
+### pretrained language model
+
+- ELMo (2016): word vector w/ context from BiLSTM
+- fine-tuning: reuse model for other task for new task
+- GPT (2018): decoder-only classifier-only transformer
+- BERT (2018): convert piece of text to
+    512-dim vector w/ bidirectional transformer
+    - mask certain tokens w/ \[MASK], random token, or actual token, then
+        try to predict
+    - popular partially bc good marketing as a Muppet just like Elmo
+    - still fail Winograd challenge: figure out what ambiguous "it" refer to
+
+### modified pretrained language model
+
+- T5: encoder-decoder transformer able to do multiple task
+    - cross-attention: query from decoder, key&value from encoder
+- prefix tuning: prepend token to mark what the task is
+    - additional parameter alongside each layer
+    - do not fine-tune original parameter
+- adapter: linear layer before&after transformer to adapt to new task
+- LoRA: add parameter alongside each layer and add them
+    - work very well
+    - can add anywhere: Q, K, V, FFN
+        - Jon: a student claimed adding to FFN was best
+- mixture of experts (MoE, from 1990s): send embedding to
+    different channel for FFN
+    - learn the router

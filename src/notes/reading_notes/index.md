@@ -1,5 +1,16 @@
 # Unstructured Reading Notes
 
+- Hybrid Data-Driven and Simulation-Driven Prediction of
+    mmWave Network Performance, Zihao Feng, NSL meeting
+    - mmWave high data rate \~40Gbps
+    - high center frequency ⇒ wider spectrum unoccupied (B)
+        ⇒ higher bandwidth
+    - phased array cause side lobe ⇒ interference
+    - data-driven simulator: protocol-based simulator w/ RL
+    - per-beam received signal strength (RSS, physical layer)
+        → RL → simulator
+    - KL divergence loss between simulator throughput and
+        measured ground truth
 - [Steve Jobs President & CEO, NeXT Computer Corp and
     Apple. MIT Sloan Distinguished Speaker
     Series](https://www.youtube.com/watch?v=Gk-9Fd2mEnI), 1992

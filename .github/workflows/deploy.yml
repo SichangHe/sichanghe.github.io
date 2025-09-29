@@ -16,7 +16,10 @@ jobs:
           lfs: true
       - uses: cargo-bins/cargo-binstall@main
       - name: Install mdBook, mdBook-KaTeX, mdBook-ToC, and mdBook-Header-Footer
-        run: cargo binstall -y mdbook mdbook-katex mdbook-toc mdbook_header_footer
+        run: |
+          cargo binstall -y mdbook --version 0.4.52
+          cargo binstall -y mdbook-toc --version 0.14.2
+          cargo binstall -y mdbook-katex mdbook_header_footer
       - name: Install minify-html
         run: |
           curl -LO https://github.com/wilsonzlin/minify-html/releases/download/v0.15.0/minhtml-0.15.0-x86_64-unknown-linux-gnu
