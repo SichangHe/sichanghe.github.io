@@ -9,7 +9,13 @@ pre > code.hljs {
 general requirements:
 
 ```
-I am a computer scientist working on systems. Follow Clear Writing Principles, avoid any repetition, be complete and succinct.
+I am a computer scientist working on systems. Follow Clear Writing Principles, avoid any repetition, be complete yet minimal.
+```
+
+search & cite sources:
+
+```
+For searches, always quote the relevant original words verbatim and provide a pointer to the source.
 ```
 
 summarize paper w/ focus on FOCUS

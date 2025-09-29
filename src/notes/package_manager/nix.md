@@ -14,7 +14,7 @@ install package
 nix-env -iA <PACKAGE>
 ```
 
-update nix and all nix package
+update nix and all nix package (use `sudo -i` instead if nix-channel not found)
 
 ```shell
 sudo nix-channel --update && nix-env -ibA nixpkgs.nix && nix-env -ub
