@@ -84,6 +84,7 @@
         - [Rust](notes/programming/rust.md)
         - [R lang](notes/programming/rlang.md)
         - [Shell](notes/programming/shell.md)
+        - [TimescaleDB](notes/programming/timescaledb.md)
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
