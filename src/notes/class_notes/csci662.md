@@ -43,6 +43,107 @@
     Cohesiveness](https://aclanthology.org/2024.emnlp-main.971/), Shixuan Ma,
     Quan Wang, EMNLP, 2024
 
+## paper to question
+
+- [Self-Instructed Derived Prompt Generation Meets In-Context Learning:
+    Unlocking New Potential of
+    Black-Box LLMs](https://aclanthology.org/2025.acl-long.92/), Zhuo Li,
+    Yuhao Du, Jinpeng Hu, Xiang Wan, Anningzhe Gao, ACL, 2025
+    - impact on context window?
+    - what would long prompt do? like a revise request?
+    - what about multi-turn?
+
+## paper presentations
+
+- What Happened in LLMs Layers when Trained for Fast vs.
+    Slow Thinking: A Gradient Perspective
+    - presented by Jinyi
+    - fast&slow thinking: system 1&2, subconscious&conscious
+    - for LLM: no chain-of-thought (CoT) vs CoT; different level of detail
+    - probing & layer importance
+        1. back propagation on different level of detail
+        1. nuclear SVD of Q K V O of each layer's gradient
+            - more detailed CoT ⇒ smoother gradient
+        1. compare mean absolute difference (MAD) of each layer
+        1. compare relative difference (RD)
+    - instruction tuning does not enable better nonsense detection
+- byte latent transformer (BLT): patches scale better than tokens
+    - presented by Saba
+    - LLM training is end-to-end except for tokenization
+    - patching: dynamic group w/o fixed vocab
+    - entropy patching: start new patch when next byte hard to predict
+        - small byte-level autoregressive model to produce entropy
+        - small byte-level encoder&decoder surrounding 1 large latent
+            transformer in middle
+        - use byte encoding plus hashed n-gram
+            - not learned!
+        - higher patch size ⇒ lower FLOP per accuracy gain
+        - minor accuracy degradation
+- HumT DumT: Measuring and controlling human-like language in LLMs
+    - presented by Sadra
+    - human-like tone (HumT): \~anthropomorphization;
+        users usually prefer against (bc wordy, not to-the-point)
+        - like flirty; overly descriptive?
+    - DPO + HumT (DUMT): RL to lower HumT
+        - little performance degradation
+- Self-Instructed Derived Prompt Generation Meets In-Context Learning:
+    Unlocking New Potential of Black-Box LLMs
+    - presented by Feiyu
+    - train rewriter (small model) to rewrite query, then feed new query to
+        queried model (large), finally feed everything to query model again
+        - use judge model for reward in training
+    - higher token count & slower, in exchange for claimed performance
+- LLMs know their vulnerabilities: Uncover Safety Gaps through
+    Natural Distribution Shifts
+    - presented by Narges
+    - train attacker LLM to make victim LLM answer harmful question
+- TreeRL: LLM Reinforcement Learning with On-Policy Tree Search
+    - presented by Saeed
+    - entropy tree (EPTree): RL w/ tree of action
+        - branch out from high-entropy (uncertain) token
+        - only fork once in the paper
+    - slightly higher \#answers generated & pass rate per \#tokens generated
+        - but unclear if better when allowing more \#tokens
+    - forking appear relative location near uniform distro
+- [Mega:
+    Moving Average Equipped Gated
+    Attention](https://openreview.net/forum?id=qNLe3iq2El), Xuezhe Ma,
+    Chunting Zhou, Xiang Kong, Junxian He, Liangke Gui, Graham Neubig,
+    Jonathan May, Luke Zettlemoyer, ICLR, 2023
+    - presented by Xuezhe
+    - why: longer context practically mean smarter model
+    - challenge: transformer is quadratic compute&space in context length
+        - communication challenge; huge KV cache
+        - attention fail in large context
+    - chunk-wise attention: only attend to chunk instead of global
+    - damped exponential moving average (EMA):
+        EMA w/ relaxed coupled weight $y_t=\alphax_t+(1-\alpha\delta)y_{t-1}$
+        - learned parameter
+        - parallelize by precomputing flattened weight & FFT
+        - theoretically unbounded context
+            - practically, w/ chunking, perform worse than full attention
+        - apply on layer input for Q K but not V
+    - single-head gated attention: add reset gate to attention output
+        - gated attention: multiple attention output w/ output of
+            another transform from input
+        - can reduce \#heads e.g. from 32 to 4 ⇒ computational efficiency
+    - single Mega model perform well on various long-context task
+- [Megalodon: Efficient LLM Pretraining and Inference with
+    Unlimited Context Length](https://arxiv.org/abs/2404.08801), Xuezhe Ma,
+    Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May,
+    Luke Zettlemoyer, Omer Levy, Chunting Zhou, NeurIPS 2024
+    - better Mega
+    - complex EMA:
+        $y_t=\alphax_t+(1-\alpha\delta)(\cos\theta+i\sin\theta)y_{t-1}$
+        - reason: diagonal matrix much more expressive in complex space
+    - time-step normalization: auto-regressive group normalization
+        - cumulative mean&variance; no reset per document in training
+    - reduce communication bc only need last output instead of whole KV cache
+    - Gecko: ongoing improvements to Megalodon
+        - running mean&variance via constant decay
+        - sliding chunk attention: less wasted compute than flash attention
+        - adaptive working memory (online softmax)
+
 ## linear model
 
 - inter-agreement rate: human annotator may disagree
@@ -139,7 +240,7 @@ problem & solution:
 
 - no sequence order
     - ⇒ position embedding: add a vector $p_i$ representing position e.g.
-        Sinusoidal (OG)/ rope
+        Sinusoidal (OG)/ RoPE
 - no element-wise nonlinearity
     - ⇒ feed forward network (FFN) after attention layer
 - not looking into future
@@ -167,6 +268,19 @@ problem & solution:
         try to predict
     - popular partially bc good marketing as a Muppet just like Elmo
     - still fail Winograd challenge: figure out what ambiguous "it" refer to
+- GPT-2 (2019): did well on task not trained on
+    - huge model: 1.5B parameters
+    - PR stunt bc uhallucinated nicorn story
+- GPT-3 (2020): SoTA on many task
+    - 175B parameters
+    - few-shot; hardly affected by irrelevant/misleading context
+    - fixated on what it learned instead of adapting to flipped task
+- T0: like T5 but only w/ task phrased in natural language
+- LLaMA (2023): public architecture, weights, training data
+    - no training&preprocessing code
+    - hard to reproduce
+- Gemini (2023): started trend of
+    white paper w/o technical details w/ tons of safety check
 
 ### modified pretrained language model
 
@@ -183,3 +297,19 @@ problem & solution:
 - mixture of experts (MoE, from 1990s): send embedding to
     different channel for FFN
     - learn the router
+
+### introspective model ourobouros
+
+- scratchpad (2021): let model generate hidden token
+    - RNN and transformer are Turing complete if given infinite think time
+- chain-of-thought (CoT, 2022): encourage model to include reasoning
+    - hand-written example for training
+- ReAct: agentic + reasoning
+
+## human feedback
+
+- problem
+    - some words matter more
+    - bad training data
+    - exposure bias
+- evaluation is usually not differentiable ⇒ RL

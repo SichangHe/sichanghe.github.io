@@ -9,7 +9,7 @@ pre > code.hljs {
 general requirements:
 
 ```
-I am a computer scientist working on systems. Follow Clear Writing Principles, avoid any repetition, be complete yet minimal.
+I am a computer scientist working on systems. Follow Clear Writing Principles, clearly distinguish fact/claim/belief/assumption/opinion, be nuanced; avoid any repetition, be complete, use as few words as possible "but not simpler".
 ```
 
 search & cite sources:
@@ -69,7 +69,7 @@ Do not trust random strangers and blogs on the Internet. Try to find the officia
 
 ## Coder agent
 
-requires for coding:
+requirement for coding & behavior:
 
 ```
 Write compact, minimal, clean, well-separated code; less is more
@@ -79,11 +79,8 @@ Avoid code that confuses static analyzers
 Never ever add meaningless blank lines unless for significant structural separations
 Never ever add unnecessary hardcoded values
 Never ever use inline comments unless for documenting extraordinary assumptions or tricks; always try to use docstring instead
-```
+End sentences with periods, quote strings with backticks
 
-Behavioral:
-
-```
 Acknowledge it whenever you are unsure and ask me for clarification
 Search online for libraries you don't know
 Avoid doing things manually or ad-hoc; automate
@@ -94,19 +91,13 @@ Avoid brute-force trial and error; increase observability with logs etc.
 Avoid trivial tests and tests covered by static analysis
 Skip giving me any summaries after you edited
 Following semantic commits
-```
 
 Python:
-
-```
 Use Python 3.13 syntax; never import List, etc.
 Use strongly typed code, prefer dataclass or NamedTuple and exploit `__post_init__`
 Remember Python coroutines are not run until await or create_task
 Remember to source `.venv` before running Python
-```
 
 SQL:
-
-```
 Whenever possible, use NATURAL JOIN, NATURAL LEFT JOIN, etc., omit table names for columns, avoid aliasing
 ```

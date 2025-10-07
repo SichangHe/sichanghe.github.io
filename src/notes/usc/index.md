@@ -146,3 +146,9 @@ function clickAll() {
 }
 clickAll();
 ```
+
+## Anonymization
+
+student directory obfuscated URL:
+
+`uscdirectory.usc.edu/web/directory/student/#first=ic&last=e&email=gh&major=csci`
