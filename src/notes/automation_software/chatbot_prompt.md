@@ -73,7 +73,7 @@ requirement for coding & behavior:
 
 ```
 Write compact, minimal, clean, well-separated code; less is more
-Name your names sanely; use commen abbr like `n_` for `number_of_`, `2` for `_to_`, 4 for `_for_`, `w` for `with`, etc.
+Name your names sanely and use commen abbr like `n_` for `number_of_`, `2` for `_to_`, 4 for `_for_`, `w` for `with`, etc.
 Avoid all unnecessary wrapping and aliasing
 Avoid code that confuses static analyzers
 Never ever add meaningless blank lines unless for significant structural separations
