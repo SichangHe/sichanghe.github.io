@@ -143,6 +143,26 @@
         - running mean&variance via constant decay
         - sliding chunk attention: less wasted compute than flash attention
         - adaptive working memory (online softmax)
+- TokAlign: Efficient Vocabulary Adaptation via Token Alignment
+    - presented by Daniel
+    - problem: BPE & friends bias towards English, etc.
+    - replace vocabulary of LLM w/o full retraining
+    - injective map source tokenizer to target tokenizer via
+        GloVe & alignment matrix
+        - evaluate by BLEU-1 score of embedding, then
+            recover corpus & eval w/ BERTScore
+    - replace vocabulary, freeze LLM body, retrain embedding & LM head, then
+        full fine-tune
+- Turning Trash into Treasure: Accelerating Inference of
+    Large Language Models with Token Recycling
+    - presented by Ardy
+    - token recycling for efficient decoding
+    - speculative decoding: small model speculate multiple token, then
+        large model verify in parallel
+        - trash: non-verified speculative token, discarded
+    - prebuild static possible token tree (unclear how to generalize)
+    - concatenate all node in tree as LLM input, discard tokens in group
+    - double speed than autoregressive decoding in benchmark
 
 ## linear model
 
@@ -313,3 +333,16 @@ problem & solution:
     - bad training data
     - exposure bias
 - evaluation is usually not differentiable ⇒ RL
+- InstructGPT/ChatGPT
+    1. supervised fine-tuning: got questions & answers & preference from human
+    1. train reward mode: use human to rank answers from LLM
+    1. PPO: initialize from supervised policy
+
+### reinforcement learning (RL)
+
+- less desirable than supervised learning
+- trick: start w/ MLE training before RL
+- avoid moving away too much from existing model ⇒ KL divergence
+- proximal policy optimization (PPO):
+    avoid hard-to-compute KL divergence w/ CLIP
+    - cap model improvement by $1+\varepsilon$

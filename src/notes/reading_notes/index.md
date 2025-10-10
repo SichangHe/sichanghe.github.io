@@ -1,5 +1,13 @@
 # Unstructured Reading Notes
 
+- Towards Microsecond-Scale vm Core Provisioning Agility on
+    Serverless Platforms, Yibo Yan, NSL meeting
+    - data-driven workload demanding, unpredictable, bursty, but has deadline
+    - ⇒ over-provisioning (waste), autoscaling (too slow)
+    - horizontal scaling slow (10s, 10s of ms)
+    - ⇒ proposal: prioritize vertical scaling (add core to VM)
+        - microsecond core reallocation (redistribute)
+    - FlusOS: library OS, work-steal, scale up/down w/ host
 - Hybrid Data-Driven and Simulation-Driven Prediction of
     mmWave Network Performance, Zihao Feng, NSL meeting
     - mmWave high data rate \~40Gbps
