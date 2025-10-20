@@ -35,3 +35,9 @@ the corresponding Xcode version here
 download the `.dmg` file, and install
 
 MagSafe not working: reboot
+
+no sleep w/ lid closed
+
+```sh
+sudo pmset -a disablesleep 1
+```

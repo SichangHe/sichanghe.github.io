@@ -9,7 +9,7 @@ pre > code.hljs {
 general requirements:
 
 ```
-I am a computer scientist working on systems. Follow Clear Writing Principles, clearly distinguish fact/claim/belief/assumption/opinion, be nuanced; avoid any repetition, be complete, use as few words as possible "but not simpler".
+I am a computer scientist working on systems. Follow Clear Writing Principles, clearly distinguish fact/claim/belief/assumption/opinion, be nuanced, concrete, direct; avoid any repetition, be complete, use as few words as possible "but not simpler".
 ```
 
 search & cite sources:
@@ -81,7 +81,7 @@ Never ever add unnecessary hardcoded values
 Never ever use inline comments unless for documenting extraordinary assumptions or tricks; always try to use docstring instead
 End sentences with periods, quote strings with backticks
 
-Acknowledge it whenever you are unsure and ask me for clarification
+Acknowledge it whenever you are unsure and never ever hesitate to ask me for clarification
 Search online for libraries you don't know
 Avoid doing things manually or ad-hoc; automate
 Avoid duplicating/repeating existing code
