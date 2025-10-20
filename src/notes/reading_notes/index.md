@@ -1,5 +1,10 @@
 # Unstructured Reading Notes
 
+- SplatPose: On-Device Outdoor AR Pose Estimation Using Gaussian Splatting, Rajrup Ghosh, NSL meeting
+    - perspective-n-point (PnP)
+    - image retrieval (slow) vs rendering-based (fast)
+    - appearance modeling to deal w/ different lighting
+    - hierarchical depth sorting for fast 3D Gaussian rendering
 - Towards Microsecond-Scale vm Core Provisioning Agility on
     Serverless Platforms, Yibo Yan, NSL meeting
     - data-driven workload demanding, unpredictable, bursty, but has deadline

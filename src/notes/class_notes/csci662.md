@@ -14,6 +14,12 @@
 
 ## Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition, with Language Models, Daniel Jurafsky, James H. Martin, 2025
 
+## [GLU Variants Improve Transformer](https://arxiv.org/abs/2002.05202), Noam Shazeer, arXiv, 2020
+
+- SwiGLU
+
+## [GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245), Joshua Ainslie, James Lee-Thorp, Michiel de Jong, Yury Zemlyanskiy, Federico Lebrón, Sumit Sanghai, EMNLP, 2023
+
 ## paper to present
 
 - [Learning to Rewrite:
@@ -110,7 +116,7 @@
     Attention](https://openreview.net/forum?id=qNLe3iq2El), Xuezhe Ma,
     Chunting Zhou, Xiang Kong, Junxian He, Liangke Gui, Graham Neubig,
     Jonathan May, Luke Zettlemoyer, ICLR, 2023
-    - presented by Xuezhe
+    - guest lecture by Xuezhe
     - why: longer context practically mean smarter model
     - challenge: transformer is quadratic compute&space in context length
         - communication challenge; huge KV cache
@@ -163,6 +169,35 @@
     - prebuild static possible token tree (unclear how to generalize)
     - concatenate all node in tree as LLM input, discard tokens in group
     - double speed than autoregressive decoding in benchmark
+- TokenFormer: Rethinking Transformer Scaling with Tokenized Model Parameters
+    - presented by Kiarash
+    - wasteful to not reuse smaller model when training larger
+    - pattention: cross attention w/ learnable parameter & modified softmax
+        - can concatenate parameter matrix to increase
+        - equivalent to 2-layer MLP w/ modified softmax as activation
+    - replace Q K V O (FFN) layer all w/ pattention
+    - much less computation power to train larger model w/ same performance
+    - better benchmark score w/ same parameter count
+- Guest presentation: Path finding: how the search space for
+    creative tasks is navigated
+    - presented by Tenghao
+    - for writing /info gathering/ brainstorming task,
+        search&reward space large
+    - heuristic: constrained beam search:
+        prefer more emotional intensive token
+    - reward design: emotional intensive + perplexity
+- Large Language Models Are Biased Because They Are Large Language Models
+    - presented by Faith
+    - model learn from biased data
+    - RLHF does not fundamentally make LLM understand ethics
+    - need linguists/philosophers & collab btw researcher/corporation
+- Toward Automatic Discovery of a Canine Phonetic Alphabet
+    - presented by Ruth-Ann
+    - clean&split&transcribe YouTube dog bark into cognitive vocal unit
+        - mutual filtering based on minimal pairs
+        - merge w/ JS divergence
+    - vision model to describe scene&movement & map to 10 category
+    - better scenario classifier thru phonetic unit than MFCC & audio model
 
 ## linear model
 
@@ -346,3 +381,15 @@ problem & solution:
 - proximal policy optimization (PPO):
     avoid hard-to-compute KL divergence w/ CLIP
     - cap model improvement by $1+\varepsilon$
+- (DPO): no explicit reward model; only compare action
+- minimum Bayes rick (MBR)
+    - generate many outputs & score against each other
+- (GRPO): choose group w/ low variance
+
+## inference optimization
+
+- KV cache
+- LM-infinite: $\Lambda$-shaped + capped attention for "infinite"
+    context window
+    - attention instability beyond training context length
+- speculative decoding
