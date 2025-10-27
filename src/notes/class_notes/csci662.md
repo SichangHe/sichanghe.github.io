@@ -198,6 +198,16 @@
         - merge w/ JS divergence
     - vision model to describe scene&movement & map to 10 category
     - better scenario classifier thru phonetic unit than MFCC & audio model
+- Improving Factuality with Explicit Working Memory
+    - presented by Tianwen
+    - working memory for RAG: KV cache for retrieved doc
+    - append memory after context in parallel w/ queue; weighted average of
+        hidden vector ⇒ better retrieval
+    - recall vs precision tradeoff
+- Reinforced IR:
+    A Self-Boosting Framework For Domain-Adapted Information Retrieval
+    - presented by Nikunj
+    - retriever + generator reinforce in a loop
 
 ## linear model
 
@@ -392,4 +402,22 @@ problem & solution:
 - LM-infinite: $\Lambda$-shaped + capped attention for "infinite"
     context window
     - attention instability beyond training context length
-- speculative decoding
+- speculative decoding: guess many upcoming tokens w/ smaller mode, check in
+    parallel in large model
+
+## information retrieval (IR)
+
+- multi-shot
+    - eval over k shots: mean average precision
+        (MAP)/ normalized discounted cumulative gain
+        (nDCG)/ mean reciprocal rank (MRR, +1/rank for each hit)
+- limited ground truth ⇒ false negatives
+    - human review of ground truth
+    - user behavior telemetry
+- token matching: surprisingly good
+    - need tokenization to account for word morphology
+- TF-IDF/ BM25 (best match)
+- cross-encoder: concatenate query & doc, classify
+- bi-encoder: encode query & doc separately, find similarity, e.g. Faiss
+- late-state interaction (e.g. ColBERT): bi-encoder except per query token
+- hard negative training (difficult, e.g. from weaker model)

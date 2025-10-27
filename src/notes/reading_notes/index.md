@@ -1,6 +1,7 @@
 # Unstructured Reading Notes
 
-- SplatPose: On-Device Outdoor AR Pose Estimation Using Gaussian Splatting, Rajrup Ghosh, NSL meeting
+- SplatPose: On-Device Outdoor AR Pose Estimation Using Gaussian Splatting,
+    Rajrup Ghosh, NSL meeting
     - perspective-n-point (PnP)
     - image retrieval (slow) vs rendering-based (fast)
     - appearance modeling to deal w/ different lighting
