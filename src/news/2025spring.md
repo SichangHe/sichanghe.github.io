@@ -1,7 +1,7 @@
 ### 2025 News
 
-- (2025-10-10) 🪧🌐 See our ACM IMC Poster (accepted earlier): [Poster:
-    Did I Just Browse A Website Written by
+- (2025-10-10) 🪧🌐 See our ACM IMC Poster (accepted earlier, *edit: and
+    student workshop slides*): [Poster: Did I Just Browse A Website Written by
     LLMs?](https://github.com/SichangHe/DeGenTWeb_docs/releases/tag/cam-ready-imc2024)
 - (2025-08-11) 📖🌐 ACM IMC accepted our 2-page student workshop paper:
     [Preprint: Did I Just Browse A Website Written by

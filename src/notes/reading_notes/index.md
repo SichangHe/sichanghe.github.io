@@ -1,5 +1,64 @@
 # Unstructured Reading Notes
 
+- Fingerprinting QUIC clients, Seungju Lee
+    - Safari inconsistent QUIC support, other browsers good
+    - different connection ID (CID) across implementations
+- Chunk-fu: Fingerprinting QUIC implementations using fragmented frames,
+    Karthik Nishanth Sengottuvelavan
+    - QUIC TLS handshake frame could be chunked, method unspecified
+    - fingerprint how chunking done, runtime (big O)
+- Passively Inferring Network Availability and Configuration from
+    NTP Pool Clients, Paul Chung
+    - network time protocol for passive measurement
+        - use NTP pool bc anyone can reserve
+    - ground truth: US hospital ransomware report
+    - fingerprinting by hashing less-volatile NTP header
+- ASINT: Learning AS-to-Organization Mapping from Internet Metadata,
+    Yongzhe Xu
+    - prune news w/ LLM → named entity recognition (NER) → RAG
+        - TODO: how prune?
+    - cluster AS of the same organization
+- When Blocks Go Missing: The Timeliness and Trustworthiness of
+    Blockchain RPC Providers, Ye Shu
+    - most user use remote block chain node thru RPC
+    - inconsistent states give opportunities for massive censorship & attack
+    - Binance smart chain (BSC) network:
+        many have multi-second delay/ missing block
+- How Do You Know My Name?
+    Investigating The Role of Domain Names for
+    Target Reconnaissance among Web and IPv6 Scanners, Sebastian Kappes
+    - network telescope (dark net) unused IP address waiting for scanner
+        - but IPv6 scanning focused so may have no traffic
+        - use honey domain name to attract scanner
+    - most scanner scan immediately after getting DNS response, but
+        few wait weeks
+        - early scanner tend to TCP/UDP; late scanner ICMP
+- Towards a systematic benchmark framework for
+    evaluating darknet-analysis methodologies, Max Gao
+    - use signature from historic outage
+    - DarkVec not much better than random; DarkSIM works somewhat
+- The Potential of Erroneous Outbound Traffic Analysis to
+    Unveil Silent Internal Anomalies, Andrea Sordello
+    - outbound traffic may be erroneous
+        - lack of response to ICMP error signal mistake
+    - capture from campus network w/ SDN monitor
+    - reveal malicious software & configuration mistake
+- Identifying Disruptive Patterns in Internet Background Radiation, Xie Qiu
+    - <https://ioda.live> outage viz
+    - background radiation (telescope) to see traffic from /24
+    - problem: spoofing, burst
+    - hard to fingerprint scanner bc distributed
+    - low and slow "scanner" from china AS, w/ many source IP
+        - possibly from CGNAT
+- IMC 2025 Student Workshop Keynote, Arpit Gupta
+    - digital inequity, vs secure & performant
+    - 100+billion spent, based on fake data from ISP oligopoly
+    - broadband querying tool (BQT): what user see from different IP
+    - ISP not executing after getting fund (CAF program)
+    - speed test data lack context of subscription tier
+    - collaborate w/ state government
+    - most ML for network don't generalize
+    - mindset: make impact, ~~publish paper~~
 - SplatPose: On-Device Outdoor AR Pose Estimation Using Gaussian Splatting,
     Rajrup Ghosh, NSL meeting
     - perspective-n-point (PnP)
