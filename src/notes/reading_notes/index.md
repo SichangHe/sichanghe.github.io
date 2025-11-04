@@ -1,5 +1,164 @@
 # Unstructured Reading Notes
 
+- A Permissions Odyssey: A Systematic Study of Browser Permissions on
+    Modern Websites, Alberto Fernandez-de-Retana
+    - website ask for permission in HTTP header `Permissions-Policy`
+        - many syntax error
+    - many permission delegate to iframe, many using wild card
+    - browser only display permission prompt on parent webpage,
+        not iframe address
+- Not All Visitors are Bilingual: A Measurement Study of
+    the Multilingual Web from an Accessibility Perspective,
+    Masudul Hasan Masud Bhuiyan
+    - many blind speak non-Latin-script language
+    - text-to-speech bad for many non-Latin
+    - alt text missing or in English
+    - Google Lighthouse test let empty alt text pass
+- From WebGL to WebGPU: A Reality Check of Browser-Based GPU Acceleration,
+    Sthitadhi Sengupta
+    - implement computation in WebGL, WebGPU, CPU on Chrome
+        - compile C++ to WASM/JS
+    - GPU slower for smaller size, faster for larger size
+        - WebGPU vs WebGL similar except for loop-driven function
+    - similar for GPU from WASM/JS
+- Scrapers selectively respect robots.txt directives: evidence from
+    a large-scale empirical study
+    - AI/search crawler \~30% endpoint access compliance
+    - AI data crawler more compliant
+- On YouTube Search API Use in Research, Alexandros Efstratiou
+    - people split time period for search to
+        circumvent 500-video result limit
+    - likely returned: more view, short, fewer channel vid, older channel
+    - result delta small ⇒ time period split work poorly
+- A first look into long-lived BGP zombies, Iliana Maria Xygkou
+    - zombie: failure to withdraw route in downstream AS
+    - BGP beacon method
+    - long-lived zombie: ≥ 8.5 month
+    - router can propagate zombie route (resurrect)
+    - service: stuck routes observatory
+- A Framework to Evaluate MPIC Security using Real-World BGP Announcements,
+    Cyrill Krähenbühl
+    - multi-perspective issuance corroboration (MPIC) to avoid BGP attack on
+        SSL
+    - deploy on cloud ⇒ lose resilience
+- ru-RPKI-ready: the Road Left to Full ROA Adoption, Deepak Gouda
+    - ROAs cover more than half prefix
+        - not in AFRNIC & LACNIC
+    - ROA issuance planning complicated by subprefix & leasing
+    - most remaining prefix straightforward to ROA
+- Replication: A Two Decade Review of Policy Atoms - Tracing the Evolution of
+    AS Path Sharing Prefixes, Weili Wu
+    - important bc prefix in same atom stick together in BGP update
+        - still true; true for IPv6
+    - policy atom split farther away from origin
+    - TODO: this and web atom
+- The Decentralization Dilemma: Performance Trade-Offs in IPFS and
+    Breakpoints, Ruizhe Shi
+    - chunk & hash file for content ID (CID) into Merkle tree
+    - bitswap: ask for file, then download it
+        - make IPFS 8x slower than HTTP
+    - straggler bring down performance dramatically
+    - modify bitswap to improve performance for large file
+- The Developer, the RFC, and the Middlebox: An HTTP/2 Compliance Story,
+    Mahmoud Attia, Ilies Benhabbour
+    - server/proxy may ignore non-compliant part in request
+        - should reply 400
+    - asymmetric compliance between client & server
+- Protocol Compliance in Popular RTC Applications, Peiqing Chen
+    - different messaging app modify RTC protocol for own purpose
+    - ⇒ cannot interop
+- How I learned to stop worrying and love IPv6:
+    Measuring the Internet Readiness for DNS over IPv6, Anja Feldmann
+    - DNS marked IPv6 optional in 2004 bc cannot fragment
+        - need MTS, rely on more fallible ICMP ⇒ pain
+        - worse for longer DNSSEC
+    - ISP still dropped IPv6 fragment bc legacy security
+    - DNS over IPv6 is mostly working
+- Do Spammers Dream of Electric Sheep?
+    Characterizing the Prevalence of LLM-Generated Malicious Emails, Wei Hao
+    - spike from GPT-4o release; \~50% spam email
+    - similar content from some spammer
+        - bypass word frequency template
+- Somesite I Used To Crawl: Awareness, Agency and Efficacy in
+    Protecting Content Creators From AI Crawlers, Elisa Luo
+    - most AI crawler respect robots.txt
+    - AI blocking services block crawler user-agent
+- An In-Depth Investigation of Data Collection in LLM App Ecosystems,
+    Yuhao Wu
+    - crawl "GPTs"
+    - analyze what they collect w/ LLM: include password
+    - embed advertising service: can see shared context window
+    - little privacy policy statement, but collect much in practice
+- Tracking Internet Disruptions in Ukraine: Insights from Three Years of
+    Active Full Block Scans, Florian Holzbauer
+    - periodic ICMP to all Ukraine /24 block every 2hr
+    - more fine-grained method than IODA
+    - ISP move address out from frontline, some to Amazon
+    - winter outage more in edge & frontline
+    - power outage overlap&correlate w/ network outage
+    - Russian army damage caused specific outage in Kherson
+- Learning AS-to-Organization Mappings with Borges, Fabián E. Bustamante
+    - AS2Org rely on WHOIS/PeeringDB `org_id`
+    - use LLM to extract info from RIR text field
+- Sibling Prefixes: Identifying Similarities in IPv4 and IPv6 Prefixes,
+    Oliver Gasser
+    - dual-stack domain in OpenIntel DNS data
+    - find matching pair w/ highest Jaccard similarity
+        - tuning algorithm
+    - 76k sibling, over half have some organization name
+- Have you SYN what I see?
+    Analyzing TCP SYN Payloads in the Wild, Dario Ferrero
+    - reactive telescope: respond to packet
+    - 3/4 are HTTP GET
+- Patchwork: A Traffic Capture and Analysis Platform for
+    Network Experiments on a Federated Testbed, Nishanth Shyamkumar
+    - FABRIC network: testbed open for routing research
+- Congestion Patterns in a Large-scale RDMA Datacenter, Soudeh Ghorbani
+    - congestion of AI training center moved from edge to core
+        - due to priority-based flow control (PFC) preventing last-hop drop
+    - unbalanced core from burst; revealed by PFC
+    - telemetry type (PFC) more important than frequency
+- The SAP Cloud Infrastructure Dataset: A Reality Check of Scheduling and
+    Placement of VMs in Cloud Computing, Arno Uhlig
+    - public dataset of CPU, mem, network, storage of VM & long-running tasks
+    - resource allocation highly imbalanced
+    - CPU usually overprovised; memory closer to capacity
+- FP-Inconsistent: Measurement and Analysis of Fingerprint Inconsistencies in
+    Evasive Bot Traffic, Hari Venugopalan
+    - bot detection vs evasion
+    - pay bot traffic service to visit distinct obfuscated URL
+    - half not detected
+    - often evade if can support browser plugin/ from "iPhone"
+        - ⇒ forge browser attribute
+    - often inconsistent
+        - temporal e.g. changing attribute from same device
+        - spacial e.g. nonexistent iPhone screen size
+    - TODO: learn from these bots
+- CookieGuard: Characterizing and Isolating the First-Party Cookie Jar,
+    Zubair Shafiq
+    - make cookie "1st-party" w/ `document.cookie`, then 3rd-party read&write
+        - not blocked bc 1st-party
+        - commonly in main frame
+    - exfiltration, overwrite, delete
+    - delete sometimes bc accidental name collision
+    - browser extensions: intercept & partition Cookie jar
+        - break SSO but not many sites
+    - for dev: running 3rd-party in main frame gives it full control
+- Canvassing the Fingerprinters:
+    Characterizing Canvas Fingerprinting Use Across the Web, Elisa Luo
+    - no need JS/consent
+    - fingerprint fingerprinting script the same way they fingerprint
+    - extract rendered canvas as base64 image ⇒ know emoji&font
+        - learn OS, browser, GPU, default font size, etc.
+    - some for CDN security
+    - adblocker list 45% of canvas fingerprinting, but
+        only block 5% bc 1st-party exemption
+- Where in the World Are My Trackers?
+    Mapping Web Tracking Flow Across Diverse Geographic Regions, Robert Ricci
+    - important to know if tracker from another country bc jurisdiction
+    - visit regional popular websites w/ browser + DNS + traceroute
+        - geolocate w/ recent technique
+    - Europe largest hub for intercontinental tracker
 - Fingerprinting QUIC clients, Seungju Lee
     - Safari inconsistent QUIC support, other browsers good
     - different connection ID (CID) across implementations

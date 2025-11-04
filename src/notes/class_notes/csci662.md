@@ -208,6 +208,42 @@
     A Self-Boosting Framework For Domain-Adapted Information Retrieval
     - presented by Nikunj
     - retriever + generator reinforce in a loop
+- SHuBERT: Self-Supervised Sign Language Representation Learning via
+    Multi-Stream Cluster Prediction
+    - presented by Anzhe
+    - K-means → language model
+    - accuracy is SoTA but trash
+- SpaRE: Enhancing Spatial Reasoning in Vision-Language Models with
+    Synthetic Data
+    - presented by Gonglin
+    - little existing spatial reasoning data
+    - data collection by cleaning
+    - existing model cannot emulate others' perspective
+    - match SoTA LLM w/ 2B model
+- vision language model (VLM)
+    - guest lecture by Xuezhe
+    - non-generative
+        - CLIP: pair image w/ description
+        - VLM from pretrained LLM: LLaVA
+    - generative distribution-based: model data distribution
+        - closed-form analytic solution, but weak
+        - deep learning estimation, but no order & propagate error ⇒ bad
+        - exact density estimation: directly model joint distro
+            - generative normalizing flow
+            - but many layers bc invertible function weak
+            - determinant calculation expensive
+        - DL w/ approximate density estimation:
+            variational auto-encoder (VAE)
+            - encode pixel to denser latent space
+            - try to recover pixel from
+                latent space w/ evidence lower bound (ELBO)
+            - but face posterior collapse w/ high-dimensional latent space
+        - diffusion: add Gaussian noise step by
+            step till get Gaussian (forward process), then (reserve process)
+            - training loss unstable; can only know by testing
+        - transfusion: try to unify diffusion transformer training
+        - 2-stage model bad at understanding task
+    - generative adversarial network (GAN)
 
 ## linear model
 
