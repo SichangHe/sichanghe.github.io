@@ -145,7 +145,8 @@
     - [Unstructured Class Notes](notes/class_notes/index.md)
         - [Advanced Analysis of Algorithms](notes/class_notes/csci670.md)
         - [Advanced Computer Networking](notes/class_notes/csci651.md)
-        - [Advanced Natural Language Processing](notes/class_notes/csci662.md)
+        - [Advanced Natural Language
+            Processing](notes/class_notes/csci662.md)
         - [Advanced Operating Systems](notes/class_notes/csci655.md)
         - [Algorithms and Databases](notes/class_notes/cs301.md)
         - [Artificial Intelligence](notes/class_notes/cs402.md)
@@ -202,3 +203,4 @@ the "right button" would not work. -->
         - [Spring 2024 Activities](diary/spring_2024_activities/index.md)
         - [IMC '24](diary/imc_24.md)
         - [Recovering Files on Exxact](diary/recovering_exxact_files.md)
+        - [IMC 2025 Record](diary/imc2025record.md)
