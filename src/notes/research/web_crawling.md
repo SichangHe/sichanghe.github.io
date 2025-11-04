@@ -40,3 +40,7 @@
     - maintain shared document of paywall info
     - "student helper" to check periodically & submit ticket
     - <https://github.com/iipc/awesome-web-archiving>
+- [The Internet with Privacy Policies:
+    Measuring The Web](https://dl.acm.org/doi/pdf/10.1145/3555352), Nikhil Jha,
+    Martino Trevisan, Luca Vassio, Marco Mellia, ToW, 2022
+    - lose content if not clicked consent banner
