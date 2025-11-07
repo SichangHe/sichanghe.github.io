@@ -32,7 +32,7 @@
     presented Ukraine outage detection; met last year
 - Enze Liu (Alex): UCSD PhD, CMU postdoc; many feedbacks on
     LLM website detection
-- Olivier Benba: dark happy French boy; GaTech; met last year
+- Olivier Benba: dark handsome happy French boy; GaTech; met last year
 - Max Gao: mature-looking; KC's student at UCSD;
     pessimistically doing telescope
 - Harris Ransom: Ethan Kats-Basset's new student, a little shy
@@ -52,6 +52,7 @@
 - Weili Wu: GaTech boy; did policy atom;
     spent all time at arcade bar shooting
 - Elisa Luo: chill tan UCD girl studying LLM impact on Web
+- Aruna Balasubramanian: program chair; let me say hi to Harsha
 - Wei Hao: graduating from Columbia to
     co-found w/ Junfeng Yang a startup that tests agents;
     did spam email LLM detection while branching out to

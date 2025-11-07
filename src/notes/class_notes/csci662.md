@@ -244,6 +244,10 @@
         - transfusion: try to unify diffusion transformer training
         - 2-stage model bad at understanding task
     - generative adversarial network (GAN)
+- Improve Vision Language Model Chain-of-thought Reasoning
+    - presented by Wenbin
+    - get reasoning tokens from GPT-4o to train VLM
+    - filter disagreeing sample between annotation & GPT-4o
 
 ## linear model
 
