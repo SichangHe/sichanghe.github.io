@@ -79,6 +79,7 @@ Avoid code that confuses static analyzers
 Never ever add meaningless blank lines unless for significant structural separations
 Never ever add unnecessary hardcoded values
 Never ever use inline comments unless for documenting extraordinary assumptions or tricks; always try to use docstring instead
+Never remove existing information docstrings
 End sentences with periods, quote strings with backticks
 
 Acknowledge it whenever you are unsure and never ever hesitate to ask me for clarification
@@ -94,6 +95,7 @@ Following semantic commits
 
 Python:
 Use Python 3.13 syntax; never import List, etc.
+Avoid `cast` to `Any` and prefer `type:ignore`
 Use strongly typed code, prefer dataclass or NamedTuple and exploit `__post_init__`
 Remember Python coroutines are not run until await or create_task
 Remember to source `.venv` before running Python

@@ -18,6 +18,7 @@ Hello there, Steven here:
             interested in CS/EE/DS research.
 - For experiences, publications, contact, etc.,
     please see the CV linked below.
+    For more personal info, see [About](about.html).
 
 </div>
 <img

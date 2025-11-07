@@ -19,6 +19,27 @@ Wider areas:
 
 Previous: Federated learning, Internet routing, content provenance (C2PA).
 
+## Leisure Interests & Personal Trivia
+
+- Programming languages: Rust, Elixir, and
+    other modern expression languages with algebraic types,
+    first-class pattern matching, function composition, etc.
+    without class inheritance.
+- Sports: I walk and jog outdoor and do casual GYM workout regularly, and
+    I sometimes hike. Played badminton before. Trying bouldering sometimes now.
+- Physical science & technology: human health, general Biology, aviation,
+    spaceflight. I have a background in Biology and organic Chemistry.
+- Art: I go to cities like Shanghai, NYC, and Chicago only for museum and
+    gallery.
+    I like some of the classical music, much of impressionist paintings, and
+    some simplistic modern art.
+    I regard most modern songs, pop culture, and "contemporary art" as
+    unworthy, and do not appreciate makeups and heavy decorations people wear.
+- Food: I like food from natural ingredients and simple cooking.
+    Hate random food being sweet. High tolerance on spicy food.
+    I look down upon general US food as bad tasting and unhealthy, so
+    I cook a lot.
+
 ## Contact
 
 - Email: See the address in my CV. I get notifications and reply.
@@ -69,7 +90,7 @@ The name used in publications is Sichang "Steven" He.
 [Google
 Translate](https://translate.google.com/?text=%E4%BD%95%E6%80%9D%E7%95%85)
 pronounces it correctly (Click <kbd>Listen</kbd>).
-Serializing it into English is impossible; the best you can get is H-err?
+Serializing it into English is impossible; the best you can get is H-ehh?
 Sii↑ ch-ah-ng↓.
 
 ## Prior Mentees

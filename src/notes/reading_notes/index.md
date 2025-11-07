@@ -1,5 +1,19 @@
 # Unstructured Reading Notes
 
+- Granula Resource Demand Heterogeneity, Coulson Liang
+    - CPU pipeline complexity makes "bandwidth usage" imprecise
+    - resource usage fluctuates within 10us-level interval
+    - fine-grained scheduling possible now bc Quicksand & Granny
+    - profile w/ hardware performance counter (PMC)
+    - need "timeline": call context of function
+    - Hiresperf w/ LDB & PMC polling & interrupt:
+        7\% overhead at 10us interval
+        - read value from dedicated core
+        - future: self-report w/o interrupt
+- Junzhou He, NSL lab meeting
+    - avoid WASM timing side-channel attack
+    - detect leakage from program dependence graph (PDG)
+    - repair by branch removal
 - A Permissions Odyssey: A Systematic Study of Browser Permissions on
     Modern Websites, Alberto Fernandez-de-Retana
     - website ask for permission in HTTP header `Permissions-Policy`
