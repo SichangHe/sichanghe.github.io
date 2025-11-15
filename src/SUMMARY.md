@@ -91,6 +91,7 @@
         - [DeGenTWeb](notes/research/DeGenTWeb/execution.md)
             - [Arguments](notes/research/DeGenTWeb/arguments.md)
             - [Literature](notes/research/DeGenTWeb/literature.md)
+            - [Changelog](notes/research/DeGenTWeb/CHANGELOG.md)
             - [Google Trends](notes/research/DeGenTWeb/google_trends.md)
             - [Preliminary Binoculars
                 Evaluation](notes/research/DeGenTWeb/preliminary_binoculars_eval.md)
@@ -101,6 +102,7 @@
             - [Classifying
                 Websites](notes/research/DeGenTWeb/classifying_site.md)
             - [Common Crawl](notes/research/DeGenTWeb/common_crawl.md)
+            - [Deprecated](notes/research/DeGenTWeb/deprecated.md)
         - [Healthcare](notes/research/healthcare.md)
         - [Generative AI](notes/research/gen_ai.md)
         - [JSphere](notes/research/JSphere/sketch.md)

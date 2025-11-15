@@ -1,5 +1,23 @@
 # Unstructured Reading Notes
 
+- Lunch in Theory: How to Measure Differences in Rankings,
+    Yeganeh Alimohammadi
+    - goal: individual ranking → global consensus
+        - explain observed variability
+    - ranking models
+        - Borda count: sum of score based on rank
+        - Plackett-Luce: probabilistic
+    - Mallow: central ranking $\sigma$, distance $d$, dispersion $\beta$
+        - $d$ usually $L_\alpha$ norm where $\alpha=1,2$
+        - MCMC work in theory but not converge in practice
+    - MLE estimator strongly consistent
+        1. set $\alpha=1$, optimize $\sigma$ and fix it first
+        1. optimize $\alpha,\beta$
+        - converge bc mean is stable w/ enough samples
+    - narrow sampling by only considering $\Delta$ diagonal band
+        - dynamic programming to compute matching of
+            spare matrix bipartite graph
+    - show how predictable games are, e.g. basketball \> football
 - Granula Resource Demand Heterogeneity, Coulson Liang
     - CPU pipeline complexity makes "bandwidth usage" imprecise
     - resource usage fluctuates within 10us-level interval
