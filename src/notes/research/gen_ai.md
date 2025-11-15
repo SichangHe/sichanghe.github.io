@@ -319,6 +319,19 @@ news:
         - argue generated post are bad writing
     - mention of YouTube get-rich-quick tutorial on generating post/book
 
+research ideas:
+
+- emphasize data in the wild different from benchmark
+    - noisy nature: non-prose
+    - low
+        %LLM text cause pathetic theoretical max accuracy skill score (MASS)
+        compared to trivial detector
+- set-level detection applications: Reddit users, OpenReview,
+    student cheating, Amazon reviewers
+- collect advanced prompts from Reddit for adversarial benchmark dataset
+- push-pull fine-tune LLM for logit-based detection
+- manually check misclassified text to find patterns
+
 ## Human detection of AI-generated content
 
 - [A Representative Study on Human Detection of

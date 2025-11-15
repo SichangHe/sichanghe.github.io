@@ -147,6 +147,12 @@ function clickAll() {
 clickAll();
 ```
 
+Agent prompt:
+
+```
+Continue until you finish all course. Sometimes you need to click through a bunch of "cards" to be able to click "Next". Never ever fucking click exit or any elements outside the middle scrollable box
+```
+
 ## Anonymization
 
 student directory obfuscated URL:

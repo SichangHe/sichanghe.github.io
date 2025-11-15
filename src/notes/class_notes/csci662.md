@@ -248,6 +248,34 @@
     - presented by Wenbin
     - get reasoning tokens from GPT-4o to train VLM
     - filter disagreeing sample between annotation & GPT-4o
+- Dehumanizing Machines: Mitigating Anthropomorphic Behaviors in
+    Text Generation Systems
+    - presented by Lydia
+    - crowd source people on how/why "human-like" they find LLM output
+    - suggestions on how to reduce human-like tone
+        - cognitive ability, self-awareness, feeling
+- Mind Reading: Decoding the internal representations of the human brain
+    - presented by Sam Nastase
+    - fMRI: plethysmography for skull defect
+    - 1st MRI machine in 1977 "Indomitable", 0.05T
+    - MRI machine never shut down, always cooled, superconductive
+    - more oxygenated blood after second-scale delay of
+        regional brain activity
+    - linear regression model to distinguish region w/ weight
+    - encoding/decoding: stimulus vs brain activity voxel
+    - singular area correlation vs aggregate correlation
+    - representational similarity analysis (RSA):
+        only care about relationship
+        - work across subject, including monkey
+- JailbreakRadar: Comprehensive Assessment of Jailbreak Attacks Against LLMs
+    - presented by Abhinav
+    - 16 violation category on 9 LLM
+    - LLaMa 3 secure, DeepSeek V3 easy to attack
+    - prompt guard mitigate most attacks
+- A Troublemaker with Contagious Jailbreak Makes Chaos in Honest Towns
+    - presented by Yuxin
+    - single-agent attack work poorly
+    - ARCJ: retrieval + replication suffix to increase toxicity
 
 ## linear model
 
@@ -461,3 +489,26 @@ problem & solution:
 - bi-encoder: encode query & doc separately, find similarity, e.g. Faiss
 - late-state interaction (e.g. ColBERT): bi-encoder except per query token
 - hard negative training (difficult, e.g. from weaker model)
+
+## dialog model
+
+### frame-based agent
+- frame w/ slots to fill needed info
+- agent need to fill in all slots user answered and ask for missing slot
+- IOB tagging: beginning (B), inside (I), outside (O) of slot
+- fail when user change task, e.g. ask question
+- ⇒ dialog state tracking (DST)
+    - figure out what user's state is and act accordingly
+- evaluation: slot error rate
+
+### aimless chatbot
+
+- evaluation w/ BLEU—horrible
+- still bad at multi-party, long-horizon
+
+## information extraction (IE)
+
+- named entity recognition (NER)
+    - geopolitical entity (GPE)
+- BIOSE: + solo entity (S), end (E)
+- coreference: merge node in knowledge graph
