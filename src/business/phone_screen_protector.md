@@ -39,3 +39,15 @@
 | --------- | ------- | ------------- | --------------- | --------- |
 | Magic Box | smooth  | 21.8x11.8x2   | 8.6x4.6x0.8     | 7.5       |
 | Magic Box | privacy | 21.8x11.8x2   | 8.6x4.6x0.8     | 10        |
+
+# RTego LLC
+
+- start w/ <https://www.michaels.com/>
+
+## Cost
+
+recurrent:
+
+| item                   | cost | unit    |
+| ---------------------- | ---- | ------- |
+| Hubstudio Subscription | 40   | ¥/month |

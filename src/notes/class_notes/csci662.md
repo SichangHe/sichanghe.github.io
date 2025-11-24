@@ -276,6 +276,39 @@
     - presented by Yuxin
     - single-agent attack work poorly
     - ARCJ: retrieval + replication suffix to increase toxicity
+- Geometric Signatures of Compositionality Across a Language Model’s Lifetime
+    - presented by Matthew
+    - compositionality of language: words etc. can recombine w/ other words
+    - manifold hypothesis: ANN compress representation to
+        low-dimension nonlinear manifold
+    - idea: language restricted, cannot arbitrarily combine words
+    - measure: n-gram
+    - estimate dimensionality of manifold by whether TwoNN
+        (2-nearest neighbor) ratio of distance to nearest by
+        next-nearest neighbor approach 1
+        - plateau as model scale
+        - even drop at certain point
+            - performance jump
+            - later layer get higher intrinsic dimensionality than
+                earlier layer, as opposed to the inverse w/ fewer parameters
+    - estimate linear dimension by PCA
+        - increase linearly as model scale
+- LocAgent: Graph-Guided LLM Agents for Code Localization
+    - presented by Danny
+    - need to locate specific lines of code to modify
+    - code graph of files, PL construct
+    - sparse hierarchical entity indexing (BM25)
+        - dense embedding suck in practice
+        - just grep
+    - let agent filter for node type in code graph
+    - similar code localization performance to SoTA agent
+- Reproduction: Prompts have evil twins
+    - presented by Kaicheng
+    - similar generation from weird prompt compared to sensible prompt
+    - brute-force search for "evil twin" prompt by token replacement
+    - make it more evil
+        - fluency penalty to the loss using log probability
+        - only pick token from limited weird set
 
 ## linear model
 
@@ -510,5 +543,16 @@ problem & solution:
 
 - named entity recognition (NER)
     - geopolitical entity (GPE)
+    - SoTA system still suck at pronoun & nominal
+    - LLM suck if asked directly; need to ask one by one
 - BIOSE: + solo entity (S), end (E)
 - coreference: merge node in knowledge graph
+- Hearst Patterns
+    1. come up w/ basic pattern
+    1. find pairs w/ that pattern
+    1. find same pairs w/ other pattern
+    1. learn
+- event-event relation: temporal, causal
+    - hard to agree on/ evaluate
+    - (PDTB)
+    - rhetorical structure theory (RST)

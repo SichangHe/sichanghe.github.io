@@ -1,5 +1,16 @@
 # Unstructured Reading Notes
 
+- LiVo:
+    Toward Bandwidth-adaptive Fully-Immersive Volumetric Video Conferencing,
+    Rajrup Ghosh, NSL meeting
+    - volumetric video streaming need high bandwidth, no bandwidth adaptation
+    - use 2D video codex (H.265) for 3D
+        - WebRTC for streaming
+    - tile depth w/ color bc GPU only support 8 parallel encoders
+    - use luminance channel for depth to avoid geometry info loss
+    - dynamic bandwidth splitting between color vs depth to balance RMSE
+        - RMSE: root mean square error
+    - frustum culling: rid invisible pixel
 - Lunch in Theory: How to Measure Differences in Rankings,
     Yeganeh Alimohammadi
     - goal: individual ranking → global consensus
@@ -28,7 +39,7 @@
         7\% overhead at 10us interval
         - read value from dedicated core
         - future: self-report w/o interrupt
-- Junzhou He, NSL lab meeting
+- Junzhou He, NSL meeting
     - avoid WASM timing side-channel attack
     - detect leakage from program dependence graph (PDG)
     - repair by branch removal
