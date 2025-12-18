@@ -78,6 +78,7 @@
         - [Mathematica](notes/programming/mathematica.md)
         - [MATLAB](notes/programming/matlab.md)
         - [MIPS Assembly](notes/programming/mips.md)
+        - [PostgreSQL](notes/programming/postgres.md)
         - [Racket](notes/programming/racket.md)
         - [Ruby](notes/programming/ruby.md)
             - [Rails](notes/programming/rails.md)

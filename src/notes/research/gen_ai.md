@@ -177,6 +177,12 @@ paper:
     - use Fast-DetectGPT w/ proprietary model logit
     - much better performance on proprietary model outputs:
         0.95 AUROC vs 0.79 on Mix3 dataset
+- [Enhancing LLM Text Detection with Retrieved Contexts and
+    Logits Distribution
+    Consistency](https://aclanthology.org/2025.emnlp-main.503/),
+    Zhaoheng Huang, Yutao Zhu, Ji-Rong Wen, Zhicheng Dou, EMNLP, 2025
+
+pending review:
 
 - [MAGRET: Machine-generated Text Detection with
     Rewritten Texts](https://aclanthology.org/2025.coling-main.557/),
@@ -319,7 +325,7 @@ news:
         - argue generated post are bad writing
     - mention of YouTube get-rich-quick tutorial on generating post/book
 
-research ideas:
+### research ideas
 
 - emphasize data in the wild different from benchmark
     - noisy nature: non-prose
@@ -331,6 +337,7 @@ research ideas:
 - collect advanced prompts from Reddit for adversarial benchmark dataset
 - push-pull fine-tune LLM for logit-based detection
 - manually check misclassified text to find patterns
+- mash various metrics together randomly by brute force to see what work well
 
 ## Human detection of AI-generated content
 

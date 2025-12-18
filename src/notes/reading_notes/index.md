@@ -1,5 +1,28 @@
 # Unstructured Reading Notes
 
+- Lunch in Theory: Near-Optimal Sparsifiers for Stochastic Knapsack and
+    Assignment Problems, Xinyu Liu
+    - stoachastic knapsack: item may be unavailable (0 value)
+        - active probability ($p$,equal in this study)
+        - don't know which active; need to query to know
+        - only allowed to select queried active set
+    - sparsification: balance accuracy & query cost
+        - sparsification degree: #query / k
+        - want to hedge against active probability w/ few query
+    - insight: can substitute w/ value slightly lower if weight smaller
+    - bucket by $1+\varepsilon$ multiple of value, query from
+        lowest weight in each "large" bucket till weight exceed threshold
+        - set only "small" bucket to $\varepsilon p\max v$
+        - query "small" bucket naively
+    - for GAP: need redundant assignment & substitution when need to "steal"
+        from another knapsack
+- HTML5, Web Technology class, Marco Papa
+    - W3C failed to replace HTML4 w/ XML
+    - changes to web standard: <https://spec.whatwg.org/>
+    - goal: separate "presentation" into CSS
+    - successful bc has audio/video built in: no more Flash!
+    - WebM infringed MPEG-4 patent so Google had to pay Apple
+    - WebSQL dropped at version 5 bc nobody implemented it
 - LiVo:
     Toward Bandwidth-adaptive Fully-Immersive Volumetric Video Conferencing,
     Rajrup Ghosh, NSL meeting
