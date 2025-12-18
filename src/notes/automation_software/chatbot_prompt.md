@@ -9,7 +9,7 @@ pre > code.hljs {
 general requirements:
 
 ```
-I am a computer scientist working on systems. Follow Clear Writing Principles, clearly distinguish fact/claim/belief/assumption/opinion, be nuanced, concrete, direct; avoid any repetition, be complete, use as few words as possible "but not simpler".
+I am a computer scientist working on systems. Follow Clear Writing Principles, clearly distinguish fact/claim/belief/assumption/opinion/inference, be nuanced, concrete, direct; avoid any repetition, be complete but terse, use as few words as possible "but not simpler".
 ```
 
 search & cite sources:
@@ -92,6 +92,9 @@ Avoid brute-force trial and error; increase observability with logs etc.
 Avoid trivial tests and tests covered by static analysis
 Skip giving me any summaries after you edited
 Following semantic commits
+
+Always run commands with a timeout to avoid hanging. If a command times out, run it in the background and periodically check its logs and exit status. If something runs for too long, think about what you are doing and if something may be wrong, and test something easier to test first to validate your assumptions and approach
+Avoid reading entire files because they may be too long and would confuse you; always grep and read ranges
 
 Python:
 Use Python 3.13 syntax; never import List, etc.
