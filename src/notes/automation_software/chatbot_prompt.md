@@ -105,5 +105,6 @@ Remember Python coroutines are not run until await or create_task
 Remember to source `.venv` before running Python
 
 SQL:
-Whenever possible, use NATURAL JOIN, NATURAL LEFT JOIN, etc., omit table names for columns, avoid aliasing
+Whenever possible, use JOIN USING instead of JOIN ON
+Omit table names for columns, or use full table name, avoid aliasing
 ```
