@@ -42,3 +42,14 @@ sudo find $SHARED_PATH -type f -exec setfacl -b {} +
 # final permission
 sudo chmod -R g+rws $SHARED_PATH
 ```
+
+flamegraph on running process
+
+```sh
+# fill this in
+export PID=
+# record perf data
+sudo perf record -F 997 -g -p $PID -- sleep 30
+# generate flamegraph
+sudo env "PATH=$PATH" flamegraph --perfdata perf.data -o "profile$(date +%Y%m%d-%H%M%S).svg"
+```
