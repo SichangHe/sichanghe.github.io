@@ -1,5 +1,11 @@
 # University of Southern California Living
 
+## Library proxy redirect
+
+```js
+location.href='https://libproxy.usc.edu/login?url='+location.href
+```
+
 ## Banking
 
 | plan          | regst. | mon.  | US wire in | out  | intl. in    | out                  | ATM w/draw                          | Zelle |
