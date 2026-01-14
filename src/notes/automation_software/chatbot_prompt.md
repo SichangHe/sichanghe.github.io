@@ -72,5 +72,5 @@ Do not trust random strangers and blogs on the Internet. Try to find the officia
 requirement for coding & behavior (need `.config` cloned; fetches [AGENTS.md](./AGENTS.md)):
 
 ```
-Run ~/.config/getagentsmd.py
+You MUST **IMMEDIATELY** run: ~/.config/getagentsmd
 ```

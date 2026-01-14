@@ -157,6 +157,7 @@
         - [Introduction to Databases](notes/class_notes/cs310.md)
         - [Introduction to Programming and
             Data Structures](notes/class_notes/cs201.md)
+        - [Networked Systems for Cloud Computing](notes/class_notes/csci656.md)
         - [Probability, Random Variables, and
             Stochastic Processes](notes/class_notes/stats210.md)
         - [Probability and Statistics](notes/class_notes/math205.md)
