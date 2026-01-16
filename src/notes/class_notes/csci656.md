@@ -2,6 +2,20 @@
 
 - sovereignty: legislation cause data to stay within regions
 
+motivation: cloud app
+
+- merchant silicon switch: Broadcom; only provide chip (cheaper)
+    - as oppose to Cisco, which provide entire rack + software (expensive)
+- previous network could not run new huge app
+    - four-post design: 4 router each connected to each of 512 racks via
+        1G port
+        - each ToR only 4G uplink despite 40x server w/ 1G link
+        - ⇒ NIC oversubscription
+- uniform bandwidth: pairwise same among server
+    - power domain: outlet w/ same power source
+        - source fail ⇒ all fail
+    - uniform bandwidth resilient to power domain fail
+
 ## Papers
 
 ### [Jupiter rising: a decade of clos topologies and centralized control in Google's datacenter network](https://dl.acm.org/doi/10.1145/2975159)
@@ -10,6 +24,31 @@ Arjun Singh, Joon Ong, Amit Agarwal, Glen Anderson, Ashby Armistead,
 Roy Bannon, Seb Boving, Gaurav Desai, Bob Felderman, Paulie Germano,
 Anand Kanagala, Hong Liu, Jeff Provost, Jason Simmons, Eiichi Tanda,
 Jim Wanderer, Urs Hölzle, Stephen Stuart, Amin Vahdat, CACM, 2016
+
+- Clos topology: switch have same radix; core & aggregation layer
+    - assume switch has $k$ port ⇒ $k/2$ core + $k$ aggregation switch
+    - ⇒ get switch w/ $k^2/2$ port
+    - rearrangeable
+    - non-blocking: 1:1 subscription ratio (telecom terminology)
+        - mathematically proved: ALA $m≥2r$ where
+            $r$ is downlink per middle layer, $m$ is uplink
+    - multi-stage Clos: more layer ⇒ exponential scaling
+        - 2-stage give $k^3/4$ port, $l$-stage give $2^{-l}k^{l+1}$
+- Firehose: 32up, 32down aggregation block each made of Clos of 8-port switch
+    - each ToR connect to 2 aggregation block
+    - deployed side-by-side w/ legacy network; big red button (fallback)
+- Watchtower: 128-port line card from 3 layer of 8x 16-port switch chip
+    - standardized design for economic of scale
+    - optical fiber
+- Saturn: similar to Firehose but w/ 288-port line card from 12x 24-port chip
+    - ToR: 4up 20down (5:1 oversubscription) or 8up 16down
+        (2:1 oversubscription)
+- Juniper: w/ 16x40G or 64x10G switch chip
+    - 128-port centauri chassis from 4 switch chip (not interconnected)
+    - 64up 256down blocking middle block from 4 centauri
+    - aggregation block from 8 middle block
+    - spine block from 6 centauri
+    - incremental: build aggregation block first, spine later
 
 ### [Jupiter evolving: transforming google's datacenter network via optical circuit switches and software-defined networking](https://dl.acm.org/doi/10.1145/3544216.3544265)
 

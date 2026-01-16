@@ -1,5 +1,23 @@
 # Unstructured Reading Notes
 
+- Async MoE, Coulson Liang, on behalf of Shaoyu Wang, NSL meeing
+    - MoE usually wait for all AllToAll before next layer
+    - async is sequential
+        1. send metadata thru CPU
+        1. allocate on GPU w/ NCCL
+        1. NCCL CPU rendezvous: receiver tell sender target address
+    - proposal: NVSHMEM (shared memory)
+        - symmetric: receiving buffer (called PE) for each other GPU on
+            each GPU
+        - send into communication buffer w/o CPU
+    - challenge:
+        - CPU needs to know transfer size to
+            efficiently copy out arriving buffer
+            - ⇒ asyncly copy out in batches
+        - if multiple send from same sender to same receiver, need to
+            tell sender when available
+            - ⇒ set bit w/ RDMA & busy wait
+    - Steven idea: use NVSHMEM to mask old implementation latency
 - Lunch in Theory: Near-Optimal Sparsifiers for Stochastic Knapsack and
     Assignment Problems, Xinyu Liu
     - stoachastic knapsack: item may be unavailable (0 value)
