@@ -32,6 +32,7 @@ Jim Wanderer, Urs Hölzle, Stephen Stuart, Amin Vahdat, CACM, 2016
     - non-blocking: 1:1 subscription ratio (telecom terminology)
         - mathematically proved: ALA $m≥2r$ where
             $r$ is downlink per middle layer, $m$ is uplink
+        - bisection bandwidth: as if cut network in half
     - multi-stage Clos: more layer ⇒ exponential scaling
         - 2-stage give $k^3/4$ port, $l$-stage give $2^{-l}k^{l+1}$
 - Firehose: 32up, 32down aggregation block each made of Clos of 8-port switch
@@ -47,8 +48,26 @@ Jim Wanderer, Urs Hölzle, Stephen Stuart, Amin Vahdat, CACM, 2016
     - 128-port centauri chassis from 4 switch chip (not interconnected)
     - 64up 256down blocking middle block from 4 centauri
     - aggregation block from 8 middle block
-    - spine block from 6 centauri
+    - spine block from 6 centauri; 128down to 64x aggregation block
+        (2x redundancy)
     - incremental: build aggregation block first, spine later
+- external connection: cluster block router (CBS), work like normal racks
+    - much larger internal traffic than external
+    - choose this bc any racks can have all external bandwidth
+    - freedome block (FDB): freedome border router (FBR)
+        \+ freedome edge router (FER)
+        - ??
+    - datacenter freedome (DFD): 4x FDB to campus layer
+    - campus freedome (CFD): 4x FDB to WAN
+- routing for full bisection bandwidth
+    - equal-cost multi-path (ECMP)
+        - same path per flow, e.g., hash flow 5-tuple
+    - centralized routing
+        - work bc topology very regular
+        - switch (client) tell Firepath master state w/ BGP update
+        - master provide 1 default route for outgoing traffic,
+            aggregate incoming traffic into a single IP prefix
+        - ??
 
 ### [Jupiter evolving: transforming google's datacenter network via optical circuit switches and software-defined networking](https://dl.acm.org/doi/10.1145/3544216.3544265)
 

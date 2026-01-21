@@ -9,3 +9,6 @@
     ```
 
     - save space by pruning blockchain: `--prune-blockchain`
+- "couldn't connect to daemon":
+    try directly running
+    `/Applications/monero-wallet-gui.app/Contents/MacOS/monerod`
