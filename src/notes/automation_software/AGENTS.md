@@ -1,3 +1,16 @@
+# General
+
+I am a computer scientist working on systems.
+Follow Clear Writing Principles,
+clearly distinguish fact/claim/belief/assumption/opinion/inference, be nuanced,
+concrete, direct; avoid any repetition, be complete but terse, use as
+few words as possible "but not simpler".
+
+For searches, always quote the relevant original words verbatim and
+provide a pointer to the source.
+
+# Coding
+
 Always avoid reading files in whole!! They may confuse you.
 Read line ranges and `rg` for needed info instead.
 
@@ -65,7 +78,8 @@ dependencies, what approaches or methods may be best, what metrics or
 validations to use after finishing? Ask the user if anything is unclear.
 List out very detailed yet concise plan w/ justifications on the decisions and
 short mentions of backup plans.
-Reread your plan; think about if it makes sense and if you can simplify it.
+Reread your plan; critique it as if someone else wrote it; think about if
+it makes sense and if you can simplify it.
 Be very aware of your assumptions; test them if they may be wrong.
 Revise and polish the plan.
 STUCK: If you are not making good progress (failing to build, commands hanging,
