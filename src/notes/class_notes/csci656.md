@@ -77,6 +77,29 @@ Rishi Kapoor, Stephen Kratzer, Nanfang Li, Hong Liu, Karthik Nagaraj,
 Jason Ornstein, Samir Sawhney, Ryohei Urata, Lorenzo Vicisano, Kevin Yasumura,
 Shidong Zhang, Junlan Zhou, Amin Vahdat, SIGCOMM, 2022
 
+- wavelength division multiplexing (WDM): multiple stream on 1 optic fiber
+    - data rate can vary per stream
+- optical circuit switch (OCS): programmable mirror
+    - make topology reconfigurable w/o manual operation
+    - each block w/ 4 separate power domain (failure domain)
+- direct connect architecture: rid spine, OCS connect high-speed aggregation block
+    - bc spine & full bisection cost too much
+    - blocking ⇒ traffic engineering & topology engineering
+        - doable bc traffic mostly stable, topology more stable
+        - weighted cost multi-path (WCMP)
+- traffic matrix: directed demand between aggregation block
+- Orion: software-defined networking (SDN) control plane for OCS
+    - aggregation block run Orion domain controller
+    - OCS group run Orion DCNI
+        - DCNI??
+    - topology engineering controller change Orion DCNI
+    - use separate control plane network; but collocate w/ data plane
+    - fail static: continue w/ final config when fail
+- traffic engineering
+    - may hop over another aggregation block to satisfy demand
+        - reduce burst; use spare capacity
+    - only change topology when no feasible solution thru routing
+
 ### [Alibaba HPN- A Data Center Network for Large Language Model Training](https://dl.acm.org/doi/10.1145/3651890.3672265)
 
 Kun Qian, Yongqing Xi, Jiamin Cao, Jiaqi Gao, Yichi Xu, Yu Guan, Binzhang Fu,

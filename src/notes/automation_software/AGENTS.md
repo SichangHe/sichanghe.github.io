@@ -23,6 +23,7 @@ Avoid all unnecessary/convoluted helper/wrapper/alias; prefer simple,
 direct constructs. Pass explicit resources instead of global sharing.
 Avoid duplicating/repeating existing code. Try to reuse.
 Merge overlapping code paths instead of duplicating near-identical functions.
+Aim for minimal diff.
 
 Be clean.
 Name your names sanely and use commen abbr like `n_` for `number_of_`, `2` for
