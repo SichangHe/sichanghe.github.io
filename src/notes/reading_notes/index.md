@@ -1,19 +1,37 @@
 # Unstructured Reading Notes
 
-- Defense: Incentivizing Efficient Delegation without Payments, Curtis Bechtel
+- I/O Optimizations for Deep Learning on
+    Distributed/Resource-Constrained Environments (Optimus-CC), Yaeyong Song,
+    NSL meeting
+    - GPU utilization low in LLM training bc gap
+    - compress inter-stage gradient communication lossy
+        - compressing forward activation would diverge
+        - naive lossy compression cause higher perplexity
+    - save compression error & propagate next batch
+    - only compress critical path (ones that finish later)
+    - reduce wall clock time to convergence
+    - only advantageous if NIC slow & compute fast
+- Defense: Incentivizing Efficient Delegation without Payments,
+    Curtis Bechtel
     - single-proposal mechanism can do as well as any multi-step method
         - WLOG, only consider single-proposal delegation
-    - multi-agent delegation: strategic delegation gap = adversarial delegation gap
-        - delegation gap tend to 1 log inversely w/ more agent (assume symmetric contribution)
-    - combinatorial constraint: downward-closed solution constraint & probing constraint
+    - multi-agent delegation:
+        strategic delegation gap = adversarial delegation gap
+        - delegation gap tend to 1 log inversely w/ more agent
+            (assume symmetric contribution)
+    - combinatorial constraint:
+        downward-closed solution constraint & probing constraint
         - utility of solution is sum of component
         - constant $\alpha\beta$ delegation gap from adaptivity gap
     - Weitzman's Pandora's box: combinatorial + probe cost per element
         - principle reimburse $1-\alpha$ of probing cost
             - agent probe too much but $\alpha$ amortize for that
-        - shared-cost approximation: different reimbursement ratio per element
+        - shared-cost approximation:
+            different reimbursement ratio per element
             - reduce to online contention resolution scheme (OCRS)
-            - agent run either $\alpha$ Pandora's box or $\alpha$ prophet inequality depending on whether probing too expensive
+            - agent run either $\alpha$ Pandora's box or
+                $\alpha$ prophet inequality depending on whether
+                probing too expensive
             - delegation gap could be ≥1 if aligned enough
 - Async MoE, Coulson Liang, on behalf of Shaoyu Wang, NSL meeing
     - MoE usually wait for all AllToAll before next layer

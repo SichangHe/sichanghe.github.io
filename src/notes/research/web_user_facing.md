@@ -76,6 +76,15 @@ ideas:
 - ranking based on user feedback
 - measuring retrieval of Perplexity, ChatGPT, etc. in search mode
 
+## Web Dependency
+
+- [Poster: Web Dependency Analyzer to Identify Resource Dependencies and
+    their Impact on Rendering](https://dl.acm.org/doi/10.1145/3646547.3689683),
+    Yasin Alhamwy, Paul Mertens, Oliver Hohlfeld, IMC, 2024
+    - which domain provide which assets, contribute how much to
+        rendered content
+    - ablation: what happens to rendering when block some domains (or down)
+
 ## Phishing
 
 - [Phishing in the Free Waters: A Study of
