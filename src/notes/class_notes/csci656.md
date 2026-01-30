@@ -82,7 +82,8 @@ Shidong Zhang, Junlan Zhou, Amin Vahdat, SIGCOMM, 2022
 - optical circuit switch (OCS): programmable mirror
     - make topology reconfigurable w/o manual operation
     - each block w/ 4 separate power domain (failure domain)
-- direct connect architecture: rid spine, OCS connect high-speed aggregation block
+- direct connect architecture: rid spine,
+    OCS connect high-speed aggregation block
     - bc spine & full bisection cost too much
     - blocking ⇒ traffic engineering & topology engineering
         - doable bc traffic mostly stable, topology more stable
@@ -96,9 +97,18 @@ Shidong Zhang, Junlan Zhou, Amin Vahdat, SIGCOMM, 2022
     - use separate control plane network; but collocate w/ data plane
     - fail static: continue w/ final config when fail
 - traffic engineering
-    - may hop over another aggregation block to satisfy demand
-        - reduce burst; use spare capacity
+    - indirect path: may hop over another aggregation block to satisfy demand
+        - hedging: reduce burst; use spare capacity
+    - minimize maximum link utilization (MLU)
+    - frequent: 15min at paper's time; 2-5min now
+- topology engineering
     - only change topology when no feasible solution thru routing
+    - traffic-aware topology; help w/ heterogeneous link capacity
+    - manual rewiring + OCS reconfiguration
+        - gradual rewiring a few links
+        - capacity drop ≤25%
+    - may reduce "stretch" for some traffic: path length per shortest path
+    - infrequent: weeks at paper's time
 
 ### [Alibaba HPN- A Data Center Network for Large Language Model Training](https://dl.acm.org/doi/10.1145/3651890.3672265)
 
@@ -106,16 +116,57 @@ Kun Qian, Yongqing Xi, Jiamin Cao, Jiaqi Gao, Yichi Xu, Yu Guan, Binzhang Fu,
 Xuemei Shi, Fangbo Zhu, Rui Miao, Chao Wang, Peng Wang, Pengcheng Zhang,
 Xianlong Zeng, Eddie Ruan, Zhiping Yao, Ennan Zhai, Dennis Cai, SIGCOMM, 2024
 
+- dense (not MoE) LLM training cause huge synchronized spike
+- very few connection per network interface (\~10)
+- 2 network: frontend standard Clos, backend for LLM training only
+    - frontend has storage; handle inference
+- backend:
+- NIC per GPU + CPU; 8 CPU per host (server)
+- intra-host network for each GPU e.g. NVLink (alongside NIC)
+    - only CPU's NIC connect to frontend; GPU NIC connect to backend
+- 136-host segment; +1/16 spare GPU in case of failure
+- rail-optimized ToR: each GPU connected to alternating ToR other machines'
+    GPU connect to
+    - can go thru different ToR + NVLink for communication
+    - mitigate biggest impact: ToR failure
+- every other backend ToR connect another plane's aggregation block
+    - 2-plane pod
+    - avoid routing load imbalance from hash polarization
+- multi-pod core layer: highly subscribed bc training fitted in 1 pod
+
 ### [NegotiaToR: Towards A Simple Yet Effective On-demand Reconfigurable Datacenter Network](https://arxiv.org/abs/2407.20045)
 
 Cong Liang, Xiangli Song, Jing Cheng, Mowei Wang, Yashe Liu, Zhenhua Liu,
 Shizhen Zhao, Yong Cui, SIGCOMM, 2024
+
+- futuristic configurable ToR
+- AWGR: dumb optical switch; smart ToR reconfigure path by
+    sending different wavelength
+    - nanosecond reconfiguration time
+- each epoch: 1-bit message to indicate whether want to send to reconfigure
+    - no centralized control
+    - REQUEST, GRANT, ACCEPT message to establish connection
 
 ### [Running BGP in Data Centers at Scale](https://www.usenix.org/conference/nsdi21/presentation/abhashkumar)
 
 Anubhavnidhi Abhashkumar, Kausik Subramanian, Alexey,reyev, Hyojeong Kim,
 Nanda Kishore Salem, Jingyi Yang, Petr Lapukhov, Aditya Akella, Hongyi Zeng,
 NSDI, 2021
+
+- Facebook used BGP for DC network routing
+    - tussle in software development: BGP already exist & has software
+    - ⇒ fast startup
+- no IGP bc OSPF does not scale
+- emulate external BGP: each switch is 1 AS
+- peer group: sweitch w/ same role, connected to same group
+    - use very similar BGP policy
+- use AS confederation for ASN assignment
+    - group all ASN within each pod into 1 when advertise externally
+    - uniform ASN assignment across DC, reuse if possible
+    - avoid devastating buggy config via simulation & staged rollout
+- each spine plane has unique ASN
+- infrastructure IP for switch, vs production IP for server
+- aggregate route per rack/pod to minimize routing table
 
 ### [Orion: Google's Software-Defined Networking Control Plane](https://www.usenix.org/conference/nsdi21/presentation/ferguson)
 
