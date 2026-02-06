@@ -176,6 +176,25 @@ Richard Alimi, Shawn Shuoshuo Chen, Mike Conley, Subhasree Mandal,
 Karthik Nagaraj, Kondapa Naidu Bollineni, Amr Sabaa, Shidong Zhang, Min Zhu,
 Amin Vahdat, NSDI, 2021
 
+- SDN: app write to state, controller read state & adjust
+- generalized forwarding: forwarding table++; match any header field,
+    do any action
+- Orion: break up routing, network management,
+    config management into microservices
+- blast radius: \#controller failrue
+- inter-block controller (IBC) control controller in spine/aggregation block
+- no fate sharing in SDN: dunno what failed when
+    controller cannot reach switch
+    - Orion identify switch state: (un)health/unknown
+    - for unknown, initially fail-closed; if below capacity, fail-static
+- out-of-band control plane except for ToR (in-band)
+    - out-of-band break circular dependency, but expensive
+- intent reconciliation:
+    - believe top-level authority on conflict
+- architecture: core → network information base (NIB)
+    → managers → OpenFlow front-end (OFE)
+    - NIB: in-memory database of network state; non-durable
+
 ### [Teal: Learning-Accelerated Optimization of WAN Traffic Engineering](https://dl.acm.org/doi/pdf/10.1145/3603269.3604857)
 
 Zhiying Xu, Francis Y. Yan, Rachee Singh, Justin T. Chiu, Alexander M. Rush,

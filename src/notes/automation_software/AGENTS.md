@@ -102,7 +102,11 @@ CHECK: After writing your code, you MUST run STRONG static checks and tests as
 suitable. Every once in a while, reflect on your approach.
 Do you deeply understand the problem? Could it be simpler?
 Avoid overengineering. The simplest approach is often the best.
-**Make sure to write STUCK & LOOP & CHECK instructions in `PLAN.md`**.
+STOP: When you have no TODOs left, do a comprehensive review of changes.
+Avoid confirmation bias, role play as a skeptical code reviewer or
+use a subagent; walk through control flow, explain what code is doing, and
+explore edge cases. Go back to LOOP if CHECK finds any issues.
 When you are fully done, remove `PLAN.md`.
+**Make sure to write STUCK LOOP CHECK STOP instructions in `PLAN.md`**.
 
 Do not use Long Running Autonomous Mode unless instructed to.
