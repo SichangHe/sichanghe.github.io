@@ -1,5 +1,16 @@
 # Unstructured Reading Notes
 
+- MetaRL, Mahdi Alizadeh, NSL meeting
+    - traffic engineering: optimal solution very slow
+    - performance gap: difference for heuristics
+    - DL & RL solutions suck at corner case e.g. link failure
+    - challenge for MetaOps
+        - need to express problem as linear program—lot of code
+        - solver very slow
+    - new approach: use RL to learn to maximize performance gap
+    - off-policy RL thru soft actor-critic (SAC)
+        - can reuse past experience, unlike on-policy e.g. PPO
+        - max reward + policy entropy
 - I/O Optimizations for Deep Learning on
     Distributed/Resource-Constrained Environments (Optimus-CC), Yaeyong Song,
     NSL meeting
