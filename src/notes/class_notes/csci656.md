@@ -191,19 +191,57 @@ Amin Vahdat, NSDI, 2021
     - out-of-band break circular dependency, but expensive
 - intent reconciliation:
     - believe top-level authority on conflict
+- packet-in: app intent
+- packet-out: controller instruction
 - architecture: core → network information base (NIB)
     → managers → OpenFlow front-end (OFE)
-    - NIB: in-memory database of network state; non-durable
+    - NIB: in-memory database & pub-sub broker of network state; non-durable
+    - topology manager & flow manager & config manager: microservice
+    - weird bc microservice usually don't share memory
+- eventual consistency; periodic reconciliation of state
+    - hand shake not scale & need memory
+- routing engine: compute path from route & install path
+    - topology abstraction: reduce part of topology to single node
+        - handle within supernode
+    - routing engine write flow → NIB pub → flow manager → OFE
+    - route sequencing to avoid dropping current packets
+        - reverse path order
+        - only doable bc SDN has global view
+- common library for app dev: NIB access, health monitoring, replication & leader election
+- NIB failure: core start new instance, reconcile state from switch, get intent from config manager, reconcile intent w/ state
+- integrate BGP for 2 WAN: B4 (data center) & B2 (public)
+- routing app abstract BGP into 1 node
+- (control) domain decomposition
+    - physical domain vs virtual domain
+- IBR-C virtual controller abstract spine/aggregation block as single node
+    - subscribe to NIB in spine&aggregation block
 
 ### [Teal: Learning-Accelerated Optimization of WAN Traffic Engineering](https://dl.acm.org/doi/pdf/10.1145/3603269.3604857)
 
 Zhiying Xu, Francis Y. Yan, Rachee Singh, Justin T. Chiu, Alexander M. Rush,
 Minlan Yu, SIGCOMM, 2023
 
+- want to distribute demand traffic among WAN optimally
+- start w/ 4-8 path between each pair
+- use GNN + RL to approximate bc inference fast
+- FlowGNN: topology + demand
+    - GNN node per edge pair & full path
+    - GNN layer for capacity & demand constraint
+    - train embedding for demand regardless of network size
+- multi-agent RL learn traffic split
+    - each demand as RL agent
+- ADMM adjust infeasible solution from model
+- fixed topology, learn using known traffic matrices
+
 ### [RedTE: Mitigating Subsecond Traffic Bursts with Real-time and Distributed Traffic Engineering](https://dl.acm.org/doi/pdf/10.1145/3651890.3672231)
 
 Fei Gui, Songtao Wang, Dan Li, Li Chen, Kaihui Gao, Congcong Min, Yi Wang,
 SIGCOMM, 2024
+
+- centralized TE not handle burst within 5min
+- put ML model on each router to respond to burst immediately
+- model distinct for each router, trained in RL in same topology
+- w/ real historical data
 
 ### [B4 and after: managing hierarchy, partitioning, and asymmetry for availability and scale in google's software-defined WAN](https://dl.acm.org/doi/10.1145/3230543.3230545)
 
@@ -211,6 +249,21 @@ Chi-Yao Hong, Subhasree Mandal, Mohammad Al-Fares, Min Zhu, Richard Alimi,
 Kondapa Naidu B., Chandan Bhagat, Sourabh Jain, Jay Kaimal, Shiyu Liang,
 Kirill Mendelev, Steve Padgett, Faro Rabe, Saikat Ray, Malveeka Tewari,
 Matt Tierney, Monika Zahn, Jonathan Zolla, Joon Ong, Amin Vahdat, SIGCOMM, 2018
+
+- ISP performance & availability insufficient for cloud for WAN
+- ISP WAN low utilization for failure headroom: 30-40%
+- scale back high-volume but elastic traffic Google control
+- hierarchical SDN
+- 4 OFA switch per site
+- OFCs run Paxos failover
+- started WAN w/ BGP/IS-IS; as fallback
+    - SDN control BGP by taking BGP update into RIB & sending update to switch
+- flow group for same-priority app between 2 site
+- tunnel group to group flow group w/ predetermined path
+- bandwidth enforcer (BwE) collect demand & enforce rate limit by flow group
+- SDN gateway collect failure & build topology & send to TE
+- bandwidth proportional assigned to app `weight`
+    - ⇒ bandwidth function (complex fairness)
 
 ### [Achieving high utilization with software-driven WAN](https://dl.acm.org/doi/10.1145/2486001.2486012)
 
