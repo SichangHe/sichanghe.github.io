@@ -35,7 +35,8 @@ Never ever add unnecessary hardcoded values.
 Never ever use inline comments unless for
 documenting extraordinary assumptions or tricks; always try to
 use docstring instead. Never remove existing information docstrings.
-End sentences with periods, quote strings with backticks.
+Docstrings may repeat what code says if they contain non-obvious info or as
+a summary. End sentences with periods, quote strings with backticks.
 
 Acknowledge it whenever you are unsure and never ever hesitate to
 ask the user for clarification. Search online for libraries you don't know.
