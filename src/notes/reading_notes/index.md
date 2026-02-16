@@ -1,5 +1,19 @@
 # Unstructured Reading Notes
 
+- Near-Optimal Online Traffic Engineering, Arvin Ghavidel, NSL meeting
+    - WAN TE 5min periodicity slow ⇒ need prediction
+    - sequencing programming switch very slow bc long RTT & waiting
+    - traditional TE fix several paths & only solve for splits
+        - easier to solve
+        - less memory on router
+    - topology engineering: edge-based instead of path-based
+    - decentralized SDN: each switch respond immediately & program itself
+        - becoming feasible bc switch becoming beefy
+    - want to be reactive, so maybe less need to predict
+    - ADMM: controller track mean, participants (switches)
+        independently solve according to mean, in a loop
+        - switches iterate multiple steps per received mean
+        - multiple controller (coordinator) grouped by RTT
 - MetaRL, Mahdi Alizadeh, NSL meeting
     - traffic engineering: optimal solution very slow
     - performance gap: difference for heuristics
