@@ -166,6 +166,7 @@
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
     - [Unstructured Reading Notes](notes/reading_notes/index.md)
 - [Blogs](blogs/index.md)
+    - [Replacing an AirTag Battery was Frustrating](blogs/replace_airtag_battery.md)
     - [My Programming Language Journey: How I Ended Up Using Rust and
         Python Most After Trying A Dozen
         Languages](blogs/programming_language_journey.md)
