@@ -34,7 +34,7 @@ Jim Wanderer, Urs Hölzle, Stephen Stuart, Amin Vahdat, CACM, 2016
             $r$ is downlink per middle layer, $m$ is uplink
         - bisection bandwidth: as if cut network in half
     - multi-stage Clos: more layer ⇒ exponential scaling
-        - 2-stage give $k^3/4$ port, $l$-stage give $2^{-l}k^{l+1}$
+        - 3-stage give $k^3/4$ port, $l$-stage give $2^{-l+1}k^l$
 - Firehose: 32up, 32down aggregation block each made of Clos of 8-port switch
     - each ToR connect to 2 aggregation block
     - deployed side-by-side w/ legacy network; big red button (fallback)
@@ -44,21 +44,24 @@ Jim Wanderer, Urs Hölzle, Stephen Stuart, Amin Vahdat, CACM, 2016
 - Saturn: similar to Firehose but w/ 288-port line card from 12x 24-port chip
     - ToR: 4up 20down (5:1 oversubscription) or 8up 16down
         (2:1 oversubscription)
-- Juniper: w/ 16x40G or 64x10G switch chip
+- Jupiter: w/ 16x40G or 64x10G switch chip
     - 128-port centauri chassis from 4 switch chip (not interconnected)
     - 64up 256down blocking middle block from 4 centauri
     - aggregation block from 8 middle block
     - spine block from 6 centauri; 128down to 64x aggregation block
         (2x redundancy)
     - incremental: build aggregation block first, spine later
-- external connection: cluster block router (CBS), work like normal racks
+        - ⇒ ToR more burst bandwidth
+- external connection: cluster block router (CBR), work like normal racks
     - much larger internal traffic than external
     - choose this bc any racks can have all external bandwidth
-    - freedome block (FDB): freedome border router (FBR)
-        \+ freedome edge router (FER)
-        - ??
-    - datacenter freedome (DFD): 4x FDB to campus layer
-    - campus freedome (CFD): 4x FDB to WAN
+    - Freedome block (FDB): Freedome border router (FBR)
+        \+ Freedome edge router (FER)
+        - 2-stage fabric running BGP
+    - datacenter Freedome (DFD): 4x FDB to campus layer
+    - campus Freedome (CFD): 4x FDB to WAN
+- in-place upgrade: reserve 25% capacity so
+    can bring down 1 FDB w/o hitting app
 - routing for full bisection bandwidth
     - equal-cost multi-path (ECMP)
         - same path per flow, e.g., hash flow 5-tuple
@@ -67,7 +70,7 @@ Jim Wanderer, Urs Hölzle, Stephen Stuart, Amin Vahdat, CACM, 2016
         - switch (client) tell Firepath master state w/ BGP update
         - master provide 1 default route for outgoing traffic,
             aggregate incoming traffic into a single IP prefix
-        - ??
+            - ⇒ scalability
 
 ### [Jupiter evolving: transforming google's datacenter network via optical circuit switches and software-defined networking](https://dl.acm.org/doi/10.1145/3544216.3544265)
 
@@ -81,18 +84,21 @@ Shidong Zhang, Junlan Zhou, Amin Vahdat, SIGCOMM, 2022
     - data rate can vary per stream
 - optical circuit switch (OCS): programmable mirror
     - make topology reconfigurable w/o manual operation
+    - support any speed bc based on WDM
     - each block w/ 4 separate power domain (failure domain)
+        - ⇒ 1 power failure only reduce 25% capacity
 - direct connect architecture: rid spine,
-    OCS connect high-speed aggregation block
+    OCS directly connect high-speed aggregation block
     - bc spine & full bisection cost too much
-    - blocking ⇒ traffic engineering & topology engineering
+    - blocking ⇒ traffic engineering (TE) & topology engineering
         - doable bc traffic mostly stable, topology more stable
-        - weighted cost multi-path (WCMP)
+    - weighted cost multi-path (WCMP) for TE
+        - weights on aggregation blocks
 - traffic matrix: directed demand between aggregation block
 - Orion: software-defined networking (SDN) control plane for OCS
     - aggregation block run Orion domain controller
     - OCS group run Orion DCNI
-        - DCNI??
+        - DCNI: optical switched datacenter network interconnection layer
     - topology engineering controller change Orion DCNI
     - use separate control plane network; but collocate w/ data plane
     - fail static: continue w/ final config when fail
@@ -155,18 +161,36 @@ NSDI, 2021
 
 - Facebook used BGP for DC network routing
     - tussle in software development: BGP already exist & has software
+    - BGP rich policy; familiar operator
     - ⇒ fast startup
 - no IGP bc OSPF does not scale
 - emulate external BGP: each switch is 1 AS
-- peer group: sweitch w/ same role, connected to same group
+- peer group: switch w/ same role, connected to same group
     - use very similar BGP policy
 - use AS confederation for ASN assignment
     - group all ASN within each pod into 1 when advertise externally
     - uniform ASN assignment across DC, reuse if possible
     - avoid devastating buggy config via simulation & staged rollout
 - each spine plane has unique ASN
+- spine/fabric/rack switch: SSW/FSW/RSW
 - infrastructure IP for switch, vs production IP for server
 - aggregate route per rack/pod to minimize routing table
+- reliability: pre-define backup paths using communities
+    - backup path never leaves pod bc route aggregation
+- maintainability: take switch offline w/ soft drain: LIVE → WARM → DRAINED
+    - WARM: lower BGP pref.
+- service availability: virtual IP (VIP), VIP advertise to rack switch,
+    BGP anycast
+    - move instance w/o changing routing config
+- avoid BGP $O(n!)$ convergence time
+    - minimize exploration scope to pod unless entire pod fail
+- fast custom BGP impl: only needed feature
+    - multi-threaded coroutine peer-thread
+    - batch same-attribute import policy
+    - policy cache for export
+- multi-stage testing: unit, simulation, canary, phased deployment
+    - BGP graceful restart: keep forwarding table
+    - 2-3 weeks to change fleet
 
 ### [Orion: Google's Software-Defined Networking Control Plane](https://www.usenix.org/conference/nsdi21/presentation/ferguson)
 
@@ -181,7 +205,7 @@ Amin Vahdat, NSDI, 2021
     do any action
 - Orion: break up routing, network management,
     config management into microservices
-- blast radius: \#controller failrue
+- blast radius: \#device when controller failure
 - inter-block controller (IBC) control controller in spine/aggregation block
 - no fate sharing in SDN: dunno what failed when
     controller cannot reach switch
@@ -189,32 +213,41 @@ Amin Vahdat, NSDI, 2021
     - for unknown, initially fail-closed; if below capacity, fail-static
 - out-of-band control plane except for ToR (in-band)
     - out-of-band break circular dependency, but expensive
-- intent reconciliation:
+- intent reconciliation from apps w/ state from switches
     - believe top-level authority on conflict
-- packet-in: app intent
-- packet-out: controller instruction
+- packet-in: switch "punt" packet to core to ask for app intent
+    - punt: redirect packet to slower path
+- packet-out: controller instruction for switch
 - architecture: core → network information base (NIB)
     → managers → OpenFlow front-end (OFE)
     - NIB: in-memory database & pub-sub broker of network state; non-durable
+        - state, entity, relationship
     - topology manager & flow manager & config manager: microservice
     - weird bc microservice usually don't share memory
 - eventual consistency; periodic reconciliation of state
     - hand shake not scale & need memory
-- routing engine: compute path from route & install path
+- routing engine (RE): compute path from route & install path
     - topology abstraction: reduce part of topology to single node
         - handle within supernode
     - routing engine write flow → NIB pub → flow manager → OFE
     - route sequencing to avoid dropping current packets
         - reverse path order
         - only doable bc SDN has global view
-- common library for app dev: NIB access, health monitoring, replication & leader election
-- NIB failure: core start new instance, reconcile state from switch, get intent from config manager, reconcile intent w/ state
+- common library for app dev: NIB access, health monitoring,
+    replication & leader election
+- NIB failure: core start new instance, reconcile state from switch,
+    get intent from config manager, reconcile intent w/ state
+    - capability readiness: abstraction of various NIB states to barrier apps
+- ToR in-band control (→50%) bc cost, else out-of-band for reliability
 - integrate BGP for 2 WAN: B4 (data center) & B2 (public)
-- routing app abstract BGP into 1 node
+- routing app abstract BGP into 1 node; switch dumb only run OpenFlow
 - (control) domain decomposition
     - physical domain vs virtual domain
 - IBR-C virtual controller abstract spine/aggregation block as single node
+    - inter-block routing central (IBR-C)
     - subscribe to NIB in spine&aggregation block
+- switch/link failure: rm from forwarding table (fast), RE recompute path (slow)
+- failure between blocks: IBR-C recompute WCMP path
 
 ### [Teal: Learning-Accelerated Optimization of WAN Traffic Engineering](https://dl.acm.org/doi/pdf/10.1145/3603269.3604857)
 
@@ -257,13 +290,32 @@ Matt Tierney, Monika Zahn, Jonathan Zolla, Joon Ong, Amin Vahdat, SIGCOMM, 2018
 - 4 OFA switch per site
 - OFCs run Paxos failover
 - started WAN w/ BGP/IS-IS; as fallback
-    - SDN control BGP by taking BGP update into RIB & sending update to switch
+    - SDN control BGP by taking BGP update into RIB & sending update to
+        switch
 - flow group for same-priority app between 2 site
 - tunnel group to group flow group w/ predetermined path
 - bandwidth enforcer (BwE) collect demand & enforce rate limit by flow group
 - SDN gateway collect failure & build topology & send to TE
 - bandwidth proportional assigned to app `weight`
     - ⇒ bandwidth function (complex fairness)
+- changes bc 100x growth & larger network
+- added availability requirement: service-level objective (SLO)
+- service class vary from search (highest) to bulk transfer (lowest)
+- increase WAN bandwidth y adding B4 site make TE expensive
+- slow TE cause lower availability bc longer time to address link failure
+- change to Stargate Site design w/ up to 4 supernode
+    - by replacing switch w/ more links
+    - Clos topology
+- TE treat multiple links between site as
+    single ⇒ cannot handle asymmetric link capacity
+- use side link to allow links w/ different capacity
+    - still have incoming traffic evenly distributed to supernodes
+    - assume supernodes within site balance outgoing traffic
+- incoming capacity need to be even split for TE
+- hierarchical TE: site-level supernode-level
+- tunnel split group (TSG) at supernode to split traffic per TG
+- generate TSG &prove is DAG,; sequence to avoid drop
+- switch split group (SSG) program switches within supernode
 
 ### [Achieving high utilization with software-driven WAN](https://dl.acm.org/doi/10.1145/2486001.2486012)
 

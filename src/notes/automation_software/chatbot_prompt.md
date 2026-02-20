@@ -86,3 +86,21 @@ Then, to actually edit, use a script that directly writes desired content to fil
 If the preview file contains a non‑empty commit message or todo, proceed by writing it back unchanged with the write script. Only ask user if the preview content is empty or I explicitly asked to edit it. Existing commit messages are acceptable by default
 For each conflict, figure out yourself what each side is doing, and combine the changes in a way that preserves both functionalities
 ```
+
+use tmux for REPL
+
+```
+To spawn and continuously interact w/ long-running REPL, you MUST use tmux
+Create a tmux session and start the REPL there
+To read REPL output, pipe `tmux capture-pane` to a file
+Never directly read the entire REPL output screen to avoid context pollution
+Print unique markers to help yourself find relevant new output
+To run commands in the REPL, `tmux send-keys` ending with Enter
+```
+
+ask agent to explain changes bit-by-bit instead of doing huge dump
+
+```
+Now, compile a list of things to go over w/ a new PLAN.md per AGENTS.md instructions
+To avoid overwhelming the human, go over them 1 by 1, waiting for the human to ask questions or give feedback before going to the next one
+```
