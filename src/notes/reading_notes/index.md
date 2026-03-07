@@ -1,5 +1,11 @@
 # Unstructured Reading Notes
 
+- Discussion: User-study Design in DDB, Yibo Yan, NSL meeing
+    - show DDB is effective: usable, helpful in certain cases, complementary
+    - competition: tracing, record&replay
+    - 2 case per category: crash, deadlock, logical bug
+    - time-to-localize, time-to-fix, success rate
+    - questionnaire participant to rate metrics + objective comments
 - Near-Optimal Online Traffic Engineering, Arvin Ghavidel, NSL meeting
     - WAN TE 5min periodicity slow ⇒ need prediction
     - sequencing programming switch very slow bc long RTT & waiting
