@@ -118,6 +118,7 @@
             - [The `eval` Trick](notes/research/JSphere/eval_trick.md)
             - [Classification
                 Results](notes/research/JSphere/classification_results.md)
+        - [MLsys](notes/research/mlsys.md)
         - [Photo Crypto Auth](notes/research/photo_crypto_auth.md)
             - [C2PA-Related Papers](notes/research/c2pa/papers.md)
             - [Peripheral

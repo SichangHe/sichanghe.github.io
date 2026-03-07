@@ -246,7 +246,8 @@ Amin Vahdat, NSDI, 2021
 - IBR-C virtual controller abstract spine/aggregation block as single node
     - inter-block routing central (IBR-C)
     - subscribe to NIB in spine&aggregation block
-- switch/link failure: rm from forwarding table (fast), RE recompute path (slow)
+- switch/link failure: rm from forwarding table (fast),
+    RE recompute path (slow)
 - failure between blocks: IBR-C recompute WCMP path
 
 ### [Teal: Learning-Accelerated Optimization of WAN Traffic Engineering](https://dl.acm.org/doi/pdf/10.1145/3603269.3604857)
@@ -342,16 +343,68 @@ Mohammad Alizadeh, Albert Greenberg, David A. Maltz, Jitendra Padhye,
 Parveen Patel, Balaji Prabhakar, Sudipta Sengupta, Murari Sridharan, SIGCOMM,
 2010
 
+- reduce congestion window (cwnd) per extent of congestion:
+    #packets w/ ECN bit
+- hard to estimate queue size by $\Delta RTT$ bc RTT small
+- mark CE bit when queue size > some K
+    - much simpler than RED
+- override delayed ACK w/ immediate ACK when CE go from 0 to 1 or
+    CE switch to 1
+- delay is usually $m=2$
+- "immediate"
+    transmission have old ECN bit state bc receiver use ACK sequence to
+    infer state transition
+- reduce cwnd by $\frac{\alpha}$ where $\alpa=(1-g)\alpha+gF$ where
+    F is fraction of marked packet in window and g is "gain"
+- DCTCP keep queue small so no lost response
+- model to estimate g and K w/ N synchronized sender w/ same cwnd
+- DCTCP can maintain throughput compared to TCP w/ much smaller queue
+- DCTCP prevent query delay increase & timeout on incast
+
 ### [Swift: Delay is Simple and Effective for Congestion Control in the Datacenter](https://dl.acm.org/doi/10.1145/3387514.3406591)
 
 Gautam Kumar, Nandita Dukkipati, Keon Jang, Hassan M. G. Wassel, Xian Wu,
 Behnam Montazeri, Yaogong Wang, Kevin Springborn, Christopher Alfeld,
 Michael Ryan, David Wetherall, Amin Vahdat
 
+- aim: low tail latency
+- disaggregation of disk etc. mandate network capability
+- also handle endpoint congestion
+- need low CPU usage
+- Swift: different transport protocol than TCP
+    - async op stream e.g. read/write
+    - user level, not kernel
+    - kernel bypass: bake network stack into app,
+        let it directly interface NIC
+- delay-based congestion control: RTT increase signal more queuing; need to
+    know accurate min RTT
+- break RTT down to host + network
+- AIMD to maintain E2E delay
+- host congestion may be from receiver packet buffer
+- delays: local NIC Tx, forward fabric, remote NIC Rx, reverse fabric,
+    local NIC Rx…
+- NIC timestamp packet w/ header at send/receive
+- MD proportional to difference between delay and target delay
+- congestion windows: ecwnd for endpoint, fcwnd for fabric; take min
+- endpoint delay is average, others are instantaneous
+- router w/ little buffer can cause cwnd < 1
+- handle cwnd < 1, send packet after RTT/cwnd delay
+    - almost every other protocol don't handle cwnd < 1
+- no pacing when cwnd > 1 to reduce CPU cost from timer
+- target delay: propagation, transmission; depend on distance &
+    #concurrent flow
+- estimate fabric target delay by linear scaling per hope
+- queue grow per sqrt of concurrent flows; scale target queue by
+    inverse sqrt cwnd
+
 ### [Crux: GPU-Efficient Communication Scheduling for Deep Learning Training](https://dl.acm.org/doi/10.1145/3651890.3672239)
 
 Jiamin Cao, Yu Guan, Kun Qian, Jiaqi Gao, Wencong Xiao, Jianbo Dong,
 Binzhang Fu, Dennis Cai, Ennan Zhai, SIGCOMM, 2024
+
+- collective communication, e.g. reliable broadcast
+- scatter: shard data 1 to all other
+- gather: collect shard from all to 1
 
 ### [Demystifying NCCL: An In-depth Analysis of GPU Communication Protocols and Algorithms](https://arxiv.org/abs/2507.04786)
 
