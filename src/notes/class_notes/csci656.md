@@ -397,19 +397,44 @@ Michael Ryan, David Wetherall, Amin Vahdat
 - queue grow per sqrt of concurrent flows; scale target queue by
     inverse sqrt cwnd
 
+### [Demystifying NCCL: An In-depth Analysis of GPU Communication Protocols and Algorithms](https://arxiv.org/abs/2507.04786)
+
+Zhiyi Hu, Siyuan Shen, Tommaso Bonato, Sylvain Jeaugey, Cedell Alexander,
+Eric Spada, James Dinan, Jeff Hammond, Torsten Hoefler, arXiv, 2025
+
+- collective communication, e.g. reliable broadcast
+- scatter: shard data 1 to all other
+- gather: collect shard from all to 1
+- all reduce: reduce then broadcast; reduce scatter
+- Nvidia Collective Communication Library (NCCL)
+- NCl abstract communication into high-level API; auto choose transport protocol
+- simple vs low latency vs low latency and high bandwidth transport protocol
+- logical topology for transport e.g. ring/tree
+
 ### [Crux: GPU-Efficient Communication Scheduling for Deep Learning Training](https://dl.acm.org/doi/10.1145/3651890.3672239)
 
 Jiamin Cao, Yu Guan, Kun Qian, Jiaqi Gao, Wencong Xiao, Jianbo Dong,
 Binzhang Fu, Dennis Cai, Ennan Zhai, SIGCOMM, 2024
 
-- collective communication, e.g. reliable broadcast
-- scatter: shard data 1 to all other
-- gather: collect shard from all to 1
+- consider either first party or third party GPU training job
+- contention on either network or intra-host link
+- GPU intensity, computation by max transmission time on any 1 link per job
+- greedily assign high priority job first
+- adjust priority based on communication-computation pattern of jobs
 
-### [Demystifying NCCL: An In-depth Analysis of GPU Communication Protocols and Algorithms](https://arxiv.org/abs/2507.04786)
+### [Network Virtualization in Multi-tenant Datacenters](https://www.usenix.org/conference/nsdi14/technical-sessions/presentation/koponen)
 
-Zhiyi Hu, Siyuan Shen, Tommaso Bonato, Sylvain Jeaugey, Cedell Alexander,
-Eric Spada, James Dinan, Jeff Hammond, Torsten Hoefler, arXiv, 2025
+Teemu Koponen, Keith Amidon, Peter Balland, Martin Casado, Anupam Chanda,
+Bryan Fulton, Igor Ganichev, Jesse Gross, Paul Ingram, Ethan Jackson,
+Andrew Lambeth, Romain Lenglet, Shih-Hao Li, Amar Padmanabhan, Justin Pettit,
+Ben Pfaff, Rajiv Ramanathan, Scott Shenker, Alan Shieh, Jeremy Stribling,
+Pankaj Thakkar, Dan Wendlandt, Alexander Yip, Ronghua Zhang, NSDI, 2014
+
+- overlay virtual network can have link not physically existing
+- end-host virtualization: use host to do it; physical network do not know
+    - overlay; more packet header
+- in-network virtualization: switch know virtual network thru flow tables w/ tag in header
+- usually do end-host virtualization
 
 ### [Andromeda: Performance, Isolation, and Velocity at Scale in Cloud Network Virtualization](https://www.usenix.org/conference/nsdi18/presentation/dalton)
 
@@ -419,14 +444,6 @@ James Alexander Docauer, Jesse Alpert, Jing Ai, Jon Olson, Kevin DeCabooter,
 Marc de Kruijf, Nan Hua, Nathan Lewis, Nikhil Kasinadhuni, Riccardo Crepaldi,
 Srinivas Krishnan, Subbaiah Venkata, Yossi Richter, Uday Naik, Amin Vahdat,
 NSDI, 2018
-
-### [Network Virtualization in Multi-tenant Datacenters](https://www.usenix.org/conference/nsdi14/technical-sessions/presentation/koponen)
-
-Teemu Koponen, Keith Amidon, Peter Balland, Martin Casado, Anupam Chanda,
-Bryan Fulton, Igor Ganichev, Jesse Gross, Paul Ingram, Ethan Jackson,
-Andrew Lambeth, Romain Lenglet, Shih-Hao Li, Amar Padmanabhan, Justin Pettit,
-Ben Pfaff, Rajiv Ramanathan, Scott Shenker, Alan Shieh, Jeremy Stribling,
-Pankaj Thakkar, Dan Wendlandt, Alexander Yip, Ronghua Zhang, NSDI, 2014
 
 ### [Achelous: Enabling Programmability, Elasticity, and Reliability in Hyperscale Cloud Networks](https://dl.acm.org/doi/10.1145/3603269.3604859)
 
