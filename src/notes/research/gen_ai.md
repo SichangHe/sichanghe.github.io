@@ -393,6 +393,15 @@ why extension for human to vote DNE:
     [Dissenter browser](https://github.com/gab-ai-inc/gab-dissenter-extension)
     let user comment on any webpage
 
+# Terms
+
+- [First Came ‘Spam.’ Now, With A.I.,
+    We’ve Got
+    ‘Slop’](https://www.nytimes.com/2024/06/11/style/ai-search-slop.html),
+    Benjamin Hoffman, The New York Times, 2024
+    - definition of "slop"
+    - claim unwanted AI spam frequently appear in search results
+
 # Benchmark paper
 
 - [MAVIS: Mathematical Visual Instruction Tuning with

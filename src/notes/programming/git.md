@@ -164,6 +164,18 @@ clone all submodules
 git submodule update --init --recursive
 ```
 
+clone w/ submodule all w/ depth 1
+
+```sh
+git clone --depth 1 --recurse-submodules --shallow-submodules $URL
+```
+
+clone all submodules w/ depth 1
+
+```sh
+git submodule update --init --recursive --depth 1
+```
+
 after changing `.gitmodule`
 
 ```sh

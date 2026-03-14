@@ -1,5 +1,16 @@
 # Unstructured Reading Notes
 
+- Wave: Leveraging Architecture Observation for
+    Privacy-Preserving Model Oversight, Haoxuan Xu, NSL meeting
+    - measure what model is run only using microarchitectural side channel
+    - e.g. is Modal-aaS service using smaller model
+        - w/o knowing model structure/ user data
+    - e.g. export control
+    - use hardware counters (PMC)
+    - FLOPS/load/store scale w/ model size due to matrix math
+    - recover periodicity in kernel stats: per token (large),
+        per layer (small)
+    - estimate kernel role & parameter size from theoretical size
 - Discussion: User-study Design in DDB, Yibo Yan, NSL meeing
     - show DDB is effective: usable, helpful in certain cases, complementary
     - competition: tracing, record&replay
