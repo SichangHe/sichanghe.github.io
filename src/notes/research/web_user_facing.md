@@ -93,3 +93,13 @@ ideas:
     Sayak Saha Roy, Unique Karanjit, Shirin Nilizadeh, IMC, 2023
     - description of free website building service
     - much pressure on detecting phishing domain ⇒ costly to buy frequently
+
+## Spam
+
+- [Click Trajectories: End-to-End Analysis of the Spam Value
+    Chain](../class_notes/csci651.md#click-trajectories-end-to-end-analysis-of-the-spam-value-chain-kirill-levchenko-andreas-pitsillidis-neha-chachra-brandon-enright-mark-felegyhazi-chris-grier-tristan-halvorson-chris-kanich-christian-kreibich-he-liu-damon-mccoy-nicholas-weaver-vern-paxson-geoffrey-m-voelker-stefan-savage),
+    S&P, 2011
+- [SybilGuard: defending against sybil attacks via
+    social networks](https://dl.acm.org/doi/abs/10.1145/1159913.1159945),
+    Haifeng Yu, Michael Kaminsky, Phillip B. Gibbons, Abraham Flaxman, SIGCOMM,
+    2006

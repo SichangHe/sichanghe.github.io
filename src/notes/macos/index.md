@@ -41,3 +41,5 @@ no sleep w/ lid closed
 ```sh
 sudo pmset -a disablesleep 1
 ```
+
+`connect to host … port 22: Can't assign requested address` ⇒ reboot

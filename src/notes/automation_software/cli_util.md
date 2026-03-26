@@ -53,3 +53,9 @@ sudo perf record -F 997 -g -p $PID -- sleep 30
 # generate flamegraph
 sudo env "PATH=$PATH" flamegraph --perfdata perf.data -o "profile$(date +%Y%m%d-%H%M%S).svg"
 ```
+
+memory usage of process `$PID` and its children, recursively
+
+```sh
+ps_mem -p "$(bash -lc 'pid="$1"; f(){ printf "%s\n" "$1"; for c in $(cat "/proc/$1/task/$1/children" 2>/dev/null); do f "$c"; done; }; f "$pid" | sort -u | paste -sd, -' _ "$PID")"
+```
