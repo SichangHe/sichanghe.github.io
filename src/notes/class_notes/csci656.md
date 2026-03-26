@@ -287,26 +287,31 @@ Matt Tierney, Monika Zahn, Jonathan Zolla, Joon Ong, Amin Vahdat, SIGCOMM, 2018
 - ISP performance & availability insufficient for cloud for WAN
 - ISP WAN low utilization for failure headroom: 30-40%
 - scale back high-volume but elastic traffic Google control
+- WAN router: 2-stage Clos from 128x10G merchant silicon
 - hierarchical SDN
-- 4 OFA switch per site
+- site: 4 OpenFlow Agent (OFA) switch, at campus edge, connect to
+    cluster & other site
 - OFCs run Paxos failover
-- started WAN w/ BGP/IS-IS; as fallback
+- started WAN w/ BGP/IS-IS (Quagga/RAP); as fallback
+    - iBGP/IS-IS w/ other sites; eBGP w/ cluster
     - SDN control BGP by taking BGP update into RIB & sending update to
         switch
 - flow group for same-priority app between 2 site
+- allocate much demand for each flow group as possible
 - tunnel group to group flow group w/ predetermined path
 - bandwidth enforcer (BwE) collect demand & enforce rate limit by flow group
 - SDN gateway collect failure & build topology & send to TE
-- bandwidth proportional assigned to app `weight`
+- bandwidth proportional to apps' assigned `weight` (fair share)
     - ⇒ bandwidth function (complex fairness)
 - changes bc 100x growth & larger network
 - added availability requirement: service-level objective (SLO)
 - service class vary from search (highest) to bulk transfer (lowest)
-- increase WAN bandwidth y adding B4 site make TE expensive
+- increase WAN bandwidth by adding B4 site make TE expensive
 - slow TE cause lower availability bc longer time to address link failure
 - change to Stargate Site design w/ up to 4 supernode
     - by replacing switch w/ more links
-    - Clos topology
+    - 2-stage Clos, 32x40G chip
+    - rid campus layer, direct site to clusters
 - TE treat multiple links between site as
     single ⇒ cannot handle asymmetric link capacity
 - use side link to allow links w/ different capacity
@@ -314,14 +319,51 @@ Matt Tierney, Monika Zahn, Jonathan Zolla, Joon Ong, Amin Vahdat, SIGCOMM, 2018
     - assume supernodes within site balance outgoing traffic
 - incoming capacity need to be even split for TE
 - hierarchical TE: site-level supernode-level
+    - non-hierarchical TE doesn't scale, \~200x slower
+    - hash-based load balancing harder
 - tunnel split group (TSG) at supernode to split traffic per TG
-- generate TSG &prove is DAG,; sequence to avoid drop
+- generate TSG & prove is DAG; sequence to avoid drop
 - switch split group (SSG) program switches within supernode
+- ACL table use TCAM to match flow; expensive&small
+- longest prefix match (LPM) table use SRAM; large
+- exploit ECMP table for WCMP cause space explosion
+- TG from QoS label + prefix
+- save memory: first match QoS to VRF (LPM), then use different VRF for
+    prefix
 
 ### [Achieving high utilization with software-driven WAN](https://dl.acm.org/doi/10.1145/2486001.2486012)
 
 Chi-Yao Hong, Srikanth Kandula, Ratul Mahajan, Ming Zhang, Vijay Gill,
 Mohan Nanduri, Roger Wattenhofer, SIGCOMM, 2013
+
+- WAN utilization⤴ thru reducing peak demand by exploiting latency-tolerance
+- label-switching: forward based on MPLS header between layer 2&3
+    - label-switching router (LSR); may rewrite label
+- ISP did MPLS-TE, greedy label-switched path (LSP)
+    assignment + capacity discovery ⇒ suboptimal&unfair
+- SWAN want prioritization + fairness within class
+- congestion-free ordering for route change
+    - need scratch capacity for gradually shifting traffic over
+- host track demand between service & DC, do rate limiting
+- broker receive&aggregate demand, tell controller → host rate limiting
+- network agents: topology state → controller
+- controller compute allocation to service & change forwarding table
+    - given pairwise demand, tunnel, link capacity, output fractions of
+        flow over each tunnel
+    - max-min fairness priority by priority
+- multi-commodity flow (MCF): maximize allocation subject to
+    demand&capacity constraint
+    - leave scratch capacity for update
+- approx. max-min fair for each bucket $[\alpha^{k-1}U,\alpha^kU)$
+    - allocate rate within $\alpha$ of fair; larger $\alpha$ ⇒ less fair,
+        faster
+    - try allocating in exponential sizes iteratively
+- save table space: greedily select max-traffic tunnel till table full
+    - rerun optimization w/ fixed selected tunnel
+- in-place traffic update: need congestion-free intermediate config
+    - use spare capacity $s$, can do in $≤\lceil1/s\rceil-1$ step
+    - use scratch capacity $\lambda$ to update tunnel set in
+        $≤\lceil1/\lambda≥1$ step; tell service to send slow before start
 
 ### [EBB: Reliable and Evolvable Express Backbone Network in Meta](https://dl.acm.org/doi/10.1145/3603269.3604860)
 
@@ -407,7 +449,8 @@ Eric Spada, James Dinan, Jeff Hammond, Torsten Hoefler, arXiv, 2025
 - gather: collect shard from all to 1
 - all reduce: reduce then broadcast; reduce scatter
 - Nvidia Collective Communication Library (NCCL)
-- NCl abstract communication into high-level API; auto choose transport protocol
+- NCl abstract communication into high-level API;
+    auto choose transport protocol
 - simple vs low latency vs low latency and high bandwidth transport protocol
 - logical topology for transport e.g. ring/tree
 
@@ -433,7 +476,8 @@ Pankaj Thakkar, Dan Wendlandt, Alexander Yip, Ronghua Zhang, NSDI, 2014
 - overlay virtual network can have link not physically existing
 - end-host virtualization: use host to do it; physical network do not know
     - overlay; more packet header
-- in-network virtualization: switch know virtual network thru flow tables w/ tag in header
+- in-network virtualization:
+    switch know virtual network thru flow tables w/ tag in header
 - usually do end-host virtualization
 
 ### [Andromeda: Performance, Isolation, and Velocity at Scale in Cloud Network Virtualization](https://www.usenix.org/conference/nsdi18/presentation/dalton)
