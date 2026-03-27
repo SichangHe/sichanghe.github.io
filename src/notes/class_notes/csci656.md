@@ -385,21 +385,31 @@ Mohammad Alizadeh, Albert Greenberg, David A. Maltz, Jitendra Padhye,
 Parveen Patel, Balaji Prabhakar, Sudipta Sengupta, Murari Sridharan, SIGCOMM,
 2010
 
+- problem:
+    cloud service latency-sensitive partition-aggregate pattern incast burst
+- switch are shallow-buffered & shared for all port bc cost
+- large flow kick out small packet on switch
+- retransmission timeout (RTO) default min 1s was huge
+- old workaround: jitter: worker randomly delay before respond; insufficient,
+    waste time
 - reduce congestion window (cwnd) per extent of congestion:
     #packets w/ ECN bit
 - hard to estimate queue size by $\Delta RTT$ bc RTT small
-- mark CE bit when queue size > some K
+- mark CE bit when instantaneous queue size > some K
     - much simpler than RED
 - override delayed ACK w/ immediate ACK when CE go from 0 to 1 or
     CE switch to 1
+    - receiver echo CE bit till sender ack
 - delay is usually $m=2$
 - "immediate"
     transmission have old ECN bit state bc receiver use ACK sequence to
     infer state transition
-- reduce cwnd by $\frac{\alpha}$ where $\alpa=(1-g)\alpha+gF$ where
-    F is fraction of marked packet in window and g is "gain"
+- reduce cwnd by $\frac{\alpha}{2}$ where $\alpha=(1-g)\alpha+gF$ where
+    $F$ is fraction of marked packet in window and g is "gain"
 - DCTCP keep queue small so no lost response
-- model to estimate g and K w/ N synchronized sender w/ same cwnd
+- model to estimate $g$ and $K$ w/
+    $N$ synchronized sender w/ same cwnd thru shared bottleneck $C$
+    - need $K>(C×RTT)/7,g<1.38/\sqrt{2(C × RTT + K)}$
 - DCTCP can maintain throughput compared to TCP w/ much smaller queue
 - DCTCP prevent query delay increase & timeout on incast
 
@@ -423,10 +433,12 @@ Michael Ryan, David Wetherall, Amin Vahdat
 - break RTT down to host + network
 - AIMD to maintain E2E delay
 - host congestion may be from receiver packet buffer
-- delays: local NIC Tx, forward fabric, remote NIC Rx, reverse fabric,
-    local NIC Rx…
+- delays: local NIC Tx, forward fabric, remote NIC Rx, remote NIC Tx,
+    reverse fabric, local NIC Rx
 - NIC timestamp packet w/ header at send/receive
-- MD proportional to difference between delay and target delay
+- MD proportional to difference between delay and
+    target delay at once per RTT
+- AI by max(1,1/cwnd) if instantaneous RTT < target delay
 - congestion windows: ecwnd for endpoint, fcwnd for fabric; take min
 - endpoint delay is average, others are instantaneous
 - router w/ little buffer can cause cwnd < 1
@@ -435,9 +447,10 @@ Michael Ryan, David Wetherall, Amin Vahdat
 - no pacing when cwnd > 1 to reduce CPU cost from timer
 - target delay: propagation, transmission; depend on distance &
     #concurrent flow
-- estimate fabric target delay by linear scaling per hope
+- estimate fabric target delay by linear scaling per hop
 - queue grow per sqrt of concurrent flows; scale target queue by
-    inverse sqrt cwnd
+    $\frac{1}{\sqrt{cwnd}}$
+- selective ACK bc infrequent loss; per-packet coalesced non-delayed ACK
 
 ### [Demystifying NCCL: An In-depth Analysis of GPU Communication Protocols and Algorithms](https://arxiv.org/abs/2507.04786)
 
@@ -489,11 +502,31 @@ Marc de Kruijf, Nan Hua, Nathan Lewis, Nikhil Kasinadhuni, Riccardo Crepaldi,
 Srinivas Krishnan, Subbaiah Venkata, Yossi Richter, Uday Naik, Amin Vahdat,
 NSDI, 2018
 
+- on Google Cloud
+- need to sclae to 100k VM per customer
+- fabric manager API take customer config → Open vSwitch host management
+    plane
+- fast path vs co-processor which do additional processing
+- hoverboard offload inactive flow
+- entity-relationship model to store network config
+- OFE program OVS, which change VM config
+
 ### [Achelous: Enabling Programmability, Elasticity, and Reliability in Hyperscale Cloud Networks](https://dl.acm.org/doi/10.1145/3603269.3604859)
 
 Chengkun Wei, Xing Li, Ye Yang, Xiaochong Jiang, Tianyu Xu, Bowen Yang,
 Taotao Wu, Chao Xu, Yilong Lv, Haifeng Gao, Zhentao Zhang, Zikang Chen,
 Zeke Wang, Zihui Zhang, Shunmin Zhu, Wenzhi Chen, SIGCOMM, 2023
+
+(under here?)
+
+- compute forward state from client config → nlog
+- nlog based on Datalog logic programming language
+    - Datalog statement: head, clause, where head true if all clauses true
+    - allow incremental evaluation for e.g.
+        VM migration only change specific tunnel
+- hierarchical controller: AIP, logical, physical, OpenFlow & OVS
+- parallel control w/ sharding
+- master & standby controller per shard
 
 ### [Triton: A Flexible Hardware Offloading Architecture for Accelerating Apsara vSwitch in Alibaba Cloud](https://dl.acm.org/doi/abs/10.1145/3651890.3672224)
 
