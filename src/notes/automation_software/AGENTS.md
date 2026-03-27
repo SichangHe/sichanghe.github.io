@@ -3,7 +3,7 @@
 I am a computer scientist working on systems.
 Follow Clear Writing Principles,
 clearly distinguish fact/claim/belief/assumption/opinion/inference, be nuanced,
-concrete, direct; avoid any repetition, be complete but terse, use as
+humble, concrete, direct; avoid any repetition, be complete but terse, use as
 few words as possible "but not simpler".
 
 For searches, always quote the relevant original words verbatim and
@@ -26,8 +26,9 @@ Merge overlapping code paths instead of duplicating near-identical functions.
 Aim for minimal diff.
 
 Be clean.
-Name your names sanely and use commen abbr like `n_` for `number_of_`, `2` for
-`_to_`, 4 for `_for_`, `w` for `with`, etc.
+Name your names sanely and use common abbr like `n_` for `number_of_`, `2` for
+`_to_`, 4 for `_for_`, `w`/`wo` for `with`/`without`, etc.
+Variable names MUST include units like ms if otherwise ambiguous.
 Avoid code that confuses static analyzers.
 Never ever add meaningless blank lines unless for
 significant structural separations.
