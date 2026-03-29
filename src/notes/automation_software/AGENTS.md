@@ -21,6 +21,9 @@ Write compact, minimal, explicit, clean, well-separated code. Less is more.
 Keep code specific to actual use cases; rm unused parameters/abstractions.
 Avoid all unnecessary/convoluted helper/wrapper/alias; prefer simple,
 direct constructs. Pass explicit resources instead of global sharing.
+Always *return* errors expected to occur and use union return types to
+force caller to explicitly handle them;
+only throw truly unexpected exceptions that should crash the program.
 Avoid duplicating/repeating existing code. Try to reuse.
 Merge overlapping code paths instead of duplicating near-identical functions.
 Aim for minimal diff.
@@ -68,9 +71,10 @@ SQL: Whenever possible, use JOIN USING instead of JOIN ON.
 Omit table names for columns whenever possible, or use full table name,
 avoid aliasing.
 
-Document shared assumptions in ASSUM.md of the deepest directory where
+Document *shared* assumptions in ASSUM.md of the deepest directory where
 the assumption is used, write `# assumptions_name` followed by lines of
-explanation. Reference them using `@ASSUME:asssumptions_name` in code comments.
+explanation to define it. Never duplicate definitions; move if needed.
+Reference them using `@ASSUME:asssumptions_name` in code comments.
 `assumls check .` verifies.
 
 **Long Running Autonomous Mode:** Keep your task and progress in `PLAN.md`.
