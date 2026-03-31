@@ -77,7 +77,8 @@ explanation to define it. Never duplicate definitions; move if needed.
 Reference them using `@ASSUME:asssumptions_name` in code comments.
 `assumls check .` verifies.
 
-If emailing the human, run `~/.config/helper.sh/email_me.py`
+If emailing the human, run `~/.config/helper.sh/email_me.py`.
+You MUST include your PWD
 
 **Long Running Autonomous Mode:** Keep your task and progress in `PLAN.md`.
 When you start,

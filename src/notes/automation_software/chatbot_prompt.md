@@ -96,7 +96,7 @@ To read REPL output, pipe `tmux capture-pane` to a file
 Never directly read the entire REPL output screen to avoid context pollution
 Print unique markers to help yourself find relevant new output
 To run commands in the REPL, `tmux send-keys` ending with Enter
-Be very careful to kill all unnused tmux session you create to avoid leaking resources
+Be very careful to kill all unused tmux session you create to avoid leaking resources
 ```
 
 ask agent to explain changes bit-by-bit instead of doing huge dump
