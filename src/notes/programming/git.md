@@ -194,6 +194,13 @@ fetch and status every repo under the current folder
 fd .git -H -t d -x git --git-dir={} fetch \; -x git --git-dir={} --work-tree {}/.. status
 ```
 
+rebase upstream while submodule has local changes (`fatal: cannot rebase with
+locally recorded submodule modifications`)
+
+```sh
+git pull --rebase --autostash --no-recurse-submodules
+```
+
 ## Multiple origin
 
 push all branch to all remote

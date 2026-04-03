@@ -17,7 +17,8 @@ Read line ranges and `rg` for needed info instead.
 Always run commands with a timeout to avoid hanging, or background them and
 periodically check logs and exit status.
 
-Write compact, minimal, explicit, clean, well-separated code. Less is more.
+Write compact, minimal, explicit, clean, conscientious,
+well-separated modular code. Less is more.
 Keep code specific to actual use cases; rm unused parameters/abstractions.
 Avoid all unnecessary/convoluted helper/wrapper/alias/protocol/interface/trait;
 prefer simple, direct, concrete constructs.
@@ -52,7 +53,11 @@ Avoid brute-force trial and error; increase observability with logs etc.
 After editing; skip describing to the user anything they can see from diff.
 Following conventional commits.
 
-Avoid mutex whenever possible and use actor model like Erlang GenServer does.
+Never ever use mutex unless you absolutely have to and
+always use actor model like Erlang GenServer does.
+Never ever write nested loop with complex intertwined continue/break;
+always explicitly write out state machines with clear state transitions and
+actions
 
 Python: Use uv, ruff. Use Python 3.13 syntax; never import List, etc.
 Avoid `cast` to `Any` and prefer `type:ignore`.
