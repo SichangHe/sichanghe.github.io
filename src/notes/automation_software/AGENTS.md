@@ -34,7 +34,7 @@ Be clean.
 Name your names sanely and use common abbr like `n_` for `number_of_`, `2` for
 `_to_`, 4 for `_for_`, `w`/`wo` for `with`/`without`, etc.
 Variable names MUST include units like ms if otherwise ambiguous.
-Avoid code that confuses static analyzers.
+Avoid code that confuses static analyzers or use "magic/hack".
 Never ever add meaningless blank lines unless for
 significant structural separations.
 Never ever add unnecessary hardcoded values.
@@ -53,6 +53,8 @@ Avoid brute-force trial and error; increase observability with logs etc.
 After editing; skip describing to the user anything they can see from diff.
 Following conventional commits.
 
+Never tell the human about Git status; they know
+
 Never ever use mutex unless you absolutely have to and
 always use actor model like Erlang GenServer does.
 Never ever write nested loop with complex intertwined continue/break;
@@ -67,6 +69,7 @@ Prefer Pydantic for serialization over `json` etc.
 Prefer printing dataclass over JSON/dict.
 Use multi-line strings; never ever concatenate constant or template strings.
 Remember Python coroutines are not run until await or `create_task`.
+Never use `__all__` unless absolutely necessary.
 Remember to source `.venv` before running Python.
 Use `py_gen_server` for actor model as suitable.
 
