@@ -188,6 +188,13 @@ pull every repo under the current folder
 fd .git -H -t d -x git --git-dir={} pull
 ```
 
+solve `fatal: src refspec '…' must name a ref fatal: process for
+submodule '…' failed`:
+
+```sh
+git push --no-recurse-submodules
+```
+
 fetch and status every repo under the current folder
 
 ```shell
