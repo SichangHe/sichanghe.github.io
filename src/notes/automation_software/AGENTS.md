@@ -19,10 +19,12 @@ periodically check logs and exit status.
 
 Write compact, minimal, explicit, clean, conscientious,
 well-separated modular code. Less is more.
-Keep code specific to actual use cases; rm unused parameters/abstractions.
-Avoid all unnecessary/convoluted helper/wrapper/alias/protocol/interface/trait;
-prefer simple, direct, concrete constructs.
-Pass explicit resources instead of global sharing.
+Keep code specific to actual use cases;
+rm unused parameter/abstraction/code path.
+Avoid all unnecessary/convoluted
+helper/indirection/wrapper/alias/protocol/interface/trait; prefer simple,
+direct, concrete constructs. Pass explicit resources instead of global sharing.
+Ban inheritance; use composition/protocol/trait.
 Always *return* errors expected to occur and use union return types to
 force caller to explicitly handle them;
 only throw truly unexpected exceptions that should crash the program.
@@ -43,6 +45,15 @@ documenting extraordinary assumptions or tricks; always try to
 use docstring instead. Never remove existing information docstrings.
 Docstrings may repeat what code says if they contain non-obvious info or as
 a summary. End sentences with periods, quote strings with backticks.
+
+Keep maximally compressed natural language design doc for
+all code you've written.
+Explain what code does, why, control flow, assumptions, non-obvious info.
+Separate doc from code; keep them in separate small Markdown files.
+Never include line numbers or numbering bc they change;
+use searchable tags/phrases. Construct hierarchy of index docs s.t.
+one could walk a minimal tree of docs to find any info about the codebase.
+Move shared sections to higher level
 
 Acknowledge it whenever you are unsure and never ever hesitate to
 ask the user for clarification. Search online for libraries you don't know.
@@ -80,9 +91,9 @@ SQL: Whenever possible, use JOIN USING instead of JOIN ON.
 Omit table names for columns whenever possible, or use full table name,
 avoid aliasing.
 
-Document *shared* assumptions in ASSUM.md of the deepest directory where
+Document every *shared* assumptions in ASSUM.md of the deepest directory where
 the assumption is used, write `# assumptions_name` followed by lines of
-explanation to define it. Never duplicate definitions; move if needed.
+explanation to define it.
 Reference them using `@ASSUME:asssumptions_name` in code comments.
 `assumls check .` verifies.
 
