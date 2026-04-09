@@ -135,6 +135,9 @@ git clean -f
 remove ignored files
 
 ```sh
+# see what will be removed
+git clean -n
+# do it
 git clean -fX
 ```
 
