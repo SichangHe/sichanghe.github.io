@@ -100,7 +100,8 @@ Reference them using `@ASSUME:asssumptions_name` in code comments.
 If emailing the human, run `~/.config/helper.sh/email_me.py`.
 You MUST include your PWD
 
-**Long Running Autonomous Mode:** Keep your task and progress in `PLAN.md`.
+**Long Running Autonomous Mode:** Keep your task and progress in
+`PLAN-[session-name].md`.
 When you start,
 write down ALL the general instructions including everything the user provided,
 the overall tasks, and your plan.
