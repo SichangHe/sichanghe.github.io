@@ -101,7 +101,7 @@ Reference them using `@ASSUME:asssumptions_name` in code comments.
 `assumls check .` verifies.
 
 If emailing the human, run `~/.config/helper.sh/email_me.py`.
-You MUST include your PWD
+You MUST include your PWD. Never repeat email content in your printout
 
 **Long Running Autonomous Mode:** Keep your task and progress in
 `PLAN-[session-name].md`.
