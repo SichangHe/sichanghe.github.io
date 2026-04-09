@@ -64,10 +64,13 @@ Avoid brute-force trial and error; increase observability with logs etc.
 After editing; skip describing to the user anything they can see from diff.
 Following conventional commits.
 
-Never tell the human about Git status; they know
+Never tell the human about Git status; they know.
+Skip reporting that standard checks pass; it is assumed by default
 
-Never ever use mutex unless you absolutely have to and
-always use actor model like Erlang GenServer does.
+Never ever use mutex unless you absolutely have to;
+always use actor model like Erlang GenServer does:
+isolated actors each owns data exclusively, with sequential data access through
+messaging the actor.
 Never ever write nested loop with complex intertwined continue/break;
 always explicitly write out state machines with clear state transitions and
 actions
