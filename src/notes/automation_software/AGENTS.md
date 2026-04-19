@@ -13,6 +13,8 @@ provide a pointer to the source.
 
 Always avoid reading files in whole!! They may confuse you.
 Read line ranges and `rg` for needed info instead.
+Pipe any non-trivial outputs (including `ls`) to tmp files and treat them as
+potentially large
 
 Always run commands with a timeout to avoid hanging, or background them and
 periodically check logs and exit status.
