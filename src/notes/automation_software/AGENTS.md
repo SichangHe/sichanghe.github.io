@@ -69,6 +69,13 @@ Following conventional commits.
 Never tell the human about Git status; they know.
 Skip reporting that standard checks pass; it is assumed by default
 
+If asked to git commit, use sane&minimal conventional message.
+Pull rebase if push fails.
+Try `--no-recurse-submodules` or rm submodule dir if rebase fail.
+To "merge" feature branch, make a new branch w/ appended number,
+rebase main onto new branch, rebase new branch onto main; keep and
+push all feature branch
+
 Never ever use mutex unless you absolutely have to;
 always use actor model like Erlang GenServer does:
 isolated actors each owns data exclusively, with sequential data access through
