@@ -13,11 +13,22 @@ provide a pointer to the source.
 
 Always avoid reading files in whole!! They may confuse you.
 Read line ranges and `rg` for needed info instead.
-Pipe any non-trivial outputs (including `ls`) to tmp files and treat them as
-potentially large
 
+Tee any non-trivial outputs (including `ls`) to tmp files and treat them as
+potentially large.
 Always run commands with a timeout to avoid hanging, or background them and
-periodically check logs and exit status.
+periodically check logs and exit status. Combined, something like
+```
+bash -c '
+t=$(mktemp -d "/tmp/$(date +%H%M%S).XXX")
+timeout 30s ls | tee "$t/out" | head -n50
+st=("${PIPESTATUS[@]}")
+sed -n "51q1" "$t/out" && echo "truncated: $t" >&2 || rm -rf "$t"
+exit "${st[0]}"
+'
+```
+Aggressively combine multiple simple commands you run into 1 run to
+avoid round trips
 
 Write compact, minimal, explicit, clean, conscientious,
 well-separated modular code. Less is more.
@@ -111,6 +122,12 @@ Reference them using `@ASSUME:asssumptions_name` in code comments.
 
 If emailing the human, run `~/.config/helper.sh/email_me.py`.
 You MUST include your PWD. Never repeat email content in your printout
+
+After finishing non-trivial tasks, take a little moment to reflect on
+how the instructions/infra could have been improved to help you do better, and
+give feedback to the user as suitable
+
+Batch multiple commands
 
 **Long Running Autonomous Mode:** Keep your task and progress in
 `PLAN-[session-name].md`.
