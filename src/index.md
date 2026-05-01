@@ -56,6 +56,8 @@ Channel](https://www.youtube.com/@sichanghe)
 [📓 Notes](/notes/)
 </div>
 
+{{ #include news/2026spring.md }}
+
 {{ #include news/2025spring.md }}
 
 {{ #include news/2024fall.md }}
