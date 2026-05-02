@@ -66,7 +66,7 @@ Channel](https://www.youtube.com/@sichanghe)
 
 To comment on the news, please [go to the news page](/news/2025spring.html).
 
-Press <kbd>s</kbd> to search!
+Press <kbd>s</kbd> to search, press <kbd>→</kbd> for next page!
 
 <div style="display: flex; justify-content: center;">
 <button

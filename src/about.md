@@ -47,6 +47,43 @@ Previous: Federated learning, Internet routing, content provenance (C2PA).
     - Ping me if I do not reply in three days.
 - GitHub: Ping me for code-related discussions. I get emails.
 
+## Name
+
+The legal name is "Sichang He" (何思畅, or 何思暢).
+Steven is the preferred English name.
+The name used in publications is Sichang Steven He.
+
+### Name pronunciation
+
+[Google
+Translate](https://translate.google.com/?text=%E4%BD%95%E6%80%9D%E7%95%85)
+pronounces it correctly (Click <kbd>Listen</kbd>).
+Serializing it into English is impossible; the best you can get is h-ehh?
+ss—↑ ch-ah-ng↓, where you pronounce the syllabic consonant "ss—" by
+vibrating your vocal chord while saying the consonant "ss" so
+it sounds like there's a vowel.
+
+## Prior Mentees
+
+At [Edge Intelligence Lab](https://sites.duke.edu/edgeintelligence/), DKU:
+
+- [Qingning Zeng](https://addw1.github.io/) when we worked on
+    the FedCampus App. He got his ECE MS at Duke and went to Snowflake.
+- [Luyao Wang](https://www.linkedin.com/in/1uyao-wang/) when we worked on
+    the FedCampus App. He went to UCI for a CS MS.
+- [Boyan Zhang (Johnny)](https://github.com/johnnybyzhang) when we worked on
+    FedCampus. He had been an undergrad at DKU.
+- [Aicha Slaitane](https://www.linkedin.com/in/aicha-slaitane/) (briefly)
+    when she explored research directions. She went to KAUST for a CS PhD.
+- [Beilong Tang](https://beilong-tang.github.io/) when we worked on
+    the FedCampus App and campus-wide federated analytics experiments.
+    He went to NCSU for an ECE PhD.
+
+I also recruited these folks to Edge Intelligence Lab:
+
+- Ningyuan Yang. He went to Duke for an ECE PhD.
+- [Yuxiang Lin](https://theta-lin.github.io/).
+
 ## For Undergrads/MS
 
 **I am looking for you if** you want to **1) participate in research**
@@ -78,33 +115,3 @@ Very helpful skills (non-exhaustive):
 - You can analyze & visualize messy domain-specific data.
 - You can do literature review.
 - You can read technical papers.
-
-## Name
-
-The legal name is "Sichang He" (何思畅, or 何思暢).
-Steven is the preferred English name.
-The name used in publications is Sichang "Steven" He.
-
-### Name pronunciation
-
-[Google
-Translate](https://translate.google.com/?text=%E4%BD%95%E6%80%9D%E7%95%85)
-pronounces it correctly (Click <kbd>Listen</kbd>).
-Serializing it into English is impossible; the best you can get is H-ehh?
-Sii↑ ch-ah-ng↓.
-
-## Prior Mentees
-
-At [Edge Intelligence Lab](https://sites.duke.edu/edgeintelligence/), DKU:
-
-- [Qingning Zeng](https://addw1.github.io/) when we worked on
-    the FedCampus App. He got his ECE MS at Duke and went to Snowflake.
-- [Luyao Wang](https://www.linkedin.com/in/1uyao-wang/) when we worked on
-    the FedCampus App. He went to UCI for a CS MS.
-- [Boyan Zhang (Johnny)](https://github.com/johnnybyzhang) when we worked on
-    FedCampus. He had been an undergrad at DKU.
-- [Aicha Slaitane](https://www.linkedin.com/in/aicha-slaitane/) (briefly)
-    when she explored research directions. She went to KAUST for a CS PhD.
-- [Beilong Tang](https://beilong-tang.github.io/) when we worked on
-    the FedCampus App and campus-wide federated analytics experiments.
-    He went to NCSU for an ECE PhD.

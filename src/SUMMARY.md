@@ -90,6 +90,7 @@
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
+        - [Browser Agent](notes/research/browser_agent.md)
         - [DeGenTWeb](notes/research/DeGenTWeb/execution.md)
             - [Arguments](notes/research/DeGenTWeb/arguments.md)
             - [Literature](notes/research/DeGenTWeb/literature.md)
@@ -129,6 +130,7 @@
             - [GenAI: Problems Introduced and
                 Countermeasures](notes/research/c2pa/gen_ai_problems.md)
         - [Removal Services](notes/research/removal_services.md)
+        - [Static Analysis](notes/research/static_analysis.md)
         - [Web Atoms](notes/research/web_atoms.md)
         - [Web Crawling](notes/research/web_crawling.md)
         - [Web User-Facing](notes/research/web_user_facing.md)
