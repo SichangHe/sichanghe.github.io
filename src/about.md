@@ -83,6 +83,7 @@ I also recruited these folks to Edge Intelligence Lab:
 
 - Ningyuan Yang. He went to Duke for an ECE PhD.
 - [Yuxiang Lin](https://theta-lin.github.io/).
+    He went to UC Riverside for a CS PhD.
 
 ## For Undergrads/MS
 
