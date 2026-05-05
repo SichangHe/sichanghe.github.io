@@ -73,3 +73,29 @@
     - combine self-synthesis + tutorial-based synthesis + agent trajectories
     - fine-tuned Qwen gets close to Sonnet 4.5 on
         VeruSAGE-Bench at a tiny fraction of the cost
+
+## Aeneas
+
+mainly focus on Rust's own soundness, rather than model checking
+
+- [Charon: An Analysis Framework for Rust](https://arxiv.org/abs/2410.18042),
+    Son Ho, Guillaume Boisseau, Lucas Franceschino, Yoann Prak,
+    Aymeric Fromherz, Jonathan Protzenko, CAV, 2025
+    - shared frontend / IR layer for Rust analysis tools
+    - gives analysis-friendly AST / CFG over rustc internals: ULLBC + LLBC
+    - used by Aeneas, Eurydice, a taint checker; can also reimplement Rudra
+- [Sound Borrow-Checking for Rust via
+    Symbolic Semantics](https://dl.acm.org/doi/10.1145/3674640), Son Ho,
+    Aymeric Fromherz, Jonathan Protzenko, ICFP, 2024
+    - formal semantics foundation for Aeneas / LLBC
+    - prove symbolic semantics really act like a borrow checker
+    - join op enables loops, so Aeneas can handle more realistic control flow
+- [Aeneas: Rust verification by
+    functional translation](https://dl.acm.org/doi/10.1145/3547647), Son Ho,
+    Jonathan Protzenko, ICFP, 2022
+    - lightweight Rust verification via functional translation instead of
+        heavy memory reasoning
+    - focus on safe Rust subset: no unsafe / interior mutability
+    - translate LLBC to pure functional code; use "backward functions" to
+        end borrows across calls
+    - case study: verified resizing hash table; claim productivity gains
