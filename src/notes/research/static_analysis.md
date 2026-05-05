@@ -8,12 +8,21 @@
     Andrea Lattuada, Travis Hance, Chanhee Cho, Matthias Brun,
     Isitha Subasinghe, Yi Zhou, Jon Howell, Bryan Parno, Chris Hawblitzel,
     OOPSLA, 2023
+    - Rust type / borrow system already does part of verification work
+    - key idea: linear ghost types / permissions for
+        low-level & concurrent code
+    - lets Verus verify tricky pointer / aliasing-heavy Rust more naturally
+    - proof / spec / exec all written in Rust-like syntax
 - [Verus: A Practical Foundation for Systems
     Verification](https://www.jaybosamiya.com/publications/2024/sosp/verus-sys.pdf),
     Andrea Lattuada, Travis Hance, Jay Bosamiya, Matthias Brun, Chanhee Cho,
     Hayley LeBlanc, Pranav Srinivasan, Reto Achermann, Tej Chajed,
     Chris Hawblitzel, Jon Howell, Jacob R. Lorch, Oded Padon, Bryan Parno,
     SOSP, 2024
+    - push Verus toward practical systems verification: concurrency,
+        bit-level reasoning, unsafe Rust
+    - 6.1K LoC impl + 31K LoC proof across case studies
+    - faster / more automated than prior verifiers on their "millibenchmarks"
 
 ## LLM + Verus
 
@@ -21,20 +30,46 @@
     Self-Improving Translation and
     Treefinement](https://www.andrew.cmu.edu/user/bparno/papers/alpha-verus.pdf),
     Pranjal Aggarwal, Bryan Parno, Sean Welleck, ICML, 2025
+    - translate Dafny → Verus to bootstrap training data / exemplars
+    - pipeline: exploration + treefinement + critique
+    - reward hacking a big issue;
+        critique phase blocks things like `assume(false)`
+    - around 45% of DafnyBench translated to verified/aligned Verus programs
 - [AutoVerus: Automated Proof Generation for
     Rust Code](https://arxiv.org/abs/2409.13082), Chenyuan Yang, Xuheng Li,
     Md Rakib Hossain Misu, Jianan Yao, Weidong Cui, Yeyun Gong,
     Chris Hawblitzel, Shuvendu Lahiri, Jacob R. Lorch, Shuai Lu, Fan Yang,
     Ziqiao Zhou, Shan Lu, OOPSLA, 2025
     - Verus: Rust-like SMT verifier language thru Rust macros
+    - agent pipeline mirrors human proof process: initial proof, refinement,
+        verifier-error-guided debugging
+    - built VerusBench: 150 non-trivial proof tasks
+    - 137 / 150 solved; baseline only 67 / 150
 - [VeruSAGE: A Study of Agent-Based Verification for
     Rust Systems](https://arxiv.org/abs/2512.18436), Chenyuan Yang,
     Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026
+    - asks whether LLM proof success transfers from toy tasks to real systems
+    - builds VeruSAGE-Bench: 849 tasks from 8 Verus-verified Rust systems
+    - system proof very different from VerusBench: much more context, specs,
+        helper lemmas
+    - best model+agent combo solves >80%;
+        Sonnet 4.5 can also help finish some human-incomplete proofs
 - [VeriStruct: AI-assisted Automated Verification of
     Data-Structure Modules in Verus](https://arxiv.org/abs/2510.25015),
     Chuyue Sun, Yican Sun, Daneshvar Amrollahi, Ethan Zhang, Shuvendu Lahiri,
     Shan Lu, David Dill, Clark Barrett, arXiv, 2026
+    - goes beyond single fn proof to whole data-structure module
+    - need shared abstraction (`View`) + type invariant + specs + proof code
+    - planner decides which components to generate;
+        repair stage fixes Verus syntax / semantic mistakes
+    - 10 / 11 benchmarks solved, 128 / 129 fn verified
 - [Reducing the Costs of Proof Synthesis on Rust Systems by
     Scaling Up a Seed Training Set](https://arxiv.org/abs/2602.04910v1),
     Nongyu Di, Tianyu Chen, Shan Lu, Shuai Lu, Yeyun Gong, Peng Cheng,
     Jacob R. Lorch, Yuan Yao, Xiaoxing Ma, arXiv, 2026
+    - goal: make Verus proof synthesis much cheaper than frontier model usage
+    - VeruSyn synthesizes 6.9M verified Rust+Verus programs + 4.5K CoT
+        trajectories
+    - combine self-synthesis + tutorial-based synthesis + agent trajectories
+    - fine-tuned Qwen gets close to Sonnet 4.5 on
+        VeruSAGE-Bench at a tiny fraction of the cost
