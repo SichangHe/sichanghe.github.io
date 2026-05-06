@@ -107,7 +107,7 @@ mainly focus on Rust's own soundness, rather than model checking
     A Verification-Guided Approach](https://doi.org/10.1145/3663529.3663854),
     Craig Disselkoen, Aaron Eline, Shaobo He, Kyle Headley, Michael Hicks,
     Kesha Hietala, John Kastner, Anwar Mamat, Matt McCutchen, Neha Rungta,
-    Bhakti Shah, Emina Torlak, Andrew Wells, FSE Companion, 2024
+    Bhakti Shah, Emina Torlak, Andrew Wells, AWS, 2024
     - verification-guided development
         1. executable Lean model + proofs
         1. check Rust impl against Lean with differential random testing
@@ -142,7 +142,7 @@ mainly focus on Rust's own soundness, rather than model checking
         can reason about some unsafe patterns like raw ptrs
     - limits: only subset of Rust + libs;
         proof / ghost style less idiomatic than normal Rust
-    - used in research + industry projects; also part of
+    - used in research + industry projects
 - (likely dead) Prusti
     - Viper-based prototype verifier for safe Rust w/ contracts
     - limits: std / external lib specs often manual; prototype / subset of
