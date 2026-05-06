@@ -96,6 +96,57 @@ mainly focus on Rust's own soundness, rather than model checking
     - lightweight Rust verification via functional translation instead of
         heavy memory reasoning
     - focus on safe Rust subset: no unsafe / interior mutability
+        - std / external defs often need extra models
     - translate LLBC to pure functional code; use "backward functions" to
         end borrows across calls
     - case study: verified resizing hash table; claim productivity gains
+
+## Other
+
+- [How We Built Cedar:
+    A Verification-Guided Approach](https://doi.org/10.1145/3663529.3663854),
+    Craig Disselkoen, Aaron Eline, Shaobo He, Kyle Headley, Michael Hicks,
+    Kesha Hietala, John Kastner, Anwar Mamat, Matt McCutchen, Neha Rungta,
+    Bhakti Shah, Emina Torlak, Andrew Wells, FSE Companion, 2024
+    - verification-guided development
+        1. executable Lean model + proofs
+        1. check Rust impl against Lean with differential random testing
+    - also use property-based testing for unmodeled Rust parts
+    - direct verification of Rust not mature enough
+        - grouped critique only: lack std lib support, idiom limits, scaling,
+            limited spec / property support
+        - see tool notes below for rough breakdown
+    - found 4 policy-validator bugs during proofs, plus 21 more bugs via
+        DRT/PBT
+
+## Rust verification tools
+
+- Aeneas
+    - active; translate safe Rust to Lean / Coq / HOL4 / F* via Charon
+    - nice if you want readable proof-assistant output instead of opaque IR
+    - limits: safe subset only; no unsafe / concurrency yet;
+        std / external defs often need handwritten models
+    - Lean page says used in Microsoft's SymCrypt → verified Rust effort
+- Kani
+    - active AWS-backed bounded model checker; good for
+        unsafe code / UB / panic / overflow checks
+    - proof-harness style w/ `kani::any()`; nice fit for CI-like checking
+    - limits: bounded, may run out of resources; no concurrency support yet
+- Creusot
+    - active deductive verifier; Rust → Coma / Why3
+    - limits: contracts / extern specs still needed; not full Rust yet
+    - used to verify CreuSAT SAT solver
+- Verus
+    - active SMT-based verifier for low-level / systems Rust
+    - bigger recent ecosystem here for deeper systems verification;
+        can reason about some unsafe patterns like raw ptrs
+    - limits: only subset of Rust + libs;
+        proof / ghost style less idiomatic than normal Rust
+    - used in research + industry projects; also part of
+- (likely dead) Prusti
+    - Viper-based prototype verifier for safe Rust w/ contracts
+    - limits: std / external lib specs often manual; prototype / subset of
+        Rust
+    - ETH still lists it as under development, but
+        latest GitHub release is 2023
+        AWS verify-rust-std effort
