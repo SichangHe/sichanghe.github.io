@@ -40,16 +40,25 @@
     Md Rakib Hossain Misu, Jianan Yao, Weidong Cui, Yeyun Gong,
     Chris Hawblitzel, Shuvendu Lahiri, Jacob R. Lorch, Shuai Lu, Fan Yang,
     Ziqiao Zhou, Shan Lu, OOPSLA, 2025
-    - Verus: Rust-like SMT verifier language thru Rust macros
     - agent pipeline mirrors human proof process: initial proof, refinement,
         verifier-error-guided debugging
+        - multiple agents, high temperature, multi-shot
+        - \~10 debugging agents for different errors
+        - using GPT-4o
+    - Lynette: AST analysis on Verus parser to provide fine-grained feedback
+        - checks; merge semi-correct generations; precise error
+    - focus mainly on handling loops (add invariants)
+    - interviewed multiple co-authors of Verus
     - built VerusBench: 150 non-trivial proof tasks
     - 137 / 150 solved; baseline only 67 / 150
 - [VeruSAGE: A Study of Agent-Based Verification for
     Rust Systems](https://arxiv.org/abs/2512.18436), Chenyuan Yang,
     Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026
-    - asks whether LLM proof success transfers from toy tasks to real systems
-    - builds VeruSAGE-Bench: 849 tasks from 8 Verus-verified Rust systems
+    - continuation of AutoVerus
+    - transfer from toy tasks to real systems
+    - VeruSAGE-Bench: 849 tasks from 8 Verus-verified systems
+        - exclude VeriSMo bc it use fork of old Verus
+        - claim Anvil is largest Verus project
     - system proof very different from VerusBench: much more context, specs,
         helper lemmas
     - best model+agent combo solves >80%;
@@ -150,3 +159,14 @@ mainly focus on Rust's own soundness, rather than model checking
     - ETH still lists it as under development, but
         latest GitHub release is 2023
         AWS verify-rust-std effort
+
+## Idea on assumption
+
+- cannot prove everything, especially dependencies
+- need to mark assumptions and verify base on them
+    - be like "law" in science
+    - use fuzzing/ simulation tests for confidence
+    - opposite to AutoVerus' claim that `assume` should not be in final proof
+- integrate assumption correctness testing into proof
+- when bug occur, need to backtrack to find which assumption is wrong
+    - DAG walk?
