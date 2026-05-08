@@ -51,7 +51,7 @@
     - interviewed multiple co-authors of Verus
     - built VerusBench: 150 non-trivial proof tasks
     - 137 / 150 solved; baseline only 67 / 150
-- [VeruSAGE: A Study of Agent-Based Verification for
+- ⭐️ [VeruSAGE: A Study of Agent-Based Verification for
     Rust Systems](https://arxiv.org/abs/2512.18436), Chenyuan Yang,
     Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026
     - continuation of AutoVerus
@@ -59,10 +59,23 @@
     - VeruSAGE-Bench: 849 tasks from 8 Verus-verified systems
         - exclude VeriSMo bc it use fork of old Verus
         - claim Anvil is largest Verus project
-    - system proof very different from VerusBench: much more context, specs,
-        helper lemmas
+    - system proof very different from VerusBench
+        - much more context, specs, helper lemmas; few loop
+        - spec almost as long as implementation and hard to read
+    - "cheat checker" built on Lynette
+        - to avoid `assume`/`admit`/`external_body`/`axiom`
+    - provide `vstd`
+    - the longer the proof, the lower the success rate
     - best model+agent combo solves >80%;
         Sonnet 4.5 can also help finish some human-incomplete proofs
+    - complicated agent orchestration + debug loop did worse than
+        direct simple prompt for smarter LLMs
+    - 🤔 provide helper function signature for the most part
+        - agent should figure them out itself
+    - 🤔 extract all problems into 1 small file w/o codebase
+        - can agent do well directly on codebase just by better prompt?
+    - agent write useless proof code, as expected
+        - suck at certain pattern bc not trained on them
 - [VeriStruct: AI-assisted Automated Verification of
     Data-Structure Modules in Verus](https://arxiv.org/abs/2510.25015),
     Chuyue Sun, Yican Sun, Daneshvar Amrollahi, Ethan Zhang, Shuvendu Lahiri,
@@ -116,7 +129,7 @@ mainly focus on Rust's own soundness, rather than model checking
     A Verification-Guided Approach](https://doi.org/10.1145/3663529.3663854),
     Craig Disselkoen, Aaron Eline, Shaobo He, Kyle Headley, Michael Hicks,
     Kesha Hietala, John Kastner, Anwar Mamat, Matt McCutchen, Neha Rungta,
-    Bhakti Shah, Emina Torlak, Andrew Wells, AWS, 2024
+    Bhakti Shah, Emina Torlak, Andrew Wells, FSE Companion, AWS, 2024
     - verification-guided development
         1. executable Lean model + proofs
         1. check Rust impl against Lean with differential random testing
@@ -157,10 +170,11 @@ mainly focus on Rust's own soundness, rather than model checking
     - limits: std / external lib specs often manual; prototype / subset of
         Rust
     - ETH still lists it as under development, but
-        latest GitHub release is 2023
-        AWS verify-rust-std effort
+        latest GitHub release is 2023 AWS verify-rust-std effort
 
-## Idea on assumption
+## Idea: assumption-carrying verification
+
+🧑 high-level:
 
 - cannot prove everything, especially dependencies
 - need to mark assumptions and verify base on them
@@ -170,3 +184,58 @@ mainly focus on Rust's own soundness, rather than model checking
 - integrate assumption correctness testing into proof
 - when bug occur, need to backtrack to find which assumption is wrong
     - DAG walk?
+
+generated expansion:
+
+- goal: regular development w/ coding agents, but
+    new code comes w/ statically checked claims
+    - not "verify the whole codebase first"
+    - assume existing code + deps are correct at start, then make that
+        assumption explicit at the boundary
+- build on VeruSAGE result as proof-synthesis inner loop
+    - but optimize for normal repo development, not extracted proof task
+    - minimal specs: only write laws the new code actually spends
+    - avoid annotating entire dependency surface
+- key object: assumption / law
+    - like scientific law: useful, scoped, test-backed, falsifiable
+    - fields: id, statement, scope, version, evidence, known falsifiers,
+        dependent proofs
+    - examples: clock monotonicity, parser normalization, db uniqueness,
+        retry idempotence, cache freshness window
+- opposite to "no `assume` in final proof" only at the wrong layer
+    - should not hide `assume` inside proof code
+    - but boundary models need explicit law-backed assumptions;
+        otherwise assumptions still exist, just invisible
+- agent workflow
+    - start w/ ordinary code, w/ verification in mind/docs
+    - proof agent / VeruSAGE-style loop proves local claims
+    - law agent extracts only missing assumptions needed by proof
+    - test agent turns each law into experiments: unit, property, fuzz,
+        simulation, differential, runtime monitor
+- proof receipt for every change
+    - claims proved
+    - laws spent
+    - new law: tests / monitors backing it
+    - document assumption debt: broad law, weak evidence, high fan-out,
+        stale version, untested weird case
+- tests become evidence, not proof
+    - confidence score, not soundness
+    - coverage should be law coverage: which tests exercise which law
+    - mutation / "mutant world" tests are especially valuable:
+        non-monotonic clock, stale cache, reordered events, duplicate ids,
+        dependency returns valid but adversarial values
+- when bug occurs: assumption debugger
+    - bug falsifies claim
+    - claim points to proof receipt
+    - receipt points to laws
+    - laws point to evidence + code/dependency boundary
+    - rank suspects by static slice, dynamic trace, recent change,
+        law fan-out, weak evidence
+    - use minimal hitting set / unsat-core-ish idea to
+        find smallest wrong-law set explaining failure
+- research demo
+    - pick 1 subsystem + 5-10 laws
+    - let coding agent make ordinary changes
+    - require proof receipts + law-linked tests
+    - inject bugs / mutants
+    - measure if system finds wrong assumption faster than grep / git bisect
