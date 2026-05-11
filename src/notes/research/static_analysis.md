@@ -95,6 +95,107 @@
     - combine self-synthesis + tutorial-based synthesis + agent trajectories
     - fine-tuned Qwen gets close to Sonnet 4.5 on
         VeruSAGE-Bench at a tiny fraction of the cost
+- [Automated Proof Generation for Rust Code via
+    Self-Evolution](https://proceedings.iclr.cc/paper_files/paper/2025/file/b2e20d7402c9985eae4ba924c65370a8-Paper-Conference.pdf),
+    Tianyu Chen, Shuai Lu, Shan Lu, Yeyun Gong, Chenyuan Yang, Xuheng Li,
+    Md Rakib Hossain Misu, Hao Yu, Nan Duan, Peng Cheng, Fan Yang,
+    Shuvendu K Lahiri, Tao Xie, Lidong Zhou, ICLR, 2025
+    - SAFE: self-evolving loop for
+        spec synthesis + proof synthesis + self-debugging on Verus errors
+    - built 19,017 specs + 9,706 verified Rust functions from
+        45,395 proof-friendly programs
+    - 52.52% accuracy on expert benchmark vs GPT-4o 14.39%
+    - self-debugging matters a lot; best setting gets 70.50% Accuracy@10
+- [KVerus: Scalable and Resilient Formal Verification Proof Generation for
+    Rust Code](https://arxiv.org/abs/2605.03822v1), Yuwei Liu, Xinyi Wan,
+    Yanhao Wang, Minghua Wang, Lin Huang, Tao Wei, arXiv, 2026
+    - says main issue is semantic-structural gap: proofs depend on
+        module deps, lemmas, and changing Verus syntax
+    - retrieval-heavy system:
+        dependency graph + lemma index + error-driven refinement
+    - 80.2% single-file success vs AutoVerus 56.9%; 51.0% on
+        repo-level benchmarks vs 4.5% baseline
+    - on Asterinas, got upstream-accepted proofs for
+        23 previously unverified funcs
+- [Towards Repository-Level Program Verification with
+    Large Language
+    Models](https://dl.acm.org/doi/epdf/10.1145/3759425.3763382),
+    Si Cheng Zhong, Xujie Si, LMPL workshop, 2025
+    - nice reminder that function-level VerusBench is too small / local
+    - introduces RVBench: 755 proof-completion tasks, 337 modules,
+        3,464 functions from 4 open-source Verus projects
+    - RAGVERUS uses retrieval over repo context / deps / examples
+    - reports large gains on old benchmarks and 27% relative gain on RVBench
+
+## Verus applications
+
+- [Vest: Verified, Secure, High-Performance Parsing and Serialization for
+    Rust](https://www.usenix.org/system/files/usenixsecurity25-cai-yi.pdf),
+    Yi Cai, Pratap Singh, Zhengyao Lin, Jay Bosamiya, Joshua Gancher,
+    Milijana Surbatovich, Bryan Parno, USENIX Security, 2026
+    - DSL + combinator library that
+        generates verified Rust parsers / serializers on top of Verus
+    - notable extra guarantee: basic digital side-channel resistance
+    - verification in seconds, meant to be CI-friendly
+    - big compression of format specs: Bitcoin \~67 LoC vs \~2,000 baseline,
+        TLS 500 vs \~7,000, Wasm 600 vs \~30,000
+- [Atmosphere: Towards Practical Verified Kernels in
+    Rust](https://dl.acm.org/doi/epdf/10.1145/3625275.3625401), Xiangdong Chen,
+    Zhaofeng Li, Lukas Mesicek, Vikram Narayanan, Anton Burtsev, KISV, 2023
+    - early "can Verus handle a real kernel?" paper
+    - minimal but practical microkernel; all code in Rust,
+        prove refinement to high-level spec
+    - headline number: proof-to-code ratio 7.5:1, much lower than
+        old kernel verification efforts
+- [Atmosphere: Practical Verified Kernels with Rust and
+    Verus](https://dl.acm.org/doi/epdf/10.1145/3731569.3764821),
+    Xiangdong Chen, Zhaofeng Li, Jerry Zhang, Vikram Narayanan, Anton Burtsev,
+    SOSP, 2025
+    - follow-up makes Atmosphere look much more practical / mature
+    - 6K LoC exec + 20.1K proof, <2.5 person-years total effort
+    - proof-to-code ratio drops to 3.32:1; full verification in <20s
+    - IPC and
+        ixgbe driver eval suggest verification did not destroy practicality
+- [VeriSMo: A Verified Security Module for
+    Confidential VMs](https://www.usenix.org/system/files/osdi24-zhou.pdf),
+    Ziqiao Zhou, Anjali (single-name author), Weiteng Chen, Sishuai Gong,
+    Chris Hawblitzel, Weidong Cui, OSDI, 2024
+    - first verified security module for confidential VMs (AMD SEV-SNP)
+    - verified for
+        functional correctness + secure information flow + VM confidentiality /
+        integrity
+    - key trick: 2-layer proof, one for malicious hypervisor interference,
+        one for VeriSMo's own concurrency
+    - similar performance to C impl;
+        proofs exposed an overlooked AMD SVSM confidentiality requirement
+
+## Hybrid Rust verification
+
+- [A Hybrid Approach to
+    Semi-automated Rust
+    Verification](https://dl.acm.org/doi/epdf/10.1145/3729289),
+    Sacha-Élie Ayoun, Xavier Denis, Petar Maksimović, Philippa Gardner, PLDI,
+    2025
+    - split the job: Creusot for safe Rust, Gillian-Rust for unsafe Rust
+    - main pitch is "real unsafe stdlib Rust" rather than
+        proof-oriented reimplementation
+    - verifies LinkedList / Vec code from Rust stdlib with minor mods,
+        often orders of magnitude faster than prior unsafe-Rust tools
+    - still proof-of-concept: gaps around closures, shared refs, concurrency,
+        some Vec caveats
+
+## Testing + verification
+
+- [Property-Based Testing: Climbing the Stairway to
+    Verification](https://trustworthy.systems/publications/papers/Chen_ROSKHK_22.pdf),
+    Zilin Chen, Christine Rizkallah, Liam O’Connor, Partha Susarla,
+    Gerwin Klein, Gernot Heiser, Gabriele Keller, SLE, 2022
+    - instead of ad-hoc QuickCheck properties,
+        test refinement relation against executable spec
+    - sells PBT as a continuum toward full proof, not all-or-nothing
+    - nice point: tests survive code evolution better than proofs
+    - found bugs in BilbyFs impl + spec;
+        also a communication medium between systems devs and proof engineers
 
 ## Aeneas
 
