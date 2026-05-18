@@ -6,6 +6,8 @@ Current:
 
 - Anti-MLsys: Detect and understand LLM-generated web content.
 - Efficient LLM agents for the Web/ programming through domain knowledge.
+- Efficient scalable agentic software development with strong correctness and
+    reliability guarantees.
 
 Wider areas:
 

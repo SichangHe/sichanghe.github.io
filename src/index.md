@@ -8,10 +8,12 @@
 Hello there, Steven here:
 
 - Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
+- Analytical, skeptical, empirical, optimistic nihilist.
 - Computer Science Ph.D. student,
     [Networked Systems Lab (NSL)](https://nsl.usc.edu/), University of
     Southern California (USC).
-    - Advisor: [Harsha Madhyastha](https://www.harsha.usc.edu/).
+    - Advisor: [Harsha V. Madhyastha](https://www.harsha.usc.edu/).
+    - Also work with [Ramesh Govindan](https://govindan.usc.edu/).
     - [**Research Interests**](about.html#research-interests): the Web,
         Networking, SE, PL, HPC.
         - 👉 [**For USC undergrads/MS students**](about.html#for-undergradsms)
