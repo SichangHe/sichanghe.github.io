@@ -25,6 +25,8 @@
         - [TOEFL](notes/exams/toefl.md)
     - [Financial](notes/financial/index.md)
         - [Monero](notes/financial/monero.md)
+        - [Stocks](notes/financial/stocks/index.md)
+            - [Robinhood](notes/financial/stocks/robinhood.md)
         - [Tax](notes/financial/tax.md)
     - [Government](notes/government/index.md)
         - [United States](notes/government/us.md)
