@@ -340,3 +340,63 @@ generated expansion:
     - require proof receipts + law-linked tests
     - inject bugs / mutants
     - measure if system finds wrong assumption faster than grep / git bisect
+
+## 🤖 Agent-added related work deepening (2026-05-24): repository-native Verus agents
+
+Fact: the strongest recent evidence says verified-Rust proof generation is now
+mostly a repository-context problem, not a loop-invariant problem. VeruSAGE-Bench
+explicitly says its 849 tasks are extracted from "8 real-world Verus projects"
+and that tasks need "understanding dependencies originally defined across a
+large codebase" (<https://github.com/microsoft/verus-proof-synthesis/blob/main/benchmarks/VeruSAGE-Bench/README.md>). Its own comparison is the useful
+research signal: Verus-Bench tasks average ~30 LoC and 1.6 loops; VeruSAGE-Bench
+tasks average ~950 LoC, ~500 spec LoC, <0.1 loops, and 2.4 helper lemmas. This
+makes helper-lemma discovery, spec/interface recovery, and dependency retrieval
+more central than invariant templates.
+
+Concrete systems/projects to anchor a paper:
+
+- `microsoft/verus-proof-synthesis`: the implementation/artifact for AutoVerus
+  and VeruSAGE. It includes `autoverus/`, `verusage/`, Lynette utilities, and
+  both Verus-Bench and VeruSAGE-Bench. Useful baseline because it exposes the
+  agent/verifier loop and benchmark format rather than only paper numbers.
+- `verus-lang/verus`: the verifier and standard library target. The README says
+  Verus "statically checks that the executable Rust code will always satisfy the
+  specifications" and can go beyond Rust's type system for code that
+  "manipulates raw pointers" (<https://github.com/verus-lang/verus>). This is
+  the practical substrate, not just a proof language.
+- RVBench / RagVerus: repository-level retrieval baseline. The arXiv page says
+  RepoVBench has 2,073 functions over 52 modules and 383 proof-completion tasks,
+  while another RVBench version reports 755 tasks over 337 modules. Treat exact
+  naming/versioning carefully; the stable takeaway is that repository indexing
+  and dependency retrieval give measurable gains but still leave large gaps.
+- KVerus: a retrieval-heavy proof-generation system. Its paper reports 80.2%
+  single-file success and 51.0% repository-level success, and says the hard case
+  is the "semantic-structural gap": proofs depend on module dependencies,
+  lemmas, and toolchain syntax drift (<https://arxiv.org/html/2605.03822>).
+
+Inference: a good systems paper should not be "LLM writes Verus proofs". That is
+already crowded. A stronger paper is a repository-native verification agent that
+keeps a live dependency/lemma/spec index, proposes missing helper signatures,
+uses Verus feedback as a typed environment signal, and evaluates proof
+maintainability under realistic code churn.
+
+Concrete evaluation plan:
+
+- Use VeruSAGE-Bench and RVBench/RepoVBench for comparability, but add at least
+  one live-repository case where the agent runs in the original project instead
+  of a single extracted file.
+- Measure solved tasks, verifier calls, token cost, retrieved-context precision,
+  helper-lemma discovery accuracy, and proof reviewability.
+- Include an anti-cheating pass like VeruSAGE's Lynette-based checker for
+  `assume`, `admit`, `external_body`, and axioms.
+- Compare against direct prompting, AutoVerus-style repair, RAG-only retrieval,
+  and a smart coding-agent baseline with the same Verus wrapper.
+
+Paper repository status: root PDFs for `VeruSAGE` and `KVerus` already exist in
+`/hdd1/sichanghe/paper_collection`. This agent could not add missing PDFs because
+that repository is readable but not writable by the agent account; ACL test failed
+with `Permission denied` at both the collection root and an existing per-paper
+directory. The available OCR convention is `ocr_all.py`, which runs
+`marker_single` over root PDFs not listed in `done_ocr.txt`; it was not practical
+or safe to run because the repository already has unrelated uncommitted OCR
+outputs and the agent cannot write new root PDFs.
