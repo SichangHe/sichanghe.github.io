@@ -196,3 +196,73 @@
     - good agent-infra paper on
         building executable repo environments automatically
     - read only if you care about code / environment agents
+
+## 🤖 Agent-added related work deepening (2026-05-24): browser-agent infrastructure and benchmarks
+
+Fact: browser-agent work has split into three layers: benchmark environments,
+agent scaffolds, and safer machine interfaces. BrowserGym is now the most useful
+systems anchor because it unifies previously fragmented benchmarks. Its README
+says it includes "MiniWoB", "WebArena", "WebArenaVerified", "VisualWebArena",
+"WorkArena", "AssistantBench", "WebLINX", "OpenApps", and "TimeWarp"
+(<https://github.com/ServiceNow/BrowserGym>). The BrowserGym paper says the
+system uses Chromium and Playwright through a Gymnasium API
+(<https://ar5iv.labs.arxiv.org/html/2412.05467>), while the README warns it is
+"not meant to be a consumer product"; that matters because it is a research
+harness, not a production safety design.
+
+Benchmarks/projects that should shape any browser-agent direction:
+
+- WebArena: canonical self-hosted realistic web benchmark
+  (<https://github.com/web-arena-x/webarena>); its repo now points researchers
+  toward BrowserGym/AgentLab for improved parallel experiments, unified
+  benchmark integration, leaderboard reporting, and edge-case handling.
+- VisualWebArena: 910 visually grounded tasks over Classifieds, Shopping, and
+  Reddit (<https://aclanthology.org/2024.acl-long.50.pdf>). The paper reports
+  best VLM success at 16.4% vs human 88.7%, which is a reminder that screenshots
+  are not a solved grounding layer.
+- WorkArena / WorkArena++: enterprise ServiceNow workflows. The ICML paper says
+  it evaluates tasks spanning "typical daily work of knowledge workers"
+  (<https://proceedings.mlr.press/v235/drouin24a.html>) and exposes a large gap
+  to full automation. This is closer to useful automation than toy webpage
+  clicking.
+- BrowserGym + AgentLab: the practical evaluation substrate for comparing
+  observation choices: DOM, accessibility tree, screenshots, coordinates,
+  high-level actions, Python actions, and chat.
+- OpenEnv / TRL BrowserGym examples
+  (<https://github.com/meta-pytorch/OpenEnv>,
+  <https://github.com/huggingface/trl/blob/main/examples/scripts/openenv/browsergym.py>):
+  useful implementation precedent for wrapping BrowserGym as an RL environment,
+  including text-only accessibility observations and multimodal screenshot +
+  accessibility observations.
+- Safety/infrastructure papers: `Building Browser Agents`, `DoomArena` (<https://github.com/ServiceNow/DoomArena>), dark pattern
+  evaluation, and prompt-injection work imply that open-ended browser control
+  should be wrapped by policy, provenance, and irreversible-action guards.
+- API-first line: `Beyond Browsing`, `Internal APIs Are All You Need`, and
+  `APISENSOR` argue that browser UI is often a poor machine interface. The
+  systems opportunity is a hybrid agent that discovers stable first-party APIs
+  from runtime traces, audits their provenance, and falls back to UI only when
+  necessary.
+
+Inference: another WebArena prompt scaffold is unlikely to be deep enough. A
+stronger systems direction is a browser/API instrumentation layer that records
+rendered evidence, DOM/accessibility provenance, network/API consequences, and
+transaction state. The agent should know when not to click: irreversible actions,
+prompt-injected pages, dark patterns, policy-sensitive flows, and API-vs-UI
+tradeoffs are the core systems problems.
+
+Concrete evaluation plan:
+
+- Use BrowserGym for reproducible baselines across MiniWoB, WebArena,
+  VisualWebArena, and WorkArena, then add a small transaction-closure suite with
+  explicit irreversible-action and audit requirements.
+- Measure task success plus action provenance completeness, unsafe-action
+  blocking, replayability, and UI-vs-API fallback decisions.
+- Compare browser-only, API-only, and hybrid agents. The important ablation is
+  not just success rate; it is whether the hybrid path reduces rediscovery,
+  lowers unsafe clicks, and makes outcomes auditable.
+
+Paper repository status: existing PDFs/notes include several browser-agent
+papers such as AgentOccam, BrowserAgent, Branch-and-Browse, Beyond Browsing,
+APISENSOR, and internal-API work. Missing high-value PDFs for BrowserGym,
+WorkArena, and VisualWebArena could not be downloaded by this agent because the
+paper repository ACL denies writes to the agent account.
