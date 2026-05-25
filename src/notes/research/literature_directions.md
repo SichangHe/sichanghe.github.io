@@ -404,3 +404,40 @@ browser tasks, and manager/worker multi-agent workflows.
 3. Riskier but novel: OPC benchmark and runtime for autonomous coding agents,
    measuring obligation retention, provenance, cost, and task success.
 
+## 🤖 Agent-added synthesis after deeper related-work pass (2026-05-24)
+
+The deeper pass changes the ranking of the three directions:
+
+- Generated verified Rust remains the strongest systems-paper direction, but the
+  novelty has to be repository-native. AutoVerus-style single-file proof repair
+  is now a baseline. VeruSAGE, RVBench/RagVerus, and KVerus show that the live
+  frontier is cross-module dependency retrieval, helper-lemma/spec discovery,
+  and proof maintainability in real Verus systems.
+- Browser agents are crowded at the general-agent scaffold layer. The deeper
+  opportunity is infrastructure: BrowserGym/AgentLab for reproducible evaluation,
+  API discovery for safer machine interfaces, and transaction/audit/safety
+  monitors for irreversible UI work.
+- OPC / partial compaction is still relevant if treated as an auditable systems
+  mechanism. The important recent shift is from passive summarization to active,
+  tool-like, budget-aware, and validated context management. Slipstream's
+  asynchronous validation idea is especially useful because it creates an
+  independent check against the original trajectory.
+
+Concrete combined project idea: build a repository-native Verus proof agent with
+explicit context-state management. The agent would maintain a typed index of
+files, specs, helper lemmas, verifier errors, failed proof attempts, and open
+obligations. Compaction would be allowed only through provenance-preserving
+state transitions. Evaluation can combine VeruSAGE/RVBench proof success with
+OPC-specific metrics: obligation retention, unsupported claims, proof retry
+avoidance, verifier-call cost, and proof maintainability under small code edits.
+
+Paper repository status: verified existing PDFs include `VeruSAGE` and `KVerus`.
+The agent attempted to add high-value PDFs for RagVerus/RVBench, BrowserGym,
+WorkArena, VisualWebArena, Slipstream, Cat, Acon, ContextBudget, SWE-Pruner, and
+BrowseComp, but `/hdd1/sichanghe/paper_collection` is not writable by this agent
+(`Permission denied` on root and per-paper directory write tests from the
+agent account). The repository has an OCR convention via `ocr_all.py` / `marker_single`, but running it was not
+practical because new PDFs could not be written and existing unrelated OCR state
+is already dirty.
+
+See also: [agent_memory](agent_memory.md) for the OPC-specific related-work map.
