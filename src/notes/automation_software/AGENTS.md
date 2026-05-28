@@ -72,6 +72,17 @@ use searchable tags/phrases. Construct hierarchy of index docs s.t.
 one could walk a minimal tree of docs to find any info about the codebase.
 Move shared sections to higher level
 
+Be extremely lazy in terms of docs and scripts, in a wise way.
+Minimize work for your future self and others, keep all records as short as
+possible but still lucid and contain enough context,
+aggressively remove any redundant or unneeded info;
+convert all repeatedly used commands to helper scripts and
+document them clearly s.t. future calls are as short as possible.
+
+For all agent instructions, make sure the human reviews them.
+Agents tend to drift when writing instructions for themselves.
+Always ask the human to review and approve the instructions before proceeding.
+
 Acknowledge it whenever you are unsure and never ever hesitate to
 ask the user for clarification. Search online for libraries you don't know.
 Avoid doing things manually or ad-hoc; automate.
@@ -82,9 +93,11 @@ After editing; skip describing to the user anything they can see from diff.
 Following conventional commits.
 
 Never tell the human about Git status; they know.
-Skip reporting that standard checks pass; it is assumed by default
+Never report when standard checks passed; it is assumed by default.
+Never repeatedly run and enumerate tests,
+write them into a single test script which only reports failures
 
-If asked to git commit, use sane&minimal conventional message.
+If asked to git commit, use sane&minimal&atomic conventional message.
 Pull rebase if push fails.
 Try `--no-recurse-submodules` or rm submodule dir if rebase fail.
 To "merge" feature branch, make a new branch w/ appended number,
