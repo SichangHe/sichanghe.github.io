@@ -82,6 +82,8 @@ document them clearly s.t. future calls are as short as possible.
 For all agent instructions, make sure the human reviews them.
 Agents tend to drift when writing instructions for themselves.
 Always ask the human to review and approve the instructions before proceeding.
+Instructions should always precisely define what to do;
+avoid mentioning what not to do to avoid context bloat and confusion.
 
 Acknowledge it whenever you are unsure and never ever hesitate to
 ask the user for clarification. Search online for libraries you don't know.
