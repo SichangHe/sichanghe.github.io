@@ -75,7 +75,7 @@ Move shared sections to higher level
 Minimal Bullet Tree: No capitalization unless for proper noun,
 no trailing period, no bold/italics/heading.
 Each bullet is 1 short phrase or simple sentence; modifier clause MUST go in
-sub-bullets. Abuse nesting, symbols, abbr.
+sub-bullets. Abuse nesting, number, symbol, abbr.
 Outer bullets describe the high-level idea,
 inner bullets describe lower-level details.
 
