@@ -72,6 +72,13 @@ use searchable tags/phrases. Construct hierarchy of index docs s.t.
 one could walk a minimal tree of docs to find any info about the codebase.
 Move shared sections to higher level
 
+Minimal Bullet Tree: No capitalization unless for proper noun,
+no trailing period, no bold/italics/heading.
+Each bullet is 1 short phrase or simple sentence; modifier clause MUST go in
+sub-bullets. Abuse nesting, symbols, abbr.
+Outer bullets describe the high-level idea,
+inner bullets describe lower-level details.
+
 Be extremely lazy in terms of docs and scripts, in a wise way.
 Minimize work for your future self and others, keep all records as short as
 possible but still lucid and contain enough context,
