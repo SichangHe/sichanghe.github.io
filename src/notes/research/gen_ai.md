@@ -339,6 +339,26 @@ news:
 - manually check misclassified text to find patterns
 - mash various metrics together randomly by brute force to see what work well
 
+## 🤖 Agent-added generated web artifacts (2026-06-07)
+
+- 🤖 Shift from text detection to artifact reliability: generated websites,
+  widgets, plugins, and scripts are deployed executable artifacts, so the useful
+  question is what obligations they satisfy, not whether a paragraph "sounds AI".
+- 🤖 Research angle: attach generation provenance, security claims, policy
+  obligations, tests, scans, and deployment receipts to each generated artifact;
+  then ask whether those receipts reduce insecure deployment and make repair
+  more stable.
+- 🤖 Transfer: software supply-chain provenance, C2PA-style authorship signals,
+  static/dynamic application security testing, property-based tests, and
+  runtime policy monitors.
+- 🤖 Evaluation sketch: generate many small sites/components from realistic
+  prompts, run scanners and hand-written exploit tests, patch with/without
+  receipts, and measure exploitable vulnerabilities, review time, and regression
+  rate.
+- 🤖 Anchors: `LLMs in Web Development`, `Hidden Risks of LLM-Generated Web
+  Application Code`, `Asleep at the Keyboard`, SLSA/in-toto/Sigstore/Rekor,
+  C2PA, Retrieval Collapse.
+
 ## Human detection of AI-generated content
 
 - [A Representative Study on Human Detection of
