@@ -444,201 +444,161 @@ is already dirty.
 
 See also: [agent_memory](agent_memory.md) for the OPC-specific related-work map.
 
-## 🤖 Broad SE/PL/Sys transfer ideas (2026-06-07)
+## 🤖 Question-first reframing of broad SE/PL/Sys ideas (2026-06-07)
 
-This is a brainstorm, not a single recommended bet. The common question is:
-what new capability appears when web/agent systems expose hidden environment
-state as typed, testable, and reviewable objects?
+- 🤖 The old ten ideas were mechanism-first. The better umbrella question is:
+  when does exposing hidden web/agent state change what people believe about
+  safety, truth, proof, or cost?
+- 🤖 Mechanism map: causal receipts and taint become candidate 1; L7
+  contracts, API discovery, and verified normalizers become candidate 2;
+  semantic efficiency and web atoms become candidate 3; source-critical agents
+  and archive-backed crawling become candidate 4; generated web artifacts
+  become candidate 5; obligation memory and assumption-carrying verification
+  become candidate 6.
+- 🤖 Use the systems artifacts only as instruments. The paper should be judged
+  by whether it proves or breaks an intuition, not by whether it ships another
+  agent platform.
 
-### 🤖 1. causal receipts for delegated web work
+### 🤖 1. Do successful web agents often succeed for the wrong reason?
 
-- insight: receipts become interesting when they let us ask which observation,
-  authority check, or postcondition caused the agent to be trustworthy
-- why not merely engineering: the research object is a semantics for delegated
-  action support: evidence, authority, closure, and counterfactual replay
-- transfer: W3C PROV/C2PA provenance, dynamic slicing, runtime verification,
-  transaction postconditions, ST policy scoring
-- why now: AgentRewardBench evaluates "web agent trajectories";
-  ST-WebAgentBench's latest arXiv version is 2026-06-04 and says task success
-  alone ignores whether agents act "safely"; WASP and NeuroTaint show prompt
-  injection and semantic influence are live problems
-- sketch: instrument BrowserGym/Playwright/browser-use to build receipt graphs
-  for claims and actions; ablate evidence nodes; score claim support,
-  authority correctness, postcondition closure, unsafe-action blocks, and
-  replayability
-- anchors: AgentRewardBench, ST-WebAgentBench, WASP, NeuroTaint, WebSuite,
-  W3C PROV, C2PA
+- 🤖 surprising question: can a web agent complete a task, satisfy a benchmark
+  checker, and still be unjustified because the decisive evidence came from a
+  stale page, hidden DOM text, injected content, or the wrong authority check?
+- 🤖 intuition being tested: task success, side-effect checks, and policy
+  compliance are necessary but may not prove that the agent's action was
+  causally supported by trustworthy evidence.
+- 🤖 what evidence would convince people: counterfactual trajectory ablations
+  where removing or changing one source/evidence node flips the safety or
+  correctness judgment; human reviewers agree the receipt explains the action;
+  high-scoring agents show a measurable "right answer, wrong reason" rate.
+- 🤖 why current literature does not already answer it: AgentRewardBench and
+  ST-WebAgentBench improve trajectory and safety evaluation, while WASP,
+  WebInject, WebAgentGuard, WARD, and NeuroTaint-style work show attacks and
+  semantic influence; they do not ask whether completed web actions have
+  causal evidentiary support.
+- 🤖 minimal system/measurement needed only as an instrument: a BrowserGym or
+  Playwright recorder that labels observations by source, builds claim/action
+  receipt graphs, and replays or ablates graph nodes against existing tasks.
+- 🤖 exciting pitch: find the agents that get the right answer for the wrong
+  reason before they spend money, change accounts, or cite the web.
 
-### 🤖 2. L7 transaction contracts for browser/API agents
+### 🤖 2. Is the browser the wrong abstraction for agentic web work?
 
-- insight: the missing web-agent interface is not a better button selector; it
-  is a contract saying what a click/API call may change, when it commits, and
-  how authority is checked
-- why not merely engineering: this asks for a typestate/session-type view of
-  web workflows, where HTTP/API/UI steps are checked as state transitions
-- transfer: session types, typestate, object-capability authority, OpenAPI /
-  AsyncAPI contracts, runtime monitors, API contract testing
-- why now: Beyond Browsing reports API/hybrid agents outperform browser-only
-  agents; Internal APIs argues the human-browser interface is a mismatch;
-  APISENSOR reconstructs APIs from runtime traffic; OASBuilder and WAPIIBench
-  show API specs are now agent-facing but still error-prone
-- sketch: annotate or infer contracts for self-hosted apps; check UI/API
-  equivalence, preconditions, side effects, idempotence, rollback, and commit
-  evidence; evaluate duplicate actions, wrong authority, and semantic drift
-- anchors: Beyond Browsing, Internal APIs, APISENSOR, OASBuilder, WAPIIBench,
-  CommaSuite, ST-WebAgentBench
+- 🤖 surprising question: when agents can use UI clicks, shadow APIs, generated
+  scripts, or formal API specs, what is the real semantic unit of work: a DOM
+  action, an endpoint call, or a transaction with authority, commit, and
+  rollback?
+- 🤖 intuition being tested: APIs and internal routes are not merely faster
+  substitutes for browsing; they may expose the action semantics that make web
+  work safer, or they may bypass user-visible checks and create new failures.
+- 🤖 what evidence would convince people: paired UI/API tasks where transaction
+  contracts predict duplicate commits, missing preconditions, wrong authority,
+  stale UI/API equivalence, and rollback failures better than selector-level or
+  endpoint-level logs.
+- 🤖 why current literature does not already answer it: Beyond Browsing shows
+  API/hybrid agents can outperform browser-only agents; Internal APIs argues
+  browser-first agents mismatch machine interfaces; APISENSOR and OASBuilder
+  recover API structure. None of these decide what transaction semantics must
+  hold for a web action to count as the user's intended action.
+- 🤖 minimal system/measurement needed only as an instrument: a small set of
+  self-hosted apps with annotated or inferred transaction contracts, a
+  normalized UI/API event stream, and monitors for preconditions, effects,
+  idempotence, authority, and commit evidence.
+- 🤖 exciting pitch: turn "the agent clicked the right button" into "the agent
+  performed exactly the transaction the user meant."
 
-### 🤖 3. generated web artifacts as executable supply-chain claims
+### 🤖 3. How little of the web can an agent see before it goes blind?
 
-- insight: an LLM-generated website is not just generated text or code; it is a
-  deployed bundle of executable claims about authentication, sessions, input
-  handling, provenance, and content trust
-- why not merely engineering: the paper question is whether provenance plus
-  executable obligations changes review, deployment, and repair of generated
-  artifacts
-- transfer: SLSA/in-toto/Sigstore supply-chain receipts, C2PA provenance,
-  static/dynamic web security testing, property-based tests, policy-as-code
-- why now: one study analyzed "2,500 GPT-4 generated PHP websites" and found
-  26% had an exploitable web vulnerability; Hidden Risks reports failures in
-  auth, sessions, validation, and HTTP headers; Retrieval Collapse frames
-  synthetic web content as an ecosystem risk
-- sketch: generate small sites/components, attach generation provenance,
-  security obligations, tests, scans, and runtime monitors; measure exploitable
-  flaws, review time, patch stability, and whether provenance survives copying
-- anchors: LLMs in Web Development, Hidden Risks of LLM-Generated Web
-  Application Code, Retrieval Collapse, Asleep at the Keyboard, SLSA, in-toto,
-  Sigstore/Rekor, C2PA
+- 🤖 surprising question: is most browser state dead weight for agents, or do
+  the ignored DOM nodes, scripts, resources, and API calls hide the evidence
+  that prevents unsafe or stale actions?
+- 🤖 intuition being tested: observation pruning, direct APIs, and generated
+  scripts can reduce cost without changing behavior if the removed state cannot
+  affect the task postcondition.
+- 🤖 what evidence would convince people: semantic ablations that preserve task
+  success, safety checks, and claim support across DOM/resource/API reductions;
+  failures are explained by missing dependency atoms rather than by opaque
+  prompt-length effects; atom changes predict which receipts or scripts become
+  stale.
+- 🤖 why current literature does not already answer it: Prune4Web, AgentOccam,
+  and Region4Web show observation design matters, and older web dependency /
+  superfluous-JS work measures unused page machinery. They do not define the
+  minimal web state needed for a specific agent postcondition.
+- 🤖 minimal system/measurement needed only as an instrument: CDP traces,
+  resource/DOM/API dependency inference, task-postcondition probes, and a
+  recrawl/replay harness that compares full browser state with candidate
+  semantic slices.
+- 🤖 exciting pitch: discover the semantic footprint of a web task and prove
+  which parts of the page never mattered.
 
-### 🤖 4. assumption-carrying verification for web/L7 boundary code
+### 🤖 4. Does synthetic or stale web evidence quietly change what agents know?
 
-- insight: verification is most valuable at boundaries where small code decides
-  what the agent saw or was allowed to do: URL/header parsers, API normalizers,
-  auth checks, receipt validators, and transaction state machines
-- why not merely engineering: verified boundary code defines the trusted base
-  for agent evidence; tests alone cannot cover adversarial inputs and state
-  transitions that later become receipts
-- transfer: Verus-style systems verification, proof receipts, law-backed
-  assumptions, property-based testing as a continuum toward proof, model
-  checking for protocol state
-- why now: VeruSAGE studies 849 proof tasks from 8 real Verus systems; KVerus
-  identifies a "Semantic-Structural Gap" in repo-level proof; Vest and
-  Atmosphere show verified Rust can target practical systems components
-- sketch: implement one critical Rust proxy/receipt module with Verus claims;
-  keep unverified environment assumptions as named laws with fuzz/PBT/runtime
-  evidence; inject malformed headers, replayed requests, stale receipts, and
-  broken idempotence to test debugging value
-- anchors: Verus, VeruSAGE, KVerus, Vest, Atmosphere, VeriSMo,
-  Property-Based Testing: Climbing the Stairway to Verification
+- 🤖 surprising question: can retrieval-backed agents keep answer accuracy
+  stable while their evidence base becomes more synthetic, less diverse, or
+  temporally wrong?
+- 🤖 intuition being tested: better retrieval and freshness metadata are enough
+  for web-grounded agents; the opposing hypothesis is that source ecology
+  changes beliefs before accuracy metrics notice.
+- 🤖 what evidence would convince people: daily crawls of volatile topics show
+  source-diversity loss, synthetic exposure, stale-claim survival, or temporal
+  citation errors; archive-backed evidence changes answers or human trust
+  decisions compared with live-only retrieval.
+- 🤖 why current literature does not already answer it: Retrieval Collapse
+  models synthetic exposure and Browsertrix/WACZ/Memento make replayable
+  evidence practical, but current web-agent benchmarks rarely measure source
+  ecology, temporal precision, or archived support for each claim.
+- 🤖 minimal system/measurement needed only as an instrument: 20-50 volatile
+  topic crawls with live browser captures, WACZ/Memento archives,
+  source-type labels, claim-to-source links, and human review of disputed
+  claims.
+- 🤖 exciting pitch: measure when the web an agent cites stops being the web a
+  human thinks it read.
 
-### 🤖 5. semantic efficiency for web agents
+### 🤖 5. Can generated websites come with falsifiable promises?
 
-- insight: efficiency should mean the agent loads, reads, and acts on only the
-  page/API/resource state that can affect the task postcondition
-- why not merely engineering: this defines a semantic minimality problem over
-  browser execution, not just a smaller prompt or faster scraper
-- transfer: program slicing, dynamic dependency analysis, partial evaluation,
-  superfluous-JS measurement, active context compression, cost-aware scheduling
-- why now: Prune4Web says real DOMs often reach "10,000 to 100,000 tokens";
-  AgentOccam shows simple observation/action alignment is strong; Internal APIs
-  and Swiftor-style proposals push the cost problem below the prompt layer
-- sketch: use CDP traces to infer resource/script/DOM dependencies for a task;
-  compare full browser, DOM pruning, resource pruning, generated scripts, and
-  API routes on task success, false-negative loss, tokens, CPU, bytes, and
-  unsafe blind spots
-- anchors: Prune4Web, AgentOccam, Internal APIs, APISENSOR, Swiftor proposal,
-  superfluous-JS web performance work, ContextBudget
+- 🤖 surprising question: if an LLM-generated site ships with executable
+  provenance, security obligations, and tests, do humans deploy safer software,
+  or do receipts merely create false confidence around vulnerable code?
+- 🤖 intuition being tested: the useful question is not whether a website was
+  AI-generated, but which security and provenance claims survive review,
+  patching, copying, and deployment.
+- 🤖 what evidence would convince people: a randomized review/repair study where
+  generated artifacts with obligations have fewer exploitable auth, session,
+  validation, upload, XSS, and header bugs; fixes regress less often; reviewers
+  are not simply over-trusting receipt labels.
+- 🤖 why current literature does not already answer it: generated-code security
+  studies measure vulnerability rates, and supply-chain systems such as SLSA,
+  in-toto, Sigstore, and C2PA attach provenance. They do not test whether
+  executable obligations change human review and repair of generated web
+  artifacts.
+- 🤖 minimal system/measurement needed only as an instrument: a generator for
+  small realistic sites/components, an obligation schema, scanners plus
+  hand-written exploit tests, and a compact review UI for with/without-receipt
+  comparisons.
+- 🤖 exciting pitch: make generated websites arrive with a bill of promises, then
+  see whether those promises actually stop insecure deployment.
 
-### 🤖 6. source-critical web agents under synthetic-content drift
+### 🤖 6. Are long-running agents failing because they forget live obligations?
 
-- insight: web agents need a source ecology model: live pages, archived pages,
-  AI-generated pages, paywalled pages, consent-gated pages, and answer-engine
-  summaries are different evidence types
-- why not merely engineering: the research asks how synthetic content and web
-  drift change the epistemology of retrieval-backed agents
-- transfer: IR measurement, causal exposure analysis, web archiving,
-  crawling-under-login, temporal provenance, source trust classification
-- why now: Retrieval Collapse reports that synthetic content can dominate
-  retrieval exposure; local PB/news notes show stale and title-only evidence can
-  change decisions; Browsertrix/WACZ/Memento make replayable web evidence more
-  practical
-- sketch: crawl volatile topics daily with live browser, source-specific
-  extractors, and WACZ archives; evaluate temporal precision, source diversity,
-  synthetic exposure, stale suppression, claim support, and human review time
-- anchors: Retrieval Collapse, Browsertrix, WACZ, Memento/RFC 7089, Heritrix,
-  AI-generated text/content measurement notes, PB news-quality work logs
-
-### 🤖 7. taint-aware interpretability for agent safety
-
-- insight: "why did the agent do that" is a source-to-sink question: did
-  untrusted page text, hidden DOM, ads, memory, or retrieved snippets influence
-  a privileged tool/action?
-- why not merely engineering: it creates an empirical account of semantic
-  influence, not a prettier trace viewer
-- transfer: information-flow control, dynamic taint tracking, causal tracing,
-  provenance graphs, source/sink policy enforcement, memory taint
-- why now: NeuroTaint argues traditional taint analysis fails for LLMs because
-  influence can be semantic, causal, and persistent; WASP shows realistic
-  prompt injections still deceive agents; dark-pattern work gives behavioral
-  manipulation cases
-- sketch: compile browser observations with source labels, log prompts/actions,
-  audit traces offline for source-to-sink influence, and enforce sink policies
-  for payments, account edits, private data, and generated content
-- anchors: NeuroTaint, WASP, WebInject, dark-pattern web-agent studies,
-  AgentRewardBench, ST-WebAgentBench
-
-### 🤖 8. obligation memory for long-running SE/web agents
-
-- insight: agents fail by losing obligations, not just facts: user constraints,
-  open claims, tests to run, source pointers, proof laws, pending receipts, and
-  safety conditions
-- why not merely engineering: memory becomes a resource-management problem with
-  correctness obligations and measurable loss, not a summarization feature
-- transfer: garbage collection, cache eviction, checkpointing, typestate,
-  provenance-preserving compaction, budgeted sequential decision making
-- why now: CAT frames context as a callable tool; PAACE is plan-aware;
-  ContextBudget treats context as a "sequential decision problem";
-  Complexity Trap shows simple masking can beat heavier summarization
-- sketch: maintain an obligation ledger across coding, verification, and web
-  research tasks; compaction may compress text only if obligations retain source
-  links and check status; evaluate task success, unsupported claims, forgotten
-  tests, cost, and recovery after resume
-- anchors: CAT, PAACE, ContextBudget/BACM, Complexity Trap, ReSum, Acon, local
-  agent_memory and manager compaction work logs
-
-### 🤖 9. verified L7 normalizers and temporal monitors
-
-- insight: before an agent reasons about a web action, messy HTTP/fetch/API/UI
-  events should be compiled into one canonical semantic event stream, then
-  checked against temporal safety rules
-- why not merely engineering: this defines the trusted compiler from web
-  protocol reality to agent-visible state; the contribution is sound event
-  semantics and monitorability, not a proxy feature
-- transfer: verified parsers/serializers, request-smuggling defenses, session
-  types, temporal logic, runtime verification, vector-clock monitors
-- why now: the scout report notes current work on HTTP semantic discrepancies,
-  L7 fast-path policy enforcement, and temporal monitors for agents; these fit
-  the same trusted-boundary story as Verus/Vest
-- sketch: build a small L7 proxy/monitor that normalizes method, authority,
-  body length, cookies, auth, side-effect class, and commit id; enforce rules
-  such as approve-before-submit, snapshot-before-edit,
-  fresh-evidence-before-answer, and no-duplicate-commit
-- anchors: HDiff, HTTP Garden, HTTP Request Synchronization, EverParse,
-  PulseParse, L7FP, Agent-C, Formal Methods Meet LLMs, Verus/Vest
-
-### 🤖 10. web dependency atoms for receipt and crawl invalidation
-
-- insight: the web-agent version of cache invalidation is knowing which pages,
-  scripts, APIs, crawls, generated artifacts, and receipts become stale when one
-  web dependency changes
-- why not merely engineering: this is a causal model of web evidence validity,
-  not a recrawl scheduler; it predicts which claims/actions/scripts need repair
-- transfer: dependency graphs, incremental computation, active automata
-  learning, dynamic web exploration, model-based testing, causal graphs
-- why now: local `web_atoms.md` already names groups of URLs that change
-  together; the scout report connects this to Web Dependency Analyzer, WebREC,
-  Browsertrix, and crawler repair
-- sketch: derive atom graphs from CDP traces, crawls, resource dependencies,
-  site maps, and deployment metadata; when an atom changes, invalidate linked
-  receipts/scripts/tests and trigger targeted recrawl or revalidation
-- anchors: `web_atoms.md`, Web Dependency Analyzer, WebREC, Browsertrix, Fable,
-  dynamic web exploration state-flow graphs, active model learning
+- 🤖 surprising question: in multi-hour coding, proof, and web tasks, is the
+  dominant failure mode missing knowledge, or losing live obligations such as
+  user constraints, tests to run, source pointers, proof laws, pending receipts,
+  and safety conditions?
+- 🤖 intuition being tested: larger context and better summarization solve agent
+  memory; the competing view is that memory should be judged like a correctness
+  system where no live obligation may be dropped.
+- 🤖 what evidence would convince people: seeded-obligation studies show raw
+  long context and generic summaries forget obligations that predict real task
+  failures; an obligation ledger reduces unsupported claims, missed tests,
+  broken proof assumptions, and unsafe web actions under resume/compaction.
+- 🤖 why current literature does not already answer it: CAT, PAACE, and
+  ContextBudget treat context as callable, plan-aware, or budgeted state, while
+  VeruSAGE, KVerus, and Verus-SpecGym study proof-agent capability. They do not
+  make obligations the measurable semantic object that must survive context
+  management and proof repair.
+- 🤖 minimal system/measurement needed only as an instrument: a small obligation
+  ledger with source links and check status, compaction/resume interventions,
+  and a task suite spanning repository edits, Verus-style proof work, and web
+  evidence tasks.
+- 🤖 exciting pitch: find out whether agent memory should be evaluated like
+  garbage collection: every live obligation must still be reachable.

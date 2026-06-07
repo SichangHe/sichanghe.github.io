@@ -321,5 +321,6 @@ paper repository ACL denies writes to the agent account.
   influenced privileged sinks. This connects prompt-injection defense to
   interpretable trajectory analysis.
 
-See `literature_directions.md` for the full fields: insight, research reason,
-SE/PL/Sys transfer, why now, evaluation sketch, and anchors.
+🤖 See `literature_directions.md` for the question-first fields: surprising
+question, intuition tested, convincing evidence, literature gap, minimal
+instrument, and pitch.

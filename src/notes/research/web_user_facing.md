@@ -94,7 +94,8 @@ ideas:
   stale evidence. For generated artifacts, generate sites, attach obligations,
   run security checks, and measure review/repair quality.
 
-See `literature_directions.md` direction 3 and direction 6 for full anchors.
+🤖 See `literature_directions.md` candidate 4 and candidate 5 for the
+question-first versions of these ideas.
 
 ## Web Dependency
 
