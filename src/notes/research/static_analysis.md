@@ -192,10 +192,67 @@
     Gerwin Klein, Gernot Heiser, Gabriele Keller, SLE, 2022
     - instead of ad-hoc QuickCheck properties,
         test refinement relation against executable spec
-    - sells PBT as a continuum toward full proof, not all-or-nothing
-    - nice point: tests survive code evolution better than proofs
-    - found bugs in BilbyFs impl + spec;
-        also a communication medium between systems devs and proof engineers
+    - 🤖 core property shape:
+        if abstract input `ia` relates to concrete input `ic`,
+        then concrete output must relate to some allowed abstract output
+        - deterministic spec: `R_X ia ic => R_Y (abs ia) (conc ic)`
+        - nondet spec: `R_X ia ic => exists oa in abs ia. R_Y oa (conc ic)`
+        - their `corres` helper is basically this existential over
+            spec results
+    - 🤖 architecture mirrors proof stack
+        - hand-written Haskell executable spec plays the role of
+            Isabelle/HOL functional spec
+        - Cogent compiler emits Haskell shallow embedding of implementation
+        - C ADTs are tested through Haskell FFI or replaced by mocks
+        - full binary-vs-spec testing is possible but usually too much
+            state-space mismatch for their file-system setting
+    - 🤖 important trick: generate one middle-ground test value and project it
+        to abstract + concrete representations
+        - avoids two independent generators where most pairs fail
+            the input-refinement precondition
+        - domain-specific generators matter bc refinement properties have
+            strong premises
+    - 🤖 nondeterminism is handled by finite executable nondeterminism
+        or by explicit oracle inputs
+        - example: media / allocator failures become either small `NonDet`
+            result sets or an oracle threaded into mocks
+        - can test oracle-style spec and nondet spec against each other by
+            enumerating finite oracles and comparing result sets
+    - 🤖 mocks are deliberately partial but observationally sufficient
+        - e.g. replace `ostore_read` with a map lookup + error oracle because
+            `fsop_readpage` only observes returned object or error code
+        - functional specs of lower modules become mocks for higher modules
+    - 🤖 modular testing caught bugs whole-system tests missed
+        - WordArray C code had invalid-input / corner-case bugs hidden by
+            current callers
+        - specs had overly specific assumptions that were valid only for
+            verified clients, not for the reusable library
+        - `fsop_readpage` testing exposed missing error cases in Haskell spec,
+            which reflected a bug in the Isabelle/HOL spec
+    - 🤖 sells PBT as a continuum toward full proof, not all-or-nothing
+        - WordArray went from axiomatized → PBT-tested → formally verified
+        - tests survive code evolution better than proofs when spec stays same
+    - 🤖 design lesson: verification-friendly and PBT-friendly design coincide
+        - keep state explicit, small, and relevant
+        - avoid huge global states where random variation is mostly ignored
+        - executable specs are a communication interface between systems devs
+            and proof engineers
+    - 🤖 for Verus + assumptions: direct analogue is assumption-backed boundary
+        laws
+        - executable model / Rust reference impl / proptest generator tests
+            the law before Verus proof spends it
+        - `assume` should be represented as a named law with evidence, not
+            hidden in proof code
+        - useful for std / OS / hardware / crate boundaries Verus cannot or
+            should not fully verify
+        - proof receipt should link each proved claim to the laws it spent and
+            each law to PBT/fuzz/differential/runtime evidence
+        - generators should be law-aware, not pure type-aware, or most cases
+            will miss the preconditions where the law is meaningful
+        - oracle/nondet split maps nicely to assumptions about alloc failure,
+            clocks, scheduling, I/O, caches, retries, DB races
+        - if a bug falsifies a claim, walk claim → receipt → spent laws →
+            weakest evidence / broadest scope / recent boundary change
 
 ## Aeneas
 
@@ -400,3 +457,21 @@ directory. The available OCR convention is `ocr_all.py`, which runs
 `marker_single` over root PDFs not listed in `done_ocr.txt`; it was not practical
 or safe to run because the repository already has unrelated uncommitted OCR
 outputs and the agent cannot write new root PDFs.
+
+## 🤖 Agent-added verification transfer (2026-06-07): web/L7 trusted boundary
+
+- 🤖 Best transfer: verify small boundary components that decide what a web
+  agent observed or was authorized to do: URL/header parsers, request/response
+  normalizers, policy monitors, receipt validators, and transaction state
+  machines.
+- 🤖 Why this is research: the verified code becomes the trust base for agent
+  evidence and action closure, so the contribution is not "use Verus", but
+  defining which boundary claims must be sound before receipts, taint, or L7
+  contracts mean anything.
+- 🤖 Practical shape: combine Verus claims with named laws for unverified
+  environment behavior, then back each law with fuzzing, property tests,
+  differential tests, or runtime monitors. Bugs should trace from failed claim
+  to spent laws and weakest evidence.
+- 🤖 Anchors: VeruSAGE and KVerus for repo-level proof-agent state of the art;
+  Vest for verified parsers/serializers; Atmosphere/VeriSMo for practical
+  systems verification; PBT-as-verification-continuum for law evidence.

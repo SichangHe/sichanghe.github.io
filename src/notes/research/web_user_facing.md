@@ -76,6 +76,26 @@ ideas:
 - ranking based on user feedback
 - measuring retrieval of Perplexity, ChatGPT, etc. in search mode
 
+## 🤖 Agent-added generated/synthetic web directions (2026-06-07)
+
+- 🤖 Source-critical agents: search and answer agents should model source
+  ecology, not just rank pages. Live pages, archives, AI-generated pages,
+  answer-engine summaries, consent-gated pages, and logged-in pages carry
+  different evidence status.
+- 🤖 Generated web artifacts: generated sites/components should be treated as
+  executable supply-chain claims with provenance, security obligations, tests,
+  and runtime monitors. This is more useful than another AI-text detector.
+- 🤖 Why now: `Retrieval Collapse` reports synthetic sources can dominate
+  retrieval exposure; LLM-generated web-app studies report exploitable auth,
+  session, validation, XSS, upload, and HTTP-header failures; AI SEO/content
+  spam changes what web-grounded agents see.
+- 🤖 Evaluation sketch: crawl a volatile topic daily, classify source types,
+  archive evidence, and test whether agent answers shift toward synthetic or
+  stale evidence. For generated artifacts, generate sites, attach obligations,
+  run security checks, and measure review/repair quality.
+
+See `literature_directions.md` direction 3 and direction 6 for full anchors.
+
 ## Web Dependency
 
 - [Poster: Web Dependency Analyzer to Identify Resource Dependencies and

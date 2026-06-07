@@ -302,3 +302,24 @@ papers such as AgentOccam, BrowserAgent, Branch-and-Browse, Beyond Browsing,
 APISENSOR, and internal-API work. Missing high-value PDFs for BrowserGym,
 WorkArena, and VisualWebArena could not be downloaded by this agent because the
 paper repository ACL denies writes to the agent account.
+
+## 🤖 Agent-added broad directions (2026-06-07): beyond receipts-as-infra
+
+- 🤖 Causal receipts: keep the flight-recorder idea, but frame it as causal
+  semantics for delegated action. The interesting question is which rendered
+  evidence, API response, source label, or authority check changes whether an
+  action is safe and complete.
+- 🤖 L7 transaction contracts: treat browser clicks and API calls as typestate
+  transitions with preconditions, side effects, idempotence, rollback, commit
+  points, and authority. This makes hybrid UI/API work more than reverse
+  engineering.
+- 🤖 Semantic efficiency: prune DOM/resources/scripts only when the removed state
+  cannot affect the task postcondition. This transfers program slicing and
+  dependency analysis into web-agent efficiency.
+- 🤖 Taint-aware interpretability: label observations by source class
+  (user/site/ad/hidden/private/archive/API) and audit whether untrusted sources
+  influenced privileged sinks. This connects prompt-injection defense to
+  interpretable trajectory analysis.
+
+See `literature_directions.md` for the full fields: insight, research reason,
+SE/PL/Sys transfer, why now, evaluation sketch, and anchors.

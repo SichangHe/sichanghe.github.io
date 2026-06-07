@@ -1,5 +1,7 @@
 # Literature directions: verified Rust, browser agents, OPC
 
+(human TODO: delete this. Agent wrote this without asking for permission.)
+
 This is a map, not a full survey. Sources consulted: local notes
 `research/static_analysis.md` and `research/browser_agent.md`, the local paper
 collection `/hdd1/sichanghe/paper_collection`, and web search results available
@@ -441,3 +443,202 @@ practical because new PDFs could not be written and existing unrelated OCR state
 is already dirty.
 
 See also: [agent_memory](agent_memory.md) for the OPC-specific related-work map.
+
+## 🤖 Broad SE/PL/Sys transfer ideas (2026-06-07)
+
+This is a brainstorm, not a single recommended bet. The common question is:
+what new capability appears when web/agent systems expose hidden environment
+state as typed, testable, and reviewable objects?
+
+### 🤖 1. causal receipts for delegated web work
+
+- insight: receipts become interesting when they let us ask which observation,
+  authority check, or postcondition caused the agent to be trustworthy
+- why not merely engineering: the research object is a semantics for delegated
+  action support: evidence, authority, closure, and counterfactual replay
+- transfer: W3C PROV/C2PA provenance, dynamic slicing, runtime verification,
+  transaction postconditions, ST policy scoring
+- why now: AgentRewardBench evaluates "web agent trajectories";
+  ST-WebAgentBench's latest arXiv version is 2026-06-04 and says task success
+  alone ignores whether agents act "safely"; WASP and NeuroTaint show prompt
+  injection and semantic influence are live problems
+- sketch: instrument BrowserGym/Playwright/browser-use to build receipt graphs
+  for claims and actions; ablate evidence nodes; score claim support,
+  authority correctness, postcondition closure, unsafe-action blocks, and
+  replayability
+- anchors: AgentRewardBench, ST-WebAgentBench, WASP, NeuroTaint, WebSuite,
+  W3C PROV, C2PA
+
+### 🤖 2. L7 transaction contracts for browser/API agents
+
+- insight: the missing web-agent interface is not a better button selector; it
+  is a contract saying what a click/API call may change, when it commits, and
+  how authority is checked
+- why not merely engineering: this asks for a typestate/session-type view of
+  web workflows, where HTTP/API/UI steps are checked as state transitions
+- transfer: session types, typestate, object-capability authority, OpenAPI /
+  AsyncAPI contracts, runtime monitors, API contract testing
+- why now: Beyond Browsing reports API/hybrid agents outperform browser-only
+  agents; Internal APIs argues the human-browser interface is a mismatch;
+  APISENSOR reconstructs APIs from runtime traffic; OASBuilder and WAPIIBench
+  show API specs are now agent-facing but still error-prone
+- sketch: annotate or infer contracts for self-hosted apps; check UI/API
+  equivalence, preconditions, side effects, idempotence, rollback, and commit
+  evidence; evaluate duplicate actions, wrong authority, and semantic drift
+- anchors: Beyond Browsing, Internal APIs, APISENSOR, OASBuilder, WAPIIBench,
+  CommaSuite, ST-WebAgentBench
+
+### 🤖 3. generated web artifacts as executable supply-chain claims
+
+- insight: an LLM-generated website is not just generated text or code; it is a
+  deployed bundle of executable claims about authentication, sessions, input
+  handling, provenance, and content trust
+- why not merely engineering: the paper question is whether provenance plus
+  executable obligations changes review, deployment, and repair of generated
+  artifacts
+- transfer: SLSA/in-toto/Sigstore supply-chain receipts, C2PA provenance,
+  static/dynamic web security testing, property-based tests, policy-as-code
+- why now: one study analyzed "2,500 GPT-4 generated PHP websites" and found
+  26% had an exploitable web vulnerability; Hidden Risks reports failures in
+  auth, sessions, validation, and HTTP headers; Retrieval Collapse frames
+  synthetic web content as an ecosystem risk
+- sketch: generate small sites/components, attach generation provenance,
+  security obligations, tests, scans, and runtime monitors; measure exploitable
+  flaws, review time, patch stability, and whether provenance survives copying
+- anchors: LLMs in Web Development, Hidden Risks of LLM-Generated Web
+  Application Code, Retrieval Collapse, Asleep at the Keyboard, SLSA, in-toto,
+  Sigstore/Rekor, C2PA
+
+### 🤖 4. assumption-carrying verification for web/L7 boundary code
+
+- insight: verification is most valuable at boundaries where small code decides
+  what the agent saw or was allowed to do: URL/header parsers, API normalizers,
+  auth checks, receipt validators, and transaction state machines
+- why not merely engineering: verified boundary code defines the trusted base
+  for agent evidence; tests alone cannot cover adversarial inputs and state
+  transitions that later become receipts
+- transfer: Verus-style systems verification, proof receipts, law-backed
+  assumptions, property-based testing as a continuum toward proof, model
+  checking for protocol state
+- why now: VeruSAGE studies 849 proof tasks from 8 real Verus systems; KVerus
+  identifies a "Semantic-Structural Gap" in repo-level proof; Vest and
+  Atmosphere show verified Rust can target practical systems components
+- sketch: implement one critical Rust proxy/receipt module with Verus claims;
+  keep unverified environment assumptions as named laws with fuzz/PBT/runtime
+  evidence; inject malformed headers, replayed requests, stale receipts, and
+  broken idempotence to test debugging value
+- anchors: Verus, VeruSAGE, KVerus, Vest, Atmosphere, VeriSMo,
+  Property-Based Testing: Climbing the Stairway to Verification
+
+### 🤖 5. semantic efficiency for web agents
+
+- insight: efficiency should mean the agent loads, reads, and acts on only the
+  page/API/resource state that can affect the task postcondition
+- why not merely engineering: this defines a semantic minimality problem over
+  browser execution, not just a smaller prompt or faster scraper
+- transfer: program slicing, dynamic dependency analysis, partial evaluation,
+  superfluous-JS measurement, active context compression, cost-aware scheduling
+- why now: Prune4Web says real DOMs often reach "10,000 to 100,000 tokens";
+  AgentOccam shows simple observation/action alignment is strong; Internal APIs
+  and Swiftor-style proposals push the cost problem below the prompt layer
+- sketch: use CDP traces to infer resource/script/DOM dependencies for a task;
+  compare full browser, DOM pruning, resource pruning, generated scripts, and
+  API routes on task success, false-negative loss, tokens, CPU, bytes, and
+  unsafe blind spots
+- anchors: Prune4Web, AgentOccam, Internal APIs, APISENSOR, Swiftor proposal,
+  superfluous-JS web performance work, ContextBudget
+
+### 🤖 6. source-critical web agents under synthetic-content drift
+
+- insight: web agents need a source ecology model: live pages, archived pages,
+  AI-generated pages, paywalled pages, consent-gated pages, and answer-engine
+  summaries are different evidence types
+- why not merely engineering: the research asks how synthetic content and web
+  drift change the epistemology of retrieval-backed agents
+- transfer: IR measurement, causal exposure analysis, web archiving,
+  crawling-under-login, temporal provenance, source trust classification
+- why now: Retrieval Collapse reports that synthetic content can dominate
+  retrieval exposure; local PB/news notes show stale and title-only evidence can
+  change decisions; Browsertrix/WACZ/Memento make replayable web evidence more
+  practical
+- sketch: crawl volatile topics daily with live browser, source-specific
+  extractors, and WACZ archives; evaluate temporal precision, source diversity,
+  synthetic exposure, stale suppression, claim support, and human review time
+- anchors: Retrieval Collapse, Browsertrix, WACZ, Memento/RFC 7089, Heritrix,
+  AI-generated text/content measurement notes, PB news-quality work logs
+
+### 🤖 7. taint-aware interpretability for agent safety
+
+- insight: "why did the agent do that" is a source-to-sink question: did
+  untrusted page text, hidden DOM, ads, memory, or retrieved snippets influence
+  a privileged tool/action?
+- why not merely engineering: it creates an empirical account of semantic
+  influence, not a prettier trace viewer
+- transfer: information-flow control, dynamic taint tracking, causal tracing,
+  provenance graphs, source/sink policy enforcement, memory taint
+- why now: NeuroTaint argues traditional taint analysis fails for LLMs because
+  influence can be semantic, causal, and persistent; WASP shows realistic
+  prompt injections still deceive agents; dark-pattern work gives behavioral
+  manipulation cases
+- sketch: compile browser observations with source labels, log prompts/actions,
+  audit traces offline for source-to-sink influence, and enforce sink policies
+  for payments, account edits, private data, and generated content
+- anchors: NeuroTaint, WASP, WebInject, dark-pattern web-agent studies,
+  AgentRewardBench, ST-WebAgentBench
+
+### 🤖 8. obligation memory for long-running SE/web agents
+
+- insight: agents fail by losing obligations, not just facts: user constraints,
+  open claims, tests to run, source pointers, proof laws, pending receipts, and
+  safety conditions
+- why not merely engineering: memory becomes a resource-management problem with
+  correctness obligations and measurable loss, not a summarization feature
+- transfer: garbage collection, cache eviction, checkpointing, typestate,
+  provenance-preserving compaction, budgeted sequential decision making
+- why now: CAT frames context as a callable tool; PAACE is plan-aware;
+  ContextBudget treats context as a "sequential decision problem";
+  Complexity Trap shows simple masking can beat heavier summarization
+- sketch: maintain an obligation ledger across coding, verification, and web
+  research tasks; compaction may compress text only if obligations retain source
+  links and check status; evaluate task success, unsupported claims, forgotten
+  tests, cost, and recovery after resume
+- anchors: CAT, PAACE, ContextBudget/BACM, Complexity Trap, ReSum, Acon, local
+  agent_memory and manager compaction work logs
+
+### 🤖 9. verified L7 normalizers and temporal monitors
+
+- insight: before an agent reasons about a web action, messy HTTP/fetch/API/UI
+  events should be compiled into one canonical semantic event stream, then
+  checked against temporal safety rules
+- why not merely engineering: this defines the trusted compiler from web
+  protocol reality to agent-visible state; the contribution is sound event
+  semantics and monitorability, not a proxy feature
+- transfer: verified parsers/serializers, request-smuggling defenses, session
+  types, temporal logic, runtime verification, vector-clock monitors
+- why now: the scout report notes current work on HTTP semantic discrepancies,
+  L7 fast-path policy enforcement, and temporal monitors for agents; these fit
+  the same trusted-boundary story as Verus/Vest
+- sketch: build a small L7 proxy/monitor that normalizes method, authority,
+  body length, cookies, auth, side-effect class, and commit id; enforce rules
+  such as approve-before-submit, snapshot-before-edit,
+  fresh-evidence-before-answer, and no-duplicate-commit
+- anchors: HDiff, HTTP Garden, HTTP Request Synchronization, EverParse,
+  PulseParse, L7FP, Agent-C, Formal Methods Meet LLMs, Verus/Vest
+
+### 🤖 10. web dependency atoms for receipt and crawl invalidation
+
+- insight: the web-agent version of cache invalidation is knowing which pages,
+  scripts, APIs, crawls, generated artifacts, and receipts become stale when one
+  web dependency changes
+- why not merely engineering: this is a causal model of web evidence validity,
+  not a recrawl scheduler; it predicts which claims/actions/scripts need repair
+- transfer: dependency graphs, incremental computation, active automata
+  learning, dynamic web exploration, model-based testing, causal graphs
+- why now: local `web_atoms.md` already names groups of URLs that change
+  together; the scout report connects this to Web Dependency Analyzer, WebREC,
+  Browsertrix, and crawler repair
+- sketch: derive atom graphs from CDP traces, crawls, resource dependencies,
+  site maps, and deployment metadata; when an atom changes, invalidate linked
+  receipts/scripts/tests and trigger targeted recrawl or revalidation
+- anchors: `web_atoms.md`, Web Dependency Analyzer, WebREC, Browsertrix, Fable,
+  dynamic web exploration state-flow graphs, active model learning

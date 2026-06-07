@@ -514,6 +514,30 @@ functionality should be provided at a layer only if it can be complete there
 - empty line `\r\n`
 - content
 
+## 🤖 Agent-added L7 systems research (2026-06-07)
+
+- 🤖 Insight: L7 protocols should expose machine-checkable transaction meaning
+  for agents: preconditions, authority, side effects, idempotence, rollback,
+  commit points, and postcondition evidence.
+- 🤖 Why not merely engineering: this turns HTTP/API/browser workflows into a
+  state-machine and contract problem, closer to session types and runtime
+  verification than to "add an API wrapper".
+- 🤖 Transfer: OpenAPI/AsyncAPI contracts, typestate/session types, object
+  capabilities, runtime monitors, API contract testing, and model checking.
+- 🤖 Why now: API/hybrid web agents can outperform browser-only agents, runtime
+  traffic API discovery is improving, and generated API integrations still make
+  endpoint/argument/sequence errors.
+- 🤖 Sketch: build a small L7 proxy/monitor that observes UI and API traffic,
+  reconstructs transaction contracts, checks UI/API equivalence, and blocks
+  duplicate commits or missing authority evidence.
+- 🤖 Stronger scout variant: verify a narrow HTTP/fetch normalizer before the
+  contract layer. The trusted core should canonicalize method, authority, body
+  length, transfer coding, cookies, side-effect class, and commit id, then feed
+  temporal monitors such as approve-before-submit and no-duplicate-commit.
+- 🤖 Anchors: Beyond Browsing, Internal APIs, APISENSOR, OASBuilder, WAPIIBench,
+  CommaSuite, ST-WebAgentBench, HDiff, HTTP Garden, HTTP Request
+  Synchronization, L7FP.
+
 # remote procedure call (RPC)
 
 client request & server respond (minimum 2 transmission)
