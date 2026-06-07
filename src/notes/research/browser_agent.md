@@ -1,6 +1,41 @@
 # Browser Agent
 
-(ones w/o sub-bullets are not reviewed yet)
+## Reading guide
+
+- read first
+    - `Beyond Browsing`, `Internal APIs`, `APISENSOR`
+        - strongest systems line: use APIs when available,
+            discover them from traffic when not
+    - `Building Browser Agents`, dark-pattern paper
+        - main safety lesson: open-ended browser control needs
+            policy, provenance, and irreversible-action guards
+    - `AgentOccam`
+        - best simple baseline; observation/action alignment beats
+            lots of prompt scaffolding
+- read second
+    - `Branch-and-Browse`, then `WebOperator`
+        - branching/search line; useful ideas,
+            but weaker as a standalone research direction
+    - `Towards Specialized Web Agents`, `WebRL`, `WebCoach`
+        - training/data/memory line; useful if building learned agents
+    - `Prune4Web`
+        - low-level DOM grounding idea
+- skim only
+    - `WebVoyager`, `AutoWebGLM`
+        - historical baselines
+    - `BrowserAgent`, `LongHorizonUI`
+        - useful mostly for browse-for-info or GUI horizon details
+    - Perplexity adoption paper
+        - product / usage evidence, not algorithmic
+- lowest value for this direction
+    - `Super-Apps`, `Intelligent AI Delegation`, `Affordance`,
+        `Repo2Run`
+        - framing or adjacent infra, not core browser-agent systems work
+
+Main takeaway: do not build another browser-only WebArena scaffold. The better
+research direction is a hybrid browser/API system that records evidence,
+discovers callable routes, blocks unsafe actions, and evaluates transaction
+closure rather than task success alone.
 
 - [WebVoyager: Building an End-to-End Web Agent with
     Large Multimodal Models](https://arxiv.org/abs/2401.13919), Hongliang He,
@@ -114,6 +149,7 @@
         filters / merges actions
     - paper claims strong WebArena results; read mainly as
         a tree-search integration paper
+    - read after `Branch-and-Browse`, not before the API / safety papers
 - [LongHorizonUI: A Unified Framework for
     Robust long-horizon Task Automation of
     GUI Agent](https://openreview.net/pdf?id=BK7Mk5d4WE), Bin Kang,
