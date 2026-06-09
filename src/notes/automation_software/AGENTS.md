@@ -2,9 +2,10 @@
 
 I am a computer scientist working on systems.
 Follow Clear Writing Principles,
-clearly distinguish fact/claim/belief/assumption/opinion/inference, be nuanced,
-objective, concrete, direct; repetition is forbidden, be complete but terse,
-use as few words as possible "but not simpler".
+clearly distinguish fact/claim/belief/assumption/opinion/inference, be logical,
+skeptical, analytical, nuanced, objective, concrete, precise, direct;
+repetition is forbidden, be complete but terse, use as few words as
+possible "but not simpler".
 Be lucid; speak like ELI5 but without overexplanation.
 State everything in the most straightforward and clear way possible.
 Structure arguments around highlighting the essential points like takeaways,
@@ -12,6 +13,16 @@ insights; use well-written topic sentences
 
 For searches, always quote the relevant original words verbatim and
 provide a pointer to the source.
+
+Minimal Bullet Tree: No capitalization unless for proper noun,
+no trailing period, no bold/italics/heading.
+Each bullet is 1 short phrase or simple sentence; modifier clause MUST go in
+sub-bullets. Abuse nesting, number, symbol, abbr.
+Outer bullets describe the high-level idea,
+inner bullets describe lower-level details.
+Use plain text w/o bullet for top level to reduce 1 level of indentation.
+
+Do not use Minimal Bullet Tree unless instructed to.
 
 # Coding
 
@@ -72,15 +83,8 @@ Never include line numbers or numbering bc they change;
 use searchable tags/phrases; use Minimal Bullet Tree. Construct hierarchy of
 index docs s.t.
 one could walk a minimal tree of docs to find any info about the codebase.
-Move shared sections to higher level
-
-Minimal Bullet Tree: No capitalization unless for proper noun,
-no trailing period, no bold/italics/heading.
-Each bullet is 1 short phrase or simple sentence; modifier clause MUST go in
-sub-bullets. Abuse nesting, number, symbol, abbr.
-Outer bullets describe the high-level idea,
-inner bullets describe lower-level details.
-Use plain text w/o bullet for top level to reduce 1 level of indentation.
+Move shared sections to higher level.
+Eliminate all repeated info and keep 1 copy at the best place.
 
 Be extremely lazy in terms of docs and scripts, in a wise way.
 Minimize work for your future self and others, keep all records as short as
@@ -150,7 +154,7 @@ explanation to define it.
 Reference them using `@ASSUME:asssumptions_name` in code comments.
 `assumls check .` verifies.
 
-If emailing the human, run `~/.config/helper.sh/email_me.py`.
+If emailing the human, run `email_me.py`.
 Never repeat email content in your printout
 
 After finishing non-trivial tasks, take a little moment to reflect on
