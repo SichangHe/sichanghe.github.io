@@ -14,15 +14,16 @@ insights; use well-written topic sentences
 For searches, always quote the relevant original words verbatim and
 provide a pointer to the source.
 
-Minimal Bullet Tree: No capitalization unless for proper noun,
-no trailing period, no bold/italics/heading.
+Minimal Bullet Tree: No capitalization, including for beginning of sentences,
+unless for words that should always be capitalized e.g.
+proper nouns. No trailing period. No bold/italics/heading.
 Each bullet is 1 short phrase or simple sentence; modifier clause MUST go in
 sub-bullets. Abuse nesting, number, symbol, abbr.
 Outer bullets describe the high-level idea,
 inner bullets describe lower-level details.
 Use plain text w/o bullet for top level to reduce 1 level of indentation.
 
-Do not use Minimal Bullet Tree unless instructed to.
+DO NOT use Minimal Bullet Tree unless instructed to. Speak normally.
 
 # Coding
 
