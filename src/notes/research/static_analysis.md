@@ -35,6 +35,30 @@
     - reward hacking a big issue;
         critique phase blocks things like `assume(false)`
     - around 45% of DafnyBench translated to verified/aligned Verus programs
+- [Goedel-Architect: Streamlining Formal Theorem Proving with Blueprint
+    Generation and Refinement](https://arxiv.org/abs/2606.06468),
+    Jui-Hui Chung, Ziyang Cai, Zihao Li, Qishuo Yin, Rohit Agarwal,
+    Simon Park, Rodrigo Porto, Narutatsu Ri, Ziran Yang, Shange Tang,
+    Xingyu Dang, Hongzhou Lin, Mengdi Wang, Danqi Chen, Chi Jin,
+    Liam H Fowl, Sanjeev Arora, arXiv, 2026
+    - Lean 4, not Verus, but useful agentic proof architecture paper
+    - core object is global blueprint graph:
+        definitions / lemmas / declared deps → target theorem
+    - generator emits typed Lean skeleton and checks parse / type /
+        acyclic / reachable graph through LeanArchitect
+    - prover closes lemma nodes in parallel using only declared parents,
+        Lean compiler feedback, and Mathlib retrieval
+    - refinement rewrites whole blueprint from failed nodes
+        - false sub-lemma can become formally negated diagnostic
+        - hard sub-lemma emits forfeit / helper-lemma decomposition
+        - solved nodes are reused if signature / deps stay same
+    - result with open DeepSeek-V4-Flash:
+        99.2% pass@1 MiniF2F-test, 75.6% pass@1 PutnamBench
+    - with natural-language proof seed:
+        100% MiniF2F-test, 88.8% PutnamBench, 4/6 IMO 2025,
+        11/12 Putnam 2025, 3/6 USAMO 2026
+    - cost claim: PutnamBench pass@1 \$294 total / \$0.44 per problem,
+        vs Hilbert ~\$163k / ~\$244
 - [AutoVerus: Automated Proof Generation for
     Rust Code](https://arxiv.org/abs/2409.13082), Chenyuan Yang, Xuheng Li,
     Md Rakib Hossain Misu, Jianan Yao, Weidong Cui, Yeyun Gong,
