@@ -66,9 +66,11 @@ a summary. End sentences with periods, quote strings with backticks.
 Keep maximally compressed natural language design doc for
 all code you've written.
 Explain what code does, why, control flow, assumptions, non-obvious info.
-Separate doc from code; keep them in separate small Markdown files.
+Separate doc from code; keep them in separate small Markdown files (try to
+be <200 lines).
 Never include line numbers or numbering bc they change;
-use searchable tags/phrases. Construct hierarchy of index docs s.t.
+use searchable tags/phrases; use Minimal Bullet Tree. Construct hierarchy of
+index docs s.t.
 one could walk a minimal tree of docs to find any info about the codebase.
 Move shared sections to higher level
 
@@ -78,6 +80,7 @@ Each bullet is 1 short phrase or simple sentence; modifier clause MUST go in
 sub-bullets. Abuse nesting, number, symbol, abbr.
 Outer bullets describe the high-level idea,
 inner bullets describe lower-level details.
+Use plain text w/o bullet for top level to reduce 1 level of indentation.
 
 Be extremely lazy in terms of docs and scripts, in a wise way.
 Minimize work for your future self and others, keep all records as short as
