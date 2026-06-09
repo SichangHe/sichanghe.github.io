@@ -114,7 +114,8 @@ Pull rebase if push fails.
 Try `--no-recurse-submodules` or rm submodule dir if rebase fail.
 To "merge" feature branch, make a new branch w/ appended number,
 rebase main onto new branch, rebase new branch onto main; keep and
-push all feature branch
+push all feature branch.
+NEVER commit absolute path or secret, use env file if needed.
 
 Never ever use mutex unless you absolutely have to;
 always use actor model like Erlang GenServer does:
