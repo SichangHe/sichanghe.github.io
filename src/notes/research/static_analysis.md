@@ -53,8 +53,9 @@
     - prover closes lemma nodes in parallel using only declared parents,
         Lean compiler feedback, and Mathlib retrieval
     - refinement rewrites whole blueprint from failed nodes
-        - false helper lemma: strengthen hypotheses, weaken conclusion,
-            fix representation, drop node, or rewire dependents
+        - false helper lemma: formal negation / counterexample diagnostic,
+            then strengthen hypotheses, weaken conclusion, fix representation,
+            drop node, or rewire dependents
         - too-hard helper lemma: emit structured forfeit with attempts,
             stall point, and smaller helper-lemma decomposition
         - solved nodes are reused only while signature and parent deps stay same
