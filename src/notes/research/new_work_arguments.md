@@ -26,6 +26,18 @@ for each change, the system records claims proved, helper lemmas used, boundary
 assumptions spent, tests or monitors supporting those assumptions, and which
 future changes invalidate the receipt.
 
+- 🤖 Goedel-Architect suggests a useful receipt shape:
+  nodes, declared deps, proof status, false-vs-hard diagnosis, repair history,
+  solved-node reuse, and invalidation rules.
+  - caveat: its evidence is Lean 4 competition-math theorem proving, not
+    Rust / Verus systems verification.
+  - repository-native proof agents need extra assumption and boundary nodes,
+    because systems proofs do not have only clean closed statements.
+  - each refinement should record what failed, whether a helper lemma was false
+    or too hard, what changed, and which solved nodes were reused.
+  - receipt validation should require parse/type success, acyclic reachable
+    graph, resolved deps, and preserved target theorem/spec signature.
+
 Why this is beyond related work: `static_analysis.md` already notes that
 VeruSAGE/KVerus move the frontier from toy loop invariants to repository context,
 helper-lemma discovery, and proof maintainability. The new argument is that real

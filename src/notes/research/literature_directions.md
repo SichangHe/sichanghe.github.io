@@ -108,6 +108,13 @@ Google Scholar / Semantic Scholar.
   context retrieval, not extracted one-file tasks.
 - Spec/helper discovery: infer missing helper lemma signatures and abstraction
   boundaries rather than assuming the human supplies them.
+- 🤖 blueprint-style proof planning: keep a repository-native dependency graph
+  of target specs, helper lemmas, declared deps, proof status, diagnoses, and
+  refinement actions.
+  - Goedel-Architect is only an architecture signal here:
+    Lean 4 competition-math proving, not Rust / Verus systems verification.
+  - adapt it by adding boundary-assumption nodes, module-context nodes, and
+    verifier-diagnostic provenance.
 - Proof maintainability: measure proof minimality, brittleness under code change,
   and reviewability, not just verifier success.
 - Systems target: pick one Rust systems component where formal verification is
@@ -136,8 +143,13 @@ Google Scholar / Semantic Scholar.
 
 - Can an agent discover the right Verus helper lemmas and abstraction functions
   from a repository without task extraction?
+- 🤖 Can a proof agent distinguish false helper lemmas from merely too-hard
+  helper lemmas, then update the global proof plan instead of only retrying the
+  local failed node?
 - Can proof-generation systems optimize for proof maintainability under realistic
   code churn?
+- 🤖 Can proof receipts reuse solved nodes safely by invalidating dependents when
+  signatures, declared deps, or boundary assumptions change?
 - Can static analysis rank proof obligations and retrieve only the context that
   materially changes verifier success?
 
