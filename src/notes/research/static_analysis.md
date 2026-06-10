@@ -41,17 +41,23 @@
     Simon Park, Rodrigo Porto, Narutatsu Ri, Ziran Yang, Shange Tang,
     Xingyu Dang, Hongzhou Lin, Mengdi Wang, Danqi Chen, Chi Jin,
     Liam H Fowl, Sanjeev Arora, arXiv, 2026
-    - Lean 4, not Verus, but useful agentic proof architecture paper
+    - 🤖 architecture signal, not a Verus systems result
+        - Lean 4 theorem proving on competition-math style benchmarks,
+            not Rust / Verus systems verification
     - core object is global blueprint graph:
         definitions / lemmas / declared deps → target theorem
     - generator emits typed Lean skeleton and checks parse / type /
         acyclic / reachable graph through LeanArchitect
+        - graph validation should also require declared deps resolve and
+            target theorem signature stays fixed
     - prover closes lemma nodes in parallel using only declared parents,
         Lean compiler feedback, and Mathlib retrieval
     - refinement rewrites whole blueprint from failed nodes
-        - false sub-lemma can become formally negated diagnostic
-        - hard sub-lemma emits forfeit / helper-lemma decomposition
-        - solved nodes are reused if signature / deps stay same
+        - false helper lemma: strengthen hypotheses, weaken conclusion,
+            fix representation, drop node, or rewire dependents
+        - too-hard helper lemma: emit structured forfeit with attempts,
+            stall point, and smaller helper-lemma decomposition
+        - solved nodes are reused only while signature and parent deps stay same
     - result with open DeepSeek-V4-Flash:
         99.2% pass@1 MiniF2F-test, 75.6% pass@1 PutnamBench
     - with natural-language proof seed:
