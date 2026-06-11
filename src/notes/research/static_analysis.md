@@ -158,6 +158,33 @@
     - RAGVERUS uses retrieval over repo context / deps / examples
     - reports large gains on old benchmarks and 27% relative gain on RVBench
 
+## 🤖 LLM + system modeling
+
+- 🤖 [SysMoBench: Evaluating AI on Formally Modeling Complex Real-World
+    Systems](https://arxiv.org/abs/2509.23130), Qian Cheng, Ruize Tang,
+    Emilie Ma, Finn Hackett, Peiyang He, Yiming Su, Ivan Beschastnikh,
+    Yu Huang, Xiaoxing Ma, Tianyin Xu, arXiv, 2026
+    - 🤖 benchmark for LLMs writing TLA+ system models from real code
+        - 🤖 11 concurrent / distributed artifacts: Asterinas locks,
+            Etcd / Redis Raft, ZooKeeper FLE, Xline CURP, PGo systems
+    - 🤖 metrics: syntax, runtime, trace conformance, invariant correctness
+        - 🤖 conformance is the important bridge from generated spec to code
+    - 🤖 result: small lock specs mostly work, but real distributed systems
+        break current LLMs
+        - 🤖 Etcd Raft basic modeling: only Claude-Sonnet-4 produced valid TLA+
+            and reached only 7.69% conformance
+    - 🤖 liveness is much harder than safety
+        - 🤖 paper reports 8.2% safety vs 41.9% liveness property violations
+- 🤖 [A. Jesse Jiryu Davis review of
+    SysMoBench](https://emptysqua.re/blog/review-sysmobench/)
+    - 🤖 useful reading: the benchmark is a spec-writing harness, not proof
+        that agents can replace formal-methods engineers
+    - 🤖 critique: task definitions already encode much expert work
+        - 🤖 defining actions and scope may be most of the human intellectual job
+    - 🤖 open question: trace conformance plus model checking proves only
+        subset relations among tested code behavior, spec behavior, and
+        invariants
+
 ## Verus applications
 
 - [Vest: Verified, Secure, High-Performance Parsing and Serialization for
