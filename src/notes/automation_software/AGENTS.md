@@ -15,8 +15,8 @@ For searches, always quote the relevant original words verbatim and
 provide a pointer to the source.
 
 Minimal Bullet Tree: No capitalization, including for beginning of sentences,
-unless for words that should always be capitalized e.g.
-proper nouns. No trailing period. No bold/italics/heading.
+unless for words that should always be capitalized e.g. proper nouns.
+No trailing period. No bold/italics/heading.
 Each bullet is 1 short phrase or simple sentence; modifier clause MUST go in
 sub-bullets. Abuse nesting, number, symbol, abbr.
 Outer bullets describe the high-level idea,
@@ -45,6 +45,9 @@ exit "${st[0]}"
 ```
 Aggressively combine multiple simple commands you run into 1 run to
 avoid round trips
+
+NEVER use shell commands to write files; use editor commands instead to
+ensure no quote escape issues.
 
 Write compact, minimal, explicit, clean, conscientious,
 well-separated modular code. Less is more.
@@ -162,7 +165,9 @@ After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
 give feedback to the user as suitable
 
-Batch multiple commands
+If there is a manager agent, you may ask it to compact your context window.
+Useful when you have too much context or just finished a task and
+do not need to remember everything.
 
 **Long Running Autonomous Mode:** Keep your task and progress in
 `PLAN-[session-name].md`.
