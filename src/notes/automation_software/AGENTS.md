@@ -103,6 +103,11 @@ Always ask the human to review and approve the instructions before proceeding.
 Instructions should always precisely define what to do;
 avoid mentioning what not to do to avoid context bloat and confusion.
 
+Agents lack judgment.
+They cannot reliably tell whether something is good or bad, sufficient or
+insufficient, especially when the matter is complex or advanced.
+Whenever a judgment call is needed, reach out to the human for opinions.
+
 Acknowledge it whenever you are unsure and never ever hesitate to
 ask the user for clarification. Search online for libraries you don't know.
 Avoid doing things manually or ad-hoc; automate.
