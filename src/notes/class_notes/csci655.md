@@ -223,6 +223,31 @@
 - metric: total computation time (TCT), page load time (PLT),
     speed index (SI, integrate \#pixel by time)
 
+## 🤖 [Serverless Runtime / Database Co-Design With Asynchronous I/O](https://doi.org/10.1145/3642968.3654821), Pekka Enberg, Sasu Tarkoma, Jon Crowcroft, Ashwin Rao, EdgeSys, 2024
+
+- 🤖 problem: edge serverless wants local SQL state
+    - 🤖 cloud DB adds network RTT
+    - 🤖 SQLite removes RTT but sync I/O blocks the app thread
+    - 🤖 blocking hurts multitenancy when tenants exceed cores
+- 🤖 idea: Limbo makes SQLite-style execution async
+    - 🤖 add Async/Await bytecode pairs for I/O opcodes
+    - 🤖 example: `Next` becomes `NextAsync` + `NextAwait`
+    - 🤖 `sqlite3_step()` can return `SQLITE_IO`
+        - 🤖 runtime does other tenant work until I/O completes
+- 🤖 architecture: query engine stays in-process, storage I/O is virtualized
+    - 🤖 runtime supplies an I/O module
+    - 🤖 prototype uses Linux `io_uring`
+    - 🤖 runtime event loop polls completions and resumes DB execution
+- 🤖 result: microbenchmark reports up to 100x lower tail latency
+    - 🤖 workload: 1-100 tenants, each runs `SELECT * FROM users LIMIT 100`
+        - 🤖 1000 times per tenant
+    - 🤖 each tenant has a separate 1 MiB DB file
+    - 🤖 SQLite uses threads; Limbo uses Rust coroutines
+- 🤖 caveat: current Limbo is preliminary
+    - 🤖 clean-slate Rust prototype
+    - 🤖 compatibility needs a shared SQLite/Limbo test suite
+    - 🤖 writes, shared DBs, scheduling, and security remain future work
+
 ## [Shielding Applications from an Untrusted Cloud with Haven](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-baumann.pdf), Andrew Baumann, Marcus Peinado, Galen Hunt, OSDI, 2014
 
 ## [Difference Engine: Harnessing Memory Redundancy in Virtual Machines](https://dl.acm.org/doi/pdf/10.1145/1831407.1831429), Diwaker Gupta, Sangmin Lee, Michael Vrable, Stefan Savage, Alex C. Snoeren, George Varghese, Geoffrey M. Voelker, Amin Vahdat, Communications of the ACM, 2010
