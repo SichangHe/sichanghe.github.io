@@ -9,6 +9,7 @@ PDFs were downloaded only from official publisher, society, PMC, or open-access 
 | ference_2017_eas_ldl_causality_ehj | Low-density lipoproteins cause atherosclerotic cardiovascular disease. 1. Evidence from genetic, epidemiologic, and clinical studies | EAS consensus | `pdf/ference_2017_eas_ldl_causality_ehj.pdf`, `text/ference_2017_eas_ldl_causality_ehj.pdf.txt` | PMC, `doi:10.1093/eurheartj/ehx144` |
 | boren_2020_eas_ldl_pathophysiology_ehj | Low-density lipoproteins cause atherosclerotic cardiovascular disease: pathophysiological, genetic, and therapeutic insights | EAS consensus | `pdf/boren_2020_eas_ldl_pathophysiology_ehj.pdf`, `text/boren_2020_eas_ldl_pathophysiology_ehj.pdf.txt` | EAS PDF, `doi:10.1093/eurheartj/ehz962` |
 | esc_eas_2025_focused_update_dyslipidaemia | 2025 Focused Update of the 2019 ESC/EAS Guidelines for dyslipidaemias | guideline update | `text/esc_eas_2025_focused_update_dyslipidaemia_esc_page.html.txt` | official ESC guideline page; official OUP article direct fetch returned 403 |
+| nla_2024_apob_consensus | Role of apolipoprotein B in the clinical management of cardiovascular risk in adults | NLA expert consensus | `text/nla_2024_apob_consensus_pubmed.txt`, `text/nla_2024_apob_consensus_page.html.txt` | NCBI E-utilities + NLA page, `doi:10.1016/j.jacl.2024.08.013` |
 | ctt_2010_intensive_ldl_lowering_lancet | Efficacy and safety of more intensive lowering of LDL cholesterol | RCT meta-analysis | `text/ctt_2010_intensive_ldl_lowering_lancet.html.txt` | PMC HTML, `doi:10.1016/S0140-6736(10)61350-5` |
 | ctt_2008_diabetes_ldl_lowering_lancet | Efficacy of cholesterol-lowering therapy in 18,686 people with diabetes in 14 randomised trials of statins | RCT meta-analysis in diabetes | `text/ctt_2008_diabetes_ldl_lowering_lancet.html.txt` | NCBI E-utilities MEDLINE record, `doi:10.1016/S0140-6736(08)60104-X` |
 | nicholls_2023_bempedoic_primary_prevention_jama | Bempedoic Acid for Primary Prevention of Cardiovascular Events in Statin-Intolerant Patients | RCT subgroup | `text/nicholls_2023_bempedoic_primary_prevention_jama.html.txt` | PMC HTML, `doi:10.1001/jama.2023.9696` |
@@ -35,12 +36,12 @@ PDFs were downloaded only from official publisher, society, PMC, or open-access 
 | iatan_2024_lchf_ukb_jaccadv | Association of a Low-Carbohydrate High-Fat Diet With Plasma Lipid Levels and Cardiovascular Risk | UK Biobank cohort | `pdf/iatan_2024_lchf_ukb_jaccadv.pdf`, `text/iatan_2024_lchf_ukb_jaccadv.pdf.txt` | PMC/open publisher, `doi:10.1016/j.jacadv.2024.100924` |
 | goldberg_2021_ketogenic_diets_not_for_everyone_jacl | Ketogenic diets, not for everyone | case series/commentary | `text/goldberg_2021_ketogenic_diets_not_for_everyone_jacl.html.txt` | NCBI E-utilities MEDLINE record, `doi:10.1016/j.jacl.2020.10.005` |
 | holm_2015_t2d_interstitial_lipoproteins_jlr | Levels of atherogenic lipoproteins are unexpectedly reduced in interstitial fluid from type 2 diabetes patients | mechanistic human study | `text/holm_2015_t2d_interstitial_lipoproteins_jlr.html.txt` | PMC HTML, `doi:10.1194/jlr.P058842` |
+| keto_cta_2026_retraction | Longitudinal Data from the KETO-CTA Study: Plaque Predicts Plaque, ApoB Does Not | retraction notice | `text/keto_cta_2026_retraction_pubmed.txt` | NCBI E-utilities MEDLINE record, `doi:10.1016/j.jacadv.2026.102824` |
 
 ## Not used as evidence
 
 - `PMC12418260`, Longitudinal Data From the KETO-CTA Study: Plaque Predicts Plaque, ApoB Does Not
-  - PMC marks the article retracted
-  - retraction: JACC Advances, May 2026, PMID 42206798
+  - PubMed records a May 2026 retraction notice, PMID 42206798
   - local status: screened online; not retained in curated collection
 
 ## Access notes
@@ -48,3 +49,4 @@ PDFs were downloaded only from official publisher, society, PMC, or open-access 
 - OUP and AHA publisher PDFs returned 403 from direct requests; open PMC or society PDFs were used instead where lawful
 - Direct BMJ low-carb T2D publisher PDF/HTML returned 403, but PMC HTML was available and saved
 - PMC binary PDFs required a transparent proof-of-work cookie before download; the collection used the official PMC challenge and did not bypass paywalls
+- Required Perplexity, Gemini, and Google Scholar browser artifacts from the redo are under `searches/`
