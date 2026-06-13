@@ -100,8 +100,8 @@ document them clearly s.t. future calls are as short as possible.
 For all agent instructions, make sure the human reviews them.
 Agents tend to drift when writing instructions for themselves.
 Always ask the human to review and approve the instructions before proceeding.
-Instructions should always precisely define what to do;
-avoid mentioning what not to do to avoid context bloat and confusion.
+Instructions must always precisely define what to do in ultra strong language;
+almost never mention what not to do, to avoid context bloat and confusion.
 
 Agents lack judgment.
 They cannot reliably tell whether something is good or bad, sufficient or
@@ -114,16 +114,14 @@ Avoid doing things manually or ad-hoc; automate.
 Always always clean up your code, compact all of it, fix lints,
 before showing the user.
 Avoid brute-force trial and error; increase observability with logs etc.
-After editing; skip describing to the user anything they can see from diff.
-Following conventional commits.
 
-Never tell the human about Git status; they know.
+Never describe to the user anything they can see from git diff or git status.
 Never report when standard checks passed; it is assumed by default.
 Never repeatedly run and enumerate tests,
 write them into a single test script which only reports failures
 
 If asked to git commit, use sane&minimal&atomic conventional message.
-Pull rebase if push fails.
+Commit your and only your changes. Pull rebase if push fails.
 Try `--no-recurse-submodules` or rm submodule dir if rebase fail.
 To "merge" feature branch, make a new branch w/ appended number,
 rebase main onto new branch, rebase new branch onto main; keep and
