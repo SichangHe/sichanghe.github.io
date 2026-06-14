@@ -105,3 +105,18 @@ ask agent to explain changes bit-by-bit instead of doing huge dump
 Now, compile a list of things to go over w/ a new PLAN.md per AGENTS.md instructions
 To avoid overwhelming the human, go over them 1 by 1, waiting for the human to ask questions or give feedback before going to the next one
 ```
+
+## 🤖 agent skill extraction
+
+🤖 reusable skills extracted from these prompt notes
+- 🤖 `focused-source-synthesis`
+  - 🤖 paper focus summaries
+  - 🤖 quote-backed official-source research
+- 🤖 `prose-revision`
+  - 🤖 draft critique
+  - 🤖 succinct revision
+  - 🤖 prompt repair after disliked output
+- 🤖 `fragile-git-ops`
+  - 🤖 noninteractive rebase and conflict handling
+- 🤖 `tmux-repl`
+  - 🤖 long-running REPL control
