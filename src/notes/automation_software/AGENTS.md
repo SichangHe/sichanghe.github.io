@@ -162,31 +162,6 @@ Never ever write nested loop with complex intertwined continue/break;
 always explicitly write out state machines with clear state transitions and
 actions
 
-Python: Use uv, ruff. Use Python 3.13 syntax; never import List, etc.
-Avoid `cast` to `Any` and prefer `type:ignore`.
-Use strongly typed code and pass basedpyright, prefer dataclass or
-NamedTuple and exploit `__post_init__`.
-Prefer Pydantic for serialization over `json` etc.
-Prefer printing dataclass over JSON/dict.
-Use multi-line strings; never ever concatenate constant or template strings.
-Remember Python coroutines are not run until await or `create_task`.
-Never use `__all__` unless absolutely necessary.
-Remember to source `.venv` before running Python.
-Use `py_gen_server` for actor model as suitable.
-
-Rust: Pass clippy, cargo fmt. Strongly prefer enum over trait.
-Use `tokio_gen_server` instead of trait objects as suitable.
-
-SQL: Whenever possible, use JOIN USING instead of JOIN ON.
-Omit table names for columns whenever possible, or use full table name,
-avoid aliasing.
-
-Document every *shared* assumptions in ASSUM.md of the deepest directory where
-the assumption is used, write `# assumptions_name` followed by lines of
-explanation to define it.
-Reference them using `@ASSUME:asssumptions_name` in code comments.
-`assumls check .` verifies.
-
 Keep shared terms in `docs/ubiquitous-language.md` and refer to it for how to
 think and talk.
 
