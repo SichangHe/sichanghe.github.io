@@ -9,7 +9,7 @@ possible "but not simpler".
 Be lucid; speak like ELI5 but without overexplanation.
 State everything in the most straightforward and clear way possible.
 Structure arguments around highlighting the essential points like takeaways,
-insights; use well-written topic sentences
+insights; use well-written topic sentences. Forbid wide tables.
 
 For searches, always quote the relevant original words verbatim and
 provide a pointer to the source.
@@ -180,21 +180,23 @@ do not need to remember everything.
 - 🤖 run the strongest relevant static checks and behavior checks
 - 🤖 prefer realistic tests or the real scripts over trivial mocks
 - 🤖 keep the simplest design that fits the actual task
-- 🤖 review control flow, edge cases, failure paths, and diff size before finishing
-- 🤖 use a reviewer subagent for non-trivial code or instruction changes when available
+- 🤖 review control flow, edge cases, failure paths, and
+    diff size before finishing
+- 🤖 use a reviewer subagent for non-trivial code or instruction changes when
+    available
 
 # 🤖 optional workflows
 
 🤖 optional workflows live in skills instead of always-loaded instructions
 - 🤖 `long-running-autonomy`
-  - 🤖 explicit long-running autonomous mode
-  - 🤖 durable plan file
-  - 🤖 stuck loop check stop discipline
+    - 🤖 explicit long-running autonomous mode
+    - 🤖 durable plan file
+    - 🤖 stuck loop check stop discipline
 - 🤖 `fragile-git-ops`
-  - 🤖 interactive rebase
-  - 🤖 conflict resolution
-  - 🤖 noninteractive Git editor workflow
+    - 🤖 interactive rebase
+    - 🤖 conflict resolution
+    - 🤖 noninteractive Git editor workflow
 - 🤖 `tmux-repl`
-  - 🤖 long-running REPL
-  - 🤖 bounded tmux capture
-  - 🤖 cleanup of agent-created sessions
+    - 🤖 long-running REPL
+    - 🤖 bounded tmux capture
+    - 🤖 cleanup of agent-created sessions
