@@ -161,6 +161,9 @@ explanation to define it.
 Reference them using `@ASSUME:asssumptions_name` in code comments.
 `assumls check .` verifies.
 
+Keep shared terms in `docs/ubiquitous-language.md` and refer to it for how to
+think and talk.
+
 If emailing the human, run `email_me.py`.
 Never repeat email content in your printout
 
@@ -171,32 +174,3 @@ give feedback to the user as suitable
 If there is a manager agent, you may ask it to compact your context window.
 Useful when you have too much context or just finished a task and
 do not need to remember everything.
-
-# 🤖 implementation discipline
-
-🤖 always-loaded implementation discipline
-- 🤖 inspect existing code and relevant docs before writing code
-- 🤖 validate assumptions with small checks when they may be wrong
-- 🤖 run the strongest relevant static checks and behavior checks
-- 🤖 prefer realistic tests or the real scripts over trivial mocks
-- 🤖 keep the simplest design that fits the actual task
-- 🤖 review control flow, edge cases, failure paths, and
-    diff size before finishing
-- 🤖 use a reviewer subagent for non-trivial code or instruction changes when
-    available
-
-# 🤖 optional workflows
-
-🤖 optional workflows live in skills instead of always-loaded instructions
-- 🤖 `long-running-autonomy`
-    - 🤖 explicit long-running autonomous mode
-    - 🤖 durable plan file
-    - 🤖 stuck loop check stop discipline
-- 🤖 `fragile-git-ops`
-    - 🤖 interactive rebase
-    - 🤖 conflict resolution
-    - 🤖 noninteractive Git editor workflow
-- 🤖 `tmux-repl`
-    - 🤖 long-running REPL
-    - 🤖 bounded tmux capture
-    - 🤖 cleanup of agent-created sessions

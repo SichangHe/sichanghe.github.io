@@ -69,34 +69,11 @@ Do not trust random strangers and blogs on the Internet. Try to find the officia
 
 ## Coder agent
 
-requirement for coding & behavior (need `.config` cloned; fetches [AGENTS.md](./AGENTS.md)):
+requirement for coding & behavior (need `.config` cloned;
+fetches [AGENTS.md](./AGENTS.md)):
 
 ```
 You MUST **IMMEDIATELY** run: ~/.config/getagentsmd
-```
-
-git interactive rebase
-
-```
-Instructions for interactive rebase:
-ALWAYS pass in non-interactive script as `EDITOR` for all Git commands to avoid stuck
-E.g. when editing Git-TODO or commit message
-First, to see what the editor would be editing, use script that print out file content elsewhere AND THEN EMPTY THE FILE to abort Git
-Then, to actually edit, use a script that directly writes desired content to file
-If the preview file contains a non‑empty commit message or todo, proceed by writing it back unchanged with the write script. Only ask user if the preview content is empty or I explicitly asked to edit it. Existing commit messages are acceptable by default
-For each conflict, figure out yourself what each side is doing, and combine the changes in a way that preserves both functionalities
-```
-
-use tmux for REPL
-
-```
-To spawn and continuously interact w/ long-running REPL, you MUST use tmux
-Create a tmux session and start the REPL there
-To read REPL output, pipe `tmux capture-pane` to a file
-Never directly read the entire REPL output screen to avoid context pollution
-Print unique markers to help yourself find relevant new output
-To run commands in the REPL, `tmux send-keys` ending with Enter
-Be very careful to kill all unused tmux session you create to avoid leaking resources
 ```
 
 ask agent to explain changes bit-by-bit instead of doing huge dump
@@ -105,18 +82,3 @@ ask agent to explain changes bit-by-bit instead of doing huge dump
 Now, compile a list of things to go over w/ a new PLAN.md per AGENTS.md instructions
 To avoid overwhelming the human, go over them 1 by 1, waiting for the human to ask questions or give feedback before going to the next one
 ```
-
-## 🤖 agent skill extraction
-
-🤖 reusable skills extracted from these prompt notes
-- 🤖 `focused-source-synthesis`
-  - 🤖 paper focus summaries
-  - 🤖 quote-backed official-source research
-- 🤖 `prose-revision`
-  - 🤖 draft critique
-  - 🤖 succinct revision
-  - 🤖 prompt repair after disliked output
-- 🤖 `fragile-git-ops`
-  - 🤖 noninteractive rebase and conflict handling
-- 🤖 `tmux-repl`
-  - 🤖 long-running REPL control
