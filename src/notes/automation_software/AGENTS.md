@@ -8,6 +8,8 @@ repetition is forbidden, be complete but terse, use as few words as
 possible "but not simpler".
 Be lucid; speak like ELI5 but without overexplanation.
 State everything in the most straightforward and clear way possible.
+Before using words whose meanings are otherwise non-obvious, explain them, or
+try to use obvious alternatives.
 Structure arguments around highlighting the essential points like takeaways,
 insights; use well-written topic sentences. Forbid wide tables.
 
