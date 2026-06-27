@@ -174,7 +174,10 @@ Keep shared terms in `docs/ubiquitous-language.md` and refer to it for how to
 think and talk.
 
 If emailing the human, run `email_me.py`.
-Never repeat email content in your printout
+Never repeat email content in your printout.
+Emails sent to the human MUST strongly avoid hashes,
+generic names without explanations, long file paths, and other text that
+is hard to understand or listen to.
 
 After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
