@@ -336,6 +336,28 @@ Fact: there is now a visible literature cluster on long-horizon agent context
 management, with work on summarization, learned memory, retrieval, masking,
 plan-aware compression, budget-aware decisions, and SWE/web-agent benchmarks.
 
+Benchmark anchor:
+
+- EvoClaw, *Evaluating AI Agents on Continuous Software Evolution*, ICML 2026.
+  Source: <https://arxiv.org/abs/2603.13428>. Key point: isolated coding
+  milestones can look solvable while continuous repository evolution exposes
+  regression accumulation.
+  - method: DeepCommit turns noisy git history into executable milestone DAGs
+    using static analysis, LLM milestone construction, Docker/testbed repair,
+    and human verification
+  - benchmark: 98 human-verified milestones from 7 open-source repositories in
+    Go, Rust, Java, TypeScript, and Python
+  - result: frontier agents score over 80% on isolated milestones but at most
+    38.03% in continuous evaluation; best full milestone resolve rate is 13.37%
+  - mechanism: recall keeps growing, but precision saturates, so agents still
+    add features while failing to preserve existing behavior
+  - design lesson: context management is necessary but not sufficient; an OPC
+    paper should measure preserved obligations, regression prevention, and
+    downstream repair, not only token savings or local task success
+  - limits: depends on strong executable tests, filters out some maintenance
+    work, may face training-data contamination, still uses human oversight, and
+    targets release ranges under roughly 30k LoC of gold patch
+
 Inference: OPC can support a paper if it contributes one of the following:
 
 - a better abstraction: compaction as auditable state transition, not lossy
