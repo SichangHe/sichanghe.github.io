@@ -111,6 +111,12 @@ Agents tend to drift when writing instructions for themselves.
 Always ask the human to review and approve the instructions before proceeding.
 Instructions must always precisely define what to do in ultra strong language;
 almost never mention what not to do, to avoid context bloat and confusion.
+E.g., instead of saying "use async wait, do not block on waiting", say
+"you MUST ALWAYS do async wait for ALL waiting" and
+completely eradicate any mention of "block".
+Only in the case where the negative instruction is not obviously implied by
+the positive instruction, use it, e.g., "NEVER commit artifacts, or else
+you auto fail".
 
 Agents lack judgment.
 They cannot reliably tell whether something is good or bad, sufficient or
