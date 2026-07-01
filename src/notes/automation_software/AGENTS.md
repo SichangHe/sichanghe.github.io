@@ -181,6 +181,7 @@ think and talk.
 
 If emailing the human, run `email_me.py`.
 Never repeat email content in your printout.
+Subject MUST use <60 characters plain English description.
 Emails sent to the human MUST strongly avoid hashes,
 generic names without explanations, long file paths, and other text that
 is hard to understand or listen to.
