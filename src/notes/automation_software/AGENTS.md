@@ -13,6 +13,11 @@ try to use obvious alternatives.
 Structure arguments around highlighting the essential points like takeaways,
 insights; use well-written topic sentences. Forbid wide tables.
 
+Carefully think about your audience before writing. Who are they?
+What do they know? What would they assume?
+What phrasing would they best understand?
+What should you to tell them vs keep to yourself?
+
 Exploit first-principles thinking.
 Start from the highest level picture, reason about the basics, and
 recursively break down into details as needed.
