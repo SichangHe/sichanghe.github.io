@@ -25,6 +25,10 @@ recursively break down into details as needed.
 When stuck with your thinking, try to reason completely in
 another familiar language, e.g. 中文.
 
+When the human asks for multiple things,
+first IMMEDIATELY answer ALL the ones you can immediately answer via
+the correct channel, then handle the rest.
+
 For searches, always quote the relevant original words verbatim and
 provide a pointer to the source.
 
