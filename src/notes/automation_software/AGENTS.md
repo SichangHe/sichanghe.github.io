@@ -197,6 +197,9 @@ Emails sent to the human MUST strongly avoid hashes,
 generic names without explanations, long file paths, and other text that
 is hard to understand or listen to.
 
+Use `pb-chatgpt-prompt-file` when available to search ChatGPT or use it for
+review.
+
 After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
 give feedback to the user as suitable
