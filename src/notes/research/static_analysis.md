@@ -533,3 +533,248 @@ outputs and the agent cannot write new root PDFs.
 - 🤖 Anchors: VeruSAGE and KVerus for repo-level proof-agent state of the art;
   Vest for verified parsers/serializers; Atmosphere/VeriSMo for practical
   systems verification; PBT-as-verification-continuum for law evidence.
+
+## 🤖 2026-07 follow-up: specification validity, grounded feedback, and joint search
+
+- 🤖 delta from the existing notes
+    - the existing notes already establish that repository context, helper
+      lemmas, and proof maintenance matter more than toy loop invariants
+    - the new evidence moves the bottleneck one layer earlier
+        - an accepted proof says the implementation refines a specification
+        - it does not show that the specification captures human intent
+    - the new systems pattern is a three-oracle loop
+        - verifier for proof validity
+        - tests, traces, mutants, or developer examples for specification intent
+        - performance and operational measurements for system utility
+- 🤖 high-level implications for VL
+    - treat the specification as a fallible artifact with its own receipt
+        - record intent examples, rejected mutants, assumptions, version, and
+          which claims depend on it
+        - invalidate dependent proofs when the specification or its evidence changes
+    - search jointly over code, proof, and representation
+        - IDS shows that changing data layout can make a stalled proof tractable
+        - a VL agent should backtrack across implementation boundaries instead of
+          repeatedly repairing a fixed proof state
+    - ground repair in concrete behavior
+        - ExVerus turns verifier failures into validated counterexamples and then
+          generalizes them into invariants
+        - this is stronger feedback than error text alone, but its validation is
+          currently strongest for loop invariants
+    - use LLMs at semantic translation boundaries, not as final judges
+        - SymGPT and Trace let LLMs recover intent or compilable structure, then
+          use symbolic or static analysis for the decision
+        - Scope's direct-LLM comparison shows why a generated warning still needs
+          an independently checkable witness
+    - retrieve proof context at multiple granularities
+        - VerusSeek reports gains from retrieving typed proof constructs rather
+          than whole files or functions
+        - its 150-task VerusBench evaluation does not establish repository-scale
+          retrieval, so VL should combine construct retrieval with the existing
+          repository dependency index and evaluate both
+    - optimize synthetic proof data for diversity as well as validity
+        - a verifier filters invalid programs but does not prevent distribution collapse
+        - Formal Disco explicitly optimizes feature entropy and still finds that
+          human code is more diverse on unoptimized proof-annotation structure
+    - separate evaluation gates
+        - specification quality, code behavior, proof validity, end-to-end alignment,
+          repository integration, and maintenance under change are different outcomes
+        - VeriContest's 5.29% best end-to-end result is not a systems result because
+          its tasks are competitive-programming functions, not repositories
+    - keep system modeling separate from function contracts
+        - SysMoBench shows trace conformance and liveness fail even when small
+          function-like models parse and run
+        - VL likely needs both a system model for global behavior and Verus claims
+          for implementation-level obligations
+
+- 🤖 evidence tiers
+    - accepted top-conference papers
+        - SymGPT at OOPSLA 2026
+        - Expecto at PLDI 2026
+        - SysMoBench at ICLR 2026
+        - Scope at ASPLOS 2026
+        - related anchor IronSpec at OSDI 2024
+    - peer-reviewed but not a top-conference anchor
+        - VerusSeek at TASE 2026
+        - Trace in IEEE Transactions on Software Engineering 2026
+    - preprints as of 2026-07-19
+        - IDS, ExVerus, FM-Agent, the VeriFast study, VeriAct,
+          Formal Disco, and VeriContest
+        - their numbers are useful hypotheses and baselines, not accepted results
+
+- 🤖 source-by-source evidence
+    - [SymGPT](https://dl.acm.org/doi/abs/10.1145/3798217), OOPSLA 2026
+        - short quote: "combining symbolic execution with the LLM significantly
+          enhances the accuracy"
+        - method: GPT-5 translates ERC prose into a small rule DSL; generated
+          constraints drive interprocedural symbolic execution
+        - scope: 132 rules from three ERC standards and 4,000 compilable contracts
+        - reported result: 5,783 violations and 122 false positives; direct GPT-5
+          found 152/159 curated ground-truth violations but produced 266 false positives
+        - uncertainty: analysis is unsound, return-value rules are unsupported,
+          and false-negative review covered only 50 high-report contracts
+        - VL delta: an LLM-produced rule needs a typed intermediate form and a
+          mechanically checkable witness before it enters a proof receipt
+    - [Inductive Deductive Synthesis](https://arxiv.org/abs/2605.23109), preprint
+        - short quote: "writing the formal specification itself remains the
+          largest open problem"
+        - method: alternating implementation synthesis and deductive proof with
+          backtracking, audit, verifier feedback, and performance feedback
+        - scope: seven Rocq specifications for distributed key-value-store consistency
+        - reported result: verified implementations for 7/7 specifications versus
+          2/7 for each coding-agent baseline; average 6.8 hours and $106 per specification
+        - uncertainty: the formal specification is an expert input; the systems omit
+          reconfiguration, recovery, observability, and much of a production store
+        - VL delta: proof difficulty is a design signal that can justify changing
+          data layout, not merely adding annotations
+    - [ExVerus](https://arxiv.org/abs/2603.25810), preprint
+        - short quote: "grounding LLM reasoning in concrete program behaviors"
+        - method: generate and validate counterexamples, mutate candidate invariants,
+          and rank repairs by whether they block those counterexamples
+        - reported result: 88.4% on VerusBench with Sonnet 4.5 and 81.6% on the
+          obfuscation benchmark with DeepSeek-V3.1; $0.04 per task for DeepSeek
+        - uncertainty: counterexample validation principally targets invariants;
+          assertion and trigger failures can lack a well-defined behavioral witness
+        - VL delta: attach counterexamples and blocked-behavior summaries to proof
+          receipts so future repairs can reuse failure knowledge
+    - [VerusSeek](https://dl.acm.org/doi/abs/10.1007/978-3-032-30693-7_6), TASE 2026
+        - short quote: "retrieving coarse-grained entire files or functions
+          introduces noise"
+        - method: split verified Verus into contracts, invariants, lemmas, proof
+          blocks, and assertions; retrieve by type and expand context hierarchically
+        - reported result from the publisher abstract: 76.7% improvement over
+          AutoVerus and 43.4% over RagVerus on 150 VerusBench tasks
+        - uncertainty: the full chapter was unavailable, so denominator, absolute
+          success, ablations, and threats could not be independently checked
+        - VL delta: retain both a typed proof-construct index and repository-level
+          dependency graph; evaluate retrieval precision rather than context size alone
+    - [FM-Agent](https://arxiv.org/abs/2604.11556), preprint
+        - short quote: "Although FM-Agent cannot ensure soundness"
+        - method: infer a function's expected behavior top-down from callers,
+          reason compositionally against natural-language contracts, then generate tests
+        - scope: four agent-generated systems from 11K to 143K lines of code
+        - reported result: 522 newly reported bugs in about two days using 3.4 billion tokens
+        - uncertainty: there is no sound verifier or comparable formal-method baseline;
+          current reasoning is sequential and the specifications remain natural language
+        - VL delta: caller-derived obligations are valuable candidates, but they should
+          become typed, falsifiable laws before proofs spend them
+    - [LLM-generated specifications for VeriFast](https://arxiv.org/abs/2606.26490), preprint
+        - short quote: "most errors (94%) come from LLMs' mistakes in the
+          domain-specific knowledge"
+        - method: eight prompt strategies, ten models, and three input forms over
+          303 C functions with separation-logic specifications
+        - reported result: 31.4% verification success overall; 51.2% on normal
+          separation logic but about 12% on concurrency and loops
+        - uncertainty: one output per configuration, public source leakage, C and
+          VeriFast only, and a benchmark derived mostly from already verified programs
+        - VL delta: expose symbolic heap state and tool-native repair actions instead
+          of expecting a general model to reconstruct ownership bookkeeping from prose
+    - [VeriAct](https://arxiv.org/abs/2604.00280), preprint
+        - short quote: "VR consistently overstates specification quality"
+        - method: Spec-Harness checks valid input-output pairs and rejects output
+          mutants; an agent refines JML after both OpenJML and harness feedback
+        - reported result: verifier-accepted specifications often collapse under
+          meaningful verification; VeriAct improves the meaningful rate by 5 and
+          12 percentage points on its two benchmarks
+        - uncertainty: the meaningful threshold is 0.5, evaluation uses at most five
+          test pairs, and complex quantifiers and helper lemmas remain hard
+        - VL delta: never use verifier acceptance as the only specification-quality metric
+    - [Expecto](https://dl.acm.org/doi/abs/10.1145/3808332), PLDI 2026
+        - short quote: "starts from a maximally permissive specification"
+        - method: top-down DSL synthesis with informal typed helper definitions,
+          tree search, SMT consistency checks, and, in the main experiment,
+          three input-output examples
+        - reported result: 103/164 sound-and-complete HumanEval+ specifications and
+          59/127 on APPS; 42/501 useful Defects4J method specifications
+        - uncertainty: soundness is probabilistic over generated invalid outputs,
+          and the DSL cannot directly express Java objects and methods
+        - VL delta: refine intent monotonically from permissive to discriminating,
+          checking every partial specification against examples and non-vacuity
+    - [SysMoBench](https://openreview.net/forum?id=SAeaTz8YoM), ICLR 2026 poster
+        - short quote: "software system intelligence, rather than code intelligence"
+        - method: grade generated TLA+ models on syntax, runtime coverage, trace
+          conformance, and invariant correctness across 11 real systems
+        - reported result: small locks can score well, while Etcd Raft's best basic
+          model reached 7.69% conformance; 41.9% of liveness properties were violated
+        - new accepted-version detail: preliminary PAT and Alloy generation failed
+          before behavioral evaluation, while simpler repair benchmarks scored well
+        - uncertainty: benchmark authors supply task scope and action hints; models
+          reproduced known bugs in five systems but do not replace human models
+        - VL delta: require trace conformance and liveness checks above local Verus proofs
+    - [Formal Disco](https://arxiv.org/abs/2607.04631), preprint
+        - short quote: "verifiers provide exactly the scalable quality signal that
+          synthetic data generation needs"
+        - method: initiator, fixer, and extender workers share verified programs;
+          iterative fine-tuning maximizes selected feature entropies
+        - reported result: fine-tuned Qwen 2.5-Coder reaches 43.0% VerusBench pass@1
+          versus 8.7% base and matches the reported Claude Opus 4.5 result
+        - uncertainty: entropy targets are hand chosen, external READMEs and docs are
+          required to avoid collapse, and human annotation structures remain more diverse
+        - VL delta: measure diversity of lemmas, invariants, repository contexts,
+          assumptions, and failure traces before training on verifier-filtered data
+    - [Trace](https://ieeexplore.ieee.org/abstract/document/11372935), IEEE TSE 2026
+        - short quote: "we do not directly employ LLMs for vulnerability detection"
+        - method: use an LLM to locate sensitive functions and complete unchanged
+          snippets, then run AST, call-graph, CFG, and access-control analysis
+        - reported result: 14/15 CVEs, 89.2% precision on on-chain contracts, and
+          87.0% precision across 83 mostly non-compilable repositories
+        - uncertainty: Solidity access control only; 4/6 repository false positives
+          came from LLM code modification and analysis truncates calls at depth three
+        - VL delta: a model may repair the analysis surface, but validation must prove
+          that the original semantic slice stayed unchanged
+    - [Scope](https://dl.acm.org/doi/abs/10.1145/3779212.3790152), ASPLOS 2026
+        - short quote: "35 were confirmed as valid by Arm"
+        - method: parse the Arm RMM PDF, translate dependency-table conditions to
+          Verus, and combine formal queries with rule-based consistency checks
+        - reported result: 35 confirmed specification bugs across evolving versions;
+          61.90% precision versus 1.52-8.00% for direct LLM review
+        - uncertainty: formal parsing covered 31/36 dependency-table cells and about
+          73% of commands; unsupported prose and syntax remain outside the model
+        - VL delta: make specification versions and coverage explicit in receipts;
+          proof success outside the modeled slice must not imply whole-document validity
+    - [VeriContest](https://arxiv.org/abs/2605.08553), preprint
+        - short quote: "end-to-end verifiable code generation is far from solved"
+        - method: 946 expert-reviewed Rust/Verus competitive-programming tasks with
+          separate specification, code, proof, and end-to-end gates
+        - reported best pass@1: 92.18% code, 48.31% specification, 13.95% proof,
+          and 5.29% end-to-end
+        - uncertainty: public contest contamination, function-level scope, excluded
+          unsupported Rust and proofs, and no repository or systems behavior
+        - VL delta: use the task decomposition as a diagnostic baseline, then add
+          live-repository, assumption, maintainability, and system-property gates
+    - related [IronSpec](https://www.usenix.org/conference/osdi24/presentation/goldweber), OSDI 2024
+        - short quote: "only as strong as their trusted specifications"
+        - method: automatic sanity checks, concrete SpecTesting Proofs, and mutation
+          testing for Dafny specifications
+        - reported result: ten specification bugs across six real verified systems;
+          61 alive mutations included 13 quickly diagnosed intended behaviors
+        - uncertainty: final intent judgment remains human and large end-to-end proofs
+          make mutation testing expensive
+        - VL delta: use spec mutants to focus human review and record the surviving
+          behavior difference as evidence, not as an automatic verdict
+
+- 🤖 exact collection paths
+    - collection root: `/hdd1/sichanghe/paper_collection`
+    - unless labeled otherwise, each PDF below is at
+      `<collection root>/<name>.pdf`
+    - each Markdown extraction or metadata directory is at
+      `<collection root>/<name>/`
+    - `SymGPT- Auditing Smart Contracts via Combining Symbolic Execution with Large Language Models, Shihao Xia, Mengting He, Shuai Shao, et al., OOPSLA, 2026`
+    - `Inductive Deductive Synthesis- Enabling AI to Generate Formally Verified Systems, Shubham Agarwal, Alexander Krentsel, Shu Liu, et al., arXiv, 2026`
+    - `ExVerus- Verus Proof Repair via Counterexample Reasoning, Jun Yang, Yuechun Sun, Yi Wu, et al., arXiv, 2026`
+    - `FM-Agent- Scaling Formal Methods to Large Systems via LLM-Based Hoare-Style Reasoning, Haoran Ding, Zhaoguo Wang, Haibo Chen, arXiv, 2026`
+    - publisher-abstract record only: `VerusSeek- Enhancing LLM-Based Proof Synthesis for Rust Programs via Semantic Chunking and Hierarchical Context Expansion, Yuchen Zhang, Cheng Wen, Zhiwu Xu, et al., TASE, 2026`
+    - `An Empirical Study of LLM-Generated Specifications for VeriFast, Wen Fan, Minh Tran, Sanya Dod, et al., arXiv, 2026`
+    - `VeriAct- Beyond Verifiability -- Agentic Synthesis of Correct and Complete Formal Specifications, Md Rakib Hossain Misu, Iris Ma, Cristina V. Lopes, arXiv, 2026`
+    - `Expecto- Extracting Formal Specifications from Natural Language Description for Trustworthy Oracles, Dongjae Lee, Kihong Heo, PLDI, 2026`
+    - `SysMoBench- Evaluating AI on Formally Specifying Complex Real-World Systems, Qian Cheng, Ruize Tang, Emilie Ma, et al., ICLR, 2026`
+    - `Formal Disco- Scalable Open-Ended Generation of Formally Verified Programs, Gabriel Poesia, Simon Henniger, Tzu-Han Hsu, et al., arXiv, 2026`
+    - `Trace- Securing Smart Contract Repository Against Access Control Vulnerability, Chong Chen, Jiachi Chen, Lingfeng Bao, et al., IEEE TSE, 2026`
+    - `Scope- Detecting Inconsistencies in Arm CCA's Formally Verified Specification, Changho Choi, Xiang Cheng, Bokdeuk Jeong, Taesoo Kim, ASPLOS, 2026`
+    - `VeriContest- A Competitive-Programming Benchmark for Verifiable Code Generation, Zichen Xie, Mrigank Pawagi, Yuxin Liu, et al., arXiv, 2026`
+    - related `IronSpec- Increasing the Reliability of Formal Specifications, Eli Goldweber, Weixin Yu, Seyed Armin Vakil Ghahani, Manos Kapritsos, OSDI, 2024`
+    - unavailable binary
+        - `Enhancing LLM-Based Proof Synthesis for Rust Programs via Semantic Chunking and Hierarchical Context Expansion`
+        - Springer redirected the PDF endpoint to the chapter page
+        - the public proceedings preview contains only front matter and the table of contents
+        - no preview was filed as the paper; the collection directory contains a
+          clearly labeled publisher-abstract record instead
