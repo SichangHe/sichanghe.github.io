@@ -532,3 +532,57 @@ outputs and the agent cannot write new root PDFs.
 - 🤖 Anchors: VeruSAGE and KVerus for repo-level proof-agent state of the art;
   Vest for verified parsers/serializers; Atmosphere/VeriSMo for practical
   systems verification; PBT-as-verification-continuum for law evidence.
+
+## 🤖 2026-07 follow-up: specification validity, grounded feedback, and joint search
+
+- 🤖 delta from the existing notes
+    - the existing notes already establish that repository context, helper
+      lemmas, and proof maintenance matter more than toy loop invariants
+    - the new evidence moves the bottleneck one layer earlier
+        - an accepted proof says the implementation refines a specification
+        - it does not show that the specification captures human intent
+    - the new systems pattern is a three-oracle loop
+        - verifier for proof validity
+        - tests, traces, mutants, or developer examples for specification intent
+        - performance and operational measurements for system utility
+
+- 🤖 evidence tiers
+    - accepted top-conference papers
+        - SymGPT at OOPSLA 2026
+        - Expecto at PLDI 2026
+        - SysMoBench at ICLR 2026
+        - Scope at ASPLOS 2026
+        - related anchor IronSpec at OSDI 2024
+    - peer-reviewed but not a top-conference anchor
+        - VerusSeek at TASE 2026
+        - Trace in IEEE Transactions on Software Engineering 2026
+    - preprints as of 2026-07-19
+        - IDS, ExVerus, FM-Agent, the VeriFast study, VeriAct,
+          Formal Disco, and VeriContest
+        - their numbers are useful hypotheses and baselines, not accepted results
+
+- 🤖 exact collection paths
+    - unless labeled otherwise, each PDF below is at
+      `<collection root>/<name>.pdf`
+    - each Markdown extraction or metadata directory is at
+      `<collection root>/<name>/`
+    - `SymGPT- Auditing Smart Contracts via Combining Symbolic Execution with Large Language Models, Shihao Xia, Mengting He, Shuai Shao, et al., OOPSLA, 2026`
+    - `Inductive Deductive Synthesis- Enabling AI to Generate Formally Verified Systems, Shubham Agarwal, Alexander Krentsel, Shu Liu, et al., arXiv, 2026`
+    - `ExVerus- Verus Proof Repair via Counterexample Reasoning, Jun Yang, Yuechun Sun, Yi Wu, et al., arXiv, 2026`
+    - `FM-Agent- Scaling Formal Methods to Large Systems via LLM-Based Hoare-Style Reasoning, Haoran Ding, Zhaoguo Wang, Haibo Chen, arXiv, 2026`
+    - publisher-abstract record only: `VerusSeek- Enhancing LLM-Based Proof Synthesis for Rust Programs via Semantic Chunking and Hierarchical Context Expansion, Yuchen Zhang, Cheng Wen, Zhiwu Xu, et al., TASE, 2026`
+    - `An Empirical Study of LLM-Generated Specifications for VeriFast, Wen Fan, Minh Tran, Sanya Dod, et al., arXiv, 2026`
+    - `VeriAct- Beyond Verifiability -- Agentic Synthesis of Correct and Complete Formal Specifications, Md Rakib Hossain Misu, Iris Ma, Cristina V. Lopes, arXiv, 2026`
+    - `Expecto- Extracting Formal Specifications from Natural Language Description for Trustworthy Oracles, Dongjae Lee, Kihong Heo, PLDI, 2026`
+    - `SysMoBench- Evaluating AI on Formally Specifying Complex Real-World Systems, Qian Cheng, Ruize Tang, Emilie Ma, et al., ICLR, 2026`
+    - `Formal Disco- Scalable Open-Ended Generation of Formally Verified Programs, Gabriel Poesia, Simon Henniger, Tzu-Han Hsu, et al., arXiv, 2026`
+    - `Trace- Securing Smart Contract Repository Against Access Control Vulnerability, Chong Chen, Jiachi Chen, Lingfeng Bao, et al., IEEE TSE, 2026`
+    - `Scope- Detecting Inconsistencies in Arm CCA's Formally Verified Specification, Changho Choi, Xiang Cheng, Bokdeuk Jeong, Taesoo Kim, ASPLOS, 2026`
+    - `VeriContest- A Competitive-Programming Benchmark for Verifiable Code Generation, Zichen Xie, Mrigank Pawagi, Yuxin Liu, et al., arXiv, 2026`
+    - related `IronSpec- Increasing the Reliability of Formal Specifications, Eli Goldweber, Weixin Yu, Seyed Armin Vakil Ghahani, Manos Kapritsos, OSDI, 2024`
+    - unavailable binary
+        - `Enhancing LLM-Based Proof Synthesis for Rust Programs via Semantic Chunking and Hierarchical Context Expansion`
+        - Springer redirected the PDF endpoint to the chapter page
+        - the public proceedings preview contains only front matter and the table of contents
+        - no preview was filed as the paper; the collection directory contains a
+          clearly labeled publisher-abstract record instead
