@@ -22,3 +22,7 @@ ideas:
 - search engine exclude spam
 - social media bot campaign
 - GitHub scam
+
+## 🤖 evidence-backed studies
+
+- [🤖 Agave verification sizing and pilot scope](agave_verification_scope.md)

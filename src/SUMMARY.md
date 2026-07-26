@@ -92,6 +92,7 @@
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
+        - [🤖 Agave Verification Sizing](notes/research/agave_verification_scope.md)
         - [Browser Agent](notes/research/browser_agent.md)
         - [DeGenTWeb](notes/research/DeGenTWeb/execution.md)
             - [Arguments](notes/research/DeGenTWeb/arguments.md)
