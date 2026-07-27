@@ -26,3 +26,4 @@ ideas:
 ## 🤖 evidence-backed studies
 
 - [🤖 Agave verification sizing and pilot scope](agave_verification_scope.md)
+- [🤖 agent frontier: useful workers, unreliable autonomy](agent_frontier.md)
