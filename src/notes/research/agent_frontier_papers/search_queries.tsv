@@ -1,0 +1,41 @@
+# 🤖 exact default-browser search record; captured_at is UTC, research date was 2026-07-26 PDT
+id	captured_at_utc	query	raw_capture
+01	2026-07-27T00:30:07.652Z	site:openreview.net agent benchmark ICLR 2025 tool use long horizon	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/01.json
+02	2026-07-27T00:30:10.566Z	site:proceedings.neurips.cc 2024 LLM agent benchmark planning tool use reliability	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/02.json
+03	2026-07-27T00:30:13.484Z	site:proceedings.mlr.press 2025 agent benchmark web software engineering scientific	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/03.json
+04	2026-07-27T00:30:16.400Z	site:aclanthology.org 2025 agent memory multi-agent benchmark	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/04.json
+05	2026-07-27T00:30:19.320Z	site:openreview.net ICLR 2026 agent benchmark memory multi-agent	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/05.json
+06	2026-07-27T00:30:22.237Z	site:arxiv.org 2025 agents time horizon METR PaperBench RE-Bench research	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/06.json
+07	2026-07-27T00:30:25.190Z	site:usenix.org 2025 LLM agent prompt injection security benchmark	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/07.json
+08	2026-07-27T00:30:28.115Z	site:dl.acm.org 2025 agent web computer use benchmark	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/08.json
+09	2026-07-27T00:33:19.673Z	site:openreview.net/forum ICLR 2026 agents benchmark accepted long horizon	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/09.json
+10	2026-07-27T00:33:22.596Z	site:proceedings.mlr.press ICML 2026 agent benchmark software research web	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/10.json
+11	2026-07-27T00:33:25.525Z	site:aclanthology.org/2026 ACL 2026 agent benchmark computer use multi-agent	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/11.json
+12	2026-07-27T00:33:28.451Z	SWE-Bench Pro ICLR 2026 OpenReview accepted	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/12.json
+13	2026-07-27T00:33:31.369Z	UltraHorizon ICLR 2026 OpenReview accepted	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/13.json
+14	2026-07-27T00:33:34.290Z	MemoryAgentBench ICLR 2026 OpenReview accepted	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/14.json
+15	2026-07-27T00:33:37.215Z	PaperBench official paper status 2025 OpenAI	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/15.json
+16	2026-07-27T00:33:40.148Z	RE-Bench official paper status 2025 METR ICLR	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/16.json
+17	2026-07-27T00:33:43.071Z	METR Measuring AI Ability to Complete Long Tasks paper 2025	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/17.json
+18	2026-07-27T00:33:45.998Z	AgentDojo NeurIPS 2024 AgentHarm ICLR 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/18.json
+19	2026-07-27T00:33:48.934Z	OSWorld NeurIPS 2024 AndroidWorld ICLR 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/19.json
+20	2026-07-27T00:33:51.863Z	tau-bench ICLR 2025 official ToolSandbox NeurIPS 2024	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/20.json
+21	2026-07-27T00:37:09.563Z	ScienceAgentBench ICLR 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/21.json
+22	2026-07-27T00:37:12.515Z	MLE-bench ICLR 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/22.json
+23	2026-07-27T00:37:15.565Z	CORE-Bench ICLR 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/23.json
+24	2026-07-27T00:37:18.504Z	MultiAgentBench ACL 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/24.json
+25	2026-07-27T00:37:21.494Z	Magentic-One technical report 2024 Microsoft official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/25.json
+26	2026-07-27T00:37:24.559Z	TheAgentCompany ICLR 2026 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/26.json
+27	2026-07-27T00:37:27.561Z	SWE-agent NeurIPS 2024 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/27.json
+28	2026-07-27T00:37:30.484Z	SWE-Lancer OpenAI 2025 official paper	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/28.json
+29	2026-07-27T00:37:33.438Z	What is in a Benchmark case of SWE-Bench 2026 ACM	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/29.json
+30	2026-07-27T00:37:36.359Z	ControlArena ICLR 2026 official agent control	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/30.json
+31	2026-07-27T00:37:39.359Z	ST-WebAgentBench ICLR 2026 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/31.json
+32	2026-07-27T00:37:42.329Z	RiOSWorld NeurIPS 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/32.json
+33	2026-07-27T00:37:45.264Z	Agent Security Bench ASB ICLR 2025 official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/33.json
+34	2026-07-27T00:37:48.231Z	LongMemEval ICLR 2025 official WebCoach agent memory	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/34.json
+35	2026-07-27T00:37:51.194Z	MemBench ACL 2025 memory agent official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/35.json
+36	2026-07-27T00:40:51.314Z	AI Control Improving safety despite intentional subversion paper conference official ControlArena	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/36.json
+37	2026-07-27T00:42:12.919Z	WebRL Training LLM Web Agents ICLR 2025 OpenReview official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/37.json
+38	2026-07-27T00:42:15.861Z	WorkArena ICML 2024 PMLR official	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/38.json
+39	2026-07-27T00:42:18.800Z	UltraHorizon ICLR 2026 official accepted OpenReview FTZfVHWAIq qRNtMWrTvo	/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/39.json

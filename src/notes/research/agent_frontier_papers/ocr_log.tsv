@@ -1,0 +1,24 @@
+# 🤖 extraction audit; Marker metadata validity and file sizes verified 2026-07-26 PDT
+id	extraction_action	pages	markdown_bytes	meta_json_bytes	status	quality_note
+time_horizons	targeted_marker_single	45	168534	68675	valid	readable and complete; final author line misclassified as heading
+tau_bench	targeted_marker_single	53	143325	58167	valid	readable; tau spacing and pass^k rendered inconsistently
+ultrahorizon	targeted_marker_single	53	144691	135006	valid	readable; broken title emphasis and over-segmented headings
+agentcompany	targeted_marker_single	24	97588	34849	valid	readable; no obvious sampled prose defect
+swe_agent	targeted_marker_single	125	333622	228969	valid	readable; no obvious sampled prose defect; layout normalization remains
+swe_bench_pro	targeted_marker_single	18	71185	30148	valid	readable; occasional words joined across line breaks
+swe_lancer	targeted_marker_single	39	118984	57127	valid	readable; occasional words joined across line breaks
+utboost	reused_existing_marker_extract	13	70683	21905	valid	readable existing extraction reused unchanged
+osworld	targeted_marker_single	55	287427	74453	valid	readable; occasional words joined across line breaks
+workarena	reused_existing_marker_extract	21	84537	30128	valid	readable existing extraction reused unchanged
+webrl	reused_existing_marker_extract	22	81554	29573	valid	readable v1 extraction reused; current official version has author and content changes
+browsecomp	targeted_marker_single	11	34345	17170	valid	readable; occasional fused line-wrap words
+paperbench	targeted_marker_single	31	125027	47207	valid	readable; occasional words joined across line breaks
+rebench	targeted_marker_single	61	149895	86724	valid	readable; no obvious sampled prose defect
+scienceagentbench	targeted_marker_single	60	224452	77537	valid	readable; nested entity markup and garbled superscript affiliation markup
+mle_bench	targeted_marker_single	29	131396	44058	valid	readable; occasional fused line-wrap words and malformed citation anchors
+memoryagentbench	targeted_marker_single	33	140177	63956	valid	readable; duplicated author footnote markers
+multiagentbench	targeted_marker_single	43	174394	72696	valid	readable; occasional spacing and punctuation joins
+agentdojo	targeted_marker_single	26	86675	45084	valid	readable; occasional fused line-wrap words and malformed links
+agentharm	targeted_marker_single	36	214107	41087	valid	readable; occasional fused line-wrap words and malformed links
+st_webagentbench	targeted_marker_single	43	118932	54503	valid	readable; title hyphenation artifact and malformed citation anchors
+ai_control	targeted_marker_single	42	167255	92075	valid	readable; occasional fused line-wrap words

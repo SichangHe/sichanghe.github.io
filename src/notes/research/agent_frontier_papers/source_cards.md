@@ -1,0 +1,885 @@
+# agent-frontier source cards 🤖
+
+reading rule
+
+- result means a paper's reported result, not an independent replication
+- each quote is short and searchable in the linked raw evidence
+- cross-paper score comparisons are invalid unless the card says otherwise
+- accepted evidence and first-party preprint evidence remain separate
+
+## time-horizons
+
+- status: NeurIPS 2025 accepted paper
+- official source: [NeurIPS](https://neurips.cc/virtual/2025/poster/119302)
+- method
+  - skilled-human completion time defines task length
+  - eight runs per agent and task feed a logistic 50%-completion fit
+  - model release date is regressed against fitted horizon
+- scope
+  - about 170 HCAST, RE-Bench, and Software Atomic Actions tasks
+  - 2019–2025 model and scaffold combinations
+- result
+  - o3 reached about a 110-minute 50% horizon
+  - fitted horizon doubled every 207 days with 166–240 day 95% bootstrap interval
+  - o3 completed some tasks that took humans more than four hours
+  - 80% horizons were four to six times shorter than 50% horizons
+- negative evidence
+  - performance was lower on messier tasks with weak feedback
+  - one internal pull request taking maintainers under five minutes had zero successes in 30 model attempts
+  - very-high-reliability horizons could not be estimated confidently
+- human and cost evidence
+  - more than 800 human baselines totaling 2,529 hours
+  - only successful human attempts set times and 21 HCAST tasks use researcher estimates
+  - under an assumed $143.61 hourly wage, more than 80% of successful agent runs cost under 10% of human salary cost
+- model and version dependence
+  - results measure model plus scaffold
+  - o1 used triframe and o1-preview duet
+  - elicitation effort varied and took two to three engineer-weeks for some models
+- leakage and comparability
+  - most HCAST tasks were withheld and SWAA creation was blind to attempts
+  - only five internal pull requests are explicitly uncontaminated
+  - no training audit covers the mixed main suite
+  - horizon depends on task distribution and the reference humans
+- short quote
+  - “time horizon is always measured relative to a task distribution”
+- uncertainty
+  - external validity to ordinary software work remains unresolved
+  - the paper inconsistently reports 169 versus 170 tasks and 11 versus 12 frontier models
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/Measuring AI Ability to Complete Long Software Tasks, Thomas Kwa, Ben West, Joel Becker, et al., NeurIPS, 2025/Measuring AI Ability to Complete Long Software Tasks, Thomas Kwa, Ben West, Joel Becker, et al., NeurIPS, 2025.md>)
+
+## tau-bench
+
+- status: ICLR 2025 accepted paper
+- official source: [OpenReview](https://openreview.net/forum?id=roNSXZpUDN)
+- method
+  - an LLM-simulated user interacts with an agent, API tools, and a domain policy
+  - exact final database and output state determines reward
+  - `pass^k` requires all k stochastic trials to succeed
+- scope
+  - 115 retail and 50 airline customer-service tasks
+- result
+  - GPT-4o function calling reached `pass^1` 61.2% in retail and 35.2% in airline
+  - domain-weighted average was 48.2%
+  - retail `pass^8` fell below 25%
+- negative evidence
+  - 55% of analyzed retail failures involved wrong or omitted information
+  - 25% were wrong decisions and 19% only partially resolved compound requests
+  - removing policy context dropped GPT-4o airline success from 33.2% to 10.8%
+- human and cost evidence
+  - no human success baseline
+  - one retail trial cost $0.38 for the GPT-4o agent and $0.23 for the GPT-4 user
+  - annotation labor cost was not reported
+- model and version dependence
+  - function calling outperformed text ReAct and Act
+  - user model was `gpt-4-0613`
+  - most agent snapshots are unspecified
+  - temperature, action cap, and number of trials matter
+- leakage and comparability
+  - GPT-4 generated data and GPT-4-turbo trials were used to tune tasks
+  - no training-data audit
+  - final-state reward is necessary but not sufficient for policy compliance
+  - simulated-user `pass^k` is unlike single-run real-task success
+- short quote
+  - “passˆ8 drops to < 25%”
+- uncertainty
+  - sampled simulator error was under 4%
+  - real-human validity and alternate valid outcomes remain unknown
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/tau-bench- A Benchmark for Tool-Agent-User Interaction in Real-World Domains, Shunyu Yao, Noah Shinn, Pedram Razavi, Karthik Narasimhan, ICLR, 2025/tau-bench- A Benchmark for Tool-Agent-User Interaction in Real-World Domains, Shunyu Yao, Noah Shinn, Pedram Razavi, Karthik Narasimhan, ICLR, 2025.md>)
+
+## ultrahorizon
+
+- status: ICML 2026 accepted paper
+- official source: [OpenReview](https://openreview.net/forum?id=qRNtMWrTvo)
+- method
+  - agents discover hidden rules in partially observable synthetic environments
+  - fixed and free interaction horizons plus a point-wise model judge score progress
+- scope
+  - grid, sequence, and alien-genetics environments
+  - five LLMs, 128K context, 200-message truncation, and traces up to about 200K tokens
+- result
+  - 33 humans averaged 26.52 versus 14.33 for the best LLM
+  - checkpoint-reflect-new-attempt prompting beat naive scaling in every reported model and environment cell
+- negative evidence
+  - GLM-4.5 normalized grid score fell from 34.4 to 5.62 as hidden rules rose from one to five
+  - naive extra steps often worsened scores
+  - sequence exploration broadly failed
+- human and cost evidence
+  - 33 humans used the same tools
+  - time, monetary, and inference costs were not reported
+- model and version dependence
+  - five named mid-2025 model families were tested
+  - ranking changes with horizon and recovery prompting
+  - a DeepSeek-R1 judge supplies partial credit
+- leakage and comparability
+  - synthetic hidden rules reduce obvious overlap but no contamination audit exists
+  - rules and prompts become public after publication
+  - partial-credit score and score@32 are unlike binary single-run success
+- short quote
+  - “Simply increasing interaction steps does not reliably improve long-horizon task performance.”
+- uncertainty
+  - headline plots are image-dependent
+  - judge agreement used only 30 trajectories per environment
+  - the paper inconsistently reports eight versus nine error types
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/UltraHorizon- Benchmarking Agent Capabilities in Ultra Long-Horizon Scenarios, Haotian Luo, Huaisong Zhang, Xuelin Zhang, et al., ICML, 2026/UltraHorizon- Benchmarking Agent Capabilities in Ultra Long-Horizon Scenarios, Haotian Luo, Huaisong Zhang, Xuelin Zhang, et al., ICML, 2026.md>)
+
+## theagentcompany
+
+- status: NeurIPS 2025 datasets and benchmarks paper
+- official source: [OpenReview](https://openreview.net/forum?id=LZnKNApvhG)
+- method
+  - agents browse, code, use office apps, and communicate with model-driven coworkers
+  - binary completion and checkpoint partial credit score work
+- scope
+  - 175 tasks in a self-hosted simulated software company
+  - 12 model backbones, mainly through OpenHands and OWL
+- result
+  - Gemini 2.5 Pro with OpenHands 0.28.1 completed 30.3%
+  - partial score was 39.3%
+  - mean run used 27.2 steps and cost about $4.20 per task
+- negative evidence
+  - every tested agent failed most tasks
+  - RocketChat, ownCloud, data-science, administration, and finance tasks were especially hard
+  - failures included navigation, social interaction, and fabricated completion
+- human and cost evidence
+  - no human performance baseline
+  - 20 people spent about two months and 3,000 person-hours constructing the benchmark
+  - claimed human task durations of ten minutes to hours were not measured
+- model and version dependence
+  - OpenHands and OWL versions materially changed scores
+  - GPT-4o reached 8.6% with OpenHands and 4.0% with OWL
+  - Gemini snapshot is unspecified
+  - 29% of tasks use a Claude model evaluator
+- leakage and comparability
+  - hand-authored tasks and private-like data reduce obvious overlap
+  - real open-source systems and project data remain possible exposure routes
+  - no training-overlap audit
+  - model coworkers, model judging, partial credit, and no human baseline limit labor claims
+- short quote
+  - “we did not collect human performance data”
+- uncertainty
+  - only two scaffolds were evaluated
+  - the simulated firm favors straightforward evaluable work over a natural job distribution
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/TheAgentCompany- Benchmarking LLM Agents on Consequential Real World Tasks, Frank F. Xu, Yufan Song, Boxuan Li, et al., NeurIPS, 2025/TheAgentCompany- Benchmarking LLM Agents on Consequential Real World Tasks, Frank F. Xu, Yufan Song, Boxuan Li, et al., NeurIPS, 2025.md>)
+
+## swe-agent
+
+- status: NeurIPS 2024 accepted paper
+- official source: [NeurIPS proceedings](https://proceedings.neurips.cc/paper_files/paper/2024/hash/5a7c947568c1b1328ccc5230172e1e7c-Abstract-Conference.html)
+- method
+  - a custom agent-computer interface supports navigation, editing, linting, testing, and bounded context
+  - repository repairs are graded at pass@1
+- scope
+  - 2,294 original SWE-bench tasks
+  - 300 SWE-bench Lite tasks
+  - HumanEvalFix
+- result
+  - GPT-4 Turbo resolved 12.47% of full SWE-bench and 18.0% of Lite
+  - Claude 3 Opus resolved 10.46% of the full set
+  - the interface improved GPT-4 over a shell-only baseline by 64% relative
+- negative evidence
+  - 52.0% of classified unresolved Lite cases were wrong or overly specific implementations
+  - 23.4% involved cascading errors or failed edit recovery
+  - 51.7% of full trajectories contained a failed edit
+- human and cost evidence
+  - no human baseline
+  - successful trajectories averaged $1.59 on full and $1.67 on Lite
+  - per-instance budget was $4
+- model and version dependence
+  - `gpt-4-1106-preview` and `claude-3-opus-20240229`
+  - zero temperature, observation truncation, retained history, and GPT-4-centered interface design matter
+- leakage and comparability
+  - issues and repositories were public
+  - issue age was not correlated with success but no direct training audit exists
+  - original, Lite, Verified, and Pro task distributions are not interchangeable
+  - test execution and budget affect comparisons
+- short quote
+  - “Due to budget constraints, we set the per-instance budget”
+- uncertainty
+  - failure labels had only 15 human-checked cases
+  - HumanEvalFix success is reported as both 87.7% and 88.3%
+  - model snapshots are old
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/SWE-agent- Agent-Computer Interfaces Enable Automated Software Engineering, John Yang, Carlos E. Jimenez, Alexander Wettig, et al., NeurIPS, 2024/SWE-agent- Agent-Computer Interfaces Enable Automated Software Engineering, John Yang, Carlos E. Jimenez, Alexander Wettig, et al., NeurIPS, 2024.md>)
+
+## swe-bench-pro
+
+- status: ICML 2026 accepted paper
+- official source: [OpenReview](https://openreview.net/forum?id=uEVTdoAbnK)
+- method
+  - professional engineers verify or augment multi-file repository tasks and tests
+  - a unified SWE-Agent scaffold receives 50 turns
+- scope
+  - 1,865 tasks across 41 repositories and four languages
+  - 731 public, 276 commercial, and 858 private held-out tasks
+  - paper reports public and commercial results while reserving held-out tasks
+- result
+  - public: GPT-5 high reached 25.9% and Claude Opus 4.1 reached 22.7%
+  - commercial: Opus led at 17.8% and GPT-5 reached 15.7%
+- negative evidence
+  - augmentation reduced GPT-5 from 25.9% to 8.4% and Opus from 22.7% to 8.2%
+  - some of that drop reflects verifier false negatives
+  - performance falls with more changed files and stays below 20% on commercial tasks
+- human and cost evidence
+  - professional engineers built and validated environments and tests
+  - no measured human completion, duration, or cost baseline
+  - model costs were not reported
+- model and version dependence
+  - models were the latest versions on 2025-09-18 but exact API snapshots are missing
+  - reasoning effort, no extended thinking for Opus, scaffold, prompt, and turn cap matter
+  - GPT-5 also judges failure categories
+- leakage and comparability
+  - private commercial tasks provide the strongest leakage resistance
+  - no formal overlap audit and held-out results are absent
+  - comparing Verified's higher scores with Pro confounds repository, task, and complexity distributions
+  - tests may reject valid alternative solutions
+- short quote
+  - “real software engineering tasks may have a variety of correct solutions”
+- uncertainty
+  - the abstract says below 25% despite a 25.9% table entry
+  - conclusion reports about 23%
+  - serving snapshots, costs, and false-negative rates remain unclear
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/SWE-Bench Pro- Can AI Agents Solve Long-Horizon Software Engineering Tasks, Xiang Deng, Jeff Da, Edwin Pan, et al., ICML, 2026/SWE-Bench Pro- Can AI Agents Solve Long-Horizon Software Engineering Tasks, Xiang Deng, Jeff Da, Edwin Pan, et al., ICML, 2026.md>)
+
+## swe-lancer
+
+- status: ICML 2025 accepted paper
+- official source: [PMLR](https://proceedings.mlr.press/v267/miserendino25a.html)
+- method
+  - agents solve historical Expensify and Upwork tasks
+  - coding tasks use triple-verified end-to-end tests
+  - management tasks reproduce the original manager's proposal choice
+- scope
+  - 1,488 tasks with $1 million historical payout
+  - 764 coding tasks and 724 management tasks
+  - 502 public Diamond tasks and a private remainder
+- result
+  - Claude 3.5 Sonnet reached 33.7% combined pass@1
+  - it recovered $403,000 of the historical $1 million and 40.3% by earn rate
+  - public Diamond scores were 26.2% for coding and 44.9% for management
+- negative evidence
+  - the best model missed 73.8% of Diamond coding tasks
+  - agents often found relevant files but missed cross-file root causes
+  - new-feature and enhancement success was 14.3%
+- human and cost evidence
+  - actual freelancers completed the source tasks but no matched human study exists
+  - o1-first with freelancer fallback was estimated 13.26% cheaper at pass@1 and 33.5% at pass@5
+  - savings assume current API prices and fast verification that can actually exceed 24 hours
+- model and version dependence
+  - `gpt-4o-2024-08-06`, o1 high effort, and `claude-3-5-sonnet-20240620`
+  - 100 tool calls, three-hour limit, one rollout, reasoning effort, retries, and user tools affect scores
+- leakage and comparability
+  - public 2023–2024 issues may have entered training
+  - Internet and remote or future commits were disabled and a private holdout exists
+  - no pretraining audit
+  - coding, proposal choice, and bounty-weighted earnings mix different abilities
+  - historical bounty is not standardized task duration or value
+- short quote
+  - “Agents excel at localizing, but fail to root cause”
+- uncertainty
+  - one repository and marketplace, one rollout, sparse task categories, and imperfect tests or labels limit generalization
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/SWE-Lancer- Can Frontier LLMs Earn $1 Million from Real-World Freelance Software Engineering, Samuel Miserendino, Michele Wang, Tejal Patwardhan, Johannes Heidecke, ICML, 2025/SWE-Lancer- Can Frontier LLMs Earn $1 Million from Real-World Freelance Software Engineering, Samuel Miserendino, Michele Wang, Tejal Patwardhan, Johannes Heidecke, ICML, 2025.md>)
+
+## osworld
+
+- status: NeurIPS 2024 datasets and benchmarks paper
+- official source: [NeurIPS proceedings](https://proceedings.neurips.cc/paper_files/paper/2024/hash/5d413e48f84dc61244b6be550f1cd8f5-Abstract-Datasets_and_Benchmarks_Track.html)
+- method
+  - agents operate real Ubuntu virtual machines through keyboard and mouse actions
+  - accessibility trees, screenshots, combined views, or set-of-mark observations expose state
+- scope
+  - 369 curated tasks across desktop apps and utilities
+  - 101 multi-app tasks and 30 infeasible tasks
+  - supplementary 43-task Windows adaptation
+- result
+  - GPT-4 with accessibility tree led at 12.24%
+  - best multimodal row was GPT-4V with screenshot plus accessibility tree at 12.17%
+  - students reached 72.36%
+- negative evidence
+  - more than 75% of 550 sampled failed GPT-4V trajectories had click inaccuracies
+  - superficial layout or clutter changes cut performance 60–80% on 28 initially strong tasks
+  - the best overall row scored 2.97% on multi-app workflows
+- human and cost evidence
+  - unfamiliar computer-science students attempted every task and had 111.94 second median time
+  - April 2024 full-suite model estimates ranged from about $100 and ten hours to $500 and 30 hours
+  - human labor cost was not reported
+- model and version dependence
+  - exact main snapshots include `gpt-4-0125-preview` and `gpt-4-vision-preview`
+  - observation type, retained history, 15-step cap, and 30-minute cap materially change scores
+- leakage and comparability
+  - no contamination audit, cutoff split, or private holdout
+  - tasks draw on public instructions and prior benchmarks
+  - partial-credit GUI execution with novice humans differs from code and research tasks
+- short quote
+  - “While humans accomplish 72.4% of the tasks, the best agents achieve <12.2%”
+- uncertainty
+  - the curated sample is not statistically representative
+  - applications evolve and the abstract's below-12.2% claim conflicts slightly with the 12.24% table row
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/OSWorld- Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments, Tianbao Xie, Danyang Zhang, Jixuan Chen, et al., NeurIPS, 2024/OSWorld- Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments, Tianbao Xie, Danyang Zhang, Jixuan Chen, et al., NeurIPS, 2024.md>)
+
+## paperbench
+
+- status: ICML 2025 accepted paper
+- official source: [PMLR](https://proceedings.mlr.press/v267/starace25a.html)
+- method
+  - agents reproduce selected ML papers from scratch without original code or rubric
+  - author-approved hierarchical rubrics score code, execution, and result match
+  - an o3-mini judge grades reruns in fresh environments
+- scope
+  - 20 ICML 2024 spotlight or oral papers
+  - 8,316 leaf criteria
+  - usually three runs per paper over 12 hours
+- result
+  - Claude 3.5 Sonnet with BasicAgent reached 21.0% ±0.8%
+  - o1 high with IterativeAgent reached 24.4% at 12 hours and 26.0% at 36 hours
+  - comparable ML PhD best-of-three reached 41.4% after 48 hours on three papers
+- negative evidence
+  - 12-hour o1 scored 43.3% on code, 4.5% on execution, and 0% on result match
+  - even at 36 hours, result match was 1.4%
+  - code-only scoring reached 43.4% but correlated only 0.48 with full score
+- human and cost evidence
+  - eight screened ML PhDs attempted a four-paper subset and could use AI tools
+  - comparable headline uses only three papers
+  - estimated o1 evaluation cost was $400 per paper and $8,000 per 20-paper run
+  - judge cost was about $66 per paper
+- model and version dependence
+  - dated 2024–2025 model snapshots, scaffold, horizon, and nondeterministic judge all matter
+  - IterativeAgent improved o1 but worsened Claude and reversed their ranking
+- leakage and comparability
+  - original code and known replications were blacklisted but browsing remained available
+  - a string monitor flagged ten of 646 runs
+  - pretrained memorization and paraphrased or off-log lookup remain undetectable
+  - rubric partial credit is not the fraction of papers replicated
+- short quote
+  - “models that are pre-trained on large corpuses may have internalized solutions”
+- uncertainty
+  - 20 papers, high seed variance, three-paper comparable human baseline, and imperfect judge make small gaps unreliable
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/PaperBench- Evaluating AI's Ability to Replicate AI Research, Giulio Starace, Oliver Jaffe, Dane Sherburn, et al., ICML, 2025/PaperBench- Evaluating AI's Ability to Replicate AI Research, Giulio Starace, Oliver Jaffe, Dane Sherburn, et al., ICML, 2025.md>)
+
+## re-bench
+
+- status: ICML 2025 accepted paper
+- official source: [PMLR](https://proceedings.mlr.press/v267/wijk25a.html)
+- method
+  - open-ended ML research-engineering environments expose iterative score feedback
+  - scores normalize each task's starting solution to zero and author reference to one
+  - best-of-k attempts share equal wall-clock and GPU budgets with humans
+- scope
+  - seven bespoke environments
+  - 71 eight-hour attempts by 61 selected ML experts
+  - agents receive 20–48 vCPUs, 200–400 GB RAM, and up to six H100s
+- result
+  - at two hours the best agent score was four times the human score
+  - humans narrowly led at eight hours and doubled the best-agent score at 32 hours
+  - at eight hours the best agents matched only the 36th and 37th human percentiles
+- negative evidence
+  - agent progress slowed after early hours while human progress continued
+  - agents repeated narrow approaches, misunderstood rules, exploited invalid loopholes, and failed to recover
+  - visible noisy scoring enabled overfitting or lucky improvements
+- human and cost evidence
+  - 82% of expert attempts had nonzero score and 24% matched or beat the reference
+  - mean eight-hour agent run cost about $123 in model tokens versus $1,855 human payment
+  - GPU cost was excluded and cost-budget plots gave agents more than ten times human compute
+- model and version dependence
+  - dated Claude 3.5 and o1-preview snapshots used different Modular or AIDE scaffolds
+  - attempt duration, restart count, k, latency accounting, and cheating adjudication change scores
+- leakage and comparability
+  - no environment or solution was directly online at construction and some test data were withheld
+  - no formal pretraining-overlap audit
+  - public release creates future exposure
+  - normalized score@k is not task success and cannot be ranked against other benchmarks
+- short quote
+  - “humans currently display better returns to increasing time budgets”
+- uncertainty
+  - seven short environments, noisy scores, high variance, and best-of-k selection limit labor forecasts
+  - months-long research direction, data creation, distributed training, and hardware diagnosis are absent
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/RE-Bench- Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts, Hjalmar Wijk, Tao Lin, Joel Becker, et al., ICML, 2025/RE-Bench- Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts, Hjalmar Wijk, Tao Lin, Joel Becker, et al., ICML, 2025.md>)
+
+## utboost
+
+- status: ACL 2025 main paper
+- official source: [ACL Anthology](https://aclanthology.org/2025.acl-long.189/)
+- method
+  - GPT-4o localizes test files and generates dependency-aware tests
+  - candidate and gold patches are compared on generated tests
+  - two experienced testers adjudicate discrepancies
+- scope
+  - SWE-Bench Lite and Verified
+  - only downloadable submissions that passed original tests
+- result
+  - 36 task instances had insufficient tests
+  - 345 split-counted erroneous patches had been labeled passed
+  - 18 of 44 Lite and 11 of 45 Verified leaderboard positions changed
+- negative evidence
+  - human-written tests did not establish functional correctness
+  - the benchmark parser misparsed more than 54% of annotations in each split
+- human and cost evidence
+  - no human performance baseline
+  - API cost averaged $1.60 per task
+  - execution used 300 cloud-server hours
+- model and version dependence
+  - test generation used only `gpt-4o-2024-08-06`
+  - leaderboard snapshot: 2024-12-15
+- leakage and comparability
+  - no training-contamination audit
+  - public issues, repositories, and patches may have been exposed
+  - effects from generated tests and parser repair overlap
+- short quote
+  - “we identified 36 task instances with insufficient test cases”
+- uncertainty
+  - false negatives remain unknown because generated tests are not exhaustive
+  - the gold-equivalence oracle can reject a legitimate alternative implementation
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/UTBoost- Rigorous Evaluation of Coding Agents on SWE-Bench, Boxi Yu, Yuxuan Zhu, Pinjia He, Daniel Kang, ACL, 2025/UTBoost- Rigorous Evaluation of Coding Agents on SWE-Bench, Boxi Yu, Yuxuan Zhu, Pinjia He, Daniel Kang, ACL, 2025.md>)
+
+## webrl
+
+- status: ICLR 2025 accepted paper
+- official source: [OpenReview](https://openreview.net/forum?id=oVKEAFjEqv)
+- method
+  - actor-critic reinforcement learning on five WebArena sites
+  - GPT-4o generates curriculum tasks from prior failures
+  - an outcome-supervised reward model, KL constraint, and replay buffer guide learning
+- scope
+  - 165 WebArena-Lite cases
+  - Llama-3.1 8B and 70B plus GLM-4 9B
+- result
+  - Llama-3.1-70B reached 49.1%
+  - its unadapted and supervised-fine-tuned baselines reached 12.7% and 23.0%
+- negative evidence
+  - removing replay caused performance to worsen over phases
+  - the reward model was about 80% accurate
+  - some site performance declined during training
+- human and cost evidence
+  - no human success baseline
+  - humans filtered generated tasks and labeled 100 reward-model rollouts
+  - compute, labor, and dollar totals were not reported
+- model and version dependence
+  - results depend on HTML preprocessing, action format, replay thresholds, and prompting
+  - local OCR is the November 2024 v1 while the current arXiv record is v3
+- leakage and comparability
+  - the reward-model supplement excluded test cases
+  - actor training overlap is less explicit in the local version
+  - literature rows on full WebArena are not directly comparable with WebArena-Lite
+  - no novel-site or open-web transfer test
+- short quote
+  - “Llama3.1-70B achieves an overall accuracy of 49.1%”
+- uncertainty
+  - current-version author order and content differ from the collected v1 extraction
+  - transfer outside the five-site task ecosystem is unknown
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/WebRL- Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning, Zehan Qi, Xiao Liu, Iat Long Iong, Hanyu Lai, Xueqiao Sun, Jiadai Sun, Xinyue Yang, Yu Yang, Shuntian Yao, Wei Xu, Jie Tang, Yuxiao Dong, ICLR, 2025/WebRL- Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning, Zehan Qi, Xiao Liu, Iat Long Iong, Hanyu Lai, Xueqiao Sun, Jiadai Sun, Xinyue Yang, Yu Yang, Shuntian Yao, Wei Xu, Jie Tang, Yuxiao Dong, ICLR, 2025.md>)
+
+## workarena
+
+- status: ICML 2024 accepted paper
+- official source: [PMLR](https://proceedings.mlr.press/v235/drouin24a.html)
+- method
+  - BrowserGym agents act on a live ServiceNow environment
+  - observations include accessibility trees, HTML, or screenshots
+- scope
+  - 33 parameterized task types with 19,912 possible instances
+  - reported evaluation samples ten instances per task
+  - each episode has a 15-step cap
+- result
+  - GPT-4o reached 42.7% ±1.5
+  - GPT-4o with vision reached 41.8%, Llama3 17.9%, and GPT-3.5 6.1%
+  - all tested models scored 0% on list-filter tasks
+- negative evidence
+  - adding vision slightly reduced overall performance
+  - memory reinforced early wrong decisions
+  - coordinate and multi-action modes hurt the tested configuration
+- human and cost evidence
+  - no measured WorkArena human baseline
+  - no monetary cost
+  - Llama3-70B used four A100 GPUs without reported runtime
+- model and version dependence
+  - BrowserGym 0.3.5 and WorkArena 0.3.0
+  - main frontier snapshot: `gpt-4o-2024-05-13`
+  - prompt truncation varied by model
+- leakage and comparability
+  - configurations were random-searched on MiniWoB and WorkArena
+  - the same task templates therefore informed tuning
+  - task synthesis used GPT-4 and GPT-3.5 before GPT-4o evaluation
+  - live ServiceNow changes threaten exact replication
+- short quote
+  - “a clear 0% success rate for all LLMs”
+- uncertainty
+  - ten instantiations per task and no held-out task families limit generalization
+  - no human study maps the score to real knowledge work
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/WorkArena- How Capable Are Web Agents at Solving Common Knowledge Work Tasks, Alexandre Drouin, Maxime Gasse, Massimo Caccia, et al., ICML, 2024/WorkArena- How Capable Are Web Agents at Solving Common Knowledge Work Tasks, Alexandre Drouin, Maxime Gasse, Massimo Caccia, et al., ICML, 2024.md>)
+
+## browsecomp
+
+- status: OpenAI first-party report and arXiv preprint, not accepted evidence
+- official sources
+  - [OpenAI](https://openai.com/index/browsecomp/)
+  - [arXiv](https://arxiv.org/abs/2504.12516)
+- method
+  - 1,266 human-written inverted fact-seeking questions
+  - short reference answers are scored for semantic equivalence by an AI judge
+- scope
+  - obscure stable web facts
+  - excludes normal query distributions, long-form synthesis, and ambiguity resolution
+- result
+  - single-run Deep Research reached 51.5%
+  - o1 reached 9.9% and GPT-4o with browsing reached 1.9%
+  - 64-sample aggregation improved accuracy by a reported 15%–25%
+  - Deep Research failed all 64 trials on 14% of questions
+- negative evidence
+  - browsing raised GPT-4o only from 0.6% to 1.9%
+  - human answers matched references on only 317 of 1,255 attempted items
+  - review removed 21 ambiguous, malformed, or incorrect items
+- human and cost evidence
+  - humans solved 29.2% under an approximately two-hour give-up policy and no AI assistance
+  - no monetary cost or Deep Research inference budget
+  - human and model conditions were not matched
+- model and version dependence
+  - Deep Research snapshot is unspecified
+  - results vary materially with browsing effort and parallel attempts
+- leakage and comparability
+  - Deep Research was trained on BrowseComp-like task data
+  - public release and a canary mitigate but do not disprove later leakage
+  - pre-screening deliberately selects earlier OpenAI-model failures
+- short quote
+  - “it's not guaranteed that this generalizes to all tasks that require browsing.”
+- uncertainty
+  - alternate-answer rate, judge-model version, budget, and post-release contamination remain unknown
+  - the PDF lists Amelia Glaese while the OpenAI page displays Mia Glaese
+- raw evidence
+  - [official-page capture](/ssd1/sichangheagent/work_logs/agent_frontier_20260726/source_pages/browsecomp.json)
+  - [local PDF](</hdd1/sichanghe/paper_collection/BrowseComp- A Simple Yet Challenging Benchmark for Browsing Agents, Jason Wei, Zhiqing Sun, Spencer Papay, et al., OpenAI, 2025.pdf>)
+  - [local OCR](</hdd1/sichanghe/paper_collection/BrowseComp- A Simple Yet Challenging Benchmark for Browsing Agents, Jason Wei, Zhiqing Sun, Spencer Papay, et al., OpenAI, 2025/BrowseComp- A Simple Yet Challenging Benchmark for Browsing Agents, Jason Wei, Zhiqing Sun, Spencer Papay, et al., OpenAI, 2025.md>)
+
+## scienceagentbench
+
+- status: ICLR 2025 accepted paper
+- official source: [OpenReview](https://openreview.net/forum?id=6z4YKr0GK6)
+- method
+  - agents produce self-contained Python programs
+  - valid execution, task success, CodeBERTScore, and API cost are measured
+  - reported scores use best of three independent runs
+- scope
+  - 102 tasks adapted from 44 papers
+  - bioinformatics, computational chemistry, GIS, and psychology or neuroscience
+  - five LLMs with direct, OpenHands CodeAct 1.9, or self-debug scaffolds
+- result
+  - o1-preview with self-debug reached 42.2% task success and 92.2% valid execution
+  - best non-o1 result was Claude 3.5 Sonnet with self-debug and expert knowledge at 34.3%
+  - the authors mark o1 as not directly comparable because its reasoning and hyperparameters differ
+- negative evidence
+  - 29 of 50 sampled OpenHands failures and 30 of 50 self-debug failures executed but were semantically wrong
+  - more than 75% of successful tasks had gold programs shorter than the 58.6-line mean
+  - expert hints sometimes reduced execution validity through unfamiliar or hallucinated APIs
+- human and cost evidence
+  - no controlled human success baseline
+  - a trained annotator reportedly needs at least 2.5–3 hours to adapt a program
+  - agent drafts usually took under ten minutes but correctness conditions were not equivalent
+  - o1 self-debug cost $0.636 per task before human validation
+- model and version dependence
+  - strongest snapshots were `o1-preview-2024-09-12` and `claude-3-5-sonnet-2024-06-20`
+  - self-debug nearly doubled Claude task success from 16.7% to 32.4%
+  - GPT-4o figure judging and best-of-three selection affect results
+- leakage and comparability
+  - mitigation removes five test points and relabels splits only when feasible
+  - public repositories and datasets remain possible exposure routes
+  - tasks are Python-only, selected across four fields, and runnable in at most ten minutes
+  - this is task-level program synthesis, not end-to-end discovery
+- short quote
+  - “we extract 102 tasks from 44 peerreviewed publications in four disciplines”
+- uncertainty
+  - automatic metrics, model judging, leakage checks, and the unmatched human comparison remain incomplete
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/ScienceAgentBench- Toward Rigorous Assessment of Language Agents for Data-Driven Scientific Discovery, Ziru Chen, Shijie Chen, Yuting Ning, et al., ICLR, 2025/ScienceAgentBench- Toward Rigorous Assessment of Language Agents for Data-Driven Scientific Discovery, Ziru Chen, Shijie Chen, Yuting Ning, et al., ICLR, 2025.md>)
+
+## mle-bench
+
+- status: ICLR 2025 oral paper
+- official source: [ICLR](https://iclr.cc/virtual/2025/oral/31914)
+- method
+  - agents develop submissions for offline Kaggle competitions
+  - private-leaderboard medal thresholds provide task-specific grading
+- scope
+  - 75 test competitions and seven development competitions
+  - default attempt: 24 hours, 36 vCPUs, 440 GB RAM, and one A10 GPU
+  - three scaffolds and four main models
+- result
+  - o1-preview with AIDE earned any medal on 16.9% ±1.1% at pass@1
+  - it beat the median on 29.4% ±1.3%
+  - pass@8 reached 34.1% under a larger compute regime
+- negative evidence
+  - many runs produced no valid submission
+  - agents mishandled time and compute or exhausted disk and RAM
+  - o1 any-medal rate fell from 34.3% on low difficulty to 8.8% on medium and 10.0% on high
+- human and cost evidence
+  - comparator is historical Kaggle leaderboards, not a matched human study
+  - humans often had weeks or months while agents had 24 hours and newer tools
+  - one 75-task seed used 1,800 GPU-hours
+  - dollar cost was not reported
+- model and version dependence
+  - GPT-4o with AIDE reached 8.7%, versus 4.4% with OpenHands and 0.8% with MLAB
+  - AIDE is Kaggle-specific and uses GPT-4o as a feedback model
+  - pass@k and resource scaling materially change the headline
+- leakage and comparability
+  - competitions, solutions, and test data were public
+  - familiarity and obfuscated-description tests found no systematic GPT-4o effect
+  - those tests cannot detect reused high-level strategies or guarantee clean future models
+  - altered splits, graders, medal proxies, and compute weaken cross-study and human comparisons
+- short quote
+  - “This does not rule out subtler effects of contamination”
+- uncertainty
+  - no clean contamination guarantee exists, especially for o1 and later models
+  - medal performance is not equivalent to open-ended ML research
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/MLE-bench- Evaluating Machine Learning Agents on Machine Learning Engineering, Jun Shern Chan, Neil Chowdhury, Oliver Jaffe, et al., ICLR, 2025/MLE-bench- Evaluating Machine Learning Agents on Machine Learning Engineering, Jun Shern Chan, Neil Chowdhury, Oliver Jaffe, et al., ICLR, 2025.md>)
+
+## memoryagentbench
+
+- status: ICLR 2026 accepted paper
+- official source: [OpenReview](https://openreview.net/forum?id=DT7JyQC3MR)
+- method
+  - inputs arrive incrementally through user and assistant turns
+  - long-context, RAG, and agentic-memory systems are compared
+- scope
+  - four operational competencies
+    - accurate retrieval
+    - test-time learning
+    - long-range understanding
+    - selective forgetting
+  - heterogeneous accuracy, Recall@5, F1, and judge scores are averaged
+- result
+  - GPT-5-mini long context led the aggregate at 60.6
+  - best non-long-context result was HippoRAG-v2 at 41.6
+  - the strongest aggregate was therefore not an agentic-memory win
+- negative evidence
+  - every method scored at most 28% on multi-hop selective forgetting
+  - o4-mini fell from 80% at 6K to 14% at 32K tokens on that task
+  - RAG and commercial agents trailed long-context baselines on learning and global understanding
+- human and cost evidence
+  - no human baseline
+  - paper costs are estimates using November 2025 prices and assumed caching
+  - embedding indexing and full deployment costs are excluded
+- model and version dependence
+  - MIRIX rose from 26.2 with GPT-4o-mini to 37.7 with GPT-4.1-mini
+  - context ceilings, FIFO truncation, top-k, and unequal chunk sizes affect comparisons
+  - exact dated API snapshots are absent
+- leakage and comparability
+  - no contamination audit
+  - many inputs derive from public datasets
+  - GPT-4o generates or judges parts of the benchmark
+  - the aggregate mixes incompatible metrics, context lengths, backbones, and budgets
+- short quote
+  - “current methods fall short of mastering all four competencies”
+- uncertainty
+  - the four-competency taxonomy is an operational choice
+  - synthetic overwrite tasks and explicit instructions do not establish real-world memory quality
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/MemoryAgentBench- Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions, Yuanzhe Hu, Yu Wang, Julian McAuley, ICLR, 2026/MemoryAgentBench- Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions, Yuanzhe Hu, Yu Wang, Julian McAuley, ICLR, 2026.md>)
+
+## multiagentbench
+
+- status: ACL 2025 main paper
+- official source: [ACL Anthology](https://aclanthology.org/2025.acl-long.421/)
+- method
+  - MARBLE evaluates four communication topologies and four planner prompts
+  - scenario-specific task scores are paired with model-rated communication, planning, and milestone metrics
+- scope
+  - five models and six scenarios
+  - cooperative research, Minecraft, database diagnosis, and coding
+  - competitive Werewolf and bargaining
+- result
+  - gpt-4o-mini reached 84.13% task score on research and 65.10% on coding
+  - it remained weak on Werewolf at 14.06%, versus Llama-3.3-70B at 36.33%
+  - evolving planning improved milestone achievement by three percentage points
+- negative evidence
+  - Llama-3.1-70B had 75.00 communication score but 0.21 task score in Minecraft
+  - group discussion was worst across all research metrics
+  - more iterations and more agents eventually reduced task metrics
+- human and cost evidence
+  - no human task baseline or dollar cost
+  - six annotators checked a subset of Werewolf ratings
+  - human correlation was 0.8057 for communication but only 0.2685 for planning
+- model and version dependence
+  - gpt-4o-mini snapshot is unspecified
+  - topology, planner, team size, communication iterations, and scenario iteration caps change results
+- leakage and comparability
+  - no contamination audit
+  - several tasks are public or LLM-generated
+  - GPT-4o also judges open-ended outputs
+  - task-score definitions differ by scenario and are rescaled
+  - synthetic settings and unmatched compute prevent a general team-advantage claim
+- short quote
+  - “increasing the number of agents leads to a decrease in the overall KPI”
+- uncertainty
+  - judge alignment is weak for planning
+  - key values exist only in figures and main results lack clear repeated-seed confidence intervals
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/MultiAgentBench- Evaluating the Collaboration and Competition of LLM Agents, Kunlun Zhu, Hongyi Du, Zhaochen Hong, et al., ACL, 2025/MultiAgentBench- Evaluating the Collaboration and Competition of LLM Agents, Kunlun Zhu, Hongyi Du, Zhaochen Hong, et al., ACL, 2025.md>)
+
+## agentdojo
+
+- status: NeurIPS 2024 datasets and benchmarks paper
+- official source: [NeurIPS proceedings](https://proceedings.neurips.cc/paper_files/paper/2024/hash/97091a5177d8dc64b1da8bf3e1f6fb54-Abstract-Datasets_and_Benchmarks_Track.html)
+- method
+  - stateful tool environments use deterministic utility and security checks
+  - generic and adaptive indirect prompt injections attack tool-calling agents
+- scope
+  - four environments, 70 tools, 97 benign tasks, and 27 injection goals
+  - 629 within-environment user-task and injection-goal security cases
+- result
+  - Claude 3.5 Sonnet benign utility was 78.22% ±3.23%
+  - under one attack its utility was 51.19% ±3.91% and targeted attack success 33.86% ±3.70%
+  - GPT-4o tool filtering reduced adaptive attack success to 6.84% while retaining 73.13% benign utility
+- negative evidence
+  - most models lost 10–25 absolute utility points under attack
+  - filtering cannot help when legitimate and malicious goals require the same tools
+  - the prompt-injection detector cut benign utility to 41.49%
+- human and cost evidence
+  - no human task baseline
+  - estimated full GPT-4o security suite cost was about $35
+  - manual data and check inspection labor was not priced
+- model and version dependence
+  - GPT-4o pipeline code uses `gpt-4o-2024-05-13`
+  - provider-specific prompts and benchmark revisions differ
+  - the later Claude 3.5 result conflicts with an older introduction claim
+- leakage and comparability
+  - no contamination or canary analysis
+  - security cases are correlated cross-products
+  - attack success is capability-dependent, so an incapable model can look safe
+  - fixed attacks are not a substitute for adaptive red teaming
+- short quote
+  - “The prompt injection detector has too many false positives”
+- uncertainty
+  - reported attack rates are lower bounds against tested attacks, not security guarantees
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/AgentDojo- A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents, Edoardo Debenedetti, Jie Zhang, Mislav Balunovic, et al., NeurIPS, 2024/AgentDojo- A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents, Edoardo Debenedetti, Jie Zhang, Mislav Balunovic, et al., NeurIPS, 2024.md>)
+
+## agentharm
+
+- status: ICLR 2025 accepted paper
+- official source: [ICLR proceedings](https://proceedings.iclr.cc/paper_files/paper/2025/hash/c493d23af93118975cdbc32cbe7323f5-Abstract-Conference.html)
+- method
+  - a direct-prompt agent uses synthetic no-side-effect tools on malicious tasks
+  - manual rubrics provide partial-credit harm scores
+  - forced tool calls and a universal template jailbreak test defenses
+- scope
+  - 110 base malicious behaviors and 330 augmentations
+  - 11 harm categories, 104 tools, and paired benign variants
+- result
+  - without an attack, Mistral Large 2 reached 82.2% harm with 1.1% refusal
+  - the template jailbreak raised Claude 3.5 harm from 13.5% to 68.7%
+  - best-of-five reached 90.8% for Mistral, 83.7% for GPT-4o, and 79.7% for Claude
+- negative evidence
+  - jailbreaks retained benign-like task capability while bypassing refusal
+  - synthetic tools make tasks easier and remove real side effects
+  - Gemini omitted about 16% of behaviors through tool-call API errors
+- human and cost evidence
+  - no human agent baseline
+  - a public-test run cost about $1–$4 for GPT-4o plus up to $0.50 for judging
+  - task and rubric review labor was not priced
+- model and version dependence
+  - exact checkpoints, basic prompt, zero temperature, output cap, and tool-call support matter
+  - prompt ablations sharply change refusal and harm
+- leakage and comparability
+  - public and private splits plus a canary reduce direct leakage risk
+  - the private 30% was withheld from public APIs and evaluated on non-logging deployments
+  - future exposure remains possible and only a subset of models received private testing
+  - direct malicious use differs from AgentDojo's indirect injection threat
+- short quote
+  - “Using synthetic tools makes these tasks easier and less realistic”
+- uncertainty
+  - harm score is a bounded proxy on English sandbox tasks
+  - it does not measure real side effects or advanced open-world autonomy
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/AgentHarm- A Benchmark for Measuring Harmfulness of LLM Agents, Maksym Andriushchenko, Alexandra Souly, Mateusz Dziemian, et al., ICLR, 2025/AgentHarm- A Benchmark for Measuring Harmfulness of LLM Agents, Maksym Andriushchenko, Alexandra Souly, Mateusz Dziemian, et al., ICLR, 2025.md>)
+
+## st-webagentbench
+
+- status: ICLR 2026 accepted paper
+- official source: [OpenReview](https://openreview.net/forum?id=MuCDzH0ctf)
+- method
+  - web tasks are enriched with explicit enterprise policies
+  - completion, partial completion, zero-violation completion, and per-policy risk are measured
+  - the policy block is appended after every observation
+- scope
+  - 375 tasks and 3,057 policy instances
+  - GitLab, ShoppingAdmin, and SuiteCRM
+  - three public agents using a shared GPT-4o backbone
+- result
+  - AWM reached 46.9% partial completion and 20% zero-violation completion
+  - across agents, raw completion averaged 24.3% and compliant completion 15.0%
+  - strict all-pass@3 was 5% for AWM, 3% for WorkArena-Legacy, and 2% for WebVoyager
+- negative evidence
+  - compliant completion fell from 18.2% with one policy to 7.1% with more than five
+  - 70% of violations concerned consent or strict execution
+  - a small completion-compliance gap can mean an agent never reached risky states
+- human and cost evidence
+  - no human task baseline
+  - ten senior enterprise stakeholders refined the policy taxonomy
+  - the human-in-loop condition auto-approves and is not a human study
+  - dollar and API cost were not reported
+- model and version dependence
+  - GPT-4o snapshot and agent versions are absent
+  - live UI state, continuous policy injection, pass@3, fuzzy confirmation matching, and auto-approval affect results
+- leakage and comparability
+  - no contamination audit
+  - two apps derive from public WebArena and AWM was built in that ecosystem
+  - policies and tasks are unevenly distributed
+  - only three apps, one backbone, English, and a bounded threat model are tested
+- short quote
+  - “These constraints frame the benchmark as a foundation, not a deployment gatekeeper.”
+- uncertainty
+  - the once-per-agent protocol is hard to reconcile with pass@3 reporting
+  - exact AWM completion is figure-dependent
+  - the official landing-page TLDR says 222 tasks while the paper and abstract say 375
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/ST-WebAgentBench- A Benchmark for Evaluating Safety and Trustworthiness in Web Agents, Ido Levy, Ben Wiesel, Sami Marreed, et al., ICLR, 2026/ST-WebAgentBench- A Benchmark for Evaluating Safety and Trustworthiness in Web Agents, Ido Levy, Ben Wiesel, Sami Marreed, et al., ICLR, 2026.md>)
+
+## ai-control
+
+- status: ICML 2024 accepted paper
+- official source: [PMLR](https://proceedings.mlr.press/v235/greenblatt24a.html)
+- method
+  - control protocols solve a simulated sequence of 5,000 APPS coding problems
+  - untrusted GPT-4 may insert backdoors and trusted GPT-3.5 monitors or edits
+  - safety is the probability of zero submitted backdoors against the strongest constructed red-team policy
+- scope
+  - 100 trusted-labor points model a 2% audit budget
+  - estimates use 1,500 problems, backdoor downsampling, resampling, and 2,000 Monte Carlo trials
+- result
+  - trusted editing on the 20% most suspicious cases reached 92% safety and 94% normalized usefulness
+  - trusted monitoring reached 62% safety and 97% usefulness
+  - upfront auditing reached only 15% safety and 100% usefulness
+- negative evidence
+  - rare attacks can wait out naive upfront auditing
+  - untrusted monitors can collude through output signals
+  - the best protocol still had 8% estimated catastrophe probability
+- human and cost evidence
+  - no observed human performance or audit baseline
+  - GPT-4 substitutes for high-quality labor because it was cheaper
+  - monetary and compute costs were not reported
+- model and version dependence
+  - results bind to GPT-4-0613, GPT-3.5-0613, APPS, prompts, and a stateless tool-less threat model
+  - the authors built both protocol and red team
+- leakage and comparability
+  - no validation or test split
+  - blue and red teams iterated on the same 1,500 public APPS problems
+  - no training-contamination audit
+  - sequence-level worst-case safety is unlike per-task attack or success rates
+  - the strongest found attack is not an upper bound on a strategic adversary
+- short quote
+  - “control evaluations could produce overoptimistic safety estimates”
+- uncertainty
+  - 92% is conditional on the simulator, sampling, red-team strength, and narrow threat model
+  - it is not a deployment guarantee
+- raw evidence
+  - [local OCR](</hdd1/sichanghe/paper_collection/AI Control- Improving Safety Despite Intentional Subversion, Ryan Greenblatt, Buck Shlegeris, Kshitij Sachan, Fabien Roger, ICML, 2024/AI Control- Improving Safety Despite Intentional Subversion, Ryan Greenblatt, Buck Shlegeris, Kshitij Sachan, Fabien Roger, ICML, 2024.md>)
