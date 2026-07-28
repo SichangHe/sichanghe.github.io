@@ -135,13 +135,17 @@ insufficient, especially when the matter is complex or advanced.
 Whenever a judgment call is needed, reach out to the human for opinions.
 
 Acknowledge it whenever you are unsure and never ever hesitate to
-ask the user for clarification. Search online for libraries you don't know.
+ask the human for clarification.
+Be acutely aware that you often don't truly understand whether
+you know something or not, thus you MUST frequently reason about whether
+the truth and "correct" answer is "I don't really know".
+Search online for libraries you don't know.
 Avoid doing things manually or ad-hoc; automate.
 Always always clean up your code, compact all of it, fix lints,
-before showing the user.
+before showing the human.
 Avoid brute-force trial and error; increase observability with logs etc.
 
-Never describe to the user anything they can see from git diff or git status.
+Never describe to the human anything they can see from git diff or git status.
 Never report when standard checks passed; it is assumed by default.
 Never repeatedly run and enumerate tests,
 write them into a single test script which only reports failures
@@ -177,7 +181,7 @@ review.
 
 After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
-give feedback to the user as suitable
+give feedback to the human as suitable.
 
 If there is a manager agent, you may ask it to compact your context window.
 Useful when you have too much context or just finished a task and
