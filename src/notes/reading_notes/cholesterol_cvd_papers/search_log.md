@@ -2,6 +2,13 @@
 
 Redo date: 2026-06-13.
 
+## Prestige-source policy
+
+- decision-weighted evidence is limited to major medical journals, major cardiology/diabetes journals, and major society guidelines or consensus statements
+- Perplexity, Gemini, and Google Scholar were discovery routes, not evidence authorities
+- lower-prestige specialty/open-access venues, case reports, cross-sectional imaging, nonrandomized interventions, and retracted work were screened only for uncertainty mapping
+- downgraded screened sources remain as paper/reference artifacts when lawful, but they do not drive the synthesis conclusion
+
 ## Required browser routes
 
 - long-running browser
@@ -12,19 +19,19 @@ Redo date: 2026-06-13.
   - used via existing browser CDP
   - signed-in profile visible as `Steven He`
   - helper selector initially missed the icon-only submit button, then direct CDP mouse/keyboard input submitted successfully
-  - artifact: `searches/perplexity_5705.json`
+  - intermediate JSON artifact was quarantined outside the notes repo
   - answer URL: `https://www.perplexity.ai/search/c6b6d1fe-e29a-487c-9fc0-00f4753fe2b3`
 - Gemini
   - used via existing browser CDP
   - no login or challenge page observed
   - direct CDP input submitted successfully through visible `Send message`
-  - artifact: `searches/gemini_5705.json`
+  - intermediate JSON artifact was quarantined outside the notes repo
   - answer URL: `https://gemini.google.com/app/b04989903395e2d6`
 - Google Scholar
   - used via existing browser CDP
   - query: `LDL ApoB causal atherosclerosis Mendelian randomization insulin resistance ketogenic diet cardiovascular risk 2024 review`
   - no CAPTCHA or unusual-traffic block observed
-  - artifact: `searches/google_scholar_5705.json`
+  - intermediate JSON artifact was quarantined outside the notes repo
 
 ## Main queries and trails
 
@@ -38,7 +45,8 @@ Redo date: 2026-06-13.
 - Mainstream LDL/ApoB evidence converged on EAS 2017/2020 consensus statements, CTT meta-analysis, non-statin outcome trials, NLA 2024 ApoB consensus, and ApoB discordance studies
 - Mechanistic evidence converged on arterial-wall retention/modification of ApoB-containing particles and glycation/inflammation in diabetes
 - Insulin/glycemia evidence supports acceleration and interaction, not replacement of ApoB as plaque substrate
-- Keto evidence converged on low-carb T2D meta-analysis, NLA low-carb statement, LMHR phenotype papers, KETO Trial imaging, controlled feeding data, and UK Biobank LCHF/MACE evidence
+- Prestige-weighted keto evidence rests mainly on the BMJ low-carb T2D meta-analysis and the NLA low-carb statement
+- LMHR phenotype papers, KETO Trial imaging, controlled feeding data, and UK Biobank LCHF/MACE evidence were downgraded because of venue, design, or both
 - The 2025 longitudinal KETO-CTA paper was screened but rejected because PubMed records a 2026 retraction notice
 
 ## Access caveats
@@ -54,4 +62,4 @@ Redo date: 2026-06-13.
 - OCR/text extraction log: `ocr_log.tsv`
 - PDFs: `pdf/`
 - extracted text and abstracts: `text/`
-- browser search artifacts: `searches/`
+- browser search JSON artifacts were quarantined outside the notes repo as intermediates

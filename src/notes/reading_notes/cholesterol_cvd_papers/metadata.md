@@ -4,6 +4,8 @@ Local collection for `src/notes/reading_notes/cholesterol_cvd.md`.
 
 PDFs were downloaded only from official publisher, society, PMC, or open-access endpoints. PDF text files were produced with `pdftotext`; HTML and abstract records were saved as text where lawful binary PDFs were unavailable. No downloaded PDF required image OCR because all yielded substantial machine-readable text.
 
+Decision-weighted evidence for the note is limited to major medical journals, major cardiology/diabetes journals, and major society guidelines or consensus statements. Lower-prestige specialty/open-access venues, case reports, cross-sectional imaging, nonrandomized interventions, and retracted work are retained only as screened paper/reference artifacts for uncertainty mapping.
+
 | local id | paper | source type | local files | source |
 |---|---|---|---|---|
 | ference_2017_eas_ldl_causality_ehj | Low-density lipoproteins cause atherosclerotic cardiovascular disease. 1. Evidence from genetic, epidemiologic, and clinical studies | EAS consensus | `pdf/ference_2017_eas_ldl_causality_ehj.pdf`, `text/ference_2017_eas_ldl_causality_ehj.pdf.txt` | PMC, `doi:10.1093/eurheartj/ehx144` |
@@ -49,4 +51,4 @@ PDFs were downloaded only from official publisher, society, PMC, or open-access 
 - OUP and AHA publisher PDFs returned 403 from direct requests; open PMC or society PDFs were used instead where lawful
 - Direct BMJ low-carb T2D publisher PDF/HTML returned 403, but PMC HTML was available and saved
 - PMC binary PDFs required a transparent proof-of-work cookie before download; the collection used the official PMC challenge and did not bypass paywalls
-- Required Perplexity, Gemini, and Google Scholar browser artifacts from the redo are under `searches/`
+- Required Perplexity, Gemini, and Google Scholar browser JSON artifacts from the redo were quarantined outside the notes repo because they are intermediate browsing artifacts

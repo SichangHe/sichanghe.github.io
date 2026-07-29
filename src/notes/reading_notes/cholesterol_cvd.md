@@ -2,7 +2,7 @@
 
 Population evidence synthesis. Not personal medical advice.
 
-Redo status: 2026-06-13. This version used the long-running browser session and the required Perplexity, Gemini, and Google Scholar routes. Local search artifacts and paper text are under `cholesterol_cvd_papers/`.
+Redo status: 2026-06-13. Tightened 2026-06-13 after human review. Perplexity, Gemini, and Google Scholar were used only for discovery. The synthesis below is decision-weighted only to major medical journals, major cardiology/diabetes journals, and major society guidelines or consensus statements.
 
 ## Bottom line
 
@@ -32,11 +32,11 @@ Fact: the 2017 EAS consensus conclusion says LDL "causes ASCVD." Its evidence ba
 
 Fact: the 2020 EAS pathophysiology consensus describes LDL as the "key deliverer of cholesterol" to the artery wall and centers retention/modification in the intima.
 
-Fact: the 2024 NLA ApoB consensus says ApoB "represents the total concentration" of atherogenic particles and is "superior to LDL-C" for risk assessment before and during lipid-lowering therapy.
+Fact: the 2024 NLA ApoB consensus is treated as a major specialty-society consensus statement. It says ApoB "represents the total concentration" of atherogenic particles and is "superior to LDL-C" for risk assessment before and during lipid-lowering therapy.
 
 Fact: the CTT meta-analysis found major vascular events fell with LDL reduction; its interpretation says each 1 mmol/L LDL-C reduction lowers major vascular events by "just over a fifth."
 
-Fact: high glucose can chemically modify LDL. A 2023 review states: "High glucose levels in blood can result in glycation" of lipids, proteins, and nucleic acids.
+Fact: diabetes and hyperglycemia are ASCVD risk accelerants in major cardiology and diabetes guidance. The detailed glycation review saved locally is mechanistic background only, not a decision-weighted prestige source.
 
 Inference: glucose/insulin status modifies risk per person and probably risk per plaque environment. It does not remove the causal role of retained ApoB particles.
 
@@ -76,22 +76,25 @@ Modern GLP-1 receptor agonist and SGLT2 inhibitor outcome trials add nuance: car
 
 ## Keto and low-carb evidence
 
-Strongest keto-side points:
+Prestige-weighted keto-side points:
 
 - Low-carb diets can improve short-term diabetes remission, weight, triglycerides, and insulin sensitivity
 - the 2021 BMJ meta-analysis found higher T2D remission at 6 months, with benefits less durable at 12 months
 - the 2019 NLA statement says low-CHO diets can help appetite, triglycerides, and T2D medication reduction
-- lean mass hyper-responders appear to be a real phenotype: the 2022 paper reports BMI was inversely associated with LDL-C change, and low TG/HDL predicted larger LDL-C increases
-- the 2024 KETO Trial found no significant difference in coronary plaque burden in 80 keto hyper-responders versus matched controls
+- there is no high-prestige hard-outcome LMHR evidence showing that very high LDL-C/ApoB is safe
 
-Strongest counterpoints:
+Prestige-weighted counterpoints:
 
-- the KETO Trial is small, selected, and cross-sectional/matched; it is not a hard-event or progression trial
-- the KETO Trial itself notes exceptionally high LDL-C is usually coincident with high LDL-P and ApoB
-- the 2025 longitudinal KETO-CTA paper should not be used; the 2026 retraction says methodology concerns affect "the reliability of the data"
-- a controlled feeding trial in normal-weight women found LDL-C increased in every participant and ApoB increased
-- a 2024 UK Biobank LCHF analysis found higher LDL-C/ApoB and higher incident MACE; this is observational and confounded, but it cuts against assuming low-carb context is protective enough
 - the 2019 NLA low-carb statement says LDL-C effects are mixed, some studies show increases, and long-term safety data are minimal
+- the broader prestige evidence for LDL/ApoB causality is not limited to insulin-resistant populations
+- LDL-lowering outcome trials in major journals support event reduction across different therapies and risk backgrounds
+- major diabetes evidence supports glucose/insulin as risk modifiers, not as proof that ApoB exposure becomes benign
+
+Downgraded screened keto/LMHR material:
+
+- LMHR phenotype papers, the KETO Trial imaging paper, keto feeding trials in lower-prestige nutrition venues, and JACC Advances observational/imaging papers are retained as paper/reference artifacts but are not decision-weighted
+- the 2025 longitudinal KETO-CTA paper should not be used; the 2026 retraction says methodology concerns affect "the reliability of the data"
+- these downgraded sources are useful for hypothesis generation and uncertainty mapping only
 
 Current inference: low-carb can reduce several risk accelerants while raising ApoB in some people. The open question is whether those improvements offset high ApoB in a narrow lean subgroup over decades. The current evidence does not establish that they do.
 
@@ -126,11 +129,12 @@ So the answer to the original controversy is: cholesterol/ApoB-containing partic
 
 ## Source trail
 
-Required browser routes:
+Evidence collection:
 
-- Perplexity: used existing long-running Chrome via CDP, signed-in profile, answer artifact `cholesterol_cvd_papers/searches/perplexity_5705.json`
-- Gemini: used existing long-running Chrome via CDP, answer artifact `cholesterol_cvd_papers/searches/gemini_5705.json`
-- Google Scholar: used existing long-running Chrome via CDP, result artifact `cholesterol_cvd_papers/searches/google_scholar_5705.json`
+- Perplexity: used existing long-running Chrome via CDP, signed-in profile, discovery result saved then quarantined outside the notes repo
+- Gemini: used existing long-running Chrome via CDP, discovery result saved then quarantined outside the notes repo
+- Google Scholar: used existing long-running Chrome via CDP, discovery result saved then quarantined outside the notes repo
+- retained note-level details are in `cholesterol_cvd_papers/search_log.md`
 
 Local artifacts:
 
@@ -141,7 +145,7 @@ Local artifacts:
 - download log: `src/notes/reading_notes/cholesterol_cvd_papers/download_log.tsv`
 - OCR/text extraction log: `src/notes/reading_notes/cholesterol_cvd_papers/ocr_log.tsv`
 
-Key sources:
+Decision-weighted prestige sources:
 
 - Ference et al. 2017, EAS LDL causality consensus, `doi:10.1093/eurheartj/ehx144`
 - Borén et al. 2020, EAS LDL pathophysiology consensus, `doi:10.1093/eurheartj/ehz962`
@@ -154,10 +158,15 @@ Key sources:
 - Nissen et al. 2023, bempedoic acid primary prevention subgroup, `doi:10.1001/jama.2023.9696`
 - Marston et al. 2022, ApoB-containing lipoproteins and MI risk, `doi:10.1001/jamacardio.2021.5083`
 - Sniderman et al. 2024, ApoB discordance and ASCVD risk, `doi:10.1093/eurheartj/ehae258`
-- Xie et al. 2023, glycation of LDL review, `doi:10.3389/fcvm.2023.1094188`
 - Boussageon et al. 2011, intensive glucose lowering meta-analysis, `doi:10.1136/bmj.d4169`
+- McGuire et al. 2021, SGLT2 inhibitor CV/kidney meta-analysis, `doi:10.1001/jamacardio.2020.4511`
+- Sattar et al. 2021, GLP-1 receptor agonist CV/kidney meta-analysis, `doi:10.1016/S2213-8587(21)00203-5`
+- ADA Standards of Care in Diabetes 2026, cardiovascular risk management, `doi:10.2337/dc26-S010`
 - Goldenberg et al. 2021, low-carb T2D meta-analysis, `doi:10.1136/bmj.m4743`
 - Kirkpatrick et al. 2019, NLA low-carb scientific statement, `doi:10.1016/j.jacl.2019.08.003`
+
+Downgraded or excluded sources:
+
 - Buren et al. 2021, ketogenic feeding trial in normal-weight women, `doi:10.3390/nu13030814`
 - Norwitz et al. 2022, lean mass hyper-responder phenotype, `doi:10.1093/cdn/nzab144`
 - Budoff et al. 2024, KETO Trial imaging study, `doi:10.1016/j.jacadv.2024.101109`
