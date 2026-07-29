@@ -94,6 +94,38 @@ Risks:
 - Scope creep is high. A credible first paper needs one subsystem and a small
   assumption vocabulary, not a universal verification platform.
 
+🤖 Verus systems-paper bar
+
+- 🤖 strongest pattern
+  - 🤖 system matters even without verification
+  - 🤖 verification idea makes a useful property practical
+  - 🤖 artifact is usable and measured against mature baselines
+- 🤖 accepted-paper evidence to imitate
+  - 🤖 real target
+    - 🤖 kernel subsystem, storage engine, controller framework, protocol library, certificate engine, security-policy engine, or verified device/TEE module
+  - 🤖 nontrivial property
+    - 🤖 liveness, crash consistency, information flow, validation, side channel, refinement, or concurrency correctness
+  - 🤖 reusable verification idea
+    - 🤖 DSL, decomposition, proof-producing compiler, ghost-state pattern, or verified architecture
+  - 🤖 practicality
+    - 🤖 performance near baselines
+    - 🤖 proof effort low enough to believe
+    - 🤖 bugs or missing requirements found by proof
+- 🤖 weak claim
+  - 🤖 we verified code in Verus
+- 🤖 strong claim
+  - 🤖 Verus changes the system design space by making a useful guarantee practical
+- 🤖 VL next move
+  - 🤖 pick one real subsystem now
+  - 🤖 build the smallest publishable artifact
+  - 🤖 define one crisp property
+  - 🤖 choose the reusable verification idea
+  - 🤖 report blockers to the human immediately
+    - 🤖 blocked on target choice
+    - 🤖 blocked on property choice
+    - 🤖 blocked on baseline or evaluation access
+    - 🤖 blocked on Verus proof feasibility
+
 Paper narrative:
 
 1. Modern proof agents fail less on syntax and more on hidden repository state.
