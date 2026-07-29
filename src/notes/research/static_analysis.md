@@ -197,6 +197,22 @@
     - verification in seconds, meant to be CI-friendly
     - big compression of format specs: Bitcoin \~67 LoC vs \~2,000 baseline,
         TLS 500 vs \~7,000, Wasm 600 vs \~30,000
+    - 🤖 Rust TLS scope map
+        - 🤖 Vest is the recalled Verus work
+            - 🤖 verified TLS 1.3 handshake-message parser / serializer
+            - 🤖 not a complete verified TLS stack
+        - 🤖 [Rustls](https://github.com/rustls/rustls) is the deployed stack
+            - 🤖 testing, fuzzing, and a prior audit
+            - 🤖 no mechanical proof binding found for current production code
+            - 🤖 conditional reserve, not a current fast experiment
+        - 🤖 [Bertie / Bert13](https://github.com/cryspen/bertie) is the broader verified Rust TLS research stack
+            - 🤖 hax extraction to F*, ProVerif, and SSProve, not Verus
+            - 🤖 property-specific proof boundaries and application-owned certificate authentication
+            - 🤖 pre-release and explicitly not for production
+        - 🤖 direction: keep all three as prior art for the current launch
+            - 🤖 Vest already covers the narrow Verus format story
+            - 🤖 Rustls production binding is wider than a one-day arm
+            - 🤖 Bertie proof / production gaps are not a fast closure
 - [Atmosphere: Towards Practical Verified Kernels in
     Rust](https://dl.acm.org/doi/epdf/10.1145/3625275.3625401), Xiangdong Chen,
     Zhaofeng Li, Lukas Mesicek, Vikram Narayanan, Anton Burtsev, KISV, 2023
@@ -241,6 +257,55 @@
         often orders of magnitude faster than prior unsafe-Rust tools
     - still proof-of-concept: gaps around closures, shared refs, concurrency,
         some Vec caveats
+- [Verifying the Rust Standard
+    Library](https://arxiv.org/abs/2606.17374), Byron Cook, Remi Delmas,
+    Zyad Hassan, Bart Jacobs, Ranjit Jhala, Rahul Kumar,
+    Felipe R. Monteiro, Thanh Nguyen, Rebecca Rumbul, Michael Tautschnig,
+    Celina Val, Carolyn Zech, NFM, 2026
+    - fact: largest Rust-stdlib verification campaign, not full std
+        correctness
+        - paper says it is an open crowdsourced effort on a maintained fork,
+            integrated into CI
+        - scope is absence of selected undefined-behavior classes, not
+            functional correctness / liveness / security
+    - target surface: real `core`, `alloc`, and `std` crates
+        - snapshot has 33,955 functions
+        - paper says std has about 7,500 unsafe functions and 3,000 more safe
+            functions that internally use unsafe code
+    - tools: Kani, ESBMC, VeriFast, Flux in CI
+        - Verus, Creusot, KRust, RAPx under review
+        - lesson: no single Rust verifier covers the whole std shape
+    - automatic harness result
+        - Autoharness generated 16,748 Kani harnesses
+        - 11,970 verified against Kani-supported UB classes
+        - 989 functions had formal function-contract proofs
+            - 295 automatic + 694 manual
+    - stronger but narrower result: VeriFast LinkedList proof
+        - directly verifies 19 pointer-heavy functions and implies 5 more
+        - establishes no UB for well-typed callers under its model
+        - also proves functional / semantic postconditions for covered
+            linked-list operations
+        - has known aliasing limitations around mutable refs / boxes and
+            reference validity
+    - limits
+        - Kani misses pointer-aliasing model violations, data races,
+            invalid inline assembly, and some provenance-related UB
+        - generic functions are the largest skipped category:
+            9,635 skipped by Autoharness
+        - concurrency / relaxed memory, compiler intrinsics, and proof
+            synchronization with six-week upstream Rust releases remain open
+    - 🤖 relevance to VL / VeruLaw
+        - this is evidence that real std-library proof work is moving from
+            isolated papers to CI-backed engineering campaigns
+        - it is not evidence that "the entire Rust standard library is
+            verified"
+        - it reinforces an assumption-carrying architecture:
+            concrete implementation proofs should state which UB / functional
+            properties they prove and which std / compiler / tool assumptions
+            they spend
+        - abstract/spec proofs and concrete Rust proofs are different layers:
+            std verification needs contracts, harnesses, models, and
+            tool-specific annotations at the implementation boundary
 
 ## Testing + verification
 
