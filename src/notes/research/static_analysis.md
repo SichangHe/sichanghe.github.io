@@ -197,6 +197,22 @@
     - verification in seconds, meant to be CI-friendly
     - big compression of format specs: Bitcoin \~67 LoC vs \~2,000 baseline,
         TLS 500 vs \~7,000, Wasm 600 vs \~30,000
+    - 🤖 Rust TLS scope map
+        - 🤖 Vest is the recalled Verus work
+            - 🤖 verified TLS 1.3 handshake-message parser / serializer
+            - 🤖 not a complete verified TLS stack
+        - 🤖 [Rustls](https://github.com/rustls/rustls) is the deployed stack
+            - 🤖 testing, fuzzing, and a prior audit
+            - 🤖 no mechanical proof binding found for current production code
+            - 🤖 conditional reserve, not a current fast experiment
+        - 🤖 [Bertie / Bert13](https://github.com/cryspen/bertie) is the broader verified Rust TLS research stack
+            - 🤖 hax extraction to F*, ProVerif, and SSProve, not Verus
+            - 🤖 property-specific proof boundaries and application-owned certificate authentication
+            - 🤖 pre-release and explicitly not for production
+        - 🤖 direction: keep all three as prior art for the current launch
+            - 🤖 Vest already covers the narrow Verus format story
+            - 🤖 Rustls production binding is wider than a one-day arm
+            - 🤖 Bertie proof / production gaps are not a fast closure
 - [Atmosphere: Towards Practical Verified Kernels in
     Rust](https://dl.acm.org/doi/epdf/10.1145/3625275.3625401), Xiangdong Chen,
     Zhaofeng Li, Lukas Mesicek, Vikram Narayanan, Anton Burtsev, KISV, 2023
