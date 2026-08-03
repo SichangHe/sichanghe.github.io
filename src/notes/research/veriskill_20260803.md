@@ -1,5 +1,65 @@
 # 🤖 VeriSkill: August 2026
 
+## direct answers to the human follow-up
+
+- public status as of 2026-08-03
+  - VeriSkill is publicly available only as arXiv v1, submitted 2026-07-30
+  - its DOI metadata classifies it as `Preprint`, version `1`
+  - arXiv explicitly says its moderation is “not a peer-review process”
+  - no exact-title Crossref or DBLP venue record, public acceptance, or public
+    rejection resolved
+  - the source package loads `aaai2027` in `preprint` mode while leaving the
+    `submission` mode commented out
+  - inference: AAAI-27 is the likely formatting target, but this does not prove
+    that a submission exists
+  - AAAI-27 lists 2026-09-24 for first-stage rejection notices and 2026-11-30
+    for final decisions, so no 2026-08-03 public outcome should be expected
+- is the reported gain just training-set fit
+  - not literally
+    - Algorithm 1 evolves on training and validation tasks, while the paper
+      reports final results on nominally separate benchmark tasks
+  - the separation is not strong enough for the broad interpretation
+    - Dafny uses an 80/20/100 task split sampled from one DafnyBench-derived
+      pool, with no reported project, file, or algorithm-family grouping
+    - VeriFast uses an 80/20/100 function-level split made after constructing
+      one pool from overlapping public example sources, with no reported file
+      or project grouping
+    - Frama-C uses 68/17 evolution tasks from four repositories and names a
+      different repository as its final benchmark, making this the strongest
+      of the three separations, but it reports neither cross-repository
+      deduplication nor the benchmark size
+  - the 17- or 20-item validation set is queried repeatedly, its outcomes
+    affect later revisions, and candidate/query budgets are not reported
+  - same-pattern transfer cases become tuning cases after their failures are
+    used to revise the lesson
+  - the evolution controller can inspect human-verified reference artifacts,
+    although the target agent sees stripped or hidden references
+  - no split manifest, code, candidate log, initial/final skill, per-task
+    result, variance, confidence interval, significance test, or seed is
+    released or linked in v1
+  - narrow supported claim
+    - on nominally held-out, mostly in-distribution partitions, the paper
+      reports higher three-run mean PASS
+  - unsupported stronger claims
+    - unseen-project generalization for Dafny or VeriFast
+    - resistance to adaptive validation overfitting
+    - statistically established superiority in every comparison
+- is this reinforcement learning without gradients
+  - directionally yes, but `LLM-guided derivative-free policy optimization`
+    or `zeroth-order optimization over a textual skill` is more precise
+  - the backbone model remains frozen, the skill text is the policy-like
+    object, verifier outcomes act as fitness, and validation accepts or rejects
+    proposed text mutations
+  - SkillOpt-Lite, the strongest included baseline, explicitly formalizes skill
+    optimization as Zeroth-Order optimization
+  - the analogy is limited
+    - gradient-free reinforcement learning already exists, so absence of a
+      gradient does not define a new learning class
+    - the paper gives no MDP, critic, or temporal credit scheme, so this is not
+      a conventional trajectory-level RL formulation
+    - edits use rich traces, verifier logs, and human references rather than a
+      scalar reward alone, making the loop partly supervised diagnosis and
+      program repair
 
 ## what VeriSkill contributes
 
@@ -103,7 +163,6 @@
     source-disjoint split
   - the Frama-C benchmark population size is unstated
 
-
 ## source map: VeriSkill
 
 - authority and version
@@ -112,8 +171,27 @@
   - primary full text: <https://arxiv.org/pdf/2607.27733v1>
   - version/date: arXiv v1, submitted 2026-07-30 06:15:29 UTC
   - remote v1 bytes matched the saved PDF on 2026-08-03
-  - access uncertainty: no exact-title venue record, code release, or public
-    implementation repository resolved
+  - public-record audit on 2026-08-03
+    - DataCite resource type: `Preprint`, version `1`
+    - arXiv moderation policy: “not a peer-review process”
+    - authoritative v1 source archive:
+      <https://arxiv.org/e-print/2607.27733v1>
+    - source archive sha256
+      `37e93229c2a3e3f066b5b66b2a72cf66f11074ee8cbf46779663c92fe7acb482`
+    - the archive was inspected from a temporary download and was not added as
+      a collection artifact; the stable PDF and extracted Markdown are below
+    - source-package excerpt: `\usepackage[preprint]{aaai2027}`
+    - no exact-title Crossref or DBLP venue record resolved
+    - no acceptance or rejection claim appears in the paper
+    - likely AAAI-27 target is an inference from the style, not evidence of
+      submission
+  - official status sources
+    - arXiv moderation: <https://info.arxiv.org/help/moderation/index.html>
+    - AAAI-27 timetable: <https://aaai.org/conference/aaai/aaai-27/>
+      - exact excerpts: “Notification of Phase 1 rejections”; “Notification of
+        final acceptance or rejection”
+  - access uncertainty: no public submission history, exact-title venue record,
+    code release, or public implementation repository resolved
 - stable local artifacts
     - bytes/pages: `731456`, `9`
     - sha256 `a96e6681d5ede80b669f057b07f0c82fa542409b1b55c232cc463972e3c7c3e5`
@@ -129,6 +207,11 @@
   - supervised attribution input
     - exact excerpt: “human-verified reference solution”
     - location: extracted line 79
+  - dataset construction
+    - exact excerpt: “split them 4:1:5 into training, validation, and benchmark”
+    - location: extracted lines 217 and 221
+    - exact excerpt: “The benchmark is the Frama-C-Problems benchmark”
+    - location: extracted line 219
   - local transfer design
     - exact excerpt: “same-pattern disjoint transfer cases”
     - location: extracted line 189
@@ -141,6 +224,13 @@
   - cross-model scope
     - exact excerpt: “same Dafny benchmark”
     - location: extracted lines 293–297
+  - audit interpretation
+    - the benchmark is absent from Algorithm 1, which consumes evolution and
+      validation tasks, so it is nominally held out from automated evolution
+    - validation feedback is reused across rounds and recorded in evolution
+      memory, so validation is development data rather than a final test
+    - no released manifest permits independent project-level separation or
+      cross-deduplication checks
 
 ## related primary sources
 
@@ -151,8 +241,11 @@
   - version/date: arXiv v1, 2026-07-03 16:07:06 UTC
   - code: <https://github.com/EvolvingLMMs-Lab/SkillOpt-Lite>
     - inspected head `4cb4eeef1f95375a9179737ab94cf5e64b9647c6`
-  - exact excerpt: “trajectory exploration, consensus mining, and validation gating”
-  - location: extracted lines 35 and 145
+  - exact excerpts
+    - “trajectory exploration, consensus mining, and validation gating”
+    - “skill optimization as the maximization of an expected reward function”
+    - “modeled as a Zeroth-Order (ZO) Oracle”
+  - location: extracted lines 35, 49, and 145
     - sha256 `4e7d36b233673a3793b95e7834e588acf19bcea3b292c7168781a95df792797d`
   - extracted Markdown sha256
     `7fae5bc495242aeb2b90d20005dfe9d71e6b9ff65675e5242a250edf5a3a43df`
