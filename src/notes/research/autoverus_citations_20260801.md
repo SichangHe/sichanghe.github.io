@@ -5,6 +5,10 @@ compares them with a frozen set of current Midas Lex / VL evidence. The alert
 is discovery evidence only; none of its wrapped links is used as technical
 evidence.
 
+- 2026-08-03 follow-up
+  - [VeriSkill and Midas Lex](veriskill_20260803.md)
+  - new risk: automated reusable verification-guidance evolution
+
 ## decision summary
 
 - overlap and competitive pressure, ranked against the current VL roadmap
