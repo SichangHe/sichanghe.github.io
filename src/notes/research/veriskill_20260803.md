@@ -26,10 +26,129 @@
     strength, source-disjoint transfer, and production-linked evidence
   - this is a plausible research position, not a demonstrated capability
 - recommended next experiment
-  - add an offline `E2_EVOLVED_GUIDANCE` arm to the planned Midas Lex
-    `E0_NO_CLI` versus `E1_CLI` comparison
-  - keep human promotion, source provenance, semantic-strength review,
+  - do not add a third standing evaluation arm
+  - keep the research comparison as paired `E0_NO_CLI` versus the latest
+    frozen, approved `E1_CLI`
+  - improve that one CLI through an internal current-version versus candidate-
+    version promotion loop with source provenance, semantic-strength review,
     per-task non-regression, and same-project exclusion as hard gates
+
+## direct answers to the human follow-up
+
+- public status as of 2026-08-03
+  - VeriSkill is publicly available only as arXiv v1, submitted 2026-07-30
+  - its DOI metadata classifies it as `Preprint`, version `1`
+  - arXiv explicitly says its moderation is “not a peer-review process”
+  - no exact-title Crossref or DBLP venue record, public acceptance, or public
+    rejection resolved
+  - the source package loads `aaai2027` in `preprint` mode while leaving the
+    `submission` mode commented out
+  - inference: AAAI-27 is the likely formatting target, but this does not prove
+    that a submission exists
+  - AAAI-27 lists 2026-09-24 for first-stage rejection notices and 2026-11-30
+    for final decisions, so no 2026-08-03 public outcome should be expected
+- is the reported gain just training-set fit
+  - not literally
+    - Algorithm 1 evolves on training and validation tasks, while the paper
+      reports final results on nominally separate benchmark tasks
+  - the separation is not strong enough for the broad interpretation
+    - Dafny uses an 80/20/100 task split sampled from one DafnyBench-derived
+      pool, with no reported project, file, or algorithm-family grouping
+    - VeriFast uses an 80/20/100 function-level split made after constructing
+      one pool from overlapping public example sources, with no reported file
+      or project grouping
+    - Frama-C uses 68/17 evolution tasks from four repositories and names a
+      different repository as its final benchmark, making this the strongest
+      of the three separations, but it reports neither cross-repository
+      deduplication nor the benchmark size
+  - the 17- or 20-item validation set is queried repeatedly, its outcomes
+    affect later revisions, and candidate/query budgets are not reported
+  - same-pattern transfer cases become tuning cases after their failures are
+    used to revise the lesson
+  - the evolution controller can inspect human-verified reference artifacts,
+    although the target agent sees stripped or hidden references
+  - no split manifest, code, candidate log, initial/final skill, per-task
+    result, variance, confidence interval, significance test, or seed is
+    released or linked in v1
+  - narrow supported claim
+    - on nominally held-out, mostly in-distribution partitions, the paper
+      reports higher three-run mean PASS
+  - unsupported stronger claims
+    - unseen-project generalization for Dafny or VeriFast
+    - resistance to adaptive validation overfitting
+    - statistically established superiority in every comparison
+- is this reinforcement learning without gradients
+  - directionally yes, but `LLM-guided derivative-free policy optimization`
+    or `zeroth-order optimization over a textual skill` is more precise
+  - the backbone model remains frozen, the skill text is the policy-like
+    object, verifier outcomes act as fitness, and validation accepts or rejects
+    proposed text mutations
+  - SkillOpt-Lite, the strongest included baseline, explicitly formalizes skill
+    optimization as Zeroth-Order optimization
+  - the analogy is limited
+    - gradient-free reinforcement learning already exists, so absence of a
+      gradient does not define a new learning class
+    - the paper gives no MDP, critic, or temporal credit scheme, so this is not
+      a conventional trajectory-level RL formulation
+    - edits use rich traces, verifier logs, and human references rather than a
+      scalar reward alone, making the loop partly supervised diagnosis and
+      program repair
+
+## one-CLI guidance enhancement loop
+
+- preserve the product decision
+  - there is one evolving Midas Lex CLI, with versioned approved guidance
+  - current-versus-candidate checks are release gates inside that product, not
+    a third arm in the research evaluation
+  - the periodic cumulative study remains `E0_NO_CLI` versus the latest frozen
+    `E1_CLI`
+- candidate cycle
+  - collect failed `E1_CLI` trajectories and immutable verifier evidence
+  - attribute each failure before learning from it
+    - invalid or unsupported task
+    - setup, environment, retrieval, or tool failure
+    - prover or encoding limitation
+    - noncompliance with available guidance
+    - missing or unclear reusable guidance
+    - specification-intent mismatch or weak contract
+    - provenance, contamination, or same-project leakage
+  - cluster only genuine guidance gaps by proof responsibility and diagnostic
+    signature
+  - propose the smallest guidance patch with provenance, applicability,
+    inapplicable cases, expected diagnostic change, project deny tags, and a
+    named review owner
+  - promote a candidate only if it passes the staged gates below, then retain
+    its exact version, evidence, and rejection or acceptance reason
+- cheap-to-accurate promotion funnel
+  - static gate at negligible agent cost
+    - schema, provenance, leakage, duplicate, size, and forbidden-content
+      checks
+  - cached replay or critic gate
+    - use logged failures to reject obviously irrelevant or contradictory
+      candidates
+    - never treat replay as causal evidence because it cannot show how a live
+      agent would change behavior
+  - targeted live micro-panel
+    - route only four to eight source-disjoint tasks matching the affected
+      guidance tags
+    - compare current CLI with candidate CLI, cache immutable worktrees and
+      deterministic verifier results, and rerun only discordant outcomes
+  - sealed release panel
+    - use about 30 privately scored opportunities across at least three
+      projects for candidates that survive the micro-panel
+    - blind semantic scoring and adjudicate only candidate-changed outcomes
+    - require no per-item proof, semantic, trust-boundary, or specification-
+      strength regression on critical tasks rather than accepting a net gain
+  - adaptive-overfit control
+    - rotate the release panel and preserve a never-touched audit reserve
+    - split by project or source family, not by function
+    - freeze stopping rules, candidate-query budgets, and guidance hashes
+      before the sealed gate
+- publication-facing evidence
+  - periodically measure the cumulative CLI with the existing paired
+    `E0_NO_CLI` versus `E1_CLI` standard
+  - report semantic quality separately from verifier green, paired effects and
+    uncertainty, leakage exclusions, cost, and trajectory mechanisms
 
 ## what VeriSkill contributes
 
@@ -197,11 +316,12 @@
   - source-disjoint and project-disjoint transfer
   - bounded guidance size, cost, and retrieval overhead
   - independent human approval before ordinary-agent exposure
-- evaluate three arms on the same frozen work
-  - `E0_NO_CLI`: no reusable guidance
-  - `E1_CLI`: current frozen human-approved guidance
-  - `E2_EVOLVED_GUIDANCE`: offline VeriSkill-style candidates behind all Midas
-    provenance and semantic gates
+- separate product optimization from research evaluation
+  - internally compare the current CLI with one candidate CLI version only as
+    a release-promotion test
+  - externally compare `E0_NO_CLI` with the latest frozen, human-approved
+    `E1_CLI` as the cumulative guidance study
+  - do not add a third standing research arm
 - positioning implication
   - avoid first self-improving verification-agent claims
   - test a narrower claim around provenance-constrained and semantically
@@ -216,8 +336,27 @@
   - primary full text: <https://arxiv.org/pdf/2607.27733v1>
   - version/date: arXiv v1, submitted 2026-07-30 06:15:29 UTC
   - remote v1 bytes matched the saved PDF on 2026-08-03
-  - access uncertainty: no exact-title venue record, code release, or public
-    implementation repository resolved
+  - public-record audit on 2026-08-03
+    - DataCite resource type: `Preprint`, version `1`
+    - arXiv moderation policy: “not a peer-review process”
+    - authoritative v1 source archive:
+      <https://arxiv.org/e-print/2607.27733v1>
+    - source archive sha256
+      `37e93229c2a3e3f066b5b66b2a72cf66f11074ee8cbf46779663c92fe7acb482`
+    - the archive was inspected from a temporary download and was not added as
+      a collection artifact; the stable PDF and extracted Markdown are below
+    - source-package excerpt: `\usepackage[preprint]{aaai2027}`
+    - no exact-title Crossref or DBLP venue record resolved
+    - no acceptance or rejection claim appears in the paper
+    - likely AAAI-27 target is an inference from the style, not evidence of
+      submission
+  - official status sources
+    - arXiv moderation: <https://info.arxiv.org/help/moderation/index.html>
+    - AAAI-27 timetable: <https://aaai.org/conference/aaai/aaai-27/>
+      - exact excerpts: “Notification of Phase 1 rejections”; “Notification of
+        final acceptance or rejection”
+  - access uncertainty: no public submission history, exact-title venue record,
+    code release, or public implementation repository resolved
 - stable local artifacts
   - PDF: `/hdd1/sichanghe/paper_collection/VeriSkill- A Self-Evolution Framework for Program Verification Skills, Changguo Jia, Tianqi Zhao, Zhiyou Xiao, Weiming Zhang, Minghui Zhou, arXiv, 2026.pdf`
     - bytes/pages: `731456`, `9`
@@ -235,6 +374,11 @@
   - supervised attribution input
     - exact excerpt: “human-verified reference solution”
     - location: extracted line 79
+  - dataset construction
+    - exact excerpt: “split them 4:1:5 into training, validation, and benchmark”
+    - location: extracted lines 217 and 221
+    - exact excerpt: “The benchmark is the Frama-C-Problems benchmark”
+    - location: extracted line 219
   - local transfer design
     - exact excerpt: “same-pattern disjoint transfer cases”
     - location: extracted line 189
@@ -247,6 +391,13 @@
   - cross-model scope
     - exact excerpt: “same Dafny benchmark”
     - location: extracted lines 293–297
+  - audit interpretation
+    - the benchmark is absent from Algorithm 1, which consumes evolution and
+      validation tasks, so it is nominally held out from automated evolution
+    - validation feedback is reused across rounds and recorded in evolution
+      memory, so validation is development data rather than a final test
+    - no released manifest permits independent project-level separation or
+      cross-deduplication checks
 
 ## related primary sources
 
@@ -257,8 +408,11 @@
   - version/date: arXiv v1, 2026-07-03 16:07:06 UTC
   - code: <https://github.com/EvolvingLMMs-Lab/SkillOpt-Lite>
     - inspected head `4cb4eeef1f95375a9179737ab94cf5e64b9647c6`
-  - exact excerpt: “trajectory exploration, consensus mining, and validation gating”
-  - location: extracted lines 35 and 145
+  - exact excerpts
+    - “trajectory exploration, consensus mining, and validation gating”
+    - “skill optimization as the maximization of an expected reward function”
+    - “modeled as a Zeroth-Order (ZO) Oracle”
+  - location: extracted lines 35, 49, and 145
   - PDF: `/hdd1/sichanghe/paper_collection/SkillOpt-Lite- Better and Faster Agent Self-evolution via One Line of Vibe, Yifei Shen, Bo Li, Xinjie Zhang, arXiv, 2026.pdf`
     - sha256 `4e7d36b233673a3793b95e7834e588acf19bcea3b292c7168781a95df792797d`
   - extracted Markdown sha256
@@ -287,6 +441,11 @@
   - sha256 `c50c55ee337e0e59c79ab4435dd7267eb894eae2fcc8bee8337dab45cbb42acc`
 - [CLI evaluation plan](</ssd1/sichangheagent/VeruLaw/docs/roadmap/cli_vs_no_cli_evaluation_plan.md>)
   - sha256 `4183ab6849bd00c5628c09970d2c56d69ddd5f4545b67c633b42075b773c5de0`
+- [guidance evaluation research standard](</ssd1/sichangheagent/VeruLaw/docs/roadmap/guidance_evaluation_research_standard.md>)
+  - sha256 `51c03110e3a300b7da498a3df7a2e388eebf9569e84172c95d3b6db896727886`
+  - current standard requires paired `E0`/`E1`, blinded scoring, uncertainty,
+    and a minimum credible pilot of 30 opportunities across three projects
+  - classification: current experiment standard, not completed evidence
 - [specification guidance](</ssd1/sichangheagent/VeruLaw/docs/guidance/spec/README.md>)
   - sha256 `9e82f0ba564fc8d2ddcc6bb92df76ca331116f1e3b98ff92aed5080c35ddb082`
 - boundary
@@ -307,6 +466,6 @@
   strength
   - the reported oracle does not directly test that property
 - review question
-  - should the next Midas Lex guidance evaluation add the source-disjoint
-    `E2_EVOLVED_GUIDANCE` arm before repository-wide scaling, with human
-    promotion and semantic, leakage, and per-task non-regression gates
+  - should the first internal CLI candidate-promotion pilot use a four-to-eight-
+    task source-disjoint micro-panel before paying for the sealed 30-opportunity
+    release panel
