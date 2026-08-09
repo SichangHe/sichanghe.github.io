@@ -456,6 +456,36 @@ The main Midas Lex product evaluation remains exactly `E0_NO_CLI` versus
 independent semantic scoring and adequate held-out sampling, not to introduce a
 third product arm. [VL-HANDOFF]
 
+### 🤖 StarVerus: center externally meaningful specification generation
+
+- paper boundary
+  - StarVerus does not produce a verifier-accepted contract-and-proof output
+    for every target
+  - successful verification proves that an implementation matches the
+    generated specification, not that the specification matches human intent
+  - the headline study mixes large and proprietary backbones
+    - the 7B and 8B results cover only the 53-task DAFNY2VERUS subset
+- proposed VL design, not a demonstrated result or launch authority
+  - retain the existing `E0_NO_CLI` and `E1_CLI` lanes
+  - first compare each generated contract with an independently stated
+    requirement
+    - regenerate the contract when this semantic check fails
+  - repair proof code for the unchanged implementation only after the contract
+    survives the semantic check
+  - only after the unchanged implementation and contract verify, test contract
+    strength against named faulty implementations under a fixed harness
+    - regenerate the contract when this post-verification strength check fails
+    - never classify proof failure as evidence of contract strength
+  - require independent oracles for specification meaning
+  - require negative tests with meaningful faulty implementations
+  - reject trust annotations as evidence
+  - retain a per-target verifier ledger
+- primary evaluation question
+  - does the generated contract capture an independently stated requirement
+    strongly enough to reject meaningful faulty implementations
+- detailed evidence and recommendations
+  - [corrected StarVerus full-paper study](./starverus_20260809.md#-human-follow-up-vl-research-focus)
+
 ## conditional PCC mechanism pilot
 
 ### status
