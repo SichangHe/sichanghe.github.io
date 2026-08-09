@@ -117,17 +117,18 @@ aggressively remove any redundant or unneeded info;
 convert all repeatedly used commands to helper scripts and
 document them clearly s.t. future calls are as short as possible.
 
-For all agent instructions, make sure the human reviews them.
-Agents tend to drift when writing instructions for themselves.
-Always ask the human to review and approve the instructions before proceeding.
-Instructions must always precisely define what to do in ultra strong language;
-almost never mention what not to do, to avoid context bloat and confusion.
-E.g., instead of saying "use async wait, do not block on waiting", say
-"you MUST ALWAYS do async wait for ALL waiting" and
-completely eradicate any mention of "block".
-Only in the case where the negative instruction is not obviously implied by
-the positive instruction, use it, e.g., "NEVER commit artifacts, or else
-you auto fail".
+🤖 For persistent agent instructions, use the
+`persistent-agent-instructions` skill. Persistent instructions are intended
+for use beyond the current task or by multiple tasks or agents, including a
+plan reused outside its original task. Make sure the human reviews and
+approves the exact instructions before they are used.
+
+🤖 When giving a task, plan, or handoff to another agent, preserve the human's
+objective and existing constraints. Add no required gate, format, check,
+prohibition, or stop-on-failure rule unless a higher-priority instruction
+requires it or it directly fixes a specific failure observed in this task or
+cited from a relevant earlier task. Label speculative precautions as optional.
+Do not let them delay the requested work.
 
 Agents lack judgment.
 They cannot reliably tell whether something is good or bad, sufficient or
