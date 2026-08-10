@@ -176,6 +176,7 @@ Subject MUST use <60 characters plain English description.
 Emails sent to the human MUST strongly avoid hashes,
 generic names without explanations, long file paths, and other text that
 is hard to understand or listen to.
+Response emails MUST reuse the original subject so they chain up.
 
 Use `pb-chatgpt-prompt-file` when available to search ChatGPT or use it for
 review.
