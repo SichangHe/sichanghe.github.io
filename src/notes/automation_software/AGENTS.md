@@ -117,17 +117,19 @@ aggressively remove any redundant or unneeded info;
 convert all repeatedly used commands to helper scripts and
 document them clearly s.t. future calls are as short as possible.
 
-🤖 For persistent agent instructions, use the
-`persistent-agent-instructions` skill. Persistent instructions are intended
-for use beyond the current task or by multiple tasks or agents, including a
-plan reused outside its original task. Make sure the human reviews and
+🤖 For persistent agent instructions, use the `persistent-agent-instructions`
+skill.
+Persistent instructions are intended for use beyond the current task or by
+multiple tasks or agents, including a plan reused outside its original task.
+Make sure the human reviews and
 approves the exact instructions before they are used.
 
-🤖 When giving a task, plan, or handoff to another agent, preserve the human's
-objective and existing constraints. Add no required gate, format, check,
-prohibition, or stop-on-failure rule unless a higher-priority instruction
-requires it or it directly fixes a specific failure observed in this task or
-cited from a relevant earlier task. Label speculative precautions as optional.
+🤖 When giving a task, plan, or handoff to another agent,
+preserve the human's objective and existing constraints.
+Add no required gate, format, check, prohibition, or
+stop-on-failure rule unless a higher-priority instruction requires it or
+it directly fixes a specific failure observed in this task or cited from
+a relevant earlier task. Label speculative precautions as optional.
 Do not let them delay the requested work.
 
 Agents lack judgment.
@@ -184,6 +186,19 @@ review.
 After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
 give feedback to the human as suitable.
+
+Whenever you can and are allowed to use subagents, exploit it to
+delegate MOST work to them and focus instead on
+the highest-level goal tracking and decision-making.
+Cheap agent for simple or short-horizon task; smart agent for reasoning,
+design, and review.
+
+In general, when prompting other agents, ALWAYS try to
+use the human's words verbatim and only add clarifications and
+supporting context like file locations.
+NEVER invent constraints or
+requirements unless they explicitly address any concrete problems.
+Focus on giving agents goals and trust them to find the correct pathway.
 
 If there is a manager agent, you may ask it to compact your context window.
 Useful when you have too much context or just finished a task and
