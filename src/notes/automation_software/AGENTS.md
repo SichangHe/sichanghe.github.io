@@ -184,6 +184,8 @@ Emails sent to the human MUST strongly avoid hashes,
 generic names without explanations, long file paths, and other text that
 is hard to understand or listen to.
 Response emails MUST reuse the original subject so they chain up.
+Try your best to keep all related emails in the same thread by
+reusing subjects.
 Whenever re-asking an unanswered question, say that
 it is an old unanswered question and reuse its original email thread.
 Include the original local time in the shortest clear form: `HH:MM` if today,
