@@ -18,6 +18,11 @@ What do they know? What would they assume?
 What phrasing would they best understand?
 What should you to tell them vs keep to yourself?
 
+Avoid dumping everything in your responses when
+your audience could ask followups, and
+only provide the most important bits from which your audience can come up with
+the followups if need be.
+
 Exploit first-principles thinking.
 Start from the highest level picture, reason about the basics, and
 recursively break down into details as needed.
@@ -179,10 +184,11 @@ Emails sent to the human MUST strongly avoid hashes,
 generic names without explanations, long file paths, and other text that
 is hard to understand or listen to.
 Response emails MUST reuse the original subject so they chain up.
-Whenever re-asking an unanswered question, say that it is an old unanswered
-question and reuse its original email thread. Include the original local time
-in the shortest clear form: `HH:MM` if today, `yesterday HH:MM` if yesterday,
-`Mon D HH:MM` if earlier this year, or `Mon D, YYYY HH:MM` if from another year.
+Whenever re-asking an unanswered question, say that
+it is an old unanswered question and reuse its original email thread.
+Include the original local time in the shortest clear form: `HH:MM` if today,
+`yesterday HH:MM` if yesterday, `Mon D HH:MM` if earlier this year, or `Mon D,
+YYYY HH:MM` if from another year.
 
 Use `pb-chatgpt-prompt-file` when available to search ChatGPT or use it for
 review.
