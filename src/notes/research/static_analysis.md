@@ -184,6 +184,24 @@
     - 🤖 open question: trace conformance plus model checking proves only
         subset relations among tested code behavior, spec behavior, and
         invariants
+- 🤖 [Multi-Grained Specifications for Distributed System Model Checking and
+    Verification](https://doi.org/10.1145/3689031.3696069), Lingzhi Ouyang,
+    Xudong Sun, Ruize Tang, Yu Huang, Madhav Jivrajani, Xiaoxing Ma,
+    Tianyin Xu, EuroSys, 2025
+    - 🤖 source evidence: [PDF](</hdd1/sichanghe/paper_collection/Multi-Grained%20Specifications%20for%20Distributed%20System%20Model%20Checking%20and%20Verification,%20Lingzhi%20Ouyang,%20Xudong%20Sun,%20Ruize%20Tang,%20Yu%20Huang,%20Madhav%20Jivrajani,%20Xiaoxing%20Ma,%20Tianyin%20Xu,%20EuroSys,%202025.pdf>), [local extraction](</hdd1/sichanghe/paper_collection/Multi-Grained%20Specifications%20for%20Distributed%20System%20Model%20Checking%20and%20Verification,%20Lingzhi%20Ouyang,%20Xudong%20Sun,%20Ruize%20Tang,%20Yu%20Huang,%20Madhav%20Jivrajani,%20Xiaoxing%20Ma,%20Tianyin%20Xu,%20EuroSys,%202025/Multi-Grained%20Specifications%20for%20Distributed%20System%20Model%20Checking%20and%20Verification,%20Lingzhi%20Ouyang,%20Xudong%20Sun,%20Ruize%20Tang,%20Yu%20Huang,%20Madhav%20Jivrajani,%20Xiaoxing%20Ma,%20Tianyin%20Xu,%20EuroSys,%202025.md>), [source record](</hdd1/sichanghe/paper_collection/Multi-Grained%20Specifications%20for%20Distributed%20System%20Model%20Checking%20and%20Verification,%20Lingzhi%20Ouyang,%20Xudong%20Sun,%20Ruize%20Tang,%20Yu%20Huang,%20Madhav%20Jivrajani,%20Xiaoxing%20Ma,%20Tianyin%20Xu,%20EuroSys,%202025/source-record-20260815.md>)
+    - 🤖 human takeaway 1 — TLA+ may be too slow when the specification covers everything
+        - 🤖 the concern does not transfer unchanged to verified Rust: TLC explicitly explores a model state space, whereas a Verus-like verified-Rust workflow generates verification conditions discharged by SMT
+        - 🤖 SMT is not free: contracts, invariants, ghost state, lemmas, solver timeouts, and proof maintenance can dominate; this paper does not measure Verus or SMT
+        - 🤖 paper evidence: the ZooKeeper TLA+ model could not finish in ten days (§1, p. 1); Table 5 reports a baseline with 2.27 billion states and no violation in 24 hours, versus 77,179 states and 11 seconds for a mixed-grained model (§5.2, p. 11)
+    - 🤖 human takeaway 2 — can a complete or near-complete distributed-system TLA+ project be converted wholesale into verified Rust
+        - 🤖 generally not as a mechanical or short-term migration: the authors say rewriting existing Java ZooKeeper with machine-checked proofs was “not realistic in the short term” (§1, p. 1), and say deductive verification cannot be directly applied to existing distributed systems (§7, pp. 13–14)
+        - 🤖 a clean-slate rewrite may be possible, but it is a new implementation and proof effort, not conversion; inference for VL: a credible path is hybrid and incremental—retain high-level TLA+ exploration, verify selected Rust components, and maintain an explicit correspondence layer
+        - 🤖 the paper’s own incremental work reused a baseline, added under-500-line specification deltas, and took under 40 person-hours for one expert (§4.3, p. 10); that evidence supports selective deepening, not wholesale porting
+    - 🤖 human takeaway 3 — TLA+-assisted projects often have specification/code mismatch because there is no programmatic binding
+        - 🤖 this supports the verified-Rust case: executable code, contracts, and proofs live in one Rust-like artifact, so code changes can invalidate the checked obligations instead of silently drifting from a separate model
+        - 🤖 the paper demonstrates the missing bridge directly: Remix needs developer-supplied mappings from model actions to code events, instruments those events, replays model traces, and compares model/code execution (§3.4–§3.5.3, pp. 7–9)
+        - 🤖 this is a strong argument for binding, not a claim that embedded contracts prove intent: the paper calls its conformance checking unsound and random, and a verified-Rust proof still establishes code against the supplied specification, not that the specification is adequate
+    - 🤖 synthesis: TLA+ and verified Rust are complementary cost and assurance points—TLA+ is useful for global protocol/state-space exploration, while verified Rust makes implementation-level contracts and code-to-proof binding harder to separate; a practical architecture can use both
 
 ## Verus applications
 
