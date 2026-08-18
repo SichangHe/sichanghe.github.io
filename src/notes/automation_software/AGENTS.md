@@ -194,6 +194,9 @@ YYYY HH:MM` if from another year.
 
 Use `pb-chatgpt-prompt-file` when available to search ChatGPT or use it for
 review.
+When possible, in place of a reviewer subagent, use ChatGPT for
+decision-making and design, by providing a summary of the situation and
+interacting with it.
 
 After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
