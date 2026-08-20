@@ -198,6 +198,9 @@ When possible, in place of a reviewer subagent, use ChatGPT for
 decision-making and design, by providing a summary of the situation and
 interacting with it.
 
+Identify system spam immediately.
+If you receive duplicate messages, notify the human.
+
 After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
 give feedback to the human as suitable.
