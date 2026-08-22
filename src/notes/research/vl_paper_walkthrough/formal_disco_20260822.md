@@ -265,16 +265,15 @@
     - need for foundations before narrower applications
   - this is not a paper-quality or publication-prestige ranking
   - one paper may have only one active study owner
-  - rank one's analysis and artifacts are complete, but closure awaits
-    independent-evaluator PASS and the human memo
-  - rank two must not start before those rank-one closure gates finish
+  - rank one is complete after independent-evaluator PASS and the human memo
+  - rank two may start only when the manager records one distinct study owner
   - all others remain queued without a new study owner
   - prior completed studies will be reused, not duplicated
   - ordering may change only when full-text evidence supplies a documented reason
 - ranked queue
   - 1 — Formal Disco: Scalable Open-Ended Generation of Formally Verified Programs
     - canonical ID: `vpsd_c678c7ff1a09998c79f7ed70caba49f88fdd38efd93d9db9bdd44b248b420b31`
-    - status: full-paper analysis complete; evaluator and human memo pending
+    - status: full-paper walkthrough complete after evaluator PASS and human memo
     - first because it directly attacks VL's scarce-data and model-scaling moat
   - 2 — KVerus: Scalable and Resilient Formal Verification Proof Generation for Rust Code
     - canonical ID: `vpsd_bbec77f6358b67e0cdadfe57627f4141fc72b29d01f9fc24710e077e258706a9`
