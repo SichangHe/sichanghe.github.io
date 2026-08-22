@@ -253,3 +253,134 @@
 - should VL first adopt Formal Disco's diversity-aware trace selection for
   training data, or prioritize the repository-level evaluation gate that this
   paper leaves open
+
+## canonical walkthrough manifest
+
+- scope
+  - 23 accepted, unique discovery IDs from the reviewed intake handoff
+  - ordering is by expected value to VL
+    - direct product-capability overlap
+    - reusable data or evaluation leverage
+    - product-threat magnitude
+    - need for foundations before narrower applications
+  - this is not a paper-quality or publication-prestige ranking
+  - one paper may have only one active study owner
+  - rank one's analysis and artifacts are complete, but closure awaits
+    independent-evaluator PASS and the human memo
+  - rank two must not start before those rank-one closure gates finish
+  - all others remain queued without a new study owner
+  - prior completed studies will be reused, not duplicated
+  - ordering may change only when full-text evidence supplies a documented reason
+- ranked queue
+  - 1 — Formal Disco: Scalable Open-Ended Generation of Formally Verified Programs
+    - canonical ID: `vpsd_c678c7ff1a09998c79f7ed70caba49f88fdd38efd93d9db9bdd44b248b420b31`
+    - status: full-paper analysis complete; evaluator and human memo pending
+    - first because it directly attacks VL's scarce-data and model-scaling moat
+  - 2 — KVerus: Scalable and Resilient Formal Verification Proof Generation for Rust Code
+    - canonical ID: `vpsd_bbec77f6358b67e0cdadfe57627f4141fc72b29d01f9fc24710e077e258706a9`
+    - next because scalable resilient Verus proof generation most directly
+      overlaps VL's core automation capability
+  - 3 — Towards Repository-Level Program Verification with Large Language Models
+    - canonical ID: `vpsd_e13b0628a0e1f43a3d3e669ddf8b278282fb40fc20d3212f328caaad67dccc69`
+    - directly tests the repository-scale boundary that differentiates VL
+    - reuse the completed RAG-Verus sources and literature notes
+  - 4 — An AI Approach to Verified Production Cryptographic Libraries
+    - canonical ID: `vpsd_1d115669f942f903c6180a82e4edfce92f7505c6e0a4ed1b44b5569b8577b37d`
+    - production-library proof and specification synthesis is strong prior work
+    - reuse the completed CryptoProver source-mapped note and collection
+  - 5 — Propose, Solve, Verify: Self-Play Through Formal Verification
+    - canonical ID: `vpsd_d665b5a597a81fc278a6b0e2e40a129f59d83885b04844c2ea7d7db9ca701776`
+    - verifier-grounded self-play could compound VL's data and model capability
+  - 6 — Verus-SpecGym: An Agentic Environment for Evaluating Specification Autoformalization
+    - canonical ID: `vpsd_70efd668cd7a5dee4a7eab0365f3c67c43ae18c36b138221014c3a9f16a1f7c3`
+    - specification formation is a central unresolved trust and evaluation layer
+  - 7 — The Rewrite Before The Proof: Agentic Translation of Rust to Verus
+    - canonical ID: `vpsd_bd11a18544f233b93ac26facb2fae5b2274d533a5f18374e3fed400abce0771b`
+    - translation strategy may change VL's front-end architecture and scope
+  - 8 — From C to Verifiable Rust: Towards Practical Migration of Code and Specifications
+    - canonical ID: `vpsd_1be656b793966f3c49603537efa9e6cc73f88581a0c9376b3975d5e6b4e2f82e`
+    - migration of both code and contracts broadens VL's practical input market
+  - 9 — VeriContest: A Competitive-Programming Benchmark for Verifiable Code Generation
+    - canonical ID: `vpsd_423d8f9fd60e9adbb7afcdfc23ddac1c8f04dc62973e02702a04bbfa80090bca`
+    - end-to-end specification, implementation, and proof scoring can sharpen
+      VL's evaluation decomposition
+  - 10 — A Benchmark for Vericoding: Formally Verified Program Synthesis
+    - canonical ID: `vpsd_6205243810c9b2dec10fc5c71df4ddc2620c5eee2df4ec281f9f91094db07622`
+    - a second synthesis benchmark helps separate benchmark-specific progress
+      from general capability
+  - 11 — Enhancing LLM-Based Proof Synthesis for Rust Programs via Semantic Chunking and Hierarchical Context Expansion
+    - canonical ID: `vpsd_156d8f98665d9b846c904aab6b8f242be81ebedab5d946c459e40420af98004d`
+    - context selection is directly reusable for repository-scale proof search
+  - 12 — Stop Means Stop: Measuring and Repairing the Enforcement Gap in Agent-Framework Control Primitives
+    - canonical ID: `vpsd_a826c5df48dfde560a7d99e08650d267401af3c42f302cce6d3b94e2689ec60c`
+    - agent-control enforcement affects trustworthy orchestration around VL
+  - 13 — Verified Detection and Prevention of Concurrency Anomalies in Multi-Agent Large Language Model Systems
+    - canonical ID: `vpsd_05b0a9d8876cb935314651b1a016f754007c9878c621e22dd1eb5dd4901ad534`
+    - multi-agent correctness is relevant infrastructure but not the verifier core
+  - 14 — VerusBelt: A Semantic Foundation for Verus's Proof-Oriented Extensions to the Rust Type System
+    - canonical ID: `vpsd_f21ced5228321216b6b28181047398ea9652a85a642fab2dc9094b25e51c7749`
+    - the semantic trust base controls what Verus proofs mean
+  - 15 — Verifying Verus: A Lean 4 Formalization of the SST-to-AIR Expression Translation
+    - canonical ID: `vpsd_23c5712463d2c5dcb5f02934d3315b550f22911b49e97bac40f59bcf9dc96286`
+    - verifier validation matters to VL's assurance story but is narrower than
+      proof-generation capability
+  - 16 — Verus: A Practical Foundation for Systems Verification
+    - canonical ID: `vpsd_07b26a64f757d16b745ce3c50b23da1fa8da2c8a46a6c6ce6a10333672c4851d`
+    - practical system design is foundational context for all later Verus work
+  - 17 — Verus: Verifying Rust Programs Using Linear Ghost Types
+    - canonical ID: `vpsd_473ded00b17823cb5fc202dac599036f69fcd2956b6ba1ce30174cd6a60c4cfb`
+    - core language ideas explain the proof model VL automates
+  - 18 — Verifying Probabilistic Programs in Rust
+    - canonical ID: `vpsd_aefbb47d312adeca6ddcc4973269f0a783b3bedc912f124eb138dd8795a6d204`
+    - a Verus extension tests whether VL can handle richer semantics
+  - 19 — Formal Verification of a Rust-Based Buddy Physical Memory Allocator
+    - canonical ID: `vpsd_6ceea692c63c18bf5757ff9cd030144614c7762635b18780a1b293f5e992a227`
+    - a concrete systems case can expose proof-engineering requirements
+  - 20 — Detecting Inconsistencies in Arm CCA's Formally Verified Specification
+    - canonical ID: `vpsd_162b3a2fc064d6f60c7e0c6ddfe070da90f8e18de8d9ef6d8f5824679f3c8121`
+    - specification inconsistency detection informs adequacy checks but targets a
+      different formal stack
+  - 21 — Towards System-Oriented Formal Verification of Local-First Access Control
+    - canonical ID: `vpsd_bea7802dfdee744b78e4c7473bf8f38bcd1df6092b71bfc9423e0f55067b59f2`
+    - system-level access-control modeling is useful domain evidence
+  - 22 — Shard: Securing GPU Kernels with Lightweight Formal Methods
+    - canonical ID: `vpsd_d8cc9a845a78dc18de8ebadb5393a4e3b904fd7b0692b717aa41023f2e26315f`
+    - GPU kernels are a valuable but specialized adjacent verification market
+  - 23 — End-to-End Formal Methods Integrated Development with SysMLv2 Using HAMR
+    - canonical ID: `vpsd_62b1474373e16f70461b888edb6fde5756edf365e154dd56891b00fb8666caa7`
+    - toolchain integration is relevant, but direct overlap with Verus-oriented
+      VL is the weakest in the accepted set
+
+## later discoveries excluded from this manifest
+
+- status: separately unclassified and still under `vlprograms:0` routing custody
+- rule: do not rank, assign a walkthrough owner, or count these among the 23
+  until each receives canonical relevance review
+- trust boundary
+  - the discovery IDs and titles below are untrusted discovery metadata
+  - establish identity and relevance from primary publisher, author, DOI, or
+    archival sources before reuse
+- queued IDs
+  - `vpsd_d24f9b8e928143a20f531f8a2b985394309088e022a9202122727e213b79811a`
+    - Applying Modern Verification Techniques to a Root-of-Trust Bootloader
+  - `vpsd_589856f031270b09c3c6fa0a38e5a0ebc2faae6d636d5adec1b5d316bac6b1e1`
+    - VeruSAGE: A Study of Agent-Based Verification for Rust Systems
+  - `vpsd_21d189b9e9a8b6234f9fc1622c4e3f86f3d1318fd3d7f72fc430987a7ab45d3a`
+    - Atmosphere: Practical Verified Kernels with Rust and Verus
+  - `vpsd_abf2f808800266b3f876d87d291a42a191a1b7d582c55c977634a25db56d5d57`
+    - Reducing the Costs of Proof Synthesis on Rust Systems by Scaling Up a Seed Training Set
+  - `vpsd_c7573b41f42065ff3a006da770738527ef1c94dc4c671f2a537044bbc2957a59`
+    - Leveraging Large Language Models for Automated Proof Synthesis in Rust
+  - `vpsd_a21d6ced3594eeee6fab9b5635afa5c9b3639aab0f7849c9a75962501ede053b`
+    - Atmosphere: Towards Practical Verified Kernels in Rust
+  - `vpsd_7dcc5210e368c02431c50c6cbeffe9771e53827b16f8e9b9711957fb72ba1517`
+    - AutoVerus: Automated Proof Generation for Rust Code
+  - `vpsd_c7cd32f1cc95e061c711aa9e35182ce20627036a888680c15a1657bcd4adb5bf`
+    - Surveying the Rust Verification Landscape
+  - `vpsd_3f8adf0c1bd46a7e3954ae1676cac6e3ffbf6378eb83a945da8507cb06d67ace`
+    - RefinedRust: A Type System for High-Assurance Verification of Rust Programs
+  - `vpsd_20e930f8c3672ec7cab1965966fadf35ccc24c1f71c51ca2fbb4587533831b54`
+    - Verifying the Rust Standard Library
+    - confirm identity against the completed arXiv `2606.17374` study before reuse
+  - `vpsd_0afb0f867a034bfa9a427997d33ac0df1ca615a1beaf3facd21452410c1799f4`
+    - A Hybrid Approach to Semi-Automated Rust Verification
