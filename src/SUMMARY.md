@@ -101,6 +101,7 @@
         - [🤖 C2VR walkthrough](notes/research/vl_paper_walkthrough/c2vr_20260822.md)
         - [🤖 VeriContest walkthrough](notes/research/vl_paper_walkthrough/vericontest_20260822.md)
         - [🤖 Benchmark for Vericoding walkthrough](notes/research/vl_paper_walkthrough/benchmark_for_vericoding_20260822.md)
+        - [🤖 VerusSeek walkthrough](notes/research/vl_paper_walkthrough/verusseek_20260822.md)
         - [🤖 Agave Verification Sizing](notes/research/agave_verification_scope.md)
         - [🤖 Agent Frontier](notes/research/agent_frontier.md)
         - [Browser Agent](notes/research/browser_agent.md)
