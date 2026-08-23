@@ -96,6 +96,7 @@
         - [🤖 KVerus walkthrough](notes/research/vl_paper_walkthrough/kverus_20260822.md)
         - [🤖 Repository-level program verification walkthrough](notes/research/vl_paper_walkthrough/repository_level_program_verification_20260822.md)
         - [🤖 Propose, Solve, Verify walkthrough](notes/research/vl_paper_walkthrough/propose_solve_verify_20260822.md)
+        - [🤖 Verus-SpecGym walkthrough](notes/research/vl_paper_walkthrough/verus_specgym_20260822.md)
         - [🤖 Agave Verification Sizing](notes/research/agave_verification_scope.md)
         - [🤖 Agent Frontier](notes/research/agent_frontier.md)
         - [Browser Agent](notes/research/browser_agent.md)
