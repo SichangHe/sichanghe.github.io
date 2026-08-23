@@ -92,6 +92,7 @@
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
+        - [🤖 VL evaluation evidence design](notes/research/vl_evaluation_evidence_design_20260823.md)
         - [🤖 Formal Disco walkthrough](notes/research/vl_paper_walkthrough/formal_disco_20260822.md)
         - [🤖 KVerus walkthrough](notes/research/vl_paper_walkthrough/kverus_20260822.md)
         - [🤖 Repository-level program verification walkthrough](notes/research/vl_paper_walkthrough/repository_level_program_verification_20260822.md)
