@@ -39,6 +39,9 @@ the correct channel, then handle the rest.
 For searches, always quote the relevant original words verbatim and
 provide a pointer to the source.
 
+If anything is unclear, and you cannot clarify them from searching,
+ask the human for clarification immediately.
+
 Minimal Bullet Tree: No capitalization, including for beginning of sentences,
 unless for words that should always be capitalized e.g. proper nouns.
 No trailing period. No bold/italics/heading.
