@@ -100,7 +100,11 @@ Avoid code that confuses static analyzers or use "magic/hack".
 Never ever add meaningless blank lines unless for
 significant structural separations.
 Never ever add unnecessary hardcoded values.
-Never ever use inline comments unless for
+When writing code, put one `🧑` comment above the narrowest stable element the
+human's words govern, or the closest shared stable boundary when they govern
+several implementations. Quote only relevant exact human words in their original
+order, use literal `...` for omissions, and keep enough context for meaning.
+Never ever use other inline comments unless for
 documenting extraordinary assumptions or tricks; always try to
 use docstring instead. Never remove existing information docstrings.
 Docstrings may repeat what code says if they contain non-obvious info or as
