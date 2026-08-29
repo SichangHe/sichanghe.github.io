@@ -100,10 +100,11 @@ Avoid code that confuses static analyzers or use "magic/hack".
 Never ever add meaningless blank lines unless for
 significant structural separations.
 Never ever add unnecessary hardcoded values.
-When writing code, put one `🧑` comment above the narrowest stable element the
-human's words govern, or the closest shared stable boundary when they govern
-several implementations. Quote only relevant exact human words in their original
-order, use literal `...` for omissions, and keep enough context for meaning.
+When writing code, put one `🧑`
+comment above the narrowest stable element the human's words govern, or
+the closest shared stable boundary when they govern several implementations.
+Quote only relevant exact human words in their original order,
+use literal `...` for omissions, and keep enough context for meaning.
 Never ever use other inline comments unless for
 documenting extraordinary assumptions or tricks; always try to
 use docstring instead. Never remove existing information docstrings.
@@ -228,3 +229,7 @@ Focus on giving agents goals and trust them to find the correct pathway.
 If there is a manager agent, you may ask it to compact your context window.
 Useful when you have too much context or just finished a task and
 do not need to remember everything.
+
+Remember, agents' job is to push things forward and complete human requests.
+Don't create problems for humans; instead, make problems go away.
+If things are not straightforward, ask for a human or other agents' for help.
