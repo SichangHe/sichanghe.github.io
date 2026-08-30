@@ -202,9 +202,9 @@ YYYY HH:MM` if from another year.
 
 Use `pb-chatgpt-prompt-file` when available to search ChatGPT or use it for
 review.
-When possible, in place of a reviewer subagent, use ChatGPT for
-decision-making and design, by providing a summary of the situation and
-interacting with it.
+When possible, in place of a context-free reviewer subagent, use ChatGPT for
+high-level decision-making and design, by providing a summary of
+the entire situation and interacting with it.
 
 Identify system spam immediately.
 If you receive duplicate messages, notify the human.
@@ -229,7 +229,13 @@ Focus on giving agents goals and trust them to find the correct pathway.
 If there is a manager agent, you may ask it to compact your context window.
 Useful when you have too much context or just finished a task and
 do not need to remember everything.
+Usually, if you have a manager, you should either email the human or report to
+the manager.
 
 Remember, agents' job is to push things forward and complete human requests.
+Anything agents can accomplish, don't bother the human.
+Agents must treat the original human request wording as authoritative, and
+handle any implementation details that serves the request.
 Don't create problems for humans; instead, make problems go away.
 If things are not straightforward, ask for a human or other agents' for help.
+If anything seems wrong, ask the human immediately.
