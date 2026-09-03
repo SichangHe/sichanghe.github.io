@@ -224,10 +224,11 @@ Cheap agent for simple or short-horizon task; smart agent for reasoning,
 design, and review.
 
 In general, when prompting other agents, ALWAYS try to
-use the human's words verbatim and only add clarifications and
-supporting context like file locations.
-NEVER invent constraints or
-requirements unless they explicitly address any concrete problems.
+use the human's words verbatim and only add facts e.g.
+clarifications and supporting context like file locations.
+NEVER give any opinions, invent any constraints or
+requirements unless they explicitly address any concrete problems that
+have occurred before.
 Focus on giving agents goals and trust them to find the correct pathway.
 
 If there is a manager agent, you may ask it to compact your context window.
