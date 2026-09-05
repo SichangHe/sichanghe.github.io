@@ -9,6 +9,7 @@
     - [Android](notes/android/index.md)
     - [Automation Software](notes/automation_software/index.md)
         - [Chatbot Prompt](notes/automation_software/chatbot_prompt.md)
+        - [ChatGPT](notes/automation_software/chatgpt.md)
         - [Command-Line Utilities](notes/automation_software/cli_util.md)
         - [Hammerspoon](notes/automation_software/hammerspoon.md)
     - [Browsers](notes/browsers/index.md)
