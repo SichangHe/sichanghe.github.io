@@ -1,5 +1,7 @@
 # Browsers
 
+Type clipboard into browser: `type_clipboard.js`
+
 ## clear browser cache
 
 ### browser DNS cache

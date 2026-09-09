@@ -1,5 +1,10 @@
 # Unstructured Reading Notes
 
+- StreamEP: Straggler-Tolerant MoE Decoding without Communication Barriers,
+    Shaoyu Wang, NSL meeting
+    - batch per each MoE expert
+    - naive approach have scattered batches → low GPU utilization
+    - predict main batch
 - Wave: Leveraging Architecture Observation for
     Privacy-Preserving Model Oversight, Haoxuan Xu, NSL meeting
     - measure what model is run only using microarchitectural side channel
