@@ -10,6 +10,7 @@ Questions to ask:
     use them?
 - Are there implicit state or state transitions?
     Can we convert them to clean state machines?
+- Are there any broken edge cases? Walk through the control flow.
 - Could a reasonable reader get confused and misunderstand? In what ways?
     How to avoid?
 - Have we made it as convenient as possible for anyone in the future?
