@@ -68,6 +68,16 @@ one could walk a minimal tree of docs to find any info about the codebase.
 Move shared sections to higher level.
 Eliminate all repeated info and keep 1 copy at the best place.
 
+Before implementing anything, always look around and
+see how it has been done in the codebase.
+Thoroughly review all relevant code and
+documentation before writing any new code.
+Always think about how to validate your code works and test it.
+Write **realistic** tests similar to actual scripts to be run to
+test intended behaviors; or, many times for one-off scripts,
+simply run the scripts themselves!
+Trivial mocks and tests covered by static analysis are meaningless!!
+
 Be extremely lazy in terms of docs and scripts, in a wise way.
 Minimize work for your future self and others, keep all records as short as
 possible but still lucid and contain enough context,
@@ -75,15 +85,15 @@ aggressively remove any redundant or unneeded info;
 convert all repeatedly used commands to helper scripts and
 document them clearly s.t. future calls are as short as possible.
 
-Avoid doing things manually or ad-hoc; automate.
+Avoid doing things manually repeatedly; automate.
 Always always clean up your code, compact all of it, fix lints,
 before showing the human.
 Avoid brute-force trial and error; increase observability with logs etc.
 
 Never describe to the human anything they can see from git diff or git status.
 Never report when standard checks passed; it is assumed by default.
-Never repeatedly run and enumerate tests,
-write them into a single test script which only reports failures
+Never repeatedly run and enumerate tests, write them into a single script which
+only reports failures
 
 If asked to git commit, use sane&minimal&atomic conventional message.
 Commit your and only your changes. Pull rebase if push fails.
@@ -104,13 +114,27 @@ actions
 Keep shared terms in `docs/ubiquitous-language.md` and refer to it for how to
 think and talk.
 
+Avoid overengineering. The simplest approach is often the best.
+Frequently apply first-principles thinking.
+
 Run each command whose description matches the current task.
 
-- `getagentsmd get assume_ls`: Use when documenting shared assumptions in ASSUM.md, referencing assumptions from code comments, or running assumls/assume-ls checks.
-- `getagentsmd get fragile_git_ops`: Use for safe Git interactive rebase, conflict resolution, commit-message editing, history rewrite, and other Git operations that may open an editor or require preserving both sides of a change.
-- `getagentsmd get python_coding`: Use when writing, reviewing, or editing Python code.
-- `getagentsmd get rust_coding`: Use when writing, reviewing, or editing Rust code.
-- `getagentsmd get software_system_design_values`: Principal values for systems design and reviewing systems, overkill for ad hoc scripts.
+- `getagentsmd get assume_ls`: Use when documenting shared assumptions in
+    ASSUM.md, referencing assumptions from code comments, or
+    running assumls/assume-ls checks.
+- `getagentsmd get fragile_git_ops`: Use for safe Git interactive rebase,
+    conflict resolution, commit-message editing, history rewrite, and
+    other Git operations that may open an editor or
+    require preserving both sides of a change.
+- `getagentsmd get python_coding`: Use when writing, reviewing, or
+    editing Python code.
+- `getagentsmd get rust_coding`: Use when writing, reviewing, or
+    editing Rust code.
+- `getagentsmd get software_system_design_values`: Principal values for
+    systems design and reviewing systems, overkill for ad hoc scripts.
 - `getagentsmd get sql_coding`: Use when writing, reviewing, or editing SQL.
-- `getagentsmd get tmux_repl`: Use when a task needs persistent interaction with e.g. a long-running REPL, shell, or interactive process.
-- `getagentsmd get ubiquitous_language`: Use when collecting common domain terms, terminologies, names.
+- `getagentsmd get tmux_repl`: Use when
+    a task needs persistent interaction with e.g.
+    a long-running REPL, shell, or interactive process.
+- `getagentsmd get ubiquitous_language`: Use when
+    collecting common domain terms, terminologies, names.

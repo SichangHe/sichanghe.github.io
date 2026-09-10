@@ -1,13 +1,5 @@
 # Agent Work
 
-🤖 When giving a task, plan, or handoff to another agent,
-preserve the human's objective and existing constraints.
-Add no required gate, format, check, prohibition, or
-stop-on-failure rule unless a higher-priority instruction requires it or
-it directly fixes a specific failure observed in this task or cited from
-a relevant earlier task. Label speculative precautions as optional.
-Do not let them delay the requested work.
-
 Agents lack judgment.
 They cannot reliably tell whether something is good or bad, sufficient or
 insufficient, especially when the matter is complex or advanced.
@@ -35,17 +27,27 @@ the highest-level goal tracking and decision-making.
 Cheap agent for simple or short-horizon task; smart agent for reasoning,
 design, and review.
 
+Extremely clearly distinguish between human requirements, which
+are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
+Every documentation file MUST state its default authorship directly below its
+title, either `(authored by agents unless marked 🧑)` or `(authored by
+human unless marked 🤖)`.
+When authorship is unclear for an existing file, leave 🤖 marks by default, and
+ask the human when authorship matters.
+
 In general, when prompting other agents, ALWAYS try to
 use the human's words verbatim and only add facts e.g.
 clarifications and supporting context like file locations.
-NEVER give any opinions, invent any constraints or
-requirements unless they explicitly address any concrete problems that
-have occurred before.
-Focus on giving agents goals and trust them to find the correct pathway.
+You MUST NEVER EVER give any opinions or precautions, invent any constraints or
+requirements unless you have strong evidence that
+they explicitly address concrete problems that occurred before.
+When handing off any human-originated task to another agent,
+you MUST ALWAYS preserve the human's original requirements.
+Focus on giving agents only goals and trust them to find the correct pathway.
 
-If there is a manager agent, you may ask it to compact your context window.
-Useful when you have too much context or just finished a task and
-do not need to remember everything.
+If there is a manager agent, they can compact your context window.
+Whenever you do not need to remember everything, you should ask your manager to
+do so.
 Usually, if you have a manager, you should either email the human or report to
 the manager.
 
@@ -54,15 +56,17 @@ Anything agents can accomplish, don't bother the human.
 Agents must treat the original human request wording as authoritative, and
 handle any implementation details that serves the request.
 Don't create problems for humans; instead, make problems go away.
+Apply FIRST PRINCIPLES thinking, and DELETE ANY part that
+is not absolutely necessary.
 If things are not straightforward, ask for a human or other agents' for help.
 If anything seems wrong, ask the human immediately.
-
-You MUST print this doc out again once in a while to remind yourself of
-these basic guidelines.
 
 Run each command whose description matches the current task.
 
 - `getagentsmd get grill_me`: Use asked to plan or design in detail.
-- `getagentsmd get long_running_autonomy`: Run complex long-running tasks autonomously.
-- `getagentsmd get persistent_agent_instructions`: Draft or revise agent instructions intended to persist beyond the current task or govern multiple tasks or agents. Use for reusable instruction files, policies, plans, and skills that require human review before use.
+- `getagentsmd get persistent_agent_instructions`: Draft or
+    revise agent instructions intended to persist beyond the current task or
+    govern multiple tasks or agents.
+    Use for reusable instruction files, policies, plans, and skills that
+    require human review before use.
 - `getagentsmd get review`: Use when asked to review code or prose.

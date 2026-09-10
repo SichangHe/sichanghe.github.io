@@ -61,11 +61,15 @@ Use plain text w/o bullet for top level to reduce 1 level of indentation.
 
 DO NOT use Minimal Bullet Tree unless instructed to. Speak normally.
 
-# Task-specific instructions
-
 Follow each reference whose description matches the current task:
 
-- Agent planning, autonomy, persistent instructions, or review: `getagentsmd get agent_work`
+- Agent planning, autonomy, persistent instructions, or review:
+    `getagentsmd get agent_work`
+    - Not needed for Q&A or discussions
 - Human-facing writing or source synthesis: `getagentsmd get communication`
+- First-principles thinking for planning and when you are not making good progresss: `getagentsmd get first_principles`
 - Programming or software development: `getagentsmd get development`
 - Diagrams or other structured visuals: `getagentsmd get visuals`
+
+You MUST periodically rerun all relevant `getagentsmd` commands to
+refresh your memory of the guidelines.
