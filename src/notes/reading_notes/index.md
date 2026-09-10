@@ -1,5 +1,32 @@
 # Unstructured Reading Notes
 
+- Emergent Algorithms in Foundation Models, Deqing Fu, Theory Lunch
+    - motivation: what happens if AI become essentially oracle
+        - understand how transformer learn & behave
+    - in-context learning for linear regression
+        - doing better recently than fine-tuned
+    - experiment show layers converge like Newton's method steps
+        - \~$O(\log\log{\frac{1}{\varepsilon}})$
+        - widely hypothesized (wrong): gradient descent
+    - train transformer to predict connectivity matrix from adjacency matrix
+        - unable to do distance $>3^L$ for $L$ layers
+        - if replace residual by concatenation, can do more
+        - unable to generalize to OOD graphs
+        - disentangle transformer into algorithm + heuristic channel
+            - in 1-layer transformer, algorithm weights go up,
+                heuristic up then down
+            - within-capacity graph promote algorithm channel
+            - out-of-capacity graph promote heuristic channel
+                - actually hurt accuracy
+        - if only train with within-capacity graph,
+            better performance both ID and OOD
+    - Fourier spectrum for numbers 0~999 embedding for
+        pretrained LM all seem similar
+        - many with frequency 2, 5, 10 due to base 10 representation
+        - number-text correspondence is important
+    - Fourier Number Encoding with (FoNE)
+        - make it take few examples to learn additions
+        - make high-precision float/ large number processing much better
 - StreamEP: Straggler-Tolerant MoE Decoding without Communication Barriers,
     Shaoyu Wang, NSL meeting
     - batch per each MoE expert
