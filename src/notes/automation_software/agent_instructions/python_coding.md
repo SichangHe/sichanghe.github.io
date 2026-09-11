@@ -1,4 +1,4 @@
-Python: Use uv, ruff. Use Python 3.13 syntax; never import List, etc.
+Use uv, ruff. Use latest Python syntax; never import List, etc.
 Avoid `cast` to `Any` and prefer `type:ignore`.
 Use strongly typed code and pass basedpyright, prefer dataclass or
 NamedTuple and exploit `__post_init__`.

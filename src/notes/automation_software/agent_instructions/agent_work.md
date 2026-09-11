@@ -1,5 +1,3 @@
-# Agent Work
-
 When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.

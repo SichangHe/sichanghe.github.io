@@ -1,5 +1,3 @@
-# SVG diagram plotting
-
 Create an explicit diagram brief before drawing: canvas/aspect ratio, nodes and
 their labels, edges and directions, groups or hierarchy,
 intended reading order, layout, visual style, and any required colors or
