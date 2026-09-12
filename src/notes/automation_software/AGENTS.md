@@ -72,6 +72,9 @@ Follow each reference whose description matches the current task:
 - Programming or software development: `getagentsmd get development`
 - Create polished full-resolution SVG diagrams from structured requirements:
     `getagentsmd get svg_diagram_plotting`
+- Manager work: `getagentsmd get agent_manager`, followed by exactly one of
+    `getagentsmd get main_manager` or `getagentsmd get submanager`
+- Hierarchical manager reporting: `getagentsmd get manager_reporting`
 
 You MUST periodically rerun all relevant `getagentsmd` commands to
 refresh your memory of the guidelines.
