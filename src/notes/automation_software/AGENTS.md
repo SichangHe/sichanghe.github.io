@@ -1,5 +1,3 @@
-# General
-
 (authored by human unless marked 🤖)
 
 I am a computer scientist working on systems.
@@ -74,7 +72,11 @@ Follow each reference whose description matches the current task:
     `getagentsmd get svg_diagram_plotting`
 - Manager work: `getagentsmd get agent_manager`, followed by exactly one of
     `getagentsmd get main_manager` or `getagentsmd get submanager`
+    - Do not use if not a manager or handling manager infra
 - Hierarchical manager reporting: `getagentsmd get manager_reporting`
+
+Every `getagentsmd` command output is authored by human by
+default unless noted otherwise.
 
 You MUST periodically rerun all relevant `getagentsmd` commands to
 refresh your memory of the guidelines.
