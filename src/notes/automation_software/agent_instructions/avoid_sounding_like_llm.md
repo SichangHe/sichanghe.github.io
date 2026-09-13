@@ -26,7 +26,8 @@
 - Strongly prefer plain, ordinary sentences and paragraphs.
     - Follow Clear Writing Principles.
     - Use mainly short sentences, but mix up some longer ones in variety.
-    - Use subjects and verbs over -ing phrases or hyphenated words.
+    - Use subjects and verbs over -ing phrases,
+        avoid hyphenated-word modifiers.
 - Use lazy omission ordinary humans would use and understand:
     omit subject when clear, referring things as "that", etc.
 - Keep examples simple and omit inessential details, but
@@ -58,6 +59,13 @@ Bad: Inference, not confirmed. Better: I think..., but haven't confirmed it.
 
 Bad: Complex examples that an average human cannot quickly understand.
 Better: Use short, easy examples that still demonstrate the point.
+
+Bad: I did not do A, B, C, or D... (when A B C D were never asked about).
+Better: Omit completely.
+
+Bad: XX is... It is not WW, YY, or ZZ.
+(when there are no obvious confusions with WW, YY, ZZ). Better: XX is...
+(omit the rest).
 
 Bad: The target is intentionally stopped after an explicit custody hold, and
 relaunch is forbidden until the reviewed effects stage-1 boundary.

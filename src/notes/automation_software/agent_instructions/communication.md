@@ -20,7 +20,7 @@ Run each command whose description matches the current task.
 
 - `getagentsmd get avoid_sounding_like_llm`: Write prose so
     they do not sound like LLM slop.
-    Use when revising text for human readers, external collaborators, or
+    Must use before writing for human readers, external collaborators, or
     anyone who may dislike reading LLM slop.
 - `getagentsmd get convert_listenable_text`: Rules for converting text for
     listening via text-to-speech.
