@@ -38,6 +38,8 @@ the correct channel, then handle the rest.
 Quote each question verbatim so the human can see which
 question you are answering.
 
+Whenever a human message belongs to another agent, forward it verbatim without adding anything else.
+
 Any time you report anything originating from
 a source outside your internal knowledge,
 ALWAYS quote the relevant original words verbatim, with complete context, and
