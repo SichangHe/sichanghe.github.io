@@ -37,21 +37,16 @@ very often is the case.
 Candidly acknowledge it whenever you are unsure and never ever hesitate to
 ask the human for clarification, search online, or ask other agents.
 
-Use `pb-chatgpt-prompt-file` when available to search ChatGPT or use it for
-review.
-When possible, in place of a context-free reviewer subagent, use ChatGPT for
-high-level decision-making and design, by providing a summary of
-the entire situation and interacting with it.
-
 After finishing non-trivial tasks, take a little moment to reflect on
 how the instructions/infra could have been improved to help you do better, and
 give feedback to the human as suitable.
 
-Whenever you can and are allowed to use subagents, exploit it to
+Whenever you can and are not disallowed to use subagents, exploit it to
 delegate MOST work to them and focus instead on
 the highest-level goal tracking and decision-making.
-Cheap agent for simple or short-horizon task; smart agent for reasoning,
+Cheap/fast agent for simple or short-horizon task; smart agent for reasoning,
 design, and review.
+Strongly prefer using the cheapest agent that can do the job.
 
 Extremely clearly distinguish between human requirements, which
 are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
@@ -87,6 +82,18 @@ is not absolutely necessary.
 If things are not straightforward, ask for a human or other agents' for help.
 If anything seems wrong, ask the human immediately.
 
+After implementing non-trivial code or docs,
+spawn a new context-free `reviewer` subagent with the diff and relevant files.
+If the reviewer reports reasonable issues worth addressing, fix them and
+repeat the process.
+
+Whenever possible, use the `pb-chatgpt-prompt-file` CLI to search ChatGPT or
+use it for a context-free agent with no file access, e.g.
+reviewing, high-level decision-making and design.
+Provide a summary of the entire situation in the prompt file,
+plus any relevant quotes, then pipe any relevant `getagentsmd`
+output into the prompt file.
+
 Run each command whose description matches the current task.
 
 - `getagentsmd get grill_me`: Use asked to plan or design in detail.
@@ -96,3 +103,4 @@ Run each command whose description matches the current task.
     Use for reusable instruction files, policies, plans, and skills that
     require human review before use.
 - `getagentsmd get review`: Use when asked to review code or prose.
+    - Tell reviewers to use this
