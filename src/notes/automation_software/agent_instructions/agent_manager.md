@@ -22,36 +22,16 @@ Rerun it after helper-code changes.
 
 This archival work is YOLO and does not need independent review.
 
-Also move every ordinary file older than 1 month to that month's folder
-
 Keep `TODO.md` as the short live task index.
-Preserve every non-`previous` section and the newest 20 `previous` rows.
-For older `previous` rows, `currently worked on`
-means authoritative task frontmatter `status: running` or `status:
-long_running`.
-Preserve those records, including `long_running` persistent roles.
-`status: blocked` means work has stopped pending its named dependency; it and
-`status: done` are not currently worked on and are archive-eligible.
-Missing, malformed, or invalid authoritative frontmatter, missing files or
-artifacts, duplicate rows, and
-destination conflicts are exact archive blockers, not lifecycle states.
-Never infer current work from pane text, pane existence, or `runat` alone.
-Move each eligible record to its documented monthly destination,
-preserving task contents, statuses, useful notes, references, and
-archive indexes.
-Bind every move source, destination, archive index, and
-rewritten Markdown file into the helper-identified plan;
-hold supported per-file locks and revalidate exact file states at each move or
-rewrite so concurrent changes abort without being overwritten.
-Claim every task and artifact destination with an atomic no-replace operation;
-a destination created during apply must preserve both the source and
-the concurrent destination and abort all ancillary mutation.
-Use no-replace restoration during rollback so a concurrently recreated task,
-artifact, index, or reference is never overwritten.
-Open every source, destination, index, and
-reference parent component without following symlinks;
-retain the directory descriptor through its mutation and rollback boundary, and
-require the public parent identity to match before commit.
+Preserve every non-`previous` section.
+Move every `previous` row to the prior month's `YYYYMM/old_todos.md` index.
+🧑 You just move tasks lines from “previous” to an older dir. You don’t check
+the “status”. Change the instructions
+Read only `TODO.md` and the affected `old_todos.md` index.
+Do not read task records, statuses, frontmatter, artifacts, panes, or `runat`.
+Do not move task or artifact files or rewrite Markdown references.
+Use the documented transactional index rewrite so concurrent changes abort
+without being overwritten.
 
 Transient state and inbound mail locations are configured locally;
 do not hardcode them here.
