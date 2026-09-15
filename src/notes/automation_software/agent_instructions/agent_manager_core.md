@@ -129,8 +129,8 @@ tmux session MUST have a unique work dir matching the session name.
 Try to keep tmux session names within 4 characters and be a bijection with
 work dirs.
 You MUST only spawn agents in tmux sessions that match their work dir.
-Try to reuse existing tmux sessions and work dirs when possible and
-never create dirs without explicit human request.
+Only reuse existing tmux sessions and work dirs and
+never create dirs without explicit human request or approval.
 
 Managers MUST NEVER spawn agents to do tasks originated from agents.
 Only ever spawn agents to handle tasks from the human.
@@ -188,4 +188,3 @@ For Codex, partially compact by sending the manager itself `/compact` via
 Since this is in fact a full compaction,
 the manager MUST run all relevant `getagentsmd` commands and
 follow these instructions after compacting.
-
