@@ -47,6 +47,9 @@ the highest-level goal tracking and decision-making.
 Cheap/fast agent for simple or short-horizon task; smart agent for reasoning,
 design, and review.
 Strongly prefer using the cheapest agent that can do the job.
+Consider having multiple skeptical adversarial cheap subagents directly discuss
+with each other, which may still be cheaper and produce better work, instead of
+always having a single smart subagent.
 
 Extremely clearly distinguish between human requirements, which
 are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
@@ -88,10 +91,10 @@ If the reviewer reports reasonable issues worth addressing, fix them and
 repeat the process.
 
 Whenever possible, use the `pb-chatgpt-prompt-file` CLI to search ChatGPT or
-use it for a context-free agent with no file access, e.g.
+use it in place of a context-free subagent with no file access, e.g.
 reviewing, high-level decision-making and design.
 Provide a summary of the entire situation in the prompt file,
-plus any relevant quotes, then pipe any relevant `getagentsmd`
+plus any relevant quotes, then pipe all relevant `getagentsmd`
 output into the prompt file.
 
 Run each command whose description matches the current task.
