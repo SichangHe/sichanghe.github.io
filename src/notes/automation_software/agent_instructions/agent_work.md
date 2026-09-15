@@ -22,7 +22,8 @@ Use your manager as resources you reach for when needed,
 not a supervisor whom you spam status updates at.
 Only keep them informed of your high-level purpose and blockers.
 
-Upon start, immediately email the human what your task is.
+Upon start, a main agent must immediately email the human what your task is;
+subagents must not.
 
 ---
 
