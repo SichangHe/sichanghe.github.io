@@ -1,5 +1,12 @@
 # Unstructured Reading Notes
 
+- DDB: Source-Level Interactive Debugging for Distributed Applications,
+    Yibo Yan, NSL meeting
+    - too many too dynamic GDB sessions
+    - stack trace end at RPC boundary
+        - piggyback IP/PID/ thread context on RPC
+    - timeouts during interactive debugging
+        - shim above LibC to fake time
 - Emergent Algorithms in Foundation Models, Deqing Fu, Theory Lunch
     - motivation: what happens if AI become essentially oracle
         - understand how transformer learn & behave
