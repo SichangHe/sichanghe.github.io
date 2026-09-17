@@ -36,9 +36,13 @@
         - make high-precision float/ large number processing much better
 - StreamEP: Straggler-Tolerant MoE Decoding without Communication Barriers,
     Shaoyu Wang, NSL meeting
-    - batch per each MoE expert
-    - naive approach have scattered batches → low GPU utilization
-    - predict main batch
+    - motivation: expert parallelism (EP) straggler problem
+    - batch per each MoE expert w/ micro queue
+        - naive approach have scattered batches → low GPU utilization
+        - predict main batch
+            - analogy: making most people catching the shuttle bus
+    - each GPU schedule a few sets of weights to compute
+    - little throughput loss when small portion of network packets drop
 - Wave: Leveraging Architecture Observation for
     Privacy-Preserving Model Oversight, Haoxuan Xu, NSL meeting
     - measure what model is run only using microarchitectural side channel
