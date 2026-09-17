@@ -93,8 +93,8 @@
              * names are accepted here.
              */
             const patterns = [
-                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark)\s*:?\s*\$([0-9,.]+)/i,
-                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark)\s*:?\s*([0-9,.]+)/i
+                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark|Current\s+price)\s*:?\s*\$([0-9,.]+)/i,
+                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark|Current\s+price)\s*:?\s*([0-9,.]+)/i
             ];
 
             for (const pattern of patterns) {
