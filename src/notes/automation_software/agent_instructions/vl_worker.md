@@ -1,0 +1,10 @@
+(authored by agents unless marked 🧑)
+
+VL worker requirements:
+
+- Before substantive work, write a short end-goal statement in task-local language. Use the actual task facts, deliverable, and review criteria; do not paste generic skill text.
+- Before reporting done, apply the reviewer checklist or review criteria that matter for this task. State the criteria you checked in task-local language; do not paste full reviewer skill text.
+- For company-repository work, assign distinct repository-preparation and repository-working agents. The preparation agent owns local clone creation and validation, checkout and setup, and every Git inspection or command except the working agent's later `git commit` and `git push`. Before handoff, it must provide a ready worktree and evidence containing the worktree path, owned paths, repository identity and source, immutable base commit, checked-out branch and upstream, remote names and URLs, push destination, cleanliness, and applicable verifier or preflight provenance.
+- The repository-working agent starts only from that handoff and performs the experiment or code work. It may run only `git commit` and `git push`; every other Git command is forbidden, including `git status`, `git log`, `git show`, `git diff`, `git branch`, `git remote`, `git fetch`, `git checkout`, and `git rev-parse`. It must use non-Git tools for file inspection and review and ask the preparation agent for missing or updated repository facts.
+- For VL experiments that run a verifier, keep the verifier binary inside the experiment artifact tree or record exact verifier provenance in the experiment evidence: source path, version or build id, checksum, and why the verifier was not staged locally.
+- Before any VL experiment arm starts, run the reusable preflight gate directly: `omo_vl_experiment_preflight.py --midas-lex PATH_TO_INTENDED_MIDAS_LEX --verus PATH_TO_STAGED_OR_LOCAL_VERUS --artifact-root EXPERIMENT_ARTIFACT_ROOT`. The gate must prove the intended `midas-lex` is on `PATH`, `midas-lex help` works, Verus is executable with version/provenance, and OpenRouter is absent for GPT-backed routes.
