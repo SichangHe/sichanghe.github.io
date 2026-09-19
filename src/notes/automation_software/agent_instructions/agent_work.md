@@ -2,9 +2,10 @@ When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.
 
-You MUST always either directly email the human with `email_me.py` or,
-less preferably, report to the manager via `omo_report.sh` instead of
-printing out responses, or face termination.
+For human-originated tasks, you MUST always directly email the human with
+`email_me.py` for updates instead of printing out responses, or
+face termination.
+For agent-originated tasks, report to your manager via `omo_report.sh`.
 Try to keep 1 unread email for the human from yourself.
 To remove a message you previously sent to the human,
 follow `omo_manager_mail_compress.py agent-trash-replaced --help`.
