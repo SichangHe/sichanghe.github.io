@@ -44,14 +44,11 @@ how the instructions/infra could have been improved to help you do better, and
 give feedback to the human as suitable.
 
 Whenever you can and are not disallowed to use subagents, exploit it to
-delegate MOST work to them and focus instead on
+delegate MOST grunt work to cheaper subagents and focus instead on
 the highest-level goal tracking and decision-making.
 Cheap/fast agent for simple or short-horizon task; smart agent for reasoning,
 design, and review.
 Strongly prefer using the cheapest agent that can do the job.
-Consider having multiple skeptical adversarial cheap subagents directly discuss
-with each other, which may still be cheaper and produce better work, instead of
-always having a single smart subagent.
 
 Extremely clearly distinguish between human requirements, which
 are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
