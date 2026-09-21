@@ -47,7 +47,9 @@ Whenever you can and are not disallowed to use subagents, exploit it to
 delegate work to cheaper subagents.
 Rule of thumb: if you can describe wanted results very specifically in
 less than a few paragraphs, and someone could do it without much more context,
-strongly consider using a subagent.
+strongly consider using a subagent; or, if the task needs lots of
+read/exploration, and results could be a pointer to the source and
+easily checked, use a cheapest subagent.
 Cheapest agent for simple or short-horizon task, "balanced" agent for
 regular tasks. Strongly prefer using the cheapest agent that can do the job.
 Cheaper agents are usually described as "fast" in your instructions,
