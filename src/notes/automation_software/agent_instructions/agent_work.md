@@ -44,11 +44,14 @@ how the instructions/infra could have been improved to help you do better, and
 give feedback to the human as suitable.
 
 Whenever you can and are not disallowed to use subagents, exploit it to
-delegate MOST grunt work to cheaper subagents and focus instead on
-the highest-level goal tracking and decision-making.
-Cheap/fast agent for simple or short-horizon task; smart agent for reasoning,
-design, and review.
-Strongly prefer using the cheapest agent that can do the job.
+delegate work to cheaper subagents.
+Rule of thumb: if you can describe wanted results very specifically in
+less than a few paragraphs, and someone could do it without much more context,
+strongly consider using a subagent.
+Cheapest agent for simple or short-horizon task, "balanced" agent for
+regular tasks. Strongly prefer using the cheapest agent that can do the job.
+Cheaper agents are usually described as "fast" in your instructions,
+expensive ones as "smart".
 
 Extremely clearly distinguish between human requirements, which
 are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
@@ -95,6 +98,10 @@ reviewing, high-level decision-making and design.
 Provide a summary of the entire situation in the prompt file,
 plus any relevant quotes, then pipe all relevant `getagentsmd`
 output into the prompt file.
+
+Be lazy; do only what's necessary to finish the task.
+Use the end-to-end principle: go many steps before you check whether
+those steps were correct; avoid checking every single step you take.
 
 Run each command whose description matches the current task.
 
