@@ -1,5 +1,34 @@
 # Unstructured Reading Notes
 
+- Collective Communication Algorithms, Arvin Ghavidel, NSL meeting
+    - collective communication (CC): any scheme where
+        multiple nodes communicate
+    - collective algorithm: how node send/receive data
+    - collective schedule: chunk-level protocol of when, how much, etc.
+    - most people just use library
+    - prominent 4: AllGather, AllReduce, AllToAll, ReduceScatter
+    - AllReduce very core to ML training ⇒ now implemented in hardware
+    - default may not work well bc no knowledge of network topology
+        - NCCL uses ring AllGather for large message, tree for small
+            - backfire when e.g.
+                each node has multiple GPUs + direct 1-to-1 connected NICs
+    - cannot escape contention w/ other process
+    - new inference paper get most gain from latency gaps
+        - latency larger than time to send some message
+        - no overlap in some link
+    - ⇒ do custom schedule
+        - most large companies forked NCCL
+        - MS-CCL, TE-CCL (SIGCOMM 2014)
+    - CC harder than TE bc can do streaming copy (dup)
+        - need many snapshots and take very long to run optimizer
+            - OptCCL basically solves this: $10^3$s for 256 GPUs
+        - unlike TE, can reuse schedule bc problem unchanged
+            - except for MoE, unsolved
+            - does not handle failure
+        - can find waypoints where schedules would be optimal for a range of
+            input
+    - installing updates hard bc usually no central control plane for GPUs
+    - direction: CC on OCS: need to decide topology + schedule
 - DDB: Source-Level Interactive Debugging for Distributed Applications,
     Yibo Yan, NSL meeting
     - too many too dynamic GDB sessions
