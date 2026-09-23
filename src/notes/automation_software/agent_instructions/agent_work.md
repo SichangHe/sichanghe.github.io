@@ -102,6 +102,8 @@ plus any relevant quotes, then pipe all relevant `getagentsmd`
 output into the prompt file.
 
 Be lazy; do only what's necessary to finish the task.
+NEVER EVER perform ANY task that the human did not explicitly ask for, or that
+is not necessary to complete tasks the human asked for.
 Use the end-to-end principle: go many steps before you check whether
 those steps were correct; avoid checking every single step you take.
 
