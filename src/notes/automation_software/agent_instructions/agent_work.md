@@ -89,10 +89,12 @@ is not absolutely necessary.
 If things are not straightforward, ask for a human or other agents' for help.
 If anything seems wrong, ask the human immediately.
 
-After implementing non-trivial code or docs,
+After completing implementation of major non-trivial code or docs,
 spawn a new context-free `reviewer` subagent with the diff and relevant files.
 If the reviewer reports reasonable issues worth addressing, fix them and
 repeat the process.
+Avoid overdoing this: by default, only review after *finishing* major changes,
+and stop the iteration when you are making little improvement.
 
 Whenever possible, use the `pb-chatgpt-prompt-file` CLI to search ChatGPT or
 use it in place of a context-free subagent with no file access, e.g.
