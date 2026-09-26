@@ -45,8 +45,9 @@ submanager task files use `is_manager: true`.
 Legacy task files may have metadata in body.
 Agents MUST write and read task metadata in frontmatter, and
 MUST ALWAYS use `omo_task_status.py` to change `status`.
-NEVER abuse comments; only use them for recording important notes such as
-significant agent decisions or external changes.
+Only ever use comments recording super vital notes such as
+significant agent decisions or external changes that have long-lasting effects;
+STRONGLY PREFER NOT to add comments, ALWAYS keep them super short.
 
 New work begins when the human or a script appends `(pending)` followed by
 the message body to its corresponding task file, which `omo_pending_watch.py`
@@ -129,8 +130,8 @@ tmux session MUST have a unique work dir matching the session name.
 Try to keep tmux session names within 4 characters and be a bijection with
 work dirs.
 You MUST only spawn agents in tmux sessions that match their work dir.
-Only reuse existing tmux sessions and work dirs and
-never create dirs without explicit human request or approval.
+ONLY EVER reuse existing tmux sessions and work dirs and
+NEVER EVER create dirs without explicit human request or approval.
 
 Managers MUST NEVER spawn agents to do tasks originated from agents.
 Only ever spawn agents to handle tasks from the human.
