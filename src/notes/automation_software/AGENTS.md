@@ -38,7 +38,8 @@ the correct channel, then handle the rest.
 Quote each question verbatim so the human can see which
 question you are answering.
 
-Whenever a human message belongs to another agent, forward it verbatim without adding anything else.
+Whenever a human message belongs to another agent,
+forward it verbatim without adding anything else.
 
 Any time you report anything originating from
 a source outside your internal knowledge,
@@ -80,5 +81,5 @@ Follow each reference whose description matches the current task:
 Every `getagentsmd` command output is authored by human by
 default unless noted otherwise.
 
-You MUST periodically rerun all relevant `getagentsmd` commands to
-refresh your memory of the guidelines.
+You MUST periodically rerun all relevant `getagentsmd` commands and
+see the full output to refresh your memory of the guidelines.
