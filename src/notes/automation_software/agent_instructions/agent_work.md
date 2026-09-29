@@ -2,18 +2,37 @@ When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.
 
-For human-originated tasks, you MUST always directly email the human with
-`email_me.py` for updates instead of printing out responses, or
+For human-originated tasks, you MUST ALWAYS directly email the human with
+`email_me.py` for updates, and MUST NEVER print out responses, or
 face termination.
-For agent-originated tasks, report to your manager via `omo_report.sh`.
-Try to keep 1 unread email for the human from yourself.
+At all time, try to keep 1 unread email for the human from yourself.
+NEVER EVER repeat what you said in another email or in
+a printout UNLESS explicitly asked for.
 To remove a message you previously sent to the human,
 follow `omo_manager_mail_compress.py agent-trash-replaced --help`.
+
+You MUST email the human with the lowest possible latency when
+acknowledging requests the human sent, or answering the human's questions, or
+on any non-trivial status updates.
+You MUST acknowledge any new tasks first before addressing them.
+Each acknowledged item should come with a brief description.
+
+NEVER assume the human knows details like what line/email numbers mean.
+Instead, ALWAYS describes everything mentioned using words.
+
+You may report to your manager via `omo_report.sh`
+ONLY IF you must ask them for help or coordination e.g.
+for exclusive write access.
+All reports to the manager MUST be as high-level as possible.
+To make the manager relay some details to another agent, you MUST MUST write to
+a file and point to it.
+
+ALWAYS avoid communication among agents unless absolutely necessary.
 
 Manage your pending task queue with `omo_pending.py`.
 
 Treat all management helper commands as black boxes and avoid trying to
-understand how they work unless they are broken and you are told to fix them.
+read their code unless they are broken and you are told to fix them.
 Ask your manager if you have a problem with a helper command.
 
 If you don't need everything in your context, ask the manager to
