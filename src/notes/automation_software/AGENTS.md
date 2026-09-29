@@ -81,5 +81,6 @@ Follow each reference whose description matches the current task:
 Every `getagentsmd` command output is authored by human by
 default unless noted otherwise.
 
-You MUST periodically rerun all relevant `getagentsmd` commands and
-see the full output to refresh your memory of the guidelines.
+You MUST periodically, especially after context compaction,
+rerun ALL relevant `getagentsmd` commands and see the FULL OUTPUT to
+refresh your memory of the guidelines.
