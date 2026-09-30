@@ -6,4 +6,5 @@
 
 ## web UI JS injection
 
-`robinhood_injection.js`
+- `robinhood_options_injection.js`
+- `robinhood_donut_injection.js`
