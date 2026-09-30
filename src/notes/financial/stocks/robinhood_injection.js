@@ -4,26 +4,26 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
-    'use strict';
+(function () {
+    "use strict";
 
     let renderFrame;
 
     window.__optionsInjectorDebug = {
         underlyingPrice: NaN,
         legs: [],
-        lastUpdate: null
+        lastUpdate: null,
     };
 
     const GREEK_DEFS = {
-        'Delta': 'Change in option price per 1 point change in underlying',
-        'Gamma': 'Rate of change in Delta per 1 point change in underlying',
-        'Theta': 'Daily time decay in option price',
-        'Vega': 'Change in option price per 1% change in implied volatility',
-        'Rho': 'Change in option price per 1% change in interest rates'
+        Delta: "Change in option price per 1 point change in underlying",
+        Gamma: "Rate of change in Delta per 1 point change in underlying",
+        Theta: "Daily time decay in option price",
+        Vega: "Change in option price per 1% change in implied volatility",
+        Rho: "Change in option price per 1% change in interest rates",
     };
 
-    const log = (msg, data = '') =>
+    const log = (msg, data = "") =>
         console.log(`[Options Injector] ${msg}`, data);
 
     function extractUnderlyingPrice() {
@@ -31,7 +31,7 @@
             document.body,
             NodeFilter.SHOW_TEXT,
             null,
-            false
+            false,
         );
 
         let node;
@@ -42,18 +42,18 @@
 
             // Pattern 1: Legacy button format (Equities)
             if (/^Share price:\s*\$[0-9,.]+$/i.test(txt)) {
-                return parseFloat(txt.replace(/[^\d.]/g, ''));
+                return parseFloat(txt.replace(/[^\d.]/g, ""));
             }
 
             // Pattern 2: Legacy button format (Indices)
             if (/^Index value:\s*[0-9,.]+$/i.test(txt)) {
-                return parseFloat(txt.replace(/[^\d.]/g, ''));
+                return parseFloat(txt.replace(/[^\d.]/g, ""));
             }
 
             // Pattern 3: Table layout format
             if (
                 /^Current\s+[A-Z0-9-.]+\s+price$/i.test(txt) &&
-                txt.toLowerCase() !== 'current price'
+                txt.toLowerCase() !== "current price"
             ) {
                 const containerNode = node.parentElement?.parentElement;
                 if (!containerNode) continue;
@@ -61,7 +61,7 @@
                 const match = containerNode.textContent.match(/\$([0-9,.]+)/);
 
                 if (match) {
-                    return parseFloat(match[1].replace(/,/g, ''));
+                    return parseFloat(match[1].replace(/,/g, ""));
                 }
             }
         }
@@ -77,62 +77,106 @@
      * on the page.
      */
     function extractOptionPrice(row) {
+        /*
+         * Strategy-row layout.
+         *
+         * The Greek block is in the expanded portion of a strategy row.
+         * Walk upward until we find the nearest container containing both:
+         *
+         *   - the strategy strike cell
+         *   - the row's selectable strategy price
+         *
+         * Example:
+         *
+         *   $280 / $480
+         *   ...
+         *   [ $58.00 ]  <- strategy price
+         *
+         * Expanded underneath:
+         *
+         *   $280 Call   $58.00
+         *   $480 Call    $0.01
+         *
+         * Those individual leg prices are NOT the denominator for the
+         * aggregate Greeks shown above them.
+         */
         let container = row;
 
-        for (
-            let depth = 0;
-            container && depth < 10;
-            depth++, container = container.parentElement
-        ) {
-            const text = container.textContent || '';
+        while (container && container !== document.body) {
+            const strikeCell = container.querySelector(
+                '[data-testid="StrategyOptionChainStrikePriceCell"]',
+            );
 
-            /*
-             * Prefer explicitly labelled values.
-             *
-             * Robinhood's wording/layout can change, so several common
-             * names are accepted here.
-             */
-            const patterns = [
-                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark|Current\s+price)\s*:?\s*\$([0-9,.]+)/i,
-                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark|Current\s+price)\s*:?\s*([0-9,.]+)/i
-            ];
+            const priceButton = container.querySelector(
+                'button[data-testid="OptionChainSelectRowButton"]',
+            );
 
-            for (const pattern of patterns) {
-                const match = text.match(pattern);
+            if (strikeCell && priceButton) {
+                const match = priceButton.textContent.match(/\$([0-9,.]+)/);
 
                 if (match) {
-                    const price = parseFloat(
-                        match[1].replace(/,/g, '')
-                    );
+                    const price = parseFloat(match[1].replace(/,/g, ""));
 
                     if (Number.isFinite(price) && price > 0) {
                         return price;
                     }
                 }
             }
+
+            container = container.parentElement;
+        }
+
+        /*
+         * Fallback for Robinhood layouts where the option price is
+         * explicitly labelled.
+         */
+        container = row;
+
+        for (
+            let depth = 0;
+            container && depth < 12;
+            depth++, container = container.parentElement
+        ) {
+            const text = container.textContent || "";
+
+            const patterns = [
+                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark|Current\s+price)\s*:?\s*\$([0-9,.]+)/i,
+                /(?:Option\s+price|Option\s+value|Mark\s+price|Mark|Current\s+price)\s*:?\s*([0-9,.]+)/i,
+            ];
+
+            for (const pattern of patterns) {
+                const match = text.match(pattern);
+
+                if (!match) {
+                    continue;
+                }
+
+                const price = parseFloat(match[1].replace(/,/g, ""));
+
+                if (Number.isFinite(price) && price > 0) {
+                    return price;
+                }
+            }
         }
 
         return NaN;
     }
-
     function inject() {
-        if (!window.location.pathname.startsWith('/options/')) {
+        if (!window.location.pathname.startsWith("/options/")) {
             return;
         }
 
         const underlyingPrice = extractUnderlyingPrice();
 
         const cellLabels = Array.from(
-            document.querySelectorAll(
-                'div[data-testid="cell-label"]'
-            )
+            document.querySelectorAll('div[data-testid="cell-label"]'),
         );
 
-        const greekRows = cellLabels.filter(div => {
+        const greekRows = cellLabels.filter((div) => {
             const txt = div.textContent.trim();
 
-            return Object.keys(GREEK_DEFS).some(
-                greek => txt.startsWith(greek)
+            return Object.keys(GREEK_DEFS).some((greek) =>
+                txt.startsWith(greek),
             );
         });
 
@@ -149,12 +193,12 @@
             const row = greekRows[i];
 
             const labelDiv =
-                row.querySelector('span:first-of-type > div') ||
-                row.querySelector('span:first-of-type');
+                row.querySelector("span:first-of-type > div") ||
+                row.querySelector("span:first-of-type");
 
             const valueDiv =
-                row.querySelector('span:last-of-type > div') ||
-                row.querySelector('span:last-of-type');
+                row.querySelector("span:last-of-type > div") ||
+                row.querySelector("span:last-of-type");
 
             if (!labelDiv || !valueDiv) {
                 continue;
@@ -163,21 +207,17 @@
             /*
              * Strip anything previously appended by this script.
              */
-            const currentText =
-                labelDiv.textContent
-                    .split(' | ')[0]
-                    .trim();
+            const currentText = labelDiv.textContent.split(" | ")[0].trim();
 
-            const greekName =
-                Object.keys(GREEK_DEFS).find(
-                    greek => currentText === greek
-                );
+            const greekName = Object.keys(GREEK_DEFS).find(
+                (greek) => currentText === greek,
+            );
 
             if (!greekName) {
                 continue;
             }
 
-            if (greekName === 'Delta') {
+            if (greekName === "Delta") {
                 currentLegIndex++;
             }
 
@@ -191,14 +231,12 @@
              */
             const originalValueText = valueDiv.textContent;
 
-            const normalizedValueText =
-                originalValueText.replace(/[−–—]/g, '-');
+            const normalizedValueText = originalValueText.replace(
+                /[−–—]/g,
+                "-",
+            );
 
-            const rawValue =
-                parseFloat(
-                    normalizedValueText
-                        .split(' | ')[0]
-                );
+            const rawValue = parseFloat(normalizedValueText.split(" | ")[0]);
 
             let newLabel = labelDiv.textContent;
             let newValue = normalizedValueText;
@@ -225,29 +263,19 @@
              * Leverage = 0.20 × 100 / 1 = 20×
              */
             if (
-                greekName === 'Delta' &&
+                greekName === "Delta" &&
                 Number.isFinite(underlyingPrice) &&
                 Number.isFinite(rawValue)
             ) {
-                const optionPrice =
-                    extractOptionPrice(row);
+                const optionPrice = extractOptionPrice(row);
 
-                if (
-                    Number.isFinite(optionPrice) &&
-                    optionPrice > 0
-                ) {
-                    const leverage =
-                        (
-                            rawValue *
-                            underlyingPrice
-                        ) /
-                        optionPrice;
+                if (Number.isFinite(optionPrice) && optionPrice > 0) {
+                    const leverage = (rawValue * underlyingPrice) / optionPrice;
 
-                    newLabel = 'Delta | Leverage';
+                    newLabel = "Delta | Leverage";
 
                     newValue =
-                        `${rawValue.toFixed(4)} | ` +
-                        `${leverage.toFixed(2)}×`;
+                        `${rawValue.toFixed(4)} | ` + `${leverage.toFixed(2)}×`;
 
                     hoverText =
                         `${GREEK_DEFS.Delta} | ` +
@@ -256,16 +284,14 @@
 
                     if (
                         !currentLegs.some(
-                            leg =>
-                                leg.legIndex ===
-                                currentLegIndex
+                            (leg) => leg.legIndex === currentLegIndex,
                         )
                     ) {
                         currentLegs.push({
                             legIndex: currentLegIndex,
                             rawDelta: rawValue,
                             optionPrice,
-                            leverage
+                            leverage,
                         });
                     }
                 }
@@ -285,25 +311,13 @@
              * /M is only a linear 30-day extrapolation. Actual theta is
              * nonlinear and generally changes as expiration approaches.
              */
-            if (
-                greekName === 'Theta' &&
-                Number.isFinite(rawValue)
-            ) {
-                const optionPrice =
-                    extractOptionPrice(row);
+            if (greekName === "Theta" && Number.isFinite(rawValue)) {
+                const optionPrice = extractOptionPrice(row);
 
-                if (
-                    Number.isFinite(optionPrice) &&
-                    optionPrice > 0
-                ) {
-                    const thetaPctDay =
-                        (
-                            rawValue /
-                            optionPrice
-                        ) * 100;
+                if (Number.isFinite(optionPrice) && optionPrice > 0) {
+                    const thetaPctDay = (rawValue / optionPrice) * 100;
 
-                    const thetaPctMonth =
-                        thetaPctDay * 30;
+                    const thetaPctMonth = thetaPctDay * 30;
 
                     newValue =
                         `${rawValue} ` +
@@ -347,14 +361,14 @@
             window.__optionsInjectorDebug = {
                 underlyingPrice,
                 legs: currentLegs,
-                lastUpdate: new Date().toISOString()
+                lastUpdate: new Date().toISOString(),
             };
 
             log(
                 `Processed Greeks. ` +
-                `Underlying: ${underlyingPrice}. ` +
-                `Valid Legs: ${currentLegs.length}`,
-                window.__optionsInjectorDebug
+                    `Underlying: ${underlyingPrice}. ` +
+                    `Valid Legs: ${currentLegs.length}`,
+                window.__optionsInjectorDebug,
             );
         }
     }
@@ -367,10 +381,8 @@
     observer.observe(document.body, {
         childList: true,
         subtree: true,
-        characterData: true
+        characterData: true,
     });
 
-    log(
-        'Initialized. TreeWalker extraction active for equities and indices.'
-    );
+    log("Initialized. TreeWalker extraction active for equities and indices.");
 })();
