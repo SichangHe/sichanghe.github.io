@@ -51,13 +51,9 @@ Managers read task files directly only for overview or troubleshooting;
 routine task-file mutations MUST go through `amh task`.
 Every agent explicitly assigned to inspect or
 directly edit task files MUST first run `getagentsmd get agent_manager` and
-follow its task-record, tmux-ownership, and lifecycle rules for that work.
+follow its task-record and lifecycle rules for that work.
 
-To create/link a task and spawn a worker, use `amh task start`. Tmux sessions whose names start with `h` are human-owned.
-Managers and agents MUST NEVER create, replace, restart, stop, or
-move agents in
-those sessions unless the human explicitly names the exact target and
-requests that action.
+To create/link a task and spawn a worker, use `amh task start`.
 When a human email causes a launch, pass `--email` and
 `--lines` selecting the exact relevant lines.
 Use the custom prompt only for narrow task context;
@@ -116,35 +112,18 @@ When work is waiting on the human, move the task file path under `TODO.md`
 For pending blocks:
 
 - If the target session is unclear, ask the human.
-- 🧑 When the human names `xx` agent to be used, by default interpret it as
-    spawning/resuming an agent in `xx` tmux session.
 - Keep directory-specific instructions in the target directory or task file.
 - Store prompts directly in task files.
 
 ## Dispatch and status
 
 Message an agent you manage with `amh tell agent`.
-If an agent is unclear or unresponsive, ask for a concise report; if needed,
-inspect only the last few visible tmux lines as diagnostic output,
-not authoritative state.
+If an agent is unclear or unresponsive, ask for a concise report.
 
 Use `amh agent status` for one agent and `amh agent problems` for
 a read-only one-shot problem check.
-The pending watcher periodically runs the problem check for
+The watcher periodically runs the problem check for
 automatic manager-facing notices.
-
-When a non-human-owned pane reports `Selected model is at capacity`,
-preserve that pane and task.
-Let the watcher send its bounded `resume` retries;
-only a verified submission that
-leaves the capacity warning consumes an attempt, and
-transport failure does not authorize replacement.
-If the verified retry budget is exhausted, switch the model in
-the same live Codex pane or stop Codex and resume its session in that
-same empty pane.
-Launch a replacement pane only when the original pane is unrecoverable.
-The watcher MUST NOT send capacity-recovery keys to human-owned `h*` targets;
-report those panes to the human without altering them.
 
 ## Helper commands
 
@@ -157,8 +136,7 @@ command help is authoritative.
 Managers do not give workers task-file paths unless the task file is
 explicitly assigned as an artifact to inspect, review, or change.
 For a reporting-tree inventory, follow `getagentsmd get manager_reporting`.
-DO NOT directly call `tmux` commands unless `amh` is broken, in which
-case report to the human immediately and spawn a worker to fix it.
+For agents that run in tmux instead of Omnigent, read `amh help tmux`.
 
 ## Reports, relays, email, and feedback
 
@@ -229,12 +207,6 @@ the manager uses the eval prompt to launch a new eval agent every time.
 The email watcher accepts only self-sent manager subjects and
 records accepted UIDs to prevent duplicate pending blocks.
 
-If an accepted reply-style subject contains an explicit tmux target after the
-manager tag, such as `Re: [a] wl:1 manager update`, the watcher maps that
-target through `TODO.md` task entries and task file frontmatter.
-When a match exists, the pending block is inserted in the matched task file and
-the pending watcher delivers it by frontmatter.
-If no match exists, the message falls back to the main manager.
 Ordinary addressed mail goes only to the addressed task's `runat`.
 `for manager` at an active unquoted content edge,
 including directly linked readable content, routes it to `managerat`;

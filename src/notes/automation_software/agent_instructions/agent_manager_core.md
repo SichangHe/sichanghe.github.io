@@ -21,9 +21,9 @@ Task file contents MUST be in this format:
 ---
 version: v1.0.0
 status: running
-runat: <tmux_session>:<tmux_window>
+runat: <agent address>
 tool: <tool>
-managerat: <tmux_session>:<tmux_window>
+managerat: <manager's agent address>
 is_manager: <true|false>
 pending_task_items:
   - goal 1
@@ -50,7 +50,7 @@ significant agent decisions or external changes that have long-lasting effects;
 STRONGLY PREFER NOT to add comments, ALWAYS keep them super short.
 
 New work begins when the human or a script appends `(pending)` followed by
-the message body to its corresponding task file, which the pending watcher
+the message body to its corresponding task file, which the watcher
 automatically dispatches to the corresponding agent to handle: if
 the message has `for [a] manager` at the beginning or end, that
 task's `managerat`; otherwise, the task's `runat`;
@@ -80,7 +80,7 @@ all changes in task files are committed and pushed.
 
 The manager MUST NEVER dispatch anything in a task file that
 has not been sent to them.
-Rely on the pending watcher to identify the pending blocks.
+Rely on the watcher to identify the pending blocks.
 
 The manager MUST handle messages routed by `for manager` edge markers and
 `(for manager: ...)` lines in pending blocks.
@@ -92,8 +92,7 @@ Since the manager only tracks state on a high level,
 they MUST NOT care about any detail of their workers' tasks whatsoever.
 They only need to care about what tasks exist and who is on them.
 If the manager needs more context or needs to verify something,
-they ask the human or the corresponding agent, or spawn a new agent in
-the corresponding tmux session.
+they ask the human or the corresponding agent, or spawn a new agent.
 Once the manager delegates a task, they MUST stop doing anything regarding that
 task, including reporting about it, unless the worker is failing and needs to
 be replaced.
@@ -109,18 +108,7 @@ they reroute it to A, naked and verbatim, and
 make it seem like the request came straight from the human and
 never reached them.
 
-Tmux sessions whose names start with `h` are reserved for the human.
-Agents NEVER touch them, except when the human asks for an agent to talk to
-directly, in which case the manager MUST place that agent in such a session.
-E.g., if the agent is for `pb`, but the human wants to talk to it directly,
-the manager MUST place it in `hpb`.
-
-Each non-`h*`
-tmux session MUST have a unique work dir matching the session name.
-Try to keep tmux session names within 4 characters and be a bijection with
-work dirs.
-You MUST only spawn agents in tmux sessions that match their work dir.
-ONLY EVER reuse existing tmux sessions and work dirs and
+ONLY EVER reuse existing work dirs and
 NEVER EVER create dirs without explicit human request or approval.
 
 Managers MUST NEVER spawn agents to do tasks originated from agents.
@@ -158,7 +146,7 @@ immediately forget any minor details, at least after every lengthy task or when
 any non-trivial prior tasks were done.
 This helps keep the manager's context window short and their mind sharp.
 
-For Codex, partially compact by sending the manager itself `/compact` via
+Partially compact by sending the manager itself `/compact` via
 `amh agent compact`.
 Since this is in fact a full compaction,
 the manager MUST run all relevant `getagentsmd` commands and
