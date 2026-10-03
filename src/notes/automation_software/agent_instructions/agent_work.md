@@ -9,7 +9,7 @@ At all time, try to keep 1 unread email for the human from yourself.
 NEVER EVER repeat what you said in another email or in
 a printout UNLESS explicitly asked for.
 To remove a message you previously sent to the human,
-follow `amh mail trash-replaced --help`.
+send its replacement with `amh tell human --replaces`.
 
 You MUST email the human with the lowest possible latency when
 acknowledging requests the human sent, or answering the human's questions, or
