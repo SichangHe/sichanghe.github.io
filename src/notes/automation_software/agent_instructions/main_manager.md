@@ -17,14 +17,7 @@ MUST understand and track all high-level goals.
 Before rotating your own TUI, write enough context to files linked from
 `TODO.md`: active manager pane, pending/running/blocked tasks,
 outstanding human questions, and dirty manager-owned changes.
-Then run `omo_manager_rotate.py` with the configured manager target and
-work-log root.
-The helper delegates self-rotation to a temporary coordinator,
-starts a fresh Codex session in this same tmux pane, and refreshes watchers.
-Self-rotation command success confirms the coordinator handoff.
-The coordinator log holds the final result;
-a private rotation audit also exists once rotation preparation reached audit
-creation.
+Then run `amh manager rotate`; its `--help` says what it does.
 Follow `202607/MANAGER_OPERATOR.md` for recovery when normal rotation fails.
 
 Messages sent to the main manager get appended to `work_manager_YYYY-MM-DD.md`,

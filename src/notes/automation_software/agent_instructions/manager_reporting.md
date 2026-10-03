@@ -6,7 +6,7 @@ Each manager accounts for its direct reports from authoritative task
 frontmatter. Pane text and pane existence are diagnostic evidence, not
 reporting relationships.
 
-Use `omo_agent_tree.py` for the inventory. Its `--help` is the only usage
+Use `amh agent tree` for the inventory. Its `--help` is the only usage
 reference; do not repeat its options or examples in other documents.
 
 Report from the selected manager downward. For every direct report, state
