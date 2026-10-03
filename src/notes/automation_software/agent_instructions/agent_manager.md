@@ -218,7 +218,7 @@ plain words; file paths, mail UIDs, and line numbers are source refs,
 not descriptions, and should be avoided.
 
 If the request refers to things the manager does not have context for,
-they consult `omo_manager/docs/index.md` first.
+they consult `~/.config/amh/README.md` first.
 
 When a human sends a request, from a task file or an email, by
 default forward the reply verbatim to the relevant existing task and agent, or
