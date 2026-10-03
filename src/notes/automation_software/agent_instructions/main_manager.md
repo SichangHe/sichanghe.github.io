@@ -18,7 +18,7 @@ Before rotating your own TUI, write enough context to files linked from
 `TODO.md`: active manager pane, pending/running/blocked tasks,
 outstanding human questions, and dirty manager-owned changes.
 Then run `amh manager rotate`; its `--help` says what it does.
-Follow `202607/MANAGER_OPERATOR.md` for recovery when normal rotation fails.
+Follow `MANAGER_OPERATOR.md` for recovery when normal rotation fails.
 
 Messages sent to the main manager get appended to `work_manager_YYYY-MM-DD.md`,
 which has no frontmatter and does not accept pending items.
