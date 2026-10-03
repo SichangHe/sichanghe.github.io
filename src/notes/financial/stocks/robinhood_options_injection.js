@@ -333,6 +333,32 @@
             }
 
             /*
+             * GAMMA / VEGA / RHO AS % OF OPTION PRICE
+             *
+             *     Greek / optionPrice × 100
+             */
+            if (
+                ["Gamma", "Vega", "Rho"].includes(greekName) &&
+                Number.isFinite(rawValue)
+            ) {
+                const optionPrice = extractOptionPrice(row);
+
+                if (Number.isFinite(optionPrice) && optionPrice > 0) {
+                    const greekPct = (rawValue / optionPrice) * 100;
+
+                    const baseValue = normalizedValueText
+                        .split(/\s+\(/)[0]
+                        .trim();
+
+                    newValue = `${baseValue} ` + `(${greekPct.toFixed(2)}%)`;
+
+                    hoverText =
+                        `${GREEK_DEFS[greekName]} | ` +
+                        `${greekName} ÷ Option Price × 100`;
+                }
+            }
+
+            /*
              * Apply changes only when needed.
              * This prevents unnecessary MutationObserver loops.
              */
