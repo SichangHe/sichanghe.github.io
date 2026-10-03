@@ -9,13 +9,13 @@ refresh memory of the guidelines.
 Manager policy is in `getagentsmd get agent_manager` and
 `getagentsmd get agent_manager_core`, and exactly one role command:
 `main_manager` or `submanager`.
-`omo_task.py --is-manager` selects submanager instructions;
+`amh task start --as-manager` selects submanager instructions;
 main-manager rotation selects main-manager instructions.
 Launches fail before mutation when any required command fails or
 returns no text.
 
 Load machine-local values from `data/local.env` if present.
-Then run `omo_manager_setup_watchers.sh` before handling pending work.
+Then run `amh manager watchers` before handling pending work.
 Rerun it after helper-code changes.
 
 ## TODO archival policy
@@ -45,24 +45,21 @@ Every active task file except
 main manager task files MUST track ALL still-open goals in
 frontmatter `pending_task_items`.
 Quote human prompt verbatim as much as possible for goals.
-Workers can manage their own pending-item lists with
-path-opaque `omo_pending.py`.
+Workers can manage their own pending-item lists with `amh todo`.
 Managers may also update pending-item lists through manager helpers.
 Managers read task files directly only for overview or troubleshooting;
-routine task-file mutations MUST go through `omo_task_edit.py`,
-`omo_record_pending.py`, or `omo_task_status.py`.
+routine task-file mutations MUST go through `amh task`.
 Every agent explicitly assigned to inspect or
 directly edit task files MUST first run `getagentsmd get agent_manager` and
 follow its task-record, tmux-ownership, and lifecycle rules for that work.
 
-To create/link a task and spawn a worker, use the `omo_task.py`
-helper command below. Tmux sessions whose names start with `h` are human-owned.
+To create/link a task and spawn a worker, use `amh task start`. Tmux sessions whose names start with `h` are human-owned.
 Managers and agents MUST NEVER create, replace, restart, stop, or
 move agents in
 those sessions unless the human explicitly names the exact target and
 requests that action.
-When a human email causes a launch, pass `--human-email-file` and
-`--human-email-lines` selecting the exact relevant lines.
+When a human email causes a launch, pass `--email` and
+`--lines` selecting the exact relevant lines.
 Use the custom prompt only for narrow task context;
 do not paraphrase the human's email.
 
@@ -76,8 +73,7 @@ If a worker reports a manager-process problem, consume it through that
 worker's task file and update manager policy yourself; do not ask the worker to
 inspect manager state.
 
-When a worker task is complete, close it with `omo_task_status.py x.md done` so
-pending validation runs and the task reference moves from `TODO.md` `current`
+When a worker task is complete, close it with `amh task close x.md` so the task reference moves from `TODO.md` `current`
 to the top of `previous`.
 
 🧑 At times, agents may become stupid and produce a mess.
@@ -127,16 +123,14 @@ For pending blocks:
 
 ## Dispatch and status
 
-Dispatch through the visible tmux pane with `omo_dispatch.sh`.
+Message an agent you manage with `amh tell agent`.
 If an agent is unclear or unresponsive, ask for a concise report; if needed,
 inspect only the last few visible tmux lines as diagnostic output,
 not authoritative state.
 
-Use `omo_codex_status.py SESSION:WINDOW` to classify a worker as `not_codex`,
-`running`, `error`, or `ready` and print the current response tail.
-Use `omo_agent_status.py --root ROOT --problems-only --no-auto-unstick` for
+Use `amh agent status` for one agent and `amh agent problems` for
 a read-only one-shot problem check.
-`omo_pending_watch.py` periodically runs the problem check for
+The pending watcher periodically runs the problem check for
 automatic manager-facing notices.
 
 When a non-human-owned pane reports `Selected model is at capacity`,
@@ -147,67 +141,30 @@ leaves the capacity warning consumes an attempt, and
 transport failure does not authorize replacement.
 If the verified retry budget is exhausted, switch the model in
 the same live Codex pane or stop Codex and resume its session in that
-same empty pane with `omo_codex_start.py`.
+same empty pane.
 Launch a replacement pane only when the original pane is unrecoverable.
 The watcher MUST NOT send capacity-recovery keys to human-owned `h*` targets;
 report those panes to the human without altering them.
 
 ## Helper commands
 
-Helper commands are on `PATH`.
-Before using a helper command, run its `--help`;
-command help is authoritative for signatures, detailed behavior, and
-compatibility options.
-Managers use helper commands for task-file mutations and
-do not give workers task-file paths unless the task file is explicitly assigned
-as an artifact to inspect, review, or change.
-For a reporting-tree inventory, follow `getagentsmd get manager_reporting`.
-DO NOT directly call `tmux` commands unless these helpers are broken, in which
-case report to the human immediately and spawn a worker to fix the helpers.
+🧑 "what managers and workers should use, i.e. just amh, and let them rely on
+`--help` instead of dumping info via file in my notes"
 
-- `omo_manager_setup_watchers.sh` — starts or refreshes manager watchers.
-- `omo_pending_watch.py` — watches pending markers and
-    routes actionable work.
-- `omo_task_audit.py` — checks task/TODO consistency without mutation.
-- `omo_record_pending.py` — records new pending items and
-    consumes their marker.
-- `omo_task_edit.py summary` — prints concise task metadata and
-    pending items.
-- `omo_pending.py` — path-opaque agent-facing pending-queue helper.
-- `omo_task_edit.py pending-move`
-    — transfers one open item between task files.
-- `omo_task_edit.py pending-marker-clear` — consumes a marker with
-    no new item.
-- `omo_task_edit.py comment-add` — appends a manager comment.
-- `omo_task_edit.py delegate-message`
-    — queues a manager-owned worker message.
-- `omo_task.py` — creates, links, and optionally launches a task.
-- `omo_task_status.py` — changes task lifecycle status and performs closure.
-- `omo_dispatch.sh` — dispatches a task-file block through tmux.
-- `omo_tmux_send.py` — sends file-backed text to a Codex tmux pane.
-- `omo_codex_compact_when_idle.py` — compacts Codex after its pane is idle.
-- `omo_codex_status.py` — classifies a Codex pane and prints recent output.
-- `omo_codex_stop.py` — stops a Codex pane for recovery or non-task use.
-- `omo_report.sh` — allocates and submits private agent reports.
-- `omo_triage_report.py` — summarizes an agent report for manager action.
-- `omo_agent_status.py` — summarizes active task and worker problems.
-- `omo_agent_tree.py` — shows reporting relationships and current work;
-    its `--help` is the sole usage reference.
-- `omo_worktree_check.py` — checks manager-owned worktree state.
+Every helper is a subcommand of `amh`, which is on `PATH`.
+Start at `amh --help`, then read the help of the group and action you need;
+command help is authoritative.
+Managers do not give workers task-file paths unless the task file is
+explicitly assigned as an artifact to inspect, review, or change.
+For a reporting-tree inventory, follow `getagentsmd get manager_reporting`.
+DO NOT directly call `tmux` commands unless `amh` is broken, in which
+case report to the human immediately and spawn a worker to fix it.
 
 ## Reports, relays, email, and feedback
 
-Every instruction for a worker to report back to the manager via
-`omo_report.sh`
-MUST require a private task-specific message file allocated with
-`REPORT_FILE=$(omo_report.sh --alloc-message-file)` and submitted with
-`omo_report.sh --status STATUS --message-file "$REPORT_FILE"`.
-Workers MUST NOT pass `--task-file`, `--root`, `--manager-target`, or
-other manual report route flags, and
-managers MUST NOT provide workers task-file paths for reporting.
-Report bodies MUST be written through an editor/file-editing tool or
-other non-shell text channel, not with `cat`, heredocs, or
-shell text injection.
+Workers message their manager with `amh tell manager`, in one or
+two sentences, as they would message a person.
+Managers MUST NOT provide workers task-file paths for reporting.
 
 Agents MUST NOT create or store artifacts under the work-log repository.
 Manager-authored scratch prompts, route notes, report drafts, and
@@ -238,7 +195,7 @@ For larger work, spawn agents in fresh windows, record dependencies.
 Before stopping a non-trivial agent, ask for concise feedback on
 unclear instructions, routing/communication gaps, missing tooling/docs,
 check friction, or whether manager-triggered compaction would have helped.
-Use `omo_task_status.py x.md done` for normal task closure, TODO movement, and
+Use `amh task close x.md` for normal task closure, TODO movement, and
 worker shutdown.
 If feedback is needed, ask before marking the task done;
 the current helper close path does not collect feedback automatically.
@@ -276,7 +233,7 @@ If an accepted reply-style subject contains an explicit tmux target after the
 manager tag, such as `Re: [a] wl:1 manager update`, the watcher maps that
 target through `TODO.md` task entries and task file frontmatter.
 When a match exists, the pending block is inserted in the matched task file and
-`omo_pending_watch.py` delivers it by frontmatter.
+the pending watcher delivers it by frontmatter.
 If no match exists, the message falls back to the main manager.
 Ordinary addressed mail goes only to the addressed task's `runat`.
 `for manager` at an active unquoted content edge,
@@ -308,16 +265,10 @@ Email is required whenever the human is the audience or asks for a response,
 including inbound pending blocks asking about manager policy/status.
 Acknowledgements can be recorded in markdown, but
 substantive human-facing answers must go via email.
-Managers MUST NOT treat `omo_report.sh`, task-file notes, TODO notes, or
+Managers MUST NOT treat `amh tell manager`, task-file notes, TODO notes, or
 TUI text as human contact.
 When any manager or submanager contacts the human, they MUST send email with
-`email_me.py`.
-Normally omit `--tmux-target` and let `email_me.py`
-infer producer identity from the launch environment and current pane.
-Use an explicit target only to
-preserve a different verified producer identity during forwarding or
-compression; NEVER pass a task owner, manager owner, or delivery destination as
-the sender target.
+`amh tell human`.
 If a worker report contains information that should reach the human,
 the manager who owns that task MUST either email the human directly or
 explicitly assign a worker to email the human.
@@ -364,7 +315,7 @@ details only for failures.
 This directory should only contain files related to managers and tasks,
 NEVER project work. Project work MUST remain in each project's directory.
 
-Before going idle, run `omo_worktree_check.py`.
+Before going idle, run `amh manager worktree`.
 The manager owns their and their workers' work dir: commit and
 push every non-pending change the manager made there before going idle.
 If workers made changes, let them commit/delete their changes.

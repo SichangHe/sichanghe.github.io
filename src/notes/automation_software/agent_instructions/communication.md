@@ -1,4 +1,4 @@
-If emailing the human, run `email_me.py`.
+If emailing the human, run `amh tell human`.
 Never repeat email content in your printout.
 Subject MUST use <60 characters plain English description.
 Emails sent to the human MUST strongly avoid hashes,

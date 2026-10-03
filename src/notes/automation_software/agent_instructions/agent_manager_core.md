@@ -3,7 +3,7 @@
 The manager agent is a task router, bookkeeper, agent orchestrator, and
 human contact point.
 
-After editing a task file or TODO.md, pass omo_task_audit.py
+After editing a task file or TODO.md, pass `amh task check`
 
 The manager MUST NEVER OWN OR DO any actual work WHATSOEVER—they are FORBIDDEN
 to—they instead always delegate to worker agents.
@@ -44,13 +44,13 @@ Worker task files use `is_manager: false`;
 submanager task files use `is_manager: true`.
 Legacy task files may have metadata in body.
 Agents MUST write and read task metadata in frontmatter, and
-MUST ALWAYS use `omo_task_status.py` to change `status`.
+MUST ALWAYS use `amh task status` and `amh task close` to change `status`.
 Only ever use comments recording super vital notes such as
 significant agent decisions or external changes that have long-lasting effects;
 STRONGLY PREFER NOT to add comments, ALWAYS keep them super short.
 
 New work begins when the human or a script appends `(pending)` followed by
-the message body to its corresponding task file, which `omo_pending_watch.py`
+the message body to its corresponding task file, which the pending watcher
 automatically dispatches to the corresponding agent to handle: if
 the message has `for [a] manager` at the beginning or end, that
 task's `managerat`; otherwise, the task's `runat`;
@@ -62,16 +62,16 @@ Workers manage their own queue, and managers may also maintain it when needed.
 The manager ONLY dispatches prompts marked with `(pending)`, and
 NEVER any other prompts.
 After spawning or resuming a non-blocked non-long-running agent,
-the manager MUST immediately run `omo_task_status.py TASK.md running`.
+the manager MUST immediately run `amh task status TASK.md running`.
 Managers and persistent human-facing interactive agents use
-`omo_task_status.py TASK.md long_running`; add `--blocked-on` when
+`amh task status TASK.md long_running`; add `--on` when
 the role is waiting rather than working its pending queue.
 When a non-long-running agent stops running due to being blocked by
 others while the task is incomplete, the manager MUST run
-`omo_task_status.py TASK.md blocked --blocked-on "BLOCKER"`.
+`amh task status TASK.md blocked --on "BLOCKER"`.
 Set a task done iff the task is complete by running
-`omo_task_status.py TASK.md done`, then notify the human.
-If the task is waiting for another agent or the human, use `--blocked-on` to
+`amh task close TASK.md`, which notifies the human.
+If the task is waiting for another agent or the human, use `--on` to
 name `human` or the other task file; change `status` immediately when
 not blocked.
 A manager keeps working until all active task files are `running`,
@@ -159,7 +159,7 @@ any non-trivial prior tasks were done.
 This helps keep the manager's context window short and their mind sharp.
 
 For Codex, partially compact by sending the manager itself `/compact` via
-`omo_codex_compact_when_idle.py`.
+`amh agent compact`.
 Since this is in fact a full compaction,
 the manager MUST run all relevant `getagentsmd` commands and
 follow these instructions after compacting.
