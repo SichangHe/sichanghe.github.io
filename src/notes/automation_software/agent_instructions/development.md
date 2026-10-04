@@ -75,7 +75,8 @@ documentation before writing any new code.
 Always think about how to validate your code works and test it.
 Write **realistic** tests similar to actual scripts to be run to
 test intended behaviors; or, many times for one-off scripts,
-simply run the scripts themselves!
+simply run the scripts themselves! Avoid fakes!
+Try to run the real thing whenever possible.
 Trivial mocks and tests covered by static analysis are meaningless!!
 
 Be extremely lazy in terms of docs and scripts, in a wise way.
@@ -109,11 +110,16 @@ Never ever use mutex unless you absolutely have to;
 always use actor model like Erlang GenServer does:
 isolated actors each owns data exclusively, with sequential data access through
 messaging the actor.
-Implement async type erasure using channel message types instead of
+Implement type erasure for async using channel message types instead of
 interfaces/traits.
 Never ever write nested loop with complex intertwined continue/break;
 always explicitly write out state machines with clear state transitions and
-actions
+actions.
+Whenever possible and simple enough, cleanly separate IO from logic,
+have a large core made of pure functions and connect them with
+small surrounding IO/mutation code, then exploit the pure core for
+reproducibility e.g. simulation tests.
+Exploit types to encode constraints, state transitions, etc.
 
 Keep shared terms in `docs/ubiquitous-language.md` and refer to it for how to
 think and talk.
