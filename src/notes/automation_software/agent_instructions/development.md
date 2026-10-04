@@ -109,6 +109,8 @@ Never ever use mutex unless you absolutely have to;
 always use actor model like Erlang GenServer does:
 isolated actors each owns data exclusively, with sequential data access through
 messaging the actor.
+Implement async type erasure using channel message types instead of
+interfaces/traits.
 Never ever write nested loop with complex intertwined continue/break;
 always explicitly write out state machines with clear state transitions and
 actions
