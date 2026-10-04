@@ -136,7 +136,6 @@ command help is authoritative.
 Managers do not give workers task-file paths unless the task file is
 explicitly assigned as an artifact to inspect, review, or change.
 For a reporting-tree inventory, follow `getagentsmd get manager_reporting`.
-For agents that run in tmux instead of Omnigent, read `amh help tmux`.
 
 ## Reports, relays, email, and feedback
 
