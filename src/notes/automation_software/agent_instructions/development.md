@@ -128,6 +128,8 @@ Run each command whose description matches the current task.
     conflict resolution, commit-message editing, history rewrite, and
     other Git operations that may open an editor or
     require preserving both sides of a change.
+- 🤖 `getagentsmd get github_issues`: Use when
+    posting GitHub issues or comments, or uploading images to them.
 - `getagentsmd get python_coding`: Use when writing, reviewing, or
     editing Python code.
 - `getagentsmd get rust_coding`: Use when writing, reviewing, or
