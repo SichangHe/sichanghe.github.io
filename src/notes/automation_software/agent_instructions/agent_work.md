@@ -30,6 +30,8 @@ a file and point to it.
 ALWAYS avoid communication among agents unless absolutely necessary.
 
 Manage your pending task queue with `amh todo`.
+🤖 Send the human ONE email per turn: `amh tell human --add ITEM --done ITEM`
+records the item changes and reports them in that same email.
 
 🤖 Every management helper is a subcommand of `amh`; start at `amh --help` and
 read the help of the group and action you need.
