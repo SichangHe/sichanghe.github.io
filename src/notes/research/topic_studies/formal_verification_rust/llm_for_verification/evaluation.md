@@ -91,6 +91,51 @@ newer tasks broaden the evidence
     - source-to-target preservation needs separate evidence
     - see [the existing collection](../../../verus_frontier_20261006.md) for the narrower test and manual-review coverage
 
+direct audits show additional evaluation failures
+- all three official abstracts and PDFs checked on October 7, 2026
+  - selected method and evaluation sections read
+  - results were not rerun
+- [Faults in Our Formal Benchmarking, Ammanamanchi, Bhat, and Biderman, June 28, 2026](https://arxiv.org/abs/2606.29493)
+  - fact: PDF reports ICML 2026, PMLR 306
+  - authors' abstract: “398 mechanically certified issues”
+    - 4,833 total checker findings across five benchmark families and their forks
+    - total findings are not the same as independently confirmed defects
+  - authors' §3.2: “Lean versions prior to 4.20.0”
+    - an `apply?` frontend bug could report success without an ordinarily kernel-checked theorem declaration
+  - authors' abstract: “defects can both inflate and deflate reported prover scores”
+  - inference: correct formal statements and a sound kernel are insufficient when the harness accepts a frontend success report
+    - rebuild and inspect the actual theorem artifact with a patched, pinned toolchain
+    - report benchmark version and defect corrections alongside scores
+- [miniF2F-Lean Revisited, Ospanov, Farnia, and Yousefzadeh, November 5, 2025](https://arxiv.org/abs/2511.03108)
+  - status: arXiv preprint
+    - peer-reviewed venue not established by this check
+  - authors' introduction: “correct over 300 Lean 4 statements”
+  - authors' introduction: “the formal statements in miniF2F”
+    - “are often significantly simplified compared to the informal statements”
+  - authors report that corrections can make previously simplified tasks harder and previously erroneous tasks provable
+  - inference: multiplying separate formalization and proof scores does not establish end-to-end accuracy
+    - the two components must agree on the statement actually required
+    - evaluate the pipeline against the original problem with independent semantic review
+  - limitation: the paper evaluates specified models and corrected benchmark variants
+    - its aggregate accuracy is not a universal correction factor for miniF2F scores
+- [NTP4VC, Xu, Luan, Wang, et al., January 28, 2026 revision](https://arxiv.org/abs/2601.18944v2)
+  - first submitted January 26, 2026
+  - status: arXiv preprint
+    - peer-reviewed venue not established by this check
+  - authors' §3.1: “syntax checking over the translation results”
+    - “cross-validation by other experts”
+  - these checks support over 2,400 expert-written translation rules across Isabelle, Lean, and Rocq
+  - inference: the advertised semantic equivalence is supported by expert review
+    - this passage does not establish a machine-checked translation-correctness theorem
+  - authors' §3.2: “EXTRACTING CHALLENGING VCS”
+  - benchmark deliberately selects and transforms verification conditions to challenge automated provers
+    - half the 600 cases concern program-verification exercises
+    - half concern real C verification
+  - authors report only 2.08% pass@1 for the best evaluated language-specific model
+  - inference: this reveals a hard obligation-solving task
+    - it is not the expected failure rate on all obligations in an arbitrary production repository
+    - retain the selection and transformation procedure when interpreting scores
+
 evaluation protocol already studied locally
 
 - use the existing [SaltBench audit](../../../saltbench_20260914.md)
