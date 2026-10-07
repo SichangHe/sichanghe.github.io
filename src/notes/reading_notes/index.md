@@ -1,5 +1,16 @@
 # Unstructured Reading Notes
 
+- JavaScript Dead-Code Elimination via HTTP Range Requests (ThorJS),
+    Ayush Pandey, NSL meeting
+    - problem: lots of JS, bloat, screw developing regions
+        - mean page load time 18s for some countries
+        - dead code
+    - use in-browser proxy with precomputed JS file range
+        - on top of Muzeel, dead JS code elimination
+        - fork Thorium
+    - <10% top 1M sites don't support range requests
+        - most servers can support tens to hundreds of ranges
+    - large savings for JS file loading & page load time
 - Collective Communication Algorithms, Arvin Ghavidel, NSL meeting
     - collective communication (CC): any scheme where
         multiple nodes communicate
