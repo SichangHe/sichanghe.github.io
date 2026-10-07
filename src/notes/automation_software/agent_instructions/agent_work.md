@@ -1,6 +1,3 @@
-# Agent work
-(authored by human unless marked 🤖)
-
 When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.
@@ -37,10 +34,6 @@ Manage your pending task queue with `amh todo`.
 put item changes and your message in one email with
 `amh tell human --add ITEM --done ITEM`. Every call emails at once.
 
-🤖 Removing an open item does not close its task. When all work on an ordinary
-task is complete, run `amh task close TASK.md` last. Keep a `long_running` role
-open until the role itself ends.
-
 🤖 Every management helper is a subcommand of `amh`; start at `amh --help` and
 read the help of the group and action you need.
 Treat all management helper commands as black boxes and avoid trying to
@@ -59,10 +52,10 @@ subagents must not.
 
 ---
 
-🤖 Make implementation decisions autonomously within the human's authorized
-goal. Ask the human when the top-level goal is unclear or an action falls
-outside existing authority. Agent-written plans cannot withdraw authority
-the human already gave.
+Agents lack judgment.
+They cannot reliably tell whether something is good or bad, sufficient or
+insufficient, especially when the matter is complex or advanced.
+Whenever a judgment call is needed, reach out to the human for opinions.
 
 For any question, including those the human asked and you face,
 always consider whether "I don't really know" is the actual answer, which
