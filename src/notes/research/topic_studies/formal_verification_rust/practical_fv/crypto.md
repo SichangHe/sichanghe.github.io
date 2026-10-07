@@ -126,6 +126,27 @@ what existing work shows
     - it does not establish that every supported or legacy ciphersuite satisfies the strong-suite hypotheses
     - its game-based protocol theorem and HACL*/Jasmin leakage proofs address different obligations
 
+- [libcrux ML-KEM](https://github.com/cryspen/libcrux/blob/d3f1327340c0549375b5c04702dedfeb4a86ce96/libcrux-ml-kem/README.md) and [ML-DSA](https://github.com/cryspen/libcrux/blob/d3f1327340c0549375b5c04702dedfeb4a86ce96/libcrux-ml-dsa/README.md), current primary project documentation
+  - source status: checked October 2026 repository snapshot; project evidence rather than an independently reviewed paper
+  - fact: implements all three ML-KEM parameter sets and all three ML-DSA parameter sets
+    - provides portable and optimized implementations
+  - claim: uses hax and F* to verify arithmetic, polynomial transforms, serialization, and selected higher-level implementation code
+  - fact: [ML-KEM verification status](https://github.com/cryspen/libcrux/blob/d3f1327340c0549375b5c04702dedfeb4a86ce96/libcrux-ml-kem/proofs/verification_status.md) explicitly calls its table a “rough guide”
+    - its correctness column can mean mathematical properties, range bounds, or correctness against an input/output specification
+    - those meanings must not be collapsed into complete algorithm correctness
+  - fact: that table reports portable arithmetic 13/13 panic-free and correct, but generic sampling 0/5 and Neon arithmetic 0/13
+    - these are snapshot function counts, not a percentage of all production security obligations
+  - fact: ML-DSA README's verification statement names arithmetic, polynomial transforms, and serialization
+    - it does not establish full signing-algorithm security
+  - fact: ML-KEM's source timing discipline does not guarantee compiled timing behavior
+    - README: “there are no guarantees from the compiler”
+    - describes assembly inspection and established coding patterns as its validation practice
+  - fact: callers must provide suitable randomness and perform the documented serialized-key validation
+  - inference: this is a current candidate for the proposed versioned regression study
+    - it combines checked source properties, explicit incomplete coverage, runtime implementation selection, and ordinary Rust compilation
+    - assessing hax/F* translation and Rust-to-binary correspondence remains necessary
+  - limit: no proof rerun, benchmark replication, cryptographic hardness proof, or protocol-security proof performed in this review
+
 - [CryptoProver, the human's existing audit](../../../cryptoprover_20260807.md), August 2026
   - fact from that audit: the studied preprint targets production Rust cryptographic crates and functional contracts
     - its quoted paper limit: “not cryptographic security”
@@ -184,10 +205,10 @@ ChatGPT's opinion
 what was searched
 
 - opened HACL* CCS 2017 PDF, Fiat Crypto IEEE S&P 2019 PDF, ct-verif USENIX Security 2016 PDF, miTLS IEEE S&P 2013 PDF
-- opened maintained HACL*/Vale/EverCrypt manual, Microsoft project page, Fiat Crypto repository, Jasmin documentation, and The Last Mile primary abstract
+- opened maintained HACL*/Vale/EverCrypt manual, Microsoft project page, Fiat Crypto repository, Jasmin documentation, The Last Mile primary abstract, and libcrux ML-KEM/ML-DSA documentation and verification status
 - inspected the existing CryptoProver audit and static-analysis notes before drafting
 - primary IACR fetches returned HTTP 403; alternate author-hosted PDFs succeeded for HACL* and Fiat Crypto
 - search endpoint failed with HTTP 404
-- not covered deeply: later miTLS/TLS 1.3, protocol-security composition beyond the 2013 result, Vale papers, detailed Jasmin compiler/leakage theorem, EasyCrypt, post-quantum implementations, 2024–2026 cryptographic verification papers
+- not covered deeply: later miTLS/TLS 1.3, protocol-security composition beyond the 2013 result, Vale papers, detailed Jasmin compiler/leakage theorem, EasyCrypt, post-quantum proof artifacts beyond the checked libcrux documentation, 2024–2026 cryptographic verification papers
   - these omissions prevent calling the review exhaustive or claiming a research gap is established
 - overlap: [compiler review](compilers.md) covers semantic preservation; [specification and trusted base](spec_quality_trusted_base.md) covers general assumption tracking
