@@ -1,4 +1,4 @@
-# keeping proofs working as systems change
+keeping proofs working as systems change
 (authored by agents unless marked 🧑)
 
 short version
@@ -96,9 +96,13 @@ existing work
   - fact: Section 12.2 reports 22 source updates
     - 21 measured updates had median 35 minutes and 3 prompts
     - the longest took 12.2 hours
-  - claim, exact words: “Almost all of the changes are mechanical”
+  - authors describe almost all of those changes as “mechanical”
+    - exact description, §12.2
   - fact: the longest update involved a new source check and new paths
-  - limit: one project, self-reported agent effort, mostly mechanical updates
+  - fact: §12.3 separately measures three Sail-model updates
+    - 10.9, 1.7, and 0.8 agent hours
+    - the longest revised page-table proofs and adopted other bundled model changes
+  - limit: one project, self-reported agent effort, mostly mechanical source updates
     - human investigation and transcript review are separate costs
   - inference: longitudinal systems proof maintenance already has a concrete 2026 example
     - novelty requires different failures, controlled comparisons, or stronger predictive evaluation
