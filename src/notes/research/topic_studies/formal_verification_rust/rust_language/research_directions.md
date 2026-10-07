@@ -156,5 +156,8 @@ assessment limits
   - each topic review identifies those cases
 - source search failed during this pass
   - 2025–2026 completeness and proposal novelty remain unresolved
-- ChatGPT consultation at Extra High is pending
-  - its opinions will be separated from independently verified sources
+- [ChatGPT critique at Extra High](consultation.md) completed
+  - its ranking is an opinion
+  - it favors direction 1, then the cheap test in direction 4
+  - it recommends narrowing direction 3 and stopping direction 2 as a standalone project
+- agent recommendation: retain direction 2 only as a small test of a specified missing caller behavior
