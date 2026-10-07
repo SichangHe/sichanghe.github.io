@@ -63,8 +63,22 @@ real-code evidence
   - unsupported dependency behavior used trusted specifications
   - this was incremental verification of parts of an implementation
   - it was not a proof of the entire blockchain protocol
-- no additional production-scale Prusti deployment was established in this focused scan
-  - this is a search gap, not a claim that none exists
+- WaVe, Johnson et al., IEEE S&P 2023
+  - [primary paper](https://cseweb.ucsd.edu/~dstefan/pubs/johnson:2023:wave.pdf), §1 and §6
+    - authors: “roughly 7.3K lines of Rust”
+  - WebAssembly runtime with memory, filesystem, and network isolation proofs
+  - runtime and proof code are checked by Prusti
+  - trusted code includes the security policy, OS-call specifications, and wrappers for unsupported operations
+  - uses fuzzing to challenge trusted specifications
+    - passing fuzzing supports those models but does not prove them
+  - §9 excludes the loader and safety for multiple threads within a sandbox
+  - concurrent processes changing the filesystem can bypass its non-atomic path-resolution checks
+    - the proof does not cover that threat
+  - fuzzing found a teardown descriptor leak outside the proved isolation specification
+    - illustrates the difference between an isolation proof and complete runtime correctness
+  - user-written OS and security models remain part of the guarantee
+  - the paper does not establish correctness of the host kernel or every WebAssembly application
+  - [Flux](flux.md) later re-verifies four selected WaVe modules
 
 open problems
 - broader Rust and library coverage without excessive trusted contracts

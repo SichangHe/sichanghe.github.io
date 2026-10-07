@@ -14,12 +14,14 @@ reading guide
   - private working files beginning with a dot are excluded
 
 Rust program verifiers
+- [collected papers](rust_verifiers/collected_papers.md): new primary papers with source records and checksums
 - [aeneas](rust_verifiers/aeneas.md): Aeneas; prove Rust behavior through ordinary functions
 - [creusot](rust_verifiers/creusot.md): Creusot; turning Rust ownership into simpler proof problems
 - [flux](rust_verifiers/flux.md): Flux, Thrust, and refinement types for Rust
 - [gillian rust](rust_verifiers/gillian_rust.md): Gillian-Rust; verify unsafe libraries, then prove their safe clients
 - [hax](rust_verifiers/hax.md): hax; choose a prover for each Rust property
 - [overview](rust_verifiers/index.md): Rust program verifiers
+- [collected papers](rust_verifiers/collected_papers.md): new primary papers with source records and checksums
 - [kani](rust_verifiers/kani.md): Kani; symbolic checks with explicit proof boundaries
 - [newer tools 2025 2026](rust_verifiers/newer_tools_2025_2026.md): newer Rust verification tools and techniques, 2025–2026
 - [open problems](rust_verifiers/open_problems.md): open problems in Rust program verification
@@ -50,11 +52,14 @@ LLMs for verification
 - [code and agents](llm_for_verification/code_and_agents.md): agents generating verified code and working in repositories
 - [evaluation](llm_for_verification/evaluation.md): benchmarks, weak contracts, translation, and fair comparisons
 - [overview](llm_for_verification/index.md): the distinction between proof, code, and specification generation
+- [maintenance prior work](llm_for_verification/maintenance_prior_work.md): prior work limiting maintenance and specification-bias novelty
 - [proof synthesis](llm_for_verification/proof_synthesis.md): retrieval, search, helper lemmas, and learning from checked proofs
 - [research directions](llm_for_verification/research_directions.md): proposed LLM-assisted verification experiments and closest work
 - [specifications](llm_for_verification/specifications.md): generating contracts that match intended software behavior
 
 Rust language and ecosystem
+- [consultation](rust_language/consultation.md): external proposal critiques and their status
+- [collected papers](rust_language/collected_papers.md): source records for newly collected Rust papers
 - [async concurrency bugs](rust_language/async_concurrency_bugs.md): async execution and concurrency defects in Rust
 - [bug finding tools](rust_language/bug_finding_tools.md): analyzers, fuzzers, and sanitizers that find Rust defects
 - [c to rust translation](rust_language/c_to_rust_translation.md): C/C++ migration to Rust and how to evaluate translations
