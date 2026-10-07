@@ -3,7 +3,7 @@ collected Rust papers
 
 archive
 
-- collected 31 distinct PDFs during this task
+- collected 33 distinct PDFs during this task
   - identical PDFs are counted once
   - source texts and provenance records are committed
   - PDFs remain local under the collection
@@ -47,3 +47,5 @@ paper records
 - Understanding Memory and Thread Safety Practices and Issues in Real-World Rust Programs, Boqin Qin et al., PLDI, 2020
 - Understanding and Detecting Real-World Safety Issues in Rust, Boqin Qin et al., TSE, 2024
 - VERT- Verified Equivalent Rust Transpilation with Large Language Models as Few-Shot Learners, Aidan Yang, Yoshiki Takashima, Brandon Paulsen, Josiah Dodds, Daniel Kroening, arXiv, 2024
+- Compositional Bug Detection for Internally Unsafe Libraries - A Logical Approach to Type Unsoundness, Pedro Carrott et al., ECOOP, 2025
+- &inator- Correct Precise C-to-Rust Interface Translation, Victor Chen, Ayden Coughlin, Michael D. Bond, PLDI, 2026

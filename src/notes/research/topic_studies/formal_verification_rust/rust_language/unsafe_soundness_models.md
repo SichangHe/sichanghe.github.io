@@ -133,9 +133,12 @@ research we could do
     - measure distinct root causes and confirmed fixes
   - risk: a disagreement alone does not establish which model is correct
 
-- shared proposal: test safe clients that deliberately violate undocumented assumptions
-  - foundation here: RustBelt requires safety for every allowed safe client
-  - [tool review](bug_finding_tools.md) owns client generation, nearest competitors, and evaluation
+- recommendation: stop the broad hostile-safe-client generator proposal
+  - foundation: RustBelt requires safety for every allowed safe client
+  - RUXt already proves that modeled failures have safe-client witnesses
+    - its prototype does not yet construct the witnesses
+  - [one discriminating experiment and closest-work comparison](bug_finding_tools.md)
+    - require a demonstrated gap in Crabtree and RUXt before building a framework
 
 - proposed: measure how unsafe-code repairs age as rules change
   - prior work: Miri's evolving checks and Tree Borrows compatibility experiment

@@ -80,6 +80,27 @@ deterministic migration
     - hypothesis to test, not a claim that every C alias pattern requires such changes
 
 learned translation and LLM assistance
+- [&inator, Chen, Coughlin, Bond, PLDI 2026](https://doi.org/10.1145/3808270)
+  - [full preprint](https://arxiv.org/abs/2604.17261)
+  - infers structure fields, function parameters and returns, and global-variable types together
+    - constraint system encodes behavior and ownership/borrowing requirements
+    - minimizes several ordered costs for pointer representations and interfaces
+  - authors, section 3.1: “requires whole-program analysis”
+    - incomplete libraries need a client test suite
+  - correctness means a compatible safe Rust implementation exists
+    - does not generate or certify all function bodies
+    - dynamic borrow conflicts can still panic
+    - reference-counting cycles can still leak memory
+    - multithreaded programs are unsupported
+  - evaluation manually constructs compatible implementations for six programs
+    - three additional larger programs assess scalability without correctness/precision assessment
+    - solving takes approximately 17,000 and 25,000 seconds for the two largest
+    - precision assessment includes manual comparison with simpler representations
+  - [artifact](https://github.com/PLaSSticity/refinator-impl)
+    - maintainers list “function pointers” as unsupported
+    - also excludes polymorphic pointers, unions, variadic functions, and ternary operators
+  - implication: globally choosing compatible low-cost structure and signature types is established work
+    - representation choice by itself is insufficient novelty
 - [FLOURINE, Eniser and colleagues, 2024](https://arxiv.org/abs/2405.11514)
   - authors: “differential fuzzing”
   - compares input/output behavior without requiring existing tests
@@ -287,13 +308,18 @@ research we could do
 - proposal 2: choose the smallest useful unit of migration
   - prior: Crubit interfaces, C2Rust's project translation, Crown's ownership recovery
     - C2SaferRust, SmartC2Rust, and Syzygy already divide migration into smaller pieces
-  - question: which groups of functions must move together to make ownership simple?
-  - proposed new contribution: jointly choose data representation and groups of functions using allocation lifetimes and caller obligations
+  - question: which groups can migrate while unchanged C callers retain their binary interface and allocation obligations?
+  - proposed new contribution: choose partial migration groups under a frozen C binary interface
+    - include callback registration, callback invocation, and allocation/deallocation across the boundary
+    - jointly choose data representation and groups of functions using allocation lifetimes and caller obligations
     - an allocation group contains creation, transfer, mutation, and destruction operations for the same objects
     - can include functions across several files and multiple call-graph branches
     - freeze the external interface of each group while allowing its private representation to change
     - compare against file boundaries, fixed syntax-tree pieces, and dependency-order translation
   - precise distinction from closest rivals
+    - &inator already chooses global compatible least-cost interface representations
+      - whole-program availability and unsupported function pointers leave the proposed callback boundary outside its demonstrated scope
+      - proposed work must preserve an existing foreign binary interface rather than replace the whole interface with inferred Rust types
     - C2SaferRust already edits a function and its affected call sites together
       - its unit sizes follow syntax and a line bound
       - its excluded structure redesign is central to the proposed study
@@ -304,6 +330,10 @@ research we could do
       - proposed work would permit private representation changes with independent behavior checks
   - evaluation
     - maintain the public C or C++ interface where feasible
+    - begin with C and require the original C interface to remain unchanged
+      - opaque handles, foreign callbacks, and externally supplied allocation/deallocation pairs
+      - unchanged independently maintained C clients are the acceptance tests
+      - C++ is a separate later study requiring exception and destructor contracts
     - measure pointer conversions, interface complexity, runtime cost, and reviewer effort
     - measure how often later callers force revision of an earlier representation
     - compare joint group-level redesign against Syzygy-style manual structure seeds
@@ -312,6 +342,7 @@ research we could do
   - why it may matter: migration can stall at language boundaries even when individual functions translate
   - novelty uncertainty: interoperation and migration-partitioning literature require further screening
     - dependency-order translation alone would repeat existing work
+    - global representation inference alone would repeat &inator
   - proposed first experiment
     - libraries with pointer-bearing structures passed among several functions
     - include independent allocation and destruction helpers
