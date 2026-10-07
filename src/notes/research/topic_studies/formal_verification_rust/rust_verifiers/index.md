@@ -24,6 +24,7 @@ choose a reading path
   - [Verus](verus.md) and [verified systems](verified_systems.md)
 
 all notes
+- [collected primary papers](collected_papers.md): newly archived source texts and provenance
 - [verus](verus.md): proof-oriented Rust for concurrency, low-level code, and systems properties
 - [prusti](prusti.md): safe Rust contracts through Viper and the state of the Prusti project
 - [creusot](creusot.md): Rust contracts through Why3, borrowed values, and newer ghost-ownership APIs
@@ -47,3 +48,11 @@ related existing notes
 - [new-work arguments](../../../new_work_arguments.md): earlier research arguments to build on
 - [Agave pilot scope](../../../agave_verification_scope.md): already-sized synchronous component targets
 - [complete four-part study](../index.md)
+
+consultation status
+- parallel agents and a fresh reviewer examined the notes
+- ChatGPT requests verified the Extra High setting
+  - requests returned no usable answer
+  - no ChatGPT opinion is represented as evidence
+- requested Opus and Fable models were unavailable in this session
+  - available agents performed the parallel review

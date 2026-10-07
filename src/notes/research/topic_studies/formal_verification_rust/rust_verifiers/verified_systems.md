@@ -117,9 +117,18 @@ Creusot systems
   - its README explicitly excludes a whole-system proof
 
 Prusti application evidence
+- [WaVe](prusti.md)
+  - memory and resource isolation for a WebAssembly runtime
+  - trusted OS/policy specifications and restricted concurrency scope
 - [Interblockchain Communication crate study](prusti.md)
   - historical incremental checking of supported functions and selected monotonicity properties
   - does not establish end-to-end protocol correctness
+
+Kani industrial components
+- [Hifitime, s2n-quic, Firecracker, and Cedar](kani.md)
+  - July 2026 tool preprint reports selected functional proofs and defect findings
+  - Hifitime's modular contracts extend earlier panic-only checking
+  - these are component guarantees with explicit harness inputs and models
 
 2025–2026 additions requiring a boundary-aware reading
 - Atmosphere and CortenMM appear in the official Verus publication list
