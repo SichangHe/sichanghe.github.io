@@ -97,6 +97,8 @@ demonstrated programs
     - example: wiping secret memory has an axiomatized model
   - standard formalizations and platform intrinsics still need expert review
   - source-level functional proofs do not establish compiled side-channel resistance
+  - §3 also trusts compiled native_decide and bv_decide machinery
+    - these are Lean proof-decision tools whose compiled implementation is part of this development's trust boundary
   - ML-KEM sampling termination uses a separate mathematical argument
   - [public subset of code and proofs](https://github.com/microsoft/SymCrypt/tree/feature/verifiedcrypto)
     - paper says public release includes ML-KEM and SHA-3
