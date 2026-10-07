@@ -49,6 +49,25 @@ saved primary PDFs
     - saved in the paper collection as `Is Human-Like Text Liked by Humans? Multilingual Human Detection and Preference Against AI, Yuxia Wang, Rui Xing, Jonibek Mansurov, et al., ACL, 2026.pdf`
     - SHA-256: `521ee263f9bd13efed4f84604d240bdc580d8fcf659add1bffa2539ccda44740`
 
+additional foundations papers
+
+- [Can AI-Generated Text be Reliably Detected](https://arxiv.org/abs/2303.11156)
+    - Vinu Sankar Sadasivan, Aounon Kumar, Sriram Balasubramanian, et al., arXiv 2025
+    - saved local PDF and committed source record
+    - SHA-256: `b351d56fbef0c7d918eefe9301487b18e0af173bc764b3b0e20cedd5c66717e3`
+- [On the Possibilities of AI-Generated Text Detection](https://arxiv.org/abs/2304.04736)
+    - Souradip Chakraborty, Amrit Singh Bedi, Sicheng Zhu, et al., arXiv 2023
+    - saved local PDF and committed source record
+    - SHA-256: `0730853bd3a8e386351092324cb6be81174cdf8a75a3e66b7918e8c5d1812911`
+- [GPT detectors are biased against non-native English writers](https://arxiv.org/abs/2304.02819)
+    - Weixin Liang, Mert Yuksekgonul, Yining Mao, et al., Patterns 2023
+    - saved local PDF and committed source record
+    - SHA-256: `9019ad9a465a7e5a6d13e372a1eccbb51321aa50a046e4510385865234194efb`
+- [Paraphrasing evades detectors of AI-generated text, but retrieval is an effective defense](https://arxiv.org/abs/2303.13408)
+    - Kalpesh Krishna, Yixiao Song, Marzena Karpinska, et al., NeurIPS 2023
+    - saved local PDF and committed source record
+    - SHA-256: `bf8572a4a30cf6bc6005be21bde9c7eaf3361721f640a67e122de508065680d7`
+
 existing collection material
 
 - core detectors and many 2025 papers were already present
@@ -59,8 +78,8 @@ existing collection material
 
 status
 
-- nine PDFs saved and hashes checked locally
-- nine source records committed in the collection
+- thirteen PDFs saved and hashes checked locally
+- thirteen source records committed in the collection
     - PDF files remain local because collection Git policy ignores PDFs
 - collection commit and remote integration are recorded after completion
 - paper-specific copyright and dataset licenses remain separate from availability of the PDF

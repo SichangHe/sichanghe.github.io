@@ -63,6 +63,9 @@ scope and evidence
 - quotes remain short and identify the paper or vendor
 - research recommendations are agent judgments
     - search results do not establish that a research gap is unoccupied
-- search services failed in this session
+- broad search services failed in this session
     - direct arXiv, ACL, vendor, and collection access worked
     - recent papers were discovered through conference-volume indexes and the paper collection
+    - Crossref API searches also worked
+        - extraction/boilerplate, website detection/Common Crawl, and web-text detection queries
+        - these noisy metadata results did not establish novelty
