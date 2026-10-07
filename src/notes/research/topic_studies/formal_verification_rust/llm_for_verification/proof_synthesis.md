@@ -13,6 +13,12 @@ what this adds
   - [Vero](../../../vero_20260821.md)
   - [Proofs Promptly](../../../proofs_promptly_20260821.md)
   - [October Verus frontier](../../../verus_frontier_20261006.md)
+- publication status
+  - LeanDojo: arXiv comments report NeurIPS 2023 acceptance
+  - CoqPilot: arXiv comments report ASE 2024 Tool Demonstrations publication
+  - other early sources below were read through their arXiv manuscripts
+    - proceedings status was not independently refreshed unless an entry states it
+    - an arXiv link alone does not establish whether later peer review occurred
 - reported results below are authors' claims
   - official abstracts and project documentation were checked
   - experiments were not independently rerun
