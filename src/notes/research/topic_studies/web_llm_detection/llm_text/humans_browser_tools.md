@@ -21,12 +21,13 @@ main findings
         - built-in search failed with HTTP 404
         - arXiv search returned HTTP 429
         - OpenAlex reported exhausted shared daily budget
-    - no independently verified 2026 human-detection study found in this pass
-        - this is a search limitation, not evidence that none exists
+    - ACL 2026 expert-annotator study subsequently found by browsing the official proceedings volume
+        - detailed below alongside the representative 2024 study
 
 human studies
 
 - Ippolito, Duckworth, Callison-Burch, and Eck, ACL 2020
+    - publication status: peer-reviewed conference paper
     - [Automatic Detection of Generated Text is Easiest when Humans are Fooled](https://aclanthology.org/2020.acl-main.164/)
     - authors' abstract: “even multi-sentence excerpts can fool expert human raters over 30% of the time”
     - study compares top-k, nucleus, and unrestricted random sampling
@@ -36,6 +37,7 @@ human studies
     - inference: human plausibility and automatic detectability need separate evaluation
 
 - Jakesch, Hancock, and Naaman, PNAS 2023
+    - publication status: peer-reviewed journal paper
     - [Human heuristics for AI-generated language are flawed](https://arxiv.org/abs/2206.07271)
     - authors' abstract: “participants (N = 4,600) were unable to detect self-presentations”
     - six experiments use professional, hospitality, and dating self-presentations
@@ -45,6 +47,8 @@ human studies
     - inference: instructions to imitate a casual human style can defeat readers' usual cues
 
 - Jannai, Meron, Lenz, Levine, and Shoham, 2023 white paper
+    - publication status: arXiv white paper
+        - peer-reviewed publication not verified here
     - [Human or Not? A Gamified Approach to the Turing Test](https://arxiv.org/abs/2305.20010)
     - authors' abstract: “users had even lower correct guess rates of 60%”
         - refers specifically to games against AI bots
@@ -55,6 +59,8 @@ human studies
     - inference: scale provides many observations but does not remove task or recruitment bias
 
 - Jones and Bergen, 2024 preprint
+    - publication status: arXiv version inspected
+        - peer-reviewed publication not verified here
     - [People cannot distinguish GPT-4 from a human in a Turing test](https://arxiv.org/abs/2405.08007)
     - authors' abstract: “GPT-4 was judged to be a human 54% of the time”
     - randomized, controlled, preregistered five-minute conversations
@@ -63,6 +69,8 @@ human studies
     - inference: errors also include rejecting real humans
 
 - Jones and Bergen, 2025 preprint
+    - publication status: arXiv version inspected
+        - peer-reviewed publication not verified here
     - [Large Language Models Pass the Turing Test](https://arxiv.org/abs/2503.23674)
     - authors' abstract: “GPT-4.5 was judged to be the human 73% of the time”
     - two randomized, controlled, preregistered tests on independent populations
@@ -74,6 +82,8 @@ human studies
     - limitation: choosing one of two partners does not estimate false accusations during ordinary browsing
 
 - Rahimov, Zamler, and Azaria, 2025 preprint
+    - publication status: arXiv version inspected
+        - peer-reviewed publication not verified here
     - [The Turing Test Is More Relevant Than Ever](https://arxiv.org/html/2505.02558v1)
     - full text inspected, sections 3–4 and 8
     - authors, model description: “All experiments used the Llama 3.2 1B model via OpenRouter’s API”
@@ -86,12 +96,50 @@ human studies
     - inference: this result and Jones–Bergen 2025 do not directly contradict each other
         - models and test conditions differ
 
-- existing-note lead requiring full verification
-    - [A Representative Study on Human Detection of Artificially Generated Media Across Countries](https://ieeexplore.ieee.org/abstract/document/10646666)
-    - Frank, Herbert, Ricker, Schönherr, Eisenhofer, and Fischer, IEEE S&P 2024
-    - human's [existing notes](../../../gen_ai.md) identify USA, Germany, and China samples across audio, images, and text
-    - not used here for numerical conclusions
-        - primary study not successfully opened in this pass
+- Frank, Herbert, Ricker, Schönherr, Eisenhofer, Fischer, Dürmuth, and Holz, IEEE S&P 2024
+    - [A Representative Study on Human Detection of Artificially Generated Media Across Countries](https://arxiv.org/abs/2312.05976)
+    - publication status: peer-reviewed IEEE S&P 2024 paper
+        - arXiv metadata identifies the venue
+        - [IEEE publication record](https://ieeexplore.ieee.org/abstract/document/10646666)
+    - [primary PDF](https://arxiv.org/pdf/2312.05976) inspected, sections 3.1.3, 3.3, and 4.1
+    - authors, section 3.3: “Kantar handled participant recruitment, country representative quotas, and participant compensation”
+    - preregistered survey with 3,002 participants across USA, Germany, and China
+    - text-condition mean accuracy: USA 51.50%, Germany 54.48%, China 52.45%
+        - these are text results, separate from image and audio results
+    - surveys ran June–September 2022
+        - 2024 publication does not mean 2024 models were tested
+    - text generated with OpenAI Davinci GPT-3 from article titles and summaries
+        - human articles from NPR, Tagesschau, and CCTV
+        - target 90–100 words in English/German and 130–140 Chinese characters
+        - presence and frequency penalties both 2, temperature 1
+    - limitation: short news excerpts and one generator do not represent all web prose
+    - inference: representative recruitment strengthens population relevance within these countries
+        - does not make the selected articles or generation settings representative of the whole web
+
+- Wang and colleagues, ACL 2026
+    - [Is Human-Like Text Liked by Humans? Multilingual Human Detection and Preference Against AI](https://aclanthology.org/2026.acl-long.639/)
+    - publication status: peer-reviewed ACL 2026 long paper
+        - [official proceedings volume](https://aclanthology.org/2026.acl-long/)
+    - [primary PDF](https://aclanthology.org/2026.acl-long.639.pdf) inspected, sections 2–3, table 3, and limitations
+    - authors, table 3: “The simple average accuracy of the human expert guesses is 87.6%”
+    - 19 native expert annotators across 16 datasets, nine languages, nine domains, and 11 models
+    - table 3 totals 8,778 examples across 30 annotation settings
+    - most tasks show a human and generated text together
+        - reader selects which one is human
+        - other tasks show one text, three texts, or unrestricted pairs
+    - experts received examples before annotation in some settings
+    - table 3 range includes 50.1% for Arabic dialect tweets and 50.7% for Vietnamese Wikipedia
+        - some news and question-answering settings approach 100%
+    - limitation: 87.6% is a simple average across different settings
+        - not one common-protocol estimate for random web readers
+    - limitation: many settings use one annotator
+        - text count does not equal independent-reader count
+    - authors aim to establish expert performance ceilings
+        - inference: their observed results do not prove a universal mathematical upper bound
+    - inference: this study challenges blanket claims that humans cannot detect generated text
+        - it does not contradict near-chance representative-reader results under other tasks
+    - [released dataset](https://github.com/xnlp-lab/HumanEval-MGT)
+        - useful starting material for matched expert-versus-lay-reader experiments
 
 browser tools observed
 
@@ -192,3 +240,13 @@ research opportunities
     - compare observed behavior with published privacy declarations
     - use constructed content and test accounts
     - limitation: client observation alone cannot verify server retention
+
+- recommendation: isolate expertise from paired-text assistance
+    - question: does expert performance remain high when only one unfamiliar webpage is shown?
+    - first experiment: reuse HumanEval-MGT examples with native expert and lay readers
+        - randomize single text versus matched pair and example training versus no training
+        - keep models, text lengths, and domains fixed across conditions
+    - measure false accusations, missed generated texts, confidence, and time per judgment
+    - report reader-level variation separately from text-level variation
+    - expected contribution: explain which protocol differences produce the representative-versus-expert performance gap
+        - hypothesis, not a claim that current studies isolate these causes

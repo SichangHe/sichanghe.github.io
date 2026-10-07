@@ -125,8 +125,14 @@ newer extensions
     - fact: NTS changes temperature when inspecting a surrogate model's token distribution
         - measure how the distribution responds
     - authors' abstract: “LLM-generated text tends to exhibit higher TS than human-written text”
-    - scope: three datasets, multiple domains and source models
-        - full-paper numbers and implementation details are being inspected
+    - authors' result, table 1: RAID AUROC 0.856
+        - Binoculars comparator: 0.807
+        - table 4 trains a separate Random Forest using these features
+        - do not confuse that trained result with the zero-shot detector
+    - author limitation: “its performance degrades under high-temperature perturbations”
+        - the paper also reports weaker compatibility with instruction-tuned scoring models
+    - inference: its label-aligned confidence metric uses ground-truth correctness
+        - this evaluation statistic is not a calibrated probability available during deployment
     - inference: add as a recent low-overhead statistical baseline before inventing another scalar score
 
 what remains worth testing
@@ -146,7 +152,7 @@ search and limits
 
 - sources opened: arXiv abstracts and saved full texts for Binoculars, Fast-DetectGPT, DetectLLM, Glimpse, MOSAIC
     - PDFs inspected for Binoculars, DetectGPT, DNA-GPT, HALO
-    - ACL 2026 volume scanned and NTS abstract opened
+    - ACL 2026 volume scanned and NTS full PDF inspected
 - direct requests to primary sites worked after both web-search tools failed
     - arXiv search and API returned HTTP 429
     - ordinary search-engine results were blocked or irrelevant
