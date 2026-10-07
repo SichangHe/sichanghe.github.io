@@ -35,6 +35,12 @@ candidate 1: maintain a verified module through real changes
   - jointly missing helper proofs remain missing until the complete module checks
   - public behavior and allowed trusted assumptions are fixed independently of the repair agent
   - include both legitimate changes and known regressions
+  - freeze the historical executable change in the first study
+    - legitimate changes require proof repair
+    - buggy changes require an independently checked behavior violation
+    - a proof timeout remains unknown, not evidence of a bug
+  - if code repair is allowed, independently check that the intended change survives
+    - otherwise reverting to the old implementation can satisfy the old contract
 - first experiment
   - select three small sequence, parser, or storage-metadata modules
   - use 10 historical changes per module
@@ -53,6 +59,9 @@ candidate 1: maintain a verified module through real changes
   - estimate: two weeks for dataset feasibility, then one to two months for a labeled pilot
   - main cost: finding meaningful changes with independent requirement evidence
 - closest work
+  - VeruSAGE-Bench now has 460 no-lemma tasks
+    - missing helper discovery alone is already covered
+    - [current source](https://github.com/microsoft/verus-proof-synthesis/blob/main/benchmarks/VeruSAGE-Bench/README.md)
   - KVerus already evaluates repository verification
   - Vero already requires whole-artifact completion
   - [Sisyphus, PLDI 2023](https://verse-lab.github.io/sisyphus/pdfs/sisyphus-pldi23.pdf) already repairs evolved OCaml library implementations under unchanged specifications
@@ -75,6 +84,9 @@ candidate 2: measure whether code-based specification generation preserves bugs
   - same docs and model budget
   - randomize implementation visibility
   - hide bug-triggering regression cases
+  - tell code-visible agents that implementations may be wrong
+    - ask them to formalize documented intent rather than observed behavior
+  - use unrelated mutations as a secondary quality check
 - first experiment
   - 30 APIs with clear documented requirements and independently known fixes
   - three conditions: docs only, docs plus buggy code, docs plus fixed code
@@ -91,6 +103,8 @@ candidate 2: measure whether code-based specification generation preserves bugs
   - KaPilot already separates documentation from implementation
   - SpecSyn already assesses mutation discrimination
   - Spec-Harness already evaluates input/output adequacy
+  - [Seeking Specifications](https://arxiv.org/abs/2504.21061) already compares correct and bug-injected C code
+    - [prior-work details](maintenance_prior_work.md) explain why real histories and randomized visibility are the remaining distinction
   - KaPilot already motivates avoiding inherited implementation flaws
   - possible distinction: quantify visibility bias causally on independently labeled real bug/fix pairs
   - [maintenance prior work](maintenance_prior_work.md) identifies the existing component ablations and the narrower untested comparison
@@ -127,6 +141,9 @@ candidate 3: reuse learned proof help across changed dependencies
     - the collected v2 also reports a release comparison; the cited wording here is from v1
     - exact version list: “20250328, 20250630, and 20250813”
     - verifier-version adaptation alone is already covered
+  - [DreamProver](https://arxiv.org/abs/2604.26311) also targets lemma transfer
+    - abstract: “prove unseen theorems in related domains”
+    - abstract checked; full PDF collected but not read in this pass
   - LeanDojo already holds out premises
   - VeriSkill already studies reusable guidance
   - SO-RSI already optimizes workflows on held-out tasks
@@ -169,8 +186,16 @@ what to do first
 
 consultation and uncertainty
 
-- ChatGPT Extra High consultation requested using the inherited job and a prepared synthesis prompt
-  - response and assessment will be recorded after retrieval
+- ChatGPT Extra High answered the compact synthesis request on October 7, 2026 UTC
+  - helper confirmed GPT-5.6 Sol and Extra High before submission
+  - [saved response](consultation.md) quotes the opinion and records its limits
+  - earlier resume and long-prompt attempts failed without an answer
+- advice: prioritize historical maintenance, then specification exposure bias, then transfer under changed environments
+- agreement: historical changes may need a checked refutation rather than a repaired proof
+  - adopted an executable-change freeze to prevent trivial reverts
+  - checked the newly identified VeruSAGE no-lemma variant directly
+- disagreement in emphasis: three forms of learned help are useful to compare eventually
+  - start with one form to avoid an uninterpretable large experiment
 - these recommendations are agents' opinions
-- a full novelty search still needs proof-repair, contract inference, incremental verification, and versioned benchmark literature
+- a full novelty search still needs contract inference, incremental verification, and versioned benchmark literature
 - no claims of being first

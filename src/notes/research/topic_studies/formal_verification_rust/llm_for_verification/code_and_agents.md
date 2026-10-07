@@ -124,6 +124,11 @@ systems proofs and module-wide contracts
   - inference: helper contracts are supplied assumptions for the extracted target
     - rebuilding those helpers is a different task
     - these intentional benchmark assumptions are not agent-created bypasses
+  - current [benchmark README](https://github.com/microsoft/verus-proof-synthesis/blob/main/benchmarks/VeruSAGE-Bench/README.md) adds 460 no-lemma tasks
+    - quote, no-lemma variant: “The agent must invent the helper lemmas”
+    - these tasks remove helper declarations entirely
+    - inference: helper discovery alone is already a benchmarked task
+    - the paper's 849-task score must not be assigned to this newer variant
   - fact: excludes permissioned unsafe APIs and state-machine macros
     - inference: the headline does not cover all hard Verus features
   - claim: structured support helps o4-mini and GPT-5
