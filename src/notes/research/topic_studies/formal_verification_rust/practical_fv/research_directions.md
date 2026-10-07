@@ -125,9 +125,12 @@ other proposals worth preserving
 
 ChatGPT Extra High consultation
 - requested through `pb-chatgpt-prompt-file --effort 'Extra High'`
-- consultation status: pending
-    - no opinion is attributed before capture completes
-    - this section will be updated with exact words and assessment
+- consultation failed after two submissions on 7 October 2026
+    - helper diagnostics confirmed Extra High selection and submission
+    - both ended with `account_ui_retry_required` and no captured response
+    - no ChatGPT opinion is available to quote
+- additional topic-specific attempts also failed or expired
+    - manager notified of the unavailable consultation route
 - source of recommendations above: this review's agent inference
     - ChatGPT agreement would be opinion, not a novelty check
 
