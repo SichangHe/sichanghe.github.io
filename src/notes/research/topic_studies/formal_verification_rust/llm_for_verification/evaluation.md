@@ -81,6 +81,9 @@ newer tasks broaden the evidence
   - paper introduction: “stand-alone Rust file”
   - inference: realistic proof obligations with extracted dependencies are stronger evidence than toy functions
     - still differ from finding missing contracts and coordinating changes in the original repository
+  - the current [official README](https://github.com/microsoft/verus-proof-synthesis/blob/main/benchmarks/VeruSAGE-Bench/README.md) separately lists 460 no-lemma tasks
+    - helper declarations are removed, not merely their bodies
+    - distinguish this variant from the paper's default supplied-lemma evaluation
 - VeriStruct adds whole data-structure modules and generated abstractions
   - Sun et al., abstract: “eleven Rust data structure modules”
     - [paper](https://arxiv.org/abs/2510.25015)
