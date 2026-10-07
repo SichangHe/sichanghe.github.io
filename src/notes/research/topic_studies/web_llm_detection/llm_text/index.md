@@ -1,81 +1,34 @@
 LLM text detection
 (authored by agents unless marked 🧑)
 
-start here
+status on 7 Oct 2026
 
-- recommendation: study whether web processing changes detector decisions
-    - a controlled comparison can separate detector failure from text-extraction failure
-    - this builds on DeGenTWeb rather than repeating a generic detector benchmark
-- recommendation: make page and site decisions account for repeated templates
-    - ten copies of the same paragraph are not ten independent pieces of evidence
-    - measure what site aggregation adds after removing duplicates
-- recommendation: define drafting and editing separately
-    - final text alone may not identify who supplied ideas, wording, or corrections
-    - test useful decisions rather than promise complete authorship recovery
-- evidence: methods work well in selected settings and fail in others
-    - Binoculars section 6: “we do not consider explicit efforts to bypass detection”
-    - [source](https://arxiv.org/abs/2401.12070)
-    - RAID figure 4: “few detectors can operate at FPR<1%”
-    - [source](https://aclanthology.org/2024.acl-long.674/)
-    - these statements concern their tested systems and datasets
-- proposal novelty is unconfirmed
-    - detailed notes identify nearby work and experiments that would reject each idea
+- rework in progress; the Claude usage limit stopped it part way
+- done and readable: every file under "reading order" except the two marked unfinished
+- not done
+    - [research proposals](research_proposals.md) are the old ones
+        - proposals 1 and 2 there overlap what DeGenTWeb already does: non-article filtering, duplicate filtering, site-level scoring
+        - they need rewriting against the DeGenTWeb notes
+    - [commercial detectors](commercial_detectors.md) may be missing or partial
+    - the [ChatGPT consultation](chatgpt_consultation.md) is from the first version and has not been redone
 
 reading order
 
-- [research proposals](research_proposals.md)
-    - questions, closest work, experiments, costs, and stopping rules
-- [ChatGPT consultation](chatgpt_consultation.md)
-    - Extra High advice and primary checks that narrowed the proposals
-- [contemporary web studies](contemporary_web_studies.md)
-    - close 2026 work already tests HTML and measures archived/Common Crawl pages
-- [zero-shot detectors](zero_shot_detectors.md)
-    - DetectGPT, DetectLLM, Fast-DetectGPT, Binoculars, DNA-GPT, Glimpse, MOSAIC, HALO, NTS
-- [trained detectors](trained_detectors.md)
-    - learned features, rewriting, attack training, and recent creator/editor models
-- [aggregate measurement](aggregate_measurement.md)
-    - corpus estimates, stable-error assumptions, and site-level interpretation
-- [foundations](foundations.md)
-    - what mathematical limits do and do not establish
-- [robustness and evaluation](robustness_evaluation.md)
-    - paraphrasing, personalization, benchmarks, short and mixed text, code, and false positives
-- [humans and browser tools](humans_browser_tools.md)
-    - human experiments, extension features, and studies of warnings and extraction
-- [recent preprints](recent_preprints.md)
-    - trajectories, steering, token filtering, and stability-based scores
-- [primary-source catalog](source_catalog.md)
-    - exact titles, authors, and links back to the relevant notes
-- [paper archive](paper_archive.md)
-    - saved papers and collection status
+- [how detection works](how_detection_works.md): the plain picture, and every term defined once
+- [zero-shot detectors](zero_shot_detectors.md): scores that need no labeled training, like Binoculars
+- [trained detectors](trained_detectors.md): classifiers and rewrite-and-compare methods
+- [commercial detectors](commercial_detectors.md): how Pangram, GPTZero, Turnitin and others work
+- [attacks and paraphrase](attacks_and_paraphrase.md): how detectors get fooled, and defenses
+- [benchmarks](benchmarks.md): how detectors are tested, and what the tests hide
+- [short, mixed, and code text](short_mixed_code.md)
+- [human detection](human_detection.md): when people can tell AI text, and when not
+- [browser extensions](browser_extensions.md): academic work and real extensions
+- [on web pages](on_web_pages.md): running detectors on crawled pages, and what DeGenTWeb already does
+- [research proposals](research_proposals.md): unfinished, see status
 
-relationship to existing notes
+leads for new proposals, not yet written up
 
-- fact: [Generative AI notes](../../../gen_ai.md) already identify in-the-wild noise and set-level detection
-    - “emphasize data in the wild different from benchmark”
-    - “noisy nature: non-prose”
-    - “set-level detection applications: Reddit users, OpenReview, student cheating, Amazon reviewers”
-- this tree expands those questions
-    - the existing DeGenTWeb preliminary evaluation, literature, and arguments files contained titles only when read
-- sibling reviews cover web infrastructure, web user harms, and provenance/watermarking
-    - this tree concentrates on detection from observed text
-
-scope and evidence
-
-- more than 60 paper titles examined
-    - catalog covers opened arXiv and ACL primary metadata
-    - contemporary-web and human/browser notes also cover publisher metadata and institutional reports
-    - Learning2Rewrite has both arXiv and proceedings entries
-- reviewed through 6 October 2026
-    - peer-reviewed conference entries and preprints are distinguished in the detailed notes
-    - abstracts support only the stated author claims
-    - full-paper checks are identified where performed
-- no detector experiments were run
-- quotes remain short and identify the paper or vendor
-- research recommendations are agent judgments
-    - search results do not establish that a research gap is unoccupied
-- broad search services failed in this session
-    - direct arXiv, ACL, vendor, and collection access worked
-    - recent papers were discovered through conference-volume indexes and the paper collection
-    - Crossref API searches also worked
-        - extraction/boilerplate, website detection/Common Crawl, and web-text detection queries
-        - these noisy metadata results did not establish novelty
+- no paper builds and tests an extension that detects AI text on ordinary web pages, and none audits what such extensions send to servers
+- no study has people judge whether a whole website is AI-written
+- neither 2026 web-archive study has known-human pages from after 2022 to measure false positives
+- Pew used an open Pangram model, so the Pangram comparison that DeGenTWeb deferred for cost may be doable for free; unchecked
