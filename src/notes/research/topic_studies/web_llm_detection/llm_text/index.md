@@ -9,7 +9,7 @@ status on 7 Oct 2026
     - [research proposals](research_proposals.md) are the old ones
         - proposals 1 and 2 there overlap what DeGenTWeb already does: non-article filtering, duplicate filtering, site-level scoring
         - they need rewriting against the DeGenTWeb notes
-    - [commercial detectors](commercial_detectors.md) may be missing or partial
+    - [commercial detectors](commercial_detectors.md) is thin on Winston and Copyleaks
     - the [ChatGPT consultation](chatgpt_consultation.md) is from the first version and has not been redone
 
 reading order
