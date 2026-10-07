@@ -66,30 +66,98 @@ Rudra, SOSP 2021
 
 SafeDrop and its successor
 
-- [SafeDrop: Detecting Memory Deallocation Bugs of Rust Programs via Static Data-Flow Analysis, TOSEM 2022, author repository](https://github.com/VaynNecol/SafeDrop)
+- Mohan Cui, Chengjun Chen, Hui Xu, Yangfan Zhou
+  - [SafeDrop, full April 2021 preprint](https://arxiv.org/abs/2103.15420v2)
+  - [TOSEM published article, 2023](https://doi.org/10.1145/3542948)
+  - author repository calls it TOSEM 2022
+    - publisher metadata records acceptance in 2022 and publication in 2023
 - searches paths across functions and fields for ownership and deallocation errors
-  - source analysis uses Rust's intermediate representation
-  - relevant to double frees and using memory after its owner frees it
+  - uses Rust's intermediate representation
+  - reports use-after-free, double free, dangling pointers, and invalid memory access
+  - includes unwind paths where a temporary owner is dropped after a panic
+- measured results in the preprint, §5
+  - all nine selected CVEs reproduced across eight crates
+  - manually classified warnings include false positives
+  - eight additional crates have previously unknown reported issues
+  - six of those eight crates have no classified false positives
+  - remaining two have at most two each
+  - this is a selected study of relevant crates
+    - not an ecosystem-wide precision or recall estimate
+- compilation cost in the preprint
+  - abstract gives 1.0%–110.7% additional time
+  - §5.3.3 gives 1.2%–110.7%
+  - preserve the discrepancy rather than choose an apparently precise minimum
+- important coverage limits in §5.4.2
+  - unsupported primitive arrays, closures, pointer offsets, and function pointers
+  - missing intermediate code for some inlined functions loses alias relationships
+  - exact consequence: “will introduce false negatives”
 - implementation maintenance matters
-  - exact author notice: “We have integrated the features of SafeDrop into RAP”
+  - exact [author repository](https://github.com/VaynNecol/SafeDrop) notice: “We have integrated the features of SafeDrop into RAP”
   - [current RAPx repository](https://github.com/safer-rust/RAPx)
   - current repository includes both bug detection and proof-oriented features
   - this review concerns bug detection
-- evidence limit: this pass verified the author repository, not the complete SafeDrop evaluation
-  - avoid adding unverified bug counts or precision figures
+- evidence limit: full preprint checked
+  - published TOSEM PDF was inaccessible
+  - do not silently attribute preprint measurements to the final article
 
 API test synthesis
 
 - SyRust, Yoshiki Takashima, Ruben Martins, Limin Jia, Corina S. Păsăreanu, PLDI 2021
-  - [paper](https://doi.org/10.1145/3453483.3454084)
+  - [original paper, author-hosted PDF](https://www.andrew.cmu.edu/user/liminjia/research/papers/syrust-pldi21.pdf)
+- synthesizes straight-line API call sequences that respect ownership and generic type relationships
+  - encodes restrictions as Boolean constraints
+  - learns from compiler rejection when trait requirements do not match
+  - uses Miri to execute accepted clients
+- reported evaluation
+  - 30 libraries, ten-hour timeout per library
+  - four new bugs in three libraries
+  - includes a bitvec dereference after freeing memory and pointer-model violations
+  - not all reports mean a crash in ordinary native execution
+- explicit scope limits in §7.4
+  - at most 15 chosen APIs per library
+  - user-provided inputs are not mutated
+  - no synthesized closure bodies
+  - exact consequence: “asynchronous APIs are off the table as well”
+
 - Crabtree, Yoshiki Takashima, Chanhee Cho, Ruben Martins, Limin Jia, Corina S. Păsăreanu, OOPSLA 2024
-  - [Rust API Test Synthesis Guided by Coverage and Type](https://doi.org/10.1145/3689733)
-- generate well-typed library clients and run them in Miri
-  - exact description in the Miri paper, §7: “generating well-typed clients”
-  - evidence here comes from the Miri authors' related-work discussion
-  - original evaluations need a deeper follow-up before numerical comparison
-- implication: writing a safe client that triggers unsafe-library failure is already an established research approach
-  - a proposal needs a particular uncovered client behavior or measurable improvement
+  - [original paper, author-hosted PDF](https://www.andrew.cmu.edu/user/liminjia/research/papers/crabtree-oopsla24.pdf)
+- adds direct trait modeling, closure synthesis, and input fuzzing
+  - prioritizes sequences that discover useful types and increase code coverage
+  - reuses fuzz inputs across sequences with the same prefix
+  - learns available trait implementations from library and selected dependency information
+- closure bodies are themselves synthesized API sequences
+  - supports borrowed and ownership-moving captures
+  - models iterator operations such as map followed by collect as a combined operation
+  - tracks the closure's required return type and which values remain usable afterward
+- evaluation samples 30 libraries
+  - ten from SyRust, ten from RULF, ten recently updated popular libraries
+  - four newly reported memory-safety bugs accepted by authors
+  - affected libraries: leapfrog, sparsey, integer-encoding, oxidebpf
+  - all four involve trait APIs or trait-constrained types
+  - also reproduces SyRust's four earlier bugs
+    - three found faster
+  - fails to reproduce RULF's regex bugs
+    - poor coverage of the parser that consumes regex expressions
+- comparison needs care
+  - tools report different failure classes
+  - Crabtree and SyRust ignore unwrap failures because they generate too many irrelevant reports
+  - mutation testing supplements coverage comparisons
+  - synthetic mutants often alter outputs without violating memory safety
+  - no automatically generated assertions check those outputs
+- explicit limits in §8
+  - exact scope: “does not generate any multi-threaded or async tests”
+  - unsupported generic or lifetime variables inside associated types
+  - missing input types make some APIs unreachable
+  - repeated compilation and Miri execution are major cost limits
+  - new-type priority can spend too little time fuzzing short parser sequences
+- implication for our proposal
+  - synthesizing safe callbacks is already a Crabtree contribution
+  - using traits or ownership-moving closures alone is not a new research claim
+  - existing trait implementations are inputs to its database
+    - this differs from synthesizing new, deliberately awkward safe implementations
+  - inference: unexplored targets may include deliberate panics, changing trait answers, and API reentry
+    - this paper does not establish that every such behavior is absent from its implementation
+    - baseline reproduction must test the proposed distinction
 
 fuzzing and native sanitizers
 
@@ -125,7 +193,8 @@ concurrent execution testing
   - README states that its C11 model is incomplete
   - some sequentially consistent operations receive weaker treatment and can cause false alarms
   - some load-buffering executions remain unexplored
-  - exact warning: “even if Loom says there is no bug”
+  - warning: a clean report can miss a bug
+    - exact excerpt: “Loom says there is no bug”
 - [async and concurrency review](async_concurrency_bugs.md) owns the broader bug literature
 
 compiler testing as adjacent evidence
@@ -141,16 +210,20 @@ compiler testing as adjacent evidence
 
 research we could do
 
-- proposed: find unsafe failures through hostile but safe callbacks
+- proposed: expose hidden safety assumptions with deliberately awkward safe clients
   - prior work: Rudra's panic and trait bugs; SyRust and Crabtree client synthesis; Miri
-  - new contribution: synthesize callbacks that panic, change answers across calls, reenter an API, or trigger unusual destruction order
+  - proposed distinction from Crabtree: synthesize new safe trait implementations and deliberately place panics or API reentry inside callbacks
+    - callbacks and trait-aware call sequences alone are already supported by Crabtree
+    - changing answers across calls tests assumptions beyond type compatibility
+    - whether the baseline already reaches these behaviors must be measured
   - why it may matter: safe API clients may legally violate assumptions that ordinary tests never challenge
   - evaluation: historical fixed bugs plus previously unseen libraries
     - compare against client-generation baselines and ordinary fuzzing
     - count independently confirmed root causes
     - measure generation cost, replay cost, and false reports
-  - risk: callback generation itself is not new
-    - require a demonstrated class that existing methods miss
+  - novelty gate: first reproduce Crabtree and add only an adversarial-client behavior it demonstrably misses
+    - compare identical APIs, starting types, and CPU budgets
+    - count memory-safety witnesses separately from deliberate harmless panics
 
 - proposed: optimize the handoff between native fuzzing and Miri
   - prior work: cargo-fuzz, sanitizers, Miri, API synthesis
@@ -178,10 +251,9 @@ research we could do
 
 limits of this pass
 
-- strongest evidence: full Miri, Tree Borrows, and Rudra papers; official tool documentation
-- SafeDrop implementation checked
-  - full paper evaluation still needed
-- SyRust and Crabtree included through an explicitly identified primary-author related-work discussion
-  - original paper evaluations still needed
-- these limits constrain numerical comparisons
-  - they do not support ranking all tools by effectiveness
+- full Miri, Tree Borrows, Rudra, SyRust, Crabtree, and SafeDrop preprint checked
+- SafeDrop final TOSEM article remains inaccessible
+  - preprint and publisher dates are distinguished above
+- synthesis implementations were not executed
+  - claimed differences in proposed clients remain hypotheses until baseline reproduction
+- tool effectiveness cannot be ranked from these differing populations and failure definitions

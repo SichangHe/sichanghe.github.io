@@ -64,47 +64,64 @@ Android: substantial deployment evidence with attribution limits
 - inference: deployment evidence makes incremental adoption a credible strategy
   - it leaves open which components should be rewritten and which should receive new safe interfaces
 
+Android update: 2025 adoption and 2026 modem integration
+
+- primary source: [Jeff Vander Stoep, Rust in Android: move fast and fix things, November 2025](https://security.googleblog.com/2025/11/rust-in-android-move-fast-fix-things.html)
+  - Vander Stoep: “the vulnerability never made it into a public release”
+- author-reported security outcomes
+  - memory safety issues below 20% of total Android vulnerabilities in 2025
+    - pre-year-end report; authors expect the 90-day patch window makes counts close to final
+  - one pre-release buffer-overflow near miss, CVE-2025-48530, in CrabbyAVIF
+  - roughly 5 million Rust lines yield 0.2 potential memory-safety vulnerabilities per million lines
+  - historical C/C++ comparison: approximately 1,000 per million lines
+  - limitation: code age, exposure, and observation periods are not matched
+    - this is a discovered-vulnerability comparison, not a randomized language effect
+- author-reported development outcomes
+  - first-party Android changes, similar Gerrit change-size categories and overlapping developer pools
+  - Rust needs about 20% fewer revisions and 25% less review time than C++
+  - medium/large Rust changes have approximately one-quarter the C++ rollback rate
+  - observational adjustment does not eliminate differences in task difficulty or team expertise
+- deployment fact: Android Linux 6.12 enables Rust and includes its first production Rust driver
+  - this establishes kernel deployment, not a measured kernel-specific security effect
+- primary source: [Jiacheng Lu, bringing Rust to the Pixel baseband, April 2026](https://security.googleblog.com/2026/04/bringing-rust-to-pixel-baseband.html)
+  - Lu: “unexpected power and performance regressions on various tests”
+- deployment fact: Pixel 10 integrates a Rust DNS parser into modem firmware
+  - Hickory-proto adapted for no_std and connected to existing C allocation/callback interfaces
+- measured prototype footprint with size optimization
+  - Rust shim: 4 KB
+  - core, alloc, compiler_builtins: 17 KB reusable one-time cost
+  - Hickory-proto and dependencies: 350 KB
+  - total: 371 KB
+- integration failure: weak linker symbols selected generic Rust memory routines over modem-optimized routines
+  - authors removed compiler_builtins objects before linking
+  - no numerical power or runtime measurements reported
+- interpretation: Rust adoption includes deployment costs and trusted C interfaces beyond parser source code
+  - the modem report provides no post-deployment vulnerability reduction estimate
+  - proposal extension: include linker substitutions, allocation contracts, and size costs in boundary-failure studies
+
 Asterinas: a small framework supports a mostly safe kernel
 
-- paper: [Yuke Peng et al., Asterinas: a Linux ABI-compatible, Rust-based framekernel OS with a small and sound TCB, USENIX ATC 2025](https://arxiv.org/abs/2506.03876)
-  - authors, abstract: “a minimized, memory-safety TCB of only about 14.0% of the codebase”
-- definition: the trusted computing base, or TCB, is the code whose correctness the stated protection depends on
-  - here the protection is kernel memory safety
-  - application correctness and permissions can depend on more code
-- design: unsafe code lives in OSTD, a framework exposing safe interfaces
-  - kernel services run in the same address space and use ordinary function calls
-  - service code relies on Rust's checks rather than separate process address spaces
-- measured TCB, paper §6.2 and table 9
-  - Asterinas: 10,571 linked source lines out of 75,285, or 14.0%
-  - Theseus: 43,978 out of 70,468, or 62.4%
-  - RedLeaf: 17,182 out of 25,992, or 66.1%
-  - Tock, selected nrf52840dk board: 2,903 out of 6,628, or 43.8%
-- method matters
-  - counts source lines represented in optimized linked LLVM code
-  - counts unsafe-containing crates and dependencies of trusted crates
-  - excludes Rust toolchain-provided core and alloc from the runtime TCB
-  - systems support different workloads and hardware
-    - these percentages measure architectural concentration, not equal security or functionality
-- performance experiment, paper §6.1
-  - single-core comparison against Linux 5.15
-  - host: Intel i7-10700, 32 GB RAM, Ubuntu 22.04, QEMU 9.1.0
-  - Linux CPU mitigations and huge pages disabled to match Asterinas feature availability
-  - measured Redis GET throughput: 218,670.04 requests/s versus 155,994.34 on Linux
-    - paper appendix B, Redis 7.0.15
-    - about 40.2% higher in this setup
-  - measured SQLite Vacuum performance: 72% of Linux with IOMMU enabled
-    - paper §6.1.2, SQLite 3.46.1, speedtest1 base size 1000
-  - authors explicitly defer comprehensive multicore evaluation
-- interpretation: results support competitive performance for selected configurations
-  - faster TCP results partly reflect absent congestion control in Asterinas's network library
-  - comparing feature-incomplete stacks does not establish equivalent production behavior
-- testing contribution: KernMiri extends Miri to simulate kernel memory and page tables
-  - paper §6.3, table 10: 134 tests across seven OSTD memory-management submodules
-  - measured line coverage: 93%
-  - measured unsafe-block coverage: 100% within those submodules
-  - total execution: 50.50 s interpreted versus 2.18 s native
-    - approximately 23.2× from the table totals
-    - reaching each block does not cover every input or execution order
+- paper: [Yuke Peng et al., Asterinas, USENIX ATC 2025](https://arxiv.org/abs/2506.03876)
+  - authors: “a minimized, memory-safety TCB of only about 14.0% of the codebase”
+- definition: trusted computing base, or TCB, means code whose correctness memory safety depends on
+- design: unsafe OSTD exposes safe interfaces to services sharing one address space
+- measured TCB, §6.2, table 9: 10,571 / 75,285 linked source lines
+  - method includes dependencies of unsafe crates but excludes toolchain core/alloc
+  - this measures memory-safety responsibility, not all security-critical code
+- performance, §6.1: single-core comparison against Linux 5.15
+  - host: i7-10700, 32 GB RAM, QEMU 9.1.0
+  - Linux CPU mitigations and huge pages disabled to match features
+  - Redis GET: 218,670 versus 155,994 requests/s
+  - SQLite Vacuum: 72% of Linux performance with IOMMU enabled
+  - faster TCP partly reflects missing congestion control
+  - comprehensive multicore analysis deferred
+- KernMiri, §6.3, table 10: extends Miri with kernel memory/page-table simulation
+  - 134 tests in seven OSTD memory-management submodules
+  - 93% line coverage; 100% unsafe-block coverage within those submodules
+  - interpreted/native totals: 50.50 / 2.18 s
+  - block coverage does not cover every input or execution order
+- assessment: selected configurations show competitive performance and concentrated trust
+  - tests do not establish whole-kernel soundness
 - current primary source: [Hongliang Tian, Asterinas 0.18.0 release, June 2026](https://asterinas.github.io/2026/06/04/announcing-asterinas-0.18.0.html)
   - Tian: “fix a page cache bug that leaks uninitialized memory to userspace”
 - fact: subsequent release notes include permission, signal, memory-mapping, and filesystem fixes
