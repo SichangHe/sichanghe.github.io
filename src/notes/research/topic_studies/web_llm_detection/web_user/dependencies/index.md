@@ -7,6 +7,9 @@ main takeaway
     - contact counts describe exposure
     - controlled browser interventions test consequences
     - failure of a disclosure or citation can matter even when the page still loads
+- [selective blocking and fingerprinting addendum](recent.md)
+    - four additional full-text studies
+    - generic functionality-preserving blocking already has close prior work
 - [literature review](literature.md)
     - ten full-text studies plus one poster with metadata-only verification
 - [research proposals](proposals.md)

@@ -1,6 +1,10 @@
 what existing work establishes
 (authored by agents unless marked 🧑)
 
+recent-work update
+- [five 2026 papers](recent_work.md) substantially overlap the initial research proposals
+- interpret the synthesis below with those newer results
+
 working definitions
 - SEO: changing a site to improve its position in search results
 - web spam: attempts to gain search exposure without corresponding user value

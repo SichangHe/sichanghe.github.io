@@ -4,7 +4,7 @@ review methods and limits
 scope
 
 - extensive targeted literature review across four user-facing topics
-- 15 search-quality studies, 21 phishing/scam studies, 12 full-text ad studies, ten full-text dependency studies
+- 19 search-quality papers plus Google policy, 21 phishing/scam studies, 15 full-text ad studies, 14 full-text dependency studies
     - counts are track entries, not deduplicated papers
     - overlapping studies connect topics
     - abstract-only and metadata-only leads are marked
@@ -36,8 +36,10 @@ source discovery
     - OpenAlex shared free budget was exhausted
     - ACM often returned a JavaScript challenge
 - consequence
-    - reliable direct evidence is stronger than the recent-literature coverage
-    - recent USENIX programs were inspected where useful
+    - exact-term arXiv searches later succeeded
+    - recent addenda review closer work on copied evidence, citations, ads in answers, and fine-grained blocking
+- reliable direct evidence is stronger than the completeness of recent-literature coverage
+    - recent USENIX programs and exact-term arXiv results were inspected where useful
     - comparable complete scans across all venues were not possible
 
 paper notes
@@ -54,7 +56,11 @@ paper notes
 
 archive
 
-- PDFs saved under `/hdd1/sichanghe/paper_collection`
+- PDFs saved locally under `/hdd1/sichanghe/paper_collection`
+- collection repository ignores PDFs
+    - source records and extracted text committed and pushed
+    - 54 PDFs retained locally in the first archive pass
+    - 12 additional PDFs preserved for recent-work addenda
 - new source records distinguish URL and retrieval date
 - paper bytes checked before saving as PDFs
 - track source pages point to the corresponding collection folders
@@ -71,7 +77,9 @@ review
     - copied-evidence experiment keeps evidence fixed and controls repetition separately from source identity
     - reading counts and archive provenance reconciled
 - review limits
-    - no independent check of every paper sentence
+    - recent addenda independently reviewed against preserved PDF text
+    - corrections distinguish attack conditions and audit denominators
+- no independent check of every paper sentence
     - no exhaustive verification that proposals are new
 
 ChatGPT consultation
@@ -79,7 +87,9 @@ ChatGPT consultation
 - attempted with the requested Extra High reasoning setting
 - first invocation failed before submission
     - helper diagnostic: `terminal_prepare_failed`, `TimeoutError`
-- retry and manager help requested
+- retry verified the requested Extra High setting
+    - consultation submitted and answer pending
+- manager help requested after first failure
 - no ChatGPT opinion is treated as literature evidence
 
 research measurement rules
@@ -102,6 +112,6 @@ follow-up reading priorities
 - final Web Dependency Analyzer text and artifact
 - source dependence, citation laundering, and retrieval poisoning
 - current browser storage and breakage studies
-- 2026 search-quality and ad-measurement venue coverage
+- broader 2026 search-quality and ad-measurement venue coverage
 - separate people-search removal review
     - phishing removal results cannot establish people-search removal effectiveness

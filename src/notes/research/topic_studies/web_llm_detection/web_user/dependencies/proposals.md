@@ -46,10 +46,13 @@ recommendation: evidence loss under dependency failure
     - if most changes are random ad rotation, improve pairing before increasing sample size
     - useful negative result: evidence survives despite substantial visual changes
 
-recommendation: preserve useful content during blocking
+replication or component: preserve useful content during blocking
 
 - question: can selective blocking retain task success while reducing measured tracking opportunities?
-- hypothesis: component-level policies can outperform whole-domain blocking where a provider mixes functions
+- existing work already shows benefits from selective method and API intervention
+    - [recent comparison](recent.md) covers Amjad et al., ByteDefender, PURL, and FP-Inspector
+    - generic component-level blocking is a replication
+- remaining hypothesis: policies can retain answer-supporting evidence while reducing observed tracking
 - closest work
     - [privacy versus compatibility](https://www.kapravelos.com/publications/ephemeralstorage-www22.pdf)
     - [tracker classification](https://arxiv.org/abs/1603.06289)

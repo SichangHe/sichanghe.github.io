@@ -52,3 +52,11 @@ access limits
 - OpenAlex shared free budget was exhausted
 - direct primary websites supplied the verified evidence
 - current-browser behavior and complete 2026 literature coverage remain open
+
+additional preserved sources
+
+- [selective blocking addendum](recent.md) supplies version, method, and page pointers
+- collection folder: `Blocking JavaScript Without Breaking the Web - An Empirical Investigation, Abdul Haddi Amjad et al., PETS, 2023`
+- collection folder: `Byte by Byte - Unmasking Browser Fingerprinting at the Function Level Using V8 Bytecode Transformers, Pouneh Nikkhah Bahrami et al., CCS, 2025`
+- collection folder: `PURL - Safe and Effective Sanitization of Link Decoration, Shaoor Munir et al., arXiv, 2024`
+- collection folder: `Fingerprinting the Fingerprinters - Learning to Detect Browser Fingerprinting Behaviors, Umar Iqbal et al., arXiv, 2020`

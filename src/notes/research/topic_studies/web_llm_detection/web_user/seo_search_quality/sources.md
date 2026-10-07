@@ -103,3 +103,9 @@ search limitations
 - several ACM and author copies returned HTTP 403 or 404
 - source discovery therefore used existing human notes, verified paper bibliographies, direct primary PDFs, and parent-provided primary sources
 - no claim of exhaustive 2025–2026 coverage
+
+recent primary additions
+- [five 2026 papers, version dates, methods, and artifact caveats](recent_work.md)
+- local PDF and note paths recorded in `/tmp/seo-recent-collection-paths.txt`
+- discovery limitation improved after direct arXiv search recovered
+  - earlier failed attempts remain an accurate historical log
