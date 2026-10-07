@@ -1,3 +1,5 @@
+@import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
+
 html {
     font-family: "KaTeX_Main", "Times New Roman"
 }
@@ -8,9 +10,9 @@ html {
 
 @media (min-width: 640px) {
 
-    #content>p,
-    #content>ol,
-    #content>ul {
+    .content main>p,
+    .content main>ol,
+    .content main>ul {
         text-align: justify;
         hyphens: auto;
     }
@@ -31,4 +33,32 @@ sup {
 .content a.active {
     color: var(--sidebar-active);
     text-decoration: underline;
+}
+
+#page-toc[hidden], mdbook-sidebar-scrollbox[hidden] {
+    display: none;
+}
+
+#page-toc ul {
+    list-style: none;
+    padding: 0 10px;
+}
+
+#page-toc li {
+    margin-block: 0.5em;
+}
+
+#page-toc a {
+    color: var(--sidebar-fg);
+    text-decoration: none;
+}
+
+#page-toc a.active {
+    color: var(--sidebar-active);
+    text-decoration: underline;
+}
+
+.page-edit-time {
+    font-size: 0.85em;
+    color: var(--fg);
 }
