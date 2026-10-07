@@ -1,0 +1,268 @@
+trained detectors and learned detection features
+(authored by agents unless marked 🧑)
+
+main takeaways
+- inference: detector training can improve transfer to new writing domains
+    - evidence: MAGE, PAWN and Learning2Rewrite compare training choices under domain shifts
+    - limitation: success on their held-out domains does not establish reliability across the web
+- inference: separating texts and choosing a reliable cutoff are different problems
+    - AUROC measures ranking across all cutoffs
+    - false-positive rate measures the fraction of human texts wrongly flagged at one chosen cutoff
+    - high AUROC can coexist with an unusable cutoff on a new website
+- inference: the most useful research question is whether a fixed detector and cutoff survive new sites, generators, editing workflows and dates
+    - recommendation: compare frozen public detectors before designing another classifier
+    - recommendation: measure mistaken accusations separately from missed generation
+- coverage fact: checked primary arXiv pages and ACL Anthology proceedings on 2026-10-06
+    - search service failed
+    - direct primary-site retrieval worked
+    - 2026 additions below are verified publication entries
+    - comprehensive coverage of every 2026 venue is not established
+
+what training changes
+- standard classifier: train a model to distinguish labeled human and machine examples
+    - risk, inference: a classifier can learn dataset formatting, topics or generation instructions instead of authorship
+- learned statistical features: train a smaller classifier over probabilities from a fixed language model
+    - advantage, inference: easier to inspect feature choices and isolate training effects
+- learned rewriting: train a model so rewriting distance separates the classes
+    - cost, inference: each detection needs generated output rather than one forward pass
+- adversarial training: repeatedly teach a detector using examples that an attacker changes to evade it
+    - limitation, inference: defending against one attacker family does not establish defense against new attacker families
+
+Ghostbuster, Verma et al., NAACL 2024, peer reviewed
+- primary source: [paper and abstract](https://arxiv.org/abs/2305.15047)
+    - abstract quote: “training a classifier on the selected features”
+    - abstract quote: “does not require access to token probabilities from the target model”
+    - total quoted words from this source: 23
+- method fact: score documents with weaker language models
+    - search combinations of their features
+    - train a classifier on selected combinations
+- author-reported result: 99.0 F1 across their evaluation domains
+    - domains: student essays, creative writing and news
+    - F1 combines precision and recall at the chosen cutoff
+    - their reported cross-domain gain is 7.5 F1 over earlier approaches
+- inference: target-model access is unnecessary
+    - scoring-model access and labeled detector training remain necessary
+- limitation, inference: three domains do not represent arbitrary web pages
+    - do not compare its F1 directly with a different paper’s AUROC
+    - measure performance at the same false-positive target on the same corpus
+- recommendation: retain as a learned-feature baseline
+    - verify scoring dependencies and reproduce the released setup before treating its reported score as deployable
+
+RADAR, Hu, Chen and Ho, NeurIPS 2023
+- primary source: [paper](https://arxiv.org/abs/2307.03838)
+    - abstract quote: “adversarial training of a paraphraser and a detector”
+- method fact: jointly train two models with opposing goals
+    - paraphraser rewrites machine text to evade the detector
+    - detector learns from original and rewritten machine text
+- author-reported scope: eight generators and four datasets
+    - generators include Pythia, Dolly, GPT-J, LLaMA and Vicuna
+    - unseen paraphraser evaluation uses GPT-3.5-Turbo
+- limitation, inference: tested generator families and attack models are mostly from 2023
+    - modern style imitation, multiple edits and short mixed text require fresh evaluation
+- recommendation: compare frozen RADAR with retrained RADAR
+    - separates benefits of adversarial training from benefits of newer training examples
+
+MAGE, Li et al., ACL 2024
+- primary source: [paper](https://arxiv.org/abs/2305.13242)
+    - section 6 quote: “struggles with selecting an appropriate decision boundary”
+    - section 6 quote: “The AUROC drops from 0.94 to 0.75”
+    - context: first quote concerns Longformer on unseen domains
+    - context: second concerns its paraphrasing evaluation
+- dataset fact: ten human-writing domains and 27 generators
+    - continuation, topic and source-specific prompts
+    - [released dataset and code](https://github.com/yafuly/MAGE)
+- method fact: train Longformer and compare it with statistical and simpler learned baselines
+- author-reported finding: unseen-domain Longformer AUROC is 0.93
+    - classification at the existing cutoff is much weaker
+    - small amounts of target-domain labeled data improve the cutoff
+- limitation acknowledged by authors: benchmark texts may overlap language-model pretraining
+    - new online writing remains a separate test
+- inference: report fixed-cutoff performance and recalibrated performance separately
+    - recalibration uses knowledge unavailable in fully unattended web measurement
+
+M4, Wang et al., EACL 2024
+- primary source: [paper](https://arxiv.org/abs/2305.14902)
+    - abstract quote: “detectors tend to misclassify machine-generated text as human-written”
+    - context: unseen domains or generators
+- dataset fact: approximately 147,000 parallel human/machine examples across seven languages
+    - domains include Wikipedia, Reddit, WikiHow, paper abstracts and peer reviews
+    - generators include GPT-4, ChatGPT, Cohere, Dolly-v2 and BLOOMz
+    - [released dataset](https://github.com/mbzuai-nlp/M4)
+- construction fact: minimum English length is 1,000 characters
+    - inference: this benchmark cannot by itself validate sentence or snippet detection
+- construction fact: clean obvious formatting differences and control generated length
+    - inference: web extraction introduces additional formatting differences absent from this cleaned setup
+- recommendation: hold out whole domains, model families and languages
+    - random document splits are a weaker test of deployment
+
+PAWN, Miralles-González et al., Information Fusion 2025, peer reviewed
+- primary source: [paper](https://arxiv.org/abs/2501.03940)
+    - abstract quote: “cache the last hidden states and next-token distribution metrics on disk”
+    - section 4.2 quote: “all models suffer greatly”
+    - context: paraphrasing attacks
+- method fact: frozen language model supplies token statistics and hidden states
+    - learned weights depend on token position and hidden state
+    - weighted statistics feed a classifier
+    - distinguishes PAWN from using one unweighted average across tokens
+- author-reported result: stronger transfer and more stable cutoffs than fine-tuned language-model baselines in their MAGE/M4 settings
+    - nine-language cross-validation reaches mean macro F1 of 81.46% with a LLaMA backbone
+    - this averages classes and languages
+    - it does not establish a low false-positive rate for every language
+- implementation fact: authors release [code](https://github.com/pablomiralles22/ai-gen-detection)
+    - GPT-2 and LLaMA backbones evaluated
+    - cached-feature training reduces repeated model computation
+- limitation, inference: few trainable parameters do not imply few total parameters or cheap inference
+    - backbone computation still occurs at detection time
+    - preprocessing, cache storage and backbone latency belong in cost comparisons
+- recommendation: test PAWN as the main learned-feature baseline
+    - ablate learned token weighting against unweighted metrics
+    - hold training examples, scoring backbone and calibration data fixed
+
+Learning2Rewrite, Li, Hao et al., ACL 2025
+- primary sources: [paper](https://aclanthology.org/2025.acl-long.322/), [arXiv](https://arxiv.org/abs/2408.04237)
+    - abstract quote: “LLMs inherently modify AI-generated content less than human-written text when tasked with rewriting”
+- method fact: train an LLM to preserve machine text more strongly during rewriting
+    - use resulting edit distance as the detection signal
+- author-reported scope: 21 domains and four generator families
+    - GPT-3.5, GPT-4, Gemini and Llama-3
+- inference: comparing with a classifier trained on the same backbone and data isolates the value of the rewriting objective
+- limitation, inference: edit distance also depends on length, language, editing instruction and writing quality
+    - need polished human text and rough machine drafts as separate controls
+    - complete rewriting consumes generation time
+- recommendation: include a frozen rewriter baseline and a trained rewriter
+    - measure both detection gain and generated tokens per document
+
+MAGRET, Huang et al., COLING 2025
+- primary source: [official proceedings paper](https://aclanthology.org/2025.coling-main.557/)
+    - abstract quote: “fine-tune a BERT encoder through contrastive learning”
+    - collection filename incorrectly labels the venue ACL
+    - official publication is COLING 2025
+- method fact: request rewritten/continued versions from candidate models
+    - learn semantic agreement between original and rewritten texts
+    - combine semantic and statistical relations for detection and attribution
+- inference: unlike a universal detector, candidate-model querying ties cost and coverage to the candidate list
+    - unknown generators and API changes require explicit tests
+- recommendation: test whether attribution survives two-stage generation
+    - one model drafts and another rewrites
+    - label the drafting and editing roles separately
+
+newer methods worth testing
+- GREATER, Li et al., ACL 2025
+    - primary source: [Iron Sharpens Iron](https://aclanthology.org/2025.acl-long.155/)
+        - abstract quote: “10 text perturbation strategies and 6 adversarial attacks”
+        - limitations quote: “the computational cost of training the adversarial framework”
+    - method fact: attack important tokens using embedding changes, greedy search and pruning
+        - synchronously update attack and detector
+    - author-reported abstract gain: attack success rate reduced by 0.67% against their strongest defense comparisons
+        - do not reinterpret this as percentage points without checking the result table
+    - author limitation: document-level detection and substantial training hardware
+    - inference: valuable comparison with RADAR for different training-time attackers
+- MoSEs, Wu et al., EMNLP 2025
+    - primary source: [paper](https://aclanthology.org/2025.emnlp-main.294/)
+        - abstract quote: “conditional threshold estimation”
+    - method fact: route input to stylistically similar labeled references
+        - estimate a cutoff from statistical and semantic features
+    - author-reported abstract gain: 11.34% average improvement against their baselines
+        - metric and aggregation must be checked before cross-paper comparison
+    - inference: relevant to website-specific calibration
+        - reference coverage may fail for a genuinely new writing style
+        - confidence outputs need independent calibration tests
+- SenDetEX, EMNLP 2025
+    - primary source: [paper](https://aclanthology.org/2025.emnlp-main.268/)
+        - abstract quote: “sentence-level AI-generated text detection via style and context fusion”
+    - method fact: combines the sentence’s style with surrounding context
+        - evaluated using synthesized human/machine mixtures
+    - inference: better fit for web paragraphs than document-only training
+        - synthetic insertion patterns may differ from real editing
+        - train/test documents must be separated before sentence extraction
+- OpenTuringBench and OTBDetector, EMNLP 2025
+    - primary source: [paper](https://aclanthology.org/2025.emnlp-main.1354/)
+        - abstract quote: “a contrastive learning framework to detect and attribute”
+    - evaluation fact: manipulation, unseen domains and unseen open models
+    - inference: useful additional training/evaluation corpus
+        - avoid assuming open-model transfer establishes closed-model transfer
+- RACE, Li et al., ACL 2026
+    - primary source: [Beyond the Final Actor](https://aclanthology.org/2026.acl-long.235/)
+        - abstract quote: “the distinct signatures of creator and editor”
+        - limitations quote: “We only conduct experiments on one public benchmark”
+    - task fact: four classes
+        - human draft
+        - machine draft
+        - machine draft later humanized by a human or tool
+        - human draft later polished by a model
+    - method fact: model document organization with a discourse graph
+        - model local style using smaller discourse units
+    - limitation acknowledged by authors: evaluated only on HART
+        - transfer to uncovered languages, domains and genres unknown
+    - inference: useful labeling model for our experiments
+        - do not assume four labels capture repeated alternation between human and model edits
+- Exons-Detect, ACL 2026
+    - primary source: [paper](https://aclanthology.org/2026.acl-long.1211/)
+        - abstract quote: “a training-free method”
+    - method fact: reweight tokens using hidden-state differences between two models
+    - inference: useful control for PAWN
+        - tests whether token weighting needs labeled training
+        - authors report 2.2% relative average AUROC gain on DetectRL
+
+failure cases that need dedicated evaluation
+- personalization
+    - primary source: [When Personalization Tricks Detectors, ACL 2026](https://aclanthology.org/2026.acl-long.1998/)
+        - abstract quote: “features that are effective for separating human-written text (HWT) from MGT in general flip their effect in personalized contexts”
+    - author-reported finding: StyloBench detects instability under imitation of literary and blog styles
+    - inference: robustness to generic paraphrasing is weaker evidence than robustness to target-author imitation
+- subgroup false positives
+    - primary source: [Identifying Bias in Machine-generated Text Detection, ACL 2026](https://aclanthology.org/2026.acl-long.109/)
+        - abstract quote: “ELL essays are more likely to be classified as machine-generated”
+        - ELL means English-language learner
+    - study fact: 16 detection systems assessed across four student attributes
+    - inference: an overall false-positive target can conceal higher error for particular groups
+- short text
+    - inference: aggregate document performance hides the setting where few words carry any evidence
+    - recommendation: report separate length bands rather than one pooled result
+- edited text
+    - inference: authorship labels must describe the writing process
+    - recommendation: preserve original, intermediate edits and final text
+        - evaluate detection of any model use separately from detection of machine drafting
+- code
+    - inference: prose-trained classifiers cannot establish code detection accuracy
+    - recommendation: keep code and prose as separate evaluation strata
+        - comments, executable code and copied templates have different origins
+
+concrete research proposals
+- 1: fixed-cutoff transfer across websites
+    - question: which training objective preserves a low false-positive rate on a new site?
+    - compare Longformer/RoBERTa, RADAR, PAWN, Ghostbuster and Learning2Rewrite
+        - add a strong zero-shot baseline
+    - freeze detector and cutoff using separate calibration sites
+    - hold out whole websites and later collection dates
+    - report detection rate at 0.1%, 1% and 5% false-positive targets
+        - include confidence intervals and per-site errors
+    - proposal value, inference: distinguishes ranking gains from deployable decisions
+    - novelty unknown until comparison with broader benchmark literature
+- 2: creator/editor transfer
+    - question: can a trained detector distinguish drafting from light editing across new generators?
+    - collect four RACE-style classes with recorded edit histories
+        - add multiple rounds of human/model editing
+    - control text length, topic and final writing quality
+    - report class confusion and false accusations on lightly polished human drafts
+    - proposal value, inference: avoids treating grammar help as equivalent to machine authorship
+- 3: adversarial training under new attacker families
+    - question: does RADAR/GREATER training survive style imitation and two-model rewriting?
+    - train on one attack family
+        - test entirely different paraphrasers, personalization prompts and multi-stage edits
+    - assess preservation of meaning and readability
+        - a destructive edit is a weak practical evasion result
+    - compare robust detection per unit of training/inference cost
+    - proposal value, inference: isolates attack-family overfitting
+- 4: token-weighting benefit after web extraction
+    - question: do PAWN’s weights survive boilerplate, headings and navigation?
+    - compare the same passage alone, in an extracted article and inside a full page
+    - ablate token weighting against simple averages with the same backbone
+    - include Exons-Detect as a training-free weighting control
+    - proposal value, inference: connects detector design to the web measurement pipeline
+- 5: detector retraining schedule
+    - question: how quickly does performance decay as generators and writing styles change?
+    - freeze old models and evaluate monthly labeled releases
+    - compare cutoff-only updates, head-only training and full training
+    - track cost and subgroup errors after every update
+    - proposal value, inference: establishes whether a usable maintenance policy exists

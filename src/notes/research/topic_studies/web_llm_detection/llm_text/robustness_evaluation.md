@@ -10,6 +10,7 @@ takeaway
 - scope: primary-source review through 6 Oct 2026
   - abstracts opened for every cited paper
   - full PDFs inspected for RAID, MultiSocial, EvoBench, Droid, MCP, and APT-Eval
+  - additional full-paper checks: DetectRL-X, StyloBench, MASH, AICD Bench, RACE, and the 2026 student-bias study
   - published numbers below are author claims within their tested settings
   - proposed experiments are agent recommendations
 
@@ -82,6 +83,9 @@ defenses and their limits
   - full-paper evidence, background: “assuming only data exchangeability”
     - exchangeability means calibration and future examples can be treated as drawn from the same distribution without regard to order
   - calibrates detector thresholds separately by text length
+  - full-paper table 2 caption: “the detection threshold set based on the test set”
+    - this describes the vanilla comparison, not MCP calibration
+    - distinguish an oracle test-tuned baseline from a deployable frozen threshold
   - inference: the guarantee needs scrutiny when new websites or user groups differ from calibration data
     - an unconditional FPR guarantee also does not establish each subgroup's FPR
 - StyloBench and StyloCheck, ACL 2026
@@ -94,6 +98,14 @@ defenses and their limits
     - adding stylistic explanations does not by itself make detection trustworthy
 
 benchmark map
+- DetectRL-X, ACL 2026
+  - [multilingual refinement benchmark](https://aclanthology.org/2026.acl-long.1773/)
+  - full-paper introduction: “3.46 million samples covering 8 languages, 6 domains, 4 generators”
+  - domains include SEO and web text
+  - includes polishing, expansion, condensation, attacks, and four text lengths
+  - separates human text refined by a model from fully generated text
+  - inference: multilingual or assisted-writing evaluation is already substantially covered
+    - HTML extraction, duplicate dependence, and site-level uncertainty need separate novelty checks
 - MAGE, ACL 2024
   - [cross-domain and cross-generator detection](https://arxiv.org/abs/2305.13242)
   - abstract evidence: “especially out-of-distribution”
