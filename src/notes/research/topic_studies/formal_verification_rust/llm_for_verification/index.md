@@ -26,6 +26,8 @@ read by question
 - [benchmarks and evaluation](evaluation.md)
   - miniF2F, DafnyBench, VerusBench, VERINA, CLEVER, VeriContest, and newer tasks
   - weak contracts, trusted dependencies, translation, contamination, and resource accounting
+- [maintenance prior work](maintenance_prior_work.md)
+  - earlier proof repair and implementation-visibility studies constrain proposed novelty
 - [research directions](research_directions.md)
   - proposed experiments, closest work, costs, and unresolved novelty
 

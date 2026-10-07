@@ -221,7 +221,9 @@ new implementations and proof-aware search
   - fact: jointly constructs Rocq implementations and proofs for supplied consistency specifications
     - temporary proof holes are allowed during search and must be closed at acceptance
     - final candidates are extracted to OCaml and measured on a five-VM runtime
-  - author claim: completes seven specifications in 6.8 hours and $106 per specification on average
+  - author claim: completes seven specifications under a three-run criterion
+    - Table 1 counts success when at least two of three runs succeed
+    - the 6.8-hour and $106 headlines aggregate per-specification medians
     - abstract: “7/7 in about 6.8 hours and $106 per spec”
     - the seven include a published Chapar specification and six author-supplied specifications
   - fact: performance measurements guide further search

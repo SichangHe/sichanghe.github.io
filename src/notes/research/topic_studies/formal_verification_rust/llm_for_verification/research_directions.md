@@ -55,8 +55,12 @@ candidate 1: maintain a verified module through real changes
 - closest work
   - KVerus already evaluates repository verification
   - Vero already requires whole-artifact completion
+  - [Sisyphus, PLDI 2023](https://verse-lab.github.io/sisyphus/pdfs/sisyphus-pldi23.pdf) already repairs evolved OCaml library implementations under unchanged specifications
+    - primary title: “Mostly Automated Proof Repair for Verified Libraries”
+    - [maintenance prior work](maintenance_prior_work.md) compares its mechanism and scope
   - proof repair and incremental verification already study reuse after edits
-  - proposed distinction is real change histories plus requirement and assumption preservation
+  - chronology and unchanged specifications alone are already covered by Sisyphus
+  - possible distinction: whole-module histories with simultaneous dependent edits, known wrong changes, and explicit assumption accounting
 - stop condition
   - cannot label required behavior without making up a new requirement
   - close existing artifacts already contain an equivalent historical-change evaluation
@@ -87,7 +91,9 @@ candidate 2: measure whether code-based specification generation preserves bugs
   - KaPilot already separates documentation from implementation
   - SpecSyn already assesses mutation discrimination
   - Spec-Harness already evaluates input/output adequacy
-  - novelty depends on the real bug/fix causal design, not implementation-blind generation alone
+  - KaPilot already motivates avoiding inherited implementation flaws
+  - possible distinction: quantify visibility bias causally on independently labeled real bug/fix pairs
+  - [maintenance prior work](maintenance_prior_work.md) identifies the existing component ablations and the narrower untested comparison
 - stop condition
   - documented bug/fix pairs are too ambiguous for independent grading
   - existing spec-generation work already measures the same visibility effect
