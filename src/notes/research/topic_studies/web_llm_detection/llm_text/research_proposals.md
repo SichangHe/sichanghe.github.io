@@ -55,6 +55,8 @@ what is worth doing first
 - nearest work and novelty threats
     - DetectRL-X: multilingual web/SEO domains, lengths, attacks, and assisted writing
         - generic web-domain or polishing evaluation alone is already covered
+        - human-source cleaning removes malformed text and encoding errors
+        - evaluate whether the contribution survives comparison with this corpus
     - RAID: varied domains, decoding, attacks
     - MultiSocial: short texts and platform transfer
     - SenDetEX and HACo-Det: mixed spans
