@@ -1,0 +1,214 @@
+what existing work establishes
+(authored by agents unless marked 🧑)
+
+recent-work update
+- [five 2026 papers](recent_work.md) substantially overlap the initial research proposals
+- interpret the synthesis below with those newer results
+
+working definitions
+- SEO: changing a site to improve its position in search results
+- web spam: attempts to gain search exposure without corresponding user value
+  - intent is often unobservable
+  - experiments should label observable behavior separately
+- affiliate link: a link that can pay the referring site for a purchase or visit
+  - its presence establishes a financial incentive
+  - it does not establish deception
+- citation support: whether cited material actually backs a statement
+  - support does not establish that the material is true
+- independent evidence: information originating from separate observations
+  - ten sites repeating one report remain one observation
+
+1. early work: labels and trust matter before classifiers
+- Gyöngyi, Garcia-Molina, and Pedersen, [Combating Web Spam with TrustRank](https://www.vldb.org/conf/2004/RS15P3.PDF), VLDB 2004
+  - original words, abstract: “We first select a small set of seed pages to be evaluated by an expert”
+  - method: select sites for human inspection
+    - propagate trust along outgoing links from accepted seeds
+    - evaluate a graph of roughly 31 million sites
+    - manually examine over 2,000 sites
+    - final accepted seed set: 178 sites
+  - author's assumption: good sites rarely link to bad sites
+  - limitation: trust depends on seeds and link behavior
+    - compromised institutions and paid placement can violate the assumption
+    - new independent authors can lack links from established seeds
+  - research implication: compare trust propagation with claim-level evidence
+    - a reputable host does not prove each hosted page
+- Ntoulas, Najork, Manasse, and Fetterly, [Detecting Spam Web Pages through Content Analysis](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/www2006.pdf), WWW 2006
+  - original words, abstract: “correctly identify 2,037 (86.2%) of the 2,364 spam pages”
+  - method: classify pages using content statistics
+    - word frequencies, redundancy, compression, and related measurements
+    - judged collection: 17,168 pages
+    - cross-validation within the collection
+  - limitation: performance describes that collection and historical spam tactics
+    - modern fluent text may evade the same signals
+    - random folds do not test future campaigns or previously unseen operators
+  - research implication: split by time, site, and campaign
+    - report false positives for legitimate verbose and non-native writing
+- Ott, Choi, Cardie, and Hancock, [Finding Deceptive Opinion Spam by Any Stretch of the Imagination](https://aclanthology.org/P11-1032/), ACL 2011
+  - original words, abstract: “fictitious opinions that have been deliberately written to sound authentic”
+  - method: compare truthful hotel reviews with commissioned deceptive reviews
+    - textual classifiers approach 90% accuracy on their dataset
+  - limitation: commissioned lies differ from naturally occurring fraud
+    - a classifier may learn the writing task or author population
+  - research implication: planted spam gives known ground truth
+    - field observations establish prevalence
+    - neither dataset alone provides both
+
+2. SEO prevalence is different from search usefulness
+- Bevendorff, Wiegmann, Potthast, and Stein, [Is Google Getting Worse?](https://downloads.webis.de/publications/papers/bevendorff_2024a.pdf), ECIR 2024
+  - original words, conclusion: “Google results seem to have improved to some extent”
+  - method: 7,392 English queries shaped as best product category
+    - top 20 results from Startpage, Bing, and DuckDuckGo
+    - Startpage acts as the Google proxy
+    - first collection: 2022-08-24
+    - repeated collections through 2023-09-19
+    - compare commercial results with ChatNoir and ClueWeb22
+    - detect product-review pages and affiliate links
+    - measure text and HTML properties
+  - reported findings
+    - affiliate marketing appears much more often in search results than in their web baseline
+    - higher-ranked review pages are more optimized and monetized on average
+    - some spam campaigns repeatedly appear
+    - updates can reduce affiliate spam temporarily
+    - some text-quality measurements decline over time
+  - limits on interpretation
+    - product-review search has unusually direct commercial incentives
+    - taxonomy-generated queries do not represent actual query frequency
+    - English results do not establish multilingual behavior
+    - Bing and DuckDuckGo share substantial infrastructure
+    - readability and vocabulary variation do not measure factual accuracy
+    - affiliate detection cannot independently establish bad advice
+    - baseline differences also reflect crawling, indexing, and ranking
+    - associations do not identify SEO's causal effect
+    - data precede current answer engines
+  - research implication: extend its repeated-query design
+    - replace a single quality proxy with independently checked answers
+    - include technical, public-service, and noncommercial queries
+    - preserve query strata instead of making a universal search-quality claim
+- Google Search Central, [spam policies](https://developers.google.com/search/docs/essentials/spam-policies), accessed 2026-10-06
+  - original words, scaled content abuse section: “no matter how it's created”
+  - policy defines mass low-value ranking manipulation by purpose and user value
+    - generated text and copied text can both qualify
+    - expired domains, scraping, hacked pages, and host reputation are separate categories
+  - evidence status: provider policy
+    - it documents claimed rules
+    - it does not demonstrate enforcement quality or prevalence
+  - research implication: policy categories make useful labeling dimensions
+    - do not use enforcement actions as the only ground truth
+
+3. answer engines add a second contest after retrieval
+- Aggarwal and colleagues, [GEO: Generative Engine Optimization](https://arxiv.org/abs/2311.09735), KDD 2024
+  - original words, abstract: “boost visibility by up to 40% in generative engine responses”
+  - method: rewrite source content to increase its presence in generated answers
+    - introduce source-visibility measurements and GEO-bench
+    - test a controlled engine and Perplexity
+    - citations, statistics, quotations, and presentation can affect exposure
+  - limitation: visibility improvement is the objective
+    - exposure gains do not establish better user answers
+    - up to is a maximum, not a universal expected gain
+    - engine versions and experimental access matter
+  - research implication: hold facts constant while varying presentation
+    - measure answer correctness and source selection together
+- Nestaas, Debenedetti, and Tramèr, [Adversarial Search Engine Optimization for Large Language Models](https://arxiv.org/abs/2406.18382), 2024 preprint
+  - original words, abstract: “promote the attacker products and discredit competitors”
+  - method: place manipulation in controlled web pages or plugin descriptions
+    - test Bing, Perplexity, GPT-4, and Claude integrations
+    - explicit instructions and misleading competitor claims can change selections
+    - also investigate multiple competing attackers
+  - limitation: many tests deliberately retrieve the controlled domain
+    - unrestricted retrieval exposure is a separate obstacle
+    - forced exposure success is not population prevalence
+    - production products and versions change
+  - research implication: report two probabilities separately
+    - chance malicious content is retrieved
+    - chance an answer changes once that content is retrieved
+    - test local copies rather than polluting public search
+
+4. supported answers require both retrieval and checking
+- Liu, Zhang, and Liang, [Evaluating Verifiability in Generative Search Engines](https://arxiv.org/abs/2304.09848), 2023
+  - original words, abstract: “only 74.5% of citations support their associated sentence”
+  - method: humans assess Bing Chat, NeevaAI, Perplexity, and YouChat
+    - distinguish answer fluency, perceived utility, citation precision, and citation recall
+    - citation recall measures how many statements receive full support
+    - reported fully supported sentence fraction: 51.5%
+  - limitation: measurements apply to then-current versions and sampled questions
+    - a citation can accurately support a false source claim
+    - this study does not establish evidence independence
+  - research implication: add source correctness and copying relationships
+- Gao, Yen, Yu, and Chen, [Enabling Large Language Models to Generate Text with Citations](https://arxiv.org/abs/2305.14627), EMNLP 2023
+  - original words, abstract: “fluency, correctness, and citation quality”
+  - method: ALCE separates those three objectives
+    - fixed retrieval corpora and questions support reproducible comparisons
+    - automated metrics are compared with human judgments
+  - limitation: a fixed corpus omits live web incentives and change
+    - automated support judgments need human error checks
+  - research implication: use its citation measurements inside a time-stamped web experiment
+- Thorne, Vlachos, Christodoulopoulos, and Mittal, [FEVER](https://aclanthology.org/N18-1074/), NAACL 2018
+  - original words, abstract: “185,445 claims generated by altering sentences extracted from Wikipedia”
+  - method: retrieve evidence and classify supported, refuted, or insufficient information
+    - evidence correctness is scored alongside claim labels
+  - limitation: Wikipedia and altered sentences differ from adversarial commercial pages
+  - research implication: require retrieved evidence, not merely the right answer label
+- Aly and colleagues, [FEVEROUS shared task](https://aclanthology.org/2021.fever-1.1/), 2021
+  - original words, abstract: “structured data (tables and lists) as a source of evidence”
+  - method: verify claims using text, tables, lists, or combinations
+  - limitation: Wikipedia remains the underlying evidence setting
+  - research implication: product specifications and technical version tables require structure-preserving extraction
+- Vu and colleagues, [FreshLLMs](https://arxiv.org/abs/2310.03214), 2023 preprint
+  - original words, abstract: “fast-changing world knowledge as well as questions with false premises”
+  - method: FreshQA tests changing facts and mistaken question assumptions
+    - FreshPrompt supplies search evidence
+    - human evaluations check correctness and hallucination
+  - limitation: search access inherits the quality of retrieved evidence
+    - benchmark maintenance and observation date affect answers
+  - research implication: include stale specifications and withdrawn advice
+- Lin, Hilton, and Evans, [TruthfulQA](https://arxiv.org/abs/2109.07958), ACL 2022
+  - original words, abstract: “false answers that mimic popular misconceptions”
+  - method: questions target widespread human false beliefs
+    - 817 questions across 38 categories
+  - limitation: model-only historical benchmark
+    - not a direct measurement of search or web spam
+  - research implication: repeated web consensus can still be false
+
+5. feedback cannot be read literally
+- Joachims, Granka, Pan, Hembrooke, and Gay, [Accurately Interpreting Clickthrough Data as Implicit Feedback](https://www.cs.cornell.edu/people/tj/publications/joachims_etal_05a.pdf), SIGIR 2005
+  - original words, abstract: “clicks are informative but biased”
+  - method: eye tracking, manipulated result ordering, and manual relevance judgments
+    - relative preferences are more useful than treating every click as absolute relevance
+  - limitation: historical search interface and participant population
+  - research implication: evaluate the human's user-feedback idea with randomized exposure
+    - count task completion and justified confidence
+    - clicks can reflect attractive titles, confusion, or rank position
+
+6. tracing narratives is already established research
+- Hanley, Okabe, and Durumeric, [Tracking the Takes and Trajectories of English-Language News Narratives across Trustworthy and Worrisome Websites](https://www.usenix.org/conference/usenixsecurity25/presentation/hanley), USENIX Security 2025
+  - original words, introduction: “our approach does not make factual assessments of individual stories”
+  - method: crawl news sites for 18 months
+    - extract stories from 29 million articles across over 4,000 sites
+    - identify 146,212 story clusters
+    - fine-tune e5-base-v2 embeddings and cluster passages
+    - estimate stance toward entities
+    - apply NETINF to infer story-spreading relationships
+  - limitation: inferred temporal influence is not a directly observed copying event
+    - factual-reliability groups come from pre-curated site lists
+    - shared topic or stance does not establish falsehood
+    - broad stories can contain multiple distinct claims
+  - research implication: generic story-diffusion mapping is insufficient novelty
+    - test whether removing duplicate evidence origins changes search or answer correctness
+    - distinguish copying from independently observing the same event
+    - validate relationships with explicit links, shared distinctive errors, and controlled copy chains
+
+synthesis
+- inference: a useful evaluation has at least four stages
+  - discover candidate pages
+  - identify their factual support and common origins
+  - form an answer without obeying page instructions
+  - measure whether a person finishes the task correctly
+- inference: measuring only page classification misses exposure
+  - perfect detection on irrelevant pages does not help the user
+- inference: measuring only citations misses bad evidence
+  - an answer can faithfully cite a fabricated review
+- inference: measuring only domains misses shared authorship
+  - copied claims can spread across many sites
+- open question: can source independence improve answers without excluding new authors?
+  - the reviewed papers supply parts of this design
+  - this reading does not establish that nobody has already combined them

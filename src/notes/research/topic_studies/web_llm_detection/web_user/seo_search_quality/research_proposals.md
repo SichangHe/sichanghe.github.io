@@ -1,0 +1,178 @@
+research we could do
+(authored by agents unless marked 🧑)
+
+revised recommendation
+- read [recent work](recent_work.md) first
+  - five 2026 papers substantially overlap these initial proposals
+- withdraw generic duplicate-evidence poisoning and citation manipulation as novelty claims
+- prefer the recent-work file's small live technical-search pilot
+  - measure version mismatch and overstated operational guarantees
+  - compare simple version filtering with existing citation defenses
+- retain the experiments below as candidate replications or components
+  - expected effects are hypotheses
+  - novelty remains unconfirmed
+
+1. does repeated evidence fool search answers?
+- question
+  - does one original claim copied across many sites appear more trustworthy than independent evidence?
+- why this follows from the review
+  - TrustRank supplies a site-level trust baseline
+  - FEVER and ALCE score evidence support
+  - Hanley et al. already trace news narratives across sites
+  - untested here: whether identifying shared origins improves task outcomes under repeated misinformation
+- candidate tasks
+  - which Rust release introduced a feature?
+  - does a specific database version promise a stated failure behavior?
+  - is a configuration still supported in a named software release?
+  - include noncommercial and product-review tasks as separate strata
+- initial sample
+  - proposal: 100 questions with answers checked against archived primary documentation
+  - collect top 10 results from two independently operated search indexes
+    - do not count Bing and DuckDuckGo as independent indexes
+  - save pages, retrieval time, language, query, and engine version where available
+  - identify the claims needed for each answer
+- evidence labels
+  - supporting, contradicting, irrelevant, or insufficient
+  - original observation, explicit copy, likely copy, or origin unknown
+  - correct version, obsolete version, or date unknown
+  - monetization and suspected manipulation as separate labels
+  - preserve uncertainty instead of forcing every page into spam or good
+- controlled test
+  - local corpus includes a primary document, one false claim, and copies of that false claim
+  - keep primary evidence and false-claim wording fixed
+  - reserve a constant token budget for the manipulated block
+    - replace unused copy slots with matched irrelevant filler
+  - separately vary apparent source identities with identical text and token count
+  - randomize passage order while preserving primary-document rank
+  - compare repeated wording from one origin against the same wording presented as multiple origins
+  - include paraphrased copies and copies on separate apparent domains
+  - independently corroborating sources form a separate condition
+  - no public publication of fabricated pages
+- baselines
+  - normal ranking
+  - one page per domain
+  - text deduplication
+  - trusted-domain preference
+  - evidence grouping by likely origin
+- measured outcomes
+  - answer correctness by question
+  - proportion of citations supporting their associated statements
+  - number of independent evidence origins used
+  - abstention when trustworthy evidence is absent
+  - exclusion of correct small or unfamiliar sites
+  - latency and amount of additional retrieval
+- validity checks
+  - double-label a random sample and report disagreement
+  - evaluate copying detection on known local copy chains
+  - distinguish common wording from copying
+  - avoid using an LLM's own preference as truth
+  - report results by topic and version age
+- strongest possible contribution
+  - a reproducible experiment showing when repeated evidence changes answers
+  - an intervention that reduces this error with modest retrieval cost
+- stop or redirect
+  - if deduplication performs as well as origin grouping, prefer the simpler intervention
+  - if controlled copies do not change answers, study live exposure before scaling the classifier
+  - if origin labels remain unreliable, publish the measured uncertainty rather than inferred copying claims
+- novelty caution
+  - Lee and Kim 2026 already isolate identical versus paraphrased sybil evidence
+    - forced exposure and deduplication trade-offs directly overlap this design
+  - fact verification, source trust, deduplication, and narrative diffusion already exist
+  - proposed contribution must be an outcome improvement under a clearly isolated failure
+
+2. do search updates remove bad advice or only its appearance?
+- question
+  - when search results look less commercial, do users receive more correct and useful information?
+- why this follows from the review
+  - Bevendorff et al. track affiliate links and text properties over time
+  - those measures cannot determine whether a recommendation is factually justified
+- experiment
+  - keep a fixed query panel and a separately sampled changing query panel
+  - proposal: 300 questions split among product reviews, technical advice, and public-service information
+  - weekly collection for 12 weeks is a pilot, not evidence about years of change
+  - annotate a fixed-size stratified sample of results
+  - record search updates as events without assuming they caused each change
+- measurements
+  - exposure to demonstrably false claims
+  - exposure to supported firsthand testing or primary records
+  - missing answers and stale advice
+  - affiliate prevalence, explicit ads, and ranking separately
+  - campaign appearance, disappearance, and domain replacement
+- comparisons
+  - within-question changes over time
+  - commercial versus noncommercial strata
+  - plain search versus answer generation from the same retrieved pages
+  - fresh retrieval versus a frozen corpus
+- causal caution
+  - an announced update can coincide with campaign turnover and index changes
+  - interrupted time series gives a descriptive association unless assumptions are justified
+  - no universal claim that Google is getting worse from one query genre
+- useful result
+  - evidence that common proxies agree or disagree with verified advice quality
+  - reusable pages and labels for future longitudinal studies
+- stop or redirect
+  - if sampling uncertainty overwhelms change, enlarge annotation before adding more engines
+  - if almost all errors come from obsolete versions, focus on temporal filtering
+- novelty caution
+  - repeating the ECIR study with newer data alone may provide limited contribution
+  - contribution must be outcome validation, another neglected query class, or a distinct failure mechanism
+
+3. can honest-looking citations manipulate source selection?
+- question
+  - does adding unsupported statistics or copied citations raise a page's exposure in answer engines?
+- why this follows from the review
+  - GEO optimizes visibility using presentation and evidence-like features
+  - adversarial SEO manipulates preferences once pages enter the context
+  - search verifiability measures support but does not prove source truth
+- local experiment
+  - choose answerable questions with known primary evidence
+  - create content variants with identical relevant facts
+    - plain presentation
+    - genuine supporting citations
+    - citations that do not support the claim
+    - authentic statistics used out of context
+    - explicit instructions to favor the page
+  - compare frozen retrieval with normal local retrieval
+  - vary attack placement, retrieved rank, and competitor quality
+- baselines
+  - ordinary answer generation
+  - source text marked as untrusted material
+  - verification of cited claims before answer generation
+  - primary-source preference
+  - source-origin grouping from proposal 1
+- measurements
+  - retrieval exposure before generation
+  - source-selection gain given exposure
+  - final answer correctness
+  - unsupported recommendation rate
+  - false rejection of honest pages with few citations
+  - extra verification cost
+- useful result
+  - evidence of which credibility cues help honest authors and which help manipulation
+  - a cheap verification step with measured costs and residual failure
+- stop or redirect
+  - if source verification removes the effect reliably, measure its real deployment cost
+  - if attacks work only when all competing evidence is absent, state that limited setting
+- novelty caution
+  - CiteShade and ForceBench already investigate unsupported credible-looking citations
+  - SIREN already controls retrieved context while editing source presentation
+  - preference manipulation is already the adversarial SEO paper's central result
+  - source exposure increase alone is already GEO's objective
+  - potential distinction is systematically separating genuine support from unsupported credibility cues
+
+shared implementation priorities
+- implement collection and archiving once
+- keep observable labels instead of guessing intent
+- require date and software version on technical claims
+- cluster evaluation by question and site
+  - many pages from one site are not independent samples
+- compare simple interventions first
+- report annotation budget and crawling failure rates
+- publish an explicit list of excluded topics and inaccessible pages
+- leave disagreements visible
+
+what this review cannot decide
+- actual prevalence of copied falsehoods in the current web
+- which 2026 commercial engine is best
+- whether any proposal is new enough for a particular venue
+- next literature check should target retrieval poisoning, source dependence, citation laundering, and search evaluation under adversarial competition

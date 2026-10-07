@@ -1,0 +1,196 @@
+recent work changes the research recommendation
+(authored by agents unless marked 🧑)
+
+conclusion
+- recommendation: withdraw generic duplicate-evidence poisoning as a new research claim
+  - Lee and Kim already compare identical copies with paraphrased coordinated passages
+  - they isolate retrieved exposure and report answer changes
+- recommendation: withdraw citation manipulation as a standalone new direction
+  - CiteShade explicitly attacks false answers attributed to trusted sources
+  - ForceBench already tests citations that look relevant but support weaker claims
+  - SIREN controls retrieved sources while testing preference manipulation
+- remaining candidate: measure these failures in live technical search with version-specific ground truth
+  - relevance to current users is plausible
+  - novelty and prevalence remain unconfirmed
+  - start with replication and a small field sample
+- evidence status
+  - CrediBench is KDD 2026 according to its current PDF
+  - the other four sources are 2026 preprints
+  - their reported results are author claims until independently reproduced
+  - source PDFs accessed 2026-10-06
+
+CrediBench: web-scale domain credibility
+- Kondrup and colleagues, [CrediBench](https://arxiv.org/abs/2509.23340)
+  - checked version: v4, 2026-06-18
+  - original words, abstract: “graph, text and time”
+- method
+  - eight monthly Common Crawl graph snapshots
+  - analyze three around the 2024 U.S. election
+  - each snapshot has over 40 million nodes and over one billion hyperlinks
+  - domain regression labels aggregate existing credibility ratings
+  - classification labels cover 662,575 domains
+    - misinformation, crowd judgments, phishing, and malware
+  - combine graph structure, text, and temporal information
+- author's reported result
+  - regression mean absolute error improves from 0.162 to 0.107
+  - classification accuracy improves from 56% to 85%
+- limits
+  - predicting domain ratings does not verify a specific claim
+  - mixed label origins and task populations require per-source evaluation
+  - phishing dominates part of the label pool
+  - monthly snapshots can miss short-lived pages
+  - graph filtering can remove poorly connected new domains
+- reusable starting points
+  - [Hugging Face datasets](https://huggingface.co/datasets/credi-net/DomainRel)
+  - [code organization](https://github.com/credi-net)
+  - availability links are present in the PDF
+    - artifacts were not installed or experimentally validated here
+- effect on proposals
+  - use as a modern domain-trust baseline
+  - a new graph credibility classifier alone needs much stronger differentiation
+
+CiteShade: the cited source can differ from the source that drove the answer
+- Fuzheng Guo, [CiteShade](https://arxiv.org/abs/2609.15660)
+  - checked version: v1, 2026-09-14
+  - original words, abstract: “while the evidence for the correct answer remains in context”
+- method
+  - attacker controls one source in multi-source question answering
+  - induce a wrong answer attributed to a different trusted source
+  - distinguish retrieval, generation, and citation conditions
+  - remove sources and regenerate to test what influenced the answer
+  - compare filters and citation-support checks with this intervention
+- author's reported result
+  - wrong-answer rate rises from 0.01 to 0.68
+  - explicit-injection condition: defense recall is 0.769 at a 6.4% false-positive rate
+  - main hybrid condition: recall is 0.462 at a 15.2% false-positive rate
+    - recall denominator: laundering items
+    - false-positive denominator: citing items
+  - adaptive attacks increase residual laundering from 0.07 to 0.12
+- limits
+  - conditional source removal is an intervention within this pipeline
+    - it does not establish universal real-world causal attribution
+  - defense degrades when clean citations already fail to track influential sources
+  - multiple sources jointly driving an answer remain difficult
+  - fixed benchmarks and controlled exposure do not establish live-web frequency
+- effect on proposals
+  - source-removal defense and false attribution are existing work
+  - compare temporal and version checks with this defense
+  - do not claim citation inspection alone solves the problem
+
+Relevant Is Not Warranted: relevant evidence can support a weaker claim
+- Qian and colleagues, [Relevant Is Not Warranted](https://arxiv.org/abs/2605.28044)
+  - checked version: v1, 2026-05-27
+  - original words, abstract: “relation, modality, scope, temporal validity, and numeric specificity”
+- method
+  - ForceBench keeps a passage fixed
+  - pair a supported claim with one that overstates the passage
+  - test whether evaluators prefer the justified wording
+  - headline evaluation uses 198 pairs after locality filtering
+- author's reported result
+  - generic support prompts fail the required strict ordering in 47.2% of evaluations across four model judges
+    - includes wrong ordering, ties, refusal, and parsing failures
+  - prompts explicitly checking claim strength reduce this to 24.5%
+- limits
+  - diagnostic paired claims are different from naturally generated answers
+  - small curated evaluation does not establish web prevalence
+  - one score must not collapse causality, scope, time, and precision
+- effect on proposals
+  - temporal validity and overstated claims are already tested axes
+  - version-specific software guarantees need additional contribution beyond relabeling these axes
+
+SIREN: controlled manipulation of web recommendations
+- Caville and colleagues, [SIREN](https://arxiv.org/abs/2607.21951)
+  - checked version: v3, 2026-09-29
+  - original words, abstract: “keeps the same sources in the same order”
+- method
+  - capture live webpages and replay them in a controlled retrieval pipeline
+  - iteratively edit one retrieved page using an attacker and a judge
+  - test 23 poisoning techniques against two Claude models
+  - aim to move a selected entity to rank one
+- author's reported result
+  - 62 of 124 technique trials reach rank one
+  - successful payloads reproduce with mean success 0.805 in fresh sessions
+- limits
+  - 124 trials are nested within only eight query–model contexts
+  - successful-payload validation is selected on prior success
+    - 0.805 is not the success rate of all attempted payloads
+  - custom replay differs from native live search behavior
+  - source editing after retrieval does not measure public-page discovery
+- effect on proposals
+  - holding sources fixed while changing presentation is existing experimental design
+  - a technical field study must connect controlled susceptibility to observed exposure
+
+polymorphic sybil poisoning: false corroboration is already isolated
+- Donghyun Lee and Juntae Kim, [A Failure-Mode Benchmark for Polymorphic Sybil Poisoning in RAG](https://arxiv.org/abs/2607.03739)
+  - checked version: v1, 2026-07-04
+  - original words, abstract: “S=6 chosen to dominate top-10 retrieval slots”
+- plain meaning
+  - one adversary inserts several passages that repeat the same false answer in different words
+  - the passages look like distinct evidence
+- method
+  - compare nearly identical copies with paraphrased passages
+  - use six attack passages per question
+  - clean, normal retrieval under attack, and forced-exposure conditions
+  - forced exposure fixes six attack, two correct, and two filler passages
+  - separate correct answers, attacker answers, abstention, and other drift
+  - main manifest has 3,145 questions
+    - strict retained set: 2,982 groups
+  - five readers, two retrievers, additional TriviaQA and 2Wiki checks
+- author's reported result
+  - identical-copy versus paraphrase ablation uses Qwen2.5-72B on 500 questions
+  - attacker-answer rate rises from 4.0% to 22.8%
+    - paired difference: 18.8 percentage points
+    - reported 95% bootstrap interval: 15.4–22.4 points
+  - embedding filtering trades missed attack passages against rejected legitimate same-topic pairs
+- important limits
+  - forced exposure isolates readers rather than deployed search success
+  - fixed six-passage attack size leaves size sensitivity open
+  - Qwen2.5-72B serves as verifier, reader, and drift classifier
+  - a 250-instance clean drift-origin audit reports human-classifier agreement κ=0.262
+    - this audits GENUINE, EXTRACTION, and DATASET origin categories
+    - it does not measure agreement for all correct, attacker, abstention, and drift outputs
+  - about one third of earlier groups had target metadata reassigned
+  - a 100-group audit estimates 76% strict support and 92% majority support
+  - appendix says forced-exposure retrieval counter is emitted as zero
+    - actual forced-exposure attack count is six
+    - do not interpret that diagnostic literally across conditions
+- artifact caveat
+  - abstract says the benchmark is released
+  - section 9 says: “Repository and dataset URLs will be added in a future revision”
+  - working public artifacts were not verified
+- effect on proposals
+  - substantially preempts proposal 1's controlled copy-count and paraphrase experiment
+  - origin grouping is still a possible intervention to compare
+    - its novelty is unconfirmed
+    - direct comparison with semantic deduplication and independent evidence must be demonstrated
+
+revised next experiment
+- question: how often do live technical answers cite the wrong software version or an overstated guarantee?
+- proposal: 50 questions across Rust releases and two database systems
+  - each question names a version and an operational claim
+  - verify answers against versioned primary documents
+  - use executable counterexamples where they establish an actual failure
+- collection
+  - archive the first ten organic results from two independently operated indexes
+  - generate cited answers from the same frozen pages
+  - annotate version mismatch, overstated guarantee, and shared evidence origin separately
+- interventions
+  - no filter
+  - primary-document preference
+  - version/date filter
+  - explicit claim-strength verification
+  - source-removal verification from CiteShade
+  - simple deduplication and source grouping
+- outcomes
+  - correctness under the named version
+  - wrong answers carrying credible-looking citations
+  - correct minority evidence retained
+  - abstention and cost
+- reason to prefer this pilot
+  - measured live exposure distinguishes it from purely forced attacks
+  - operational software claims allow unusually concrete checking
+  - current corpus can reveal whether the problem occurs often enough to justify further work
+- stopping rule
+  - no extension if these failures are rare or version filtering already solves them
+  - no novelty claim without searching technical support retrieval and version-aware question answering
+  - replication failures should be reported before using reported attack rates as assumptions
