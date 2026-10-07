@@ -35,6 +35,9 @@ what the proof covers
 - unsized types remain a major missing feature
   - these include types whose size is not fixed at compilation, such as slices
   - [OOPSLA 2026](https://doi.org/10.1145/3839484), §1: “proper support for unsized types”
+- §5.3 excludes generic associated types and trait requirements on associated types
+  - an associated type is a type chosen by a trait implementation
+  - the missing generic form lets that chosen type depend on further parameters
 - closure specification inference remains an author-stated improvement
   - trait objects and async are also identified as future extensions in that paper
   - treat its claim about other tools' support as the authors' assessment, not a current survey result
