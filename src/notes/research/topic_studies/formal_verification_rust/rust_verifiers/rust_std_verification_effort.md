@@ -64,6 +64,14 @@ proof boundaries
   - the paper explicitly distinguishes this from formal proof
   - two upstream bugs were found
 
+Creusot work after the campaign snapshot
+- [official Creusot research list](https://creusot.rs/research) lists Xia and Jourdan's RustVerify 2026 presentation
+  - title: “Verifying the Rust standard library with Creusot”
+  - [associated repository](https://github.com/Lysxia/creusot-rust-std)
+- this is evidence of additional work
+  - it does not change the June campaign's reported accepted-tool counts
+  - a presentation title alone does not establish complete standard-library verification
+
 research we could do: recommendations, not established results
 - shared specifications for the most influential intrinsics
   - builds on the paper's intrinsic-model gap and SIMD challenge experience

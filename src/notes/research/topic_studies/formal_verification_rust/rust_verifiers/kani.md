@@ -65,9 +65,11 @@ real code and the exact boundary
   - [campaign details and counts](rust_std_verification_effort.md)
 
 recent primary reading
-- [Kani: A Model Checker for Rust, Delmas et al., ASE 2026](https://doi.org/10.1145/3832783.3834499)
+- [Kani: A Model Checker for Rust, Delmas et al., ASE 2026, citation in official README](https://github.com/model-checking/kani#citing-kani)
   - the current repository identifies this as the tool's reference paper
   - conference dates are 2026-10-12–16, after this note's check date
+  - listed DOI: 10.1145/3832783.3834499
+    - DOI resolver returned 404 during this check
   - paper text was not retrieved here; do not infer evaluation results from its citation
 - [Verifying the Rust Standard Library, Cook et al., 2026](https://arxiv.org/abs/2606.17374)
   - concrete evidence for automatic harnesses, modular contracts, and missing model coverage

@@ -50,6 +50,7 @@ LLMs for verification
 - [code and agents](llm_for_verification/code_and_agents.md): agents generating verified code and working in repositories
 - [evaluation](llm_for_verification/evaluation.md): benchmarks, weak contracts, translation, and fair comparisons
 - [overview](llm_for_verification/index.md): the distinction between proof, code, and specification generation
+- [maintenance prior work](llm_for_verification/maintenance_prior_work.md): prior work limiting maintenance and specification-bias novelty
 - [proof synthesis](llm_for_verification/proof_synthesis.md): retrieval, search, helper lemmas, and learning from checked proofs
 - [research directions](llm_for_verification/research_directions.md): proposed LLM-assisted verification experiments and closest work
 - [specifications](llm_for_verification/specifications.md): generating contracts that match intended software behavior
