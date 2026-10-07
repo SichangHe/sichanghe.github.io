@@ -25,6 +25,10 @@ reading order
 
 - [research proposals](research_proposals.md)
     - questions, closest work, experiments, costs, and stopping rules
+- [ChatGPT consultation](chatgpt_consultation.md)
+    - Extra High advice and primary checks that narrowed the proposals
+- [contemporary web studies](contemporary_web_studies.md)
+    - close 2026 work already tests HTML and measures archived/Common Crawl pages
 - [zero-shot detectors](zero_shot_detectors.md)
     - DetectGPT, DetectLLM, Fast-DetectGPT, Binoculars, DNA-GPT, Glimpse, MOSAIC, HALO, NTS
 - [trained detectors](trained_detectors.md)
@@ -57,8 +61,9 @@ relationship to existing notes
 
 scope and evidence
 
-- 64 primary paper pages opened and cataloged
-    - 63 distinct paper titles
+- more than 60 paper titles examined
+    - catalog covers opened arXiv and ACL primary metadata
+    - contemporary-web and human/browser notes also cover publisher metadata and institutional reports
     - Learning2Rewrite has both arXiv and proceedings entries
 - reviewed through 6 October 2026
     - peer-reviewed conference entries and preprints are distinguished in the detailed notes

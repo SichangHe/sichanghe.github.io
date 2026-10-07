@@ -206,6 +206,10 @@ how to use this catalog
     - authors: Hans, Abhimanyu, Schwarzschild, Avi, Cherepanova, Valeriia, Kazemi, Hamid, Saha, Aniruddha, Goldblum, Micah, Geiping, Jonas, Goldstein, Tom
     - publication: arXiv metadata; acceptance not established by this page; 2024/01/22
     - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [Detecting AI-Generated Sentences in Human-AI Collaborative Hybrid Texts: Challenges, Strategies, and Insights](https://arxiv.org/abs/2403.03506)
+    - authors: Zeng, Zijie, Liu, Shiqi, Sha, Lele, Li, Zhuang, Yang, Kaixun, Liu, Sannyuya, Gašević, Dragan, Chen, Guanliang
+    - publication: arXiv metadata; acceptance not established by this page; 2024/03/06
+    - discussed in: [humans browser tools](humans_browser_tools.md)
 - [Monitoring AI-Modified Content at Scale: A Case Study on the Impact of ChatGPT on AI Conference Peer Reviews](https://arxiv.org/abs/2403.07183)
     - authors: Liang, Weixin, Izzo, Zachary, Zhang, Yaohui, Lepp, Haley, Cao, Hancheng, Zhao, Xuandong, Chen, Lingjiao, Ye, Haotian, Liu, Sheng, Huang, Zhi, McFarland, Daniel A., Zou, James Y.
     - publication: arXiv metadata; acceptance not established by this page; 2024/03/11
@@ -246,6 +250,10 @@ how to use this catalog
     - authors: Sun, Ke, Bao, Guangsheng, Cui, Han, Zhang, Yue
     - publication: arXiv metadata; acceptance not established by this page; 2026/01/08
     - discussed in: [recent preprints](recent_preprints.md)
+- [The Impact of AI-Generated Text on the Internet](https://arxiv.org/abs/2604.26965)
+    - authors: Dolezal, Jonas, Alam, Sawood, Graham, Mark, Bohacek, Maty
+    - publication: arXiv metadata; acceptance not established by this page; 2026/04/14
+    - discussed in: [contemporary web studies](contemporary_web_studies.md)
 - [Steer-to-Detect: Probing Hidden Representations for Detection of LLM-Generated Texts](https://arxiv.org/abs/2605.12890)
     - authors: Liang, Luxu, Li, Xiang
     - publication: arXiv metadata; acceptance not established by this page; 2026/05/13

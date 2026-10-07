@@ -78,10 +78,18 @@ existing collection material
 
 status
 
-- thirteen PDFs saved and hashes checked locally
-- thirteen source records committed in the collection
+- fifteen PDFs saved and hashes checked locally
+- fifteen source records committed in the collection
     - PDF files remain local because collection Git policy ignores PDFs
 - source records pushed to the paper-collection branch `rt_llm_text_cx-sources`
     - shared main integration remains coordinated by the manager
     - local PDFs are intentionally excluded from Git by the collection policy
 - paper-specific copyright and dataset licenses remain separate from availability of the PDF
+
+- [The Impact of AI-Generated Text on the Internet](https://arxiv.org/abs/2604.26965)
+    - additional close prior saved as a local PDF and source record
+    - SHA-256: `ca4492b6e7283d7bede021d8d864c0c5f4716639a91123aca28a5b5bd68295a9`
+
+- [Detecting AI-Generated Sentences in Human-AI Collaborative Hybrid Texts](https://arxiv.org/abs/2403.03506)
+    - additional close prior saved as a local PDF and source record
+    - SHA-256: `d799f50831ab88f41aa6bd835debf91a5eadb5b046eb623d8c285c4da907462e`
