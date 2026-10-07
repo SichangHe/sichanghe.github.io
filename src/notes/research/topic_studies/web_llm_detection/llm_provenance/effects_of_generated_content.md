@@ -3,8 +3,7 @@
 (authored by agents unless marked 🧑)
 
 Literature review of the harm AI-generated text, images and code suggestions
-have been shown to cause on the web. Work in progress as of 7 Oct 2026;
-sections fill in as papers get read.
+have been shown to cause on the web, as of 7 Oct 2026. About 60 sources.
 
 Related notes, not repeated here:
 
@@ -341,3 +340,404 @@ Argued:
     - the argument: people who read misinformation are limited by how much
         they want, not by how much exists, so making more changes little. The
         measurements above have not contradicted this so far
+
+One live measurement I found only second hand: an Ahrefs study of 27 July
+2026, as reported by
+[Let's Data Science](https://letsdatascience.com/news/ahrefs-finds-heavy-ai-use-correlates-with-weaker-google-perf-056283e2)
+(I did not open the Ahrefs post itself). About 150,000 pages from Google's
+top 10 for 100,000 searches: "5.3% of top-three pages scored as fully
+AI-generated", and pages flagged as heavily AI ranked a bit lower and were
+indexed less often. The report says "The findings do not show that Google
+detects and penalizes AI-written text". This points the opposite way from the
+lab results, which fits: Google ranks on much more than text matching. It is a
+vendor study with its own detector.
+
+## Fake reviews
+
+My take: thin evidence. I found only detector vendor reports, each on a small
+or oddly chosen sample, with no false positive rate measured on reviews.
+Nobody has shown generated reviews change what people buy. Fake reviews and
+their detection from before LLMs are a large literature that I did not cover.
+
+- [Pangram Amazon review study](https://www.pangram.com/blog/ai-amazon-reviews),
+    Pangram Labs blog, dated 4 May 2026 on the page.
+    - "30,000 front-page product reviews across 500 of Amazon's best-selling
+        products"; "3% of the total reviews studied - 909 total reviews - were
+        AI-generated with high confidence"
+    - "74% of AI-written reviews gave products a 5-star rating. This compares
+        to 59% of legitimate human reviews", and 93% of the AI ones carried the
+        "Verified Purchase" badge
+    - front page of best sellers only, so not a share of all reviews
+- [Originality.ai Amazon review
+    study](https://originality.ai/blog/amazon-ai-generated-reviews),
+    Originality.ai blog, 17 Nov 2025.
+    - 2,000 reviews sampled from 26,000; says the share of reviews with "50%
+        or more AI Content" grew about 400% since 2022, from a tiny base
+    - "Verified reviewers are roughly 1.4 times less likely to be AI generated
+        than non-verified reviewers", which disagrees in spirit with Pangram's
+        93%
+    - no false positive rate given
+
+## Academic publishing and peer review
+
+My take: use is well measured; harm is partly measured. The harm with the
+cleanest evidence is made-up references, because a reference either exists or
+it does not, so no detector is needed. Claims that LLMs flood science with
+weak papers rest on detectors and on one Science paper whose main number has
+been challenged. Liang 2024 and Latona 2024 are in the human's
+[gen_ai](../../../gen_ai.md) notes; prevalence counts are in
+[generated_web_measurement](generated_web_measurement.md).
+
+Made-up references (measured, no detector needed):
+
+- "Fabricated citations: an audit across 2·5 million biomedical papers",
+    Maxim Topaz et al., The Lancet, 7 May 2026; I read the
+    [Columbia Nursing summary](https://www.nursing.columbia.edu/news/nearly-3-000-peer-reviewed-medical-papers-have-fake-citations-columbia-nursing-ai-assisted-audit-finds),
+    not the letter.
+    - PubMed Central open access papers from 1 Jan 2023 to 18 Feb 2026; among
+        97.1 million references, 4,046 fake ones in 2,810 papers
+    - about one paper in 2,828 in 2023, one in 277 in early 2026 (the second
+        pair of numbers as reported by
+        [The Next Web](https://thenextweb.com/news/arxiv-ai-slop-ban-researchers-preprint))
+    - the link to LLMs is timing only: "sharpest increase beginning mid-2024,
+        coinciding with the rise of AI writing tools"
+- [Phantom References: Hallucinated Citations That Survive Peer Review at
+    Top-Tier Conferences](https://arxiv.org/abs/2607.00738), Mark Russinovich,
+    Ram Shankar Siva Kumar, Ahmed Salem (Microsoft), arXiv, 2026.
+    - checks camera-ready papers from ICLR, ICML, NeurIPS and USENIX Security
+        with an open tool, RefChecker
+    - "in 2025, roughly one in twenty NeurIPS and USENIX Security papers
+        contains at least two likely hallucinated academic-paper-like
+        references under our strict definition"
+    - "auditing is tractable (about 0.04$ per paper in one venue-scale scan)"
+    - one in twenty is far above GPTZero's 1% below. I have not read the body
+        to see why; "likely" may be doing a lot of work
+- [GPTZero NeurIPS 2025 investigation](https://gptzero.me/news/neurips/),
+    Nazar Shmatko, Alex Adam, Paul Esau, Alex Cui, Edward Tian, GPTZero, 21 Jan
+    2026.
+    - "4841 papers accepted by NeurIPS 2025" scanned; "100 confirmed
+        hallucinations in the table below, spanning over 51 NeurIPS papers",
+        each "verified by a human expert"
+- [Compound Deception in Elite Peer Review: A Failure Mode Taxonomy of 100
+    Fabricated Citations at NeurIPS 2025](https://arxiv.org/abs/2602.05930),
+    Samar Ansari, arXiv, 2026.
+    - sorts GPTZero's 100: "Total Fabrication (66%), Partial Attribute
+        Corruption (27%)"; "92% of contaminated papers contain 1-2
+        hallucinations"
+
+Generated papers and reviews (measured with detectors):
+
+- [Pangram's ICLR 2026 analysis](https://www.pangram.com/blog/pangram-predicts-21-of-iclr-reviews-are-ai-generated),
+    Pangram Labs blog, 18 Nov 2025.
+    - "21%, or 15,899 reviews, were *fully AI-generated*"; "over half of the
+        reviews had some form of AI involvement"; "9% of submissions had over
+        50% AI content"
+    - "the more AI is present in a review, the higher the score is", same
+        direction as Latona 2024
+    - vendor claims "1 in 10,000" false positives; no independent check on
+        reviews
+- [Delving into LLM-assisted writing in biomedical publications through excess
+    vocabulary](https://arxiv.org/abs/2406.07016), Dmitry Kobak, Rita
+    González-Márquez, Emőke-Ágnes Horvát, Jan Lause, Science Advances, 2025.
+    - no detector: counts words that suddenly got more common in 15 million
+        PubMed abstracts
+    - "at least 13.5% of 2024 abstracts were processed with LLMs", "reaching
+        40% for some subcorpora"
+    - shows use, not harm
+- [Scientific production in the era of Large Language
+    Models](https://arxiv.org/abs/2601.13187), Keigo Kusumegi, Xinyu Yang,
+    Paul Ginsparg, Mathijs de Vaan, Toby Stuart, Yian Yin, Science, 2025.
+    - "scientists adopting LLMs to draft manuscripts demonstrate a large
+        increase in paper production, ranging from 23.7-89.3%"
+    - "LLM use has reversed the relationship between writing complexity and
+        paper quality, leading to an influx of manuscripts that are
+        linguistically complex but substantively underwhelming"
+- [Comment on Scientific production in the era of large language
+    models](https://arxiv.org/abs/2605.17979), Thomas Renault, Antonin
+    Bergeaud, Clément Bosquet, arXiv, 2026.
+    - says the production number is an artifact: an author counts as an
+        adopter from the first month one of their abstracts gets flagged, and
+        "detected-adoption months are disproportionately high-output months"
+    - three placebo tests, including "a pre-ChatGPT observation window", "each
+        produce a similarly positive post-treatment pattern"
+    - a good warning for any study that dates "adoption" by first detection
+- [GPT-fabricated scientific papers on Google
+    Scholar](https://misinforeview.hks.harvard.edu/article/gpt-fabricated-scientific-papers-on-google-scholar-key-features-spread-and-implications-for-preempting-evidence-manipulation/),
+    Jutta Haider, Kristofer Rolf Söderström, Björn Ekström, Malte Rödl, HKS
+    Misinformation Review, 2024.
+    - found 139 papers by searching Google Scholar for leftover chatbot
+        phrases; 57% on "policy-relevant subjects (i.e., environment, health,
+        computing)"
+    - a floor from careless authors, like NewsGuard's method
+- [Explosion of formulaic research articles, including inappropriate study
+    designs and false discoveries, based on the NHANES US national health
+    database](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3003152),
+    Tulsi Suchak, Anietie E. Aliu, Charlie Harrison, Reyer Zwiggelaar, Nophar
+    Geifman, Matt Spick, PLOS Biology, 2025.
+    - papers of one template on one public dataset went from about 4 a year
+        (2014 to 2021) to 190 in 2024
+    - the paper infers AI and paper mills from the timing and the sameness; it
+        does not detect generated text
+
+What venues did about it (shows the cost was real to them):
+
+- arXiv CS stopped taking review and position papers without prior peer
+    review on 31 Oct 2025. From
+    [404 Media](https://www.404media.co/arxiv-changes-rules-after-getting-spammed-with-ai-generated-research-papers/):
+    "We now receive hundreds of review articles every month", and "Generative
+    AI / large language models have added to this flood by making
+    papers—especially papers not introducing new research results—fast and
+    easy to write".
+- In May 2026 arXiv's CS chair Thomas Dietterich announced a one-year ban for
+    "incontrovertible evidence" of unchecked generated content such as
+    references that do not exist, per
+    [The Next Web](https://thenextweb.com/news/arxiv-ai-slop-ban-researchers-preprint).
+
+## Made-up package names, court citations, bug reports
+
+My take: models make up names at a measured and still nonzero rate, and the
+downstream damage is counted in courts and in open source bug trackers. For
+packages, the attack is shown to be possible, but I found no measured case of
+an attacker registering a made-up name and getting installs.
+
+- [We Have a Package for You! A Comprehensive Analysis of Package
+    Hallucinations by Code Generating LLMs](https://arxiv.org/abs/2406.10279),
+    Joseph Spracklen, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti,
+    Bimal Viswanath, Murtuza Jadliwala, USENIX Security, 2025.
+    - 576,000 generated code samples, 16 models
+    - "the average percentage of hallucinated packages is at least 5.2% for
+        commercial models and 21.7% for open-source models, including a
+        staggering 205,474 unique examples of hallucinated package names"
+- [The Range Shrinks, the Threat Remains: Re-evaluating LLM Package
+    Hallucinations on the 2026 Frontier-Model
+    Cohort](https://arxiv.org/abs/2605.17062), Aleksandr Churilov, arXiv, 2026.
+    - reruns Spracklen on five 2025 to 2026 models: "overall hallucination
+        rates between 4.62% (Claude Haiku 4.5) and 6.10% (GPT-5.4-mini)"
+    - "127 package names (109 on PyPI, 18 on npm) that all five evaluated
+        models invent identically"; after telling the registries, 53 "remain
+        registrable by an attacker"
+    - per [CSO Online](https://www.csoonline.com/article/4201164), he found
+        "no evidence that any of the remaining 53 names have been registered
+        maliciously, nor used in an attack"
+    - single independent author, not peer reviewed
+- [Large Legal Fictions: Profiling Legal Hallucinations in Large Language
+    Models](https://arxiv.org/abs/2401.01301), Matthew Dahl, Varun Magesh,
+    Mirac Suzgun, Daniel E. Ho, Journal of Legal Analysis, 2024.
+    - lab: models asked checkable questions about random federal cases are
+        wrong "between 58% of the time with ChatGPT 4 and 88% with Llama 2"
+- [AI Hallucination Cases database](https://www.damiencharlotin.com/hallucinations/),
+    Damien Charlotin, ongoing.
+    - in the wild: court decisions where a court "explicitly found (or
+        implied) that a party relied on hallucinated content"; 2,149 cases as
+        of 5 Oct 2026
+    - a count of people who got caught
+- [The end of the curl bug
+    bounty](https://daniel.haxx.se/blog/2026/01/26/the-end-of-the-curl-bug-bounty/),
+    Daniel Stenberg, blog, 26 Jan 2026.
+    - share of reports that were real bugs used to be "north of 15% of the
+        submissions ending up confirmed vulnerabilities" and in 2025
+        "plummeted to below 5%"; he blames an "explosion in AI slop reports"
+    - one project, the maintainer's own count, but it is a direct cost: they
+        ended the bounty
+- [On Autopilot? An Empirical Study of Human-AI Teaming and Review Practices
+    in Open Source](https://arxiv.org/abs/2601.13754), Haoyu Gao, Peerachai
+    Banyongrakkul, Hao Guan, Mansooreh Zahedi, Christoph Treude, MSR, 2026.
+    - "over 67.5% of AI-co-authored PRs originate from contributors without
+        prior code ownership", and from such contributors "approximately 80%
+        merged without any explicit review"
+    - so in this dataset the problem is too little checking, not maintainers
+        drowning
+
+## Writing style and language
+
+My take: LLM word habits have clearly entered human writing and even speech.
+That is measured. Whether this is harm is opinion. The stronger harm claim,
+that people who write with an LLM end up sounding and thinking alike, is shown
+only in small lab studies.
+
+- [Empirical evidence of Large Language Model's influence on human spoken
+    communication](https://arxiv.org/abs/2409.01754), Hiromu Yakura, Ezequiel
+    Lopez-Lopez, Levin Brinkmann, Ignacio de la Serna, Lara Kirfel, Prateek
+    Gupta, Ivan Soraperra, Thomas F. Eisenmann, Dirk U. Wulff, Iyad Rahwan,
+    arXiv, 2024 (revised 2026).
+    - "words preferentially generated by ChatGPT, such as delve, showcase,
+        boast, intricacies and meticulous, increased abruptly in spontaneous
+        human speech", in "737,083 hours of conversation from 824,634 podcast
+        episodes, screened for unscripted speech"
+    - plus an experiment with 496 people: "a brief chatbot interaction led
+        participants to adopt its words as their own"
+    - matters for detectors: human text is drifting toward what detectors
+        call AI. The human's notes already list "human may learn word from AI"
+        as a criticism of Liang 2024
+- [Why Does ChatGPT "Delve" So Much? Exploring the Sources of Lexical
+    Overrepresentation in Large Language
+    Models](https://arxiv.org/abs/2412.11385), Tom S. Juzek, Zina B. Ward,
+    COLING, 2025.
+    - "21 focal words whose increased occurrence in scientific abstracts is
+        likely the result of LLM usage"; could not pin down why models overuse
+        them
+- [Does Writing with Language Models Reduce Content
+    Diversity?](https://arxiv.org/abs/2309.05196), Vishakh Padmakumar, He He,
+    ICLR, 2024.
+    - lab: essays written with InstructGPT are more alike; "the
+        user-contributed text remains unaffected", so the sameness comes from
+        the model's own sentences
+- [Generative artificial intelligence enhances creativity but reduces the
+    diversity of novel content](https://arxiv.org/abs/2312.00506), Anil R.
+    Doshi, Oliver P. Hauser, Science Advances, 2024 (I read the arXiv page).
+    - lab: stories written with AI ideas rated better, but "more similar to
+        each other than stories by humans alone"
+- [AI Suggestions Homogenize Writing Toward Western Styles and Diminish
+    Cultural Nuances](https://arxiv.org/abs/2409.11360), Dhruv Agarwal, Mor
+    Naaman, Aditya Vashistha, CHI, 2025.
+    - lab, 118 people: "AI suggestions led Indian participants to adopt
+        Western writing styles"
+
+## Money: publishers, freelancers, creators
+
+My take: the money harm to publishers is real and now has causal evidence,
+but it comes from AI answers shown in place of links, not from generated pages
+competing with human ones. I found no study that measures human sites losing
+readers or ad money to generated sites. That is the gap closest to DeGenTWeb.
+
+AI answers taking clicks:
+
+- [Google users are less likely to click on links when an AI summary appears
+    in the results](https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/),
+    Athena Chapekis, Anna Lieb, Pew Research Center, 22 July 2025.
+    - browsing data of 900 US adults, March 2025, 68,879 searches
+    - users clicked a result link on 8% of visits with an AI summary and 15%
+        without; they clicked a source inside the summary on "just 1% of all
+        visits"
+    - observational: searches that trigger a summary differ from those that
+        do not
+- A randomized experiment by Saharsh Agarwal and Ananya Sen, SSRN, 2026, which
+    I read only through
+    [PPC Land](https://ppc.land/ai-overviews-cut-publisher-clicks-39-8-in-first-randomized-study/):
+    a browser extension hid AI Overviews for a random half of 1,065 US desktop
+    Chrome users. Outbound clicks per search were 0.37 with overviews and 0.62
+    without; searches with no click were 73% against 54%.
+    - this is the causal number, and it is bigger than Pew's
+- [Impact of AI Search Summaries on Website Traffic: Evidence from Google AI
+    Overviews and Wikipedia](https://arxiv.org/abs/2602.18455), Mehrzad
+    Khosravi, Hema Yoganarasimhan, arXiv, 2026.
+    - compares the same articles across languages as AI Overviews rolled out
+        country by country
+    - "default AIO availability reduced English search traffic by 5.45% and
+        4.82%" against German and French
+    - much smaller than the 8% and the click numbers above; Wikipedia gets
+        traffic from many places besides Google
+- Chartbeat data in the Reuters Institute's 2026 trends report, via
+    [Press Gazette](https://pressgazette.co.uk/media-audience-and-business-data/google-traffic-down-2025-trends-report-2026/)
+    (Charlotte Tobitt, 12 Jan 2026): Google search referrals to "more than
+    2,500 publisher websites" "declined globally by a third in the year to
+    November"; ChatGPT referrals are "just 0.02% of total referral traffic".
+    - a trend; the report blames AI summaries but does not isolate them
+- [The crawl-to-click gap: Cloudflare data on AI bots, training, and
+    referrals](https://blog.cloudflare.com/ai-search-crawl-refer-ratio-on-radar/),
+    David Belson, Sam Rhea, Cloudflare blog, 1 July 2025.
+    - pages crawled per visitor sent back; Anthropic 70,900 to 1 in the week
+        of 19 to 26 June 2025
+    - more on crawler load in [crawling](../web_infra/crawling.md)
+
+Work and creators:
+
+- "The Short-Term Effects of Generative Artificial Intelligence on Employment:
+    Evidence from an Online Labor Market", Xiang Hui, Oren Reshef, Luofeng
+    Zhou, Organization Science, 2024; I read the
+    [WashU summary](https://olin.washu.edu/about/news-and-media/news/2023/08/study-ai-tools-cause-a-decline-in-freelance-work-and-incomeat-least-in-the-short-run.php).
+    - Upwork writers after ChatGPT: monthly jobs down 2%, earnings down 5.2%;
+        image freelancers after DALL-E and Midjourney: jobs down 3.7%, income
+        down 9.4%; better-paid freelancers lost more
+- [Deezer newsroom](https://newsroom-deezer.com/2026/07/ai-music-exceeds-50-percent-daily-uploads-deezer/),
+    21 July 2026.
+    - "90,000 AI-generated tracks per day now represent over 50% of all new
+        music uploads", yet only 1 to 3% of listening, and "up to 85% of the
+        streams generated by fully AI-generated tracks were in fact fraudulent
+        in 2025"
+    - the clearest picture I found of supply against demand: a flood of
+        uploads, almost nobody listening, and most of the listening faked to
+        collect royalties. It backs the Medium CEO's claim in the human's
+        notes that generated posts were hardly read, and Simon 2023's argument
+        above. The platform's own detector and its own numbers
+
+## What the evidence adds up to
+
+- Solid, with comparison groups: people moved from Stack Overflow to
+    chatbots; AI answers in search cut clicks to sites; freelance writers and
+    illustrators lost some work.
+- Solid, by direct count: made-up references in published papers and court
+    filings; models inventing package names at around 5%; curl's bug reports.
+- Shown in the lab only: models getting worse from generated training data;
+    rankers preferring generated text; people writing more alike.
+- Counted but with no measured harm: generated news sites, generated
+    misinformation, generated reviews, generated music uploads.
+- Mostly argued: that generated pages crowd human pages out of search and ad
+    money; that the web's training value is falling.
+
+Two things stand out to me. First, the best measured harms come from people
+using chatbots instead of visiting sites, not from generated content on the
+web. Second, where supply and demand were both measured (Deezer, Medium,
+Community Notes), generated content is a large share of what gets uploaded and
+a small share of what gets seen. A count of generated sites, which is what
+DeGenTWeb gives, says little about harm until it is joined with who visits
+them.
+
+## Research we could do
+
+1. Weigh DeGenTWeb's site labels by traffic. Do LLM-dominant sites get
+    visits, search impressions and ads, or do they sit unread like Deezer's
+    uploads? Use Tranco or CrUX rank, Common Crawl's host link graph, ads.txt
+    and ad tags on the page. Builds on DeGenTWeb, Deezer's upload against
+    stream numbers, Simon 2023, NewsGuard (which has no traffic data).
+2. Test source bias on a live engine. The lab papers (Dai 2024, Wang 2025)
+    rewrote passages; nobody ran the matched test on real results. For queries
+    where both LLM-dominant and human sites answer, compare their rank after
+    controlling for site age and inbound links. DeGenTWeb already has Bing
+    results labeled per site. Builds on Dai 2024, Wang 2025, Yu 2026, the
+    Ahrefs 2026 correlation.
+3. Do answer engines cite generated sites? Send the DeGenTWeb how-to queries
+    to AI Overviews, ChatGPT search and Perplexity, collect cited URLs, and
+    label the sites. This is Retrieval Collapse (Yu 2026) measured in the wild
+    instead of simulated, and Spiral of Silence (Chen 2024) with real data.
+4. Did human sites that compete with generated sites lose more? For topics
+    where LLM-dominant sites appeared early, check whether human sites on
+    those topics lost search visibility or stopped posting sooner than human
+    sites on untouched topics. Same design idea as Lyu 2025 (similar against
+    dissimilar Wikipedia articles) and del Rio-Chanona 2024. This is the
+    missing study in the money section. It needs a traffic or posting-rate
+    signal; posting rate can come from Common Crawl and the Internet Archive.
+5. Site-level training value. Russell 2026 labels tokens with a paid detector
+    its authors sell. Redo a small version with DeGenTWeb's site labels:
+    train small models on text from LLM-dominant sites against matched human
+    sites. Split generated sites by whether they restate human pages or make
+    things up, because Kang 2025 says that split decides harm. An independent
+    check on a result people will quote a lot.
+6. Reference checking on the web. Made-up references are the one harm that
+    needs no detector. Run a RefChecker-style check (Russinovich 2026) on
+    outbound links and cited sources of web pages: do LLM-dominant sites cite
+    pages, papers or packages that do not exist more often? If yes, it is both
+    a harm measure and a detector-free signal to validate DeGenTWeb's labels.
+7. Made-up package names in the wild. Churilov 2026 found no attack on his
+    127 names. Scan crawled tutorial pages and public repositories for
+    install commands naming packages that do not exist, and watch the
+    registries for who registers them. Builds on Spracklen 2025, Churilov
+    2026. This fits a web measurement group better than a model evaluation.
+8. Where do the readers of dead Q&A sites' topics go? Stack Overflow fell 99%.
+    Check whether generated how-to sites now rank for the queries Stack
+    Overflow used to answer. Joins the knowledge site section with DeGenTWeb's
+    how-to query set.
+
+I would start with 1 and 2. Both reuse data DeGenTWeb already has, and both
+answer the question a reviewer will ask of a prevalence paper: so what?
+
+## Gaps in this review
+
+- ChatGPT was not consulted; the tool fails on login.
+- I read abstracts and summary pages for most papers, not full texts. The
+    Lancet letter, the Agarwal and Sen experiment, Hui 2024 and the Ahrefs
+    study were read only through secondary pages, as marked.
+- Not covered: generated images and video beyond misinformation counts,
+    deepfake fraud, education and student cheating, generated books on
+    Amazon, social media bots (the human's notes list them), and the fake
+    review literature from before LLMs.
