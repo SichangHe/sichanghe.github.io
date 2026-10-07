@@ -88,7 +88,9 @@ ChatGPT consultation
 - first invocation failed before submission
     - helper diagnostic: `terminal_prepare_failed`, `TimeoutError`
 - retry verified the requested Extra High setting
-    - consultation submitted and answer pending
+    - consultation submitted but returned no answer
+    - helper diagnostic: `account_ui_retry_required`
+    - no ChatGPT consultation result available
 - manager help requested after first failure
 - no ChatGPT opinion is treated as literature evidence
 

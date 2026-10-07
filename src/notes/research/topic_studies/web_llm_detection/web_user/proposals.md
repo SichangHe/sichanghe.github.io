@@ -12,7 +12,29 @@ recommendation
     - no venue suitability or novelty guarantee
     - full-text review of the closest work is required before scaling
 
-1. version errors and apparent corroboration in technical search
+1. sponsorship disclosure lost during extraction
+
+- question: does a tool retain promotional claims but discard the label that explains who paid for them?
+- user benefit: distinguish paid promotion from independent evidence
+- [complete design](ads/proposals.md)
+- decisive pilot
+    - known sponsored or affiliate passages with explicit disclosures
+    - compare rendered page, HTML, accessibility tree, article extraction, and answer
+    - move disclosures while leaving underlying claims fixed
+- compare
+    - ordinary extraction, label-preserving extraction, and original page
+- primary outcome: retained commercial claims still linked to their disclosure
+    - false commercial labels on ordinary content are a separate cost
+- closest work
+    - [affiliate disclosure, accessibility, native ads, AdGraph, PERCIVAL](ads/literature.md)
+        - prior studies already detect ads and measure disclosure problems
+- potential contribution
+    - measure and prevent information loss between tools
+    - payment ground truth is necessary
+- negative result worth keeping
+    - one small extractor fix prevents nearly all failures
+
+2. version errors and apparent corroboration in technical search
 
 - question: how often do live technical answers cite the wrong software version or overstate a guarantee?
 - recent evidence changes the initial recommendation
@@ -41,28 +63,6 @@ recommendation
     - show an inexpensive mitigation improves operational answers
 - negative result worth keeping
     - errors are rare or simple version filtering solves them
-
-2. sponsorship disclosure lost during extraction
-
-- question: does a tool retain promotional claims but discard the label that explains who paid for them?
-- user benefit: distinguish paid promotion from independent evidence
-- [complete design](ads/proposals.md)
-- decisive pilot
-    - known sponsored or affiliate passages with explicit disclosures
-    - compare rendered page, HTML, accessibility tree, article extraction, and answer
-    - move disclosures while leaving underlying claims fixed
-- compare
-    - ordinary extraction, label-preserving extraction, and original page
-- primary outcome: retained commercial claims still linked to their disclosure
-    - false commercial labels on ordinary content are a separate cost
-- closest work
-    - [affiliate disclosure, accessibility, native ads, AdGraph, PERCIVAL](ads/literature.md)
-        - prior studies already detect ads and measure disclosure problems
-- potential contribution
-    - measure and prevent information loss between tools
-    - payment ground truth is necessary
-- negative result worth keeping
-    - one small extractor fix prevents nearly all failures
 
 3. evidence disappears before the whole page fails
 
