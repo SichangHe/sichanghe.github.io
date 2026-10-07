@@ -1,0 +1,173 @@
+Rust dependencies and security
+(authored by agents unless marked 🧑)
+
+research takeaway
+
+- inference: Rust removes some memory mistakes but does not decide whether a dependency deserves trust
+  - a dependency can deliberately steal data using valid, memory-safe code
+  - our strongest candidate is measuring what dependency code can do during builds, then testing whether restricting those actions prevents real attacks without breaking normal builds
+- scope: published research, incident records, and existing tools
+  - evidence checked 2026-10-07
+  - statements labeled proposal are research ideas, not established findings
+  - newer papers whose full text was inaccessible are discovery leads, not evidence for quantitative conclusions
+
+existing work
+
+- ecosystem data: Schueller, Wachs, Servedio, Thurner, and Loreto, Scientific Data 2022
+  - [Evolving collaboration, dependencies, and use in the Rust Open Source Software ecosystem](https://www.nature.com/articles/s41597-022-01819-z)
+  - author quotation: “The data covers eight years of developer contributions to Rust libraries”
+  - contribution: links dependency history, developer activity, downloads, and repository visibility
+    - useful for identifying heavily reused crates maintained by few people
+    - useful for reconstructing downstream effects of an update
+  - author quotation: “by no means an objective measure”
+  - limit: reuse and visibility do not measure maliciousness or vulnerability
+  - limit: the collected historical population does not establish the state of today's ecosystem
+  - inference: an exposure study should reconstruct version-specific dependencies and actual build configurations
+    - repository-level dependency graphs can merge unrelated packages
+    - package presence does not establish that a vulnerable function executes
+- known vulnerabilities: RustSec and cargo-audit
+  - [RustSec project README](https://github.com/RustSec/rustsec)
+  - project quotation: “Audit Cargo.lock against the advisory DB”
+  - contribution: reproducible matching between locked dependency versions and published advisories
+  - inference: useful baseline for measuring known exposure
+    - cannot establish absence of undiscovered vulnerabilities
+    - cannot determine exploitability from a lockfile alone
+- intentional malware: rustdecimal incident, 2022
+  - [Rust Security Response WG and crates.io team incident record, reproduced by RustSec](https://rustsec.org/advisories/RUSTSEC-2022-0042.html)
+  - source quotation: “The crate name was intentionally similar to the name of the popular `rust_decimal` crate”
+  - mechanism: misleading package name plus a payload triggered when a function ran in GitLab CI
+  - observed scope: the source reports fewer than 500 downloads and no crates.io dependents
+  - limit: download count does not establish number of affected systems
+  - limit: this incident used a runtime function; it is not evidence that every crate attack uses a build script
+- build-time malware: oncecell incident, reported 2023 and documented retrospectively in 2026
+  - [RustSec RUSTSEC-2023-0101](https://rustsec.org/advisories/RUSTSEC-2023-0101.html)
+  - source quotation: “contained a malware payload in build.rs to exfiltrate host information to the attacker”
+  - source quotation: “no longer available”
+    - refers to the malicious crate's version information and download records
+  - inference: retrospective attack datasets can systematically lose the evidence needed to estimate exposure
+    - preserve incident timestamps, evidence availability, and uncertainty separately
+- build scripts are executable dependency code
+  - [Cargo Book, build scripts](https://doc.rust-lang.org/cargo/reference/build-scripts.html)
+  - documentation quotation: “Cargo will compile a build script into an executable”
+  - legitimate roles include compiling C libraries, discovering host libraries, and generating code
+  - inference: removing build scripts wholesale would break legitimate packages
+    - a study should separate necessary actions from unexpected network, filesystem, and process activity
+- procedural macros also execute during compilation
+  - [Rust Reference, procedural macros](https://doc.rust-lang.org/reference/procedural-macros.html)
+  - documentation quotation: “Procedural macros run during compilation, and thus have the same resources that the compiler has”
+  - inference: a dependency review that considers only runtime code misses another route to the build machine
+- shared dependency reviews: cargo-vet
+  - [Mozilla cargo-vet](https://github.com/mozilla/cargo-vet)
+  - project quotation: “third-party Rust dependencies have been audited by a trusted entity”
+  - contribution: makes an explicit review requirement checkable across dependency updates
+  - inference: review coverage, reviewer trust, and review criteria are different questions
+    - a satisfied policy is not evidence that every possible attack was ruled out
+- distributed reviews: cargo-crev
+  - [cargo-crev project](https://github.com/crev-dev/cargo-crev)
+  - project quotation: “A cryptographically verifiable code review system for the cargo (Rust) package manager”
+  - contribution: signed review records and relationships expressing which reviewers a user trusts
+  - inference: signatures establish who made a statement, not whether the statement is correct
+- dependency policy: cargo-deny
+  - [Embark Studios cargo-deny](https://github.com/EmbarkStudios/cargo-deny)
+  - project quotation: “The sources check ensures crates only come from sources you trust”
+  - contribution: checks advisory records, licenses, allowed packages, duplicate versions, and sources
+  - inference: policy checking complements source review but does not replace it
+- existing Rust-specific permissions: Cackle / cargo-acl
+  - [David Lattimore and contributors, Cackle README](https://github.com/cackle-rs/cackle)
+  - project quotation: “Can run build scripts, tests in a sandbox to restrict network and filesystem access”
+  - contribution: per-build-script sandbox configuration and whole-compiler sandboxing for procedural macros
+    - also checks dependency API use and omits unreachable code
+  - project quotation: “currently not granular”
+    - refers to procedural macro permissions shared across the compiler process
+  - limit: the project explicitly describes configuration gaps and possible evasion
+  - implication: a generic Rust dependency sandbox or API permission checker is already existing work
+- earlier Cargo sandbox effort
+  - [Rust Secure Code WG cargo-sandbox README](https://github.com/rust-secure-code/cargo-sandbox)
+  - project quotation: “This tool is in the planning stage and is not presently usable”
+  - implication: distinguish an existing design proposal from a usable evaluation baseline
+- contributor reputation research: Hamer, Imtiaz, Tamanna, Shabrina, and Williams, IEEE TSE 2025
+  - [Trusting Code in the Wild: Exploring Contributor Reputation Measures to Review Dependencies in the Rust Ecosystem](https://doi.org/10.1109/TSE.2025.3551664)
+  - publisher title quotation: “Exploring Contributor Reputation Measures to Review Dependencies in the Rust Ecosystem”
+  - paper identity checked against [publisher-deposited metadata](https://api.crossref.org/works/10.1109/TSE.2025.3551664)
+  - limit: full text unavailable in this pass
+    - no claim here about prediction accuracy, dataset size, or whether reputation predicts security
+    - read before proposing a supposedly new reputation score
+- Rust package-name attacks: Vu, Nguyen, and Vu, ASIA CCS 2025 poster
+  - [POSTER: TYPOSQUATTING ATTACKS ON THE RUST ECOSYSTEM](https://doi.org/10.1145/3708821.3735340)
+  - publisher title quotation: “TYPOSQUATTING ATTACKS ON THE RUST ECOSYSTEM”
+  - paper identity checked against [publisher-deposited metadata](https://api.crossref.org/works/10.1145/3708821.3735340)
+  - limit: poster full text unavailable
+    - established relevance, not an independently checked measurement result
+
+security categories must stay separate
+
+- memory safety across dependencies and native libraries
+  - [RustSec time incident](https://rustsec.org/advisories/RUSTSEC-2020-0071.html)
+  - source quotation: “The affected functions set environment variables without synchronization”
+  - source quotation: “Non-Unix targets (including Windows and wasm) are unaffected”
+  - implication: platform, function use, and concurrency affect actual exposure
+- algorithmic security
+  - [RustSec oqs SIKE incident](https://rustsec.org/advisories/RUSTSEC-2022-0045.html)
+  - source quotation: “the secret key of SIKEp751 can be recovered in a matter of hours”
+  - implication: a memory-safe implementation can faithfully implement a broken cryptographic scheme
+- maintenance risk
+  - [RustSec ansi_term notice](https://rustsec.org/advisories/RUSTSEC-2021-0139.html)
+  - source quotation: “Type INFO Unmaintained”
+  - implication: do not count every advisory as an exploitable vulnerability
+- malicious publication
+  - use incident records above
+  - implication: do not combine attacker-written packages with accidental bugs into one undifferentiated rate
+
+research proposals
+
+- proposal 1: measure and restrict dependency actions during builds
+  - prior: Cackle / cargo-acl, Cargo extensions, RustSec incidents, cargo-vet reviews
+  - question: which filesystem, network, and process actions are necessary for typical Rust builds?
+  - new candidate: a configuration-specific permission record tied to an exact package version
+    - compare recorded legitimate actions against incident mechanisms
+    - test whether separating individual procedural macro permissions improves Cackle's shared compiler permission boundary
+    - study changes between releases instead of only labeling entire crates suspicious
+  - why it may matter: reduces what stolen package credentials or malicious dependencies can do on developer and CI machines
+  - evaluation
+    - stratified corpus with pure Rust, native libraries, generated code, procedural macros, and cross-compilation
+    - measure build success, missed malicious actions, unnecessary restrictions, runtime overhead, and reviewer effort
+    - replay harmless versions of documented attack mechanisms in isolated machines
+    - hold out later releases to test whether policies generalize
+  - novelty risk: Cackle already provides Rust build sandboxing and permission policies
+    - compare against Cackle under identical workloads
+    - publish only if update-specific evidence or separate macro permissions improves measured protection and review effort
+- proposal 2: measure exploitable dependency exposure rather than lockfile warnings
+  - prior: RustSec matching, Schueller et al. dependency history, Cargo feature resolution
+  - [Cargo features documentation](https://doc.rust-lang.org/cargo/reference/features.html)
+    - documentation quotation: “union of all features enabled”
+  - new candidate: exposure estimates conditioned on target OS, enabled features, native libraries, and vulnerable function use
+  - why it may matter: separates urgent warnings from unavailable code paths
+  - evaluation
+    - manually audited sample of incidents with explicit affected functions or platforms
+    - compare lockfile matching, configuration filtering, function-use analysis, and Cackle's reachable API checks
+    - report false negatives separately from reductions in warning count
+    - evaluate build-time execution separately from application call paths
+  - novelty risk: dependency reachability analysis exists in other languages
+    - Rust-specific feature unification and build-time code must produce more than a port
+- proposal 3: review effort should follow risky changes rather than popularity
+  - prior: cargo-vet, cargo-crev, contributor reputation paper, ecosystem history dataset
+  - new candidate: test whether new permissions, native code, unsafe interfaces, and maintainer changes identify updates deserving review
+  - why it may matter: limited reviewer time is the practical constraint
+  - evaluation
+    - reconstruct what was knowable before each incident or advisory
+    - compare random selection, popularity, reputation, and code-change signals under equal reviewer budgets
+    - measure confirmed problems found per review hour
+    - separate malicious packages, accidental vulnerabilities, and abandoned packages
+  - limit: few public malicious incidents may make estimates unstable
+    - report uncertainty and unavailable evidence
+    - avoid treating an unreported problem as a confirmed clean package
+
+recommended starting point
+
+- opinion: begin proposal 1 with a measurement study
+  - permissions are observable and directly connected to documented build-time attacks
+  - postpone a new defense until evidence shows what normal packages require
+- remaining reading gap
+  - obtain the full contributor-reputation paper and package-name attack poster
+  - survey existing build sandbox and dependency-reachability systems before claiming novelty
+  - this review does not establish that these candidate directions are previously unstudied
