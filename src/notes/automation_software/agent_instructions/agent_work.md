@@ -136,6 +136,8 @@ those steps were correct; avoid checking every single step you take.
 Run each command whose description matches the current task.
 
 - `getagentsmd get grill_me`: Use asked to plan or design in detail.
+- 🤖 `getagentsmd get cheap_to_strong_search`: Use when
+    searching material too large for one agent to read.
 - `getagentsmd get persistent_agent_instructions`: Draft or
     revise agent instructions intended to persist beyond the current task or
     govern multiple tasks or agents.
