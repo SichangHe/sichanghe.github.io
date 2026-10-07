@@ -44,6 +44,10 @@ where the existing notes already answer the question
 - [Vero](../../../vero_20260821.md): whole-instance Lean evaluation and the tradeoff from implementation freedom
 - [Proofs Promptly](../../../proofs_promptly_20260821.md): substantial F*/Pulse work with expert specification review and occasional invariant help
 - [October frontier scan](../../../verus_frontier_20261006.md): SO-RSI discovery and deployment-boundary proposals
+- [broader literature directions](../../../literature_directions.md): AlphaVerus, VeruSyn, KVerus, and repository-level retrieval
+- [existing proposal](../../../new_work_arguments.md): assumption records tied to code changes
+  - proposals below add matched reconstruction and transfer experiments
+  - recording assumptions alone is already proposed there
 - these links carry the earlier studies' evidence and caveats
   - the sections below add comparisons and papers not explained there
 
@@ -55,7 +59,8 @@ retrieving context for fixed-code proofs
   - fact: Zhong, Zhu, Tian, and Si, arXiv preprint, February 2025
   - fact: the opened version is v1
     - the [author repository](https://github.com/GouQi12138/RVBench) links a later paper through [ACM DOI](https://doi.org/10.1145/3759425.3763382)
-    - its later full paper was not opened here
+    - its later full paper was opened from the existing collection
+    - the next entry separates the expanded published benchmark from this preprint
   - fact: retrieves proof examples and dependency information from a repository
     - generates annotations for existing implementations and contracts
     - evaluated repository tasks are proof completion, not new implementations
@@ -69,6 +74,19 @@ retrieving context for fixed-code proofs
     - inference: the result should not be read as transfer without examples
   - fact: on 331 complex tasks, both refinement methods solve 52
     - inference: the overall gain comes from the simple subset
+
+- [Towards Repository-Level Program Verification with Large Language Models](https://doi.org/10.1145/3759425.3763382)
+  - fact: Zhong and Si, LMPL 2025, peer-reviewed workshop paper
+  - fact: expanded published RAGVERUS study
+    - RVBench contains 755 tasks from four Verus projects
+    - the earlier preprint's 383 tasks are the VeriSMo subset
+  - authors, §5.4.1: “our evaluation assesses proof completion per function”
+  - claim: on IronKV, 27/129 tasks pass correctness and edit-integrity checks
+    - versus 17/129 for refinement, Table 4
+    - retrieving examples and dependencies helps in this setting
+  - inference: cite this published version for the expanded benchmark
+    - keep the preprint's different population and numbers explicit
+  - [earlier coverage](../../../literature_directions.md)
 
 - [VerusSeek: Enhancing LLM-Based Proof Synthesis for Rust Programs via Semantic Chunking and Hierarchical Context Expansion](https://doi.org/10.1007/978-3-032-30693-7_6)
   - fact: Zhang et al., TASE 2026, peer-reviewed proceedings chapter
@@ -144,6 +162,30 @@ systems proofs and module-wide contracts
     - the unfilled question is reliable transfer and independent contract adequacy at larger scale
   - fact: [artifact](https://github.com/ChuyueSun/VeriStruct)
 
+- [KVerus: Scalable and Resilient Formal Verification Proof Generation for Rust Code](https://arxiv.org/abs/2605.03822v2)
+  - fact: Liu et al., opened August 2026 v2
+    - arXiv comments report ASE 2026 acceptance
+    - proceedings version not opened in this pass
+  - fact: combines dependency context, semantic lemma retrieval, toolchain knowledge, and error-guided repair
+    - human review is part of production integration
+  - claim: 183/359 repository-derived targets solved, 51.0%
+    - baseline: 16/359, 4.5%, Table 1
+    - MathSpec-Bench 81/104, allocator 50/89, CortenMM 52/166
+  - authors, evaluation setup: “report the union of results across repetitions”
+    - fact: three repetitions, Claude Sonnet 4.0, at most ten refinement queries
+    - inference: 51.0% is cumulative coverage, not one-run expected success
+  - authors, benchmark setup: “keeping shared lemmas intact”
+    - context: existing target proofs are removed
+    - inference: jointly rebuilding missing shared lemmas remains a different experiment
+  - claim: production patches verify 23 previously unverified CortenMM functions and introduce 6 reusable lemmas
+    - accepted upstream according to the abstract
+    - inference: generating reusable lemmas is already demonstrated
+  - fact: human reviewers assess specification suitability and proof maintainability, §3.5
+  - fact: §4.4 and Table 5 evaluate Verus releases 20250328, 20250630, and 20250813
+    - version-matched knowledge and error repair are already part of KVerus
+    - inference: verifier-version resilience alone is not a new proposal
+  - [earlier coverage](../../../literature_directions.md)
+
 new implementations and proof-aware search
 
 - [AlphaVerus: Bootstrapping Formally Verified Code Generation through Self-Improving Translation and Treefinement](https://arxiv.org/abs/2412.06176)
@@ -162,6 +204,34 @@ new implementations and proof-aware search
     - context: critique models judge whether translated specifications and programs match the source
   - inference: correct target proofs do not prove that Dafny-to-Verus translation preserves intent
   - fact: [artifact](https://alphaverus.github.io/)
+
+- [P3: joint program-and-proof planning](https://arxiv.org/abs/2608.09277v1)
+  - use the existing [P3 evidence audit](../../../p3_joint_planning_20260813.md)
+  - source scope: supplied Lean specifications, generated implementations and proofs
+  - the audit compares joint planning, implementation-only planning, and sequential planning
+  - exact audit judgment: “joint planning is a credible workflow contribution”
+  - inference: joint planning is already a direct baseline for proof-friendly implementation search
+    - its optional algorithm or complexity instructions also constrain redesign
+
+- [Inductive Deductive Synthesis: Enabling AI to Generate Formally Verified Systems](https://arxiv.org/abs/2605.23109v1)
+  - fact: Agarwal, Krentsel, Liu, et al., May 22, 2026 arXiv preprint
+  - primary identity resolved through the [authors' repository](https://github.com/skydiscover-ai/skydiscover)
+    - existing collection extraction preserved
+    - versioned PDF, text, and provenance added
+  - fact: jointly constructs Rocq implementations and proofs for supplied consistency specifications
+    - temporary proof holes are allowed during search and must be closed at acceptance
+    - final candidates are extracted to OCaml and measured on a five-VM runtime
+  - author claim: completes seven specifications in 6.8 hours and $106 per specification on average
+    - abstract: “7/7 in about 6.8 hours and $106 per spec”
+    - the seven include a published Chapar specification and six author-supplied specifications
+  - fact: performance measurements guide further search
+    - abstract: “performance feedback into the same loop”
+  - author limitation: fixed formal specifications remain an expert input
+    - §6: “requires a formal Rocq specification as input”
+  - inference: code/proof co-synthesis with performance feedback is already demonstrated
+    - a new Rust study needs a more precise distinction
+    - measured throughput is not a formal resource-bound proof
+    - the paper's expert-speedup estimate is not a controlled expert baseline
 
 - existing code-and-proof results need resource requirements
   - fact: the [Vero note](../../../vero_20260821.md) documents agent simplifications that retain formal behavior while sacrificing efficiency
@@ -187,6 +257,22 @@ what exactly improves in self-improvement
     - inference: that score combines proof capability with the quality and strength of generated statements
   - inference: verifier filtering is reliable for a frozen statement
     - it cannot independently certify that generated statements express the intended task
+
+- [Reducing the Costs of Proof Synthesis on Rust Systems by Scaling Up a Seed Training Set](https://arxiv.org/abs/2602.04910v3)
+  - fact: Di et al., VeruSyn, opened May 2026 v3 preprint
+  - fact: synthetic verified programs and agent trajectories fine-tune Qwen2.5-Coder-32B-Instruct
+  - authors, abstract: “6.9 million Rust programs”
+    - context: each has a specification and proof
+  - claim: 49% Accuracy@600 with debugging on 560 VeruSAGE tasks
+    - direct prompting of Sonnet 4.5: 54%, Table 1
+    - claimed average inference spending: $0.61 versus $39.24 per task, Table 2
+    - training and data-generation expense is not included in this per-task comparison
+  - authors, §5.2: “does not involve any coding agent”
+    - inference: these scores are not comparable to VeruSAGE's 81% agent score
+  - fact: 47 over-context tasks count as failures rather than vanish from the denominator
+  - inference: cheaper proof models are already a substantial research direction
+    - a useful extension tests them inside controlled agents and on project-separated tasks
+  - [earlier coverage](../../../literature_directions.md)
 
 - [Second-Order Problem Solving for Recursive Self-Improvement in Formal Verification](https://arxiv.org/abs/2610.05701v1)
   - fact: Jiang, Vempaty, and Jagmohan, October 5, 2026 arXiv preprint
@@ -216,6 +302,8 @@ what exactly improves in self-improvement
   - inference: classify it separately from SAFE weights, AlphaVerus examples, and SO-RSI workflow code
   - inference: compare these forms under one fixed model, checker, budget, and held-out project set
     - a pass-rate comparison across their existing papers would mix too many conditions
+  - KVerus already evaluates resilience to verifier updates
+    - the proposed extension is learned-guidance transfer with sealed claim boundaries
 
 an adjacent paper whose name can mislead
 
@@ -237,6 +325,7 @@ what the evidence leaves unresolved
 - whole-module recovery under jointly missing helper proofs
   - VeruSAGE supplies helper contracts and skips helper bodies
   - RagVerus erases one function at a time
+  - KVerus keeps shared lemmas intact while evaluating missing target proofs
   - VeriStruct and CryptoProver already tackle multiple functions
     - inference: the gap is a matched, broad reconstruction study with sealed boundaries
     - not a claim that nobody has verified multiple functions
@@ -253,89 +342,34 @@ what the evidence leaves unresolved
   - newly inserted proof bypasses change the claim
   - inference: graders should freeze the intended boundary and report both kinds separately
 
-research we can do
+research implications
 
-1. reconstruct a module when its helper proofs disappear together
-
-- question: can agents invent shared invariants instead of relying on supplied helper contracts?
-- builds on: VeruSAGE extraction, RagVerus retrieval, VeriStruct planning, [CryptoProver](../../../cryptoprover_20260807.md) integrity checks, and [Vero](../../../vero_20260821.md) whole-instance scoring
-- proposed new contribution: compare isolated and jointly removed proofs on the same original Verus modules
-  - restore every dependent proof needed for the target module
-  - preserve original executable code, contracts, and baseline trust assumptions
-- why it may matter: local success can hide the cost of constructing the reusable proof foundation
-- first experiment: 12 modules across 3 projects, stratified by dependency depth
-  - compare one-hole tasks, all-proof-holes tasks, and all-proof-holes with reusable lemma discovery
-  - use one strong general agent as the main baseline
-  - reproduce the original module build in a fresh checkout
-- convincing result: higher complete-module success at matched spending
-  - every generated helper checks without added assumptions
-  - improvement remains after same-project reference proofs are hidden
-  - report cost, failures, proof dependencies, and repeated-run uncertainty
-- cost: benchmark extraction, dependency closure, and several hundred agent runs
-  - pilot estimate: hundreds to low thousands of dollars
-  - this is an estimate, not a measured budget
-- closest work that could scoop it: CryptoProver, VeriStruct, and Vero
-  - weak novelty if the only change is larger modules
-  - stronger novelty if jointly missing proofs reveal and address a measured failure mechanism
-
-2. learn guidance that survives project and verifier changes
-
-- question: do learned verification lessons improve unseen-project results without weakening what gets proved?
-- builds on: SAFE data synthesis, AlphaVerus examples, VeriSkill guidance, and SO-RSI executable diagnosis
-- proposed new contribution: one matched experiment separating the object that improves
-  - frozen weights with examples
-  - frozen weights with written lessons
-  - frozen weights with workflow edits
-  - weight updates are an optional later arm
-- why it may matter: teams need improvements that survive moving to a new codebase
-- first experiment: evolve on two projects and evaluate once on a third
-  - repeat with each project held out
-  - freeze contracts and assumptions outside agent write access
-  - split whole files, modules, and closely related algorithms together
-  - include all evolution and diagnostic spending in the budget
-  - evaluate an additional verifier version as a separate transfer condition
-- convincing result: better whole-module completion on untouched projects
-  - equivalent claim boundaries and no new bypasses
-  - per-project gains and uncertainty, not only an aggregate task average
-  - diagnostic records support why lessons transfer
-- cost: several matched evolution runs plus held-out evaluation
-  - SO-RSI's 24-hour runs suggest starting with a smaller pilot
-  - a full weight-training study would require a separate compute budget
-- closest work that could scoop it: VeriSkill, SO-RSI, SAFE, and general agent self-improvement studies
-  - inference: novelty is controlled transfer and semantic integrity, not another reflection prompt
-
-3. choose proof-friendly implementations while preserving resource requirements
-
-- question: can an agent reduce proof cost without making the program too slow or too large?
-- builds on: AlphaVerus code synthesis, [LeetProof](../../../leetproof_20260804.md), and [Vero](../../../vero_20260821.md) implementation freedom
-- proposed new contribution: joint code-and-proof search under independently fixed functional and resource contracts
-  - examples: parser allocation limits, bounded queue storage, or map operation counts
-  - define the cost model explicitly before generation
-- why it may matter: an easy-to-prove replacement can be unusable in a system
-- first experiment: 20 small Rust tasks with two known implementations
-  - one cheap to prove but expensive to run
-  - one operationally efficient but proof-heavy
-  - compare fixed-code proof search with unconstrained and resource-constrained rewriting
-- convincing result: checked functional and resource properties with lower total synthesis cost
-  - validate the formal cost model against concrete measurements separately
-  - measure compiled Rust performance under a declared workload
-  - performance measurements support model relevance rather than replace proofs
-- cost: cost-model annotations, paired implementations, and a small synthesis campaign
-- closest work that could scoop it: verified synthesis with resource bounds and proof-aware compiler optimization
-  - broader literature on these topics still needs a dedicated novelty search
-  - proposal status: promising experiment, unestablished novelty
+- [combined research directions](research_directions.md) contain the full experimental designs and budget estimates
+- candidate 1 should compare isolated versus jointly removed helper proofs
+  - restore every dependent proof needed for the module
+  - KVerus, CryptoProver, VeriStruct, P3, IDS, and Vero are direct baselines
+  - larger modules alone are weak novelty
+- candidate 3 should compare examples, written lessons, and workflow edits
+  - include all improvement spending
+  - hold out related projects and changed contracts
+  - KVerus already covers toolchain-release adaptation
+- a separate synthesis question is whether proof-friendly redesign preserves resource requirements
+  - builds on AlphaVerus, P3, LeetProof, Vero, and IDS
+  - IDS already optimizes measured performance
+  - proposed distinction: independently fixed and checked resource bounds
+  - see the combined note for feasibility and stop conditions
 
 ChatGPT's opinion
 
-- pending the parent study's shared Extra High consultation
-  - these three proposals and the evidence above were sent to the parent
+- see [research directions](research_directions.md) for the shared Extra High consultation
   - no ChatGPT opinion is invented here
 
 what was searched and opened
 
-- eight main primary papers opened in this pass
+- twelve main primary papers opened in this pass
   - RagVerus v1, VerusSeek publisher chapter, VeruSAGE local full text, VeriStruct local full text
   - AlphaVerus ICML full text, SAFE ICLR full text, SO-RSI v1, VeriCoder v2
+  - published RAGVERUS LMPL text, KVerus v2, VeruSyn v3
 - existing notes read before synthesis
   - AutoVerus citations, LeetProof, CryptoProver, StarVerus, VeriSkill, Vero, Proofs Promptly, and October frontier scan
 - discovery queries
@@ -348,7 +382,7 @@ what was searched and opened
     - author READMEs resolved their paper identifiers and artifacts
   - direct arXiv abstract, HTML, and PDF requests succeeded
 - new collection entries
-  - RagVerus v1 and VeriCoder v2 PDFs, extracted text, and arXiv metadata
+  - RagVerus v1, VeriCoder v2, and VeruSyn v3 PDFs, extracted text, and arXiv metadata
   - collection root: `/hdd1/sichanghe/paper_collection`
 - limits
   - reported results are author claims, not reproduced experiments

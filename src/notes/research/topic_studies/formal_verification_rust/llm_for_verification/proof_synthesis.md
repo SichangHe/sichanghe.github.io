@@ -237,45 +237,18 @@ self-improvement has several meanings
   - prose guidance can become stale or accidentally contain benchmark solutions
   - report both improvement cost and held-out benefit
 
-research we could do
-- proposed direction: proof reuse under library and specification changes
-  - builds on LeanDojo premise retrieval, LEGO-Prover checked lemmas, and VeriSkill reusable guidance
-  - proposed new contribution: evaluate which learned facts remain useful after a real Rust dependency or contract changes
-  - experiment
-    - collect consecutive versions of verified modules
-    - hold later projects and changed specifications out of learning
-    - compare retrieval, checked-lemma reuse, and prose guidance with the same proof budget
-    - measure whole-module completion, verifier time, and repair effort
-  - why it may matter: maintenance, rather than first verification, is a recurring systems cost
-  - novelty is unconfirmed
-    - search proof-repair and incremental-verification literature before claiming a first
-- proposed direction: verifier feedback that preserves the original obligation
-  - builds on COPRA, DeepSeek subgoal decomposition, and DafnyPro target checking
-  - proposed new contribution: make each decomposition step produce independently checked obligations while keeping code and required contracts fixed
-  - experiment
-    - allow auxiliary assertions and lemmas
-    - reject weakened contracts, changed executable behavior, and added trusted assumptions
-    - compare whole-proof retry with checked decomposition at equal total cost
-  - why it may matter: it separates real proof progress from making the task easier
-  - novelty is unconfirmed
-- proposed direction: learn from failed proofs without learning weak specifications
-  - builds on expert iteration, DafnySynth, StarVerus, and VeriSkill
-  - proposed new contribution: retain failure explanations and successful repairs only when an independent specification-quality check accepts the task
-  - experiment
-    - freeze specifications before the proof search
-    - use deliberately incorrect implementations to test what those specifications reject
-    - split by project and proof family
-    - compare learning from all checked artifacts with learning from the independently screened subset
-  - why it may matter: verifier acceptance alone can reward valid proofs of unhelpful statements
-  - novelty is unconfirmed
-- proposed direction: measure the price of human proof insight
-  - builds on Proofs Promptly and sketch-guided proving
-  - proposed new contribution: controlled evaluation with recorded, limited expert hints on realistic Rust modules
+research implications
+
+- [combined research designs](research_directions.md) specify the experiments and closest baselines
+- retrieval and learned lemmas motivate candidate 3's dependency-change evaluation
+- checked decomposition must compare against Goedel-Architect, Quarry, Goedel-Code-Prover, and P3
+  - preserving the original target is an evaluation requirement, not by itself a new method
+- recommendation: measure expert hints separately
   - compare no hint, invariant-only hint, and full proof-plan hint
-    - use independently prepared hints
-    - account for expert preparation time
-  - why it may matter: a small amount of expert input may be more useful than many additional model calls
-  - this is a hypothesis to test
+  - include expert preparation time
+  - builds on Proofs Promptly and sketch-guided proving
+  - hypothesis: a small expert intervention may beat many additional model calls
+  - novelty unconfirmed
 
 remaining limits
 - this is a cross-language mechanism review

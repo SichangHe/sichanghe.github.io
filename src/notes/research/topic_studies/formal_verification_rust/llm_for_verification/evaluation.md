@@ -84,7 +84,8 @@ newer tasks broaden the evidence
 - the October Lean-backed VeriContest result adds a translation boundary
   - Serbanuta et al., §4.1: “This validated 658 of the 1007 specs”
     - [paper](https://arxiv.org/abs/2610.03994v1)
-  - inference: the 1007-task evaluation is a different snapshot from the 946-task benchmark paper
+  - inference: the papers report 1007 and 946 tasks
+    - their task-set relationship was not established
     - record versions instead of silently treating counts as interchangeable
     - Lean acceptance establishes the translated statement
     - source-to-target preservation needs separate evidence
@@ -122,40 +123,17 @@ what can make a success misleading
   - private or newly authored tasks reduce known leakage routes
   - do not claim they prove absence of contamination
 
-research we could do
-- proposal: measure how often verification hides a specification defect
-  - builds on VeriContest's negative-test checks and CLEVER's specification comparison
-  - new study: introduce realistic contract defects into verified Rust modules
-    - remove a frame condition describing which state may change
-    - exclude a required boundary input
-    - weaken an output condition
-    - add an invalid trusted helper assumption
-  - compare existing verifier acceptance, tests, equivalence checks and independent counterexample search
-  - measure defect detection and false alarms by defect class
-  - why it may matter: separates proof automation from detecting a wrong verification target
-  - direct competing work: Spec-Harness already measures specification adequacy using symbolic verification and mutation
-    - authors, abstract: “using Hoare-triple based symbolic verification and input/output mutation”
-    - [current paper](https://arxiv.org/abs/2604.00280)
-  - novelty status: a general contract-mutation audit is already covered
-    - possible remaining distinction: Rust module state and explicit trusted-assumption defects
-    - this requires testing against Spec-Harness before a novelty claim
-    - [VeriContest](https://arxiv.org/abs/2605.08553) and [CLEVER](https://arxiv.org/abs/2505.13938v4) are required baselines
-- proposal: score verification under software changes
-  - builds on VeruSAGE-Bench and VeriStruct
-  - new study: change an API or data representation in a held-out module
-    - ask an agent to repair code, contracts and proofs while preserving the external requirement
-  - compare proof-only repair with coordinated contract-and-proof repair
-  - measure preserved behavior, trusted assumptions, changed code and total repair cost
-  - why it may matter: maintenance is a recurring systems task that extracted proof completion only partly represents
-  - novelty status: unresolved against repository-level verification and existing maintenance studies
-    - [VeruSAGE-Bench](https://github.com/microsoft/verus-proof-synthesis/tree/main/benchmarks/VeruSAGE-Bench) and [VeriStruct](https://arxiv.org/abs/2510.25015) supply initial task families
-- proposal: make specification judgments equally accountable for humans and models
-  - builds on VERINA's separate specification evaluation and the existing LeetProof trust audit
-  - new study: hide specification authorship from reviewers
-    - compare human and model contracts against the same independently constructed behaviors
-    - resolve differences with checked implications or concrete counterexamples when possible
-    - keep unresolved cases separate from errors
-  - measure semantic omissions, excessive input restrictions and reviewer disagreement
-  - why it may matter: avoids declaring one fallible reference the winner by definition
-  - novelty status: study design recommendation, requiring a broader specification-evaluation search before a novelty claim
-    - [VERINA](https://arxiv.org/abs/2505.23135) and [LeetProof](https://verse-lab.org/papers/leetproof-ase26.pdf) are direct comparison points
+research implications
+
+- [candidate 1](research_directions.md) studies semantic preservation across software changes
+- a contract-defect experiment must compare against Spec-Harness
+  - authors, abstract: “using Hoare-triple based symbolic verification and input/output mutation”
+  - [current paper](https://arxiv.org/abs/2604.00280)
+  - possible remaining distinction: mutable Rust module state and invalid trusted helper assumptions
+  - a general specification-mutation audit is already covered
+- recommendation: blind human/model authorship during specification review
+  - compare both against independently constructed valid and invalid behaviors
+  - resolve differences with checked implications or concrete counterexamples where possible
+  - keep unresolved cases separate from errors
+  - builds on VERINA and the existing LeetProof trust audit
+  - this is an evaluation recommendation, not an established research novelty
