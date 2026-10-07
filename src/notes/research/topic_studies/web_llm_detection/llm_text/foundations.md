@@ -16,7 +16,8 @@ takeaway
   - Krishna et al., NeurIPS 2023
   - local collection searched
     - existing survey consulted
-    - no matching standalone collection entry found for these four papers during this pass
+    - four additional primary PDFs subsequently saved with source records
+      - see [paper archive](paper_archive.md)
 
 plain definitions
 - distribution: a rule assigning probabilities to possible observations
@@ -92,6 +93,8 @@ many observations can change the problem
   - section 3.2 evidence: “i.i.d. drawn from either the human h or machine m”
     - i.i.d. means independent observations drawn from the same distribution
   - replaces one-sample distributions by product distributions Hⁿ and Mⁿ
+    - n observations all independently from H, or all independently from M
+    - this is a same-origin hypothesis test, not a mixed-corpus prevalence model
   - for distinct fixed H and M, their product-distribution distance approaches 1 as n grows
   - interpretation
     - repeated independent evidence can reveal a small persistent difference
@@ -109,6 +112,9 @@ many observations can change the problem
     - let M assign probability 0.6 to outcome 1
     - δ = 0.1
     - optimal ranking AUROC is 0.55
+      - generated outcome exceeds human outcome with probability 0.6 × 0.5 = 0.3
+      - tie probability is 0.5
+      - AUROC = 0.3 + 0.5 × 0.5 = 0.55
     - the stated bound is 0.595
   - the likelihood-ratio detector is optimal
     - optimality does not imply equality with every upper bound
