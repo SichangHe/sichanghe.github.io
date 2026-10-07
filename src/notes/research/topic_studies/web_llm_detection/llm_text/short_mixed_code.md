@@ -1,0 +1,144 @@
+short text, mixed human+AI text, and code
+(authored by agents unless marked 🧑)
+
+terms like perplexity, threshold and false positive rate (FPR) are explained in [how_detection_works.md](how_detection_works.md)
+
+takeaway
+- all three cases are harder than detecting a long, fully AI-written essay, and the benchmarks that cover them are newer and smaller
+  - short text carries less signal, so scores get noisy
+  - mixed text has no single label, and the in-between cases are the hardest
+  - code is full of forced, predictable tokens, so text detectors that work on prose do badly on code
+- for a site-level classifier
+  - short comment or review pages give weak page scores, so give them less weight when you pool pages
+  - an "AI-edited" page is a gray case: published results show detectors flag even light polish as AI, so decide ahead of time what you want to count
+  - if you ever look at code on pages, use detectors trained on code
+
+short text
+- takeaway: a detector trained on short text from the same platform does fine, while general detectors and zero-shot scores get unreliable as text shrinks
+- [MultiSocial: Multilingual Benchmark of Machine-Generated Text Detection of Social-Media Texts](https://arxiv.org/abs/2406.12549), Macko et al., arXiv 2024
+  - 472,097 texts in 22 languages from five platforms (Telegram, Twitter, Gab, Discord, WhatsApp), written by humans and 7 LLMs
+  - quote: "the fine-tuned detectors have no problem to be trained on social-media texts and that the platform selection for training matters"
+  - full-text: "There is no clear indication for the length of such texts affecting these results, since Discord has the lowest (9) and WhatsApp and Twitter the highest (18) median value of word-count text length"
+  - meaning: the texts are only about 10-20 words long, so detection is possible, but only when the detector was trained on that platform
+    - it does not show zero-shot detection works on arbitrary short fragments
+- [Unmasking the Imposters: How Censorship and Domain Adaptation Affect the Detection of Machine-Generated Tweets](https://arxiv.org/abs/2406.17967), Tuck et al., arXiv 2024
+  - nine tweet datasets from Llama 3, Mistral, Qwen2 and GPT-4o, both with and without safety tuning ("censored" vs "uncensored")
+  - quote: "our evaluation demonstrates that "uncensored" models significantly undermine the effectiveness of automated detection methods"
+  - meaning: a model with the safety tuning removed writes less detectable tweets, and people running bots can use those
+- [Stylometric Detection of AI-Generated Text in Twitter Timelines](https://arxiv.org/abs/2303.03697), Kumarage et al., arXiv 2023
+  - they look at a user's whole timeline, using style features plus a language-model detector
+  - quote: "tweets are inherently short, thus making it difficult for current state-of-the-art pre-trained language model-based detectors to accurately detect at what point the AI starts to generate tweets in a given Twitter timeline"
+  - meaning: pooling many short posts from one source is the same trick you use with pooling pages per site
+- [TweepFake: about Detecting Deepfake Tweets](https://arxiv.org/abs/2008.00036), Fagni et al., arXiv 2020
+  - 25,572 real tweets, half posted by 23 bots (Markov chains, RNN, LSTM, GPT-2) that imitated 17 human accounts, with 13 detectors tested
+  - the abstract says it is the first dataset of "real deepfake tweets", meaning each bot tweet was actually posted
+  - meaning: old generators, but it is a rare set with real wild bot posts
+- [ChatGPT or Human? Detect and Explain. Explaining Decisions of Machine Learning Model for Detecting Short ChatGPT-generated Text](https://arxiv.org/abs/2301.13852), Mitrović et al., arXiv 2023
+  - fine-tuned model on short online reviews, with explanations of its decisions
+  - quote: "disambiguation between human and ChatGPT-generated reviews is more challenging for the ML model when using rephrased text. However, our proposed approach still achieves an accuracy of 79%"
+  - meaning: when ChatGPT rewrites a human review, the accuracy of 79% leaves a lot of mistakes
+- [Can You Really Trust That Review? ProtoFewRoBERTa and DetectAIRev: A Prototypical Few-Shot Method and Multi-Domain Benchmark for Detecting AI-Generated Reviews](https://aclanthology.org/2025.findings-ijcnlp.132/), Agrahari et al., Findings of IJCNLP-AACL 2025
+  - a review benchmark across domains and LLMs, with a few-shot method (needs only a few labeled examples per class)
+  - quote: "Models trained on such datasets generalize poorly, lacking cross-model adaptation and struggling to detect diverse LLM-generated reviews in real-world, open-domain scenarios"
+  - meaning: a review detector trained on one product category and one LLM should not be trusted elsewhere
+- [Is Your Paper Being Reviewed by an LLM? Benchmarking AI Text Detection in Peer Review](https://arxiv.org/abs/2502.19614), Yu et al., arXiv 2025 (ICLR 2026)
+  - 788,984 AI-written peer reviews paired with human ones, 18 detectors, and a method that uses the paper being reviewed as context
+  - quote: "Our work reveals the difficulty of identifying AI-generated text at the individual peer review level"
+  - meaning: single-document detection is hard even in this setting, and group-level counts are easier, which fits your site-level design
+- [Artificial Writing and Automated Detection](https://www.nber.org/papers/w34223), Jabarian and Imas, NBER 2025
+  - the study includes product reviews and restaurant reviews, plus "stubs" of 50 words or fewer
+  - quote: "Pangram achieving near-zero FNR and FPR rates that remain robust across models, threshold rules, ultra-short passages, "stubs" (≤ 50 words)"
+  - meaning: the one outside result that says short text can work for a commercial detector, on their own corpus
+    - I would not assume it carries over to open detectors like Binoculars
+- [DetectRL](https://arxiv.org/abs/2410.23746) (see [benchmarks.md](benchmarks.md)) also tested lengths and found "longer test data improves detector performance" for zero-shot detectors
+
+mixed human+AI text
+- takeaway: detectors flag light AI edits as AI, can't tell how much AI was involved, and do worst on half-edited text
+- the label problem comes first
+  - a page can be: fully AI, human text polished by AI, AI text edited by a human, or AI sentences inserted into human text
+  - [LLM-as-a-Coauthor: Can Mixed Human-Written and Machine-Generated Text Be Detected?](https://arxiv.org/abs/2401.05952) (MixSet), Zhang et al., arXiv 2024
+    - the first dataset for "mixtext": AI-revised human text and human-revised AI text
+    - quote: "existing detectors struggle to identify mixtext, particularly in dealing with subtle modifications and style adaptability"
+    - meaning: if the human edits the AI text, or AI polishes a human draft, the page is neither of your two classes
+- [Almost AI, Almost Human: The Challenge of Detecting AI-Polished Writing](https://arxiv.org/abs/2502.15666) (APT-Eval), Saha et al., arXiv 2025 (Findings of ACL 2025)
+  - 14.7K texts made by having LLMs polish human writing by different amounts, run through 12 detectors
+  - quote: "detectors frequently flag even minimally polished text as AI-generated, struggle to differentiate between degrees of AI involvement, and exhibit biases against older and smaller models"
+  - full-text example: GLTR with a 6.83% FPR on pure human text "classifies 40.87% of extremely minor and 42.81% of minor-" polished texts as AI
+  - quote: "Such classification can lead to false plagiarism accusations and misleading claims about AI prevalence in online content"
+  - meaning: if you count every flagged page as AI-generated, grammar-checked human sites inflate your numbers
+    - the 14.7K texts all come from 300 human originals, so split by original document if you reuse them
+- [Real, Fake, or Manipulated? Detecting Machine-Influenced Text](https://arxiv.org/abs/2509.15350) (HERO), Wang et al., arXiv 2025
+  - four classes instead of two: human-written, machine-generated, machine-polished, machine-translated
+  - quote: "benign uses may involve using LLM on a human-written document to improve its grammar or to translate it into another language. However, a document entirely produced by a LLM may be more likely to be used to spread misinformation"
+  - meaning: a four-way label is closer to what you want to measure than a binary one
+- [Operation-Guided Progressive Human-to-AI Text Transformation Benchmark for Multi-Granularity AI-Text Detection](https://arxiv.org/abs/2606.06481) (OpAI-Bench), Bsharat et al., arXiv 2026
+  - nine stages of editing from human toward AI for each document, with five edit types
+  - quote: "mixed-authorship intermediate versions are often harder to detect than both fully human and heavily AI-edited endpoints, exposing non-monotonic detection patterns missed by existing benchmarks"
+  - meaning: detectors do not scale smoothly with the share of AI text, so "score = how much AI" is wrong
+- finding where the AI starts and stops
+  - [SeqXGPT: Sentence-Level AI-Generated Text Detection](https://arxiv.org/abs/2310.08903), Wang et al., arXiv 2023
+    - each sentence is labeled, using the sequence of token log probabilities as features
+    - quote: "previous methods struggle in solving sentence-level AIGT detection, while our method not only significantly surpasses baseline methods in both sentence and document-level detection challenges but also exhibits strong generalization capabilities"
+    - needs probabilities from a white-box model, so it is not a black-box tool
+  - [AI-generated text boundary detection with RoFT](https://arxiv.org/abs/2311.08349), Kushnareva et al., arXiv 2023
+    - texts that start human and continue as machine text, find where it switches
+    - quote: "perplexity-based approaches to boundary detection tend to be more robust to peculiarities of domain-specific data than supervised fine-tuning of the RoBERTa model"
+    - meaning: perplexity-based scoring (your Binoculars approach) travels better across domains in this setting
+  - [HACo-Det: A Study Towards Fine-Grained Machine-Generated Text Detection under Human-AI Coauthoring](https://aclanthology.org/2025.acl-long.1069/), Su et al., ACL 2025
+    - word-level labels from an automatic mixing pipeline, with seven document-level detectors converted to word level
+    - quote: "metric-based methods struggle to conduct fine-grained detection with a 0.462 average F1 score, while finetuned models show superior performance and better generalization across domains"
+    - meaning: score-based methods like yours get about half the words right at word level, though fine-tuned models do better
+  - [SenDetEX: Sentence-Level AI-Generated Text Detection for Human-AI Hybrid Content via Style and Context Fusion](https://aclanthology.org/2025.emnlp-main.268/), Jiang et al., EMNLP 2025
+    - sentence-level detection that also looks at the neighboring sentences
+    - quote: "human-written text (HWT) and AI-generated text (AGT) alternate irregularly"
+    - quote: "mainstream AI-generated text detection (AGTD) methods primarily target document-level long texts and struggle to generalize effectively to sentence-level short texts"
+    - meaning: sentence-level work uses context, because a lone sentence is short text again
+  - [DAMASHA: Detecting AI in Mixed Adversarial Texts via Segmentation with Human-interpretable Attribution](https://arxiv.org/abs/2512.04838), Teja et al., arXiv 2025
+    - segmentation of mixed text that holds up when the text was also attacked
+    - quote: "Info-Mask significantly improves span-level robustness under adversarial conditions, establishing new baselines while revealing remaining challenges"
+  - M4GT-Bench subtask 3 and SemEval-2024 Task 8 subtask C are boundary detection too, see [benchmarks.md](benchmarks.md)
+- the Pangram 4 report claims better mixed-text results
+  - [Pangram 4 Technical Report](https://arxiv.org/abs/2607.27183), Glickenhaus et al., arXiv 2026
+  - quote: "Pangram 4 exhibits superior out-of-distribution generalization and robustness to adversarial attacks. Another novel contribution of Pangram 4 is its improved ability to distinguish fine-grained edits and mixed AI-human co-authored text"
+  - this is the vendor's own claim, and I did not see an independent test of the mixed-text part
+
+code
+- takeaway: text detectors do poorly on code, code-specific detectors do well in the data they trained on and badly elsewhere, and a few lines of edits or a different prompt can hide the model
+- [Zero-Shot Detection of Machine-Generated Codes](https://arxiv.org/abs/2310.05103) (DetectGPT4Code), Yang et al., arXiv 2023
+  - modifies DetectGPT: a smaller code model scores how likely the rightmost tokens are
+  - quote: "existing training-based or zero-shot text detectors are ineffective in detecting code, likely due to the unique statistical properties found in code structures"
+  - tested on Python from CodeContest and APPS, with ChatGPT-family outputs
+  - meaning: perplexity-style scoring works worse on code, so scoring code with Binoculars as-is is a bad idea
+- [Is this Snippet Written by ChatGPT? An Empirical Study with a CodeBERT-Based Classifier](https://arxiv.org/abs/2307.09381) (GPTSniffer), Nguyen et al., arXiv 2023
+  - a CodeBERT classifier for ChatGPT-written code
+  - quote: "GPTSniffer can accurately classify whether code is human-written or AI-generated, and outperforms two baselines, GPTZero and OpenAI Text Classifier"
+  - meaning: a supervised code model beat the text detectors, but only on the ChatGPT code it learned from
+- [Uncovering LLM-Generated Code: A Zero-Shot Synthetic Code Detector via Code Rewriting](https://arxiv.org/abs/2405.16133), Ye et al., arXiv 2024
+  - ask an LLM to rewrite the code, and compare: AI-written code changes less when rewritten
+  - quote: "differences between LLM-rewritten and original code tend to be smaller when the original code is synthetic"
+  - quote: "AUROC scores increasing by 20.5% on the APPS benchmark and 29.1% on the MBPP benchmark"
+  - meaning: the rewrite trick is the idea behind RAIDAR (which you know), applied to code
+- [Between Lines of Code: Unraveling the Distinct Patterns of Machine and Human Programmers](https://arxiv.org/abs/2401.06461) (DetectCodeGPT), Shi et al., arXiv 2024
+  - perturbs code by inserting spaces and newlines in place of asking another LLM to rewrite it
+  - quote: "DetectCodeGPT perturbs the code corpus by strategically inserting spaces and newlines, ensuring both efficacy and efficiency"
+- [An Empirical Study on Automatically Detecting AI-Generated Source Code: How Far Are We?](https://arxiv.org/abs/2411.04299), Suh et al., arXiv 2024
+  - tests existing detectors, then tries fine-tuning and models on code features
+  - quote: "The results show that they all perform poorly and lack sufficient generalizability to be practically deployed"
+  - best new model: "an F1 score of 82.55"
+- [CoDet-M4: Detecting Machine-Generated Code in Multi-Lingual, Multi-Generator and Multi-Domain Settings](https://aclanthology.org/2025.findings-acl.550/), Orel et al., Findings of ACL 2025
+  - many languages, code generators and sources, with out-of-domain tests such as hybrid authorship
+  - quote: "we propose a framework capable of distinguishing between human-written and LLM-generated program code across multiple programming languages, code generators, and domains"
+- [Droid: A Resource Suite for AI-Generated Code Detection](https://aclanthology.org/2025.emnlp-main.1593/), Orel et al., EMNLP 2025
+  - over a million samples, 7 languages, 43 coding models, and human-AI co-authored and attack samples
+  - quote: "existing detectors' performance fails to generalise to diverse coding domains and programming languages outside of their narrow training data"
+  - quote: "most detectors are easily compromised by humanising the output distributions using superficial prompting and alignment approaches, this problem can be easily amended by training on a small number of adversarial examples"
+- [CodeMirage: A Multi-Lingual Benchmark for Detecting AI-Generated and Paraphrased Source Code from Production-Level LLMs](https://arxiv.org/abs/2506.11059), Guo et al., arXiv 2025 (NeurIPS 2025 poster, per the NeurIPS site)
+  - 10 languages, 10 current LLMs from six providers (reasoning and non-reasoning), and paraphrased code
+  - quote: "most cover only a limited set of programming languages and rely on less capable generative models"
+  - meaning: another benchmark that says earlier ones used weak generators
+- [AICD Bench: A Challenging Benchmark for AI-Generated Code Detection](https://arxiv.org/abs/2602.02079), Orel et al., arXiv 2026
+  - 2M examples from 77 models and 9 languages, with tasks for distribution shift, model family, and human/machine/hybrid/adversarial classes
+  - quote: "performance remains far below practical usability, particularly under distribution shift and for hybrid or adversarial code"
+- what this means for web pages
+  - the code you see is usually short snippets inside tutorials and answers, and the code benchmarks mostly use whole programs from coding contests, so I can't say these numbers carry over to snippets
+  - a mixed case is common: a developer writes the idea, an assistant writes the code
