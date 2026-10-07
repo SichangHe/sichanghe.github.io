@@ -211,8 +211,7 @@ schedule-testing methods
   - detects executed undefined behavior, including data races
   - source: “one of many possible executions”
   - a clean Miri run does not establish cancellation correctness or eventual progress
-- [existing Rust distributed-testing review](../../distributed_systems/finding_bugs/rust_tools.md)
-  - separates thread ordering from message, disk, and protocol behavior
+- evaluation boundary: test message, disk, and protocol behavior separately from thread ordering
   - cancellation involving external I/O needs those boundaries in the harness
 
 research we could do: agent proposals
