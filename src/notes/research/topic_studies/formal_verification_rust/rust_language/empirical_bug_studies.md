@@ -1,0 +1,160 @@
+empirical studies of Rust bugs
+(authored by agents unless marked 🧑)
+
+takeaway
+- Rust changes which mistakes are possible and where responsibility sits
+- collected bug reports show remaining memory, concurrency, and panic failures
+  - they do not estimate the probability that a Rust program has a bug
+- agent recommendation: study reproducible failures after compiler acceptance
+  - distinguish faulty unsafe libraries from faulty safe callers and ordinary logic mistakes
+  - compare detection methods on the same historical versions
+
+what the studies actually measured
+- [Qin, Chen, Yu, Song, Zhang, PLDI 2020](https://cseweb.ucsd.edu/~yiying/RustStudy-PLDI20.pdf)
+  - title: Understanding Memory and Thread Safety Practices and Issues in Real-World Rust Programs
+  - inspected 850 unsafe uses and 170 bugs
+    - 70 memory bugs and 100 concurrency bugs
+    - five applications, five libraries, Rust standard library, CVE, RustSec
+  - selected bug candidates using safety words in commit logs
+    - manually checked reports, patches, and discussions
+  - memory failures involved unsafe code
+    - safe callers can encounter a faulty library's safe interface
+  - source, introduction: “all blocking bugs we studied are in safe code”
+    - §6 clarifies that these callers use interfaces implemented with unsafe code
+  - [artifact](https://github.com/system-pclub/rust-study)
+- [Qin, Chen, Liu, Zhang, Wen, Song, Zhang, TSE 2024](https://songlh.github.io/paper/rust-tse.pdf)
+  - title: Understanding and Detecting Real-World Safety Issues in Rust
+  - extension of the PLDI study
+    - shares its memory and concurrency cases
+    - adds 110 errors causing unexpected panics
+    - these are overlapping studies rather than two independent samples
+  - 107 of 110 panic cases occurred in safe code
+    - categories include missing error handling, invalid arithmetic, assertions, bounds, and invalid input
+  - five static detectors evaluated on 22 projects
+    - source, abstract: “96 previously unknown bugs”
+    - §7: 52 double locks, 27 conflicting lock orders, 11 atomicity violations, six use-after-free bugs
+    - 45 fixed and 41 additionally confirmed at the reporting cutoff
+    - authors classified seven false positives
+  - panic detector output needs separate treatment
+    - flags calls that might panic rather than proving unwanted failure
+    - source, §7.2: “not all of these sites necessarily represent real bugs”
+  - [implementation](https://github.com/BurtonQin/lockbud)
+- [Xu, Chen, Sun, Zhou, Lyu, TOSEM 2021](https://doi.org/10.1145/3466642)
+  - title: Memory-Safety Challenge Considered Solved? An In-Depth Study with All Rust CVEs
+  - publisher abstract examined through [Crossref's DOI record](https://api.crossref.org/works/10.1145/3466642)
+    - full paper was inaccessible in this pass
+  - 186 reports from multiple sources
+    - covers memory-safety CVEs through 2020-12-31
+    - “all” describes that historical cutoff
+  - source, abstract: “all memory-safety bugs require unsafe code”
+    - qualifies the analyzed dataset
+  - authors distinguish unsound interfaces from observed damaging executions
+    - an unsound interface permits a safe caller to trigger memory misuse
+    - a report about that possibility need not document an actual attack
+  - reported categories: automatic memory reclaim, unsound functions, unsound generics or traits
+    - generic interfaces must uphold safety for every allowed type
+- [Bae, Kim, Askar, Lim, Kim, Rudra, SOSP 2021](https://raw.githubusercontent.com/sslab-gatech/Rudra/master/rudra-sosp21.pdf)
+  - title: Rudra: Finding Memory Safety Bugs in Rust at the Ecosystem Scale
+  - static analysis of panic-sensitive unsafe operations and incorrect Send/Sync constraints
+    - Send permits ownership transfer across threads
+    - Sync permits shared references across threads
+  - analyzed the historical registry of roughly 43,000 packages in 6.5 hours
+  - source, abstract: “identified 264 previously unknown memory safety bugs”
+    - authors report 76 CVEs and 112 RustSec advisories
+    - advisory totals and bug totals count different objects
+  - demonstrates defects in widely reused unsafe abstractions
+    - includes standard library, futures, compiler
+  - targeted discovery rather than a random ecosystem sample
+    - prevalence outside the supported patterns remains unknown
+  - [artifact repository](https://github.com/sslab-gatech/Rudra)
+    - source, README: “This project is archived and no longer maintained”
+    - pinned artifact needed for replication
+- [Zhu, Zhang, Qin, Xiong, Song, ICSE 2022](https://songlh.github.io/paper/survey.pdf)
+  - title: Learning and Programming Challenges of Rust: A Mixed-Methods Study
+  - 100 Stack Overflow questions and a survey of 101 Rust programmers
+  - source, abstract: “whether the Rust compiler is sufficiently helpful in debugging safety-rule violations”
+  - studies understanding and compiler-rejected programs
+    - supports hypotheses about developer mistakes
+    - does not measure deployed defect rates
+  - useful complement to bug studies
+    - compare what developers misunderstand with what actually fails after compilation
+
+how to interpret the evidence
+- bug-report samples describe known, reported defects
+  - keyword filtering can miss reports using different language
+  - security databases omit undiscovered and unreported bugs
+  - a popular project may have more reports because more people inspect it
+- detector-found bugs reflect the detector's supported patterns
+  - discovery totals alone cannot compare languages or tools
+  - an undetected bug may be outside the analysis, unsupported, or never triggered
+- compilation and dependency failures can distort comparisons
+  - Qin TSE §7 reports MirChecker could compile only ten of 22 historical targets
+  - report unavailable targets separately from successful checks
+- do not combine overlapping study counts
+  - shared cases across PLDI, TSE, CVE, and Rudra must be deduplicated
+- reliability, memory safety, and security need separate outcomes
+  - an intentional panic can preserve memory safety
+  - whether that panic enables denial of service depends on the deployment
+- matched C or C++ comparisons need exposure and engineering context
+  - implementation age, code size, inputs, dependencies, testing, and reporting effort
+  - these studies do not supply a controlled language comparison
+
+research we could do: agent proposals
+- a reproducible corpus of Rust failures after compiler acceptance
+  - builds on Qin's cases, Xu's report classification, Rudra's proofs of failure
+  - new question: which failures remain reproducible under today's dependencies and language editions
+  - retain historical compiler, feature flags, dependencies, platform, failing input, and fixing commit
+  - classify twice independently
+    - report disagreements and cases that cannot be reproduced
+  - deduplicate by faulty code and shared fix
+    - preserve separate advisory identities
+  - evaluation
+    - reproduce failure before the patch and absence after the patch
+    - run current tools with matched time budgets and supported configurations
+    - report coverage, false alarms, analysis failures, and harness effort
+  - why it may matter
+    - makes new detection claims comparable
+    - prevents treating old advisory counts as current defect rates
+  - novelty risk
+    - collecting more reports alone is weak
+    - contribution needs executable cases and a new conclusion about failure causes or tool limits
+- shared proposal: study failures introduced while fixing compiler errors
+  - evidence here: Zhu's learning study and Qin's actual bug categories
+  - [LLM repair review](llms_writing_rust.md) owns repair evaluation and consequences
+  - empirical prerequisite: independent requirements or an earlier working version
+    - a compiler-rejected program has no executable behavior to preserve
+
+- measure the maintenance burden of safe interfaces backed by unsafe code
+  - builds on Rudra and Xu's unsound generic or trait cases
+  - new question: which dependency updates invalidate an interface's safety assumptions
+  - compare documentation, tests, and changed implementations around confirmed fixes
+  - evaluation
+    - hold out later commits
+    - predict affected interfaces from earlier assumptions
+    - require a failing safe caller to confirm each soundness finding
+    - measure maintainer review effort and false alarms
+  - why it may matter
+    - identifies where review effort should follow dependency changes
+  - novelty remains unconfirmed
+    - requires comparison with unsafe-code auditing and change-impact analysis literature
+
+relationship to existing notes
+- [existing static-analysis notes](../../../static_analysis.md)
+  - already cover proof synthesis and verification tools
+  - this page asks what concrete failures remain in ordinary Rust programs
+- [existing new-work arguments](../../../new_work_arguments.md)
+  - proposed recording assumptions used by proof agents
+  - an executable historical bug corpus could test whether those records identify real invalid assumptions
+- [async and concurrency review](async_concurrency_bugs.md)
+  - develops cancellation, progress, and scheduling questions
+
+evidence and collection
+- primary PDFs inspected on 2026-10-07
+  - Qin PLDI 2020, Qin TSE 2024, Rudra SOSP 2021, Zhu ICSE 2022
+  - PDFs and text extractions saved under `/hdd1/sichanghe/paper_collection/`
+    - directories start with each paper's full title
+- Xu TOSEM 2021 reviewed at publisher-abstract depth
+- coverage limit
+  - search service failed with HTTP 404
+  - author pages, primary artifacts, direct PDFs, and publisher metadata supplied this pass
+  - recent 2025–2026 empirical literature needs a further search pass before claiming completeness

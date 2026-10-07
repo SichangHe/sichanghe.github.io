@@ -1,0 +1,197 @@
+async and concurrency bugs in Rust
+(authored by agents unless marked 🧑)
+
+takeaway
+- preventing invalid shared memory access does not guarantee that work finishes or produces the right result
+- an operation can stop while owning valid memory and still lose application progress
+- agent recommendation: study cancellation at the boundary between library promises and application behavior
+  - compare historical failures with controlled scheduling tests
+  - define the required behavior before calling a cancellation a bug
+
+terms used here
+- async task
+  - computation that can pause while waiting and resume later
+- future
+  - Rust value representing a computation that can be polled toward completion
+- cancellation
+  - abandoning a computation before completion
+  - behavior depends on whether a future, task handle, or external request is abandoned
+- deadlock
+  - work waits on resources that cannot become available
+- race condition
+  - result depends incorrectly on execution order
+  - can occur even when every shared-memory access is protected
+- atomicity violation
+  - an operation intended to act as one step is split by another operation
+- starvation
+  - some work keeps being denied progress while other work runs
+
+existing empirical evidence
+- [Qin et al., PLDI 2020, §6](https://cseweb.ucsd.edu/~yiying/RustStudy-PLDI20.pdf)
+  - 100 collected concurrency bugs
+    - 59 blocking and 41 non-blocking
+  - lock failures include double locking and inconsistent lock order
+  - guard destruction controls lock release
+    - temporary values can keep a lock longer than the programmer expects
+    - §6 Figure 8 gives a TiKV read-lock/write-lock example inside a match
+  - do not transfer that historical example blindly across editions
+    - [Rust 2024 temporary-scope changes](https://doc.rust-lang.org/edition-guide/rust-2024/temporary-if-let-scope.html)
+      - source: “The 2024 Edition changes the drop scope of temporary values”
+      - affects if-let scrutinees
+      - a particular fix still needs its compiler and edition
+  - study predates the current async ecosystem
+    - its categories motivate async questions
+    - counts do not establish today's async bug frequency
+- [Qin et al., TSE 2024, §7](https://songlh.github.io/paper/rust-tse.pdf)
+  - lock analysis tracks live guards and lock acquisition order
+  - atomicity analysis looks for a restricted read-then-write pattern
+  - supports targeted checks rather than complete concurrent correctness
+  - [Lockbud README](https://github.com/BurtonQin/lockbud)
+    - source: “it may report many FPs”
+      - describes the Condvar detector
+      - FPs means false positives
+    - pinned compiler requirements limit direct current-code reuse
+- [VRLifeTime, Zhang et al., CCS 2020 demonstration](https://songlh.github.io/paper/vr.pdf)
+  - source, abstract: “an IDE tool that can visualize lifetime for Rust programs”
+  - shows lifetimes to explain hidden destruction and release points
+  - agent hypothesis: showing pause, destruction, and resource ownership together may help async debugging
+    - no user-study result for that extension has been established here
+
+- [Lee, Diaz, Yang, Liu, Human-Centric Computing and Information Sciences 2025](https://doi.org/10.1016/j.hcc.2025.100377)
+  - publisher title: “Enhancing concurrency bug detection in Rust programs through LLVM IR based graph visualization”
+  - [publisher metadata](https://api.crossref.org/works/10.1016/j.hcc.2025.100377) checked
+  - full text unavailable in this pass
+  - direct novelty comparison needed before proposing another visualization of concurrency behavior
+  - no detection-rate or usability result claimed here
+
+cancellation is a documented application responsibility
+- [Tokio select documentation, cancellation safety](https://docs.rs/tokio/latest/tokio/macro.select.html#cancellation-safety)
+  - source: “Cancellation safety describes what happens when a future is dropped before it completes”
+  - read_exact, read_to_end, read_to_string, write_all can lose progress under cancellation
+    - retrying a new operation may not resume the old byte position
+  - receiving through documented cancellation-safe channel methods avoids that particular problem
+    - a containing function can still perform other effects before receiving
+  - cancelling queued lock, semaphore, or notification waits loses queue position
+    - progress and fairness differ from memory safety
+  - ordinary select branches run within the current task
+    - blocking one branch prevents the others from running
+  - cancelling during shutdown may be acceptable
+    - application requirements determine whether partial work must be retained
+  - inspected [implementation documentation](https://github.com/tokio-rs/tokio/blob/master/tokio/src/macros/select.rs)
+- [Tokio JoinHandle documentation](https://docs.rs/tokio/latest/tokio/task/struct.JoinHandle.html)
+  - source: “A JoinHandle detaches the associated task when it is dropped”
+  - dropping a handle does not mean the spawned task stopped
+  - agent inference: tests must distinguish dropping a branch future from abandoning an already spawned task
+- [Tokio Mutex documentation](https://docs.rs/tokio/latest/tokio/sync/struct.Mutex.html)
+  - source: “designed to be held across `.await` points”
+  - an async mutex permits that use
+  - agent inference: permission to hold a guard is not assurance that application lock order permits progress
+  - holding a blocking mutex while awaiting another task can prevent that task from obtaining the same mutex
+- [Rust Clippy await_holding_lock](https://rust-lang.github.io/rust-clippy/master/index.html#await_holding_lock)
+  - source: “Checks for calls to await while holding a non-async-aware MutexGuard”
+  - catches a useful source pattern
+  - does not establish absence of lock cycles or application cancellation failures
+
+schedule-testing methods
+- [Loom](https://github.com/tokio-rs/loom)
+  - substitutes modeled concurrency primitives and explores alternative executions
+  - useful for small locks, atomics, and wakeups
+  - source: “Loom currently does not implement the full C11 memory model”
+  - README documents incomplete load-buffering exploration
+    - some allowed executions remain untested
+  - SeqCst accesses are treated as AcqRel
+    - weaker modeled synchronization can cause false alarms
+  - passing checks applies to the harness, bounds, and modeled operations
+- [Shuttle](https://github.com/awslabs/shuttle)
+  - controls thread scheduling and saves schedules for deterministic replay
+  - randomized exploration permits larger tests
+  - source: “a passing Shuttle test does not prove the code is correct”
+  - supported wrappers connect the harness to selected dependencies
+  - compare repeated runs under a budget
+    - one seed is one explored execution
+- [Burckhardt et al., ASPLOS 2010, A Randomized Scheduler with Probabilistic Guarantees of Finding Bugs](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/asplos277-pct.pdf)
+  - methodological predecessor cited by Shuttle
+  - paper not reread in this pass
+  - do not inherit its probabilistic guarantees without checking the scheduler and assumptions
+- [Miri](https://github.com/rust-lang/miri)
+  - detects executed undefined behavior, including data races
+  - source: “one of many possible executions”
+  - a clean Miri run does not establish cancellation correctness or eventual progress
+- [existing Rust distributed-testing review](../../distributed_systems/finding_bugs/rust_tools.md)
+  - separates thread ordering from message, disk, and protocol behavior
+  - cancellation involving external I/O needs those boundaries in the harness
+
+research we could do: agent proposals
+- cancellation testing with observable application effects
+  - prior work
+    - Tokio documents restart safety of individual operations
+    - Loom and Shuttle explore thread ordering
+    - Qin supplies a historical failure taxonomy
+  - new question
+    - which effects survive when a composed operation stops at each reachable pause
+    - examples: bytes consumed, permits retained, request sent, record partially updated
+  - proposed method
+    - record effects around pause points
+    - cancel and restart under a controlled scheduler
+    - compare against application requirements
+  - evaluation
+    - historical reported bugs and fixed versions
+    - seeded faults reported separately
+    - ordinary tests, Clippy, schedule-only testing, cancellation-only testing, combined testing
+    - detection rate, false alarms, replay reliability, runtime, harness effort
+  - why it may matter
+    - local API promises need not cover the complete transaction
+    - exposes failures that memory checking cannot observe
+  - novelty risk
+    - cancellation testing and async effect analysis may already cover portions of this method
+    - validate novelty before building a broad framework
+- measure the effect of losing queue position on progress
+  - prior work
+    - Tokio documents queue-position loss under cancellation
+    - controlled scheduling makes selected executions replayable
+  - new question
+    - can repeated timeouts starve valid work under realistic arrival rates
+  - evaluation
+    - lock and semaphore workloads with cancellation and retry
+    - compare recreating waits with retaining the same pending operation
+    - measure completed work, longest wait, tail latency, throughput
+    - test multiple runtime configurations and load levels
+  - why it may matter
+    - a service can remain memory safe while some requests never finish
+  - claim limit
+    - finite experiments establish observed delays
+    - claiming inevitable starvation requires a model or a constructive repeatable execution
+- reveal lock ownership across pauses and task boundaries
+  - prior work
+    - VRLifeTime visualizes lifetimes
+    - Lockbud tracks guards and lock order
+    - Clippy flags blocking guards across await
+  - new question
+    - does connecting lock ownership to tasks and dependencies explain real deadlocks missed by local warnings
+  - evaluation
+    - reproduce historical multi-task cycles
+    - compare local warnings with task-aware explanations
+    - blinded debugging tasks for developers
+    - measure successful diagnosis, time, incorrect suggested repairs
+  - why it may matter
+    - changing a blocking mutex into an async mutex can preserve the same circular wait
+  - novelty risk
+    - a visualization alone needs evidence of improved diagnosis
+
+agent assessment
+- recommended first experiment: cancellation at pause points in a small real parser or channel-processing loop
+  - require an observable rule such as preserving consumed bytes or completing acknowledged work
+  - retain both faulty and fixed historical implementations
+- stop or narrow the proposal if existing cancellation frameworks already cover the same behavior
+  - a useful negative result would identify what external effects cannot be replayed faithfully
+- a detector warning is evidence of a candidate failure
+  - require a reproducer or a justified model before labeling it a bug
+
+evidence limits
+- author PDFs and primary repository documentation inspected on 2026-10-07
+- search service was unavailable
+  - no claim of exhaustive 2025–2026 async literature coverage
+- PCT listed as a methodological lead
+  - full-text guarantees not audited
+- proposals are agent hypotheses
+  - no implementation or measured result claimed
