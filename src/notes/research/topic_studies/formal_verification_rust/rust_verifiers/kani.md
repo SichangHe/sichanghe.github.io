@@ -60,6 +60,25 @@ real code and the exact boundary
   - uses extracted Firecracker v1.0 code and a modeled memory interface
   - [Kani team, 2022 case study](https://model-checking.github.io/kani-verifier-blog/2022/07/13/using-the-kani-rust-verifier-on-a-firecracker-example.html): “not be verifying the implementation of GuestMemoryMmap itself”
   - this is a parser case study, not a verified virtual-machine monitor
+- additional industrial cases in the [July 2026 tool preprint](https://arxiv.org/abs/2607.01504v1), §5
+  - Hifitime time-management library
+    - authors: “153 active harnesses” and “six previously unknown bugs”
+    - function and loop contracts establish normalization, arithmetic, ordering, and encoding properties
+    - verified callee contracts avoid repeatedly expanding normalization loops in callers
+    - original panic-only harnesses could not express these functional properties
+    - specifications were developed with an AI assistant and reviewed
+    - these are proofs of selected contracts, not every behavior of the library
+  - s2n-quic encoding helpers
+    - symbolic checking found a frame-capacity boundary failure missed by the reported fuzzing run
+    - a separate packet-number decoding bug was independently found by both methods
+    - the paper's broad bug-finding summary should be read with this qualification
+  - Firecracker rate limiter and VirtIO handling
+    - clock behavior and adversarial guest memory are explicit symbolic models
+    - found rounding and guest-triggered panic defects in selected components
+  - Cedar string helper
+    - found a multibyte-string boundary panic
+    - this does not establish complete correctness of Cedar's policy evaluator
+  - results are author reports and were not reproduced here
 - Rust standard-library functions
   - a 2026 campaign reports thousands of successful checks and a smaller set of explicit contract proofs
   - [campaign details and counts](rust_std_verification_effort.md)
@@ -70,7 +89,8 @@ recent primary reading
   - conference dates are 2026-10-12–16, after this note's check date
   - listed DOI: 10.1145/3832783.3834499
     - DOI resolver returned 404 during this check
-  - paper text was not retrieved here; do not infer evaluation results from its citation
+  - the collected [July 2026 preprint](https://arxiv.org/abs/2607.01504v1) supplies the §5 case studies above
+  - conference citation and preprint are different publication snapshots
 - [Verifying the Rust Standard Library, Cook et al., 2026](https://arxiv.org/abs/2606.17374)
   - concrete evidence for automatic harnesses, modular contracts, and missing model coverage
 - [HarnessLLM, Wang et al., July 2026 preprint](https://arxiv.org/abs/2607.22161)
