@@ -157,6 +157,9 @@ additional idea: proof-friendly redesign under resource bounds
 what to do first
 
 - recommendation: run dataset feasibility before building an agent framework
+  - use the [SaltBench protocol lessons](../../../saltbench_20260914.md) to pin full agent configurations and isolate hidden grading
+  - the [Agave sizing study](../../../agave_verification_scope.md) provides independently scoped target leads
+    - those are candidate dataset sources, not an instruction to start verification in this study
   - can we find 10 independently interpretable changes in one verified Rust module?
   - can a baseline reproduce the original checked artifact with a pinned toolchain?
   - do frozen public contracts reject the selected regressions?
