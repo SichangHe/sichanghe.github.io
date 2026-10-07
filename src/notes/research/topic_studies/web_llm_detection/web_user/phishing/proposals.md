@@ -1,0 +1,144 @@
+research proposals: user-visible deception
+(authored by agents unless marked 🧑)
+
+recommendation
+- begin with paired-view measurement
+  - it can produce a useful result without private victim telemetry
+- use shared-hosting identity and search-based verification as focused extensions
+- these are agent recommendations
+  - novelty is provisional until a broader search checks near-duplicate work
+- cited facts, quotes, and limits are in [literature](literature.md)
+
+1. how much harmful content does an ordinary crawler fail to see?
+- question
+  - how much measured phishing and scam exposure changes when visits follow an ordinary user’s route
+- prior foundation
+  - PhishPrint measures recognizable crawlers
+  - PhishDecloaker reveals content behind CAPTCHA screens
+  - Sunrise to Sunset connects visits and delayed mitigation
+- proposed difference
+  - attribute missed visibility to concrete path and browser differences across real campaigns
+  - separate a collector’s inability to see from a detector’s inability to classify
+- pilot
+  - collect several hundred fresh, public, reported URLs
+  - visit promptly with a fixed desktop browser and a mobile configuration
+  - compare direct visits with captured referral and redirect routes
+  - perform bounded page interaction without submitting secrets
+  - stratify by shared host, copied brand, challenge, and lure source
+- measurements
+  - extra confirmed harmful pages per collection configuration
+  - page-state disagreement across paired visits
+  - detection changes for fixed baseline classifiers
+  - added browser time and requests
+  - unresolved and unreachable fractions
+- controls
+  - ordinary sites using the same hosts and challenge software
+  - visit order randomized where feasible
+  - short time gaps and repeat visits to estimate temporal changes
+- publishable result
+  - a defensible lower bound on undercounting within the sampled population
+  - a collection recipe with measured cost and coverage
+- stop or narrow
+  - if fresh public URLs cannot be collected rapidly enough
+  - if page disagreement cannot be separated from rapid removal
+- unresolved novelty
+  - prior evasion measurement already covers some configurations
+  - broad “realistic crawling improves recall” would be insufficient
+
+2. when does a trusted hosting domain hide an untrusted tenant?
+- question
+  - can browser protections distinguish malicious tenants from ordinary tenants without blocking a whole builder?
+- prior foundation
+  - Free Waters finds builder-specific detection gaps
+  - Phishpedia and PhishIntention compare brands with domains
+- proposed difference
+  - represent identity at tenant and page granularity
+  - evaluate protection and collateral damage together
+- pilot
+  - select three builders with different URL and form-hosting designs
+  - manually map tenant boundaries and authorized brand relationships
+  - collect ordinary pages independently of threat feeds
+  - compare parent-domain, tenant, page, and credential-destination decisions
+- measurements
+  - campaign-weighted missed malicious pages
+  - ordinary tenants falsely flagged
+  - identity-evidence acquisition cost
+  - recurrence under new paths and tenants
+- controls
+  - ordinary organizations using builder-hosted contact forms
+  - authorized payment and login providers
+  - known brand pages without login requests
+- publishable result
+  - a measured tradeoff between timely blocking and ordinary-page harm
+  - a representation for brand authorization on shared hosts
+- stop or narrow
+  - if tenant ownership cannot be verified for a useful independently sampled subset
+- unresolved novelty
+  - tenant-sensitive URL reputation and provider abuse research need an additional search
+  - builder-hosted phishing prevalence alone repeats Free Waters
+
+3. can search-backed verification become the scam’s endorsement?
+- question
+  - when a user or browsing agent checks an unfamiliar service, does search corroborate attacker-controlled claims?
+- prior foundation
+  - NOKEScam promotes invented names to dominate exact-match results
+  - PhishLLM uses search to validate brand-domain identity
+- proposed difference
+  - test the interaction between scam discovery and automated identity checking
+  - identify evidence independence rather than count agreeing pages
+- pilot
+  - obtain historical scam names and page snapshots from published or public reports
+  - assemble matched ordinary new services and obscure organizations
+  - compare exact-name search, broader search, and authority-restricted checks
+  - evaluate agents on an archived source set first
+  - add live search only with recorded queries and outputs
+- measurements
+  - false legitimacy conclusions
+  - acceptance of attacker-owned pages as independent corroboration
+  - unsupported identity claims in final answers
+  - abstention, false alarms, latency, and additional source visits
+- intervention
+  - require the agent to distinguish operator-controlled pages from independently established evidence
+  - require an explicit unresolved answer when evidence only repeats the service’s own claim
+- controls
+  - new ordinary businesses with little independent coverage
+  - genuinely independent directory entries
+  - ordinary reseller and affiliate pages
+- publishable result
+  - a benchmark for verifying unfamiliar web services
+  - measured evidence rules that improve reliability without rejecting every small business
+- stop or narrow
+  - if dataset labels only repeat blacklist verdicts
+  - if live search cannot be replayed well enough to explain answer differences
+- unresolved novelty
+  - search poisoning and retrieval prompt injection are already studied
+  - novelty needs to center on independent identity evidence and measured user decisions
+
+4. which dependency survives when individual scam pages disappear?
+- question
+  - do removed campaigns return through the same redirect, form, payment, or profile infrastructure?
+- prior foundation
+  - Click Trajectories connects spam advertising to monetization bottlenecks
+  - Evolving Bots connects profiles to scam campaigns
+  - Dutch kit measurement connects sites through reusable software
+- proposed difference
+  - compare removal of pages with persistence of reachable campaign paths
+- pilot
+  - follow public lure and destination paths for several weeks
+  - cluster using multiple independent signals
+  - retain uncertainty about common templates and shared infrastructure
+- measurements
+  - time to destination return
+  - replacement domains and tenants
+  - proportion of campaign paths interrupted
+  - unrelated ordinary pages sharing each proposed dependency
+- controls
+  - provider-wide shared assets and generic templates
+  - independently verified campaigns
+- publishable result
+  - evidence that a named dependency is durable and sufficiently specific to support intervention
+- feasibility limit
+  - public browsing reveals only part of monetization
+  - private provider data is probably necessary for strong payment or victim claims
+- unresolved novelty
+  - without temporal return and collateral-damage measurements, this risks repeating infrastructure clustering

@@ -1,0 +1,203 @@
+ad measurement literature
+(authored by agents unless marked 🧑)
+
+what must be measured
+
+- recommendation: keep four questions separate
+  - is this material an ad?
+  - what does it claim?
+  - where did it come from?
+  - what did a person or answering system encounter and believe?
+- definitions used here
+  - native ad: paid material styled to resemble surrounding content
+  - affiliate link: a link that can earn its publisher a commission
+  - ad extraction: locating an ad and saving its content and context
+  - malvertising: advertising used to deliver malicious activity
+  - precision: fraction of detected items that are correct
+  - recall: fraction of relevant items successfully detected
+- inference: a tracking request, a visible ad, and a sponsored recommendation are different measurement units
+  - a detector trained to imitate network filters does not establish recall for embedded sponsorships
+
+resource and visual detection
+
+- [AdGraph: A Graph-Based Approach to Ad and Tracker Blocking](https://umariqbal.com/papers/adgraph-sp2020.pdf)
+  - Umar Iqbal, Peter Snyder, Shitong Zhu, Benjamin Livshits, Zhiyun Qian, Zubair Shafiq, IEEE S&P 2020
+  - original words, abstract: “a graph representation of the HTML structure, network requests, and JavaScript behavior of a webpage”
+  - method: instrument Chromium to connect page elements, scripts, and requests
+    - classify resources using their context
+  - reported evaluation: Alexa top 10,000 sites
+    - 95.33% accuracy against combined human-maintained filter labels
+    - §IV reports 89.1% precision and 86.6% recall
+    - manual disagreement analysis finds both list errors and classifier errors
+  - limit: matching filter labels measures agreement with filters
+    - it does not directly measure all visible advertising
+    - dual-purpose scripts can serve both ads and useful page functions
+  - useful artifact: [instrumentation code](https://uiowa-irl.github.io/AdGraph/)
+    - source patch targets Chromium 69
+    - adapting it to current browsers is substantial engineering
+- [PERCIVAL: Making In-Browser Perceptual Ad Blocking Practical with Deep Learning](https://www.usenix.org/system/files/atc20-din.pdf)
+  - Zainul Abi Din, Panagiotis Tigas, Samuel T. King, Benjamin Livshits, USENIX ATC 2020
+  - original words, abstract: “intercept every image obtained during page execution”
+  - method: classify images inside the browser rendering pipeline
+  - reported filter-label accuracy: 96.76%
+    - reported rendering overhead: 4.55% in Chromium and 19.07% in Brave
+  - limit: §7 discusses image-based scope
+    - an image classifier cannot fully describe text-only ads or sponsored prose
+    - accuracy against EasyList is not complete human-labeled ad recall
+  - inference: combine browser context with visual recognition
+    - neither signal establishes whether the advertised claim is accurate
+- [The Future of Ad Blocking: An Analytical Framework and New Techniques](https://arxiv.org/abs/1705.08568)
+  - Grant Storey, Dillon Reisman, Jonathan Mayer, Arvind Narayanan, 2017 preprint
+  - original words, abstract: “ads must be recognizable by humans”
+  - method: model blocking and anti-blocking behavior as states and transitions
+    - prototype visual disclosure detection and techniques that conceal blocking
+  - limit: recognizability is an assumption about disclosure behavior
+    - hidden sponsorships violate the assumption in practice
+    - these are historical technical and legal arguments, not verified current legal requirements
+- [AdVersarial: Perceptual Ad Blocking meets Adversarial Machine Learning](https://arxiv.org/abs/1811.03194)
+  - Florian Tramèr, Pascal Dupré, Gili Rusak, Giancarlo Pellegrino, Dan Boneh, ACM CCS 2019
+  - original words, abstract: “constructing adversarial examples in a real web page context”
+  - method: attack multiple steps in visual ad detection
+    - alter ad images, disclosure logos, and ordinary content
+  - reported result: attacks against seven detectors achieve 100% success in their evaluated settings
+  - limit: this is an attacker-controlled evaluation
+    - it is not a prevalence estimate for attacks on today's deployed blockers
+  - implication: test whether ordinary content is removed when it resembles an ad
+    - protecting useful content matters alongside detecting more ads
+
+visible content and deceptive destinations
+
+- [Bad News: Clickbait and Deceptive Ads on News and Misinformation Websites](https://www.franziroesner.com/pdf/zeng-ads-conpro20.pdf)
+  - Eric Zeng, Tadayoshi Kohno, Franziska Roesner, ConPro 2020
+  - original words, §III.B: “screenshots each ad, stores its HTML content”
+  - method: Puppeteer plus EasyList selectors
+    - visit homepages and article pages
+    - split native-ad collections into individual ads
+    - save ad screenshots, HTML, and clicked destinations
+    - attribute the publisher-facing ad platform using selectors and subtree resource URLs
+  - January 2020 crawl: 6,498 mainstream news sites and 1,055 listed misinformation sites
+    - 81,870 detected ad slots
+    - 55,045 visible elements
+    - manually code three groups of 100 sites
+  - finding within the coded sample: problematic content occurs on mainstream and listed misinformation sites
+    - native platforms account for much of the coded problematic content
+  - original words, §III.D: “uninitialized, occluded, or otherwise false positives”
+    - these explain a large share of detected slots in an auxiliary manual check
+  - limit: an empty slot is not an observed ad
+    - lists of misinformation sites are incomplete
+    - publisher-facing platform attribution does not identify every seller or advertiser
+    - neutral crawlers miss personalized exposure
+  - reusable contribution: extract the ad and destination together
+    - a misleading promise may become apparent only after following the link
+- [What Makes a “Bad” Ad? User Perceptions of Problematic Online Advertising](https://www.franziroesner.com/pdf/zeng-badads-CHI21.pdf)
+  - Eric Zeng, Tadayoshi Kohno, Franziska Roesner, CHI 2021
+  - original words, abstract: “15 positive and negative user reactions”
+  - abstract describes a 60-person taxonomy survey
+    - 500 collected ads labeled by 1,000 participants
+  - reported disliked categories include software downloads, listicles, and health supplements
+  - limit: disliking an ad is distinct from proving deception or malware
+    - reviewer checked the abstract only
+    - the author-hosted PDF is truncated and cannot be reliably read in full
+    - it was excluded from the saved PDF set
+- [Polls, Clickbait, and Commemorative $2 Bills](https://franziroesner.com/pdf/electionads-imc21.pdf)
+  - Eric Zeng, Miranda Wei, Theo Gregersen, Tadayoshi Kohno, Franziska Roesner, IMC 2021
+  - original words, abstract: “bait-and-switch ads formatted as opinion polls”
+  - method: daily ads from 745 news/media websites across six US locations
+    - September 2020–January 2021
+    - 1.4 million ads
+    - combine qualitative content coding with geographic and website comparisons
+  - finding: political content includes polls leading to another purpose and controversy used to attract clicks
+  - limit: geography and website comparisons do not establish individual targeting mechanisms
+    - the crawl observes a sample of delivered ads
+    - politically themed commercial ads can fall outside official political-ad archives
+- [Towards Measuring and Mitigating Social Engineering Software Download Attacks](https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/nelms)
+  - Terry Nelms, Roberto Perdisci, Manos Antonakakis, Mustaque Ahamad, USENIX Security 2016
+  - original words, abstract: “reconstruct the web path followed by the victims”
+  - method: reconstruct over 2,000 download attacks from live network traffic
+    - classify the tactics used to persuade users
+    - inspect the route to the download and supporting infrastructure
+  - finding: many observed attacks arrived through advertising
+  - limit: the sampled successful downloads cannot establish the malicious fraction of all ad impressions
+  - inference: follow the chain from publisher to landing page to requested action
+    - first-hop classification alone loses the attack's purpose
+
+who actually sees which ads
+
+- [What Factors Affect Targeting and Bids in Online Advertising? A Field Measurement Study](https://www.franziroesner.com/pdf/Zeng-IMC2022-AdTargetingBids.pdf)
+  - Eric Zeng, Rachel McAmis, Tadayoshi Kohno, Franziska Roesner, IMC 2022
+  - original words, abstract: “a representative sample of 286 participants in the U.S.”
+  - method: browser extension and guided visits to ten sites
+    - EasyList locates slots
+    - Prebid.js APIs expose some auction bids
+    - match an element identifier to the bid's ad-unit identifier
+    - screenshots and text recognition support product-topic coding
+    - ask users how targeted selected ads feel
+  - finding: website and individual profile explain more observed variation than the tested demographic groupings
+  - limit: ten sites and US recruitment constrain generalization
+    - observable header bids are only part of advertising auctions
+    - a winning bid can fail to produce a displayed ad
+    - an unobserved demographic effect is not proof of equal treatment everywhere
+  - recommendation: compare crawlers with a consenting user panel before claiming user exposure
+- [Analyzing the (In)Accessibility of Online Advertisements](https://www.franziroesner.com/pdf/yeung-accessible-ads-imc24.pdf)
+  - Christina Yeung, Tadayoshi Kohno, Franziska Roesner, IMC 2024
+  - original words, abstract: “90 websites over a month”
+  - method: inspect HTML and accessibility properties against selected WCAG practices
+    - interview 13 blind screen-reader users
+    - test whether content is perceivable, understandable, and navigable
+  - finding: missing image descriptions, unclear links, and difficult closing controls create barriers
+  - limit: a subset of accessibility guidelines and websites
+    - an attribute's presence does not guarantee it communicates useful information
+  - useful resources: [project and dataset](https://ads.cs.washington.edu/projects/adaccessibility.html), [Ad Archive](https://ad-archive.cs.washington.edu/)
+  - inference: visual ad disclosure and screen-reader disclosure should be compared on the same page
+
+ads embedded in ostensibly informative content
+
+- [Endorsements on Social Media](https://arxiv.org/abs/1809.00620)
+  - Arunesh Mathur, Arvind Narayanan, Marshini Chetty, CSCW 2018
+  - original words, abstract: “only about 10% of affiliate marketing content”
+    - context: the sampled content on YouTube and Pinterest contained a disclosure
+  - method: inspect over 500,000 videos and 2.1 million pins
+    - find affiliate content through recognizable affiliate links
+    - compare disclosure forms in a 1,791-participant study
+  - finding: short disclosures without explanation were poorly understood
+  - limit: known link patterns miss unknown affiliate programs and hidden redirects
+    - missing a detected disclosure does not by itself establish illegality
+    - the historical paper's legal discussion is not a current legal assessment
+- [Investigating Influencer VPN Ads on YouTube](https://par.nsf.gov/servlets/purl/10353407)
+  - Omer Akgul, Richard Roberts, Moses Namara, Dave Levin, Michelle L. Mazurek, IEEE S&P 2022
+  - original words, abstract: “243 videos containing VPN ads”
+  - method: start from metadata for about 86 million videos
+    - inspect more popular videos with available English subtitles
+    - manually code threats, promised protection, and disclosures
+  - reported sample: 63 million views across the 243 identified videos
+  - finding: some ads overstate protection and portray exaggerated threats
+  - limit: English subtitles and a popularity threshold constrain coverage
+    - views do not equal distinct people or attentive ad exposure
+    - the study measures claims, not their causal effect on beliefs
+- [As Advertised? Understanding the Impact of Influencer VPN Ads](https://arxiv.org/abs/2406.13017)
+  - Omer Akgul, Richard Roberts, Emma Shroyer, Dave Levin, Michelle L. Mazurek, USENIX Security 2025
+  - original words, abstract: “no significant correlation”
+    - context: measured ad exposure and the tested factual or misleading VPN mental models
+  - method: obtain 217 participants' YouTube histories
+    - detect sponsored segments in subtitles
+    - compare measured exposure with beliefs using preregistered regressions
+  - finding: exposure correlates with brand familiarity and exaggerated threat beliefs
+  - limit: observational association does not establish causation
+    - watch history does not show whether someone watched the sponsored segment
+    - inaccurate beliefs can precede exposure or influence recommendations
+  - recommendation: retain this distinction when proposing studies of AI answers and advertising claims
+
+what the evidence leaves open
+
+- inference: published extraction approaches often rely on the same filter lists they evaluate
+  - the resulting blind spots can carry into prevalence estimates
+- inference: commercial intent is harder to observe when the content itself is sponsored
+  - resource classification and image classification do not settle this question
+- inference: the complete advertising boundary spans visible labels, browser accessibility, links, and claims
+  - the reviewed papers study important pieces
+  - they do not establish how this boundary survives article extraction and AI answers
+- search limitation: no verified exhaustive recent malvertising or adblock evaluation survey
+  - the papers above are a checked starting set
+  - [UW publication list](https://ads.cs.washington.edu/publications.html) supplies additional studies of ads during the 2022 invasion of Ukraine
+  - citation leads in Bad News include Knowing Your Enemy, CCS 2012, and The Dark Alleys of Madison Avenue, IMC 2014
+    - these leads were not read in this review

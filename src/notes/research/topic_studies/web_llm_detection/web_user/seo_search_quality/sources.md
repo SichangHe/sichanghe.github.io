@@ -1,0 +1,105 @@
+source collection
+(authored by agents unless marked 🧑)
+
+verified full-text sources
+- checked 2026-10-06
+- all quotations in the review were checked against downloaded full text
+- PDFs saved in the shared paper collection
+  - collection notes link back to this review
+  - historical performance numbers describe historical experiments
+
+saved sources
+- Combating Web Spam with TrustRank
+  - authors: Gyongyi, Garcia-Molina, Pedersen
+  - venue/date: VLDB 2004
+  - [primary PDF](https://www.vldb.org/conf/2004/RS15P3.PDF)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Combating Web Spam with TrustRank, Gyongyi, Garcia-Molina, Pedersen, VLDB 2004.pdf`
+- Detecting Spam Web Pages through Content Analysis
+  - authors: Ntoulas, Najork, Manasse, Fetterly
+  - venue/date: WWW 2006
+  - [primary PDF](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/www2006.pdf)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Detecting Spam Web Pages through Content Analysis, Ntoulas, Najork, Manasse, Fetterly, WWW 2006.pdf`
+- Finding Deceptive Opinion Spam by Any Stretch of the Imagination
+  - authors: Ott, Choi, Cardie, Hancock
+  - venue/date: ACL 2011
+  - [primary PDF](https://aclanthology.org/P11-1032.pdf)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Finding Deceptive Opinion Spam by Any Stretch of the Imagination, Ott, Choi, Cardie, Hancock, ACL 2011.pdf`
+- Is Google Getting Worse - A Longitudinal Investigation of SEO Spam in Search Engines
+  - authors: Bevendorff, Wiegmann, Potthast, Stein
+  - venue/date: ECIR 2024
+  - [primary PDF](https://downloads.webis.de/publications/papers/bevendorff_2024a.pdf)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Is Google Getting Worse? A Longitudinal Investigation of SEO Spam in Search Engines, Janek Bevendorff, Matti Wiegmann, Martin Potthast, Benno Stein, Springer ECIR, 2024.pdf`
+- GEO - Generative Engine Optimization
+  - authors: Aggarwal et al.
+  - venue/date: KDD 2024
+  - [primary PDF](https://arxiv.org/pdf/2311.09735)
+  - local PDF: `/hdd1/sichanghe/paper_collection/GEO - Generative Engine Optimization, Aggarwal et al., KDD 2024.pdf`
+- Adversarial Search Engine Optimization for Large Language Models
+  - authors: Nestaas, Debenedetti, Tramer
+  - venue/date: preprint 2024
+  - [primary PDF](https://arxiv.org/pdf/2406.18382)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Adversarial Search Engine Optimization for Large Language Models, Fredrik Nestaas, Edoardo Debenedetti, Florian Tramèr, arXiv, 2024.pdf`
+- Evaluating Verifiability in Generative Search Engines
+  - authors: Liu, Zhang, Liang
+  - venue/date: 2023
+  - [primary PDF](https://arxiv.org/pdf/2304.09848)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Evaluating Verifiability in Generative Search Engines, Liu, Zhang, Liang, 2023.pdf`
+- Enabling Large Language Models to Generate Text with Citations
+  - authors: Gao, Yen, Yu, Chen
+  - venue/date: EMNLP 2023
+  - [primary PDF](https://arxiv.org/pdf/2305.14627)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Enabling Large Language Models to Generate Text with Citations, Gao, Yen, Yu, Chen, EMNLP 2023.pdf`
+- FEVER - a large-scale dataset for Fact Extraction and VERification
+  - authors: Thorne, Vlachos, Christodoulopoulos, Mittal
+  - venue/date: NAACL 2018
+  - [primary PDF](https://aclanthology.org/N18-1074.pdf)
+  - local PDF: `/hdd1/sichanghe/paper_collection/FEVER - a large-scale dataset for Fact Extraction and VERification, Thorne, Vlachos, Christodoulopoulos, Mittal, NAACL 2018.pdf`
+- The FEVEROUS Shared Task
+  - authors: Aly et al.
+  - venue/date: 2021
+  - [primary PDF](https://aclanthology.org/2021.fever-1.1.pdf)
+  - local PDF: `/hdd1/sichanghe/paper_collection/The FEVEROUS Shared Task, Aly et al., 2021.pdf`
+- FreshLLMs - Refreshing Large Language Models with Search Engine Augmentation
+  - authors: Vu et al.
+  - venue/date: preprint 2023
+  - [primary PDF](https://arxiv.org/pdf/2310.03214)
+  - local PDF: `/hdd1/sichanghe/paper_collection/FreshLLMs - Refreshing Large Language Models with Search Engine Augmentation, Vu et al., preprint 2023.pdf`
+- TruthfulQA - Measuring How Models Mimic Human Falsehoods
+  - authors: Lin, Hilton, Evans
+  - venue/date: ACL 2022
+  - [primary PDF](https://arxiv.org/pdf/2109.07958)
+  - local PDF: `/hdd1/sichanghe/paper_collection/TruthfulQA - Measuring How Models Mimic Human Falsehoods, Lin, Hilton, Evans, ACL 2022.pdf`
+- Accurately Interpreting Clickthrough Data as Implicit Feedback
+  - authors: Joachims, Granka, Pan, Hembrooke, Gay
+  - venue/date: SIGIR 2005
+  - [primary PDF](https://www.cs.cornell.edu/people/tj/publications/joachims_etal_05a.pdf)
+  - local PDF: `/hdd1/sichanghe/paper_collection/Accurately Interpreting Clickthrough Data as Implicit Feedback, Joachims, Granka, Pan, Hembrooke, Gay, SIGIR 2005.pdf`
+- Tracking the Takes and Trajectories of English-Language News Narratives across Trustworthy and Worrisome Websites
+  - Hanley, Okabe, and Durumeric, USENIX Security 2025
+  - [primary PDF](https://www.usenix.org/system/files/usenixsecurity25-hanley.pdf)
+  - saved in collection folder `Tracking the Takes and Trajectories of English-Language News Narratives across Trustworthy and Worrisome Websites, Hans W. A. Hanley et al., USENIX Security, 2025`
+
+additional reading leads
+- metadata verified or found in the ECIR paper bibliography
+  - full text not obtained here
+  - do not treat these as reviewed findings
+- Gyöngyi and Garcia-Molina, Web Spam Taxonomy, 2005
+  - Stanford technical report
+- Castillo et al., Know Your Neighbors: Web Spam Detection Using the Web Topology, SIGIR 2007
+- Liao et al., Characterizing Long-tail SEO Spam on Cloud Web Hosting Services, WWW 2016
+  - [DOI](https://doi.org/10.1145/2872427.2883008)
+- Lewandowski, Sünkler, and Yagci, The Influence of Search Engine Optimization on Google’s Results, WebSci 2021
+- Schultheiß, Häußler, and Lewandowski, Does Search Engine Optimization Come Along with High-Quality Content?, CHIIR 2022
+- Kurland and Tennenholtz, Competitive Search, SIGIR 2022
+  - [DOI](https://doi.org/10.1145/3477495.3532771)
+- Zobel, When Measurement Misleads: The Limits of Batch Assessment of Retrieval Systems, SIGIR Forum 2023
+  - [DOI](https://doi.org/10.1145/3582524.3582540)
+
+search limitations
+- web search tool failed with HTTP 404
+- direct Google requests returned JavaScript challenges
+- OpenAlex returned HTTP 429
+- Crossref worked intermittently
+- several ACM and author copies returned HTTP 403 or 404
+- source discovery therefore used existing human notes, verified paper bibliographies, direct primary PDFs, and parent-provided primary sources
+- no claim of exhaustive 2025–2026 coverage
