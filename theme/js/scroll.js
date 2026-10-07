@@ -1,19 +1,11 @@
-const storageKey = "lastY";
-let lastY = localStorage.getItem(storageKey) || 0;
-
-function resumeScroll() {
-    if (lastY) {
-        window.scrollTo(0, lastY);
+(() => {
+    const key = `lastY:${location.pathname}`;
+    function restore() {
+        if (location.hash) return;
+        try { window.scrollTo(0, Number(sessionStorage.getItem(key)) || 0); } catch {}
     }
-}
-
-function saveScroll() {
-    const diff = Math.abs(lastY - window.scrollY);
-    if (diff > 100) {
-        localStorage.setItem(storageKey, window.scrollY);
-        lastY = window.scrollY;
-    }
-}
-
-document.addEventListener("load", resumeScroll);
-document.addEventListener("scrollend", saveScroll);
+    window.addEventListener("load", restore, {once: true});
+    window.addEventListener("pagehide", () => {
+        try { sessionStorage.setItem(key, String(window.scrollY)); } catch {}
+    });
+})();

@@ -6,7 +6,6 @@ Steven Hé (Sīchàng) is also known as Steven He, StevenHe, Sichang He, \
 SichangHe, StevenSichangHe, 何思畅, or 何思暢.
 """
 language = "en"
-multilingual = false
 src = "src"
 title = "Steven Hé (Sīchàng)"
 
@@ -22,6 +21,7 @@ additional-js = [
 ]
 git-repository-url = "https://github.com/SichangHe/sichanghe.github.io"
 smart-punctuation = true
+sidebar-header-nav = false
 
 [output.html.fold]
 enable = true
@@ -31,8 +31,9 @@ level = 1
 copy-js = false
 runnable = false
 
-[preprocessor.header-footer]
-headers = [{ padding = "<!-- toc -->\n" }]
+[preprocessor.page-meta]
+# 🧑 "automatic edit time inserted at page end based on git history" ... "write Lua scripts that acts as plugins"
+command = "lua scripts/page-meta.lua"
 footers = [
     { regex = "^blogs/", padding = """
 
@@ -55,12 +56,14 @@ footers = [
     </script>
 """ },
 ]
-before = ["links", "toc"]
-
-[preprocessor.toc]
-before = ["katex"]
+before = ["links", "katex"]
 
 [preprocessor.katex]
 after = ["links"]
 include-src = true
 throw-on-error = false
+
+[output.sitemap]
+# 🧑 "sitemap having correct timing based on git history"
+command = "./scripts/sitemap.lua"
+base-url = "https://sichanghe.github.io/"
