@@ -91,6 +91,15 @@ newer tasks broaden the evidence
     - source-to-target preservation needs separate evidence
     - see [the existing collection](../../../verus_frontier_20261006.md) for the narrower test and manual-review coverage
 
+evaluation protocol already studied locally
+
+- use the existing [SaltBench audit](../../../saltbench_20260914.md)
+  - it examines pinned agent configurations, independent referees, and isolation failures
+  - exact note judgment: “the registered result is about cost only”
+  - recommendation: attach a correctness verdict to every priced run before interpreting a cost/quality tradeoff
+- [existing verified-agent evaluation](../../../verified_agent_code_evaluation_20260808.md) distinguishes executable checks, proof validity, claim integrity, and intent
+  - this chapter supplies the benchmark comparison rather than repeating that audit
+
 what can make a success misleading
 - recommendation: freeze the required behavior independently of the model generating the proof
   - preserve public contracts and executable behavior for proof-only tasks

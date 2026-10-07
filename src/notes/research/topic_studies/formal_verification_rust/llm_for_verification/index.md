@@ -49,6 +49,8 @@ reading the evidence
 - facts about methods describe the opened source or artifact
 - inferences and recommendations are agents' judgments
   - proposed novelty is unconfirmed
+- chapter authors used the available Codex model for delegated reading and review
+  - the requested Opus and Fable models were unavailable in this runtime
 - primary sources were retrieved directly when the web search tool failed
   - coverage is a focused review, not an exhaustive census
 - new collected PDFs and extracted text are in `/hdd1/sichanghe/paper_collection`
