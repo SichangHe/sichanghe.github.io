@@ -1,4 +1,4 @@
-# cost and adoption of practical verification
+cost and adoption of practical verification
 (authored by agents unless marked 🧑)
 
 short version
@@ -21,6 +21,28 @@ what cost means
   - bugs found do not directly reveal money saved
 
 what existing work shows
+
+- [Formal Methods in Dependable Systems Engineering: A Survey of Professionals from Europe and North America](https://arxiv.org/abs/1812.08815), Mario Gleirscher and Diego Marmsoler, Empirical Software Engineering, 2020
+  - status: peer-reviewed journal article; opened the authors' post-review preprint
+    - journal DOI: [10.1007/s10664-020-09836-5](https://doi.org/10.1007/s10664-020-09836-5)
+  - fact: 216 responses collected from Aug 2017 to Mar 2019
+    - 50% were practitioners under the paper's classification
+    - approximately 31% were pure academics; approximately 21% had not practised formal methods
+      - these categories answer different questions and are not disjoint population shares
+  - fact, sampling §4.5: recruited through discussion channels, researchers' networks, and participant referrals
+    - opportunity, volunteer, and cluster sampling rather than a controlled random population sample
+  - exact quote, conclusion §7: “with scalability, skills, and education leading”
+    - context: these led the challenges respondents rated moderately or highly difficult
+    - additional reported challenges included resources, process compatibility, and practicality/reputation
+  - authors' interpretation: respondents intended greater industrial use but perceived ease of use negatively
+    - intent is not observed future adoption
+    - the survey measures reported perceptions rather than causal barriers or monetary costs
+  - exact quote, validity §6.4.3: “the response rate (1 to 2%)”
+    - estimated rate; recruitment exposure and population size were uncertain
+  - limitations: self-selection and bias toward formal-methods experts
+    - authors caution against generalizing to finance and electronic voting
+    - respondents' geographic background was not directly collected
+    - inference: the study identifies plausible obstacles worth testing; it does not estimate the fraction of all software teams adopting verification
 
 - [IronFleet: Proving Practical Distributed Systems Correct](https://www.microsoft.com/en-us/research/publication/ironfleet-proving-practical-distributed-systems-correct/), Hawblitzel et al., SOSP, 2015
   - status: peer-reviewed; full paper opened from the collection
@@ -90,9 +112,9 @@ what remains missing
 - inference: these sources support feasibility, not a general return-on-investment claim
   - success cases are selected and have different assurance targets
   - avoided incident costs and abandonment rates are unknown
-- unfilled review need: representative surveys of non-adopters, abandoned efforts, and small teams
-  - search failures prevented verification of a suitable survey here
-  - this is a review limitation, not a claim that no survey exists
+- review need: probability-based samples of non-adopters, abandoned efforts, and small teams
+  - Gleirscher and Marmsoler include non-practitioners, but recruitment was self-selected
+  - no population adoption rate follows from their response count
 - inference: lifetime maintenance may change the ranking of methods
   - a cheap initial proof can become expensive after repeated specification or dependency changes
   - see [proof_maintenance_repair.md](proof_maintenance_repair.md)
@@ -102,7 +124,9 @@ research we can do
 - question: what is the complete cost of preserving a fixed assurance target across ordinary feature changes
   - builds on IronFleet's cost accounting, ShardStore's expert-to-engineer handoff, and Cedar's model/proof measurements and CCF's startup-versus-reuse accounting
   - proposed new contribution: a public longitudinal dataset connecting tasks, specifications, proofs, solver failures, review, and developer time
-    - novelty uncertain until maintenance datasets and industrial surveys are searched systematically
+    - novelty uncertain until maintenance datasets are searched systematically
+    - Gleirscher and Marmsoler already study perceived obstacles and intended use
+    - a new survey repeating those questions alone would have weak novelty
   - why it may matter: teams need a budget for ongoing engineering, not just an initial proof-size ratio
   - first experiment: follow three small real components through 20 realistic changes each
     - compare model-plus-testing and source-level proofs for explicitly shared properties
@@ -128,8 +152,8 @@ research we can do
 
 consultation status
 
-- parent agent is collecting ChatGPT's opinion on these ideas
-  - no response was available when this file was written
+- shared Extra High review requested
+  - see [research_directions.md](research_directions.md) for the consolidated status
 
 what was searched
 
@@ -137,4 +161,5 @@ what was searched
 - inspected existing research notes for previous TLA+ and implementation-verification conclusions
 - attempted searches for industrial adoption surveys and newer cost studies
   - both available search tools failed; direct primary-source pages were readable
-- not yet covered: controlled trials, survey response rates, unsuccessful projects, regulated-industry economic studies
+- opened Gleirscher and Marmsoler 2020 through the arXiv author API after web-search tools failed
+- not yet covered: controlled trials, unsuccessful projects, regulated-industry economic studies

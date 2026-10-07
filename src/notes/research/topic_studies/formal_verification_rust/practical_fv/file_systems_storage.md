@@ -63,7 +63,7 @@ what existing work shows
   - fact: the 2019 result trusts Goose translation, Go compiler, and primitive/device correspondence
     - section 9.2: “we trust the Go compiler to produce correct code”
   - fact: that version assumes no integer overflow
-    - section 9.2: “Goose does not model” it
+    - section 9.2 explicitly excludes overflow from the model
     - do not generalize this historical limitation to every later Goose release
 
 - [Verifying the DaisyNFS concurrent and crash-safe file system with sequential reasoning](https://www.usenix.org/conference/osdi22/presentation/chajed), OSDI 2022, peer reviewed

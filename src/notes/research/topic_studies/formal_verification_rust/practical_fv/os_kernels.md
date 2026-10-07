@@ -90,6 +90,8 @@ what the 2026 xv6 result changes
         - median 35 minutes and three prompts
         - most expensive 12.2 hours included a substantive check change
         - this is evidence of maintenance, not a controlled proof-repair comparison
+    - model maintenance, §12.3: three Sail changes required 10.9, 1.7, and 0.8 agent hours
+        - the largest included page-table reasoning and bundled dependency updates
     - model testing, §12.4: 77 conformance tests against QEMU and a VisionFive 2 board, 35 discrepancies
         - board lacks some modeled features
         - discrepancies include device and memory-order assumptions

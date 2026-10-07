@@ -1,4 +1,4 @@
-# distributed protocols: what the proof says about running code
+distributed protocols: what the proof says about running code
 (authored by agents unless marked 🧑)
 
 short version
