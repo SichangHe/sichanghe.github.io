@@ -1,0 +1,253 @@
+C and C++ to Rust translation
+(authored by agents unless marked 🧑)
+
+the research problem
+- migration has three separate obligations
+  - produce code that builds
+  - preserve the behavior users depend on
+  - remove memory hazards rather than move them into `unsafe`
+- inference: compilation alone cannot establish the second obligation
+  - a safe program can return the wrong answer
+  - a compiling program can contain incorrect `unsafe`
+- proposal: evaluate all three obligations independently
+  - also measure speed, memory use, public-interface changes, and maintenance cost
+- source cutoff: primary pages inspected on 2026-10-07
+  - the review is strongest on deterministic translation and compiler-guided repair
+  - discovery of newer LLM migration papers remains incomplete because search services failed
+
+deterministic migration
+- [C2Rust, Immunant, current repository](https://github.com/immunant/c2rust)
+  - scope: C99 to Rust, followed by refactoring
+  - maintainers: “produces unsafe Rust code that closely mirrors the input C code”
+  - implication: translation is a starting point for migration, not evidence that memory hazards disappeared
+  - the repository supplies cross-checking between original and translated executions
+    - [cross-check tutorial](https://github.com/immunant/c2rust/blob/master/docs/cross-check-tutorial.md)
+    - inference: matching observed executions supports tested behavior, not all possible behavior
+  - current pipeline includes deterministic refactoring and LLM postprocessing
+    - [postprocessor documentation](https://github.com/immunant/c2rust/blob/master/c2rust-postprocess/README.md)
+    - maintainers call it “a lightweight cleanup pass”
+    - inference: automated cleanup and full ownership redesign are different tasks
+- [Crown, Zhang, David, Yu, Wang, CAV 2023](https://komaec.github.io/files/ownership.pdf)
+  - ownership analysis guides the migration
+  - starts from unsafe Rust emitted by C2Rust
+  - infers which pointer owns an allocation and which pointer temporarily borrows it
+  - rewrites suitable pointers into `Box` and references
+  - handles nested pointers and linked data structures
+  - authors, section 8: “20 programs”
+    - median reductions: 37.3% of mutable non-array pointer declarations and 62.1% of their uses
+    - these are pointer counts, not vulnerability reductions or percentages of fully safe programs
+  - authors, section 8: “continue to pass”
+    - refers to every available test suite after translation
+    - available suites cover six programs
+    - tests support behavior preservation on exercised inputs
+  - authors, section 8: “under 10 seconds”
+    - refers to analysis and rewriting of the largest benchmark, Brotli
+    - approximately 537,723 lines in their translated benchmark representation
+    - does not include every activity in a production migration
+  - limits: array pointers remain raw pointers
+    - ownership inference does not recover their bounds
+    - unusual allocators and memory-management conventions lower conversion rates
+    - unions and variadic arguments exclude some programs from evaluation
+  - [artifact and reproduction instructions](https://github.com/KomaEc/crown/tree/artifact)
+    - artifact records small count corrections after bug fixes
+- [Laertes, Emre, Schroeder, Dewey, Hardekopf, OOPSLA 2021](https://doi.org/10.1145/3485498)
+  - paper title: “Translating C to safer Rust”
+  - [artifact](https://doi.org/10.5281/zenodo.5442253)
+  - [publisher abstract deposited with Crossref](https://api.crossref.org/works/10.1145/3485498)
+    - authors: “the first empirical study of unsafety in translated Rust programs”
+  - mechanism coverage here is indirect
+    - Crown describes Laertes as using the compiler to guide candidate rewrites
+    - Crown, introduction: “guided by the type error messages from the Rust compiler”
+  - inference: compiler-guided search and ownership inference are complementary baselines
+  - limitation: this review did not independently inspect the Laertes paper
+- [aliasing limits, Emre and colleagues, OOPSLA 2023](https://doi.org/10.1145/3586046)
+  - paper title: “Aliasing limits on translating C to safe Rust”
+  - [publisher abstract deposited with Crossref](https://api.crossref.org/works/10.1145/3586046)
+  - authors: “from 12% to 21% of all pointers”
+    - reported improvement from encoding more precise analysis for an unchanged Rust compiler
+    - absolute gain is 9 percentage points
+    - authors report the relative gain as 75%
+  - implication: failed conversion can reflect checker imprecision rather than inherently unsafe source behavior
+  - research implication: some migrations require changing data representation or runtime checks
+    - hypothesis to test, not a claim that every C alias pattern requires such changes
+
+learned translation and LLM assistance
+- [FLOURINE, Eniser and colleagues, 2024](https://arxiv.org/abs/2405.11514)
+  - authors: “differential fuzzing”
+  - compares input/output behavior without requiring existing tests
+    - sends counterexamples back to the model for repair
+  - abstract reports best-model success on 47% of its real-project-derived benchmarks
+  - implication: fuzzing-assisted LLM migration already has a direct prior study
+    - our acceptance-gap study must add new failure classes or a stronger evaluation population
+- [C2SaferRust, Nitin, Krishna, Lemos do Valle, Ray, 2025](https://arxiv.org/abs/2501.14257)
+  - authors: “7 real-world programs”
+  - first runs C2Rust
+    - breaks unsafe Rust into smaller pieces for LLM rewriting
+    - runs end-to-end tests after each piece
+  - abstract reports reductions up to 38% in raw pointers and up to 28% in unsafe code
+    - maxima, not average improvements
+    - unsafe counts do not directly measure vulnerabilities
+- [Syzygy, Shetty, Jain, Godbole, Seshia, Sen, 2024](https://arxiv.org/abs/2412.14234)
+  - authors: “LLM-driven code and test translation”
+  - execution information guides incremental translation in dependency order
+  - abstract reports Zopfli with approximately 3,000 lines and 98 functions
+    - checks equivalence on a set of inputs
+  - inference: translating tests alongside code can reproduce a shared misunderstanding
+    - independently maintained hidden tests are useful for evaluating this risk
+- [CRUST-Bench, Khatry and colleagues, 2025](https://arxiv.org/abs/2504.15254)
+  - authors: “100 C repositories”
+  - supplies manually written safe Rust interfaces and tests
+  - abstract reports o1 solving 15 tasks in the single-attempt setting
+    - historical result for that setup, not current-model capability
+  - implication: repository-level migration with specified interfaces is an established benchmark target
+- [SmartC2Rust, Shiraishi and Shinagawa, 2024](https://arxiv.org/abs/2409.10506)
+  - authors: “segmentation contexts”
+  - combines segmented translation and feedback about compilation, behavior, and unsafe statements
+  - abstract-level inspection only
+    - no numerical outcome claimed here
+- [VERT, Yang, Takashima, Paulsen, Dodds, Kroening, 2024 preprint](https://arxiv.org/abs/2404.18852)
+  - [later ASE 2025 publication](https://doi.org/10.1109/ASE63991.2025.00123)
+    - numerical results below come from the preprint abstract
+  - authors: “1,394 programs taken from competitive programming style benchmarks”
+  - generates a Rust reference implementation through WebAssembly compilation
+    - compares an LLM's candidate against that reference
+    - regenerates candidates after failures
+  - authors: “bounded model-checking”
+    - checks behavior within explicit bounds
+    - reported Claude-2 success rises from 1% alone to 42% with VERT on this measure
+    - property-based testing success rises from 31% to 54%
+    - the two measures establish different kinds of evidence
+  - full paper, section on equivalence checking
+    - bounded checks disable loop-unwinding assertions
+    - a later stage enables those assertions to establish exhaustive exploration for the harness
+    - inference: neither stage automatically establishes correctness of the trusted source-to-WebAssembly-to-Rust translation
+  - inference: general differential checking of LLM translations is already established
+    - a new study needs realistic boundary failures, hidden tests, or a distinct acceptance-gap question
+- [SACTOR, Zhou and colleagues, ACL 2026](https://aclanthology.org/2026.acl-long.28/)
+  - authors: “end-to-end testing via the foreign function interface”
+  - first translates toward behavior preservation
+    - then refines toward ordinary Rust style
+  - static analysis supplies pointer and dependency information
+  - published abstract reports 200 programs plus 50 CRust-Bench samples and libogg
+  - reported CRust-Bench success averages 85% before style refinement and 52% after it
+    - inference: refinement remains a separate source of failures
+  - full paper, limitations: “cannot guarantee full semantic equivalence”
+    - refers to existing end-to-end tests
+    - adapter generation and incomplete pointer analysis can also fail
+    - complex macros, pervasive function pointers, variadic calls, global state, and inline assembly are partly supported
+  - [tool and datasets](https://github.com/qsdrqs/sactor)
+  - direct competitor to proposals about mixed C/Rust testing and analysis-assisted translation
+    - new work must establish more than combining static analysis with an LLM
+- [compositional-reasoning position paper, UCB/EECS-2025-174](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2025/EECS-2025-174.html)
+  - institutional abstract: “correctness beyond functional equivalence”
+  - argues for checking interfaces, internal invariants, memory safety, and timing
+  - position paper, not a measured migration result
+  - inference: broad proposals to add formal checks or nonfunctional checks are already articulated
+    - our contribution would need a concrete method or measured failure population
+- [TransCoder, Lachaux, Roziere, Chanussot, Lample, 2020](https://arxiv.org/abs/2006.03511)
+  - authors: “translate functions between C++, Java, and Python”
+  - Rust is outside the reported target languages
+  - learns translation from separate collections of each language
+    - no aligned source-target training pairs required
+  - authors release “852 parallel functions”
+    - unit tests assess generated behavior
+  - relevance: learned translation plus executable checks is a methodological ancestor
+    - not evidence of Rust ownership recovery or complete-project migration
+- [C2Rust LLM postprocessor](https://github.com/immunant/c2rust/blob/master/c2rust-postprocess/README.md)
+  - concrete example of a mixed pipeline
+    - deterministic translation supplies a starting program
+    - an LLM proposes cleanup
+    - further work produces safe, maintainable Rust
+  - inference: compare direct LLM translation against this stronger baseline
+    - comparing only against unsafe transpilation can overstate gains
+- [RustAssistant, Deligiannis and colleagues, ICSE 2025](https://www.microsoft.com/en-us/research/publication/rustassistant-using-llms-to-fix-compilation-errors-in-rust-code/)
+  - addresses compiler errors in existing Rust
+  - useful repair component for generated translations
+  - reported success rates are not C-to-Rust migration results
+  - [separate review](llms_writing_rust.md)
+- coverage gap
+  - recent LLM migration systems need individual paper and artifact checks
+  - no claim here that the listed systems exhaust current work
+  - discovered publication records still awaiting full-text inspection
+    - [C2RustTV, COMPSAC 2025](https://doi.org/10.1109/COMPSAC65507.2025.00158)
+      - title: “An LLM-based Framework for C to Rust Translation and Validation”
+    - [SafeTrans, 2026](https://doi.org/10.1145/3786180.3788317)
+      - title: “LLM-assisted Transpilation from C to Rust”
+    - [type migration with a data-flow graph, 2025](https://doi.org/10.1145/3735544.3735582)
+      - nearest candidate competitor for analysis-directed representation changes
+    - [rules and semantics for LLM translation, ICSME 2025](https://doi.org/10.1109/ICSME64153.2025.00069)
+    - [feedback loops and code perturbations, SANER 2026](https://doi.org/10.1109/SANER67736.2026.00047)
+      - nearest candidate competitor for migration-feedback ablations
+  - do not infer translation correctness from model quality, compilation, or benchmark title
+
+Google and DARPA
+- [DARPA TRACTOR program page](https://www.darpa.mil/research/programs/translating-all-c-to-rust)
+  - DARPA: “aims to automate the translation of legacy C code to Rust”
+  - proposed ingredients: static analysis, dynamic analysis, and machine learning
+  - program goal includes the quality and style of skilled Rust development
+    - goal, not an achieved result
+  - evaluation is assigned to MIT Lincoln Laboratory
+    - [published evaluation resources](https://www.ll.mit.edu/tractor)
+    - resource page returned an access error during this review
+    - no milestone-success or program-wide performance claim established here
+- [Google memory-safety strategy, Rebert, Carruth, Engel, Qin, 2024](https://security.googleblog.com/2024/10/safer-with-google-advancing-memory.html)
+  - authors: “new code instead of rewriting mature and stable memory-unsafe C or C++ codebases”
+  - refers to Android's adoption strategy
+  - inference: measured Android improvements cannot be attributed to automatic translation
+  - strategy also includes C++ hardening and gradual expansion of Rust
+- [Google Crubit](https://github.com/google/crubit)
+  - maintainers: “a bidirectional bindings generator for C++ and Rust”
+  - generates interfaces so either language can call the other
+  - inference: interoperability can make gradual migration feasible without translating everything
+  - remaining C++ still needs its own memory-safety discipline
+- C++ requires its own study population
+  - proposal: separately stratify templates, exceptions, inheritance, destructors, callbacks, and standard-library use
+  - inference: C99 translation outcomes do not establish results for these C++ mechanisms
+
+research we could do
+- proposal 1: audit migrations that compile and pass the supplied tests
+  - prior: C2Rust cross-checks, Crown's tests, VERT's checking, SACTOR's mixed-language tests
+    - FLOURINE already combines differential fuzzing with LLM repair
+    - Syzygy translates code and tests together
+  - question: which behavior changes survive the usual acceptance checks?
+  - proposed new contribution: a reproducible collection of accepted-but-wrong library migrations across foreign-call and resource-cleanup boundaries
+    - separate newly introduced bugs from intended repairs of invalid C behavior
+  - evaluation
+    - real libraries with independently maintained tests
+    - hidden differential fuzzing between original and translated versions
+    - compare errors, output bytes, allocation behavior, callbacks, and resource cleanup
+    - run sanitizers on C and Miri where supported on Rust
+    - independently review disagreements caused by undefined C behavior
+    - report accepted incorrect translations per project and per migration attempt
+  - why it may matter: adoption requires evidence about behavior beyond compilation
+  - novelty uncertainty: VERT and SACTOR already check translations
+    - useful novelty would be failures at realistic library boundaries that their tests miss
+    - a general proposal to add differential testing is insufficient
+- proposal 2: choose the smallest useful unit of migration
+  - prior: Crubit interfaces, C2Rust's project translation, Crown's ownership recovery
+    - C2SaferRust, SmartC2Rust, and Syzygy already divide migration into smaller pieces
+  - question: which groups of functions must move together to make ownership simple?
+  - proposed new contribution: choose groups using allocation lifetimes and caller obligations
+    - compare against file boundaries and call-graph-only grouping
+  - evaluation
+    - maintain the public C or C++ interface where feasible
+    - measure pointer conversions, interface complexity, runtime cost, and reviewer effort
+    - include callbacks, shared allocations, and foreign callers
+  - why it may matter: migration can stall at language boundaries even when individual functions translate
+  - novelty uncertainty: interoperation and migration-partitioning literature require further screening
+    - dependency-order translation alone would repeat existing work
+- proposal 3: recover array and allocator conventions before requesting an LLM rewrite
+  - prior: Crown leaves array bounds and unusual memory management unresolved
+    - SACTOR already combines pointer analysis with LLM translation
+  - question: can static facts and execution traces supply the missing conventions?
+  - proposed new contribution: explicit candidate contracts for length, capacity, and ownership transfer
+    - an LLM proposes representations from those contracts
+    - independent checks reject unsupported contracts
+  - evaluation
+    - parsers, compression libraries, and custom allocators
+    - compare compiler feedback alone, static facts alone, traces alone, and combined facts
+    - include Syzygy and SACTOR as direct methodological competitors
+    - measure behavior failures and memory hazards as well as safe-pointer conversions
+    - retain programs the analysis cannot handle in the denominator
+  - why it may matter: targets a documented limitation instead of making already easy translations prettier
+  - novelty uncertainty: contract-inference and current LLM migration work may already address parts of this proposal
