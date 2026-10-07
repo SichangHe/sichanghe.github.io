@@ -44,6 +44,9 @@ jobs:
 
   deploy:
     name: Deploy the site to GitHub Pages
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
     needs: build
     if: github.event_name == 'push'
     permissions:
