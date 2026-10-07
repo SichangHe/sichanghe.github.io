@@ -141,6 +141,63 @@ human studies
     - [released dataset](https://github.com/xnlp-lab/HumanEval-MGT)
         - useful starting material for matched expert-versus-lay-reader experiments
 
+
+labeling and logged-interaction prior work
+
+- Gamage, Sewwandi, Zhang, and Bandara, CHI 2025
+    - [Labeling Synthetic Content: User Perceptions of Label Designs for AI-Generated Content on Social Media](https://doi.org/10.1145/3706598.3713171)
+    - verified ACM-deposited [Crossref metadata](https://api.crossref.org/works/10.1145/3706598.3713171)
+    - metadata title: “User Perceptions of Label Designs for AI-Generated Content on Social Media”
+    - publication status: CHI 2025 proceedings article, 29 pages
+    - access limitation: ACM abstract and PDF returned HTTP 403
+        - Open University repository also returned HTTP 403
+        - findings, stimuli, sample size, and treatment design remain unverified here
+    - inference: a broad claim that AI-label interface studies are new is untenable
+        - the verified title establishes directly related prior work
+        - it does not establish whether the paper measures erroneous browser-detector warnings
+
+- Jung, Hua, Bao, and Sundar, CHI EA 2025
+    - [AI-Generated or AI-Modified? User Reactions to Labeling AI Use in Social Media Posts](https://doi.org/10.1145/3706599.3720264)
+    - verified ACM-deposited [Crossref metadata](https://api.crossref.org/works/10.1145/3706599.3720264)
+    - metadata title: “AI-Generated or AI-Modified? User Reactions to Labeling AI Use in Social Media Posts”
+    - publication status: CHI 2025 extended-abstract proceedings article, seven pages
+        - distinct from a full CHI research paper
+    - access limitation: ACM abstract and PDF returned HTTP 403
+        - findings and study protocol remain unverified here
+    - inference: distinguishing generated from edited content in label wording already has directly related work
+    - recommendation: read both CHI papers before claiming novelty for the warning experiment
+        - refine the proposed contribution around measured detector errors, extraction choices, and factual decisions
+        - novelty of that narrower combination remains unverified
+
+- Lee and colleagues, CoAuthor dataset, 2022
+    - [official Stanford project](https://coauthor.stanford.edu/)
+    - project authors: “All interactions between the writers and the system were recorded at the keystroke level”
+    - 63 writers and four GPT-3 instances across 1,445 English writing sessions
+    - traces include requests, accepted or rejected suggestions, cursor movements, and edits
+    - creative and argumentative writing by qualified Amazon Mechanical Turk workers
+    - inference: logged composition histories already exist for more than a thousand real sessions
+        - collecting such histories alone is not a new contribution
+    - limitation: controlled GPT-3 writing sessions are not ordinary web publication workflows
+
+- Zeng, Liu, Sha, Li, Yang, Liu, Gašević, and Chen, IJCAI 2024
+    - [Detecting AI-Generated Sentences in Human-AI Collaborative Hybrid Texts: Challenges, Strategies, and Insights](https://arxiv.org/abs/2403.03506)
+    - publication status: accepted IJCAI 2024 AI and Social Good paper
+        - inspected camera-ready arXiv version 4
+    - [full primary HTML](https://arxiv.org/html/2403.03506v4), sections 3–4 and table 1
+    - authors, methods: “We selected the CoAuthor Dataset”
+    - labels distinguish AI-generated, human-written, and human–AI collaborative sentences
+    - randomly divides 1,445 CoAuthor texts into 70% training, 15% validation, and 15% test
+    - best reported ordinary full-test pipeline uses sentence-level DeBERTa-v3 with agreement score 0.4002
+        - agreement score means Cohen's kappa
+        - it subtracts expected chance agreement
+        - it is not 40.02% accuracy
+    - same classifier with perfect supplied boundaries reaches 0.5166
+        - ideal baseline, not a deployable detector
+    - authors report that editing, frequent authorship changes, and short segments hinder detection
+    - limitation: text-random split does not establish performance on unseen writers or newer models
+    - inference: realistic interaction traces and three-way sentence labels are important existing baselines
+        - a proposed mixed-text benchmark should add a concrete missing workflow or generalization test
+
 browser tools observed
 
 - GPTZero
@@ -228,6 +285,7 @@ research opportunities
 
 - recommendation: test replay claims against realistic alternative workflows
     - question: does writing history distinguish composition from transcription?
+    - prior baselines: CoAuthor traces and Zeng et al. sentence labels above
     - first experiment: compare original drafting, dictation, human transcription of AI output, pasted human drafts, and automated typing
     - measure mistakes separately for each workflow
     - record accessible input methods
