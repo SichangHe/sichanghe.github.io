@@ -41,7 +41,8 @@ plain definitions
   - a high value does not establish useful recall at a very low false-positive rate
 
 text-only limits
-- [Can AI-Generated Text be Reliably Detected?](https://arxiv.org/abs/2303.11156), Sadasivan et al.
+- [Can AI-Generated Text be Reliably Detected?](https://arxiv.org/abs/2303.11156), Sadasivan et al., arXiv 2023, 2025 revision inspected
+  - publication status: preprint version reviewed
   - section 4 evidence: “any two arbitrary distributions H and M”
   - theorem 1
     - AUROC ≤ ½ + δ − δ²/2
@@ -89,7 +90,8 @@ text-only limits
     - seed secrecy and the actual generator matter
 
 many observations can change the problem
-- [On the Possibilities of AI-Generated Text Detection](https://arxiv.org/abs/2304.04736), Chakraborty et al.
+- [On the Possibilities of AI-Generated Text Detection](https://arxiv.org/abs/2304.04736), Chakraborty et al., arXiv 2023
+  - publication status: preprint version reviewed
   - section 3.2 evidence: “i.i.d. drawn from either the human h or machine m”
     - i.i.d. means independent observations drawn from the same distribution
   - replaces one-sample distributions by product distributions Hⁿ and Mⁿ
@@ -131,7 +133,7 @@ many observations can change the problem
     - compare empirical error against naive independent-sample estimates
 
 human populations change false-positive risk
-- [GPT detectors are biased against non-native English writers](https://arxiv.org/abs/2304.02819), Liang et al., 2023
+- [GPT detectors are biased against non-native English writers](https://arxiv.org/abs/2304.02819), Liang et al., Patterns 2023, peer reviewed
   - results evidence: “average false positive rate: 61.22%”
   - seven then-available detectors
   - 91 human TOEFL essays from a Chinese educational forum

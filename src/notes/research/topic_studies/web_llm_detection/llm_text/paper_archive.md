@@ -81,5 +81,7 @@ status
 - thirteen PDFs saved and hashes checked locally
 - thirteen source records committed in the collection
     - PDF files remain local because collection Git policy ignores PDFs
-- collection commit and remote integration are recorded after completion
+- source records pushed to the paper-collection branch `rt_llm_text_cx-sources`
+    - shared main integration remains coordinated by the manager
+    - local PDFs are intentionally excluded from Git by the collection policy
 - paper-specific copyright and dataset licenses remain separate from availability of the PDF
