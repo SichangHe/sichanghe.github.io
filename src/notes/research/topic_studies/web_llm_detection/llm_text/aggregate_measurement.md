@@ -37,7 +37,9 @@ existing detector-based web estimate
 
 - [The Rise of AI-Generated Content in Wikipedia](https://arxiv.org/abs/2410.08044), Brooks, Eggert, Peskoff, 2024
     - inspected primary arXiv version 1
-    - study appears in the EMNLP 2024 NLP for Wikipedia workshop
+    - existing notes identify an EMNLP 2024 workshop publication
+        - exact proceedings entry was not independently verified
+        - bibliographic status remains provisional
     - fact: calibrate GPTZero and Binoculars on pre-March-2022 Wikipedia articles
         - target 1% false positives
         - compare with articles newly created in August 2024

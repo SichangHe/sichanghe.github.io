@@ -233,50 +233,9 @@ evaluation contract we should use
   - do not claim that a scalar detector score is the probability of AI authorship without calibration evidence
 
 research proposals
-- highest-priority recommendation: web extraction as a source of detector error
-  - question: does the same article receive different decisions after navigation, quotes, comments, or related-story text enter the input?
-  - experiment
-    - collect known human articles and matched known generations
-    - retain raw HTML, rendered text, extracted article, and paragraph blocks
-    - add controlled amounts of human navigation and AI comments
-    - compare Binoculars, Fast-DetectGPT, a trained encoder, and length-calibrated versions
-    - hold out entire websites and dates
-  - outputs
-    - error changes attributable to extraction
-    - shortest reliable block length under fixed FPR
-    - whether page-level aggregation improves recall without multiplying false flags
-  - novelty uncertainty: related benchmark searches found short and mixed text studies
-    - no source opened here directly isolates web extraction errors
-- recommendation: calibration drift monitor
-  - question: can we notice that a detector's human FPR has risen before using its estimates?
-  - experiment
-    - calibrate on earlier human pages
-    - test later pages and held-out domains without retuning
-    - add controlled editorial style and accessibility changes
-    - compare fixed thresholds, length bins, domain bins, and abstention
-  - success criterion
-    - warn or abstain before a chosen FPR limit is exceeded
-    - quantify human audit cost and lost coverage
-  - reason: RAID, MCP, EvoBench, and StyloBench expose complementary failures
-- recommendation: mixed authorship with observable edit histories
-  - question: which human/AI editing histories can actually be distinguished from final text?
-  - experiment
-    - preserve drafts and logged operations
-    - vary grammar correction, sentence rewriting, idea expansion, and full generation independently
-    - test binary detection, span detection, and contribution estimates
-    - include different final texts with similar histories and similar final texts with different histories
-  - output
-    - an explicit boundary between recoverable authorship evidence and unsupported attribution
-  - reason: MixSet, APT-Eval, and HACo-Det show that label definition is part of the problem
-- recommendation: held-out attacker evaluation
-  - train defenses on one attack family
-  - test on unseen paraphrasers, style tuning, personalization, Unicode changes, and sampling changes
-  - include query-limited black-box attacks
-  - preserve task usefulness
-    - factual content for prose
-    - compilation and tests for code
-  - novelty uncertainty: existing adversarial defenses already cover several attacks
-    - contribution requires stronger separation of training attacks from final attackers
+
+- [shared proposals](research_proposals.md) develop extraction, site aggregation, editing-history, and browser-warning studies
+- method-specific controls and limitations remain in the sections above
 
 remaining verification
 - inspect full methods and artifacts for the 2026 papers before fixing experiments around their claims

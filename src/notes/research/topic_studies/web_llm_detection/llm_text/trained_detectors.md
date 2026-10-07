@@ -228,41 +228,7 @@ failure cases that need dedicated evaluation
     - recommendation: keep code and prose as separate evaluation strata
         - comments, executable code and copied templates have different origins
 
-concrete research proposals
-- 1: fixed-cutoff transfer across websites
-    - question: which training objective preserves a low false-positive rate on a new site?
-    - compare Longformer/RoBERTa, RADAR, PAWN, Ghostbuster and Learning2Rewrite
-        - add a strong zero-shot baseline
-    - freeze detector and cutoff using separate calibration sites
-    - hold out whole websites and later collection dates
-    - report detection rate at 0.1%, 1% and 5% false-positive targets
-        - include confidence intervals and per-site errors
-    - proposal value, inference: distinguishes ranking gains from deployable decisions
-    - novelty unknown until comparison with broader benchmark literature
-- 2: creator/editor transfer
-    - question: can a trained detector distinguish drafting from light editing across new generators?
-    - collect four RACE-style classes with recorded edit histories
-        - add multiple rounds of human/model editing
-    - control text length, topic and final writing quality
-    - report class confusion and false accusations on lightly polished human drafts
-    - proposal value, inference: avoids treating grammar help as equivalent to machine authorship
-- 3: adversarial training under new attacker families
-    - question: does RADAR/GREATER training survive style imitation and two-model rewriting?
-    - train on one attack family
-        - test entirely different paraphrasers, personalization prompts and multi-stage edits
-    - assess preservation of meaning and readability
-        - a destructive edit is a weak practical evasion result
-    - compare robust detection per unit of training/inference cost
-    - proposal value, inference: isolates attack-family overfitting
-- 4: token-weighting benefit after web extraction
-    - question: do PAWN’s weights survive boilerplate, headings and navigation?
-    - compare the same passage alone, in an extracted article and inside a full page
-    - ablate token weighting against simple averages with the same backbone
-    - include Exons-Detect as a training-free weighting control
-    - proposal value, inference: connects detector design to the web measurement pipeline
-- 5: detector retraining schedule
-    - question: how quickly does performance decay as generators and writing styles change?
-    - freeze old models and evaluate monthly labeled releases
-    - compare cutoff-only updates, head-only training and full training
-    - track cost and subgroup errors after every update
-    - proposal value, inference: establishes whether a usable maintenance policy exists
+research proposals
+
+- [shared proposals](research_proposals.md) develop extraction, site aggregation, editing-history, and browser-warning studies
+- method-specific controls and limitations remain in the sections above
