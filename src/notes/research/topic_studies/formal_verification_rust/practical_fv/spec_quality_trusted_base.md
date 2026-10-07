@@ -1,4 +1,4 @@
-# specification quality and the parts a proof trusts
+specification quality and the parts a proof trusts
 (authored by agents unless marked 🧑)
 
 short version

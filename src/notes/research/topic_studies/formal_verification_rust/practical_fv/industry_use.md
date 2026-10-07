@@ -1,4 +1,4 @@
-# industrial use of formal verification
+industrial use of formal verification
 (authored by agents unless marked 🧑)
 
 short version
@@ -115,8 +115,9 @@ what remains missing
   - current evidence here does not quantify how often model/code differences escape differential testing
 - inference: these selected cases cannot rank languages by industrial adoption
   - there is no denominator of eligible projects or failed attempts
-- open review gap: additional 2025–2026 company case studies and representative adoption surveys
-  - search tools failed; this is a gap in this review, not evidence that the studies do not exist
+- open review gap: additional 2025–2026 company case studies and probability-based adoption surveys
+  - the 2020 survey in [cost_adoption.md](cost_adoption.md) studies perceptions using self-selected respondents
+  - additional current company cases remain a review gap
 
 research we can do
 
@@ -137,8 +138,8 @@ research we can do
 
 consultation status
 
-- ChatGPT opinion was requested through the parent agent's shared consultation
-  - no opinion is attributed before its response is available
+- shared Extra High review requested
+  - see [research_directions.md](research_directions.md) for the consolidated status
 
 what was searched and opened
 

@@ -71,6 +71,7 @@ what is missing
 - inference: these sources do not supply a single proof covering arbitrary production front ends, transformations, foreign libraries, linkers, and hardware
 - research gap candidate: routinely identify which compiler version changes invalidate a particular source-level proof assumption
   - general translation validation already exists
+  - [ct-verif and Jasmin](crypto.md) already check optimized-code leakage and support proved assembly generation
   - a new contribution needs evidence beyond rerunning Alive2 or compiler fuzzing
 - research gap candidate: connect observed low-level leakage with the precise secret-independence model used by the source proof
   - hardware behavior is not fully represented by ordinary functional compiler correctness
@@ -89,7 +90,9 @@ research we can do
   - cost estimate: six to eight weeks for a pilot, excluding a new machine semantics
     - agent estimate
   - closest work: Alive2, compiler fuzzing, constant-time checking, and verified cryptographic compilation
+    - compare against ct-verif on optimized LLVM and Jasmin/EasyCrypt on proved assembly paths
     - merely combining existing checks is insufficient novelty
+    - target changes to unsupported deployment assumptions, not a claim that constant-time compilation is unsolved
 
 - validate foreign-function contracts for verified compiler runtimes
   - question: can executable contracts detect bad C interactions that remain outside a CakeML theorem?

@@ -1,4 +1,4 @@
-# testing the parts a proof depends on
+testing the parts a proof depends on
 (authored by agents unless marked 🧑)
 
 short version
@@ -102,6 +102,41 @@ existing work
   - inference: model testing can force genuine proof maintenance
     - counts alone do not measure how many false assumptions in public claims were eliminated
 
+- [How We Built Cedar: A Verification-Guided Approach](https://arxiv.org/abs/2407.01688), Disselkoen et al., FSE Companion 2024
+  - fact: peer-reviewed industry/practitioner paper; opened the paper collection PDF
+  - authors' claim: proving the Lean model found four validator bugs
+    - differential and property-based testing found 21 additional bugs
+    - source: abstract and Tables 2–3
+  - fact: Section 4 runs `cargo-fuzz` inputs against both the Lean model and production Rust
+    - generates millions of requests, policies, and entities
+    - preserves minimized test corpora for continuous integration
+  - fact: property tests also cover unmodeled components, including the parser
+  - fact: Table 4 lists missed bugs and their reasons
+    - malformed inputs or schemas were not methodically generated
+    - relevant APIs were not tested in some cases
+  - limit: finite differential tests connect production Rust to the proved Lean model
+    - the paper does not prove universal equivalence between them
+  - cost: proof checking and model compilation take about three minutes in Section 3
+    - no controlled comparison of total testing and proof maintenance effort
+  - quote and effort details: [industry_use.md](industry_use.md), “Lean at AWS”
+  - inference: a new campaign needs evidence beyond saving corpora and checking model parity
+
+- [An Empirical Study on the Correctness of Formally Verified Distributed Systems](https://www.cs.purdue.edu/homes/pfonseca/papers/eurosys2017-dsbugs.pdf), Fonseca et al., EuroSys 2017
+  - fact: peer-reviewed paper; opened revised author PDF
+  - authors' claim: found sixteen bugs across IronFleet, Verdi, and Chapar
+    - PK toolkit automatically detects thirteen
+    - source: abstract and Sections 3–6
+  - fact: includes environment fuzzing and mutation-based checks of specifications
+    - shim fuzzing modifies network and filesystem behavior through `LD_PRELOAD`
+    - negative testing introduces implementation bugs and checks whether verification rejects them
+      - continued verification suggests the specification permits the bug
+    - separate specification checking proves expected properties about the specification
+  - limit: tests cannot establish all trusted components meet all assumed contracts
+    - protocol proofs remained conditional on those contracts
+  - cost: eight months of investigation is a study duration, not the cost of every PK run
+  - quote and boundary discussion: [distributed_protocols.md](distributed_protocols.md), empirical study entry
+  - inference: targeted testing of proof assumptions and specification mutation were already demonstrated in 2017
+
 what is missing
 
 - inference: tests, formal checks, and shared specifications already coexist
@@ -121,7 +156,7 @@ research we can do
 
 - proposal 1: rebuild only evidence affected by an environment change
   - question: can proof dependencies choose which tests to rerun after an OS, compiler, device, or library change?
-  - builds on: Cogent refinement testing, MachCSL conformance tests, existing named-law notes
+  - builds on: Cogent refinement testing, PK assumption fuzzing, MachCSL conformance tests, existing named-law notes
   - proposed new part: versioned assumption-to-test-to-theorem dependencies with measured incremental invalidation
   - why it may matter: a proof can remain syntactically valid after its external assumption becomes false
   - first experiment: one verified driver or storage module
@@ -130,14 +165,14 @@ research we can do
     - inject environment changes and replay real version changes
   - convincing result: same detected assumption violations with lower test cost than full retesting
     - report missed violations and stale public claims
-    - compare dependency selection with random and coverage-guided selection
+    - compare dependency selection with PK-style boundary tests, random selection, and coverage-guided selection
   - cost estimate, ours: weeks for a prototype; months for diverse real changes
-  - closest competing work: MachCSL hardware model testing and existing proof dependency tools
+  - closest competing work: PK, Cedar corpus regression tests, MachCSL hardware model testing, and existing proof dependency tools
     - novelty must be incremental evidence and its measured effect
 
 - proposal 2: find errors shared by code and its specification
   - question: can independently generated behaviors expose an accepted but unintended specification?
-  - builds on: Cogent executable refinement specifications, Alive2 semantic clarification
+  - builds on: Cogent executable refinement specifications, PK specification mutation, Cedar differential testing, Alive2 semantic clarification
   - proposed new part: evaluate specification mutants against independent reference behavior and deployed traces
     - use mutants that change allowed behavior, not merely text
   - first experiment: parser, allocator, or storage operation with a public behavioral interface
@@ -147,7 +182,7 @@ research we can do
     - show which independent oracle supplied the missing information
   - why it may matter: implementation and spec can agree on the same mistake
   - cost estimate, ours: several weeks to curate labeled errors and a trustworthy reference
-  - closest competing work: specification mutation testing
+  - closest competing work: PK specification mutation and Cedar independent model/production testing
     - cross-reference [spec_quality_trusted_base.md](spec_quality_trusted_base.md) before choosing this direction
     - withdraw novelty if the same independence experiment already exists
 
@@ -160,7 +195,7 @@ ChatGPT opinion
 search record
 
 - first read existing testing and assumption-carrying sections of `static_analysis.md`
-- opened three papers, CBMC documentation, and QuickChick textbook page
+- opened five papers, CBMC documentation, and QuickChick textbook page
 - checked local paper collection before downloading
   - added Alive2, Pumpkin Pi, quotient repair, and PRISM PDFs for the shared study
 - attempted searches for QuickChick, Alive2, and proof maintenance

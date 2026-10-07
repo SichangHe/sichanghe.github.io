@@ -67,6 +67,42 @@ what existing work shows
     - this section describes project documentation, not an independently inspected EverCrypt paper
     - no paper-specific benchmark or theorem claim added
 
+- [Verifying Constant-Time Implementations](https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_almeida.pdf), USENIX Security 2016, peer reviewed
+  - fact: ct-verif checks optimized LLVM implementations using SMACK and Boogie
+    - abstract: “verifies optimized LLVM implementations”
+  - fact: models two executions and proves their permitted leakage agrees
+    - supports benign differences already revealed by public outputs
+    - verifies the underlying reduction in Coq for a core language
+  - fact: evaluates NaCl, OpenSSL, FourQ, and other library components, including top-level APIs
+    - timings are separated into product construction and verification
+    - no reliable single aggregate verification-time figure extracted here
+  - fact: the checked representation is LLVM, before final machine-code generation
+    - section 6: “Operand-based constant-time properties, however, are generally not preserved”
+  - fact: library-function timing behavior and allocator behavior are assumed
+  - inference: ct-verif already addresses compilation-related leakage in optimized intermediate code
+    - rerunning this checker across compiler versions alone is not a new verification method
+
+- [Jasmin maintained documentation](https://jasmin-lang.readthedocs.io/en/stable/about.html), primary project documentation
+  - fact: defines source semantics in Coq and identifies the compiler-correctness statement in `proofs/compiler/compiler_proof.v`
+    - documentation: “formally verified for correctness”
+  - fact: [constant-time tooling](https://jasmin-lang.readthedocs.io/en/stable/tools/ct.html) provides both a type-system checker and extraction of explicit leakage into EasyCrypt
+    - safety must be established before the relational leakage theorem
+  - fact: the ordinary leakage model observes branches and memory access
+    - optional DOIT mode also constrains operands of instructions outside the approved data-independent timing list
+  - inference: instruction timing assumptions depend on the target and selected leakage policy
+    - functional source-to-assembly correctness alone is not evidence for every hardware side channel
+
+- [The Last Mile: High-Assurance and High-Speed Cryptographic Implementations](https://hal.univ-lorraine.fr/hal-02974993v1), IEEE S&P 2020, peer reviewed
+  - source limit: opened the primary HAL abstract and publication metadata; full PDF was not accessible through attempted URLs
+  - claim: combines Jasmin and EasyCrypt to produce correct, side-channel-protected vectorized ChaCha20-Poly1305 assembly
+    - authors' abstract: “assembly code that is provably functionally correct, protected against side-channels”
+  - claim: evaluated implementations outperform the fastest unverified code
+    - the accessible abstract supplies no precise speed ratio
+  - fact from abstract: optimizations are justified through equivalence proofs; the extended verified compiler supports vectors and a richer memory model
+  - inference: preserving source guarantees into assembly is established prior work, not an unfilled general research gap
+  - limit: this review did not inspect the full theorem's leakage relation or final assembler/linker assumptions
+    - do not extend the abstract's claim to every CPU or arbitrary speculative execution
+
 - [CryptoProver, the human's existing audit](../../../cryptoprover_20260807.md), August 2026
   - fact from that audit: the studied preprint targets production Rust cryptographic crates and functional contracts
     - its quoted paper limit: “not cryptographic security”
@@ -80,7 +116,8 @@ what is missing
   - randomness, key lifetime, nonce reuse, parsing, and misuse by callers may fall outside the primitive theorem
 - research gap candidate: evidence that proved source properties survive real compiler and integration upgrades
   - constant-time validation and verified cryptographic compilers already address parts of this problem
-  - novelty is unconfirmed until Jasmin, Vale, ct-verif, and binary-checking work are reviewed
+  - ct-verif and Jasmin already cover optimized-code checking and verified assembly generation
+  - the narrower candidate concerns historical changes in deployment assumptions, not inventing constant-time compilation
 - research gap candidate: combine performance-oriented implementation selection with machine-checked API assumptions and regression tests
   - avoid claiming runtime dispatch itself is unverified without inspecting the relevant theorem
 
@@ -91,6 +128,8 @@ research we can do
   - builds on [HACL*](https://www.microsoft.com/en-us/research/wp-content/uploads/2018/08/tmp536.pdf), [Fiat Crypto](https://adam.chlipala.net/papers/FiatCryptoSP19/FiatCryptoSP19.pdf), and [Alive2](compilers.md)
   - proposed new contribution: preserve one precise guarantee across source proof, generated code, binary observations, and version history
     - compare functional and secret-independence checks rather than merging their outcomes
+    - baseline: ct-verif on LLVM and Jasmin/EasyCrypt on supported source-to-assembly paths
+    - new work would have to expose unsupported integration or platform changes beyond those existing guarantees
   - why it may matter: proof success can coexist with a bad compiler assumption or an incorrect integration
   - first experiment: a few arithmetic and symmetric-crypto routines across historical GCC/Clang releases
     - include known source-to-binary timing counterexamples as positive controls
@@ -99,7 +138,8 @@ research we can do
   - cost estimate: six to eight weeks for a pilot
     - agent estimate, excluding new binary semantics or hardware measurement infrastructure
   - closest work: constant-time verification, compiler leakage studies, Jasmin, Vale, verified compilation
-    - this proposal may be scooped already; search these before implementation
+    - ct-verif and The Last Mile already occupy the core checking and assembly-generation space
+    - reject this proposal if it only repeats those checks without new deployment evidence
 
 - caller contracts that prevent cryptographic misuse
   - question: can verified primitive APIs make assumptions such as nonce uniqueness explicit and checkable at integration time?
@@ -120,10 +160,11 @@ ChatGPT's opinion
 
 what was searched
 
-- opened HACL* CCS 2017 PDF, Fiat Crypto IEEE S&P 2019 PDF, maintained HACL*/Vale/EverCrypt manual, Microsoft project page, Fiat Crypto repository
+- opened HACL* CCS 2017 PDF, Fiat Crypto IEEE S&P 2019 PDF, ct-verif USENIX Security 2016 PDF
+- opened maintained HACL*/Vale/EverCrypt manual, Microsoft project page, Fiat Crypto repository, Jasmin documentation, and The Last Mile primary abstract
 - inspected the existing CryptoProver audit and static-analysis notes before drafting
 - primary IACR fetches returned HTTP 403; alternate author-hosted PDFs succeeded for HACL* and Fiat Crypto
 - search endpoint failed with HTTP 404
-- not covered deeply: miTLS, protocol-security composition, Jasmin, Vale papers, EasyCrypt, post-quantum implementations, 2024–2026 cryptographic verification papers
+- not covered deeply: miTLS, protocol-security composition, Vale papers, detailed Jasmin compiler/leakage theorem, EasyCrypt, post-quantum implementations, 2024–2026 cryptographic verification papers
   - these omissions prevent calling the review exhaustive or claiming a research gap is established
 - overlap: [compiler review](compilers.md) covers semantic preservation; [specification and trusted base](spec_quality_trusted_base.md) covers general assumption tracking

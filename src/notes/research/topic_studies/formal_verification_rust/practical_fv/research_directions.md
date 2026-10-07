@@ -61,7 +61,7 @@ proposal 2: predict expensive proof failures before a tool or code upgrade
 - existing work
     - [Dafny measurement and Cazamariposas](proof_maintenance_repair.md): instability measurement and debugging
     - [PRISM and Pumpkin Pi](proof_maintenance_repair.md): historical repair data and structured proof transport
-    - [MachCSL](os_kernels.md): 22 measured source-version updates already demonstrate practical repair
+    - [MachCSL](os_kernels.md): 22 source-version updates, 21 with measured repair sessions already demonstrate practical repair
 - proposed new contribution
     - chronological prediction and intervention study across actual systems histories
     - measure total maintenance saved rather than benchmark proof completion alone
