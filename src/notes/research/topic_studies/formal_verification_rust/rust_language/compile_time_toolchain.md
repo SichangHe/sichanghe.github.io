@@ -7,7 +7,7 @@ research takeaway
   - measuring only clean builds hides the cost developers repeatedly pay
   - reusing work also creates a correctness obligation: a cached answer must match recomputation
 - scope: literature and research proposals
-  - implementation experiments belong to [seamless Rust setup](seamless_rust_setup.md)
+  - implementation experiments belong to [seamless Rust setup](https://github.com/SichangHe/seamless_rust_setup)
   - no new engineering work is proposed for this notes repository
   - sources checked 2026-10-07
 

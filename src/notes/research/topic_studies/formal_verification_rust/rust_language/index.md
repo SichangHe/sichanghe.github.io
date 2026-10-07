@@ -19,7 +19,7 @@ literature reviews and proposed research on Rust itself
 - [LLMs writing and repairing ordinary Rust](llms_writing_rust.md)
 - [supply chain and security of the crate ecosystem](supply_chain_security.md)
 - [compile time and toolchain research](compile_time_toolchain.md)
-- [seamless Rust setup: rebuilds, live debugging, task inspection, and small artifacts](seamless_rust_setup.md)
+- [seamless Rust setup: rebuilds, live debugging, task inspection, and small artifacts](https://github.com/SichangHe/seamless_rust_setup)
 
 reading guide
 
@@ -27,7 +27,7 @@ reading guide
 - [ChatGPT critique](consultation.md) records the completed Extra High consultation
 - [collected papers](collected_papers.md) records local PDFs and source provenance
 - follow the topic reviews for evidence, methods, and competing work
-- read the [seamless Rust setup](seamless_rust_setup.md) pointer for the separately owned engineering effort
+- read the [seamless Rust setup](https://github.com/SichangHe/seamless_rust_setup) pointer for the separately owned engineering effort
 
 evidence limits
 

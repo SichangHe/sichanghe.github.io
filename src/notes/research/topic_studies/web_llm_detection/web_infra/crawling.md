@@ -1,4 +1,5 @@
-how researchers crawl the web for measurement studies
+# How researchers crawl the web for measurement studies
+
 (authored by agents unless marked 🧑)
 
 - written 2026-10-06; quotes are verbatim from the paper's abstract or body unless I say otherwise
@@ -6,7 +7,7 @@ how researchers crawl the web for measurement studies
     - search was limited: web search and most paper APIs were rate limited this session, so discovery leaned on arXiv metadata (DataCite), Crossref, Springer pages, and PDFs I could fetch directly
         - consequence: 2023 to 2026 papers that are only in ACM DL or IEEE Xplore may be missing
 
-the picture in plain words
+## The picture in plain words
 
 - the question behind every crawl study: "what does a normal visitor get when they open this site?", asked for thousands to millions of sites
 - the method is always the same three choices
@@ -23,7 +24,7 @@ the picture in plain words
 - the 2024 to 2026 twist: AI scrapers made site owners block bots much harder, and research crawlers are caught in the same net
 - my take: the field has many "X matters" papers for tracker and cookie counts, and very few that (a) say how big the error is on your own metric, (b) cover page content and JavaScript behavior rather than privacy metrics, or (c) track the problem over time
 
-crawler tools
+## Crawler tools
 
 - [Web Crawling](https://doi.org/10.1561/1500000017), Olston, Najork, Foundations and Trends in IR, 2010 (survey)
     - fact: splits the classic literature into "Building an efficient, robust and scalable crawler", "Selecting a traversal order of the web graph", "Scheduling revisitation of previously crawled content", "Avoiding problematic and undesirable content", and "Crawling so-called “deep web” content, which must be accessed via HTML forms rather than hyperlinks"
@@ -76,7 +77,7 @@ crawler tools
     - [Efficient Crawling for Scalable Web Data Acquisition](https://arxiv.org/abs/2602.11874), Gauquier, Manolescu, Senellart, EDBT 2026: a bandit learns "which hyperlinks lead to pages that link to many targets, based on the paths leading to the links in their enclosing webpages"
     - inference: all three pick pages by expected value, which makes the sample biased on purpose; the opposite of what a measurement needs
 
-which sites to visit: top lists
+## Which sites to visit: top lists
 
 - [A Long Way to the Top: Significance, Structure, and Stability of Internet Top Lists](https://arxiv.org/abs/1805.11506), Scheitle et al., IMC 2018
     - fact: "top lists generally overestimate results compared to the general population by a significant margin, often even an order of magnitude"
@@ -118,7 +119,7 @@ which sites to visit: top lists
     - fact: "existing top lists of popular websites are unlabeled and lack semantic information about the nature of the included websites"; they "propose a practical two-step methodology for scalable targeted web measurements starting from the Tranco list" using LLMs to label sites
     - open: uses the LLM to choose sites, not to drive the crawl
 
-which pages to visit: landing versus internal
+## Which pages to visit: landing versus internal
 
 - [On Landing and Internal Web Pages](https://dl.acm.org/doi/abs/10.1145/3419394.3423626), Aqeel, Chandrasekaran, Feldmann, Maggs, IMC 2020 (Hispar; already in the human's notes)
     - fact: "the insights and claims of nearly two-thirds of the relevant studies would need to be revised for them to apply to internal pages"
@@ -145,9 +146,9 @@ which pages to visit: landing versus internal
         - why it is here: an example of a task-specific crawler that has to find product pages and walk a checkout flow
     - inference: every one of these judges a crawler by code coverage or bugs found; none asks how the extra pages change a prevalence number
 
-how results depend on the setup
+## How results depend on the setup
 
-the browser and the automation framework
+## The browser and the automation framework
 
 - [Towards Realistic and Reproducible Web Crawl Measurements](https://doi.org/10.1145/3442381.3450050), Jueckstock et al., WWW 2021
     - what: "naive crawling tool defaults vs. careful attempts to match “real” users across the Tranco top 25k web domains"
@@ -185,7 +186,7 @@ the browser and the automation framework
     - fact: on "6,384 pages, including landing and internal web pages", "43% of web pages are not strictly dependent on JavaScript and that more than 67% of pages are likely to be usable as long as the visitor only requires the content from the main section of the page"
     - inference: roughly a third of pages lose main content without JavaScript, which is a first-order estimate of what a no-JavaScript corpus such as Common Crawl misses
 
-bot detection
+## Bot detection
 
 - [Cloak of Visibility: Detecting When Machines Browse A Different Web](https://research.google.com/pubs/archive/45365.pdf), Invernizzi et al., S&P 2016
     - fact: studied "ten prominent cloaking services marketed within the underground", including "IP blacklists that contain over 50 million addresses tied to the top five search engines and tens of anti-virus and security crawlers"
@@ -219,7 +220,7 @@ bot detection
     - [FP-Agent: Fingerprinting AI Browsing Agents](https://arxiv.org/abs/2605.01247), Wang, Shafiq, Vekaria, arXiv 2026: "FP-Agent detects all seven AI browsing agents, whereas Cloudflare detects only one"
     - inference: the stealth-plugin advice from 2020 to 2022 may now make a research crawler easier to spot; nobody has tested this on research crawlers specifically
 
-vantage point
+## Vantage point
 
 - [The Blind Men and the Internet: Multi-Vantage Point Web Measurements](https://arxiv.org/abs/1905.08767), Jueckstock et al., arXiv 2019
     - what: "synchronized crawls on the Alexa top 5K domains from four distinct network VPs: research university, cloud datacenter, residential network, and Tor gateway proxy"
@@ -238,7 +239,7 @@ vantage point
     - inference: "we crawled from country X through a VPN" is not one setup but one per provider
 - the human's BGP background fits here: this is the same "which vantage points see the same thing" question as BGP atoms, asked of web servers and CDNs
 
-consent banners
+## Consent banners
 
 - [We Value Your Privacy ... Now Take Some Cookies](https://arxiv.org/abs/1808.05096), Degeling et al., NDSS 2019
     - fact: "62.1 % of websites in Europe now display cookie consent notices, 16 % more than in January 2018"
@@ -265,7 +266,7 @@ consent banners
     - fact: emails "exfiltrated ... before form submission and without giving consent on 1,844 websites in the EU crawl and 2,950 websites in the US crawl"
     - the crawler "finds and fills email and password fields", built on Tracker Radar Collector (per the dataset record)
 
-logins and paywalls
+## Logins and paywalls
 
 - [The Prevalence of Single Sign-On on the Web](https://dl.acm.org/doi/10.1145/3618257.3624841), Ardi, Calder, IMC 2023 (in the human's notes)
     - fact: "58% of the top 10K websites with logins are accessible with popular 3rd-party SSO providers"
@@ -283,7 +284,7 @@ logins and paywalls
     - fact: "paywall use has increased, and at an increasing rate (2× more paywalls every 6 months)"; "paywalls are in general trivial to circumvent"
     - both numbers are from 2019; I found no newer paywall prevalence crawl
 
-can web measurements be repeated and compared
+## Can web measurements be repeated and compared
 
 - [On the Similarity of Web Measurements Under Different Experimental Setups](https://doi.org/10.1145/3618257.3624795), Demir et al., IMC 2023
     - what: "visiting 1.7M webpages with five different measurement setups", two of which are identical and run in parallel
@@ -311,7 +312,7 @@ can web measurements be repeated and compared
     - fact: "we have identified the least and most representative segments for a number of recent archives"; a segment can stand in for a whole archive
     - belongs mostly to the Common Crawl file; listed here because it is a repeatability trick
 
-rules of the road: robots.txt, ethics, and the AI crawler backlash
+## Rules of the road: robots.txt, ethics, and the AI crawler backlash
 
 - [Where Are the Red Lines? Towards Ethical Server-Side Scans in Security and Privacy Research](https://swag.cispa.saarland/papers/hantke2024redlines.pdf), Hantke et al., S&P 2024
     - fact: "a slight majority (57%) of operators having a positive stance towards such academic research"; proposes "a preregistration process"
@@ -337,7 +338,7 @@ rules of the road: robots.txt, ethics, and the AI crawler backlash
 - inference from the last four: who blocks crawlers correlates with content quality, so any corpus built by a polite, named crawler (Common Crawl included) is tilting toward lower-quality sites over time
     - this bears directly on DeGenTWeb-style prevalence numbers; see idea 2
 
-known pitfalls and unsolved problems
+## Known pitfalls and unsolved problems
 
 - the sample is not the web
     - top lists overstate (Scheitle: "often even an order of magnitude"); Tranco random samples understate relative to Common Crawl hosts by about 30% on security metrics (Zhang 2026)
@@ -365,62 +366,68 @@ known pitfalls and unsolved problems
     - a correction method: given a crawl's known blind spots, how to adjust the estimate rather than only list "limitations"
     - whether archive-based or record-replay crawls agree with live crawls for anything beyond headers and script inclusion
 
-research ideas
+## Research ideas
 
 - ordering is by how much I would bet on them; confidence is about whether the gap is real, given the limited search noted at the top
 
-1. what does crawler blocking do to published numbers, and how fast is it getting worse
-    - question: when a standard research crawler is blocked or served a degraded page, how far do the usual metrics (third parties, cookies, security headers, JS API usage, page text) move, and how did block rates change from 2022 to 2026
-    - why not answered: Gundelach 2026 measures block rates once and states "The downstream effect on specific measurement outcomes remains future work"; Krumnow 2022, Jonker 2019, Vastel 2020 are pre-AI-scraper snapshots; Liu 2024 and Bouchaud 2025 track AI-crawler rules, not research browsers
-    - what we would build: paired visits to the same pages with a "known good" client (real headful Chrome on a residential line, human-like interaction) and the common research setups (OpenWPM, Playwright headless and headful, cloud IP); label block / challenge / silent degradation; then recompute two or three well-known results with and without the blocked sites, and with reweighting by CDN
-        - trend: reuse HTTP Archive and Common Crawl response codes and challenge-page signatures per site over years as a free longitudinal signal (Liu 2024 notes Common Crawl records 403 for blocked sites)
-    - data and tools: Tranco and CrUX; OpenWPM; Playwright; VisibleV8 to see probing; Zenodo has unreviewed 2026 datasets titled "Anti-Bot Adoption Index — WAF / anti-bot vendor scan of the Tranco top 1M" that could seed vendor labels
-    - main risk: the "known good" client is itself not ground truth; silent degradation is hard to label at scale; residential access raises ethics questions
-    - confidence the gap is real: medium to high for the downstream-effect part, medium for the trend part (someone may have an ACM-only paper I could not see)
+### 1. what does crawler blocking do to published numbers, and how fast is it getting worse
 
-2. does a polite no-JavaScript corpus see the same text as a browser, and does the difference bias content studies
-    - question: for the same URLs, how much of the main text is missing or different in Common Crawl compared with a rendered, consent-accepted browser visit, and is the missing part skewed toward particular kinds of sites
-    - why not answered: setup-comparison papers measure trackers and requests (Jueckstock 2021, Demir 2022, Demir 2023); Ulloa 2024 measures text but only for news pages in a user panel ("at least 33.8% of the contents ... cannot be determined using static web scraping"); Fouquet 2023 measures breakage without JavaScript on 6,384 pages, not text and not Common Crawl; Bouchaud 2025 and Steinacker-Olsztyn 2025 show that reputable sites block named crawlers more, but only at the robots.txt level
-    - why the human should care: DeGenTWeb estimates AI-generated site prevalence from Common Crawl; if high-quality sites opt out of CCBot faster than content farms, the estimate drifts upward for reasons unrelated to AI
-    - what we would measure: sample Common Crawl URLs stratified by site category; refetch with a browser within days; compare extracted main text (same extractor on both); record robots.txt and 403 status for CCBot versus browser; rerun the LLM-text detector on both versions; report a bias factor per site category
-    - data and tools: Common Crawl index and WARC, Playwright or Browsertrix, BannerClick or Priv-Accept for consent, trafilatura-style extraction
-    - main risk: overlap with the Common Crawl worker's file; time gap between the two fetches confounds (Ulloa puts that at about 6.5 points over 90 days, so keep the gap short)
-    - confidence the gap is real: medium; the selection-bias angle (who blocks CCBot) I am fairly confident nobody has tied to AI-content prevalence
+- question: when a standard research crawler is blocked or served a degraded page, how far do the usual metrics (third parties, cookies, security headers, JS API usage, page text) move, and how did block rates change from 2022 to 2026
+- why not answered: Gundelach 2026 measures block rates once and states "The downstream effect on specific measurement outcomes remains future work"; Krumnow 2022, Jonker 2019, Vastel 2020 are pre-AI-scraper snapshots; Liu 2024 and Bouchaud 2025 track AI-crawler rules, not research browsers
+- what we would build: paired visits to the same pages with a "known good" client (real headful Chrome on a residential line, human-like interaction) and the common research setups (OpenWPM, Playwright headless and headful, cloud IP); label block / challenge / silent degradation; then recompute two or three well-known results with and without the blocked sites, and with reweighting by CDN
+    - trend: reuse HTTP Archive and Common Crawl response codes and challenge-page signatures per site over years as a free longitudinal signal (Liu 2024 notes Common Crawl records 403 for blocked sites)
+- data and tools: Tranco and CrUX; OpenWPM; Playwright; VisibleV8 to see probing; Zenodo has unreviewed 2026 datasets titled "Anti-Bot Adoption Index — WAF / anti-bot vendor scan of the Tranco top 1M" that could seed vendor labels
+- main risk: the "known good" client is itself not ground truth; silent degradation is hard to label at scale; residential access raises ethics questions
+- confidence the gap is real: medium to high for the downstream-effect part, medium for the trend part (someone may have an ACM-only paper I could not see)
 
-3. how many internal pages per site are enough, and can page templates (web atoms) pick them
-    - question: for a per-site metric, what is the error from visiting 1, 5, or 20 pages, and does sampling one page per template beat random links or search results
-    - why not answered: Aqeel 2020 and Urban 2020 show internal pages differ but give no estimator; Stafeev 2024 compares navigation algorithms by code and link coverage; Zhang 2026 is the first rigorous sampling paper but samples sites, not pages within a site; Sprinter 2024 exploits per-site script reuse for speed, not for sampling
-    - what we would build: for a few hundred sites, crawl deeply (thousands of pages each) once as reference; cluster pages by DOM skeleton and shared resources; simulate sampling strategies and plot error versus pages visited for several metrics; test whether clusters that share structure also change together, which would connect to the web atoms idea in the sibling file
-    - data and tools: Common Crawl gives many URLs per host for free as the candidate pool; Hispar lists as a baseline; Arachnarium from the SoK
-    - main risk: the deep reference crawl is itself blocked or rate limited on the sites that matter; "template" may be too site-specific to generalize
-    - confidence the gap is real: medium; I searched arXiv titles and abstracts for page-level sampling and found only Zhang 2026
+### 2. does a polite no-JavaScript corpus see the same text as a browser, and does the difference bias content studies
 
-4. agent-driven crawling for measurement: what a consent-clicking, logging-in, interacting crawler reveals, and at what cost
-    - question: how much more of a site (text, JS API calls, third parties) appears when an LLM browser agent accepts consent, signs in via SSO, and uses the page, compared with load-and-wait; and are agent crawls repeatable enough to publish numbers from
-    - why not answered: YuraScanner 2025 and SpiderSapien 2026 use LLMs for security scanning on self-hosted apps; Bozzolan 2025 uses LLMs to label sites; Rautenstrauch 2024 is semi-manual and ends at 200 sites; Ardi 2023 shows 58% of login sites accept SSO but does not crawl behind it; Annamalai 2025 shows real users hit 45% more fingerprinting sites, which is the size of the prize
-    - what we would build: an agent harness on Playwright with engine-level logging (VisibleV8 or WebREC) so the observation does not depend on the agent; run load-only, scripted (BannerClick + SSO-Monitor), and agent modes on the same sites; repeat each three times to measure run-to-run spread
-    - fit with JSphere: API usage after interaction is the natural next question
-    - main risk: agents are now a detection target (FP-Agent 2026: classifier "detects all seven AI browsing agents"; Fayolle 2026), so the agent may be blocked more than a plain crawler; account creation and terms of service; cost per site
-    - confidence the gap is real: medium to high today, but this is an obvious next step for the CISPA and Ca' Foscari groups, so the window is short
+- question: for the same URLs, how much of the main text is missing or different in Common Crawl compared with a rendered, consent-accepted browser visit, and is the missing part skewed toward particular kinds of sites
+- why not answered: setup-comparison papers measure trackers and requests (Jueckstock 2021, Demir 2022, Demir 2023); Ulloa 2024 measures text but only for news pages in a user panel ("at least 33.8% of the contents ... cannot be determined using static web scraping"); Fouquet 2023 measures breakage without JavaScript on 6,384 pages, not text and not Common Crawl; Bouchaud 2025 and Steinacker-Olsztyn 2025 show that reputable sites block named crawlers more, but only at the robots.txt level
+- why the human should care: DeGenTWeb estimates AI-generated site prevalence from Common Crawl; if high-quality sites opt out of CCBot faster than content farms, the estimate drifts upward for reasons unrelated to AI
+- what we would measure: sample Common Crawl URLs stratified by site category; refetch with a browser within days; compare extracted main text (same extractor on both); record robots.txt and 403 status for CCBot versus browser; rerun the LLM-text detector on both versions; report a bias factor per site category
+- data and tools: Common Crawl index and WARC, Playwright or Browsertrix, BannerClick or Priv-Accept for consent, trafilatura-style extraction
+- main risk: overlap with the Common Crawl worker's file; time gap between the two fetches confounds (Ulloa puts that at about 6.5 points over 90 days, so keep the gap short)
+- confidence the gap is real: medium; the selection-bias angle (who blocks CCBot) I am fairly confident nobody has tied to AI-content prevalence
 
-5. a variance budget for crawl metrics beyond trackers
-    - question: for a given metric, how much of the spread comes from time, vantage point, browser, consent state, and plain chance, and how many repeats make a difference between two crawls believable
-    - why not answered: Zeber 2020 isolates "time, cloud IP address vs. residential, and operating system" and Demir 2023 compares five profiles, both on tracking and request-tree metrics; neither gives a recipe (repeats needed, minimum detectable difference) and neither covers page text or JS API sets
-    - what we would do: a full factorial crawl on a few thousand pages with replication; fit a variance-components model per metric; publish the table and a calculator
-    - main risk: reviewers may see it as incremental over Demir 2023; needs a sharp demonstration, such as a published longitudinal trend that falls inside the noise
-    - confidence the gap is real: low to medium for tracker metrics, medium for content and API metrics
+### 3. how many internal pages per site are enough, and can page templates (web atoms) pick them
 
-6. a shared calibration panel across studies (weakest; listed so the human can discard it knowingly)
-    - question: if every crawl study also crawled the same few hundred pages, could results from different papers be put on one scale
-    - nearest work: Tranco's list IDs fix the site sample; WebREC's .web archives fix the recording; nothing fixes the comparison across setups
-    - main risk: adoption problem rather than research problem; may only work as part of idea 5
-    - confidence: low
+- question: for a per-site metric, what is the error from visiting 1, 5, or 20 pages, and does sampling one page per template beat random links or search results
+- why not answered: Aqeel 2020 and Urban 2020 show internal pages differ but give no estimator; Stafeev 2024 compares navigation algorithms by code and link coverage; Zhang 2026 is the first rigorous sampling paper but samples sites, not pages within a site; Sprinter 2024 exploits per-site script reuse for speed, not for sampling
+- what we would build: for a few hundred sites, crawl deeply (thousands of pages each) once as reference; cluster pages by DOM skeleton and shared resources; simulate sampling strategies and plot error versus pages visited for several metrics; test whether clusters that share structure also change together, which would connect to the web atoms idea in the sibling file
+- data and tools: Common Crawl gives many URLs per host for free as the candidate pool; Hispar lists as a baseline; Arachnarium from the SoK
+- main risk: the deep reference crawl is itself blocked or rate limited on the sites that matter; "template" may be too site-specific to generalize
+- confidence the gap is real: medium; I searched arXiv titles and abstracts for page-level sampling and found only Zhang 2026
 
-opinions from ChatGPT
+### 4. agent-driven crawling for measurement: what a consent-clicking, logging-in, interacting crawler reveals, and at what cost
+
+- question: how much more of a site (text, JS API calls, third parties) appears when an LLM browser agent accepts consent, signs in via SSO, and uses the page, compared with load-and-wait; and are agent crawls repeatable enough to publish numbers from
+- why not answered: YuraScanner 2025 and SpiderSapien 2026 use LLMs for security scanning on self-hosted apps; Bozzolan 2025 uses LLMs to label sites; Rautenstrauch 2024 is semi-manual and ends at 200 sites; Ardi 2023 shows 58% of login sites accept SSO but does not crawl behind it; Annamalai 2025 shows real users hit 45% more fingerprinting sites, which is the size of the prize
+- what we would build: an agent harness on Playwright with engine-level logging (VisibleV8 or WebREC) so the observation does not depend on the agent; run load-only, scripted (BannerClick + SSO-Monitor), and agent modes on the same sites; repeat each three times to measure run-to-run spread
+- fit with JSphere: API usage after interaction is the natural next question
+- main risk: agents are now a detection target (FP-Agent 2026: classifier "detects all seven AI browsing agents"; Fayolle 2026), so the agent may be blocked more than a plain crawler; account creation and terms of service; cost per site
+- confidence the gap is real: medium to high today, but this is an obvious next step for the CISPA and Ca' Foscari groups, so the window is short
+
+### 5. a variance budget for crawl metrics beyond trackers
+
+- question: for a given metric, how much of the spread comes from time, vantage point, browser, consent state, and plain chance, and how many repeats make a difference between two crawls believable
+- why not answered: Zeber 2020 isolates "time, cloud IP address vs. residential, and operating system" and Demir 2023 compares five profiles, both on tracking and request-tree metrics; neither gives a recipe (repeats needed, minimum detectable difference) and neither covers page text or JS API sets
+- what we would do: a full factorial crawl on a few thousand pages with replication; fit a variance-components model per metric; publish the table and a calculator
+- main risk: reviewers may see it as incremental over Demir 2023; needs a sharp demonstration, such as a published longitudinal trend that falls inside the noise
+- confidence the gap is real: low to medium for tracker metrics, medium for content and API metrics
+
+### 6. a shared calibration panel across studies (weakest; listed so the human can discard it knowingly)
+
+- question: if every crawl study also crawled the same few hundred pages, could results from different papers be put on one scale
+- nearest work: Tranco's list IDs fix the site sample; WebREC's .web archives fix the recording; nothing fixes the comparison across setups
+- main risk: adoption problem rather than research problem; may only work as part of idea 5
+- confidence: low
+
+## Opinions from ChatGPT
 
 - I sent the six ideas above to ChatGPT (Extra High) for a novelty check; no answer had arrived when I wrote this file, so nothing here reflects it
 
-gaps in this review
+## Gaps in this review
 
 - not fetched as PDF, abstract only: Ahmad 2020, Zeber 2020, Jueckstock 2021, Xie 2024, HLISA 2021, Shepherd 2020, Cookie Hunter 2020, and the Springer papers
 - not covered: McDonald et al. "403 Forbidden: A Global View of CDN Geoblocking" (IMC 2018) and Vallina et al. on domain classification services (IMC 2020), because I could not reach a copy to quote
