@@ -27,7 +27,9 @@ opinion received
 
 changes made after the critique
 
-- investigate RUXt before proposing new safe-client witnesses
+- checked RUXt before proposing new safe-client witnesses
+  - corrected the consultation's abstract-based implication that its prototype generates witnesses
+  - the full paper says the prototype omits witness construction
 - investigate &inator before claiming new global interface representation
 - compare cargo-sandbox as well as Cackle
 - distinguish permissions granted, actions observed, and permissions shown necessary by denial tests
@@ -39,7 +41,7 @@ changes made after the critique
 
 evidence
 
-- [full response](/tmp/cx-rust-opinion-third-answer.md)
-- [helper diagnostic](/tmp/cx-rust-opinion-third.json)
-- these absolute paths are local session artifacts
+- [full response](/hdd1/sichanghe/paper_collection/Rust language research consultation, ChatGPT GPT-5.6 Sol, 2026/response.txt)
+- [helper diagnostic](/hdd1/sichanghe/paper_collection/Rust language research consultation, ChatGPT GPT-5.6 Sol, 2026/helper-diagnostic.json)
+- these absolute paths are local collection artifacts
   - primary sources identified by ChatGPT are checked separately in the topic reviews
