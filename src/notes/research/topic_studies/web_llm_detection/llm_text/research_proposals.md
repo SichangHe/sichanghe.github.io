@@ -4,6 +4,8 @@ research proposals for DeGenTWeb
 what is worth doing first
 
 - recommendation: begin with a small paired experiment on web extraction
+    - close 2026 studies already compare HTML and text
+    - test controlled extraction/template effects against known changes in drafting and editing
     - question: are we measuring authorship or the text our extractor happens to return?
     - expand only if extraction changes useful decisions at a fixed false-positive target
 - recommendation: follow with site aggregation under repeated templates
@@ -11,6 +13,7 @@ what is worth doing first
 - recommendation: keep authoring history and warning design as separate studies
     - these need collaborators or data collection beyond a crawl
 - uncertainty: no proposal below has established novelty
+    - [contemporary web studies](contemporary_web_studies.md) substantially overlap the initial framing
     - nearest prior work defines what must be checked before committing to a paper
 
 1: isolate web extraction errors
@@ -53,6 +56,11 @@ what is worth doing first
     - approximately one week to implement and inspect the pilot
     - full calibration and provenance checks will cost more than scoring a few hundred texts
 - nearest work and novelty threats
+    - Dolezal et al., The Impact of AI-Generated Text on the Internet
+        - already reports HTML robustness comparisons and Binoculars failure
+    - Pew Research Center, August 2026 Common Crawl measurement
+        - already collects WARC/WET and compares detector outputs
+    - simple HTML-versus-text tests and crawl-wide prevalence estimates are weak novelty
     - DetectRL-X: multilingual web/SEO domains, lengths, attacks, and assisted writing
         - generic web-domain or polishing evaluation alone is already covered
         - human-source cleaning removes malformed text and encoding errors
@@ -98,7 +106,9 @@ what is worth doing first
         - aggregate estimation of AI-modified reviews already exists
     - [The Rise of AI-Generated Content in Wikipedia](https://arxiv.org/abs/2410.08044)
         - use of document detectors to estimate web prevalence already exists
-    - these are novelty leads from the human's notes
+    - Dolezal and Pew: recent aggregate web estimates
+        - compare their sampling, calibration, and dependence assumptions
+    - these are novelty leads from the human's notes and verified primary sources
         - current arXiv full texts were inspected in this review
         - see [aggregate measurement](aggregate_measurement.md) for assumptions
         - inspect later follow-ups before adopting an estimator
@@ -161,7 +171,9 @@ what is worth doing first
         - an end-to-end extension trial must additionally measure actual detector accuracy
 - nearest work
     - human-detection and browser-tool notes in this tree
-    - dedicated literature on automation reliance and warning design needs further review
+    - CHI 2025 label-design and modification-label studies are close work
+        - see [human/browser notes](humans_browser_tools.md)
+    - dedicated literature on calibrated reliance needs further review
 - stopping rule
     - if an AI label harms decisions, test source-evidence prompts instead
 
@@ -178,7 +190,7 @@ ideas to deprioritize
 
 ChatGPT consultation
 
-- requested with Extra High reasoning through the shared browser CLI
-- consultation result and critical assessment will be added when the call returns
-- agent recommendations above remain provisional
-    - ChatGPT's opinion will not establish novelty or replace primary evidence
+- Extra High consultation completed
+- [advice and primary checks](chatgpt_consultation.md)
+- consequence: combine extraction and site-level measurement only if controlled interventions add beyond recent web studies
+- its suggestions do not establish novelty
