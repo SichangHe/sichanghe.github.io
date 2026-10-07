@@ -81,7 +81,8 @@ defenses and their limits
 - MCP, ACL 2025
   - [false-positive calibration with RealDet](https://aclanthology.org/2025.acl-long.601/)
   - full-paper evidence, background: “assuming only data exchangeability”
-    - exchangeability means calibration and future examples can be treated as drawn from the same distribution without regard to order
+    - exchangeability means the joint distribution is unchanged when example order is permuted
+      - independent samples from one unchanged distribution are a sufficient example
   - calibrates detector thresholds separately by text length
   - full-paper table 2 caption: “the detection threshold set based on the test set”
     - this describes the vanilla comparison, not MCP calibration
