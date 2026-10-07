@@ -103,9 +103,10 @@ Rocq / Coq: local proof completion and program-derived obligations
   - inference: editor integration is useful evidence for a practical workflow
     - it does not establish autonomous specification generation
 - [RocqStar, Solovev et al., 2025 / AAMAS 2026](https://arxiv.org/abs/2505.22846)
-  - authors' abstract: “retrieval-based premise selection as a central component”
+  - authors' abstract: “retrieval-based premise selection”
   - reported retrieval gain is up to 28% relative
-  - authors' abstract: “incorporating multi-agent debate during the planning stage increases the proof success rate by 20% overall”
+  - authors' abstract reports multi-agent debate during planning
+    - “increases the proof success rate by 20% overall”
   - limitation: “relative” and percentage-point improvements differ
     - the abstract's planning figure should not be silently read as a percentage-point gain
   - inference: compare additional agents with additional independent attempts at the same cost
@@ -142,6 +143,83 @@ F* / Pulse: substantial programs with expert guidance
   - existing audit identifies conflicting elapsed-time descriptions
     - use completed checked artifacts as evidence
     - avoid treating estimated manual effort as a controlled productivity measurement
+
+2025–26 frontier: the proof plan itself is a search object
+- source status checked on October 7, 2026
+  - all five official abstracts and PDFs opened
+  - selected method, evaluation, and limitation sections read
+  - this is selective full-paper reading, not abstract-only evidence
+- [Goedel-Architect, Chung, Cai, Li, et al., June 4, 2026](https://arxiv.org/abs/2606.06468)
+  - status: arXiv preprint
+    - peer-reviewed venue not established by this check
+  - authors' §2: “keeps the signature of the original formal statement”
+  - method: generate a graph of definitions and lemmas, prove its nodes, and revise the graph after failures
+  - authors' §3.2: “measured at the pipeline level rather than at the prover level”
+  - reported 75.6% PutnamBench coverage uses one initial graph and up to 16 refinement rounds
+  - reported 88.8% additionally uses natural-language proof guidance and more attempts
+  - inference: these are different operating settings
+    - one pipeline attempt can contain many model calls
+    - the quoted pass@1 distinction is essential when comparing costs
+  - systems relevance: a module's proof dependencies can be revised globally instead of repeatedly repairing one failing assertion
+    - this paper evaluates competition mathematics, not maintained Rust projects
+- [Planning to Hammer / Quarry, Zhang, Di, Li, Yao, and Ma, July 24, 2026 revision](https://arxiv.org/abs/2606.17981v2)
+  - first submitted June 16, 2026
+  - status: arXiv preprint
+    - the PDF has an unfilled ACM article template
+    - that alone does not establish peer-reviewed publication
+  - authors' abstract: “type-checks them in Rocq under temporarily admitted sublemmas”
+  - method: rank alternative decompositions by estimated difficulty for CoqHammer
+  - authors' Algorithm 1: “solved with a kernel-checked Rocq proof”
+  - temporary admissions help check candidate plans
+    - final acceptance requires the sublemmas to be proved
+  - authors' §6.4 reports 55%, 52%, and 16% on CoqGym100, Wigderson100, and TransBench58
+    - uniform ten-minute wall-clock budget
+    - reported gains over the strongest baseline are 7–13 percentage points
+  - removing difficulty ranking reduces these rates to 51%, 49%, and 12%
+  - inference: selecting an easy decomposition contributes beyond generating several plans
+    - the low TransBench58 rate cautions against assuming easy transfer to translated Rust obligations
+- [Goedel-Code-Prover, Li, Yang, He, et al., August 10, 2026 revision](https://arxiv.org/abs/2603.19329v3)
+  - first submitted March 18, 2026
+  - PDF states: “Published as a conference paper at COLM 2026”
+  - status: conference publication reported by the authors' PDF
+  - method: train one model to decompose obligations and complete proofs
+    - the decomposition score is also used to rank plans during search
+  - authors' introduction: “three Lean 4 code verification benchmarks”
+  - reported 62.0% aggregate success with an 8B model across 427 tasks
+    - Verina: 68.8%
+    - CLEVER: 54.0%
+    - AlgoVeri: 62.3%
+  - inference: this is more directly relevant than competition theorem proving
+    - these are Lean verification exercises
+    - the result does not establish native Verus support or autonomous specification correctness
+  - research consequence: decomposition plus learning is already a strong existing contribution
+    - our proposed contribution must target a different failure, such as maintained dependencies or specification changes
+- [Seed-Prover, Chen, Gu, Huang, et al., August 1, 2025 revision](https://arxiv.org/abs/2507.23726v2)
+  - first submitted July 31, 2025
+  - status: arXiv preprint
+    - peer-reviewed venue not established by this check
+  - authors' abstract: “Lean feedback, proved lemmas, and self-summarization”
+  - method: retain proved intermediate lemmas while revising a whole proof
+  - authors' §2.2.4: “This setting completes in 1–2 hours”
+    - their light setting already includes 8–16 attempts and 8–16 refinements per attempt
+  - reported 81.8% on MiniCTX-v2 uses context from recent formalization projects
+  - reported IMO 2025 result combines Seed-Prover with a separate geometry engine
+    - it must not be read as six ordinary Lean tasks handled by one prover
+  - inference: context-rich evaluation and explicit compute budgets matter more than the word “light”
+- [Agentic Verification of Software Systems / AutoRocq, Tu, Zhao, Song, et al., April 11, 2026 revision](https://arxiv.org/abs/2511.17330v3)
+  - first submitted November 21, 2025
+  - PDF publication line: “Proc. ACM Softw. Eng., Vol. 3, No. FSE, Article FSE157”
+  - status: FSE 2026 journal publication reported by the authors' PDF
+  - method: query Rocq context on demand and track the branching proof structure
+  - program obligations come from annotated C through Frama-C
+    - this pipeline supplies the program semantics and verification conditions
+  - authors' §7: “12/60 (20%) lemmas”
+  - kernel-utility case study reports 12 of 60 lemmas proved
+    - AutoRocq with CoqHammer proves 18
+    - PALM proves 10
+  - inference: this establishes partial proof automation on program-derived obligations
+    - it does not establish complete Linux-module verification
+    - local refinement during one proof is distinct from changing model weights across tasks
 
 self-improvement has several meanings
 - [expert iteration, Polu et al., 2022](https://arxiv.org/abs/2202.01344)
@@ -203,5 +281,8 @@ remaining limits
 - this is a cross-language mechanism review
   - it is not a complete ranking of October 2026 proving models
 - official source pages were fetched directly when the browser search endpoint failed
+- five frontier PDFs and extracted text were added to `/hdd1/sichanghe/paper_collection`
+  - folder names contain the linked title, first three authors, arXiv, and year
+  - source versions are recorded in the entries above
 - the research proposals above are agent recommendations
   - no novelty claim or performance gain has been established
