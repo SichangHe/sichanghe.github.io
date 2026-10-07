@@ -103,6 +103,29 @@ what existing work shows
   - limit: this review did not inspect the full theorem's leakage relation or final assembler/linker assumptions
     - do not extend the abstract's claim to every CPU or arbitrary speculative execution
 
+- [Implementing TLS with Verified Cryptographic Security](https://inria.hal.science/hal-00863373/document), IEEE S&P 2013, peer reviewed
+  - fact: full paper opened; this is the original F#/F7 miTLS result for TLS 1.2
+    - later TLS 1.3 implementations require separate evidence
+  - fact: verifies record-layer authenticated stream encryption and handshake key establishment, then combines them through the protocol state machine
+  - fact: the game-based theorem covers adversaries controlling network traffic and scheduling parallel connections
+    - theorem 6: “For all p.p.t. adversaries”
+    - p.p.t. means probabilistic polynomial time, the paper's restriction on adversary computation
+    - oracle-based corollary avoids restricting adversaries to the implementation's abstract API types
+  - fact: security is conditional on the stated primitive and handshake hypotheses
+    - theorem 4 assumes secure signatures, pseudorandom functions, extraction, and RSA/DH key-establishment properties
+    - section VII: “rather strong assumptions for the Handshake”
+  - fact: the evaluation reports approximately 5,000 implementation lines and 2,500 interface/annotation lines
+    - whole-program typechecking takes about 15 minutes in the reported setup
+  - fact: this version does not support ECDH or AES-GCM
+  - fact: F7, the F# compiler, .NET runtime, and underlying cryptographic libraries remain trusted
+    - section VII: “a large, unverified TCB”
+  - fact: timing side channels are outside the formal guarantee
+    - section VII: “do not formally account for side channels”
+  - fact: some usage restrictions are not established by typechecking
+  - inference: this supplies a concrete protocol-security result beyond primitive correctness
+    - it does not establish that every supported or legacy ciphersuite satisfies the strong-suite hypotheses
+    - its game-based protocol theorem and HACL*/Jasmin leakage proofs address different obligations
+
 - [CryptoProver, the human's existing audit](../../../cryptoprover_20260807.md), August 2026
   - fact from that audit: the studied preprint targets production Rust cryptographic crates and functional contracts
     - its quoted paper limit: “not cryptographic security”
@@ -160,11 +183,11 @@ ChatGPT's opinion
 
 what was searched
 
-- opened HACL* CCS 2017 PDF, Fiat Crypto IEEE S&P 2019 PDF, ct-verif USENIX Security 2016 PDF
+- opened HACL* CCS 2017 PDF, Fiat Crypto IEEE S&P 2019 PDF, ct-verif USENIX Security 2016 PDF, miTLS IEEE S&P 2013 PDF
 - opened maintained HACL*/Vale/EverCrypt manual, Microsoft project page, Fiat Crypto repository, Jasmin documentation, and The Last Mile primary abstract
 - inspected the existing CryptoProver audit and static-analysis notes before drafting
 - primary IACR fetches returned HTTP 403; alternate author-hosted PDFs succeeded for HACL* and Fiat Crypto
 - search endpoint failed with HTTP 404
-- not covered deeply: miTLS, protocol-security composition, Vale papers, detailed Jasmin compiler/leakage theorem, EasyCrypt, post-quantum implementations, 2024–2026 cryptographic verification papers
+- not covered deeply: later miTLS/TLS 1.3, protocol-security composition beyond the 2013 result, Vale papers, detailed Jasmin compiler/leakage theorem, EasyCrypt, post-quantum implementations, 2024–2026 cryptographic verification papers
   - these omissions prevent calling the review exhaustive or claiming a research gap is established
 - overlap: [compiler review](compilers.md) covers semantic preservation; [specification and trusted base](spec_quality_trusted_base.md) covers general assumption tracking
