@@ -117,6 +117,9 @@ Creusot systems
   - its README explicitly excludes a whole-system proof
 
 Prusti application evidence
+- [WaVe](prusti.md)
+  - memory and resource isolation for a WebAssembly runtime
+  - trusted OS/policy specifications and restricted concurrency scope
 - [Interblockchain Communication crate study](prusti.md)
   - historical incremental checking of supported functions and selected monotonicity properties
   - does not establish end-to-end protocol correctness
