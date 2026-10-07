@@ -107,7 +107,7 @@ Miri connects models to real code
   - allocation identity, initialization, type validity, access permissions, and thread conflicts
 - [official README](https://github.com/rust-lang/miri#readme) marks both aliasing checks “Experimental”
 - a passing run is limited evidence
-  - exact README words: “Miri fundamentally cannot ensure that your code is sound”
+  - exact README words: “cannot ensure that your code is sound”
   - [testing tools and evidence limits](bug_finding_tools.md)
 
 foreign-language boundaries test the models
@@ -133,14 +133,9 @@ research we could do
     - measure distinct root causes and confirmed fixes
   - risk: a disagreement alone does not establish which model is correct
 
-- proposed: test safe clients that deliberately violate undocumented assumptions
-  - prior work: RustBelt's safe-client boundary; Rudra's trait and panic bugs; SyRust and Crabtree client generation
-  - new contribution: systematically vary safe callbacks, trait implementations, panic points, and object destruction order
-  - why it may matter: ordinary tests often exercise cooperative clients rather than every behavior a safe API permits
-  - evaluation: historical repaired bugs and held-out libraries
-    - compare generated-client baselines under equal time budgets
-    - require executable safe-client witnesses for claimed soundness bugs
-  - novelty condition: outperform existing client synthesis on a specified missing class
+- shared proposal: test safe clients that deliberately violate undocumented assumptions
+  - foundation here: RustBelt requires safety for every allowed safe client
+  - [tool review](bug_finding_tools.md) owns client generation, nearest competitors, and evaluation
 
 - proposed: measure how unsafe-code repairs age as rules change
   - prior work: Miri's evolving checks and Tree Borrows compatibility experiment

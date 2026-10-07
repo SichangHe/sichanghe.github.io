@@ -85,7 +85,7 @@ API test synthesis
 - Crabtree, Yoshiki Takashima, Chanhee Cho, Ruben Martins, Limin Jia, Corina S. Păsăreanu, OOPSLA 2024
   - [Rust API Test Synthesis Guided by Coverage and Type](https://doi.org/10.1145/3689733)
 - generate well-typed library clients and run them in Miri
-  - exact description in the Miri paper, §7: “automatically generating well-typed clients and executing them in Miri”
+  - exact description in the Miri paper, §7: “generating well-typed clients”
   - evidence here comes from the Miri authors' related-work discussion
   - original evaluations need a deeper follow-up before numerical comparison
 - implication: writing a safe client that triggers unsafe-library failure is already an established research approach
@@ -125,7 +125,7 @@ concurrent execution testing
   - README states that its C11 model is incomplete
   - some sequentially consistent operations receive weaker treatment and can cause false alarms
   - some load-buffering executions remain unexplored
-  - exact warning: “there can be a bug in the checked code even if Loom says there is no bug”
+  - exact warning: “even if Loom says there is no bug”
 - [async and concurrency review](async_concurrency_bugs.md) owns the broader bug literature
 
 compiler testing as adjacent evidence
@@ -162,16 +162,9 @@ research we could do
     - report inputs rejected by Miri because of unsupported operations separately
   - novelty risk: search existing replay and hybrid-fuzzing work before committing to this idea
 
-- proposed: measure which defects survive combinations of tools
-  - prior work: Rudra, SafeDrop, Miri, native sanitizers, Loom
-  - new contribution: a versioned benchmark with safe-client witnesses and explicit reasons each tool can or cannot analyze each case
-  - why it may matter: developers need evidence about the remaining failure classes after their current checks pass
-  - evaluation: reproduce original buggy and repaired commits
-    - hold out libraries and root-cause families
-    - report build failures, unsupported operations, timeouts, false alarms, and confirmed detections
-    - test whether combinations discover more than their cheapest component
-  - limit: this is initially a measurement study
-    - a new detector needs evidence of a specific remaining gap
+- shared proposal: compare tools on executable historical failures
+  - tools here contribute complementary checks and distinct support limits
+  - [empirical review](empirical_bug_studies.md) owns corpus construction, deduplication, and evaluation
 
 - proposed: carry pointer information across real Rust/C boundaries at lower cost
   - prior work: the ICSE 2025 interpreter combination; Miri's provenance checks
