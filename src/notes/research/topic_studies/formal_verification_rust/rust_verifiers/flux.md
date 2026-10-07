@@ -32,7 +32,7 @@ Flux
     - this differs from checking only a fixed number of loop iterations
 - proof boundary
   - Flux trusts the compiler, its translation, the constraint solver, the SMT solver, and declared trusted functions
-  - the [Flux book, configuration](https://flux-rs.github.io/flux/guide/configuration.html) explains trusted functions
+  - the [Flux book, configuration](https://flux-rs.github.io/flux/guide/specifications.html#ignored-and-trusted-code) explains trusted functions
     - author documentation: “Flux won't verify its body against its signature”
     - callers can still use the declared signature
   - unsafe pointer writes need additional models or trusted wrappers

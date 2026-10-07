@@ -1,15 +1,242 @@
-# Newer Rust verification tools and techniques, 2025–2026
+newer Rust verification tools and techniques, 2025–2026
 (authored by agents unless marked 🧑)
 
-scope: tools and papers that first appeared or changed a lot in 2025–2026 and that the sibling notes miss
-- sibling notes cover Verus; Prusti and Creusot; Kani and other model checkers plus the Rust std verification effort; Aeneas and hax; Flux and Thrust; RefinedRust, Gillian-Rust, VeriFast and unsafe Rust theory
-- status: draft in progress, written early in case the session is cut off
+what changed
+- newer work tackles three different gaps
+  - making proofs easier to guide: RustyDL and Rust-Prover
+  - checking the reasoning machinery itself: VerusBelt and Flex
+  - handling ordinary systems code: Corten and the 2026 RefinedRust extension
+- Corten and CortenMM are unrelated projects
+  - Corten is a verifier
+  - CortenMM is an operating-system memory subsystem verified with Verus
+- Crux predates this window
+  - included because its production-code approach is an important alternative
+- author-reported results below have not been reproduced
+- source review: October 7, 2026
+  - primary abstracts checked directly on arXiv where available
+  - full papers read from the earlier worker's downloaded texts
+  - search service failed during this pass
+  - this is a selected review, not an exhaustive census
 
-## leads from the brief, to be filled in
+RustyDL and Rusty KeY: let people inspect and guide source-level proofs
+- [Drodt and Hähnle, RustyDL, February 2026](https://arxiv.org/abs/2602.22075v1)
+  - abstract: “RustyDL reasons about Rust programs directly on the source code level”
+- mechanism
+  - describes program execution inside logical statements
+  - proof rules step through Rust code and update the logical state
+  - the KeY interface permits automatic steps and manual choices
+  - mutable references use logical updates rather than a separate permission calculus
+  - [prototype and examples](https://github.com/Drodt/key/tree/rusty)
+- demonstrated scope
+  - safe Rust fragments with borrowing, loops, arrays, tuples, and some enums
+  - §3.5 reports binary search verified with 4,260 rule applications in 2.1 seconds
+  - examples are demonstrations, not a verified production library
+- limits
+  - §3.5: “The proof system is not foundational”
+    - its rules and implementation remain trusted
+  - traits, iterators, generic functions, and fuller pattern matching remain future work
+  - unsafe Rust needs a more explicit memory model
+  - §5 postpones a fuller evaluation until automation improves
+- research proposal: source-level failure explanations
+  - builds on RustyDL's visible proof state and KeY interaction
+  - new experiment: compare diagnosis and repair of deliberately broken Rust contracts against Creusot and Verus
+  - measure time to identify the actual cause, repaired proof success, and misleading explanations
+  - may matter because proving a correct function and understanding why a proof failed are different tasks
+  - novelty against existing verifier user studies remains to be checked
 
-- RustyDL / KeY for Rust (FM 2026, arXiv 2602.22075)
-- VerusBelt (PLDI 2026)
-- Bringing Foundational Verification to Real-World Rust Code (OOPSLA 2026)
-- KRust and RAPx (Rust std verification effort)
-- Solving VeriContest with a Lean-Backed Rust Verifier (arXiv 2610.03994)
-- Crux (arXiv 2410.18280)
+Corten: verify source-shaped Rust in Rocq
+- [Farka, Abate, Linker, and Ertel, September 2026 preprint](https://arxiv.org/abs/2609.04372v1)
+  - abstract: “verifying memory safety of the allocation and deallocation functions”
+- mechanism
+  - imports Rust's typed high-level representation, THIR
+  - represents its syntax and execution inside Rocq
+  - Iris supplies rules for reasoning about separately owned memory
+  - proof goals remain close enough to Rust syntax to print as source-shaped code
+  - automatic proof steps follow the structure of the program
+  - constructs receive separate soundness arguments against an execution model
+    - §10 says extension to all supported constructs is still ongoing
+- demonstrated scope
+  - a buddy allocator
+    - an allocator that splits blocks into smaller blocks and joins free buddies
+  - allocation and deallocation memory safety
+  - synthetic tests reportedly reduce proof size by 2–4× against direct semantic proofs
+- limits
+  - the allocator case study does not establish whole-kernel correctness
+  - traits have remaining restrictions
+  - Iris's ability to reason about concurrency does not establish coverage of all concurrent Rust features
+  - compilation and correspondence to hardware execution require further arguments
+  - THIR changes can still require importer maintenance
+- research proposal: allocator proofs across the hardware boundary
+  - builds on Corten's allocator and shared Rocq foundation
+  - new target: connect allocator ownership to page-table updates and explicitly modeled hardware permissions
+  - begin with one allocation/map/unmap sequence
+  - may matter because a correct allocator cannot prevent an incorrect mapping from exposing its pages
+  - compare against ACE and Verus memory-management work before claiming novelty
+
+VerusBelt: justify Verus's special proof types
+- [Hance, Elbeheiry, Matsushita, and Dreyer, PLDI 2026](https://doi.org/10.1145/3808325)
+  - abstract: “the first semantic soundness proof for a significant subset of Verus”
+- mechanism
+  - gives mathematical meanings to Verus's proof-oriented types
+  - proves the corresponding rules preserve those meanings
+  - uses Iris and Rocq
+  - combines RustBelt's lifetime reasoning with Leaf's temporary resource sharing
+  - models cells, invariants, resource algebras, and storage protocols
+    - these types track permission to access or temporarily share program state
+- demonstrated scope
+  - lifetimes, mutable borrows, concurrency, and thread safety in the formalized subset
+  - a foundation for types used by verified allocators, locks, and reference-counted objects
+  - this is a proof of verification rules, not a new proof of every system already verified with Verus
+- limits
+  - §6 excludes the connection to Verus's verification-condition generator
+  - §6 excludes “soundness issues in Verus’s erasure scheme”
+    - erasure removes proof-only code before execution
+  - the formalized language approximates a subset of implemented Verus
+- research proposal: validate proof-code erasure
+  - builds on VerusBelt's semantics
+  - new target: a checked correspondence between a useful subset before and after proof-code removal
+  - start with permission tokens, invariant opening, and drop behavior
+  - may matter because correct logical rules cannot compensate for incorrectly generated executable code
+  - requires a precise statement of which observable behaviors must be preserved
+
+RefinedRust 2026: ordinary abstractions meet verified unsafe code
+- [Gäher et al., Bringing Foundational Verification to Real-World Rust Code, OOPSLA 2026](https://doi.org/10.1145/3839484)
+  - abstract: “including traits, closures, and iterators”
+- mechanism
+  - extends RefinedRust's Rocq/Iris proofs to these high-level features
+  - keeps them usable alongside unsafe pointer manipulation
+- real system
+  - parts of the ACE security monitor's memory subsystem
+  - includes its page allocator
+  - the paper verifies selected parts, not the complete monitor
+- significance
+  - less need to flatten idiomatic Rust into loops and manually specialized functions
+  - [RefinedRust note](refinedrust.md) covers the underlying tool and its limits
+- research proposal: quantify proof maintenance under ordinary refactoring
+  - builds on the newly supported traits, closures, and iterators
+  - compare equivalent iterator, loop, and trait-based implementations of the same subsystem
+  - measure annotation changes and proof repair after realistic refactorings
+  - may matter because a one-time proof says little about the cost of maintaining a verified library
+
+Flex: check solver answers inside Lean
+- [Khan, Markopoulos, Lehmann, and Jhala, July 2026](https://arxiv.org/abs/2607.12226v1)
+  - abstract: “automatically discharges 95.7% of the CHCs from Flux’s benchmark suite”
+- mechanism
+  - a constrained Horn clause, CHC, describes requirements on an unknown program invariant
+  - represents these requirements as Lean propositions
+  - tactics find candidate invariants and build proofs checked by Lean's kernel
+  - provides proved generators for a small imperative language and a functional calculus
+  - connects to Flux-generated requirements for Rust libraries
+  - [artifact](https://github.com/jam-khan/Flex)
+- demonstrated scope
+  - examples include sorting, a Tock-derived ring buffer, modular arithmetic, and a hash table
+  - the ring-buffer case uses a trusted wrapper around possibly uninitialized storage
+  - the paper's automatic result counts individual constraints
+    - it is not the percentage of complete Rust programs verified automatically
+- limits
+  - §7 distinguishes proved toy-language generators from trusted compiler plugins such as Flux
+  - Lean checking removes trust in the solver's answer
+    - it does not remove trust in Rust-to-constraint generation
+  - remaining constraints need stronger automation or human proof assistance
+- research proposal: checked Rust-to-constraint correspondence
+  - builds on Flex's proof-producing backend and Flux's frontend
+  - new target: certificates for a restricted Rust fragment's translation into constraints
+  - start with integer arithmetic, bounds checks, and mutable borrowing
+  - may matter because the strongest backend still proves the wrong claim if its input is mistranslated
+  - compare its trusted components and implementation effort against RefinedRust
+
+Rust-Prover and VeriContest: high proof coverage with a translation caveat
+- [Serbanuta, Xu, Stefanescu, and Radoi, October 2, 2026](https://arxiv.org/abs/2610.03994v1)
+  - abstract: “All 1325 theorems of all 1007 problems were proved”
+- mechanism
+  - restates Verus specifications and translates Rust programs into Lean
+  - agents produce Lean proofs
+  - Lean's kernel checks the resulting theorems
+- demonstrated scope
+  - competitive-programming problems, not a production systems codebase
+  - §4.1 checks specifications against tests for 658 problems
+  - §4.2 compares 21,413 executions covering 114 problems
+  - 27 problems require re-encoding of code or specification helpers
+- limits
+  - proof coverage applies to the translated statements
+  - execution tests support correspondence for tested inputs
+    - they do not prove translation correctness for all inputs
+  - the [existing October collection](../../../verus_frontier_20261006.md) records these distinctions
+- research proposal: translation-preservation challenge set
+  - builds on the paper's execution comparisons and Lean proofs
+  - deliberately vary overflow, indexing, division, panic, and representation choices
+  - require an explicit preservation argument for each accepted transformation
+  - may matter because proof success can hide an easier but different translated problem
+  - report original-code coverage separately from target-theorem success
+
+Crux-MIR: symbolic tests for intricate production Rust
+- [Pernsteiner et al., October 2024 preprint](https://arxiv.org/abs/2410.18280v1)
+  - abstract: “verifying the Ring library implementations of SHA1 and SHA2”
+- mechanism
+  - executes Rust's MIR with symbolic inputs
+    - one symbolic execution represents many concrete inputs
+  - reasons precisely about machine-width values
+  - assertions look like unit tests
+  - compares outputs against executable Cryptol or hacspec specifications
+  - replaces separately verified subfunctions with simpler specifications to scale proofs
+  - [official tool](https://crux.galois.com)
+- scope
+  - safe and unsafe Rust
+  - fixed-size cryptographic code and other bounded computations
+  - equality to a specification includes avoiding undefined behavior and panic
+- limits
+  - arbitrary bounds restrict the theorem to those bounds
+  - unbounded loops need additional reasoning
+  - coverage of Rust depends on its MIR translation and memory model
+  - SAW's C/assembly industry successes are not automatically Crux-MIR Rust successes
+- research proposal: mixed bounded and unbounded proofs
+  - builds on Crux's verified function replacement and an invariant-based Rust verifier
+  - use Crux for fixed-size encoding or cryptographic helpers
+  - use Creusot or Verus for an unbounded caller
+  - new target: check that both tools assign the same meaning to the shared contract
+  - may matter because neither style alone fits every part of a systems library
+
+CortenMM: a verified system that informs verifier research
+- [Zhang et al., SOSP 2025](https://doi.org/10.1145/3731569.3764836)
+  - §5: “We formally verify the core part of CortenMM”
+- system design
+  - removes a separate software mapping structure and operates through page tables
+  - provides transactional mapping operations and scalable locking
+  - implemented within Asterinas
+- proof
+  - Verus proves basic operation correctness and locking properties for the transaction core
+  - ownership tokens connect the functional and mutual-exclusion proofs
+- limits
+  - §5 trusts hardware, Verus/SMT, and other operating-system code
+  - physical allocation, DMA programming, locks, and RCU remain trusted
+  - the proof does not establish all hardware translation-cache behavior
+- research proposal: discharge one trusted boundary
+  - builds on CortenMM's transactional contract
+  - verify one surrounding component and connect its guarantees to the core proof
+  - candidates: allocator integration or translation-cache invalidation
+  - may matter because concurrent mapping correctness depends on more than page-table updates
+  - define the hardware model before attempting the translation-cache candidate
+
+other recent work to connect
+- [Forte, September 2026](https://arxiv.org/abs/2609.30254v1)
+  - abstract: “Flux checks Forte as an ordinary library, with no fork of the compiler”
+  - specialized sensitivity reasoning across mutable borrowing
+  - relevant to extending verifier libraries rather than adding another compiler fork
+- [Fewer Assumptions by Design, September 2026](https://arxiv.org/abs/2609.34886v1)
+  - abstract: “a specification weakness can arise when verification relies on unproven or invalidated assumptions”
+  - doubly linked lists provide a concrete setting for auditing assumed lemmas
+- [Vosti, September 2026](https://arxiv.org/abs/2609.38981v1)
+  - §5.1: “imports kernel contracts as trusted assumptions in Verus”
+  - useful example of the engine/GPU contract boundary
+  - covered in the existing October collection and the verified-systems study
+
+research priority, agent opinion
+- first: compare translated claims against original Rust behavior
+  - directly relevant to Rust-Prover, Flex, and multi-tool proofs
+  - a small adversarial corpus provides a concrete first result
+- second: proof maintenance after ordinary code changes
+  - directly relevant to source-level proofs and new support for idiomatic Rust
+  - use existing allocator cases before proposing another verifier
+- larger project: connect verified memory components
+  - Corten, ACE, and CortenMM supply different starting points
+  - avoid claiming whole-system verification from separately verified components
