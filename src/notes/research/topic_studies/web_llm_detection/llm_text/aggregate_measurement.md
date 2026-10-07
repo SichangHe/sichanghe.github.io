@@ -90,7 +90,12 @@ site-level experiment requirements
     - vary generator/prompt mixtures and recall
     - compare raw pages with deduplicated article content
     - test temporal changes known to contain no new model generation
-- recommendation: cluster uncertainty by site and underlying article
+- recommendation: calculate uncertainty by resampling whole sites and source articles together
     - do not resample copied paragraphs as independent evidence
+    - with N independent human examples, measured false-positive rates change in steps of 1/N
+    - zero errors still leaves uncertainty
+        - one-sided 95% binomial upper bound: 1 − 0.05^(1/N)
+        - approximately 3/N
+        - dependent samples do not justify this independent-sample bound
 - limitation: bounded estimates depend on bounded drift assumptions
     - no reviewed method makes text-only web prevalence assumption-free

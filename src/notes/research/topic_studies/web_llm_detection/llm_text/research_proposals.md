@@ -47,6 +47,7 @@ what is worth doing first
     - with no errors, the approximate 95% upper bound is 3/n under independent sampling
         - 3,000 sources support approximately 0.1%, not 0.01%
         - clustered pages need uncertainty calculated by source/site, not by paragraph
+        - observing a numerical rate is separate from establishing a confidence bound
 - planning estimate, not measured cost
     - one GPU with enough memory for the selected baselines
     - approximately one week to implement and inspect the pilot
