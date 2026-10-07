@@ -12,6 +12,13 @@ main point
   - paper results are author claims, not independently reproduced here
   - the normal web-search tool failed; direct arXiv pages and existing collected manuscripts supplied the sources
 
+publication status
+
+- miniF2F: arXiv comments report ICLR 2022 publication
+- AutoVerus: arXiv comments report OOPSLA 2025
+- DafnyBench, VERINA, CLEVER, and VeriContest are cited from opened arXiv manuscripts
+  - later proceedings status was not independently established in this pass
+
 compare the jobs before comparing scores
 - miniF2F measures mathematical proof search across formal systems
   - Zheng, Han and Polu: “488 problem statements”
