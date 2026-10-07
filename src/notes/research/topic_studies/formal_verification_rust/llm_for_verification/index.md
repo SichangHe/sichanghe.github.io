@@ -28,6 +28,8 @@ read by question
   - weak contracts, trusted dependencies, translation, contamination, and resource accounting
 - [maintenance prior work](maintenance_prior_work.md)
   - earlier proof repair and implementation-visibility studies constrain proposed novelty
+- [ChatGPT consultation](consultation.md)
+  - confirmed Extra High advice and independently checked competing work
 - [research directions](research_directions.md)
   - proposed experiments, closest work, costs, and unresolved novelty
 

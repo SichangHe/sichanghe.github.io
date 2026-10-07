@@ -102,6 +102,33 @@ implementation visibility and inherited mistakes
   - distinguish missing implicit safety assumptions from contracts preserving a concrete wrong output
   - these are related risks but not identical evaluation targets
 
+direct bug-versus-correct-code comparison: Seeking Specifications
+
+- source: Granberry, Ahrendt and Johansson, [Seeking Specifications: The Case for Neuro-Symbolic Specification Synthesis](https://arxiv.org/abs/2504.21061), 2025 preprint
+- method: Deepseek-R1 generates ACSL contracts for C programs
+  - §3.1: 50 programs covering familiar algorithms, complex examples and short implementations
+  - §6.2 calls the intent dataset “fully handcrafted”
+- control: compare unmodified, bug-injected, name-anonymized and buggy-anonymized versions
+  - §3.3: “We introduced subtle bugs”
+  - §3.2: three generations per program and prompt at temperature 0.7
+  - target implementations remain visible
+  - no docs-only arm or real historical bug/fix pairs reported in this experiment
+- result: authors say the model inferred intent in nearly every generation
+  - §3.4 reports three exceptions among nearly 600 generations
+  - bug recognition varies by category
+    - §3.6 reports 47/60 recognized bugs in Basic and 9/30 in Famous
+- result: recognizing a bug did not ensure a specification of intended behavior
+  - §3.7 describes generated contracts following buggy behavior
+  - explicitly asking for intent changed the authors' qualitative assessment
+- evidence limit: evaluation mainly inspects model reasoning rather than independently checked requirement satisfaction
+  - §3.3: “primarily focused on analysis of the reasoning output”
+  - §6.1 acknowledges possible “confirmation bias”
+  - inference: reasoning text cannot establish the correctness of the resulting ACSL contract
+- novelty consequence for candidate 2
+  - comparing specifications from correct and buggy implementations is already done
+  - possible remaining distinction: real bug/fix histories, randomized implementation visibility, fixed documentation and independently scored hidden regression behavior
+  - this is a narrower experimental extension, not a claim of discovering inherited bugs
+
 existing bug datasets do not necessarily test the visibility effect
 
 - source: Ma et al., [SpecGen: Automated Generation of Formal Program Specifications via Large Language Models](https://arxiv.org/abs/2401.08807), ICSE 2025

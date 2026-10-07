@@ -82,6 +82,9 @@ newer tasks broaden the evidence
     - [collected manuscript](</hdd1/sichanghe/paper_collection/VeruSAGE- A Study of Agent-Based Verification for Rust Systems, Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026/VeruSAGE- A Study of Agent-Based Verification for Rust Systems, Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026.md>)
   - inference: realistic proof obligations with extracted dependencies are stronger evidence than toy functions
     - still differ from finding missing contracts and coordinating changes in the original repository
+  - the current [official README](https://github.com/microsoft/verus-proof-synthesis/blob/main/benchmarks/VeruSAGE-Bench/README.md) separately lists 460 no-lemma tasks
+    - helper declarations are removed, not merely their bodies
+    - distinguish this variant from the paper's default supplied-lemma evaluation
 - VeriStruct adds whole data-structure modules and generated abstractions
   - Sun et al., abstract: “eleven Rust data structure modules”
     - [paper](https://arxiv.org/abs/2510.25015)
