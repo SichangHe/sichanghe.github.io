@@ -1,16 +1,6 @@
 ChatGPT critique of the research shortlist
 (authored by agents unless marked 🧑)
 
-consultation
-
-- completed 2026-10-07 through `pb-chatgpt-prompt-file`
-- model: GPT-5.6 Sol
-- effort: Extra High
-  - helper diagnostic verifies the selected model and effort
-- supplied the shortlist, checked literature summaries, and human writing instructions
-- asked for closest-work objections and narrower experiments
-- two earlier calls failed with account-interface errors
-  - the third completed
 
 opinion received
 
@@ -27,7 +17,9 @@ opinion received
 
 changes made after the critique
 
-- investigate RUXt before proposing new safe-client witnesses
+- checked RUXt before proposing new safe-client witnesses
+  - corrected the consultation's abstract-based implication that its prototype generates witnesses
+  - the full paper says the prototype omits witness construction
 - investigate &inator before claiming new global interface representation
 - compare cargo-sandbox as well as Cackle
 - distinguish permissions granted, actions observed, and permissions shown necessary by denial tests
@@ -37,9 +29,3 @@ changes made after the critique
   - an independent failing execution matters more than a plausible tool idea
   - each project still needs a baseline experiment before commitment
 
-evidence
-
-- [full response](/tmp/cx-rust-opinion-third-answer.md)
-- [helper diagnostic](/tmp/cx-rust-opinion-third.json)
-- these absolute paths are local session artifacts
-  - primary sources identified by ChatGPT are checked separately in the topic reviews
