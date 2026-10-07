@@ -44,31 +44,31 @@ main decision
   - [async review](async_concurrency_bugs.md) explains the overlap
   - novelty must lie in a demonstrated missing remote-effect or recovery case
 
-2. safe callers that invalidate unsafe-library assumptions
+2. safe callers: retain one discriminating test
 
-- question: which legal callback, trait, panic, or destruction behavior breaks an apparently safe API?
+- agent recommendation: stop the broad standalone generator proposal
 - builds on
-  - [RustBelt](https://plv.mpi-sws.org/rustbelt/popl18/)
   - [Rudra](https://github.com/sslab-gatech/Rudra)
-  - [Miri](https://ralfj.de/research/papers/2026-popl-miri.pdf)
-  - [SyRust](https://www.andrew.cmu.edu/user/liminjia/research/papers/syrust-pldi21.pdf) and [Crabtree](https://www.andrew.cmu.edu/user/liminjia/research/papers/crabtree-oopsla24.pdf) client synthesis
-  - evidence and exact source excerpts: [tool review](bug_finding_tools.md)
-- proposed contribution: synthesize new safe trait implementations and deliberately placed panic or API reentry
-  - Crabtree already synthesizes closures and trait-aware call sequences
-  - first demonstrate a selected behavior its implementation misses
-  - adding an LLM alone is insufficient novelty
-- why it may matter: a safe interface must work for all allowed callers
+  - [SyRust](https://www.andrew.cmu.edu/user/liminjia/research/papers/syrust-pldi21.pdf)
+  - [Crabtree](https://www.andrew.cmu.edu/user/liminjia/research/papers/crabtree-oopsla24.pdf)
+  - [RUXt](https://doi.org/10.4230/LIPIcs.ECOOP.2025.5)
+  - [tool review](bug_finding_tools.md) owns the original evidence and limits
+- possible new contribution: one demonstrated caller behavior that current methods cannot express or discover
+  - new safe trait implementations combined with panic, destructor behavior, or API reentry are candidates
+  - no missing behavior is established yet
+- why it may matter: tests a concrete hidden assumption at a safe API boundary
 - first experiment
-  - reproduce historical panic and trait bugs
-  - vary callback return values, panic points, reentry, and destruction order
-  - execute generated safe callers in a pinned Miri version
-- compare Rudra, existing client synthesis, and native fuzzing plus Miri replay
-  - report the shared supported cases and the full target population separately
-  - retain compilation failures, unsupported behavior, and missing harnesses in the results
-- convincing result: reproducible safe-client witnesses for new failures or an established missing class
-  - measure confirmed causes per hour
-  - separate model violations, intended API misuse, and actual soundness failures
-- stop condition: existing synthesis already covers the selected behavior at comparable cost
+  - manually reproduce one historical real-Rust failure
+  - pin its Miri model and tool version
+  - establish whether Crabtree expresses and finds it under matched APIs and CPU budgets
+  - identify which construct RUXt's current model excludes
+- compare shared supported cases and the complete target population separately
+  - retain unsupported cases and missing harnesses in the results
+- proceed only if the gap repeats across independent libraries
+- correction to the consultation's abstract-based summary
+  - RUXt proves that safe witnesses exist
+  - its current prototype does not construct them
+  - the exact paper excerpt is in the tool review
 
 3. migration units that preserve allocation responsibility
 
@@ -79,7 +79,10 @@ main decision
   - [Crubit](https://github.com/google/crubit)
   - VERT and SACTOR behavior checks
     - [translation review](c_to_rust_translation.md) provides papers and checked scope
-- proposed contribution: jointly choose private data representations and migration groups using allocation lifetime
+- proposed contribution: choose ownership-transfer-connected migration groups under a frozen C ABI
+  - ABI means the binary calling convention and data layout foreign callers use
+  - include function-pointer callbacks and asymmetric allocation/free responsibilities
+  - global representation choice alone overlaps &inator
   - freeze external interfaces during the comparison
   - include callbacks and cleanup obligations
   - compare C2SaferRust caller-aware slicing and Syzygy dependency ordering
@@ -93,9 +96,9 @@ main decision
 - convincing result: simpler ownership boundaries without changing required behavior or hiding cost
   - use independent hidden tests and differential fuzzing
   - reject comparisons whose C behavior is undefined
-- closest blockers: C2SaferRust and Syzygy
+- closest blockers: C2SaferRust, Syzygy, and &inator
   - migration partitioning and dependency ordering are already established
-  - contribution requires better joint representation choices under the same validation and search budget
+  - contribution requires better partial-migration boundaries under the same validation and search budget
   - C++ mechanisms still need a separate reviewed population
 
 4. dependency permissions that change between releases
@@ -113,10 +116,14 @@ main decision
 - why it may matter: a correct Rust program can still misuse build-machine access
 - first experiment
   - packages using native libraries, code generation, procedural macros, and cross-compilation
-  - observe necessary network, filesystem, and process actions
+  - distinguish permissions granted, actions observed, and permissions shown necessary by denial and retry
+  - include network, filesystem, and process actions
   - hold out later versions and configurations
-- compare current Cackle policies, broad sandboxing, and version-specific permission records
-- convincing result: less review effort or fewer unnecessary exceptions without missing documented attack actions
+- compare Cackle policies, cargo-sandbox package-name policies, and version/configuration-specific records
+  - respect each tool's supported operating systems
+- convincing result: less review effort or excess privilege while retaining successful builds
+  - execute harmless attack reproductions before claiming a policy blocks their actions
+  - lack of observed malicious behavior does not establish benignness
 - stop condition: existing policies already generalize without meaningful cost
 
 other directions worth retaining
@@ -156,5 +163,8 @@ assessment limits
   - each topic review identifies those cases
 - source search failed during this pass
   - 2025–2026 completeness and proposal novelty remain unresolved
-- ChatGPT consultation at Extra High is pending
-  - its opinions will be separated from independently verified sources
+- [ChatGPT critique at Extra High](consultation.md) completed
+  - its ranking is an opinion
+  - it favors direction 1, then the cheap test in direction 4
+  - it recommends narrowing direction 3 and stopping direction 2 as a standalone project
+- agent recommendation: retain direction 2 only as a small test of a specified missing caller behavior

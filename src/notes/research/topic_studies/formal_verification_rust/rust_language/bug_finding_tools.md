@@ -159,6 +159,33 @@ API test synthesis
     - this paper does not establish that every such behavior is absent from its implementation
     - baseline reproduction must test the proposed distinction
 
+RUXt, ECOOP 2025
+
+- Pedro Carrott, Sacha-Élie Ayoun, Azalea Raad
+  - [Compositional Bug Detection for Internally Unsafe Libraries: A Logical Approach to Type Unsoundness](https://doi.org/10.4230/LIPIcs.ECOOP.2025.5)
+  - [approved artifact](https://doi.org/10.4230/DARTS.11.2.9)
+- reasons about which values safe library calls can produce
+  - uses type information and symbolic execution to find a reachable safety failure
+  - analyzes library functions without requiring a complete client program
+- theorem establishes genuine failures in the modeled language
+  - every reported failure has a safe-client witness
+  - Rocq formalization supports this guarantee
+  - this is an existence theorem about witnesses
+- crucial implementation distinction in §4
+  - exact words: “our prototype does not currently construct witness programs”
+  - OCaml prototype evaluates three small case studies in a model of Rust
+  - includes an intentionally faulty linked list
+  - mutable-reference wrappers are written manually in that case study
+- limits in §3.3 and future work
+  - treats references like raw pointers
+  - misses failures specific to Stacked Borrows or Tree Borrows aliasing rules
+  - polymorphism and higher-order functions remain future work
+  - production Rust evaluation remains future work
+- effect on our proposed research
+  - a legal safe client demonstrating unsafe-library failure is already the conceptual target
+  - practical real-Rust testing is not subsumed by this prototype
+  - a broad safe-client generator still needs a concrete gap beyond RUXt and Crabtree
+
 fuzzing and native sanitizers
 
 - [cargo-fuzz, official repository](https://github.com/rust-fuzz/cargo-fuzz)
@@ -210,20 +237,19 @@ compiler testing as adjacent evidence
 
 research we could do
 
-- proposed: expose hidden safety assumptions with deliberately awkward safe clients
-  - prior work: Rudra's panic and trait bugs; SyRust and Crabtree client synthesis; Miri
-  - proposed distinction from Crabtree: synthesize new safe trait implementations and deliberately place panics or API reentry inside callbacks
-    - callbacks and trait-aware call sequences alone are already supported by Crabtree
-    - changing answers across calls tests assumptions beyond type compatibility
-    - whether the baseline already reaches these behaviors must be measured
-  - why it may matter: safe API clients may legally violate assumptions that ordinary tests never challenge
-  - evaluation: historical fixed bugs plus previously unseen libraries
-    - compare against client-generation baselines and ordinary fuzzing
-    - count independently confirmed root causes
-    - measure generation cost, replay cost, and false reports
-  - novelty gate: first reproduce Crabtree and add only an adversarial-client behavior it demonstrably misses
-    - compare identical APIs, starting types, and CPU budgets
-    - count memory-safety witnesses separately from deliberate harmless panics
+- recommendation: stop the broad hostile-client generator proposal
+  - prior work: Rudra, SyRust, Crabtree, RUXt
+  - reason: safe-client witnesses, trait-aware calls, and synthesized callbacks already have substantial prior work
+  - retain one discriminating experiment only
+    - choose one historical real-Rust bug requiring a newly defined safe trait implementation plus panic, destructor behavior, or API reentry
+    - manually construct a Miri-executable safe witness first
+    - test whether Crabtree can express and discover it under the same API and time budget
+    - document exactly which construct falls outside RUXt's current model
+  - possible new contribution: evidence of one specific missing client behavior
+    - not another general generator unless the gap repeats across independent libraries
+  - why it may matter: identifies a concrete safety assumption that existing client generation misses
+  - stop condition: no demonstrated expressive or discovery gap
+  - successful Miri runs do not establish soundness
 
 - proposed: optimize the handoff between native fuzzing and Miri
   - prior work: cargo-fuzz, sanitizers, Miri, API synthesis
@@ -251,7 +277,7 @@ research we could do
 
 limits of this pass
 
-- full Miri, Tree Borrows, Rudra, SyRust, Crabtree, and SafeDrop preprint checked
+- full Miri, Tree Borrows, Rudra, SyRust, Crabtree, RUXt, and SafeDrop preprint checked
 - SafeDrop final TOSEM article remains inaccessible
   - preprint and publisher dates are distinguished above
 - synthesis implementations were not executed

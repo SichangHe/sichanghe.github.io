@@ -81,6 +81,21 @@ existing work
     - refers to procedural macro permissions shared across the compiler process
   - limit: the project explicitly describes configuration gaps and possible evasion
   - implication: a generic Rust dependency sandbox or API permission checker is already existing work
+- separate cargo-sandbox implementation: madsmtm/cargo-sandbox
+  - [implementation README, configuration section](https://github.com/madsmtm/cargo-sandbox#configuration)
+  - source quotation: “This uses just the package name”
+    - applies to the build-script policy key
+  - source quotation: “version or the source of it”
+    - describes identity fields the current policy does not consider
+  - source quotation: “it applies to all dependent crates”
+    - describes the documented procedural-macro sandbox boundary
+  - contribution: wraps compiler and build-script invocations using configured sandbox policies
+  - documented platform scope: macOS implementation with a warning marker
+    - Linux, FreeBSD, and Windows listed as unsupported
+  - implication: permissions that persist across releases are already a concrete design choice
+    - proposal 1 must measure the consequences of that choice
+  - limit: README describes intended operation and incomplete work
+    - not independent evidence of attack resistance
 - earlier Cargo sandbox effort
   - [Rust Secure Code WG cargo-sandbox README](https://github.com/rust-secure-code/cargo-sandbox)
   - project quotation: “This tool is in the planning stage and is not presently usable”
@@ -120,22 +135,30 @@ security categories must stay separate
 
 research proposals
 
-- proposal 1: measure and restrict dependency actions during builds
-  - prior: Cackle / cargo-acl, Cargo extensions, RustSec incidents, cargo-vet reviews
-  - question: which filesystem, network, and process actions are necessary for typical Rust builds?
-  - new candidate: a configuration-specific permission record tied to an exact package version
-    - compare recorded legitimate actions against incident mechanisms
-    - test whether separating individual procedural macro permissions improves Cackle's shared compiler permission boundary
-    - study changes between releases instead of only labeling entire crates suspicious
-  - why it may matter: reduces what stolen package credentials or malicious dependencies can do on developer and CI machines
+- proposal 1: measure permission changes across releases and build configurations
+  - prior: Cackle / cargo-acl, madsmtm/cargo-sandbox, Cargo extensions, RustSec incidents, cargo-vet reviews
+  - question: how often does a package update need different permissions under the same build configuration?
+  - new candidate: a history of release × enabled features × target platform
+    - identity includes package source, version, and toolchain
+    - distinguish permissions granted by policy from actions observed during execution
+    - separately record permissions demonstrated necessary by denying an action and retrying the build
+    - necessity is relative to the tested configuration and successful-build criterion
+  - why it may matter: package-name policies can retain permissions after an update stops needing them
+    - a release can also acquire a previously unneeded permission
   - evaluation
     - stratified corpus with pure Rust, native libraries, generated code, procedural macros, and cross-compilation
-    - measure build success, missed malicious actions, unnecessary restrictions, runtime overhead, and reviewer effort
-    - replay harmless versions of documented attack mechanisms in isolated machines
-    - hold out later releases to test whether policies generalize
-  - novelty risk: Cackle already provides Rust build sandboxing and permission policies
-    - compare against Cackle under identical workloads
-    - publish only if update-specific evidence or separate macro permissions improves measured protection and review effort
+    - compare unchanged package-name policy, release-specific policy, and configuration-specific policy
+    - compare Cackle and madsmtm/cargo-sandbox only on platforms each supports
+    - measure build success, policy edits, permission carryover, overhead, and reviewer effort
+    - test restrictions using harmless versions of documented attack mechanisms in isolated machines
+    - hold out later releases and configurations
+    - report actions missed because an input or path was not exercised
+  - limitation: not observing a malicious action does not establish that a package is benign
+    - do not describe recorded actions as legitimate without independent assessment
+    - restricting an observed action can break a build without establishing that every granted permission is necessary
+  - novelty risk: existing tools already provide Rust build sandboxing and permission policies
+    - contribution must be measured release/configuration drift or demonstrably better review decisions
+    - separate macro permissions are an optional follow-up, not assumed novelty
 - proposal 2: measure exploitable dependency exposure rather than lockfile warnings
   - prior: RustSec matching, Schueller et al. dependency history, Cargo feature resolution
   - [Cargo features documentation](https://doc.rust-lang.org/cargo/reference/features.html)
@@ -165,7 +188,8 @@ research proposals
 recommended starting point
 
 - opinion: begin proposal 1 with a measurement study
-  - permissions are observable and directly connected to documented build-time attacks
+  - granted permissions and exercised actions can be measured separately
+  - documented build-time attacks motivate testing restrictions
   - postpone a new defense until evidence shows what normal packages require
 - remaining reading gap
   - obtain the full contributor-reputation paper and package-name attack poster
