@@ -1,0 +1,187 @@
+research we could do with Rust verifiers
+(authored by agents unless marked 🧑)
+
+takeaway, agent opinion
+- start with a narrow gap in existing proofs rather than another general verifier
+- the most concrete first study is checking agreement between two tools at one library boundary
+- proof maintenance and source-to-proof correspondence are alternatives
+- these are proposals, not novelty claims
+  - the closest existing work is listed for each
+  - experiments below have not been run
+
+1. check that two tools mean the same thing by a shared contract
+- question
+  - can a safe caller proof rely on an unsafe library proof without silently changing the contract's meaning?
+- builds on
+  - [Ayoun et al., hybrid Creusot/Gillian verification, PLDI 2025](https://doi.org/10.1145/3729289)
+    - [review and unfinished Vec obligation](gillian_rust.md)
+  - [Forte, September 2026](https://arxiv.org/abs/2609.30254)
+    - [Flux/Verus split and trusted primitives](flux.md)
+  - [Cook et al., standard-library campaign, NFM 2026](https://arxiv.org/abs/2606.17374)
+    - [common contracts and tool-specific annotations](rust_std_verification_effort.md)
+- proposed contribution
+  - a checkable correspondence between two interpretations of one restricted contract language
+  - include input ownership, output ownership, machine integer behavior, and sequence contents
+  - reject contracts outside the supported fragment
+- first experiment
+  - begin with one ring-buffer or vector API
+  - use the original hybrid tool pair first
+    - adding Flux is a follow-up if the existing pair exposes a useful gap
+  - introduce deliberate mismatches
+    - signed versus unsigned values
+    - mathematical versus wrapping arithmetic
+    - old versus updated borrowed contents
+    - returned reference lifetime
+    - panic versus ordinary failure result
+  - compare with today's shared annotations and manual review
+- success criterion
+  - a proved correspondence theorem for the fragment
+  - an independent checker rejects mismatches outside that theorem
+  - existing client proofs continue to establish the same functional property
+- why it may matter
+  - tool specialization is useful only when their proofs compose
+- novelty risk
+  - hybrid verification already exists
+  - a syntax translator or shared macro alone is insufficient
+  - first inspect the hybrid paper's existing conversion argument
+    - the result may be an extension or mechanization rather than a new architecture
+- main difficulty
+  - unsafe ownership and lifetime meaning must be part of the theorem
+  - translating only arithmetic postconditions leaves the hardest boundary unchecked
+
+2. measure proof maintenance across real upstream changes
+- question
+  - can a proof survive ordinary library evolution with predictable repair cost?
+- builds on
+  - [standard-library CI and upstream synchronization](rust_std_verification_effort.md)
+  - [Zhou et al., Cazamariposas, CADE 2025](https://www.andrew.cmu.edu/user/bparno/papers/cazamariposas.pdf)
+    - repairs solver instability under semantically irrelevant changes
+  - [RefinedRust's 2026 ACE allocator proof](https://doi.org/10.1145/3839484)
+    - [case study and assumptions](refinedrust.md)
+  - [SymCrypt's Aeneas/Lean case study](https://arxiv.org/abs/2609.15648v1)
+    - already reports agent-assisted adaptation and maintenance
+  - [practical proof-maintenance review](../practical_fv/proof_maintenance_repair.md)
+- proposed contribution
+  - replay proofs over actual source histories with classified changes and reproducible repair records
+  - distinguish genuine property violations, changed interfaces, changed execution models, and solver instability
+  - evaluate a repair method that propagates changed contracts to affected callers
+- first experiment
+  - choose one existing verified collection or allocator
+  - replay a fixed sequence of upstream revisions
+  - keep the intended property fixed where the API meaning is unchanged
+  - compare full reproving, existing tool diagnostics, and dependency-guided repair
+- success criterion
+  - lower repair time or fewer unnecessary proof edits without weakened contracts
+  - independent checks identify property changes and introduced defects
+  - report failed migrations and unsupported source revisions
+- why it may matter
+  - maintaining proof coverage is more useful than verifying an obsolete fork once
+- novelty risk
+  - incremental checking, dependency tracking, and proof-repair agents already exist
+  - the contribution needs a new diagnosis method or a revealing longitudinal result
+  - a benchmark alone may fit a measurement paper better than a new-verifier paper
+- coordinate with sibling work
+  - this proposal concerns Rust source and contract evolution
+  - general agent proof repair belongs in [LLM proof synthesis](../llm_for_verification/proof_synthesis.md)
+
+3. check source-to-proof correspondence for a restricted Rust fragment
+- question
+  - does a checked target theorem describe the original Rust program's behavior?
+- builds on
+  - [Aeneas and Charon](aeneas.md)
+    - [SymCrypt's September 2026 report](https://arxiv.org/abs/2609.15648v1) already demonstrates production proofs and trusted translation boundaries
+  - [hax's backend paths and production crypto boundaries](hax.md)
+  - [Rust-Prover, Flex, VerusBelt, and Corten](newer_tools_2025_2026.md)
+  - [Rong's SST-to-AIR expression translation formalization, 2026](https://www.andrew.cmu.edu/user/avigad/Students/rong_ms_thesis.pdf)
+    - already addresses a particular Verus translation stage
+- proposed contribution
+  - an independently checkable preservation certificate for one translation stage
+  - choose a stage not already covered by existing semantic theorems
+  - state supported operations and observable outcomes precisely
+- first experiment
+  - arithmetic, bounds checks, mutable updates, and panic outcomes
+  - pin Rust compiler settings and frontend revision
+  - corrupt emitted operations to test checker rejection
+  - compare original and target executions as a bug-finding supplement
+- success criterion
+  - a theorem connects source execution to target execution for the chosen fragment
+  - generated certificates check under a small proof kernel
+  - unsupported constructs fail explicitly
+- why it may matter
+  - a stronger proof backend cannot compensate for a mistranslated program
+- novelty risk
+  - Aeneas already has semantic foundations
+  - RefinedRust and Corten already model execution in a proof assistant
+  - the contribution must identify and discharge a specific remaining trusted stage
+- main difficulty
+  - a general Rust compiler proof is far larger than this proposal
+  - a useful first theorem must remain narrow enough to complete
+
+4. connect a verified allocator to one memory-protection operation
+- question
+  - do allocator guarantees survive mapping, unmapping, and hardware access?
+- builds on
+  - [RefinedRust's ACE page tokens and allocator](refinedrust.md)
+  - [Corten allocator and CortenMM mapping transactions](newer_tools_2025_2026.md)
+  - [Verus kernel and security-monitor systems](verified_systems.md)
+- proposed contribution
+  - connect two existing component contracts for one allocation/map/unmap sequence
+  - explicitly model when a processor may still access an unmapped page
+- first experiment
+  - single address space and a selected hardware configuration
+  - prove that no page is reused while permitted stale access remains
+  - compare the composed guarantee with the isolated component guarantees
+- success criterion
+  - the end-to-end invariant excludes a concrete reuse/access failure
+  - no unproved assumption merely restates that invariant
+- why it may matter
+  - separate correct components can still disagree about when a resource is safe to reuse
+- novelty risk and effort
+  - verified page-table and allocator systems are existing work
+  - hardware translation caches and concurrency can make this a large systems project
+  - start only after reviewing the precise existing models
+  - [practical kernel research](../practical_fv/os_kernels.md) owns the broader systems comparison
+
+5. measure the price of ordinary Rust idioms
+- question
+  - which idioms increase proof effort without improving the verified behavior?
+- builds on
+  - [Creusot iterators](creusot.md)
+  - [RefinedRust traits, closures, and iterators](refinedrust.md)
+    - the 2026 paper §6.1 already compares ported Creusot iterator studies
+    - §6.2 already compares ACE page-token functions using different higher-order features
+  - [Flux inference](flux.md)
+  - [Aeneas functional translation](aeneas.md)
+- proposed contribution
+  - extend those existing comparisons with controlled equivalent rewrites across more tools or longitudinal repairs
+  - compare equivalent implementations with identical properties and dependencies
+  - use loops, iterators, trait-based interfaces, and closure-based adapters
+  - count source adaptation separately from specifications and proof scripts
+- first experiment
+  - one collection transformation and one page-token transformation
+  - restrict comparisons to each tool's documented support
+  - record unsupported variants instead of silently rewriting them
+- success criterion
+  - reproducible explanations of where proof effort moves
+  - at least one reusable abstraction reduces work across more than one example
+- why it may matter
+  - teams need to know whether adopting verification forces costly source rewrites
+- novelty risk
+  - merely repeating RefinedRust's iterator and page-token comparison would add little
+  - comparative benchmark results alone may be modest
+  - a reusable verified abstraction would strengthen the contribution
+
+selection rule, agent recommendation
+- choose direction 1 if the hybrid contract conversion has a concrete uncovered semantic case
+- choose direction 2 if usable source histories and existing proof artifacts are available
+- choose direction 3 if a remaining translation stage can be isolated
+- defer direction 4 until its hardware model and existing proofs are understood
+- use direction 5 as a supporting experiment rather than a broad claim about the best verifier
+
+relation to existing human notes
+- [static analysis](../../../static_analysis.md) already proposes assumption-carrying verification
+- [new-work arguments](../../../new_work_arguments.md) already proposes assumption records and proof-maintenance evaluation
+- [October collection](../../../verus_frontier_20261006.md) already proposes checking the Vosti engine/GPU boundary
+- the new scope here is specific verifier interfaces and Rust proof artifacts
+  - novelty against those earlier proposals remains limited
+- [open problems](open_problems.md) separates documented limitations from inferred opportunities

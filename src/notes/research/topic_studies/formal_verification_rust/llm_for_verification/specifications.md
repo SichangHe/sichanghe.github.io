@@ -97,7 +97,8 @@ interprocedural generation: SpecSyn
 - fact about the method: decompose C programs and strengthen ACSL contracts using behavior-changing program mutations
   - quote, abstract: “semantic-non-equivalent program mutations”
 - author claim: the resulting contracts discharge 1071 of 1365 target properties
-  - quote, §5: “1071” and “1365” in Table 3
+  - quote, §5.3: “verification targets successfully proved by Frama-C/WP”
+  - count from Table 3
 - metric boundary: their precision counts generated specifications that can be verified
   - quote, §4.4: “percentage of verifiable specifications”
   - inference: this supports implementation consistency; it does not independently establish agreement with user intent
@@ -121,41 +122,17 @@ internal assertions: SpecCoder
   - quote, method: “must pass all available tests”
   - inference: a tested reference can still contain an unexercised bug
 
-research we can do
+research implications
 
-- question: does seeing buggy code make an agent specify its bug?
-  - builds on KaPilot's implementation-blind generation and Spec-Harness's behavior tests
-  - proposed addition: pair each documented API with a real buggy version and its later fix
-  - first experiment: 30 small Rust APIs with clear documented behavior and regression tests
-    - compare docs-only, docs-plus-buggy-code, and docs-plus-fixed-code under equal budgets
-    - keep the evaluator's bug-triggering inputs hidden
-  - convincing result: access to buggy code causes a repeatable increase in accepting the known wrong behavior
-    - and a generation method reduces this effect without rejecting intended behavior
-  - why it may matter: code-based contract generation can certify the bug it was meant to prevent
-  - cost estimate: several weeks for a pilot; expert labeling dominates model cost
-  - closest work: KaPilot, SpecSyn, Verus-SpecGym, Spec-Harness
-    - novelty remains unresolved until their full artifacts are checked for equivalent experiments
-
-- question: can a specification survive legitimate changes while rejecting later bugs?
-  - builds on mutation-based quality measurement and Vero's clean-artifact grading
-  - proposed addition: evaluate against later real commits rather than only generated mutants
-  - first experiment: freeze requirements and contracts before selecting later fixes and legitimate feature changes
-    - score bug rejection, accepted legitimate changes, and ambiguous requirements separately
-  - convincing result: contract scores predict real regression detection beyond test coverage and simple mutation counts
-  - why it may matter: production contracts must remain useful as code changes
-  - cost estimate: one to two months for a carefully labeled dataset
-  - closest work: specification mining, regression testing, SpecSyn, SpecCoder
-    - this source scan does not establish that the historical evaluation is new
-
-- question: can we distinguish wrong specifications from hard example proofs?
-  - builds on Coins's instantiated Rocq obligations and Verus-SpecGym's executable predicates
-  - proposed addition: run both checks on overlapping expressible predicates with identical examples
-  - first experiment: retain checked acceptance, checked rejection, timeout, and unsupported translation as separate outcomes
-  - convincing result: a measurable set of proof timeouts resolved by execution without masking semantic defects
-  - why it may matter: benchmark rankings should reflect specification quality rather than proof automation alone
-  - cost estimate: a small predicate translator plus a month of evaluation
-  - closest work: Coins already identifies this measurement problem
-    - merely restating it is not a contribution
+- [candidate 2](research_directions.md) tests whether access to buggy code biases generated specifications
+  - builds on implementation-blind KaPilot and behavior-based evaluators
+- historical contract usefulness belongs in [candidate 1](research_directions.md)
+  - use later real regressions and legitimate changes rather than only synthetic mutants
+- Coins and Verus-SpecGym motivate a smaller measurement experiment
+  - run checked example proofs and executable predicate tests on the same examples
+  - retain timeout and unsupported translation as unknown
+  - question: which proof failures reflect automation difficulty rather than a wrong specification?
+  - Coins already identifies the issue; a new study needs a demonstrated evaluation benefit
 
 scope and evidence
 

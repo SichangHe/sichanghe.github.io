@@ -116,13 +116,37 @@ candidate 3: reuse learned proof help across changed dependencies
   - estimate: one month if compatible task histories already exist
   - model training is optional for the first pilot
 - closest work
+  - KVerus already compares Verus releases and adapts to version-matched documentation
+    - [paper](https://arxiv.org/abs/2605.03822v1), §5.1
+    - the collected v2 also reports a release comparison; the cited wording here is from v1
+    - exact version list: “20250328, 20250630, and 20250813”
+    - verifier-version adaptation alone is already covered
   - LeanDojo already holds out premises
   - VeriSkill already studies reusable guidance
   - SO-RSI already optimizes workflows on held-out tasks
-  - possible distinction is version change and dependency invalidation
+  - possible distinction is held-out project transfer plus changed contracts and dependency invalidation
 - stop condition
   - ordinary retrieval or extra retries match the result at lower total cost
   - task histories do not distinguish genuine change from renamed duplicate exercises
+
+additional idea: proof-friendly redesign under resource bounds
+
+- question: can we lower proof cost without making the implementation too slow or too large?
+- builds on AlphaVerus, LeetProof, Vero, P3, and IDS
+  - [code-and-agent review](code_and_agents.md) gives sources and limits
+  - IDS already includes measured performance in joint code/proof search
+- proposed distinction: fix a resource model before generation and check its bounds
+  - examples: parser allocations, queue capacity, map operation counts
+- first experiment: 20 small tasks with proof-easy and runtime-efficient alternatives
+  - compare fixed-code proving, unconstrained rewriting, and resource-constrained rewriting
+  - measure compiled performance separately to test the cost model's relevance
+- convincing evidence: lower synthesis cost with checked functional and resource properties
+- why it may matter: an easy proof is insufficient if the replacement is unsuitable for its workload
+- cost estimate: a month for annotations, paired implementations, and a small campaign
+- closest work: IDS, P3, resource-bounded synthesis, proof-aware optimization
+  - novelty unresolved; performance feedback alone is already occupied
+- stop condition: the resource model fails to predict practical performance
+  - or earlier synthesis work already provides the claimed mechanism
 
 what to do first
 
