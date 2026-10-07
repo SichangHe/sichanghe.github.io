@@ -22,3 +22,5 @@ status
 - start with [research choices](proposals.md) for priorities and decisive pilots
 - primary papers checked and saved in the paper collection
 - source access and novelty limits are explicit in each track
+- recent addenda revise initial novelty judgments
+    - copied-evidence attacks, citation manipulation, and fine-grained blocking already have close prior work

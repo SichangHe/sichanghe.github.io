@@ -5,6 +5,10 @@ recommended first project: does extracting knowledge erase advertising labels?
 
 - proposed question: when a tool turns a page into usable information, does it preserve which claims were paid promotion?
   - recommendation motivated by [affiliate disclosures, accessibility, and native-ad measurements](literature.md)
+  - closest recent work: [Ad Insertion and Evaluating and Pricing Advertisements](recent.md)
+    - they study insertion, fit, and commercial scoring
+    - proposed distinction: trace loss of pre-existing sponsorship evidence through extraction and later answers
+    - [children's-site measurement](recent.md) supplies a disclosure extraction baseline
   - novelty is a hypothesis
     - this review did not establish the absence of a prior equivalent benchmark
 - distinguish two failures

@@ -4,23 +4,28 @@ research choices across user-facing web measurement
 recommendation
 
 - start with whether tools preserve the difference between a claim and its evidence
-    - strongest bounded pilots: copied evidence and lost sponsorship disclosures
+    - strongest bounded pilot: lost sponsorship disclosures
+    - second candidate: live technical search with version-specific ground truth
     - both can use saved pages and controlled local experiments
     - both produce checkable failures rather than another vague quality score
 - these priorities are agent opinions
     - no venue suitability or novelty guarantee
     - full-text review of the closest work is required before scaling
 
-1. copied sources masquerading as independent evidence
+1. version errors and apparent corroboration in technical search
 
-- question: does repeated text across apparent sources change an answer more than genuine independent support?
+- question: how often do live technical answers cite the wrong software version or overstate a guarantee?
+- recent evidence changes the initial recommendation
+    - [five 2026 papers](seo_search_quality/recent_work.md) already test coordinated false evidence, citation laundering, claim strength, and controlled preference manipulation
+    - generic copied-evidence and citation-manipulation experiments are replications
+    - the remaining proposal must establish live exposure and a systems-specific outcome
 - user benefit: fewer answers that mistake repetition for confirmation
-- [complete design](seo_search_quality/research_proposals.md)
+- [revised design and closest recent work](seo_search_quality/recent_work.md)
 - decisive pilot
-    - versioned technical questions with primary documentation
-    - fixed evidence block and false claim
-    - vary repetition and apparent source identities separately
-    - hold token budget and primary-document rank fixed
+    - 50 versioned technical questions with primary documentation
+    - archive organic search results and cited answers
+    - label wrong versions and overstated guarantees separately
+    - compare version filtering, primary-source preference, claim-strength checking, and existing citation defenses
 - compare
     - ordinary retrieval, one page per domain, text deduplication, primary-source preference, origin grouping
 - primary outcome: answer correctness
@@ -32,9 +37,10 @@ recommendation
     - [ALCE and FEVER](seo_search_quality/literature.md)
         - evidence support already has evaluation methods
 - potential contribution
-    - isolate false corroboration and show an inexpensive mitigation improves answers
+    - measure naturally occurring errors under named software versions
+    - show an inexpensive mitigation improves operational answers
 - negative result worth keeping
-    - ordinary deduplication works as well as more elaborate origin tracking
+    - errors are rare or simple version filtering solves them
 
 2. sponsorship disclosure lost during extraction
 

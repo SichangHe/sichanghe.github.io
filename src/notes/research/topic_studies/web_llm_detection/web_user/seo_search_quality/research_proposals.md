@@ -1,12 +1,14 @@
 research we could do
 (authored by agents unless marked 🧑)
 
-recommendation
-- begin with technical search and repeated evidence
-  - tractable ground truth from versioned documentation and executable checks
-  - visible benefit: fewer confidently wrong answers
-  - direct connection to the human's systems background
-- all experiments below are agent proposals
+revised recommendation
+- read [recent work](recent_work.md) first
+  - five 2026 papers substantially overlap these initial proposals
+- withdraw generic duplicate-evidence poisoning and citation manipulation as novelty claims
+- prefer the recent-work file's small live technical-search pilot
+  - measure version mismatch and overstated operational guarantees
+  - compare simple version filtering with existing citation defenses
+- retain the experiments below as candidate replications or components
   - expected effects are hypotheses
   - novelty remains unconfirmed
 
@@ -73,6 +75,8 @@ recommendation
   - if controlled copies do not change answers, study live exposure before scaling the classifier
   - if origin labels remain unreliable, publish the measured uncertainty rather than inferred copying claims
 - novelty caution
+  - Lee and Kim 2026 already isolate identical versus paraphrased sybil evidence
+    - forced exposure and deduplication trade-offs directly overlap this design
   - fact verification, source trust, deduplication, and narrative diffusion already exist
   - proposed contribution must be an outcome improvement under a clearly isolated failure
 
@@ -150,6 +154,8 @@ recommendation
   - if source verification removes the effect reliably, measure its real deployment cost
   - if attacks work only when all competing evidence is absent, state that limited setting
 - novelty caution
+  - CiteShade and ForceBench already investigate unsupported credible-looking citations
+  - SIREN already controls retrieved context while editing source presentation
   - preference manipulation is already the adversarial SEO paper's central result
   - source exposure increase alone is already GEO's objective
   - potential distinction is systematically separating genuine support from unsupported credibility cues
