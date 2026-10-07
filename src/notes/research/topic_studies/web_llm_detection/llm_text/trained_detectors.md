@@ -1,234 +1,146 @@
-trained detectors and learned detection features
+detectors trained on labeled examples, and rewrite-based detectors
 (authored by agents unless marked 🧑)
 
-main takeaways
-- inference: detector training can improve transfer to new writing domains
-    - evidence: MAGE, PAWN and Learning2Rewrite compare training choices under domain shifts
-    - limitation: success on their held-out domains does not establish reliability across the web
-- inference: separating texts and choosing a reliable cutoff are different problems
-    - AUROC measures ranking across all cutoffs
-    - false-positive rate measures the fraction of human texts wrongly flagged at one chosen cutoff
-    - high AUROC can coexist with an unusable cutoff on a new website
-- inference: the most useful research question is whether a fixed detector and cutoff survive new sites, generators, editing workflows and dates
-    - recommendation: compare frozen public detectors before designing another classifier
-    - recommendation: measure mistaken accusations separately from missed generation
-- coverage fact: checked primary arXiv pages and ACL Anthology proceedings on 2026-10-06
-    - search service failed
-    - direct primary-site retrieval worked
-    - 2026 additions below are verified publication entries
-    - comprehensive coverage of every 2026 venue is not established
+terms (perplexity, AUROC, FPR, TPR, F1, rewrite-and-compare) are defined in [how_detection_works.md](how_detection_works.md)
+- "trained" means the detector itself learned from labeled human and machine texts
+- quotes are from each paper's abstract unless I say otherwise
+- weak spot: where I name a section or figure, I read it in the PDF, otherwise it is what the abstract leaves out
 
-what training changes
-- standard classifier: train a model to distinguish labeled human and machine examples
-    - risk, inference: a classifier can learn dataset formatting, topics or generation instructions instead of authorship
-- learned statistical features: train a smaller classifier over probabilities from a fixed language model
-    - advantage, inference: easier to inspect feature choices and isolate training effects
-- learned rewriting: train a model so rewriting distance separates the classes
-    - cost, inference: each detection needs generated output rather than one forward pass
-- adversarial training: repeatedly teach a detector using examples that an attacker changes to evade it
-    - limitation, inference: defending against one attacker family does not establish defense against new attacker families
+the shared problem
+- a classifier can learn the quirks of its training data instead of the difference between people and models
+    - [Intrinsic Dimension Estimation for Robust Detection of AI-Generated Texts](https://arxiv.org/abs/2306.04723), Tulchinskii et al., NeurIPS 2023, related work section
+        - supervised detectors "do not generalize to other text domains, generation models, and even sampling strategies"
+    - so every trained detector below should be read for how it handles new topics, new generators and rewrites
 
-Ghostbuster, Verma et al., NAACL 2024, peer reviewed
-- primary source: [paper and abstract](https://arxiv.org/abs/2305.15047)
-    - abstract quote: “training a classifier on the selected features”
-    - abstract quote: “does not require access to token probabilities from the target model”
-    - total quoted words from this source: 23
-- method fact: score documents with weaker language models
-    - search combinations of their features
-    - train a classifier on selected combinations
-- author-reported result: 99.0 F1 across their evaluation domains
-    - domains: student essays, creative writing and news
-    - F1 combines precision and recall at the chosen cutoff
-    - their reported cross-domain gain is 7.5 F1 over earlier approaches
-- inference: target-model access is unnecessary
-    - scoring-model access and labeled detector training remain necessary
-- limitation, inference: three domains do not represent arbitrary web pages
-    - do not compare its F1 directly with a different paper’s AUROC
-    - measure performance at the same false-positive target on the same corpus
-- recommendation: retain as a learned-feature baseline
-    - verify scoring dependencies and reproduce the released setup before treating its reported score as deployable
+group 1, a plain classifier on the text
+- idea: fine-tune a text encoder to say human or machine
+- OpenAI's GPT-2 output detector
+    - source: [openai/gpt-2-output-dataset detector README](https://github.com/openai/gpt-2-output-dataset/blob/master/detector/README.md), OpenAI, 2019
+    - trick: "the GPT-2 output detector model, obtained by fine-tuning a RoBERTa model with the outputs of the 1.5B-parameter GPT-2 model"
+    - needs: roberta-base (478 MB) or roberta-large (1.5 GB) weights, one forward pass, runs on a laptop or small GPU
+    - result: the README makes no accuracy claim, the report is [Release Strategies and the Social Impacts of Language Models](https://arxiv.org/abs/1908.09203), Solaiman et al., 2019
+    - weak spot: trained on GPT-2 text only, [Ghostbuster](https://arxiv.org/abs/2305.15047) says RoBERTa-style models "can exhibit catastrophic worst-case performance"
+- [Technical Report on the Pangram AI-Generated Text Classifier](https://arxiv.org/abs/2402.14873), Emi and Spero, arXiv 2024
+    - trick: a transformer classifier, trained with "hard negative mining with synthetic mirrors": keep finding the human texts it wrongly flags, and add machine twins of them to the training set
+    - needs: Pangram's hosted service, the weights are not public, so you pay per call
+    - result: "outperforms zero-shot methods such as DetectGPT as well as leading commercial AI detection tools with over 38 times lower error rates on a comprehensive benchmark comprised of 10 text domains ... and 8 open- and closed-source large language models"
+    - weak spot: the benchmark and the numbers are the company's own, I know no independent run in these notes
+- [MAGE: Machine-generated Text Detection in the Wild](https://arxiv.org/abs/2305.13242), Li et al., ACL 2024
+    - trick: a large test set (many human domains and many LLMs), not a new detector, used to see how classifiers behave on unseen data
+    - needs: it releases data and code
+    - result: "the top-performing detector can identify 86.54% out-of-domain texts generated by a new LLM"
+    - weak spot: the same abstract says detection is hard "especially out-of-distribution", "due to the decreasing linguistic distinctions between the two sources"
+- [GPT detectors are biased against non-native English writers](https://arxiv.org/abs/2304.02819), Liang et al., Patterns 2023
+    - not a detector, a test of several, see [how_detection_works.md](how_detection_works.md#who-gets-falsely-accused)
+- [Amplifying, Not Learning](https://arxiv.org/abs/2605.21653), arXiv 2026
+    - not a detector, a claim that fine-tuned detectors mostly rescale how predictable the text is, see how_detection_works.md
 
-RADAR, Hu, Chen and Ho, NeurIPS 2023
-- primary source: [paper](https://arxiv.org/abs/2307.03838)
-    - abstract quote: “adversarial training of a paraphraser and a detector”
-- method fact: jointly train two models with opposing goals
-    - paraphraser rewrites machine text to evade the detector
-    - detector learns from original and rewritten machine text
-- author-reported scope: eight generators and four datasets
-    - generators include Pythia, Dolly, GPT-J, LLaMA and Vicuna
-    - unseen paraphraser evaluation uses GPT-3.5-Turbo
-- limitation, inference: tested generator families and attack models are mostly from 2023
-    - modern style imitation, multiple edits and short mixed text require fresh evaluation
-- recommendation: compare frozen RADAR with retrained RADAR
-    - separates benefits of adversarial training from benefits of newer training examples
+group 2, classifiers built on language-model probabilities
+- idea: do not read the text, read how a language model finds it, and train a small learner on that
+- [Ghostbuster: Detecting Text Ghostwritten by Large Language Models](https://arxiv.org/abs/2305.15047), Verma et al., NAACL 2024
+    - trick: get per-word probabilities from several weak models, search over combinations of them, train a small classifier on the best combinations
+    - needs: a unigram model, a trigram model, and the early GPT-3 models ada and davinci for probabilities, no access to the target model; those old API models may no longer be callable (my read, not checked)
+    - result: "Ghostbuster achieves 99.0 F1 when evaluated across domains, which is 5.9 F1 higher than the best preexisting model"
+    - weak spot: "Ghostbuster may be unreliable for documents with ≤ 100 tokens, and its performance levels off with ≥ 500 tokens"
+- [Not all tokens are created equal: Perplexity Attention Weighted Networks for AI generated text detection](https://arxiv.org/abs/2501.03940), Miralles-González et al., Information Fusion 2025 (PAWN)
+    - trick: some words are more telling than others, so learn per-word weights instead of a plain average of surprise
+    - needs: one language model pass (hidden states and probabilities cached on disk), then training a small head
+    - result: "PAWN shows competitive and even better performance in-distribution than the strongest baselines (fine-tuned LMs) with a fraction of their trainable parameters"
+    - weak spot: "fraction of trainable parameters" is not a cheaper detection run, you still run the big model on every text
+- [SV-Detect: AI-generated Text Detection with Steering Vectors](https://arxiv.org/abs/2606.07313), arXiv 2026
+    - trick: find, at each layer, a direction that separates human from machine text in a frozen model, and train a light classifier on the projections
+    - needs: one pass of a frozen LLM, plus labeled examples
+    - result: "strong performance both in-distribution and under distribution shift, including across domains, source models, and machine-editing transformations such as polishing and rewriting"
+    - weak spot: no numbers in the abstract
+- [Steer-to-Detect: Probing Hidden Representations for Detection of LLM-Generated Texts](https://arxiv.org/abs/2605.12890), arXiv 2026
+    - trick: learn a vector injected into a frozen model's hidden states so the two classes separate, then run a statistical test
+    - needs: a frozen observer LLM and some labeled examples
+    - result: "We establish finite-sample, high-probability guarantees for Type I and Type II errors"
+    - weak spot: the guarantees hold under the paper's assumptions on how the features are distributed, which a new website need not follow
+- [MoSEs: Uncertainty-Aware AI-Generated Text Detection via Mixture of Stylistics Experts with Conditional Thresholds](https://aclanthology.org/2025.emnlp-main.294/), Wu et al., EMNLP 2025
+    - trick: pick the cutoff per text, by looking up labeled texts in a similar style
+    - needs: a reference store of labeled texts, plus a scoring model
+    - result: "Our framework achieves an average improvement 11.34% in detection performance compared to baselines"
+    - weak spot: a style that the reference store does not cover gets a poor cutoff (my read)
 
-MAGE, Li et al., ACL 2024
-- primary source: [paper](https://arxiv.org/abs/2305.13242)
-    - section 6 quote: “struggles with selecting an appropriate decision boundary”
-    - section 6 quote: “The AUROC drops from 0.94 to 0.75”
-    - context: first quote concerns Longformer on unseen domains
-    - context: second concerns its paraphrasing evaluation
-- dataset fact: ten human-writing domains and 27 generators
-    - continuation, topic and source-specific prompts
-    - [released dataset and code](https://github.com/yafuly/MAGE)
-- method fact: train Longformer and compare it with statistical and simpler learned baselines
-- author-reported finding: unseen-domain Longformer AUROC is 0.93
-    - classification at the existing cutoff is much weaker
-    - small amounts of target-domain labeled data improve the cutoff
-- limitation acknowledged by authors: benchmark texts may overlap language-model pretraining
-    - new online writing remains a separate test
-- inference: report fixed-cutoff performance and recalibrated performance separately
-    - recalibration uses knowledge unavailable in fully unattended web measurement
+group 3, learn from many authors or from attacks
+- [DeTeCtive: Detecting AI-generated Text via Multi-Level Contrastive Learning](https://arxiv.org/abs/2410.20964), Guo et al., NeurIPS 2024
+    - trick: train an encoder so texts by the same author or model land near each other, then classify a new text by looking up its nearest labeled neighbors
+    - needs: a text encoder and a labeled database, no per-text generation
+    - result: "in OOD zero-shot evaluation, our method outperforms existing approaches by a large margin"
+    - weak spot: the abstract gives no number and no FPR
+- [OpenTuringBench: An Open-Model-based Benchmark and Framework for Machine-Generated Text Detection and Attribution](https://aclanthology.org/2025.emnlp-main.1354/), Cava and Tagarelli, EMNLP 2025
+    - trick: a benchmark built from open models, plus a contrastive detector (OTBDetector)
+    - needs: the released data and model
+    - result: "our detector achieving remarkable capabilities across the various tasks and outperforming most existing detectors"
+    - weak spot: open models only, closed models are not covered
+- [RADAR: Robust AI-Text Detection via Adversarial Learning](https://arxiv.org/abs/2307.03838), Hu et al., NeurIPS 2023
+    - trick: train a paraphraser to evade the detector and a detector to catch the paraphraser, in alternation
+    - needs: training both models, the detector is run alone afterward
+    - result: "RADAR significantly outperforms existing AI-text detection methods, especially when paraphrasing is in place"
+    - weak spot: tested on 2023 models (Pythia, Dolly, LLaMA, Vicuna and so on), with GPT-3.5-Turbo as the only newer check
+- [Iron Sharpens Iron: Defending Against Attacks in Machine-Generated Text Detection with Adversarial Training](https://aclanthology.org/2025.acl-long.155/), Li et al., ACL 2025 (GREATER)
+    - trick: an attacker model finds the words that most matter to the detector and swaps them, the detector trains against it
+    - needs: training an attacker and a detector together
+    - result: "reduces the Attack Success Rate (ASR) by 0.67% compared with SOTA defense methods"
+    - weak spot: 0.67% is small, and I did not check whether it is relative or in points
 
-M4, Wang et al., EACL 2024
-- primary source: [paper](https://arxiv.org/abs/2305.14902)
-    - abstract quote: “detectors tend to misclassify machine-generated text as human-written”
-    - context: unseen domains or generators
-- dataset fact: approximately 147,000 parallel human/machine examples across seven languages
-    - domains include Wikipedia, Reddit, WikiHow, paper abstracts and peer reviews
-    - generators include GPT-4, ChatGPT, Cohere, Dolly-v2 and BLOOMz
-    - [released dataset](https://github.com/mbzuai-nlp/M4)
-- construction fact: minimum English length is 1,000 characters
-    - inference: this benchmark cannot by itself validate sentence or snippet detection
-- construction fact: clean obvious formatting differences and control generated length
-    - inference: web extraction introduces additional formatting differences absent from this cleaned setup
-- recommendation: hold out whole domains, model families and languages
-    - random document splits are a weaker test of deployment
+group 4, rewrite and compare
+- idea: rewrite the text with a model, machine text changes less
+- [Raidar: geneRative AI Detection viA Rewriting](https://arxiv.org/abs/2401.12970), Mao et al., ICLR 2024
+    - trick: prompt an LLM to rewrite the text, count the edits, a small edit distance means machine text
+    - needs: an LLM call per rewrite, black box is fine, only word-level edits are used so no probabilities
+    - result: "Raidar significantly improves the F1 detection scores of existing AI content detection models -- both academic and commercial -- across various domains ... with gains of up to 29 points"
+    - weak spot: the Learning to Rewrite paper says a trained-in-domain rewrite model can cause "RAIDAR to fail to generalize to new domains"
+- [Learning to Rewrite: Generalized LLM-Generated Text Detection](https://arxiv.org/abs/2408.04237), Li et al., ACL 2025 (L2R)
+    - trick: fine-tune the rewriting model so it leaves machine text alone and rewrites human text more, widening the gap
+    - needs: fine-tuning a rewriter (the paper's figure shows LLaMA-3-8B), then a rewrite per text
+    - result: "outperforms state-of-the-art detection methods by up to 23.04% in AUROC for in-distribution tests, 37.26% for out-of-distribution tests, and 48.66% under adversarial attacks"
+    - weak spot: one generation per text, plus training the rewriter
+- [Learn-to-Distance: Distance Learning for Detecting LLM-Generated Text](https://arxiv.org/abs/2601.21895), Zhou et al., ICLR 2026 (L2D)
+    - trick: instead of a plain edit distance between the text and its rewrite, learn the distance
+    - needs: a rewriting LLM, plus training the distance
+    - result: "it achieves relative improvements from 54.3% to 75.4% over the strongest baseline across different target LLMs (e.g., GPT, Claude, and Gemini)"
+    - weak spot: still one rewrite per text, and "relative improvement" hides the starting point
+- [MAGRET: Machine-generated Text Detection with Rewritten Texts](https://aclanthology.org/2025.coling-main.557/), Huang et al., COLING 2025
+    - trick: ask candidate LLMs to rewrite the text in several ways, train a BERT encoder to judge how close the rewrites sit to the original
+    - needs: access to the candidate LLMs, so cost and coverage grow with the list of models
+    - result: "previous methods struggle with closed-source model detection, while our approach significantly outperforms baseline methods in this regard"
+    - weak spot: a generator that is not on your candidate list is not covered (my read)
+- [Triospect: A Three-Dimensional Framework for Robust Statistical AI-Generated Text Detection Against Diverse Attacks](https://arxiv.org/abs/2606.31074), arXiv 2026
+    - trick: score the text plus two transformed versions that keep its content or keep its style, and combine the three scores
+    - needs: a rewriting step and a base detector, I could not tell from the abstract whether any training is needed
+    - result: "improves the strong baseline by a significant margin of 22.3% (AUROC) and 13% (TPR01) on the Humanize-16K after-attack subset, and by 9.1% (AUROC) and 22% (TPR01) on the adversarial RAID"
+    - weak spot: designed for attacked text, extra rewrites per text
+- [DetectAnyLLM: Towards Generalizable and Robust Detection of Machine-Generated Text Across Domains and Models](https://arxiv.org/abs/2509.14268), Fu et al., ACM MM 2025
+    - trick: train the detector to directly predict the gap between the original and rewritten text, rather than a generic label
+    - needs: a base scoring model and training, plus the MIRAGE data
+    - result: "achieving over a 70% performance improvement under the same training data and base scoring model"
+    - weak spot: the 70% is relative to their own baselines
 
-PAWN, Miralles-González et al., Information Fusion 2025, peer reviewed
-- primary source: [paper](https://arxiv.org/abs/2501.03940)
-    - abstract quote: “cache the last hidden states and next-token distribution metrics on disk”
-    - section 4.2 quote: “all models suffer greatly”
-    - context: paraphrasing attacks
-- method fact: frozen language model supplies token statistics and hidden states
-    - learned weights depend on token position and hidden state
-    - weighted statistics feed a classifier
-    - distinguishes PAWN from using one unweighted average across tokens
-- author-reported result: stronger transfer and more stable cutoffs than fine-tuned language-model baselines in their MAGE/M4 settings
-    - nine-language cross-validation reaches mean macro F1 of 81.46% with a LLaMA backbone
-    - this averages classes and languages
-    - it does not establish a low false-positive rate for every language
-- implementation fact: authors release [code](https://github.com/pablomiralles22/ai-gen-detection)
-    - GPT-2 and LLaMA backbones evaluated
-    - cached-feature training reduces repeated model computation
-- limitation, inference: few trainable parameters do not imply few total parameters or cheap inference
-    - backbone computation still occurs at detection time
-    - preprocessing, cache storage and backbone latency belong in cost comparisons
-- recommendation: test PAWN as the main learned-feature baseline
-    - ablate learned token weighting against unweighted metrics
-    - hold training examples, scoring backbone and calibration data fixed
+group 5, handle edited and mixed text
+- idea: real text is often human text a model polished, or machine text a human edited
+- [Beyond the Final Actor: Modeling the Dual Roles of Creator and Editor for Fine-Grained LLM-Generated Text Detection](https://aclanthology.org/2026.acl-long.235/), ACL 2026 (RACE)
+    - trick: build a discourse graph for the creator's structure and sentence-piece features for the editor's style, classify into four kinds
+    - needs: a discourse parser and a trained classifier
+    - result: "RACE outperforms 12 baselines in identifying fine-grained types with low false alarms"
+    - weak spot: no numbers in the abstract
+- [SenDetEX: Sentence-Level AI-Generated Text Detection for Human-AI Hybrid Content via Style and Context Fusion](https://aclanthology.org/2025.emnlp-main.268/), EMNLP 2025
+    - trick: judge one sentence at a time, using the neighbouring sentences as context
+    - needs: a trained model, and the paper's synthetic mixed-text dataset
+    - result: "significantly outperforms all baseline models in detection accuracy, while exhibiting remarkable transferability and robustness"
+    - weak spot: the mixed training texts are synthesized, real editing may differ
+- [Hidden Human-Like Nature of Machine-Generated Texts: Theory and Detection Enhancement](https://arxiv.org/abs/2605.23190), arXiv 2026
+    - trick: even machine text has stretches that look human, so repeatedly drop the most human-looking pieces and retrain on the rest
+    - needs: an existing detector, "the framework can also work in a training-free manner"
+    - result: "Extensive experiments across various LLMs and practical scenarios demonstrate that the proposed framework consistently enhances existing detectors"
+    - weak spot: filtering by the detector's own confidence can repeat its mistakes (my read)
+- [Latent Trajectory Discrimination for AI-Generated Text Detection](https://arxiv.org/abs/2607.14967), arXiv 2026 (GTCL)
+    - trick: embed overlapping windows of the document in order, and learn from how the embedding moves along the text
+    - needs: a text embedding model and contrastive training
+    - result: "GTCL outperforms detection baselines consistently"
+    - weak spot: tested on long documents, no word on short snippets
 
-Learning2Rewrite, Li, Hao et al., ACL 2025
-- primary sources: [paper](https://aclanthology.org/2025.acl-long.322/), [arXiv](https://arxiv.org/abs/2408.04237)
-    - abstract quote: “LLMs inherently modify AI-generated content less than human-written text when tasked with rewriting”
-- method fact: train an LLM to preserve machine text more strongly during rewriting
-    - use resulting edit distance as the detection signal
-- author-reported scope: 21 domains and four generator families
-    - GPT-3.5, GPT-4, Gemini and Llama-3
-- inference: comparing with a classifier trained on the same backbone and data isolates the value of the rewriting objective
-- limitation, inference: edit distance also depends on length, language, editing instruction and writing quality
-    - need polished human text and rough machine drafts as separate controls
-    - complete rewriting consumes generation time
-- recommendation: include a frozen rewriter baseline and a trained rewriter
-    - measure both detection gain and generated tokens per document
-
-MAGRET, Huang et al., COLING 2025
-- primary source: [official proceedings paper](https://aclanthology.org/2025.coling-main.557/)
-    - abstract quote: “fine-tune a BERT encoder through contrastive learning”
-    - collection filename incorrectly labels the venue ACL
-    - official publication is COLING 2025
-- method fact: request rewritten/continued versions from candidate models
-    - learn semantic agreement between original and rewritten texts
-    - combine semantic and statistical relations for detection and attribution
-- inference: unlike a universal detector, candidate-model querying ties cost and coverage to the candidate list
-    - unknown generators and API changes require explicit tests
-- recommendation: test whether attribution survives two-stage generation
-    - one model drafts and another rewrites
-    - label the drafting and editing roles separately
-
-newer methods worth testing
-- GREATER, Li et al., ACL 2025
-    - primary source: [Iron Sharpens Iron](https://aclanthology.org/2025.acl-long.155/)
-        - abstract quote: “10 text perturbation strategies and 6 adversarial attacks”
-        - limitations quote: “the computational cost of training the adversarial framework”
-    - method fact: attack important tokens using embedding changes, greedy search and pruning
-        - synchronously update attack and detector
-    - author-reported abstract gain: attack success rate reduced by 0.67% against their strongest defense comparisons
-        - do not reinterpret this as percentage points without checking the result table
-    - author limitation: document-level detection and substantial training hardware
-    - inference: valuable comparison with RADAR for different training-time attackers
-- MoSEs, Wu et al., EMNLP 2025
-    - primary source: [paper](https://aclanthology.org/2025.emnlp-main.294/)
-        - abstract quote: “conditional threshold estimation”
-    - method fact: route input to stylistically similar labeled references
-        - estimate a cutoff from statistical and semantic features
-    - author-reported abstract gain: 11.34% average improvement against their baselines
-        - metric and aggregation must be checked before cross-paper comparison
-    - inference: relevant to website-specific calibration
-        - reference coverage may fail for a genuinely new writing style
-        - confidence outputs need independent calibration tests
-- SenDetEX, EMNLP 2025
-    - primary source: [paper](https://aclanthology.org/2025.emnlp-main.268/)
-        - abstract quote: “sentence-level AI-generated text detection via style and context fusion”
-    - method fact: combines the sentence’s style with surrounding context
-        - evaluated using synthesized human/machine mixtures
-    - inference: better fit for web paragraphs than document-only training
-        - synthetic insertion patterns may differ from real editing
-        - train/test documents must be separated before sentence extraction
-- OpenTuringBench and OTBDetector, EMNLP 2025
-    - primary source: [paper](https://aclanthology.org/2025.emnlp-main.1354/)
-        - abstract quote: “a contrastive learning framework to detect and attribute”
-    - evaluation fact: manipulation, unseen domains and unseen open models
-    - inference: useful additional training/evaluation corpus
-        - avoid assuming open-model transfer establishes closed-model transfer
-- RACE, Li et al., ACL 2026
-    - primary source: [Beyond the Final Actor](https://aclanthology.org/2026.acl-long.235/)
-        - abstract quote: “the distinct signatures of creator and editor”
-        - limitations quote: “We only conduct experiments on one public benchmark”
-    - task fact: four classes
-        - human draft
-        - machine draft
-        - machine draft later humanized by a human or tool
-        - human draft later polished by a model
-    - method fact: model document organization with a discourse graph
-        - model local style using smaller discourse units
-    - limitation acknowledged by authors: evaluated only on HART
-        - transfer to uncovered languages, domains and genres unknown
-    - inference: useful labeling model for our experiments
-        - do not assume four labels capture repeated alternation between human and model edits
-- Exons-Detect, ACL 2026
-    - primary source: [paper](https://aclanthology.org/2026.acl-long.1211/)
-        - abstract quote: “a training-free method”
-    - method fact: reweight tokens using hidden-state differences between two models
-    - inference: useful control for PAWN
-        - tests whether token weighting needs labeled training
-        - authors report 2.2% relative average AUROC gain on DetectRL
-
-failure cases that need dedicated evaluation
-- personalization
-    - primary source: [When Personalization Tricks Detectors, ACL 2026](https://aclanthology.org/2026.acl-long.1998/)
-        - abstract quote: “features that are effective for separating human-written text (HWT) from MGT in general flip their effect in personalized contexts”
-    - author-reported finding: StyloBench detects instability under imitation of literary and blog styles
-    - inference: robustness to generic paraphrasing is weaker evidence than robustness to target-author imitation
-- subgroup false positives
-    - primary source: [Identifying Bias in Machine-generated Text Detection, ACL 2026](https://aclanthology.org/2026.acl-long.109/)
-        - abstract quote: “ELL essays are more likely to be classified as machine-generated”
-        - ELL means English-language learner
-    - study fact: 16 detection systems assessed across four student attributes
-    - inference: an overall false-positive target can conceal higher error for particular groups
-- short text
-    - inference: aggregate document performance hides the setting where few words carry any evidence
-    - recommendation: report separate length bands rather than one pooled result
-- edited text
-    - inference: authorship labels must describe the writing process
-    - recommendation: preserve original, intermediate edits and final text
-        - evaluate detection of any model use separately from detection of machine drafting
-- code
-    - inference: prose-trained classifiers cannot establish code detection accuracy
-    - recommendation: keep code and prose as separate evaluation strata
-        - comments, executable code and copied templates have different origins
-
-research proposals
-
-- [shared proposals](research_proposals.md) develop extraction, site aggregation, editing-history, and browser-warning studies
-- method-specific controls and limitations remain in the sections above
+in short
+- for a web study, the closest to what the human already runs is group 2, plus rewrite methods as a second opinion
+- none of these abstracts gives a TPR at 0.01% FPR on a web crawl, so each needs a recheck on your own pages
