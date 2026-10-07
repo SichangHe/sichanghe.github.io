@@ -56,6 +56,7 @@ LLMs for verification
 - [specifications](llm_for_verification/specifications.md): generating contracts that match intended software behavior
 
 Rust language and ecosystem
+- [collected papers](rust_language/collected_papers.md): source records for newly collected Rust papers
 - [async concurrency bugs](rust_language/async_concurrency_bugs.md): async execution and concurrency defects in Rust
 - [bug finding tools](rust_language/bug_finding_tools.md): analyzers, fuzzers, and sanitizers that find Rust defects
 - [c to rust translation](rust_language/c_to_rust_translation.md): C/C++ migration to Rust and how to evaluate translations

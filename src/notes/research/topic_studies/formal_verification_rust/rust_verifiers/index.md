@@ -47,3 +47,11 @@ related existing notes
 - [new-work arguments](../../../new_work_arguments.md): earlier research arguments to build on
 - [Agave pilot scope](../../../agave_verification_scope.md): already-sized synchronous component targets
 - [complete four-part study](../index.md)
+
+consultation status
+- parallel agents and a fresh reviewer examined the notes
+- ChatGPT requests verified the Extra High setting
+  - requests returned no usable answer
+  - no ChatGPT opinion is represented as evidence
+- requested Opus and Fable models were unavailable in this session
+  - available agents performed the parallel review
