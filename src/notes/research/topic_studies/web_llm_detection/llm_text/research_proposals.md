@@ -85,14 +85,20 @@ what is worth doing first
 - convincing result
     - aggregation improves detection at the same site false-positive rate
     - improvement survives duplicate removal and held-out templates
-    - estimated generated share tracks known mixture proportions with honest uncertainty
+    - the pilot tests site classification rather than interpreting scores as generated share
+    - a later prevalence study needs an explicit estimator
+        - compare with adjustment using held-out recall and specificity
+        - test sensitivity to changing domains and generator mixtures
+        - do not interpret the fraction flagged or an average score as the true generated fraction
 - closest work
     - [Monitoring AI-Modified Content at Scale](https://arxiv.org/abs/2403.07183)
         - aggregate estimation of AI-modified reviews already exists
     - [The Rise of AI-Generated Content in Wikipedia](https://arxiv.org/abs/2410.08044)
         - use of document detectors to estimate web prevalence already exists
     - these are novelty leads from the human's notes
-        - inspect their full assumptions and later follow-ups before adopting an estimator
+        - current arXiv full texts were inspected in this review
+        - see [aggregate measurement](aggregate_measurement.md) for assumptions
+        - inspect later follow-ups before adopting an estimator
 - inference: the possible contribution is sensitivity to dependence and website change
     - simply averaging detector scores is insufficient
     - disagreement between detectors does not create an independent ground-truth label

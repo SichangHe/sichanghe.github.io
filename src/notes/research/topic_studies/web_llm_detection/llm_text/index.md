@@ -29,6 +29,10 @@ reading order
     - DetectGPT, DetectLLM, Fast-DetectGPT, Binoculars, DNA-GPT, Glimpse, MOSAIC, HALO, NTS
 - [trained detectors](trained_detectors.md)
     - learned features, rewriting, attack training, and recent creator/editor models
+- [aggregate measurement](aggregate_measurement.md)
+    - corpus estimates, stable-error assumptions, and site-level interpretation
+- [foundations](foundations.md)
+    - what mathematical limits do and do not establish
 - [robustness and evaluation](robustness_evaluation.md)
     - paraphrasing, personalization, benchmarks, short and mixed text, code, and false positives
 - [humans and browser tools](humans_browser_tools.md)
