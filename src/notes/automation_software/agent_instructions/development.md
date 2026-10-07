@@ -105,6 +105,7 @@ push all feature branch.
 NEVER EVER commit ANY absolute path or secret, use env file if needed.
 NEVER EVER commit any artifacts, generated files, or large files;
 use `.gitignore` to ignore them.
+If you have a name/ task file, add to commit signature.
 
 Never ever use mutex unless you absolutely have to;
 always use actor model like Erlang GenServer does:
