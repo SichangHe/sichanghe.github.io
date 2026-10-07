@@ -1,0 +1,276 @@
+primary-source catalog
+(authored by agents unless marked 🧑)
+
+how to use this catalog
+
+- exact titles and author names come from opened primary-page metadata
+- topic notes contain evidence quotes, methods, results, and limitations
+- an arXiv posting is not by itself peer-reviewed acceptance
+    - publication status is stated in the topic notes when verified
+- catalog compilation checked primary metadata directly
+    - it does not imply that every paper was read in full
+
+- [Automatic Detection of Generated Text is Easiest when Humans are Fooled](https://aclanthology.org/2020.acl-main.164/)
+    - authors: Daphne Ippolito, Daniel Duckworth, Chris Callison-Burch, Douglas Eck
+    - publication: Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics; 2020/7
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [RAID: A Shared Benchmark for Robust Evaluation of Machine-Generated Text Detectors](https://aclanthology.org/2024.acl-long.674/)
+    - authors: Liam Dugan, Alyssa Hwang, Filip Trhlík, Andrew Zhu, Josh Magnus Ludan, Hainiu Xu, Daphne Ippolito, Chris Callison-Burch
+    - publication: Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2024/8
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [SemEval-2024 Task 8: Multidomain, Multimodel and Multilingual Machine-Generated Text Detection](https://aclanthology.org/2024.semeval-1.279/)
+    - authors: Yuxia Wang, Jonibek Mansurov, Petar Ivanov, Jinyan Su, Artem Shelmanov, Akim Tsvigun, Osama Mohammed Afzal, Tarek Mahmoud, Giovanni Puccetti, Thomas Arnold
+    - publication: Proceedings of the 18th International Workshop on Semantic Evaluation (SemEval-2024); 2024/6
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [HACo-Det: A Study Towards Fine-Grained Machine-Generated Text Detection under Human-AI Coauthoring](https://aclanthology.org/2025.acl-long.1069/)
+    - authors: Zhixiong Su, Yichen Wang, Herun Wan, Zhaohan Zhang, Minnan Luo (罗敏楠)
+    - publication: Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [Iron Sharpens Iron: Defending Against Attacks in Machine-Generated Text Detection with Adversarial Training](https://aclanthology.org/2025.acl-long.155/)
+    - authors: Yuanfan Li, Zhaohan Zhang, Chengzhengxu Li, Chao Shen, Xiaoming Liu
+    - publication: Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md), [trained detectors](trained_detectors.md)
+- [Learning to Rewrite: Generalized LLM-Generated Text Detection](https://aclanthology.org/2025.acl-long.322/)
+    - authors: Wei Hao, Ran Li, Weiliang Zhao, Junfeng Yang, Chengzhi Mao
+    - publication: Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2025/7
+    - discussed in: [trained detectors](trained_detectors.md)
+- [MultiSocial: Multilingual Benchmark of Machine-Generated Text Detection of Social-Media Texts](https://aclanthology.org/2025.acl-long.36/)
+    - authors: Dominik Macko, Jakub Kopál, Robert Moro, Ivan Srba
+    - publication: Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [Reliably Bounding False Positives: A Zero-Shot Machine-Generated Text Detection Framework via Multiscaled Conformal Prediction](https://aclanthology.org/2025.acl-long.601/)
+    - authors: Xiaowei Zhu, Yubing Ren, Yanan Cao, Xixun Lin, Fang Fang, Yangxi Li
+    - publication: Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [MAGRET: Machine-generated Text Detection with Rewritten Texts](https://aclanthology.org/2025.coling-main.557/)
+    - authors: Yifei Huang, Jiuxin Cao, Hanyu Luo, Xin Guan, Bo Liu
+    - publication: Proceedings of the 31st International Conference on Computational Linguistics; 2025/1
+    - discussed in: [trained detectors](trained_detectors.md)
+- [OpenTuringBench: An Open-Model-based Benchmark and Framework for Machine-Generated Text Detection and Attribution](https://aclanthology.org/2025.emnlp-main.1354/)
+    - authors: Lucio La Cava, Andrea Tagarelli
+    - publication: Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing; 2025/11
+    - discussed in: [trained detectors](trained_detectors.md)
+- [Droid: A Resource Suite for AI-Generated Code Detection](https://aclanthology.org/2025.emnlp-main.1593/)
+    - authors: Daniil Orel, Indraneil Paul, Iryna Gurevych, Preslav Nakov
+    - publication: Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing; 2025/11
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [TempParaphraser: “Heating Up” Text to Evade AI-Text Detection through Paraphrasing](https://aclanthology.org/2025.emnlp-main.1607/)
+    - authors: Junjie Huang, Ruiquan Zhang, Jinsong Su, Yidong Chen (陈毅东)
+    - publication: Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing; 2025/11
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [SenDetEX: Sentence-Level AI-Generated Text Detection for Human-AI Hybrid Content via Style and Context Fusion](https://aclanthology.org/2025.emnlp-main.268/)
+    - authors: Lei Jiang, Desheng Wu, Xiaolong Zheng
+    - publication: Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing; 2025/11
+    - discussed in: [robustness evaluation](robustness_evaluation.md), [trained detectors](trained_detectors.md)
+- [MoSEs: Uncertainty-Aware AI-Generated Text Detection via Mixture of Stylistics Experts with Conditional Thresholds](https://aclanthology.org/2025.emnlp-main.294/)
+    - authors: Junxi Wu, Jinpeng Wang, Zheng Liu, Bin Chen, Dongjian Hu, Hao Wu, Shu-Tao Xia
+    - publication: Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing; 2025/11
+    - discussed in: [trained detectors](trained_detectors.md)
+- [Your Language Model Can Secretly Write Like Humans: Contrastive Paraphrase Attacks on LLM-Generated Text Detectors](https://aclanthology.org/2025.emnlp-main.433/)
+    - authors: Hao Fang, Jiawei Kong, Tianqu Zhuang, Yixiang Qiu, Kuofeng Gao, Bin Chen, Shu-Tao Xia, Yaowei Wang, Min Zhang
+    - publication: Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing; 2025/11
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [Enhancing LLM Text Detection with Retrieved Contexts and Logits Distribution Consistency](https://aclanthology.org/2025.emnlp-main.503/)
+    - authors: Zhaoheng Huang, Yutao Zhu (朱余韬), Ji-Rong Wen, Zhicheng Dou (窦志成)
+    - publication: Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing; 2025/11
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [Almost AI, Almost Human: The Challenge of Detecting AI-Polished Writing](https://aclanthology.org/2025.findings-acl.1303/)
+    - authors: Shoumik Saha, Soheil Feizi
+    - publication: Findings of the Association for Computational Linguistics: ACL 2025; 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [Stress-testing Machine Generated Text Detection: Shifting Language Models Writing Style to Fool Detectors](https://aclanthology.org/2025.findings-acl.156/)
+    - authors: Andrea Pedrotti, Michele Papucci, Cristiano Ciaccio, Alessio Miaschi, Giovanni Puccetti, Felice Dell’Orletta, Andrea Esuli
+    - publication: Findings of the Association for Computational Linguistics: ACL 2025; 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [CoDet-M4: Detecting Machine-Generated Code in Multi-Lingual, Multi-Generator and Multi-Domain Settings](https://aclanthology.org/2025.findings-acl.550/)
+    - authors: Daniil Orel, Dilshod Azizov, Preslav Nakov
+    - publication: Findings of the Association for Computational Linguistics: ACL 2025; 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [EvoBench: Towards Real-world LLM-Generated Text Detection Benchmarking for Evolving Large Language Models](https://aclanthology.org/2025.findings-acl.754/)
+    - authors: Xiao Yu, Yi Yu, Dongrui Liu, Kejiang Chen, Weiming Zhang, Nenghai Yu, Jing Shao
+    - publication: Findings of the Association for Computational Linguistics: ACL 2025; 2025/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [SilverSpeak: Evading AI-Generated Text Detectors using Homoglyphs](https://aclanthology.org/2025.genaidetect-1.1/)
+    - authors: Aldan Creo, Shushanta Pudasaini
+    - publication: Proceedings of the 1stWorkshop on GenAI Content Detection (GenAIDetect); 2025/1
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [Identifying Bias in Machine-generated Text Detection](https://aclanthology.org/2026.acl-long.109/)
+    - authors: Kevin Stowe, Svetlana Afanaseva, Rodolfo C. Raimundo, Yitao Sun, Kailash Patil
+    - publication: Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md), [trained detectors](trained_detectors.md)
+- [Exons-Detect: Identifying and Amplifying Exonic Tokens via Hidden-State Discrepancy for Robust AI-Generated Text Detection](https://aclanthology.org/2026.acl-long.1211/)
+    - authors: Xiaowei Zhu, Yubing Ren, Fang Fang, Shi Wang, Yanan Cao, Li Guo
+    - publication: Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/7
+    - discussed in: [trained detectors](trained_detectors.md)
+- [Zero-Shot Detection of LLM-Generated Text using Temperature Sensitivity](https://aclanthology.org/2026.acl-long.1748/)
+    - authors: Shixuan Ma, Jiahao Li, Zhendong Mao, Quan Wang
+    - publication: Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/7
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [DetectRL-X: Towards Reliable Multilingual and Real-World LLM-Generated Text Detection](https://aclanthology.org/2026.acl-long.1773/)
+    - authors: Junchao Wu, Yefeng Liu, Chenyu Zhu, Hao Zhang, Zeyu Wu, Tianqi Shi, Yichao Du, Longyue Wang, Weihua Luo, Jinsong Su, Derek F. Wong (黄辉)
+    - publication: Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [When Personalization Tricks Detectors: The Feature-Inversion Trap in Machine-Generated Text Detection](https://aclanthology.org/2026.acl-long.1998/)
+    - authors: Lang Gao, Xuhui Li, Chenxi Wang, Mingzhe Li, Wei Liu, Zirui Song, Jinghui Zhang, Rui Yan, Preslav Nakov, Xiuying Chen
+    - publication: Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md), [trained detectors](trained_detectors.md)
+- [Beyond the Final Actor: Modeling the Dual Roles of Creator and Editor for Fine-Grained LLM-Generated Text Detection](https://aclanthology.org/2026.acl-long.235/)
+    - authors: Yang Li, Qiang Sheng, Zhengjia Wang, Yehan Yang, Danding Wang, Juan Cao
+    - publication: Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/7
+    - discussed in: [trained detectors](trained_detectors.md)
+- [Is Human-Like Text Liked by Humans? Multilingual Human Detection and Preference Against AI](https://aclanthology.org/2026.acl-long.639/)
+    - authors: Yuxia Wang, Rui Xing, Jonibek Mansurov, Giovanni Puccetti, Zhuohan Xie, Minh Ngoc Ta, Jiahui Geng, Jinyan Su, Mervat Abassy, Saadeldine Eletter, Kareem Elozeiri, Nurkhan Laiyk, Maiya Goloburda, Tarek Mahmoud, Raj Vardhan Tomar, Alexander Aziz, Ryuto Koike, Masahiro Kaneko, Artem Shelmanov, Ekaterina Artemova, Vladislav Mikhailov, Akim Tsvigun, Alham Fikri Aji, Nizar Habash, Iryna Gurevych, Preslav Nakov
+    - publication: Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/7
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [Explaining Generalization of AI-Generated Text Detectors Through Linguistic Analysis](https://aclanthology.org/2026.eacl-long.307/)
+    - authors: Yuxi Xia, Kinga Stańczak, Benjamin Roth
+    - publication: Proceedings of the 19th Conference of the European Chapter of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/3
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [AICD Bench: A Challenging Benchmark for AI-Generated Code Detection](https://aclanthology.org/2026.eacl-long.325/)
+    - authors: Daniil Orel, Dilshod Azizov, Indraneil Paul, Yuxia Wang, Iryna Gurevych, Preslav Nakov
+    - publication: Proceedings of the 19th Conference of the European Chapter of the Association for Computational Linguistics (Volume 1: Long Papers); 2026/3
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [MASH: Evading Black-Box AI-Generated Text Detectors via Style Humanization](https://aclanthology.org/2026.findings-acl.1487/)
+    - authors: Yongtong Gu, Songze Li, Xia Hu
+    - publication: Findings of the Association for Computational Linguistics: ACL 2026; 2026/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [C-ReD: A Comprehensive Chinese Benchmark for AI-Generated Text Detection Derived from Real-World Prompts](https://aclanthology.org/2026.findings-acl.2119/)
+    - authors: Chenxi Qing, Junxi Wu, Zheng Liu, Yixiang Qiu, Hongyao Yu, Bin Chen, Hao Wu, Shu-Tao Xia
+    - publication: Findings of the Association for Computational Linguistics: ACL 2026; 2026/7
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [Human heuristics for AI-generated language are flawed](https://arxiv.org/abs/2206.07271)
+    - authors: Jakesch, Maurice, Hancock, Jeffrey, Naaman, Mor
+    - publication: arXiv metadata; acceptance not established by this page; 2022/06/15
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [DetectGPT: Zero-Shot Machine-Generated Text Detection using Probability Curvature](https://arxiv.org/abs/2301.11305)
+    - authors: Mitchell, Eric, Lee, Yoonho, Khazatsky, Alexander, Manning, Christopher D., Finn, Chelsea
+    - publication: arXiv metadata; acceptance not established by this page; 2023/01/26
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [Can AI-Generated Text be Reliably Detected?](https://arxiv.org/abs/2303.11156)
+    - authors: Sadasivan, Vinu Sankar, Kumar, Aounon, Balasubramanian, Sriram, Wang, Wenxiao, Feizi, Soheil
+    - publication: arXiv metadata; acceptance not established by this page; 2023/03/17
+    - discussed in: [foundations](foundations.md), [robustness evaluation](robustness_evaluation.md)
+- [Paraphrasing evades detectors of AI-generated text, but retrieval is an effective defense](https://arxiv.org/abs/2303.13408)
+    - authors: Krishna, Kalpesh, Song, Yixiao, Karpinska, Marzena, Wieting, John, Iyyer, Mohit
+    - publication: arXiv metadata; acceptance not established by this page; 2023/03/23
+    - discussed in: [foundations](foundations.md), [robustness evaluation](robustness_evaluation.md)
+- [GPT detectors are biased against non-native English writers](https://arxiv.org/abs/2304.02819)
+    - authors: Liang, Weixin, Yuksekgonul, Mert, Mao, Yining, Wu, Eric, Zou, James
+    - publication: arXiv metadata; acceptance not established by this page; 2023/04/06
+    - discussed in: [foundations](foundations.md)
+- [On the Possibilities of AI-Generated Text Detection](https://arxiv.org/abs/2304.04736)
+    - authors: Chakraborty, Souradip, Bedi, Amrit Singh, Zhu, Sicheng, An, Bang, Manocha, Dinesh, Huang, Furong
+    - publication: arXiv metadata; acceptance not established by this page; 2023/04/10
+    - discussed in: [foundations](foundations.md)
+- [MAGE: Machine-generated Text Detection in the Wild](https://arxiv.org/abs/2305.13242)
+    - authors: Li, Yafu, Li, Qintong, Cui, Leyang, Bi, Wei, Wang, Zhilin, Wang, Longyue, Yang, Linyi, Shi, Shuming, Zhang, Yue
+    - publication: arXiv metadata; acceptance not established by this page; 2023/05/22
+    - discussed in: [robustness evaluation](robustness_evaluation.md), [trained detectors](trained_detectors.md)
+- [M4: Multi-generator, Multi-domain, and Multi-lingual Black-Box Machine-Generated Text Detection](https://arxiv.org/abs/2305.14902)
+    - authors: Wang, Yuxia, Mansurov, Jonibek, Ivanov, Petar, Su, Jinyan, Shelmanov, Artem, Tsvigun, Akim, Whitehouse, Chenxi, Afzal, Osama Mohammed, Mahmoud, Tarek, Sasaki, Toru, Arnold, Thomas, Aji, Alham Fikri, Habash, Nizar, Gurevych, Iryna, Nakov, Preslav
+    - publication: arXiv metadata; acceptance not established by this page; 2023/05/24
+    - discussed in: [robustness evaluation](robustness_evaluation.md), [trained detectors](trained_detectors.md)
+- [Ghostbuster: Detecting Text Ghostwritten by Large Language Models](https://arxiv.org/abs/2305.15047)
+    - authors: Verma, Vivek, Fleisig, Eve, Tomlin, Nicholas, Klein, Dan
+    - publication: arXiv metadata; acceptance not established by this page; 2023/05/24
+    - discussed in: [trained detectors](trained_detectors.md)
+- [DNA-GPT: Divergent N-Gram Analysis for Training-Free Detection of GPT-Generated Text](https://arxiv.org/abs/2305.17359)
+    - authors: Yang, Xianjun, Cheng, Wei, Wu, Yue, Petzold, Linda, Wang, William Yang, Chen, Haifeng
+    - publication: arXiv metadata; acceptance not established by this page; 2023/05/27
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [Human or Not? A Gamified Approach to the Turing Test](https://arxiv.org/abs/2305.20010)
+    - authors: Jannai, Daniel, Meron, Amos, Lenz, Barak, Levine, Yoav, Shoham, Yoav
+    - publication: arXiv metadata; acceptance not established by this page; 2023/05/31
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [DetectLLM: Leveraging Log Rank Information for Zero-Shot Detection of Machine-Generated Text](https://arxiv.org/abs/2306.05540)
+    - authors: Su, Jinyan, Zhuo, Terry Yue, Wang, Di, Nakov, Preslav
+    - publication: arXiv metadata; acceptance not established by this page; 2023/05/23
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [RADAR: Robust AI-Text Detection via Adversarial Learning](https://arxiv.org/abs/2307.03838)
+    - authors: Hu, Xiaomeng, Chen, Pin-Yu, Ho, Tsung-Yi
+    - publication: arXiv metadata; acceptance not established by this page; 2023/07/07
+    - discussed in: [trained detectors](trained_detectors.md)
+- [Fast-DetectGPT: Efficient Zero-Shot Detection of Machine-Generated Text via Conditional Probability Curvature](https://arxiv.org/abs/2310.05130)
+    - authors: Bao, Guangsheng, Zhao, Yanbin, Teng, Zhiyang, Yang, Linyi, Zhang, Yue
+    - publication: arXiv metadata; acceptance not established by this page; 2023/10/08
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [A Representative Study on Human Detection of Artificially Generated Media Across Countries](https://arxiv.org/abs/2312.05976)
+    - authors: Frank, Joel, Herbert, Franziska, Ricker, Jonas, Schönherr, Lea, Eisenhofer, Thorsten, Fischer, Asja, Dürmuth, Markus, Holz, Thorsten
+    - publication: arXiv metadata; acceptance not established by this page; 2023/12/10
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [LLM-as-a-Coauthor: Can Mixed Human-Written and Machine-Generated Text Be Detected?](https://arxiv.org/abs/2401.05952)
+    - authors: Zhang, Qihui, Gao, Chujie, Chen, Dongping, Huang, Yue, Huang, Yixin, Sun, Zhenyang, Zhang, Shilin, Li, Weiye, Fu, Zhengyan, Wan, Yao, Sun, Lichao
+    - publication: arXiv metadata; acceptance not established by this page; 2024/01/11
+    - discussed in: [robustness evaluation](robustness_evaluation.md)
+- [Spotting LLMs With Binoculars: Zero-Shot Detection of Machine-Generated Text](https://arxiv.org/abs/2401.12070)
+    - authors: Hans, Abhimanyu, Schwarzschild, Avi, Cherepanova, Valeriia, Kazemi, Hamid, Saha, Aniruddha, Goldblum, Micah, Geiping, Jonas, Goldstein, Tom
+    - publication: arXiv metadata; acceptance not established by this page; 2024/01/22
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [Detecting AI-Generated Sentences in Human-AI Collaborative Hybrid Texts: Challenges, Strategies, and Insights](https://arxiv.org/abs/2403.03506)
+    - authors: Zeng, Zijie, Liu, Shiqi, Sha, Lele, Li, Zhuang, Yang, Kaixun, Liu, Sannyuya, Gašević, Dragan, Chen, Guanliang
+    - publication: arXiv metadata; acceptance not established by this page; 2024/03/06
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [Monitoring AI-Modified Content at Scale: A Case Study on the Impact of ChatGPT on AI Conference Peer Reviews](https://arxiv.org/abs/2403.07183)
+    - authors: Liang, Weixin, Izzo, Zachary, Zhang, Yaohui, Lepp, Haley, Cao, Hancheng, Zhao, Xuandong, Chen, Lingjiao, Ye, Haotian, Liu, Sheng, Huang, Zhi, McFarland, Daniel A., Zou, James Y.
+    - publication: arXiv metadata; acceptance not established by this page; 2024/03/11
+    - discussed in: [aggregate measurement](aggregate_measurement.md)
+- [People cannot distinguish GPT-4 from a human in a Turing test](https://arxiv.org/abs/2405.08007)
+    - authors: Jones, Cameron R., Bergen, Benjamin K.
+    - publication: arXiv metadata; acceptance not established by this page; 2024/05/09
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [Learning to Rewrite: Generalized LLM-Generated Text Detection](https://arxiv.org/abs/2408.04237)
+    - authors: Li, Ran, Hao, Wei, Zhao, Weiliang, Yang, Junfeng, Mao, Chengzhi
+    - publication: arXiv metadata; acceptance not established by this page; 2024/08/08
+    - discussed in: [trained detectors](trained_detectors.md)
+- [MOSAIC: Multiple Observers Spotting AI Content](https://arxiv.org/abs/2409.07615)
+    - authors: Dubois, Matthieu, Yvon, François, Piantanida, Pablo
+    - publication: arXiv metadata; acceptance not established by this page; 2024/09/11
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [The Rise of AI-Generated Content in Wikipedia](https://arxiv.org/abs/2410.08044)
+    - authors: Brooks, Creston, Eggert, Samuel, Peskoff, Denis
+    - publication: arXiv metadata; acceptance not established by this page; 2024/10/10
+    - discussed in: [aggregate measurement](aggregate_measurement.md)
+- [Glimpse: Enabling White-Box Methods to Use Proprietary Models for Zero-Shot LLM-Generated Text Detection](https://arxiv.org/abs/2412.11506)
+    - authors: Bao, Guangsheng, Zhao, Yanbin, He, Juncai, Zhang, Yue
+    - publication: arXiv metadata; acceptance not established by this page; 2024/12/16
+    - discussed in: [zero shot detectors](zero_shot_detectors.md)
+- [Not all tokens are created equal: Perplexity Attention Weighted Networks for AI generated text detection](https://arxiv.org/abs/2501.03940)
+    - authors: Miralles-González, Pablo, Huertas-Tato, Javier, Martín, Alejandro, Camacho, David
+    - publication: arXiv metadata; acceptance not established by this page; 2025/01/07
+    - discussed in: [trained detectors](trained_detectors.md)
+- [Large Language Models Pass the Turing Test](https://arxiv.org/abs/2503.23674)
+    - authors: Jones, Cameron R., Bergen, Benjamin K.
+    - publication: arXiv metadata; acceptance not established by this page; 2025/03/31
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [The Turing Test Is More Relevant Than Ever](https://arxiv.org/abs/2505.02558)
+    - authors: Rahimov, Avraham, Zamler, Orel, Azaria, Amos
+    - publication: arXiv metadata; acceptance not established by this page; 2025/05/05
+    - discussed in: [humans browser tools](humans_browser_tools.md)
+- [When AI Settles Down: Late-Stage Stability as a Signature of AI-Generated Text Detection](https://arxiv.org/abs/2601.04833)
+    - authors: Sun, Ke, Bao, Guangsheng, Cui, Han, Zhang, Yue
+    - publication: arXiv metadata; acceptance not established by this page; 2026/01/08
+    - discussed in: [recent preprints](recent_preprints.md)
+- [The Impact of AI-Generated Text on the Internet](https://arxiv.org/abs/2604.26965)
+    - authors: Dolezal, Jonas, Alam, Sawood, Graham, Mark, Bohacek, Maty
+    - publication: arXiv metadata; acceptance not established by this page; 2026/04/14
+    - discussed in: [contemporary web studies](contemporary_web_studies.md)
+- [Steer-to-Detect: Probing Hidden Representations for Detection of LLM-Generated Texts](https://arxiv.org/abs/2605.12890)
+    - authors: Liang, Luxu, Li, Xiang
+    - publication: arXiv metadata; acceptance not established by this page; 2026/05/13
+    - discussed in: [recent preprints](recent_preprints.md)
+- [Hidden Human-Like Nature of Machine-Generated Texts: Theory and Detection Enhancement](https://arxiv.org/abs/2605.23190)
+    - authors: Wu, Chenwang, Cheung, Yiu-ming, Han, Bo, Lian, Defu
+    - publication: arXiv metadata; acceptance not established by this page; 2026/05/22
+    - discussed in: [recent preprints](recent_preprints.md)
+- [SV-Detect: AI-generated Text Detection with Steering Vectors](https://arxiv.org/abs/2606.07313)
+    - authors: Vishnyakov, Mikhail, Gaintseva, Tatiana
+    - publication: arXiv metadata; acceptance not established by this page; 2026/06/05
+    - discussed in: [recent preprints](recent_preprints.md)
+- [Triospect: A Three-Dimensional Framework for Robust Statistical AI-Generated Text Detection Against Diverse Attacks](https://arxiv.org/abs/2606.31074)
+    - authors: Bao, Guangsheng, Rong, Lihua, Zhao, Yanbin, Yu, Xiao, Zhou, Qiji, Zhang, Yue
+    - publication: arXiv metadata; acceptance not established by this page; 2026/06/30
+    - discussed in: [recent preprints](recent_preprints.md)
+- [Latent Trajectory Discrimination for AI-Generated Text Detection](https://arxiv.org/abs/2607.14967)
+    - authors: Bonifazi, Gianluca, Buratti, Christopher, Marchetti, Michele, Parlapiano, Federica, Quaglieri, Giulia, Traini, Davide, Ursino, Domenico, Virgili, Luca
+    - publication: arXiv metadata; acceptance not established by this page; 2026/07/16
+    - discussed in: [recent preprints](recent_preprints.md)

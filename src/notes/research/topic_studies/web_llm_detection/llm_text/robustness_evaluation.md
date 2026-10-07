@@ -1,0 +1,252 @@
+llm text detection: robustness and evaluation
+(authored by agents unless marked 🧑)
+
+takeaway
+- research recommendation: test whether a detector remains useful after the text, generator, or website changes
+  - a high score on one balanced dataset does not answer this question
+  - first define what counts as generated
+    - full generation, human text polished by AI, inserted AI sentences, and human revision of AI text are different histories
+  - then measure missed generations at a fixed rate of human text being wrongly flagged
+- scope: primary-source review through 6 Oct 2026
+  - abstracts opened for every cited paper
+  - full PDFs inspected for RAID, MultiSocial, EvoBench, Droid, MCP, and APT-Eval
+  - additional full-paper checks: DetectRL-X, StyloBench, MASH, AICD Bench, RACE, and the 2026 student-bias study
+  - published numbers below are author claims within their tested settings
+  - proposed experiments are agent recommendations
+
+robustness failures
+- RAID, Dugan et al., ACL 2024
+  - [paper and released resources](https://aclanthology.org/2024.acl-long.674/)
+  - abstract evidence: “variations in sampling strategies, repetition penalties, and unseen generative models”
+  - benchmark includes over 6 million generations
+    - 11 generators, 8 domains, 11 attacks, 4 decoding strategies
+  - full-paper evidence, figure 4: “few detectors can operate at FPR<1%”
+    - FPR means the fraction of human texts incorrectly flagged
+  - inference: benchmark decoding settings belong in the evaluation contract
+    - a detector can fail without any later paraphrasing
+- recursive paraphrasing, Sadasivan et al., 2023
+  - [Can AI-Generated Text be Reliably Detected?](https://arxiv.org/abs/2303.11156)
+  - abstract evidence: “each approximately 300 tokens long”
+  - tests watermark, neural, zero-shot, and retrieval detectors
+  - abstract evidence: “only slightly degrades text quality in many cases”
+  - scope limit: the experiments do not establish failure for every detector or text length
+- DIPPER, Krishna et al., NeurIPS 2023
+  - [Paraphrasing evades detectors of AI-generated text, but retrieval is an effective defense](https://arxiv.org/abs/2303.13408)
+  - abstract evidence: “drops detection accuracy of DetectGPT from 70.3% to 4.6%”
+    - evaluated at 1% FPR
+  - defense retrieves similar text from a provider's generation history
+    - tested with 15 million stored generations
+    - authors report 80–97% detection after paraphrasing at 1% FPR
+  - inference: this defense needs access to the generating service's history
+    - it does not directly cover arbitrary web content from unknown services
+- SilverSpeak, GenAI Detection workshop 2025
+  - [paper](https://aclanthology.org/2025.genaidetect-1.1/)
+  - abstract evidence: “homoglyph-based attacks (‘A’ → Cyrillic ‘А’)”
+    - a homoglyph is a different character that looks similar
+  - evaluates seven detectors, including Binoculars, across five datasets
+  - reported average Matthews correlation falls from 0.64 to −0.01
+    - this correlation summarizes binary prediction agreement while accounting for all four outcome counts
+  - inference: preserve raw text and separately test normalization
+    - indiscriminate replacement could corrupt legitimate multilingual text
+- style attacks, Findings ACL 2025
+  - [Stress-testing Machine Generated Text Detection](https://aclanthology.org/2025.findings-acl.156/)
+  - abstract evidence: “detectors can be easily fooled with relatively few examples”
+  - authors tune generators toward human writing preferences
+    - this changes generation itself rather than applying character noise
+- CoPA, EMNLP 2025
+  - [contrastive paraphrase attack](https://aclanthology.org/2025.emnlp-main.433/)
+  - abstract evidence: “a training-free method”
+  - subtracts an auxiliary machine-like word distribution during generation
+  - inference: robust evaluation should include attacks that alter generation probabilities
+- TempParaphraser, EMNLP 2025
+  - [paper and code](https://aclanthology.org/2025.emnlp-main.1607/)
+  - abstract evidence: “reduces detector accuracy by an average of 82.5%”
+  - authors combine ordinary-temperature generations to imitate high-temperature sampling
+  - scope limit: this aggregate is not a low-FPR recall guarantee
+- MASH, Findings ACL 2026
+  - [black-box style humanization](https://aclanthology.org/2026.findings-acl.1487/)
+  - abstract evidence: “average Attack Success Rate (ASR) of 92%”
+  - tested over six datasets and five detectors
+  - attack combines style tuning, preference tuning, and refinement at generation time
+  - inference: include held-out style attacks after training a defense
+    - success on the attacks used for training is insufficient evidence of general robustness
+
+defenses and their limits
+- GREATER, ACL 2025
+  - [adversarial training](https://aclanthology.org/2025.acl-long.155/)
+  - abstract evidence: “10 text perturbation strategies and 6 adversarial attacks”
+  - attack and detector train together
+  - authors report a 0.67% reduction in attack success relative to compared defenses
+  - uncertainty: the abstract does not clarify percentage points versus relative percent
+- MCP, ACL 2025
+  - [false-positive calibration with RealDet](https://aclanthology.org/2025.acl-long.601/)
+  - full-paper evidence, background: “assuming only data exchangeability”
+    - exchangeability means the joint distribution is unchanged when example order is permuted
+      - independent samples from one unchanged distribution are a sufficient example
+  - calibrates detector thresholds separately by text length
+  - full-paper table 2 caption: “the detection threshold set based on the test set”
+    - this describes the vanilla comparison, not MCP calibration
+    - distinguish an oracle test-tuned baseline from a deployable frozen threshold
+  - inference: the guarantee needs scrutiny when new websites or user groups differ from calibration data
+    - an unconditional FPR guarantee also does not establish each subgroup's FPR
+- StyloBench and StyloCheck, ACL 2026
+  - [personalized generation](https://aclanthology.org/2026.acl-long.1998/)
+  - abstract evidence: “flip their effect in personalized contexts”
+    - refers to features separating human writing from generated text
+  - literary and blog text paired with generated imitations
+  - authors report 85% correlation between predicted and observed performance shifts
+  - inference: style features can become evidence in the wrong direction
+    - adding stylistic explanations does not by itself make detection trustworthy
+
+benchmark map
+- DetectRL-X, ACL 2026
+  - [multilingual refinement benchmark](https://aclanthology.org/2026.acl-long.1773/)
+  - full-paper introduction: “3.46 million samples covering 8 languages, 6 domains, 4 generators”
+  - domains include SEO and web text
+  - full-paper construction cleans “malformed texts, encoding errors”
+    - human sources predate 2022
+    - tested lengths: 64, 128, 256, and 512 tokens
+    - inference: this cleaned corpus does not reproduce all raw extraction noise
+  - includes polishing, expansion, condensation, attacks, and four text lengths
+  - separates human text refined by a model from fully generated text
+  - inference: multilingual or assisted-writing evaluation is already substantially covered
+    - HTML extraction, duplicate dependence, and site-level uncertainty need separate novelty checks
+- MAGE, ACL 2024
+  - [cross-domain and cross-generator detection](https://arxiv.org/abs/2305.13242)
+  - abstract evidence: “especially out-of-distribution”
+  - useful for testing texts whose domain or generator was absent during training
+  - human note to preserve: [existing notes](../../../gen_ai.md)
+    - “paraphrase both human&machine text as machine text”
+    - label choice must match the proposed study's question
+- M4, EACL 2024
+  - [multilingual benchmark](https://arxiv.org/abs/2305.14902)
+  - abstract evidence: “detectors tend to misclassify machine-generated text as human-written”
+    - for unseen domains or generators
+- SemEval-2024 task 8
+  - [shared-task report](https://aclanthology.org/2024.semeval-1.279/)
+  - abstract evidence: “identify the changing point within a text”
+  - separates binary detection, generator attribution, and a human-to-machine boundary
+  - inference: one boundary is simpler than many alternating human and AI spans
+- EvoBench, Findings ACL 2025
+  - [generator evolution benchmark](https://aclanthology.org/2025.findings-acl.754/)
+  - abstract evidence: “7 LLM families and their 29 evolving versions”
+  - tests updates, tuning, and pruning across 14 detectors
+  - authors report all tested detectors struggle with evolving generators
+  - inference: record generator version and detection date
+    - an API name alone is insufficient for reproducibility
+- linguistic generalization analysis, EACL 2026
+  - [cross-prompt, cross-model, cross-domain study](https://aclanthology.org/2026.eacl-long.307/)
+  - abstract evidence: “6 prompting strategies, 7 large language models (LLMs), and 4 domain datasets”
+  - correlates performance changes with 80 linguistic features
+  - scope limit: correlation identifies candidate explanations, not demonstrated causes
+- C-ReD, Findings ACL 2026
+  - [Chinese real-prompt benchmark](https://aclanthology.org/2026.findings-acl.2119/)
+  - abstract evidence: “Derived from Real-World Prompts”
+  - useful complement to English synthetic benchmarks
+  - uncertainty: abstract-level review does not verify prompt sampling or contamination controls
+
+short and mixed text
+- MultiSocial, ACL 2025
+  - [multilingual social-media benchmark](https://aclanthology.org/2025.acl-long.36/)
+  - abstract evidence: “the platform selection for training matters”
+  - 472,097 texts, 22 languages, five platforms, seven generators
+  - full-paper evidence: “Twitter the highest (18) median value of word-count text length”
+  - inference: short text can be learnable within a domain
+    - that does not establish reliable zero-shot detection of arbitrary short web fragments
+- MixSet, NAACL 2024
+  - [LLM-as-a-Coauthor](https://arxiv.org/abs/2401.05952)
+  - abstract evidence: “particularly in dealing with subtle modifications and style adaptability”
+  - distinguishes AI revision of human text from human revision of AI text
+- APT-Eval, Findings ACL 2025
+  - [Almost AI, Almost Human](https://aclanthology.org/2025.findings-acl.1303/)
+  - abstract evidence: “detectors frequently flag even minimally polished text as AI-generated”
+  - 14.7 thousand polished samples originate from 300 human samples
+  - inference: split and resample by original human document
+    - polished variants are not independent source documents
+  - authors call flags on minimally polished text false positives
+    - whether this label applies depends on the study's definition of generated content
+- HACo-Det, ACL 2025
+  - [word-level coauthoring benchmark](https://aclanthology.org/2025.acl-long.1069/)
+  - abstract evidence: “a 0.462 average F1 score”
+    - for adapted metric-based detectors
+  - produces word attribution labels with an automatic mixing pipeline
+  - inference: generated word histories need not map cleanly to substantive human contribution
+- SenDetEX, EMNLP 2025
+  - [sentence detection with surrounding context](https://aclanthology.org/2025.emnlp-main.268/)
+  - abstract evidence: “human-written text (HWT) and AI-generated text (AGT) alternate irregularly”
+  - constructs mixed text and combines sentence style with context
+  - inference: test whether surrounding templates or quoted text cause a sentence's label to change
+
+code
+- CoDet-M4, Findings ACL 2025
+  - [multiple languages, generators, and domains](https://aclanthology.org/2025.findings-acl.550/)
+  - abstract evidence: “authorship and hybrid authorship”
+  - includes unseen generators, domains, and programming languages
+- Droid, EMNLP 2025
+  - [resource suite](https://aclanthology.org/2025.emnlp-main.1593/)
+  - abstract evidence: “over a million code samples, seven programming languages, outputs from 43 coding models”
+  - includes mixed code and attacks
+  - full-paper evidence: “samples with between 6 and 300 lines of”
+    - source code in the data filtering description
+  - scope limit: this does not cover every tiny completion or whole repository
+  - authors find small amounts of attack training improve tested robustness
+- AICD Bench, EACL 2026
+  - [large code benchmark](https://aclanthology.org/2026.eacl-long.325/)
+  - abstract evidence: “2M examples, 77 models across 11 families, and 9 programming languages”
+  - separately tests binary detection, family attribution, and human/machine/hybrid/adversarial classes
+  - abstract evidence: “performance remains far below practical usability”
+    - particularly under shift and for mixed or adversarial code
+  - full-paper appendix G: “Boilerplate code is also frequently mislabeled as AI-generated”
+    - author observation from inspected failures
+  - inference: preserve compilation or tests when evaluating code attacks
+    - success that breaks the program is a different result
+
+false accusations and group effects
+- student-essay bias study, ACL 2026
+  - [Identifying Bias in Machine-generated Text Detection](https://aclanthology.org/2026.acl-long.109/)
+  - abstract evidence: “ELL essays are more likely to be classified as machine-generated”
+    - ELL means English-language learner
+  - evaluates 16 detectors across gender, race/ethnicity, language learning, and economic status
+  - authors describe effects as inconsistent across systems
+  - inference: report group results rather than infer fairness from overall accuracy
+
+evaluation contract we should use
+- recommendation: separate calibration from final testing
+  - choose thresholds on known human calibration data
+  - freeze thresholds before unseen-domain, attack, or future-version tests
+  - never tune a threshold using the final test's human labels
+- recommendation: report detection recall at 0.1%, 1%, and 5% human FPR
+  - recall means the fraction of generated texts caught
+  - report uncertainty intervals and human sample counts
+  - deduction: zero errors in 300 independent human samples only bounds FPR to about 1% at 95% confidence
+    - uses the binomial zero-event approximation 3/n
+    - roughly 3,000 independent human samples are needed for a corresponding 0.1% bound
+- recommendation: show the consequences of base rates
+  - assumed example: generated content is 1% of texts
+  - assumed detector: 80% recall and 1% human FPR
+  - deduction: only about 45% of flags correspond to generated text
+    - 0.008 / (0.008 + 0.0099)
+- recommendation: split by source, author, prompt family, generator family, and date
+  - keep revisions and paraphrases of one source in the same split
+  - test copied or memorized text separately
+- recommendation: separate legitimate transformations from attacks
+  - legitimate: translation, grammar correction, accessible formatting, human revision
+  - attack: detector-guided paraphrasing, style tuning, character substitution
+  - report semantic preservation and attack cost beside detector evasion
+- recommendation: include an abstain outcome
+  - measure what fraction of texts receives a decision
+  - measure errors among decided texts
+  - do not claim that a scalar detector score is the probability of AI authorship without calibration evidence
+
+research proposals
+
+- [shared proposals](research_proposals.md) develop extraction, site aggregation, editing-history, and browser-warning studies
+- method-specific controls and limitations remain in the sections above
+
+remaining verification
+- inspect full methods and artifacts for the 2026 papers before fixing experiments around their claims
+- verify data licensing and source-date controls before reproducing benchmark datasets
+- cross-check research novelty with targeted searches outside ACL
+  - web search tools failed during this pass
+  - direct HTTPS access to arXiv and ACL worked
+- no experiments were run in this review
