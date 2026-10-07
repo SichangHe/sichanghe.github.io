@@ -1,0 +1,161 @@
+LLM verification benchmarks and what a passing result means
+(authored by agents unless marked 🧑)
+
+main point
+- inference: a verifier pass establishes a relationship between a program and a formal statement
+  - evaluating whether that statement expresses the required behavior needs separate evidence
+  - evaluating whether the proof used acceptable assumptions needs another check
+- this note compares evaluation tasks and proposes studies
+  - detailed LeetProof and CryptoProver trust analysis remains in [the existing specification note](../../../cryptoprover_leetproof_spec_clarification_20260808.md)
+  - recent Verus papers remain in [the October collection](../../../verus_frontier_20261006.md)
+- scope: primary papers and released benchmark descriptions checked on October 7, 2026 UTC
+  - paper results are author claims, not independently reproduced here
+  - the normal web-search tool failed; direct arXiv pages and existing collected manuscripts supplied the sources
+
+compare the jobs before comparing scores
+- miniF2F measures mathematical proof search across formal systems
+  - Zheng, Han and Polu: “488 problem statements”
+    - [paper abstract and §3](https://arxiv.org/abs/2109.00110)
+  - the paper divides these into 244 validation statements and 244 test statements
+    - paper table 1: “Test Set Validation Set TOTAL 244 244”
+  - inference: useful for proof-search comparisons
+    - does not establish ability to specify a program, model its state or preserve a Rust implementation
+- DafnyBench measures restoring missing proof hints around supplied code and contracts
+  - Loughridge et al., §3.2: “removed all of its hints”
+    - [paper](https://arxiv.org/abs/2406.08467)
+  - its 782 source programs include scraped GitHub programs and earlier benchmark translations
+    - §3.1: “782 ground_truth stand-alone Dafny programs”
+  - acceptance preserves preconditions and postconditions
+    - §3.2: “preserves all preconditions”
+  - inference: success measures proof assistance under supplied contracts
+    - a preserved contract can still omit a required behavior
+    - public-source programs create a contamination risk
+    - do not equate its retry-based success rate with a one-attempt code-generation score
+- VerusBench measures proof generation for small supplied Rust programs and Verus specifications
+  - Yang et al., introduction: “150 non-trivial proof tasks”
+    - [AutoVerus paper](https://arxiv.org/abs/2409.13082)
+  - the tasks mainly translate Diffy, MBPP and CloverBench problems
+    - paper introduction: “mainly translated from other benchmark suites”
+  - inference: useful as a small, repeatable proof-repair baseline
+    - high success leaves repository navigation, specification discovery and maintenance largely unmeasured
+    - translation may change arithmetic, allowed inputs or behavior
+- VERINA separates code, specification and proof generation in Lean
+  - Ye et al., abstract: “189 manually curated coding tasks in Lean”
+    - [paper and official evaluation-code links](https://arxiv.org/abs/2505.23135)
+  - §3 describes positive and negative tests
+    - exact claim: “100% line coverage on the Lean ground truth implementations”
+  - inference: line coverage measures whether tests visit code
+    - it does not prove that tests cover every behavior admitted by a specification
+    - modular evaluation helps locate failures before measuring the whole pipeline
+- CLEVER separates matching a hidden reference specification from generating a verified Lean implementation
+  - Thakur et al., abstract: “161 problems”
+    - [paper, v4](https://arxiv.org/abs/2505.13938v4)
+  - its specifications avoid handing the implementation to the model
+    - §3: “models can copy them into implementations and produce trivial proofs via rewriting”
+  - inference: the restriction tests proof and specification reasoning beyond copying
+    - a reference statement can itself be wrong
+    - deliberately opaque statements can increase proof difficulty without increasing software relevance
+    - executable specifications are useful engineering artifacts even when they make a benchmark easier
+- VeriContest combines specifications, Rust code and Verus proofs on harder algorithm problems
+  - Xie et al., abstract: “946 competitive-programming problems”
+    - [paper](https://arxiv.org/abs/2605.08553)
+  - positive and negative tests support specification evaluation
+    - §3: “expose incomplete postconditions at scale”
+  - appendix A distinguishes proof-based precondition comparison from test-based postcondition evaluation
+    - exact explanation: “we use testing for postconditions”
+  - inference: a passed specification score remains finite-test evidence for postconditions
+    - it should not be reported as a proof that every invalid output is excluded
+    - competitive-programming tasks provide algorithmic difficulty but leave persistent state, concurrency and API evolution outside their central task
+
+newer tasks broaden the evidence
+- VeruSAGE-Bench adds proof tasks from previously verified systems
+  - Yang et al., introduction: “849 proof tasks extracted from eight open-source Verus-verified system projects”
+    - [official benchmark](https://github.com/microsoft/verus-proof-synthesis/tree/main/benchmarks/VeruSAGE-Bench)
+  - paper introduction: “stand-alone Rust file”
+    - [collected manuscript](</hdd1/sichanghe/paper_collection/VeruSAGE- A Study of Agent-Based Verification for Rust Systems, Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026/VeruSAGE- A Study of Agent-Based Verification for Rust Systems, Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026.md>)
+  - inference: realistic proof obligations with extracted dependencies are stronger evidence than toy functions
+    - still differ from finding missing contracts and coordinating changes in the original repository
+- VeriStruct adds whole data-structure modules and generated abstractions
+  - Sun et al., abstract: “eleven Rust data structure modules”
+    - [paper](https://arxiv.org/abs/2510.25015)
+  - inference: valuable module-level complement to isolated proof tasks
+    - count module success separately from function success
+    - inspect generated contracts and invariants before treating verification as requirement satisfaction
+- the October Lean-backed VeriContest result adds a translation boundary
+  - Serbanuta et al., §4.1: “This validated 658 of the 1007 specs”
+    - [paper](https://arxiv.org/abs/2610.03994v1)
+  - inference: the 1007-task evaluation is a different snapshot from the 946-task benchmark paper
+    - record versions instead of silently treating counts as interchangeable
+    - Lean acceptance establishes the translated statement
+    - source-to-target preservation needs separate evidence
+    - see [the existing collection](../../../verus_frontier_20261006.md) for the narrower test and manual-review coverage
+
+what can make a success misleading
+- recommendation: freeze the required behavior independently of the model generating the proof
+  - preserve public contracts and executable behavior for proof-only tasks
+  - judge generated contracts against required and forbidden behaviors for specification tasks
+  - record unresolved ambiguity as unknown
+- inference: weak postconditions allow incorrect results
+  - example: preserving a list's length does not establish sorting
+- inference: stronger preconditions can remove the troublesome inputs
+  - example: requiring an already sorted list makes sorting easier but changes the job
+- inference: contradictory assumptions make any conclusion provable
+  - inspect assumptions, new axioms, skipped verification and admitted proofs
+  - compare the accepted assumptions with a frozen task-specific allowance
+- inference: consistency between generated code and generated tests is weak independent evidence
+  - both may inherit the same misunderstanding
+  - use separately constructed requirements and counterexamples
+- inference: equivalence to a human reference establishes agreement with that reference
+  - it does not establish agreement with English intent
+  - the existing LeetProof audit documents reference defects and the distinction
+- recommendation: distinguish a wrong statement from a proof search failure
+  - a checked equivalence proof establishes equivalence within its assumptions
+  - a concrete counterexample establishes a difference
+  - a timeout establishes neither
+- recommendation: measure comparable resources
+  - report attempts, verifier calls, elapsed time, model tokens and cost
+  - include failed attempts and repair work
+  - freeze prompts and tools before testing
+- recommendation: use project and time separation for held-out evaluation
+  - hold out related functions, helper lemmas and translated versions together
+  - record public-source exposure and development-set use
+  - private or newly authored tasks reduce known leakage routes
+  - do not claim they prove absence of contamination
+
+research we could do
+- proposal: measure how often verification hides a specification defect
+  - builds on VeriContest's negative-test checks and CLEVER's specification comparison
+  - new study: introduce realistic contract defects into verified Rust modules
+    - remove a frame condition describing which state may change
+    - exclude a required boundary input
+    - weaken an output condition
+    - add an invalid trusted helper assumption
+  - compare existing verifier acceptance, tests, equivalence checks and independent counterexample search
+  - measure defect detection and false alarms by defect class
+  - why it may matter: separates proof automation from detecting a wrong verification target
+  - direct competing work: Spec-Harness already measures specification adequacy using symbolic verification and mutation
+    - authors, abstract: “using Hoare-triple based symbolic verification and input/output mutation”
+    - [current paper](https://arxiv.org/abs/2604.00280)
+  - novelty status: a general contract-mutation audit is already covered
+    - possible remaining distinction: Rust module state and explicit trusted-assumption defects
+    - this requires testing against Spec-Harness before a novelty claim
+    - [VeriContest](https://arxiv.org/abs/2605.08553) and [CLEVER](https://arxiv.org/abs/2505.13938v4) are required baselines
+- proposal: score verification under software changes
+  - builds on VeruSAGE-Bench and VeriStruct
+  - new study: change an API or data representation in a held-out module
+    - ask an agent to repair code, contracts and proofs while preserving the external requirement
+  - compare proof-only repair with coordinated contract-and-proof repair
+  - measure preserved behavior, trusted assumptions, changed code and total repair cost
+  - why it may matter: maintenance is a recurring systems task that extracted proof completion only partly represents
+  - novelty status: unresolved against repository-level verification and existing maintenance studies
+    - [VeruSAGE-Bench](https://github.com/microsoft/verus-proof-synthesis/tree/main/benchmarks/VeruSAGE-Bench) and [VeriStruct](https://arxiv.org/abs/2510.25015) supply initial task families
+- proposal: make specification judgments equally accountable for humans and models
+  - builds on VERINA's separate specification evaluation and the existing LeetProof trust audit
+  - new study: hide specification authorship from reviewers
+    - compare human and model contracts against the same independently constructed behaviors
+    - resolve differences with checked implications or concrete counterexamples when possible
+    - keep unresolved cases separate from errors
+  - measure semantic omissions, excessive input restrictions and reviewer disagreement
+  - why it may matter: avoids declaring one fallible reference the winner by definition
+  - novelty status: study design recommendation, requiring a broader specification-evaluation search before a novelty claim
+    - [VERINA](https://arxiv.org/abs/2505.23135) and [LeetProof](https://verse-lab.org/papers/leetproof-ase26.pdf) are direct comparison points
