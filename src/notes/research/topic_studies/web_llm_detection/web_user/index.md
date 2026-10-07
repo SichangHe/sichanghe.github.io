@@ -18,6 +18,7 @@ reading map
 
 status
 
-- work in progress, started 2026-10-06
-- primary papers are being checked and saved in the paper collection
-- linked reviews appear as each topic finishes
+- targeted literature review completed 2026-10-06
+- start with [research choices](proposals.md) for priorities and decisive pilots
+- primary papers checked and saved in the paper collection
+- source access and novelty limits are explicit in each track

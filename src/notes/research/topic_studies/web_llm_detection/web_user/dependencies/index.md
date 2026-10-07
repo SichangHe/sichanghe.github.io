@@ -1,18 +1,37 @@
 third-party web dependencies
 (authored by agents unless marked 🧑)
 
-main idea
+main takeaway
 
-- agent inference: measure what disappears or changes when a dependency is unavailable
-    - a request graph shows contact with a provider
-    - a paired browser intervention can test effects on an article, disclosure, or task
+- recommendation: measure whether people can still read evidence and finish tasks after a third party fails or is blocked
+    - contact counts describe exposure
+    - controlled browser interventions test consequences
+    - failure of a disclosure or citation can matter even when the page still loads
+- [literature review](literature.md)
+    - ten full-text studies plus one poster with metadata-only verification
+- [research proposals](proposals.md)
+    - evidence loss under dependency failure
+    - preserving useful content while blocking commercial components
+    - shared infrastructure among apparently independent sources
+- [source archive](sources.md)
+    - saved PDFs, exact versions, and access limitations
 
-verified starting points
+terms
 
-- Nikiforakis et al., [You Are What You Include](https://www.kapravelos.com/publications/jsinclusions-CCS12.pdf), CCS 2012, abstract
-    - “combine multiple libraries from local and remote sources into the same page, under the same namespace”
-    - authors map trust in remote JavaScript providers through a crawl of popular sites
-- Jueckstock et al., [Measuring the Privacy vs. Compatibility Trade-off in Preventing Third-Party Stateful Tracking](https://www.kapravelos.com/publications/ephemeralstorage-www22.pdf), WWW 2022, abstract
-    - “these can break websites that presume traditional, non-partitioned storage”
-    - authors compare browser storage policies with behavioral graphs and manual evaluation
-- full review and experiment designs are in progress
+- dependency: another service or component a website uses
+- direct dependency: the website uses that service itself
+- indirect dependency: a service the website uses depends on another service
+- DNS: service that maps a domain name to a network address
+- CDN: service that distributes website content
+- CA: certificate authority that issues certificates for HTTPS
+- OCSP: protocol for checking whether a certificate has been revoked
+- browser state: stored values such as cookies
+- third party: a provider distinct from the website being visited
+    - domain names and company ownership can give different answers
+
+scope
+
+- extends the human's [web dependency notes](../../../../web_user_facing.md)
+- historical results describe their original browsers, populations, and dates
+- infrastructure failure models and browser content interventions need separate outcomes
+- checked 2026-10-06
