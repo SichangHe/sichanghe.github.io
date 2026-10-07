@@ -1,72 +1,68 @@
-function fix_toc_n_add_math_copying() {
-    const sidebar = document.getElementById("sidebar-scrollbox");
-    const sidebar_toc = document.getElementById("toc-scrollbox");
-    const toc_toggle_button = document.getElementById("toc-toggle");
-    sidebar_toc.style.display = "none";
-    toc_toggle_button.addEventListener("click", () => {
-        if (html.classList.contains("toc-shown")) {
-            html.classList.remove("toc-shown");
-            sidebar.style.display = "block";
-            sidebar_toc.style.display = "none";
-        } else {
-            html.classList.add("toc-shown");
-            sidebar.style.display = "none";
-            sidebar_toc.style.display = "block";
-        }
-    });
-
-    const toc = document.querySelector("#content > main > ul");
-    if (!toc) {
-        return false;
-    }
-    sidebar_toc.replaceChildren(toc);
-
-    const toc_anchors = toc.querySelectorAll("a");
-    const header_anchors = document
-        .querySelector("main")
-        .querySelectorAll("h1 > a, h2 > a, h3 > a, h4 > a");
-    const elements_w_refs = [];
-    toc_anchors.forEach((anchor, index) => {
-        const header = header_anchors[index];
-        anchor.href = header.href;
-        elements_w_refs.push([header, anchor]);
-    });
-    let current_active = undefined;
-    document.addEventListener("scroll", () => {
-        let last_passed_anchor = null;
-        for (const [element, anchor] of elements_w_refs) {
-            if (window.innerHeight / 3 + window.scrollY > element.offsetTop) {
-                last_passed_anchor = anchor;
-            } else {
-                if (last_passed_anchor) {
-                    if (current_active) {
-                        current_active.classList.remove("active");
-                    }
-                    current_active = last_passed_anchor;
-                    current_active.classList.add("active");
-                    current_active.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                    });
-                    break;
+(() => {
+    function setup() {
+        const sidebar = document.querySelector("mdbook-sidebar-scrollbox");
+        const menu = document.querySelector(".left-buttons");
+        const headings = [...document.querySelectorAll("main :is(h1,h2,h3,h4,h5,h6) > a.header")];
+        if (sidebar && menu && headings.length) {
+            // 🧑 "Clean up the ToC hack we did and preserve the functionalities"
+            const toc = document.createElement("div");
+            toc.id = "page-toc";
+            toc.className = "sidebar-scrollbox";
+            toc.hidden = true;
+            const list = document.createElement("ul");
+            const entries = headings.map(heading => {
+                const item = document.createElement("li");
+                item.style.marginInlineStart = `${(Number(heading.parentElement.tagName.slice(1)) - 1) * 0.75}rem`;
+                const link = document.createElement("a");
+                link.href = heading.getAttribute("href");
+                link.replaceChildren(...[...heading.childNodes].map(node => node.cloneNode(true)));
+                item.append(link);
+                list.append(item);
+                return {heading, link};
+            });
+            toc.append(list);
+            sidebar.after(toc);
+            const button = document.createElement("button");
+            button.id = "toc-toggle";
+            button.className = "icon-button";
+            button.type = "button";
+            button.title = "Toggle this page's contents (Ctrl/Command+Shift+B)";
+            button.setAttribute("aria-label", "Toggle this page's contents");
+            button.setAttribute("aria-controls", "page-toc");
+            button.setAttribute("aria-expanded", "false");
+            button.innerHTML = '<span aria-hidden="true">☷</span>';
+            menu.children[0].after(button);
+            button.addEventListener("click", () => {
+                toc.hidden = !toc.hidden;
+                sidebar.hidden = !toc.hidden;
+                button.setAttribute("aria-expanded", String(!toc.hidden));
+            });
+            let active;
+            function update() {
+                let current = entries[0];
+                for (const entry of entries) {
+                    if (entry.heading.getBoundingClientRect().top > window.innerHeight / 3) break;
+                    current = entry;
+                }
+                if (active === current) return;
+                active?.link.classList.remove("active");
+                active?.link.removeAttribute("aria-current");
+                active = current;
+                active.link.classList.add("active");
+                active.link.setAttribute("aria-current", "location");
+                if (!toc.hidden) {
+                    const offset = active.link.getBoundingClientRect().top - toc.getBoundingClientRect().top;
+                    toc.scrollTop += offset - toc.clientHeight / 2;
                 }
             }
+            document.addEventListener("scroll", update, {passive: true});
+            update();
         }
-    });
-
-    // Click katex element to copy their source.
-    for (const data of document.querySelectorAll("data.katex-src")) {
-        data.title = "Click to copy source.";
-        data.addEventListener("click", () =>
-            navigator.clipboard.writeText(data.value),
-        );
+        for (const data of document.querySelectorAll("data.katex-src")) {
+            data.title = "Click to copy source.";
+            data.addEventListener("click", () => navigator.clipboard?.writeText(data.value).catch(console.error));
+        }
     }
-    return true;
-}
-
-if (document.readyState === "complete") {
-    fix_toc_n_add_math_copying();
-} else {
-    document.addEventListener("DOMContentLoaded", fix_toc_n_add_math_copying);
-}
-document.addEventListener("load", fix_toc_n_add_math_copying);
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup, {once: true});
+    else setup();
+})();
