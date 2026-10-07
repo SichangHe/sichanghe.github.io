@@ -24,6 +24,7 @@ literature reviews and proposed research on Rust itself
 reading guide
 
 - start with [research directions](research_directions.md) for cross-topic choices
+- [ChatGPT critique](consultation.md) records the completed Extra High consultation
 - [collected papers](collected_papers.md) records local PDFs and source provenance
 - follow the topic reviews for evidence, methods, and competing work
 - read the [seamless Rust setup](seamless_rust_setup.md) pointer for the separately owned engineering effort
