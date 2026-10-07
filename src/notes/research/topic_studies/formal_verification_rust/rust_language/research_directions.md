@@ -29,11 +29,13 @@ main decision
   - simple cancellation injection and effect recording are already established ideas
 - why it may matter: a service can preserve memory while abandoning a promised result
 - first experiment
-  - one byte-processing loop and one request-processing loop
-  - obtain historical buggy and fixed versions
-  - state the required byte or acknowledgment behavior independently
-  - cancel at reachable pauses and replay the same inputs
-- compare ordinary tests, Clippy, schedule exploration, cancellation testing, and combined testing
+  - one historical client/service or client/database cancellation failure
+  - obtain buggy and fixed versions
+  - observe request, remote commit, acknowledgment, retry, and connection reuse
+  - permit unknown outcomes when the API permits them
+  - reject lost acknowledged work against an independent requirement
+- compare ordinary tests, schedule exploration, local cancellation checks, and both-endpoint history checks
+  - include existing progress-preserving adapters where applicable
 - convincing result: confirmed failures missed by the strongest comparable baseline
   - count distinct causes and independently reviewed false alarms
   - report replay failures, unsupported effects, and harness effort
@@ -49,8 +51,7 @@ main decision
   - [RustBelt](https://plv.mpi-sws.org/rustbelt/popl18/)
   - [Rudra](https://github.com/sslab-gatech/Rudra)
   - [Miri](https://ralfj.de/research/papers/2026-popl-miri.pdf)
-  - SyRust and Crabtree client synthesis
-    - original papers are now reviewed in the tool review
+  - [SyRust](https://www.andrew.cmu.edu/user/liminjia/research/papers/syrust-pldi21.pdf) and [Crabtree](https://www.andrew.cmu.edu/user/liminjia/research/papers/crabtree-oopsla24.pdf) client synthesis
   - evidence and exact source excerpts: [tool review](bug_finding_tools.md)
 - proposed contribution: synthesize new safe trait implementations and deliberately placed panic or API reentry
   - Crabtree already synthesizes closures and trait-aware call sequences

@@ -92,6 +92,100 @@ cancellation is a documented application responsibility
   - catches a useful source pattern
   - does not establish absence of lock cycles or application cancellation failures
 
+closest work on cancellation and async analysis
+- [Rain Paharia, Oxide RFD 400, published engineering guide](https://rfd.shared.oxide.computer/rfd/0400)
+  - title: Dealing with cancel safety in async Rust
+  - source: “cancel correctness as a global property”
+  - distinguishes a future's local restart safety from the containing system's correctness
+  - concrete cases
+    - [serial-console issue](https://github.com/oxidecomputer/omicron/issues/3356)
+      - a received message could be lost during later processing awaits
+    - [installinator tracker repair](https://github.com/oxidecomputer/omicron/pull/3950)
+      - a cancelled progress report could leave shared state invalid
+  - discusses cleanup before reusing database connections and effects outside the process
+  - novelty blocker
+    - composing safe operations, preserving shared invariants, and observing external effects are already explicit concerns
+    - a general claim that cancellation has application-wide consequences would repeat this guide
+  - source limitation
+    - current guide inspected
+    - linked historical issue and patch are leads for reproduction
+    - neither case was executed here
+- [cancel-safe-futures 0.1.5, Oxide library](https://docs.rs/cancel-safe-futures/0.1.5/cancel_safe_futures/)
+  - source: “Alternative futures adapters that are more cancellation-aware”
+  - reserves sink capacity before consuming a value
+  - completion-on-error join adapters avoid cancelling unfinished siblings
+  - RobustMutex structures state updates to preserve invariants under cancellation
+  - cooperative cancellation permits explicit stopping locations
+  - novelty blocker
+    - retaining progress, avoiding accidental sibling cancellation, and choosing safe stopping points already have reusable implementations
+  - comparison needed
+    - test existing adapters before proposing a replacement
+    - a library guarantee is scoped to its documented API use
+- [Lagaillardie, Neykova, Yoshida, MultiCrusty, ECOOP 2022](https://arxiv.org/abs/2204.13464)
+  - title: Stay Safe under Panic: Affine Rust Programming with Multiparty Session Types
+  - session types describe the permitted sequence of communication steps
+  - source, §3: “Cancellation Termination”
+    - theorem requires the paper's typed initial-program assumptions
+  - generates Rust APIs that propagate cancellation among protocol participants
+  - [Hou, Lagaillardie, Yoshida, MultiCrustyT, ECOOP 2024](https://arxiv.org/abs/2406.19541)
+    - title: Fearless Asynchronous Communications with Timed Multiparty Session Protocols
+    - adds time constraints, timeouts, and failure handling
+    - source, abstract: “deadlock-free, communication safe”
+  - protocol asynchrony differs from arbitrary Tokio futures
+    - implementations use crossbeam_channel
+    - these papers do not establish cancellation correctness of arbitrary disk or database effects in existing Tokio services
+  - novelty blocker
+    - cancellation propagation and timeout-safe protocol structure already have formal designs
+    - explain whether our property concerns communication progress or application state after a remote effect
+- [Ahman, Pretnar, Higher-Order Asynchronous Effects, LMCS 2024](https://arxiv.org/abs/2307.13795)
+  - published 2024-09-23
+    - extended version of POPL 2021 work
+  - formal model separates signalling an operation from receiving its result
+  - §6.3 models cancellable remote function calls
+    - prototype is in OCaml rather than Rust
+  - source, §6.3: “not discarded completely, leading to a memory leak”
+    - qualifies the presented cancellation encoding
+  - novelty blocker
+    - a formal account of async effects and remote cancellation already exists
+    - its type-safety theorem does not by itself specify persistent application effects or connection reuse
+- [Gray, Krishnamurthi, Crichton, A Design Space Exploration of Async/Await, OOPSLA 2026](https://doi.org/10.1145/3839519)
+  - publisher record: PACMPL 10, OOPSLA2, published 2026-10-01
+  - [author preprint](https://arxiv.org/abs/2608.20677)
+    - full text inspected
+  - compares nine semantic choices across languages and runtimes
+    - includes when tasks start, finish, and receive cancellation
+  - formal models checked against implementations
+    - source, data-availability statement: “A differential fuzzer to test each model against its real-world counterpart”
+  - novelty blocker
+    - differentiating runtime cancellation semantics and testing models against runtimes are existing methods
+  - opening identified by the authors
+    - §6 calls for empirical evidence about which choices prevent realistic bugs
+    - our candidate contribution needs application failures and a measurable semantic comparison
+- [Tip, Composable Building Blocks for Resilient Asynchronous Code, arXiv 2026](https://arxiv.org/abs/2608.21489)
+  - preprint
+    - peer-reviewed venue not established here
+  - JavaScript/TypeScript combinators for timeouts, retries, locks, streams, and cancellation
+  - source, §3.2: “a cancelled call is not retried”
+    - describes the library's policy
+  - handles interactions among cancellation and other resilience policies
+  - novelty blocker
+    - another collection of composable cancellation and retry wrappers is insufficient
+  - inference
+    - client cancellation and remote execution outcome still need separate observation in a cross-process test
+- [Zhang, Zhang, Liu, Cai, Qin, RcChecker, arXiv v2, 2026-01-07](https://arxiv.org/abs/2401.01114v2)
+  - current PDF title: Two Birds One Stone: Effective Static Detection of Resource and Communication Deadlocks in Rust Programs
+  - peer-reviewed venue not established here
+  - metadata API still returned the older title and three authors
+    - current PDF supplies this title and five authors
+  - tracks locks and condition-variable signals in one dependency graph
+  - authors report seven previously unreported deadlocks
+    - two resource deadlocks and five communication deadlocks
+  - source, §6: “considering handling the asynchronous features of Rust”
+    - present analysis covers locks and condition variables
+    - Channels and Semaphores are also future extensions
+  - relevant competitor for task-aware deadlock analysis
+    - does not supply an arbitrary-future cancellation checker
+
 schedule-testing methods
 - [Loom](https://github.com/tokio-rs/loom)
   - substitutes modeled concurrency primitives and explores alternative executions
@@ -122,29 +216,39 @@ schedule-testing methods
   - cancellation involving external I/O needs those boundaries in the harness
 
 research we could do: agent proposals
-- cancellation testing with observable application effects
+- cancellation histories that include remote effects and recovery
   - prior work
-    - Tokio documents restart safety of individual operations
-    - Loom and Shuttle explore thread ordering
-    - Qin supplies a historical failure taxonomy
-  - new question
-    - which effects survive when a composed operation stops at each reachable pause
-    - examples: bytes consumed, permits retained, request sent, record partially updated
+    - Oxide already identifies global cancellation correctness and external effects
+    - cancel-safe-futures already preserves local progress and structures safe stopping
+    - MultiCrustyT supplies typed timeout and cancellation propagation
+    - Gray et al. already compare and fuzz cancellation semantics
+  - narrower question
+    - when the client stops waiting, what did the server commit
+    - does retry duplicate the effect or recover its result
+    - does the next user of the same connection inherit unfinished work
   - proposed method
-    - record effects around pause points
-    - cancel and restart under a controlled scheduler
-    - compare against application requirements
+    - retain a history of client request, cancellation, server commit, acknowledgment, retry, and connection reuse
+    - control delays on both sides
+    - cancel only at reachable poll boundaries
+    - compare the complete history against an application requirement
+  - concrete candidate requirement
+    - each identified request may commit once
+    - an acknowledged request remains committed
+    - an unacknowledged request can have an unknown outcome
+      - tests must permit this when the API permits it
   - evaluation
-    - historical reported bugs and fixed versions
-    - seeded faults reported separately
-    - ordinary tests, Clippy, schedule-only testing, cancellation-only testing, combined testing
-    - detection rate, false alarms, replay reliability, runtime, harness effort
+    - historical failures and their fixes in one client/database or client/service pair
+    - compare ordinary tests, schedule-only tests, local cancellation tests, and tests observing both endpoints
+    - include existing progress-preserving adapters and structured cancellation approaches where applicable
+    - report failures detected, incorrect alarms, unsupported external operations, replay reliability, and harness effort
   - why it may matter
-    - local API promises need not cover the complete transaction
-    - exposes failures that memory checking cannot observe
-  - novelty risk
-    - cancellation testing and async effect analysis may already cover portions of this method
-    - validate novelty before building a broad framework
+    - reveals whether checking client state misses surviving server work or contaminated connections
+  - required new result
+    - demonstrate historical failures missed by strong existing cancellation tests
+    - or establish that a specific cancellation policy reduces those failures without unacceptable latency or resource cost
+  - novelty remains unresolved
+    - adding cancellation injection or recording effects is not enough
+    - compare with database fault injection, distributed histories, and recovery testing before claiming a new method
 - measure the effect of losing queue position on progress
   - prior work
     - Tokio documents queue-position loss under cancellation
@@ -164,7 +268,7 @@ research we could do: agent proposals
 - reveal lock ownership across pauses and task boundaries
   - prior work
     - VRLifeTime visualizes lifetimes
-    - Lockbud tracks guards and lock order
+    - Lockbud and RcChecker track resource dependencies
     - Clippy flags blocking guards across await
   - new question
     - does connecting lock ownership to tasks and dependencies explain real deadlocks missed by local warnings
@@ -179,9 +283,10 @@ research we could do: agent proposals
     - a visualization alone needs evidence of improved diagnosis
 
 agent assessment
-- recommended first experiment: cancellation at pause points in a small real parser or channel-processing loop
-  - require an observable rule such as preserving consumed bytes or completing acknowledged work
-  - retain both faulty and fixed historical implementations
+- recommended first experiment: reproduce one cancellation failure involving remote work or connection reuse
+  - observe both endpoints before choosing the expected result
+  - retain faulty and fixed historical implementations
+  - distinguish expected unknown outcomes from lost acknowledged work
 - stop or narrow the proposal if existing cancellation frameworks already cover the same behavior
   - a useful negative result would identify what external effects cannot be replayed faithfully
 - a detector warning is evidence of a candidate failure
@@ -189,6 +294,8 @@ agent assessment
 
 evidence limits
 - author PDFs and primary repository documentation inspected on 2026-10-07
+  - added six paper PDFs and text extractions to the paper collection
+  - primary arXiv API and publisher metadata supplied the deeper search
 - search service was unavailable
   - no claim of exhaustive 2025–2026 async literature coverage
 - PCT listed as a methodological lead
