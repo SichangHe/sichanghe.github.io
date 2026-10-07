@@ -39,6 +39,8 @@ reading order
     - human experiments, extension features, and studies of warnings and extraction
 - [recent preprints](recent_preprints.md)
     - trajectories, steering, token filtering, and stability-based scores
+- [primary-source catalog](source_catalog.md)
+    - exact titles, authors, and links back to the relevant notes
 - [paper archive](paper_archive.md)
     - saved papers and collection status
 
@@ -55,6 +57,7 @@ relationship to existing notes
 
 scope and evidence
 
+- 64 distinct primary paper pages opened and cataloged
 - reviewed through 6 October 2026
     - peer-reviewed conference entries and preprints are distinguished in the detailed notes
     - abstracts support only the stated author claims
