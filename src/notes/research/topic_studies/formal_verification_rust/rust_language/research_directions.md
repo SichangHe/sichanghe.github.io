@@ -22,10 +22,11 @@ main decision
   - [Tokio's cancellation-safety contracts](https://docs.rs/tokio/latest/tokio/macro.select.html#cancellation-safety)
   - [Loom](https://github.com/tokio-rs/loom) and [Shuttle](https://github.com/awslabs/shuttle)
   - evidence and exact source excerpts: [async review](async_concurrency_bugs.md)
-- proposed contribution: test application effects when cancellation and thread ordering interact
+- proposed contribution: replay remote commit, acknowledgment, cancellation, and recovery histories
+  - include connection reuse after a partially completed request
   - ordinary schedule exploration is a baseline
-  - testing individual library operations is another baseline
-  - added value must come from composed behavior or external effects
+  - progress-preserving adapters are another baseline
+  - simple cancellation injection and effect recording are already established ideas
 - why it may matter: a service can preserve memory while abandoning a promised result
 - first experiment
   - one byte-processing loop and one request-processing loop
@@ -36,8 +37,10 @@ main decision
 - convincing result: confirmed failures missed by the strongest comparable baseline
   - count distinct causes and independently reviewed false alarms
   - report replay failures, unsupported effects, and harness effort
-- nearest-work gap: newer async cancellation analyzers and testing frameworks need a focused search
-  - do not begin a broad framework before resolving that overlap
+- closest blockers: Oxide RFD 400 and cancel-safe-futures
+  - both already address composed cancellation correctness
+  - [async review](async_concurrency_bugs.md) explains the overlap
+  - novelty must lie in a demonstrated missing remote-effect or recovery case
 
 2. safe callers that invalidate unsafe-library assumptions
 
@@ -47,10 +50,11 @@ main decision
   - [Rudra](https://github.com/sslab-gatech/Rudra)
   - [Miri](https://ralfj.de/research/papers/2026-popl-miri.pdf)
   - SyRust and Crabtree client synthesis
-    - original evaluations remain a reading prerequisite
+    - original papers are now reviewed in the tool review
   - evidence and exact source excerpts: [tool review](bug_finding_tools.md)
-- proposed contribution: target a specified class of adversarial safe callbacks that current client synthesis misses
-  - generating clients in general is established work
+- proposed contribution: synthesize new safe trait implementations and deliberately placed panic or API reentry
+  - Crabtree already synthesizes closures and trait-aware call sequences
+  - first demonstrate a selected behavior its implementation misses
   - adding an LLM alone is insufficient novelty
 - why it may matter: a safe interface must work for all allowed callers
 - first experiment
@@ -58,6 +62,8 @@ main decision
   - vary callback return values, panic points, reentry, and destruction order
   - execute generated safe callers in a pinned Miri version
 - compare Rudra, existing client synthesis, and native fuzzing plus Miri replay
+  - report the shared supported cases and the full target population separately
+  - retain compilation failures, unsupported behavior, and missing harnesses in the results
 - convincing result: reproducible safe-client witnesses for new failures or an established missing class
   - measure confirmed causes per hour
   - separate model violations, intended API misuse, and actual soundness failures
@@ -72,9 +78,11 @@ main decision
   - [Crubit](https://github.com/google/crubit)
   - VERT and SACTOR behavior checks
     - [translation review](c_to_rust_translation.md) provides papers and checked scope
-- proposed contribution: choose migration groups using allocation lifetime, callbacks, and cleanup obligations
-  - compare file boundaries and call-graph grouping
-  - preserve the public foreign-language interface where feasible
+- proposed contribution: jointly choose private data representations and migration groups using allocation lifetime
+  - freeze external interfaces during the comparison
+  - include callbacks and cleanup obligations
+  - compare C2SaferRust caller-aware slicing and Syzygy dependency ordering
+  - measure later forced revisions caused by early representation choices
 - why it may matter: individually translated functions may leave a costly or unsafe shared-allocation interface
 - first experiment
   - two libraries with callbacks and transferred buffers
@@ -84,8 +92,10 @@ main decision
 - convincing result: simpler ownership boundaries without changing required behavior or hiding cost
   - use independent hidden tests and differential fuzzing
   - reject comparisons whose C behavior is undefined
-- nearest-work gap: migration partitioning and compositional C-to-Rust reasoning need further comparison
-  - current review already rules out generic compiler-guided differential checking as a sufficient new contribution
+- closest blockers: C2SaferRust and Syzygy
+  - migration partitioning and dependency ordering are already established
+  - contribution requires better joint representation choices under the same validation and search budget
+  - C++ mechanisms still need a separate reviewed population
 
 4. dependency permissions that change between releases
 

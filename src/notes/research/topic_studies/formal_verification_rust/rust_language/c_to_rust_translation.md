@@ -55,11 +55,19 @@ deterministic migration
   - [artifact](https://doi.org/10.5281/zenodo.5442253)
   - [publisher abstract deposited with Crossref](https://api.crossref.org/works/10.1145/3485498)
     - authors: “the first empirical study of unsafety in translated Rust programs”
-  - mechanism coverage here is indirect
-    - Crown describes Laertes as using the compiler to guide candidate rewrites
-    - Crown, introduction: “guided by the type error messages from the Rust compiler”
+  - [author-hosted full paper](https://hardekbc.github.io/files/emre21translating.pdf)
+    - section 3 optimistically converts suitable pointers to references
+    - compiler errors guide conversion back to owning or raw pointers
+    - analysis propagates those choices through types and value flow
+    - connects cross-module definitions before rewriting
+  - representation and runtime behavior constrain its scope
+    - section 3 avoids new mechanisms such as reference counting
+    - assumes dereferenced input pointers are valid on source executions with defined behavior
+    - inference: a migration that redesigns shared ownership addresses a different problem
   - inference: compiler-guided search and ownership inference are complementary baselines
-  - limitation: this review did not independently inspect the Laertes paper
+  - [artifact documentation](https://zenodo.org/api/records/5442253/files/README.md/content)
+    - lists benchmark-specific discrepancies after implementation fixes
+    - inference: compare pinned artifact revisions rather than mixing original tables with revised tool results
 - [aliasing limits, Emre and colleagues, OOPSLA 2023](https://doi.org/10.1145/3586046)
   - paper title: “Aliasing limits on translating C to safe Rust”
   - [publisher abstract deposited with Crossref](https://api.crossref.org/works/10.1145/3586046)
@@ -87,13 +95,51 @@ learned translation and LLM assistance
   - abstract reports reductions up to 38% in raw pointers and up to 28% in unsafe code
     - maxima, not average improvements
     - unsafe counts do not directly measure vulnerabilities
+  - full paper, sections 3.2–3.3
+    - splits function bodies into syntax-tree pieces below a line limit
+    - processes callees before callers
+    - uses weakly connected call-graph groups for ordering
+      - falls back to a traversal order for cycles
+    - sends call sites with function signatures that may change
+    - sends global variables and input/output variable context with the relevant piece
+  - authors, section 3.2: “structure and enum definitions”
+    - transformation of these lies outside the paper's scope
+  - discussion identifies remaining unsafe calls through C interfaces
+    - explicitly warns that unsafe-line counts may improve without improving safety
+  - direct overlap with any proposal merely to split code and repair affected callers together
 - [Syzygy, Shetty, Jain, Godbole, Seshia, Sen, 2024](https://arxiv.org/abs/2412.14234)
   - authors: “LLM-driven code and test translation”
   - execution information guides incremental translation in dependency order
   - abstract reports Zopfli with approximately 3,000 lines and 98 functions
     - checks equivalence on a set of inputs
+  - full paper, Zopfli evaluation
+    - 26 collected top-level inputs initially cover 88% of lines and 70% of branches
+    - authors manually construct structures and check macros and globals
+    - manually repair one macro corner case
+    - report approximately 15 hours and $2,500 for translation
+    - larger validation uses one million inputs
+      - covers 95% of lines and 83% of branches
+      - discovers a failure missed by the initial tests
+    - optimized Rust is up to 3.67 times slower on their tested workloads
+      - authors suggest allocations and bounds checks as possible causes
+      - those causal explanations are tentative
+  - implication: reported success includes human interventions and has a material performance cost
+    - this is one concrete migration, not an overall Rust-versus-C performance result
   - inference: translating tests alongside code can reproduce a shared misunderstanding
     - independently maintained hidden tests are useful for evaluating this risk
+  - full paper, sections 4–5
+    - translates top-level declarations in dependency order
+    - dependency graph includes definitions, uses, and dynamically observed function-pointer matches
+    - execution traces supply properties such as nullability and aliasing
+  - authors, discussion: “manually translating the structs”
+    - representation choices need global information about later uses
+    - early array-versus-vector choices can conflict with downstream callers
+    - later repairs can cascade through already translated functions
+  - authors, discussion: “does not support cyclic C structs and multi-threading”
+    - scope limit of this implementation
+  - intermediate equivalence checks can constrain representation changes too much
+    - example: source allocation capacity bookkeeping is retained although Rust `Vec` manages capacity
+    - inference: deciding which private bookkeeping is externally observable affects migration quality
 - [CRUST-Bench, Khatry and colleagues, 2025](https://arxiv.org/abs/2504.15254)
   - authors: “100 C repositories”
   - supplies manually written safe Rust interfaces and tests
@@ -121,6 +167,12 @@ learned translation and LLM assistance
     - bounded checks disable loop-unwinding assertions
     - a later stage enables those assertions to establish exhaustive exploration for the harness
     - inference: neither stage automatically establishes correctness of the trusted source-to-WebAssembly-to-Rust translation
+  - real-project evaluation selects 14 functions from prior migration benchmarks
+    - includes pointer-intensive cases and some multi-function examples
+    - does not establish migration of the complete containing projects
+  - authors manually explore five timeout cases with Verus
+    - succeed on three
+    - inference: automated verification coverage and achievable coverage with human proof effort differ
   - inference: general differential checking of LLM translations is already established
     - a new study needs realistic boundary failures, hidden tests, or a distinct acceptance-gap question
 - [SACTOR, Zhou and colleagues, ACL 2026](https://aclanthology.org/2026.acl-long.28/)
@@ -181,6 +233,15 @@ learned translation and LLM assistance
   - do not infer translation correctness from model quality, compilation, or benchmark title
 
 Google and DARPA
+- [Google's stated LLM translation exploration, Rosique and colleagues, April 2024](https://security.googleblog.com/2024/04/accelerating-incident-response-using.html)
+  - authors: “teaching an LLM to rewrite C++ code to memory-safe Rust”
+  - context: future research discussed after an incident-summary automation experiment
+  - confirms exploration of C++ translation
+    - reports no translated-project success rate, semantic-equivalence result, or production rollout
+    - the incident-summary time savings in that article are unrelated to translation
+- Google researchers coauthor [SACTOR](https://aclanthology.org/2026.acl-long.28/)
+  - its evaluated source language is C
+  - inference: Google affiliation does not turn these results into C++ migration evidence
 - [DARPA TRACTOR program page](https://www.darpa.mil/research/programs/translating-all-c-to-rust)
   - DARPA: “aims to automate the translation of legacy C code to Rust”
   - proposed ingredients: static analysis, dynamic analysis, and machine learning
@@ -227,15 +288,34 @@ research we could do
   - prior: Crubit interfaces, C2Rust's project translation, Crown's ownership recovery
     - C2SaferRust, SmartC2Rust, and Syzygy already divide migration into smaller pieces
   - question: which groups of functions must move together to make ownership simple?
-  - proposed new contribution: choose groups using allocation lifetimes and caller obligations
-    - compare against file boundaries and call-graph-only grouping
+  - proposed new contribution: jointly choose data representation and groups of functions using allocation lifetimes and caller obligations
+    - an allocation group contains creation, transfer, mutation, and destruction operations for the same objects
+    - can include functions across several files and multiple call-graph branches
+    - freeze the external interface of each group while allowing its private representation to change
+    - compare against file boundaries, fixed syntax-tree pieces, and dependency-order translation
+  - precise distinction from closest rivals
+    - C2SaferRust already edits a function and its affected call sites together
+      - its unit sizes follow syntax and a line bound
+      - its excluded structure redesign is central to the proposed study
+    - Syzygy already uses dependency and dynamic-alias information
+      - global structure choices and downstream consistency remain documented difficulties
+      - the contribution must solve this consistency problem rather than rename dependency groups
+    - Laertes propagates ownership choices while preserving memory representation
+      - proposed work would permit private representation changes with independent behavior checks
   - evaluation
     - maintain the public C or C++ interface where feasible
     - measure pointer conversions, interface complexity, runtime cost, and reviewer effort
+    - measure how often later callers force revision of an earlier representation
+    - compare joint group-level redesign against Syzygy-style manual structure seeds
+    - give every method the same external interfaces, tests, model, and compute budget
     - include callbacks, shared allocations, and foreign callers
   - why it may matter: migration can stall at language boundaries even when individual functions translate
   - novelty uncertainty: interoperation and migration-partitioning literature require further screening
     - dependency-order translation alone would repeat existing work
+  - proposed first experiment
+    - libraries with pointer-bearing structures passed among several functions
+    - include independent allocation and destruction helpers
+    - stop pursuing this method if joint grouping adds no benefit over caller-aware slicing
 - proposal 3: recover array and allocator conventions before requesting an LLM rewrite
   - prior: Crown leaves array bounds and unusual memory management unresolved
     - SACTOR already combines pointer analysis with LLM translation
