@@ -14,12 +14,14 @@ reading guide
   - private working files beginning with a dot are excluded
 
 Rust program verifiers
+- [collected papers](rust_verifiers/collected_papers.md): new primary papers with source records and checksums
 - [aeneas](rust_verifiers/aeneas.md): Aeneas; prove Rust behavior through ordinary functions
 - [creusot](rust_verifiers/creusot.md): Creusot; turning Rust ownership into simpler proof problems
 - [flux](rust_verifiers/flux.md): Flux, Thrust, and refinement types for Rust
 - [gillian rust](rust_verifiers/gillian_rust.md): Gillian-Rust; verify unsafe libraries, then prove their safe clients
 - [hax](rust_verifiers/hax.md): hax; choose a prover for each Rust property
 - [overview](rust_verifiers/index.md): Rust program verifiers
+- [collected papers](rust_verifiers/collected_papers.md): new primary papers with source records and checksums
 - [kani](rust_verifiers/kani.md): Kani; symbolic checks with explicit proof boundaries
 - [newer tools 2025 2026](rust_verifiers/newer_tools_2025_2026.md): newer Rust verification tools and techniques, 2025–2026
 - [open problems](rust_verifiers/open_problems.md): open problems in Rust program verification
