@@ -91,6 +91,8 @@ ChatGPT consultation
     - consultation submitted but returned no answer
     - helper diagnostic: `account_ui_retry_required`
     - no ChatGPT consultation result available
+- two fresh attempts after manager advice failed before submission
+    - helper diagnostic: `account_ui_login_required`
 - manager help requested after first failure
 - no ChatGPT opinion is treated as literature evidence
 
