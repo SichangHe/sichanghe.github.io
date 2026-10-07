@@ -14,7 +14,6 @@ reading guide
   - private working files beginning with a dot are excluded
 
 Rust program verifiers
-- [collected papers](rust_verifiers/collected_papers.md): new primary papers with source records and checksums
 - [aeneas](rust_verifiers/aeneas.md): Aeneas; prove Rust behavior through ordinary functions
 - [creusot](rust_verifiers/creusot.md): Creusot; turning Rust ownership into simpler proof problems
 - [flux](rust_verifiers/flux.md): Flux, Thrust, and refinement types for Rust
@@ -80,4 +79,3 @@ Rust language and ecosystem
 - [seamless rust setup](rust_language/seamless_rust_setup.md): pointer to the separately owned Rust setup study
 - [supply chain security](rust_language/supply_chain_security.md): crate supply-chain risks and defenses
 - [unsafe soundness models](rust_language/unsafe_soundness_models.md): the semantics of unsafe Rust and aliasing models
-
