@@ -103,6 +103,10 @@ benchmark map
   - [multilingual refinement benchmark](https://aclanthology.org/2026.acl-long.1773/)
   - full-paper introduction: “3.46 million samples covering 8 languages, 6 domains, 4 generators”
   - domains include SEO and web text
+  - full-paper construction cleans “malformed texts, encoding errors”
+    - human sources predate 2022
+    - tested lengths: 64, 128, 256, and 512 tokens
+    - inference: this cleaned corpus does not reproduce all raw extraction noise
   - includes polishing, expansion, condensation, attacks, and four text lengths
   - separates human text refined by a model from fully generated text
   - inference: multilingual or assisted-writing evaluation is already substantially covered
@@ -192,6 +196,8 @@ code
   - separately tests binary detection, family attribution, and human/machine/hybrid/adversarial classes
   - abstract evidence: “performance remains far below practical usability”
     - particularly under shift and for mixed or adversarial code
+  - full-paper appendix G: “Boilerplate code is also frequently mislabeled as AI-generated”
+    - author observation from inspected failures
   - inference: preserve compilation or tests when evaluating code attacks
     - success that breaks the program is a different result
 

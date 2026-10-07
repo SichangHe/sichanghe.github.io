@@ -57,7 +57,9 @@ relationship to existing notes
 
 scope and evidence
 
-- 64 distinct primary paper pages opened and cataloged
+- 64 primary paper pages opened and cataloged
+    - 63 distinct paper titles
+    - Learning2Rewrite has both arXiv and proceedings entries
 - reviewed through 6 October 2026
     - peer-reviewed conference entries and preprints are distinguished in the detailed notes
     - abstracts support only the stated author claims
