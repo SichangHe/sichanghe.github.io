@@ -30,6 +30,8 @@ decision, agent recommendation
   - find ten interpretable historical changes in one verified Rust module
   - reproduce its original proof with pinned tools
   - freeze the executable change during proof repair
+  - pin the requirements and their dependencies: referenced predicates, preconditions, models, trait implementations, extraction settings, and target
+    - unchanged theorem text can acquire a different meaning when those dependencies change
   - compare existing diagnostics, an ordinary code agent, and dependency-guided repair
   - include full build cost and expert review time
 - why it may matter
@@ -64,6 +66,9 @@ decision, agent recommendation
   - compare documentation only, documentation plus buggy code, and documentation plus patched code
   - tell every code-visible agent that the implementation may be wrong
   - use equal budgets and the same independent grading
+  - grade accepted inputs and permitted outcomes separately
+  - report initial contracts separately from contracts revised after verifier feedback
+    - counterexamples can reveal implementation behavior to a condition intended to hide it
 - why it may matter
   - proving a generated statement does not establish that it expresses the requirement
 - reject if
@@ -78,18 +83,21 @@ decision, agent recommendation
   - [joint code/specification changes](practical_fv/research_directions.md)
   - blockchain exploit tests are an additional population, not a new mechanism
 
-3. a proof that contracts mean the same thing in two tools
-- question: when one tool proves an unsafe library and another proves its safe callers, do both interpret the shared contract identically?
+3. a proof that one unsafe-library promise supports its safe caller
+- question: when one tool proves an unsafe library and another proves its safe callers, does the caller establish the library requirements, and does the library establish the caller assumptions?
 - builds on
   - [Creusot/Gillian-Rust hybrid verification, PLDI 2025](https://doi.org/10.1145/3729289)
   - [Forte, 2026](https://arxiv.org/abs/2609.30254)
   - [standard-library verification, NFM 2026](https://arxiv.org/abs/2606.17374)
 - proposed difference
-  - a machine-checked correspondence for a restricted contract fragment
+  - a machine-checked implication between the two interpretations for a restricted contract fragment
+    - equality is stronger than composition needs
   - include ownership, lifetimes, integer overflow, returned contents, and failure outcomes
 - first experiment
   - inspect the hybrid paper's conversion argument before writing a translator
   - select one uncovered semantic case in a vector or ring-buffer API
+  - candidate client: borrow element i mutably, replace it, end the borrow, and recover a sequence changed only at i
+    - inspect the current artifact before treating any published unfinished proof as still open
   - deliberately corrupt the conversion and require the checker to reject it
 - why it may matter
   - a correct caller proof cannot repair a differently interpreted library promise
@@ -121,9 +129,12 @@ consultation and review status
 - a new four-folder Extra High request failed before submission with `picker_effort_not_verified`
   - the tooling owner supplied an explicit saved-background route
   - one GPT-6.1 Sol / Extra High consultation was submitted through that route
-  - its final answer is pending
+  - the tooling owner recovered a substantial [response and assessment](consultation_assessment.md)
+  - ChatGPT still displayed “Connection interrupted. Waiting for the complete answer”
+  - the page never confirmed completion; a verified final answer remains outstanding
 - a fresh Codex reviewer checked the whole tree against the original literature-and-proposal goal
   - reviewer conclusion: “No remaining material findings”
   - scope and novelty limitations remain explicit
-  - the pending consultation remains an unmet requirement
+  - the recovered advice has been assessed and incorporated
+  - final-answer confirmation remains an unmet requirement
 - recommendations are agents' opinions, including after review

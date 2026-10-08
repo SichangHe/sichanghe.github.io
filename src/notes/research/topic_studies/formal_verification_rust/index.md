@@ -86,3 +86,6 @@ Rust language and ecosystem
 - [seamless rust setup](rust_language/seamless_rust_setup.md): pointer to the separately owned Rust setup study
 - [supply chain security](rust_language/supply_chain_security.md): crate supply-chain risks and defenses
 - [unsafe soundness models](rust_language/unsafe_soundness_models.md): the semantics of unsafe Rust and aliasing models
+
+consultation assessment
+- [four-folder advice](consultation_assessment.md): adopted design changes and the missing final-answer confirmation
