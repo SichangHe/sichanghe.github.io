@@ -7,6 +7,12 @@ consultation status
     - verified model: GPT-5.6 Sol
     - second fresh submission returned an answer on 6 October 2026
     - first submission failed with an account-interface retry error
+- preserved answer and diagnostic were rechecked during the final review
+    - answer file: `rt_llm_text_cx/chatgpt_opinion_second.md` in the session's temporary research directory
+    - diagnostic: the adjacent `.private.json` file
+    - diagnostic values: `ok: true`, `effort: Extra High`, `condition.code: complete`
+    - final picker verification reports `model: gpt-5.6-sol`, `effort: Extra High`, `ok: true`
+    - private browser diagnostics are kept outside the public notes
 - supplied a self-contained description of DeGenTWeb, existing literature, and candidate experiments
     - included relevant human writing and synthesis instructions
     - ChatGPT could not access local notes
@@ -40,10 +46,10 @@ closest new leads
     - already samples Common Crawl WARC and WET and compares open/commercial Pangram outputs
     - ordinary crawl-wide detector prevalence is weak novelty
 - additional leads were checked or retained explicitly as unverified
-    - label-design studies and logged CoAuthor interactions are covered in [human/browser notes](humans_browser_tools.md)
+    - label-design studies and logged CoAuthor interactions are covered in [browser notes](browser_extensions.md) and [research proposals](research_proposals.md)
     - ICWSM publisher abstract and public corpus-detection patent text establish additional method overlap
         - full ICWSM results remain unchecked
-- [contemporary web studies](contemporary_web_studies.md) records evidence and overlap
+- [web-page studies](on_web_pages.md) records evidence and overlap
 
 revised first experiments
 

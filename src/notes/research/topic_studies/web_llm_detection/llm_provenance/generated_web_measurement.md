@@ -1,5 +1,4 @@
-# Measuring How Much of the Web Is AI-Generated
-
+measuring How Much of the Web Is AI-Generated
 (authored by agents unless marked 🧑)
 
 Sibling notes: [image_watermarking](image_watermarking.md),
@@ -7,16 +6,9 @@ Sibling notes: [image_watermarking](image_watermarking.md),
 themselves are covered under [llm_text](../llm_text/), search and SEO under
 [web_user](../web_user/), crawling under [web_infra](../web_infra/).
 
-- unit: the website (subdomain), labeled "LLM-dominant" when most of its prose
-    pages look LLM-written; not per page, not per token
-- method: Trafilatura extraction, Dolma heuristic filter plus 200-token
-    minimum plus Rabin dedup, Binoculars (Falcon-7B pair) per page, 9 deciles
-    of 20 pages per site into a linear SVM trained on a 120-site baseline
-    (60 Russell 2000 and IndieWeb sites vs 60 Wix/B12 AI-builder mirrors)
+open web and web crawls
 
-## Open web and web crawls
-
-### Pew Research Center, "How Much of the Internet Is Written With AI?" (2026)
+pew Research Center, "How Much of the Internet Is Written With AI?" (2026)
 
 [Main report](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/)
 and [methodology](https://www.pewresearch.org/data-labs/2026/08/20/methodology-ai-content/),
@@ -42,7 +34,7 @@ Pew Research Center Data Labs, August 2026.
     2021 and 2022 crawls should be treated as approximate" because early crawls
     show more false positives
 
-### Dolezal, Alam, Graham, Bohacek, "The Impact of AI-Generated Text on the Internet" (2026)
+dolezal, Alam, Graham, Bohacek, "The Impact of AI-Generated Text on the Internet" (2026)
 
 [arXiv 2604.26965](https://arxiv.org/abs/2604.26965), Jonas Dolezal, Sawood
 Alam, Mark Graham, Maty Bohacek (Internet Archive and Stanford), arXiv, 2026.
@@ -65,7 +57,7 @@ Alam, Mark Graham, Maty Bohacek (Internet Archive and Stanford), arXiv, 2026.
     pages counts the same as a site with one; the secondary claims about
     diversity and sentiment lean on correlations across months
 
-### Russell et al., "How Much Is an AI Token Worth?" (2026)
+russell et al., "How Much Is an AI Token Worth?" (2026)
 
 [arXiv 2609.40295](https://arxiv.org/abs/2609.40295), Jenna Russell, Ben
 Glickenhaus, Katherine Thai, John Wieting, Mohit Iyyer, Max Spero, Bradley
@@ -82,7 +74,7 @@ Emi (UMass Amherst and Pangram), arXiv, 2026.
     pages are already removed, which inflates the share relative to raw crawls;
     the detector vendor is a coauthor; no independent ground truth
 
-### Graphite, "More Articles Are Now Created by AI Than Humans" (2025) and the Q1 2026 update
+graphite, "More Articles Are Now Created by AI Than Humans" (2025) and the Q1 2026 update
 
 [Graphite report](https://graphite.io/five-percent/more-articles-are-now-created-by-ai-than-humans),
 Graphite (an SEO agency), October 2025; the follow-up was covered by
@@ -107,7 +99,7 @@ could not open directly.
     authors sell SEO services; the "more than half" headline got repeated by
     many outlets without the sampling caveats
 
-### Ahrefs, "74% of New Webpages Include AI Content" (2025)
+ahrefs, "74% of New Webpages Include AI Content" (2025)
 
 [Ahrefs blog](https://ahrefs.com/blog/what-percentage-of-new-content-is-ai-generated),
 Ahrefs, May 2025.
@@ -121,7 +113,7 @@ Ahrefs, May 2025.
 - trust: low. The 74% counts any page with any flagged span, and the
     detector is unvalidated in public
 
-### Thompson et al., "A Shocking Amount of the Web is Machine Translated" (2024)
+thompson et al., "A Shocking Amount of the Web is Machine Translated" (2024)
 
 [arXiv 2401.05749](https://arxiv.org/abs/2401.05749), Brian Thompson, Mehak
 Preet Dhaliwal, Peter Frisch, Tobias Domhan, Marcello Federico, Findings of
@@ -139,9 +131,9 @@ ACL, 2024.
 - trust: the inference from multi-way parallelism to machine translation is
     indirect; it says nothing about monolingual English content
 
-## Search results
+search results
 
-### Originality.ai, "Amount of AI Content in Google Search Results" (ongoing, 2019 to 2025)
+originality.ai, "Amount of AI Content in Google Search Results" (ongoing, 2019 to 2025)
 
 [Originality.ai study](https://originality.ai/ai-content-in-google-search-results),
 Originality.ai (a detector vendor), updated through September 2025.
@@ -155,7 +147,7 @@ Originality.ai (a detector vendor), updated through September 2025.
 - trust: the 2019 value of 2.27% is a false positive floor the study never
     subtracts; no validation on web pages; the vendor sells the detector
 
-### Graphite, "How Does AI-Generated Content Perform in Search and Answer Engines?" (2025)
+graphite, "How Does AI-Generated Content Perform in Search and Answer Engines?" (2025)
 
 [Graphite report](https://graphite.io/five-percent/ai-content-in-search-and-llms),
 Graphite, 2025. Not read in full; the companion to the article study above.
@@ -163,9 +155,9 @@ They claim AI articles "largely do not appear in Google and ChatGPT", that is,
 AI content is common in the crawl but rare among top results. Graphite's search sample is drawn from their SEO clients' queries, not random
 how-to questions.
 
-## News sites
+news sites
 
-### Hanley and Durumeric, "Machine-Made Media" (2024)
+hanley and Durumeric, "Machine-Made Media" (2024)
 
 [arXiv 2305.09820](https://arxiv.org/abs/2305.09820), Hans W. A. Hanley,
 Zakir Durumeric, ICWSM, 2024. PDF now in the paper collection.
@@ -194,7 +186,7 @@ Zakir Durumeric, ICWSM, 2024. PDF now in the paper collection.
     news, which the detector also flags. Period ends May 2023, so the numbers
     are early
 
-### Russell et al., "AI use in American newspapers is widespread, uneven, and rarely disclosed" (2026)
+russell et al., "AI use in American newspapers is widespread, uneven, and rarely disclosed" (2026)
 
 [arXiv 2510.18774](https://arxiv.org/abs/2510.18774), Jenna Russell, Marzena
 Karpinska, Destiny Akinode, Katherine Thai, Bradley Emi, Max Spero, Mohit
@@ -212,7 +204,7 @@ Iyyer, ACL, 2026. Already in the paper collection.
     strength; but the detector is the coauthors' product and no FPR is
     measured on this corpus; "partially" AI is a soft label
 
-### Ansari, Zhang, Tripto, Lee, "Echoes of Automation" (2025)
+ansari, Zhang, Tripto, Lee, "Echoes of Automation" (2025)
 
 [arXiv 2508.06445](https://arxiv.org/abs/2508.06445), Abolfazl Ansari, Delvin
 Ce Zhang, Nafis Irtiza Tripto, Dongwon Lee, SBP-BRiMS, 2025. PDF added.
@@ -227,7 +219,7 @@ Ce Zhang, Nafis Irtiza Tripto, Dongwon Lee, SBP-BRiMS, 2025. PDF added.
 - trust: three detectors is good practice, but without a reported FPR or
     absolute share the finding is directional
 
-### NewsGuard AI Tracking Center (ongoing)
+newsGuard AI Tracking Center (ongoing)
 
 [NewsGuard AI Tracking Center](https://www.newsguardtech.com/special-reports/ai-tracking-center/),
 NewsGuard, 2023 to 2026.
@@ -237,9 +229,9 @@ NewsGuard, 2023 to 2026.
 - trust: a count of found sites, not a share of anything; detection is
     editorial judgment, criteria not reproducible; the number only ever grows
 
-## Wikipedia
+wikipedia
 
-### Brooks, Eggert, Peskoff, "The Rise of AI-Generated Content in Wikipedia" (2024)
+brooks, Eggert, Peskoff, "The Rise of AI-Generated Content in Wikipedia" (2024)
 
 [arXiv 2410.08044](https://arxiv.org/abs/2410.08044), Creston Brooks, Samuel
 Eggert, Denis Peskoff, WikiNLP workshop at EMNLP, 2024.
@@ -256,9 +248,9 @@ Eggert, Denis Peskoff, WikiNLP workshop at EMNLP, 2024.
     higher false negatives on non-English, so the cross-language comparison
     is weak
 
-## Social media and forums
+social media and forums
 
-### Sun et al., "Are We in the AI-Generated Text World Already?" (2025)
+sun et al., "Are We in the AI-Generated Text World Already?" (2025)
 
 [arXiv 2412.18148](https://arxiv.org/abs/2412.18148), Zhen Sun, Zongmin
 Zhang, Xinyue Shen, Ziyi Zhang, Yule Liu, Xinlei He, Michael Backes, Yang
@@ -276,7 +268,7 @@ Zhang, ACL, 2025. PDF added.
     detector was trained on 12 LLMs mostly GPT and Llama; "AI attribution"
     includes polished human text
 
-### La Cava, Aiello, Tagarelli, "Machines in the Crowd" (2025)
+la Cava, Aiello, Tagarelli, "Machines in the Crowd" (2025)
 
 [arXiv 2510.07226](https://arxiv.org/abs/2510.07226), Lucio La Cava, Luca
 Maria Aiello, Andrea Tagarelli, arXiv, 2025. PDF added.
@@ -292,7 +284,7 @@ Maria Aiello, Andrea Tagarelli, arXiv, 2025. PDF added.
     threshold means the numbers are floors; no FPR reported for the
     threshold on pre-LLM Reddit text in the abstract
 
-### Chen, Ye, Ferrara, Luceri, "Prevalence, Sharing Patterns, and Spreaders of Multimodal AI-Generated Content on X" (2025)
+chen, Ye, Ferrara, Luceri, "Prevalence, Sharing Patterns, and Spreaders of Multimodal AI-Generated Content on X" (2025)
 
 [arXiv 2502.11248](https://arxiv.org/abs/2502.11248), Zhiyi Chen, Jinyi Ye,
 Emilio Ferrara, Luca Luceri, arXiv, 2025. Already in the paper collection and
@@ -310,7 +302,7 @@ in the human's gen_ai.md notes.
     images could be false positives; the text number is within detector
     error, as the human's notes say
 
-### Pangram, "AI in Your Feed" (2026)
+pangram, "AI in Your Feed" (2026)
 
 [Pangram blog](https://www.pangram.com/blog/ai-in-your-feed), Pangram Labs,
 2026; covered by [The
@@ -326,7 +318,7 @@ Decoder](https://the-decoder.com/linkedin-is-the-undisputed-king-of-long-form-ai
     biased toward suspicious posts; the 0.01% FPR claim is the vendor's on
     its own benchmark; still the largest multi-platform sample
 
-### Originality.ai, "Social Media AI Tracker" (monthly, 2026)
+originality.ai, "Social Media AI Tracker" (monthly, 2026)
 
 [Originality.ai August 2026 tracker](https://originality.ai/blog/social-media-tracker-august),
 Originality.ai, 2026.
@@ -342,7 +334,7 @@ Originality.ai, 2026.
     13% vs La Cava's under 9% peaks vs Sun's 2.45% shows how much the
     definition and detector drive the number
 
-### Matatov, Aubin Le Quéré, Amir, Naaman, "AI-Generated Media in Art Subreddits" (2024)
+matatov, Aubin Le Quéré, Amir, Naaman, "AI-Generated Media in Art Subreddits" (2024)
 
 [arXiv 2410.07302](https://arxiv.org/abs/2410.07302), Hana Matatov, Marianne
 Aubin Le Quéré, Ofra Amir, Mor Naaman, arXiv, 2024.
@@ -353,7 +345,7 @@ Aubin Le Quéré, Ofra Amir, Mor Naaman, arXiv, 2024.
     image-based posts"
 - trust: self-labels are a floor; relevant mostly as a norm study
 
-### Kapwing, "YouTube AI slop" report (2026)
+kapwing, "YouTube AI slop" report (2026)
 
 [Kapwing report via NeoMam](https://neomam.com/projects/youtube-ai-slop-report/),
 Kapwing, 2026 (press coverage in LBC, SlashGear and others).
@@ -364,12 +356,12 @@ Kapwing, 2026 (press coverage in LBC, SlashGear and others).
 - trust: hand judgment of "slop", a single new account, a marketing company;
     directional only
 
-## Product reviews
+product reviews
 
 No academic study with a defensible in-the-wild prevalence number exists for
 reviews. All numbers below come from detector vendors.
 
-### Pangram, "Three percent of front-page Amazon reviews are now AI-generated" (2026)
+pangram, "Three percent of front-page Amazon reviews are now AI-generated" (2026)
 
 [Pangram blog](https://www.pangram.com/blog/ai-amazon-reviews), Pangram Labs,
 May 2026.
@@ -382,7 +374,7 @@ May 2026.
 - trust: front-page reviews only; "high confidence" threshold means a floor;
     no FPR measured on pre-ChatGPT reviews
 
-### Originality.ai, Google reviews and TripAdvisor studies (2025)
+originality.ai, Google reviews and TripAdvisor studies (2025)
 
 [Google reviews](https://originality.ai/blog/ai-google-reviews-study) and
 [TripAdvisor](https://originality.ai/blog/ai-tripadvisor-reviews-study),
@@ -396,23 +388,23 @@ Originality.ai, 2025.
     LLM existed, and the studies never subtract them; short reviews are the
     worst case for any detector; vendor-run
 
-### Loke and GC, "Detecting AI-Generated Reviews for Corporate Reputation Management" (2025)
+loke and GC, "Detecting AI-Generated Reviews for Corporate Reputation Management" (2025)
 
 [SciTePress](https://www.scitepress.org/PublishedPapers/2025/135720), R. Loke,
 M. GC, 2025. Builds the ARED dataset of Amazon reviews and estimates
 "almost 10%" AI reviews in a product sample, validated only by comparing with
 Fakespot and ReviewMeta, which detect fake reviews, not AI ones. Low trust.
 
-### Schäfer, Mofreh, Steinebach, "Ghostwriters of the Marketplace" (2026)
+schäfer, Mofreh, Steinebach, "Ghostwriters of the Marketplace" (2026)
 
 [ICWSM 2026](https://ojs.aaai.org/index.php/ICWSM/article/view/42791), Karla
 Schäfer, Mohammed Mofreh, Martin Steinebach, ICWSM, 2026. A 78k-review
 corpus of machine-generated Google reviews from six LLMs for training
 detectors; no prevalence estimate. Listed so nobody mistakes it for one.
 
-## Academic papers and peer reviews
+academic papers and peer reviews
 
-### Liang et al., "Monitoring AI-Modified Content at Scale" (2024)
+liang et al., "Monitoring AI-Modified Content at Scale" (2024)
 
 [arXiv 2403.07183](https://arxiv.org/abs/2403.07183), Weixin Liang, Zachary
 Izzo, Yaohui Zhang, Haley Lepp, Hancheng Cao, Xuandong Zhao, Lingjiao Chen,
@@ -430,7 +422,7 @@ Haotian Ye, Sheng Liu, Zhi Huang, Daniel A. McFarland, James Y. Zou, ICML,
     validation set, and humans adopt LLM words over time, which inflates
     later estimates
 
-### Liang et al., "Mapping the Increasing Use of LLMs in Scientific Papers" (2024) and the Nature Human Behaviour version (2025)
+liang et al., "Mapping the Increasing Use of LLMs in Scientific Papers" (2024) and the Nature Human Behaviour version (2025)
 
 [arXiv 2404.01268](https://arxiv.org/abs/2404.01268), Weixin Liang et al.,
 arXiv, 2024; published as "Quantifying large language model usage in
@@ -445,7 +437,7 @@ scientific papers",
 - trust: same method and caveats as above; the drift from 17.5% to 22%
     between versions is partly more months of data
 
-### Kobak, González-Márquez, Horvát, Lause, "Delving into LLM-assisted writing in biomedical publications through excess vocabulary" (2025)
+kobak, González-Márquez, Horvát, Lause, "Delving into LLM-assisted writing in biomedical publications through excess vocabulary" (2025)
 
 [arXiv 2406.07016](https://arxiv.org/abs/2406.07016), Dmitry Kobak, Rita
 González-Márquez, Emőke-Ágnes Horvát, Jan Lause, Science Advances, 2025. PDF
@@ -462,7 +454,7 @@ added.
     data; it is a lower bound by construction and a one-word test, so it can
     only see LLM style words, not LLM content
 
-### Gray, "ChatGPT 'contamination'" (2024) and Geng and Trotta (2024)
+gray, "ChatGPT 'contamination'" (2024) and Geng and Trotta (2024)
 
 [arXiv 2403.16887](https://arxiv.org/abs/2403.16887), Andrew Gray, arXiv,
 2024 (PDF added): keyword counts in Dimensions, "At least 60,000 papers
@@ -474,7 +466,7 @@ about 35% of computer science abstracts revised by ChatGPT, against a
 studies; the 1% vs 35% gap comes from whether one counts a few rare marker
 words (Gray) or fits a whole frequency shift (Geng).
 
-### Wolfrath et al., "Rising Prevalence of Detected AI-Generated Text in Medical Literature" (2026)
+wolfrath et al., "Rising Prevalence of Detected AI-Generated Text in Medical Literature" (2026)
 
 [arXiv 2603.19316](https://arxiv.org/abs/2603.19316), Nathan Wolfrath, Simrin
 Patel, Madelyn Flitcroft, Anjishnu Banerjee, Melek Somai, Bradley H. Crotty,
@@ -488,7 +480,7 @@ Anai N Kothari, arXiv, 2026. PDF added.
 - trust: the 0.0% in January 2022 is a useful implicit FPR check for this
     corpus; single commercial detector; one journal
 
-### Latona et al., "The AI Review Lottery" (2024)
+latona et al., "The AI Review Lottery" (2024)
 
 [arXiv 2405.02150](https://arxiv.org/abs/2405.02150), Giuseppe Russo Latona,
 Manoel Horta Ribeiro, Tim R. Davidson, Veniamin Veselovsky, Robert West,
@@ -501,7 +493,7 @@ arXiv, 2024.
 - trust: single proprietary detector; the effect sizes are small and could
     come from reviewer selection
 
-### ICLR 2026: Pangram's 21% and follow-ups (2025 to 2026)
+ICLR 2026: Pangram's 21% and follow-ups (2025 to 2026)
 
 Pangram's blog post on ICLR 2026 reviews could not be opened (404 on the URL
 I tried); the number is quoted in
@@ -526,9 +518,9 @@ using an LLM despite the prohibition" and 36.5% under the permissive policy
 reported a disallowed use.
 
 
-## Other text in the wild
+other text in the wild
 
-### Liang et al., "The Widespread Adoption of Large Language Model-Assisted Writing Across Society" (2025)
+liang et al., "The Widespread Adoption of Large Language Model-Assisted Writing Across Society" (2025)
 
 [arXiv 2502.09747](https://arxiv.org/abs/2502.09747), Weixin Liang, Yaohui
 Zhang, Mihai Codreanu, Jiayu Wang, Hancheng Cao, James Zou, arXiv, 2025. PDF
@@ -548,11 +540,11 @@ added.
     and Pew's slowing curve, or it means detectors stopped seeing newer
     models
 
-### Hao et al., "Do Spammers Dream of Electric Sheep?" (2025)
+hao et al., "Do Spammers Dream of Electric Sheep?" (2025)
 
-### Puccetti et al., "AI 'News' Content Farms Are Easy to Make and Hard to Detect" (2024)
+puccetti et al., "AI 'News' Content Farms Are Easy to Make and Hard to Detect" (2024)
 
-### Copyleaks, "Explosive Growth of AI Content Across the Web" (2024)
+copyleaks, "Explosive Growth of AI Content Across the Web" (2024)
 
 [Copyleaks press release](https://copyleaks.com/about-us/media/copyleaks-analysis-reveals-explosive-growth-of-ai-content-across-the-web),
 Copyleaks, 2024. Claims an "8,362%" rise from November 2022 to March 2024,
@@ -561,7 +553,7 @@ The 1.57% is interesting only because it is so far below Ahrefs' 74% and
 Graphite's 39% for the same period: it shows vendor numbers are
 incomparable even with each other.
 
-## Images online
+images online
 
 I found no study that estimates what share of images on the open web are
 AI-generated. The literature on image detection is about benchmarks, not
@@ -589,9 +581,68 @@ prevalence. What exists:
     provenance labels rather than detectors are the plausible path to counting
     images
 
-## Cross-cutting lessons on trusting the numbers
+cross-cutting lessons on trusting the numbers
 
 - nobody has a prevalence number for images on the open web, and nobody has
     a non-English web number beyond Thompson's machine translation work
 
-## Research we could do
+research we could do
+
+
+1: compare methods and units on one sample
+
+- run open Pangram, page-level Binoculars, and excess-word estimates on one Common Crawl sample
+- report page, site, and text-volume estimates separately
+    - word-frequency mixture estimates have their own interpretation
+- calibrate on documented human and generated writing
+    - pre-ChatGPT pages are historical controls rather than proven human authorship
+- compare with Pew, Dolezal, Russell, Kobak, and Graphite
+- isolates method and denominator differences
+    - cannot alone explain the published 2.5% to 74% spread
+    - populations, dates, and authorship definitions also differ
+- stop if the differences follow directly from the chosen denominator
+
+3: cross-check with excess vocabulary
+
+- apply Kobak's method to Common Crawl prose by half-year
+- agreement is supporting evidence rather than independent ground truth
+    - both methods can respond to shared topic or style shifts
+- compare historical periods and documented writing before interpreting generation
+
+4: test aggregation for another unit
+
+- possible units include Reddit users, outlets, Amazon reviewers, and peer reviewers
+    - reviewed leads include La Cava, Sun, Russell, Pangram, Shen, and Wang
+- choose a unit with checkable authoring histories
+    - Kim et al.'s ICML self-reports are a lead
+    - self-reports need their own reliability assessment
+- the human's notes already propose set-level applications
+    - this is an extension rather than a new aggregation idea
+
+5: track search exposure across engines and years
+
+- combine Webis-PSERP-24, Originality.ai, Graphite, and Bevendorff's SEO-spam methods
+- measure which generated-dominant sites appear and at what ranks
+- distinguish ranking changes from detector drift and changing site samples
+- search-engine updates are candidate interventions
+    - concurrent changes limit causal interpretation
+
+6: evaluate multilingual website detection
+
+- compare non-English Common Crawl prose with Thompson's machine-translation results
+- test a multilingual scoring pair on documented human and generated sites
+- translation and original generation are different writing processes
+    - calibrate them separately
+- builds on Thompson and Brooks
+    - do not infer transfer from English detection alone
+
+7: measure detectable provenance in web images
+
+- sample images from a defined crawl
+- report C2PA, IPTC source labels, and accessible generator watermarks separately
+    - missing marks do not establish human authorship
+    - mark presence needs validation before becoming an origin label
+- builds on Chen, DiResta, Brooks, Hanley, and [image watermarking](image_watermarking.md)
+- measures detectable evidence rather than total generated-image prevalence
+- no comprehensive open-web estimate was identified in this review
+

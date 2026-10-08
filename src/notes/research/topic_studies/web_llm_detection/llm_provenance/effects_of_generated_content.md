@@ -1,5 +1,4 @@
-# What AI-Generated Content Does to the Web: Measured Effects
-
+what AI-Generated Content Does to the Web: Measured Effects
 (authored by agents unless marked 🧑)
 
 Literature review of the harm AI-generated text, images and code suggestions
@@ -24,7 +23,7 @@ only argued. "In the wild" means someone observed real sites, real users or
 real traffic. "Lab" means the authors built the generated content themselves
 and tested a system on it.
 
-## Models trained on generated data
+models trained on generated data
 
 My take: every result that shows models getting worse comes from a lab loop
 the authors built. Nobody has shown a deployed model that got worse because
@@ -129,7 +128,7 @@ Closest to the wild:
         If the detector flags a certain kind of low-quality human page, the
         result would look the same
 
-## Search and retrieval
+search and retrieval
 
 My take: that rankers prefer generated text is well shown in the lab, on
 benchmark collections where the authors rewrote human passages with an LLM.
@@ -187,7 +186,7 @@ Lab:
         stronger suppression"
     - the human's notes already name this paper as an anchor
 
-## Human knowledge sites: Stack Overflow, Wikipedia
+human knowledge sites: Stack Overflow, Wikipedia
 
 My take: this is the best measured harm in the whole file. Two independent
 studies with comparison groups found Stack Overflow lost activity right after
@@ -262,7 +261,7 @@ not from generated content sitting on the web.
         and social media on how people seek information". That part is a
         claim; the post has no comparison group
 
-## Misinformation and fake news sites
+misinformation and fake news sites
 
 My take: generated misinformation exists and is counted, but the counts are
 small next to ordinary misinformation, and I found no study that measures
@@ -352,7 +351,7 @@ detects and penalizes AI-written text". This points the opposite way from the
 lab results, which fits: Google ranks on much more than text matching. It is a
 vendor study with its own detector.
 
-## Fake reviews
+fake reviews
 
 My take: thin evidence. I found only detector vendor reports, each on a small
 or oddly chosen sample, with no false positive rate measured on reviews.
@@ -378,7 +377,7 @@ their detection from before LLMs are a large literature that I did not cover.
         93%
     - no false positive rate given
 
-## Academic publishing and peer review
+academic publishing and peer review
 
 My take: use is well measured; harm is partly measured. The harm with the
 cleanest evidence is made-up references, because a reference either exists or
@@ -493,7 +492,7 @@ What venues did about it (shows the cost was real to them):
     references that do not exist, per
     [The Next Web](https://thenextweb.com/news/arxiv-ai-slop-ban-researchers-preprint).
 
-## Made-up package names, court citations, bug reports
+made-up package names, court citations, bug reports
 
 My take: models make up names at a measured and still nonzero rate, and the
 downstream damage is counted in courts and in open source bug trackers. For
@@ -548,7 +547,7 @@ an attacker registering a made-up name and getting installs.
     - so in this dataset the problem is too little checking, not maintainers
         drowning
 
-## Writing style and language
+writing style and language
 
 My take: LLM word habits have clearly entered human writing and even speech.
 That is measured. Whether this is harm is opinion. The stronger harm claim,
@@ -593,7 +592,7 @@ only in small lab studies.
     - lab, 118 people: "AI suggestions led Indian participants to adopt
         Western writing styles"
 
-## Money: publishers, freelancers, creators
+money: publishers, freelancers, creators
 
 My take: the money harm to publishers is real and now has causal evidence,
 but it comes from AI answers shown in place of links, not from generated pages
@@ -661,7 +660,7 @@ Work and creators:
         notes that generated posts were hardly read, and Simon 2023's argument
         above. The platform's own detector and its own numbers
 
-## What the evidence adds up to
+what the evidence adds up to
 
 - Solid, with comparison groups: people moved from Stack Overflow to
     chatbots; AI answers in search cut clicks to sites; freelance writers and
@@ -683,7 +682,7 @@ a small share of what gets seen. A count of generated sites, which is what
 DeGenTWeb gives, says little about harm until it is joined with who visits
 them.
 
-## Research we could do
+research we could do
 
 1. Weigh DeGenTWeb's site labels by traffic. Do LLM-dominant sites get
     visits, search impressions and ads, or do they sit unread like Deezer's
@@ -731,7 +730,7 @@ them.
 I would start with 1 and 2. Both reuse data DeGenTWeb already has, and both
 answer the question a reviewer will ask of a prevalence paper: so what?
 
-## Gaps in this review
+gaps in this review
 
 - ChatGPT was not consulted; the tool fails on login.
 - I read abstracts and summary pages for most papers, not full texts. The

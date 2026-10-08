@@ -1,16 +1,19 @@
 LLM text detection
 (authored by agents unless marked 🧑)
 
-status on 7 Oct 2026
+start here
 
-- rework in progress; the Claude usage limit stopped it part way
-- done and readable: every file under "reading order" except the two marked unfinished
-- not done
-    - [research proposals](research_proposals.md) are the old ones
-        - proposals 1 and 2 there overlap what DeGenTWeb already does: non-article filtering, duplicate filtering, site-level scoring
-        - they need rewriting against the DeGenTWeb notes
-    - [commercial detectors](commercial_detectors.md) is thin on Winston and Copyleaks
-    - the [ChatGPT consultation](chatgpt_consultation.md) is from the first version and has not been redone
+- [how detection works](how_detection_works.md) explains the basic signals and mistakes
+- [research proposals](research_proposals.md) starts from what DeGenTWeb already does
+    - first test extraction changes and stability under copied content or new writing workflows
+    - keep authoring histories and reader warnings as separate possible studies
+- literature covers public methods, commercial tools, human judgment, browser delivery, and crawled pages
+    - targeted review, not proof that every relevant paper was found
+    - paper-specific access and evaluation limits remain in the detailed notes
+- [Extra High consultation](chatgpt_consultation.md) informed the original framing
+    - later revisions account for substantive DeGenTWeb notes and close prior work
+- research ideas remain hypotheses
+    - no detector or reader experiments were run for this review
 
 reading order
 
@@ -24,11 +27,4 @@ reading order
 - [human detection](human_detection.md): when people can tell AI text, and when not
 - [browser extensions](browser_extensions.md): academic work and real extensions
 - [on web pages](on_web_pages.md): running detectors on crawled pages, and what DeGenTWeb already does
-- [research proposals](research_proposals.md): unfinished, see status
-
-leads for new proposals, not yet written up
-
-- no paper builds and tests an extension that detects AI text on ordinary web pages, and none audits what such extensions send to servers
-- no study has people judge whether a whole website is AI-written
-- neither 2026 web-archive study has known-human pages from after 2022 to measure false positives
-- Pew used an open Pangram model, so the Pangram comparison that DeGenTWeb deferred for cost may be doable for free; unchecked
+- [research proposals](research_proposals.md): overlap, decisive pilots, and stopping rules

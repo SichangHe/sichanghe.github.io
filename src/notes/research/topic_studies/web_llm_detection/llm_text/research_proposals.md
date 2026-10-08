@@ -3,194 +3,149 @@ research proposals for DeGenTWeb
 
 what is worth doing first
 
-- recommendation: begin with a small paired experiment on web extraction
-    - close 2026 studies already compare HTML and text
-    - test controlled extraction/template effects against known changes in drafting and editing
-    - question: are we measuring authorship or the text our extractor happens to return?
-    - expand only if extraction changes useful decisions at a fixed false-positive target
-- recommendation: follow with site aggregation under repeated templates
-    - question: does combining pages add information after removing repeated content?
-- recommendation: keep authoring history and warning design as separate studies
-    - these need collaborators or data collection beyond a crawl
-- uncertainty: no proposal below has established novelty
-    - [contemporary web studies](contemporary_web_studies.md) substantially overlap the initial framing
-    - nearest prior work defines what must be checked before committing to a paper
+- recommendation: test whether the current website decision survives changes in extraction, copied content, and generators
+    - DeGenTWeb already solves the basic filtering and aggregation problem
+    - the possible contribution is a measured boundary of that solution
+- recommendation: compare one frozen commercial/open detector before designing a new detector
+    - strong commercial baselines change what counts as a useful improvement
+- keep reader warnings and writing histories as separate possible studies
+    - their data and evaluation differ from a crawl
+- these are research recommendations, not established novel contributions
+    - the experiments below can reject them cheaply
 
-1: isolate web extraction errors
+existing project overlap
 
-- question: which parts of a web measurement pipeline cause false flags or missed generations?
-- human requirement motivating the question
-    - existing [notes](../../../gen_ai.md): “noisy nature: non-prose”
-- evidence for the question
-    - [Binoculars](https://arxiv.org/abs/2401.12070) section 6: “such as source code, which we do not investigate”
-    - [SenDetEX](https://aclanthology.org/2025.emnlp-main.268/) studies text where human and generated spans “alternate irregularly”
-    - [MultiSocial](https://aclanthology.org/2025.acl-long.36/) states “the platform selection for training matters”
-- inference: these papers address adjacent inputs
-    - the opened sources do not establish robustness to alternative HTML extraction of the same article
-    - this is narrower than claiming that web detection has never been studied
-- first experiment
-    - choose 200 source articles with documented human origin and 200 controlled generated counterparts
-        - treat old dates as supporting evidence, not proof of human origin
-        - preserve source, prompt, model version, and generation parameters
-    - embed each article in several HTML templates
-        - vary navigation, related links, quotes, comments, tables, and code separately
-        - keep the article text identical across variants
-    - compare article-only, rendered-visible-text, extractor output, and paragraph blocks
-    - score Binoculars, Fast-DetectGPT, NTS, and PAWN
-        - add likelihood/rank controls from already-computed probabilities
-    - calibrate on separate websites or template families
-        - freeze thresholds before testing new sites
-- convincing result
-    - reproducible differences attributable to extraction alone
-    - an extraction or abstention rule reduces held-out human flags while preserving useful recall
-    - report score changes, confusion counts, abstention coverage, throughput, and extraction failures
-- low false-positive extension
-    - 200 human sources are insufficient to validate 0.1% false positives
-    - if the pilot shows an effect, expand to thousands of independent sources
-    - with no errors, the approximate 95% upper bound is 3/n under independent sampling
-        - 3,000 sources support approximately 0.1%, not 0.01%
-        - clustered pages need uncertainty calculated by source/site, not by paragraph
-        - observing a numerical rate is separate from establishing a confidence bound
-- planning estimate, not measured cost
-    - one GPU with enough memory for the selected baselines
-    - approximately one week to implement and inspect the pilot
-    - full calibration and provenance checks will cost more than scoring a few hundred texts
-- nearest work and novelty threats
-    - Dolezal et al., The Impact of AI-Generated Text on the Internet
-        - already reports HTML robustness comparisons and Binoculars failure
-    - Pew Research Center, August 2026 Common Crawl measurement
-        - already collects WARC/WET and compares detector outputs
-    - simple HTML-versus-text tests and crawl-wide prevalence estimates are weak novelty
-    - DetectRL-X: multilingual web/SEO domains, lengths, attacks, and assisted writing
-        - generic web-domain or polishing evaluation alone is already covered
-        - human-source cleaning removes malformed text and encoding errors
-        - evaluate whether the contribution survives comparison with this corpus
-    - RAID: varied domains, decoding, attacks
-    - MultiSocial: short texts and platform transfer
-    - SenDetEX and HACo-Det: mixed spans
-    - HALO: context changes detection
-    - MCP: length-specific false-positive calibration
-    - check whether any artifact already varies HTML extraction before claiming novelty
-- stopping rule
-    - if extraction barely changes results and simple article extraction solves the problem, use the finding in DeGenTWeb rather than build a standalone project
+- substantive notes were found in the original DeGenTWeb checkout
+    - source: original `DeGenTWeb_imc2025` project, `docs/` directory
+    - a later `dw` project checkout also has a closed detector comparison in `docs/classifying_site.md`
+    - the linked notes in this checkout contain titles only
+- site aggregation already exists
+    - classification notes: “compute 9 Binoculars score deciles among webpage for each website”
+    - same section: “train linear SVM classifier on deciles as feature vector”
+- filtering and duplicate removal already exist
+    - `filter_non_article.md`: “50% text duplicated relative to previous pages of the same subdomain”
+    - `preliminary_binoculars_eval.md`: “cookie banner from Trafilatura extraction issue”
+- adding related detector scores has already been tested on a small held-out set
+    - later classification notes: “This tie shows no observed benefit from the larger method”
+    - the same notes close that comparison pending a later paper decision
+- proposing filtering, deduplication, aggregation, or a generic score ensemble again would repeat existing work
+    - [web-page review](on_web_pages.md) describes the current pipeline and its limits
 
-2: site decisions without counting copies as new evidence
+1: test whether extraction changes the website decision
 
-- question: can many pages support a more reliable site-level conclusion than one page?
-- human motivation from [existing notes](../../../gen_ai.md)
-    - “set-level detection applications: Reddit users, OpenReview, student cheating, Amazon reviewers”
-- starting observation, deduction
-    - if every page repeats one generated paragraph, averaging pages can appear confident without observing more independent writing
-    - confidence must depend on distinct content and the process that produced it
-- target quantity must be chosen explicitly
-    - fraction of distinct article text generated
-    - fraction of pages containing generated drafting
-    - presence of any generated passage
-    - these have different denominators and cannot share one interpretation
-- first experiment
-    - create site-sized groups with known article histories
-    - vary generated fraction, duplicated templates, copied articles, and heterogeneous writing domains independently
-    - compare page mean, maximum score, proportion of flagged blocks, and duplicate-aware aggregation
-    - split entire sites between calibration and evaluation
-    - use site resampling for uncertainty
-- convincing result
-    - aggregation improves detection at the same site false-positive rate
-    - improvement survives duplicate removal and held-out templates
-    - the pilot tests site classification rather than interpreting scores as generated share
-    - a later prevalence study needs an explicit estimator
-        - compare with adjustment using held-out recall and specificity
-        - test sensitivity to changing domains and generator mixtures
-        - do not interpret the fraction flagged or an average score as the true generated fraction
+- question: with authorship held fixed, can extraction alone change a site's classification?
 - closest work
-    - [Monitoring AI-Modified Content at Scale](https://arxiv.org/abs/2403.07183)
-        - aggregate estimation of AI-modified reviews already exists
-    - [The Rise of AI-Generated Content in Wikipedia](https://arxiv.org/abs/2410.08044)
-        - use of document detectors to estimate web prevalence already exists
-    - Dolezal and Pew: recent aggregate web estimates
-        - compare their sampling, calibration, and dependence assumptions
-    - these are novelty leads from the human's notes and verified primary sources
-        - current arXiv full texts were inspected in this review
-        - see [aggregate measurement](aggregate_measurement.md) for assumptions
-        - inspect later follow-ups before adopting an estimator
-- inference: the possible contribution is sensitivity to dependence and website change
-    - simply averaging detector scores is insufficient
-    - disagreement between detectors does not create an independent ground-truth label
-- planning estimate
-    - reuse proposal 1's scoring pipeline
-    - one to two additional weeks for grouping, mixtures, uncertainty calculations, and audits
+    - DeGenTWeb already uses Trafilatura, prose filters, and duplicate filters
+    - [Dolezal et al.](https://arxiv.org/abs/2604.26965) already compare generated text with HTML-wrapped versions
+    - [Pew](https://www.pewresearch.org/data-labs/2026/08/20/methodology-ai-content/) uses Common Crawl text and calibrates an open Pangram model to a commercial model
+        - methodology: “closely calibrate the results from Open Pangram to those from Pangram 3.3”
+    - generic HTML-versus-text or crawl-prevalence comparisons are weak novelty
+- smallest useful experiment
+    - use documented human articles and controlled generated counterparts
+    - put identical article text in several templates
+        - vary navigation, quotes, comments, tables, and related links separately
+    - compare article text, rendered text, WET-style text, and Trafilatura output
+    - run the existing DeGenTWeb pipeline with frozen filters and classifier
+    - compare Binoculars with one accessible Pangram baseline
+        - open EditLens and commercial Pangram are different models
+        - agreement between them is not known authorship
+- measure
+    - changes in submitted text, detector score, retained pages, and final website decision
+    - false human flags and missed generated sites on separate held-out template families
+    - scan failures and time per site
+- possible contribution
+    - an extraction change improves errors on unseen sites beyond current DeGenTWeb filtering
+    - a rule says when too little usable text remains for a decision
 - stopping rule
-    - if simple duplicate removal plus a page detector matches the new estimator, prefer the simpler method
+    - if current filtering already removes the effect, document the robustness result within DeGenTWeb
+    - do not turn a negligible effect into a separate method paper
 
-3: decisions that remain useful for assisted writing
+2: test stability under dependence and changing writing processes
 
-- question: what can a text detector reliably infer about a sequence of human and model edits?
+- question: when does DeGenTWeb's score distribution stop representing distinct writing on a site?
 - closest work
-    - [MixSet](https://arxiv.org/abs/2401.05952): human/model revision
-    - [APT-Eval](https://aclanthology.org/2025.findings-acl.1303/): “even minimally polished text” is frequently flagged
-    - [RACE](https://aclanthology.org/2026.acl-long.235/): “the distinct signatures of creator and editor”
-        - four authoring-history classes are already studied
-- inference: another four-class classifier is weak novelty
-    - repeated editing, observed histories, and abstention need a sharper claim
-- first experiment
-    - preserve human drafts, model suggestions, accepted edits, and final text
-    - vary grammar correction, sentence rewriting, expansion, and full drafting
-    - include model drafts revised by humans
-    - hold out writers, prompts, and model families
-    - evaluate any-model-use, model-drafting, and span-localization questions separately
-- convincing result
-    - identify which histories remain distinguishable after matching final length, topic, and quality
-    - provide an abstention rule for histories with overlapping final-text evidence
-    - describe a useful action, such as requesting writing history, instead of making an unsupported accusation
-- identifiability limit, deduction
-    - the same final string can result from independent human writing, copying, or model generation
-    - a detector given only that string cannot distinguish those identical observations
-    - empirical success is conditional on how the histories are sampled
-- planning estimate
-    - needs consenting writers and recorded editing sessions
-    - generation and scoring are routine compared with obtaining reliable authoring histories
+    - DeGenTWeb already drops highly duplicated pages and classifies site score distributions
+    - [Liang et al.](https://arxiv.org/abs/2403.07183) already estimate AI modification at corpus level
+        - abstract: “between 6.5% and 16.9%”
+        - scope is text submitted as reviews at selected AI conferences
+    - [Wikipedia measurement](https://arxiv.org/abs/2410.08044), Dolezal, and Pew already estimate prevalence
+- smallest useful experiment
+    - hold distinct article content fixed while varying copies, templates, and sample order
+    - separately vary model family and human editing of generated drafts
+    - compare the current duplicate filter and nine-decile classifier with simple mean and majority baselines
+    - split whole source sites and generator families between calibration and testing
+- measure
+    - site false positives, missed generated sites, decision changes, and usable unique text
+    - uncertainty by source site rather than by paragraph
+    - dependence on page order in the duplicate filter
+- choose the question before counting
+    - a generated-dominant site label is different from a fraction of generated pages or words
+    - page flags and average scores are not estimates of generated share without a validated estimator
+- possible contribution
+    - identify a failure caused by dependence or new writing workflows that survives current duplicate filtering
+    - improve the decision while keeping held-out human flags low
 - stopping rule
-    - if known-history classes cannot be separated across held-out writers at acceptable false-positive rates, report that boundary rather than relabel the problem
+    - if the current pipeline or simple duplicate removal matches the proposed change, retain the simpler method
 
-4: browser warnings judged by reader outcomes
+3: distinguish drafting from editing only where the evidence permits
 
-- question: does a detection warning help readers check claims?
-- motivation
-    - official GPTZero [Chrome page](https://gptzero.me/chrome): “Results should not be used to punish or as the final verdict”
-    - inference: a warning still changes what people trust
-- first experiment
-    - vary factual correctness and human/model origin independently
-    - randomize no warning, binary warning, uncertainty warning, and a source-check suggestion
-    - separately test actual detector errors and controlled warnings
-- convincing result
-    - improved error identification and source checking
-    - fewer false accusations than binary warnings
-    - benefit across varied language backgrounds
-- costs and limits
-    - requires a user study and appropriate review of recruitment and consent
-    - synthetic warnings identify interface effects
-        - an end-to-end extension trial must additionally measure actual detector accuracy
-- nearest work
-    - human-detection and browser-tool notes in this tree
-    - CHI 2025 label-design and modification-label studies are close work
-        - see [human/browser notes](humans_browser_tools.md)
-    - dedicated literature on calibrated reliance needs further review
+- question: what authoring histories remain distinguishable from final text across unseen writers?
+- closest work
+    - [CoAuthor](https://coauthor.stanford.edu/) already records real writing interactions
+        - project: “All interactions between the writers and the system were recorded at the keystroke level”
+    - [Zeng et al.](https://arxiv.org/abs/2403.03506) already classify collaborative sentences using CoAuthor
+    - [RACE](https://aclanthology.org/2026.acl-long.235/) already models “the distinct signatures of creator and editor”
+    - [commercial detectors](commercial_detectors.md) already return assistance and mixed-text labels
+- smallest useful experiment
+    - reuse recorded drafts and accepted edits before collecting another dataset
+    - hold out writers and model families
+    - compare correction, rewriting, expansion, drafting, and human revision of model drafts
+    - test model drafting separately from any model use
+- measure
+    - mistaken labels for each workflow and text length
+    - how often a detector must decline to decide to meet the chosen error target
+- basic limit
+    - identical final text can come from different histories
+    - a final-text detector cannot distinguish identical observations
+- possible contribution
+    - establish which labels generalize across writers and which need writing history
 - stopping rule
-    - if an AI label harms decisions, test source-evidence prompts instead
+    - if existing labels and baselines answer the question, use them
+    - another four-class classifier alone is weak novelty
 
-ideas to deprioritize
+4: evaluate browser warnings by what readers do
 
-- agent judgment: generic score ensembles
-    - Ghostbuster and MOSAIC already combine scoring information
-- agent judgment: another paraphrase-resistant binary detector
-    - RADAR, GREATER, and numerous attack benchmarks already occupy this space
-    - a new systems claim needs measured deployment behavior or a distinct threat model
-- agent judgment: a browser badge asserting definite AI authorship
-    - official tools already deliver badges and highlights
-    - the research question is whether the badge improves decisions under errors
+- question: do detector warnings improve factual checking under realistic mistakes?
+- closest work
+    - commercial extensions already scan pages and show highlights
+    - [CHI label-design work](https://doi.org/10.1145/3706598.3713171) already studies AI label perceptions
+    - [CHI editing-label work](https://doi.org/10.1145/3706599.3720264) already distinguishes generated from modified labels
+    - [browser review](browser_extensions.md) separates academic prototypes from vendor products
+- smallest useful experiment
+    - vary factual correctness independently of human/model origin
+    - randomize no warning, binary warning, uncertainty warning, and source-check suggestion
+    - separate controlled warning experiments from trials with actual detector outputs
+- measure
+    - correct error identification, source checking, false accusations, and time
+    - include varied language backgrounds and reader experience
+- possible contribution
+    - a warning improves checking even when origin detection makes mistakes
+    - a page badge alone is a delivery mechanism, not a new detector
+- stopping rule
+    - if origin labels harm checking, test source-evidence prompts instead
+    - needs user-study expertise and consent planning
 
-ChatGPT consultation
+what is still uncertain
 
-- Extra High consultation completed
-- [advice and primary checks](chatgpt_consultation.md)
-- consequence: combine extraction and site-level measurement only if controlled interventions add beyond recent web studies
-- its suggestions do not establish novelty
+- novelty of every proposed extension
+    - nearest work is identified, but an exhaustive search cannot prove absence
+- deployment cost of current vendor APIs and open-model inference
+    - no experiments or purchases were made for this review
+- authoring ground truth for contemporary web pages
+    - old publication dates are supporting evidence, not proof
+- tiny false-positive targets need large independent samples
+    - zero errors among N independent samples gives an approximate 95% upper bound of 3/N
+    - clustered pages need uncertainty by site
+- [Extra High consultation](chatgpt_consultation.md) informed the initial extraction and aggregation framing
+    - its advice is opinion
+    - these revisions also account for the substantive DeGenTWeb notes found afterward
