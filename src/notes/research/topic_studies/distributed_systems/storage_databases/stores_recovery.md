@@ -254,3 +254,70 @@ what remains before choosing a paper-sized project
   - recommendations are agent opinions
   - claimed novelty remains unestablished
   - benchmark outcomes and proposed failure cases remain unmeasured
+
+file and object-store follow-up, 8 Oct 2026
+
+- recommendation: distinguish checked update order from a complete storage guarantee
+  - compiler checks, model checking, generated tests, and implementation proofs establish different things
+  - test the precise contract each system exposes
+
+- [SquirrelFS, OSDI 2024 artifact README](https://github.com/utsaslab/squirrelfs/blob/main/README.md)
+  - evidence: “uses soft updates for crash consistency”
+  - evidence: “uses Rust support for the typestate pattern”
+  - context: its description of checking persistent-update ordering
+  - interpretation: operation types constrain which persistent update may happen next
+    - this is a concrete comparison for a Rust crash-safety project
+    - calling it “no separate proof” must not hide the separately supplied Alloy model
+  - artifact requirements include a modified Linux kernel and persistent memory
+    - the README permits emulated persistent memory
+      - it warns that the emulated device is wiped on reboot
+      - running on it does not validate persistence through reboot
+    - no kernel or benchmark was built here
+  - read depth: repository overview, system requirements, setup outline, and model inventory
+
+- [SysSpec and SpecFS, Liu et al., arXiv v1](https://arxiv.org/html/2512.13047v1)
+  - evidence, section 6.6: “nor does it consider crash consistency”
+  - evidence, section 4.1: “replacing the role of a formal theorem prover”
+  - context: an LLM enforces structured specifications while generating code
+  - interpretation: the generated file system is a comparison for specification-guided generation
+    - it is not evidence that a generated implementation has a machine-checked crash-safety proof
+  - the limitations section places the prototype in user space using FUSE
+  - read depth: design overview, functionality-specification discussion, prototype description, and limitations
+
+- [Lakestream, Sun et al., arXiv v1](https://arxiv.org/html/2605.09994v1)
+  - evidence, section 4.3: “they never scan the object store directly”
+    - context: consumers fetch only objects referenced by committed batch descriptors
+  - evidence, section 5.3: “advance atomically in the same write”
+    - context: producer recovery offsets are stored with committed training batches
+  - evidence, section 5.3: “ties retention directly to checkpoint progress”
+    - context: deletion waits for the minimum consumer checkpoint watermark
+  - interpretation: retry tracking, manifest publication, and checkpoint-dependent deletion already appear together in a concrete object-store data plane
+    - a generic proposal to combine them must compare with this work
+    - the inspected argument concerns training replay
+      - it does not establish complete recovery after asynchronous regional copying
+  - proposed contract audit
+    - enumerate the checkpoint versions still promised recoverable
+    - compute their full object dependencies independently
+    - check deletion eligibility when a consumer restarts or an older checkpoint remains retained
+    - treat disagreement as a candidate counterexample until the supported checkpoint policy is verified
+  - citation caution
+    - OpenAlex returned this identifier under the title BatchWeave
+    - the retrieved versioned primary HTML is titled Lakestream
+    - use the versioned source title and verify PDF metadata before relying on the bibliographic index
+  - read depth: abstract, introduction, atomic visibility, consumer cursor, and fault-tolerance/lifecycle sections
+  - no implementation was run and no correctness failure was observed
+
+- what this follow-up resolves
+  - supplies a concrete existing checkpoint-retention comparison for safe deletion
+  - separates generated specifications from proved crash safety
+  - adds artifact prerequisites for a Rust file-system comparison
+- what remains open in this review
+  - complete recent FAST, OSDI, SOSP, and object-store publication sweep
+  - independent artifact and fault-model checks
+  - catalog recovery and older backup systems that may already cover the proposed regional mechanism
+- access limits
+  - OpenAlex and direct arXiv/GitHub retrieval worked
+  - Crossref regional search returned HTTP 429
+  - FAST 2025 and 2026 program retrieval returned HTTP 403
+  - these failures limit this pass
+    - they do not establish that literature access is wholly blocked

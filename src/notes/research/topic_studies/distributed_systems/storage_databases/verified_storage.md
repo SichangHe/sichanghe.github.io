@@ -15,7 +15,7 @@ scope and neighbours
   - [deterministic simulation testing](../finding_bugs/deterministic_simulation_testing.md): FoundationDB, MadSim, Turmoil, S2, ModelFuzz
   - [model checking](../finding_bugs/model_checking.md): TLA+ and P at AWS, MongoDB conformance checking, Mocket, trace validation
   - [Rust bug-finding tools](../finding_bugs/rust_tools.md): Loom, Shuttle, Kani, ShardStore abstract
-  - [review B systems](../../../distributed_verification_review_b/review_b_systems_20261007.md): IronFleet, Verdi, Grove, Aneris, DaisyNFS, ShardStore with trusted-base notes
+  - review B systems, pending publication at `src/notes/research/distributed_verification_review_b/review_b_systems_20261007.md`: IronFleet, Verdi, Grove, Aneris, DaisyNFS, ShardStore with trusted-base notes
   - [transactions and regions](transactions_regions.md): MongoDB's VLDB 2025 storage-contract spec
 - what this note adds
   - verified transaction systems: vMVCC and Tulip, which no sibling covers
@@ -49,7 +49,9 @@ verified transaction systems
   - size: "3,956 lines of Go, and the proof consists of 42,131 lines of Rocq"; "The proof is about 11× the number of lines of executable code"
   - what is trusted and missing
     - "Tulip's proof does not guarantee that, for example, all transactions will eventually either commit or abort. Like TAPIR, Tulip does not support reconfiguration."
-    - the implementation "build[s] on the Grove framework" and uses "Grove's network, file system, and RPC libraries", so Grove's trusted base (see [review B](../../../distributed_verification_review_b/review_b_systems_20261007.md)) carries over
+    - the implementation "build[s] on the Grove framework" and uses "Grove's network, file system, and RPC libraries"
+      - Grove's trusted libraries therefore need to be included in this proof's assumptions
+      - the preceding review B pointer supplies the inherited trusted-base notes
     - "PSM requires a framework that supports reasoning about ownership of permissions; our prototype is built on top of Iris and Grove"
   - why it matters to the human: VerIso found that TAPIR as published violates even atomic visibility (see [consistency guarantees](consistency_guarantees.md)); Tulip is a TAPIR-style design that does carry a proof, so comparing the two would say exactly which TAPIR step was unsound; I have not done that comparison
   - my reading: Tulip is the ceiling today for "verified transactions"; its cost, 11× proof lines in Rocq, is what any Verus attempt must beat or justify
@@ -97,7 +99,7 @@ checked at compile time or by SMT, not by a full proof
 
 industry: checking storage engines without proving them
 - all of these check running code against a model or under injected faults; none proves anything; see the sibling notes for the general method
-- Amazon S3 ShardStore, SOSP 2021: see [rust tools](../finding_bugs/rust_tools.md) and [review B](../../../distributed_verification_review_b/review_b_systems_20261007.md); [AWS blog, Bornholt and Warfield, 20 Oct 2021](https://aws.amazon.com/blogs/storage/how-automated-reasoning-helps-us-innovate-at-s3-scale): specifications are "only about 13% more code on top of the implementation", checked "in hundreds of millions of scenarios"; the blog also says the team "validate[s] every single deployment of ShardStore"
+- Amazon S3 ShardStore, SOSP 2021: see [rust tools](../finding_bugs/rust_tools.md) and the preceding review B pointer; [AWS blog, Bornholt and Warfield, 20 Oct 2021](https://aws.amazon.com/blogs/storage/how-automated-reasoning-helps-us-innovate-at-s3-scale): specifications are "only about 13% more code on top of the implementation", checked "in hundreds of millions of scenarios"; the blog also says the team "validate[s] every single deployment of ShardStore"
   - I found no public follow-up paper on ShardStore after 2021; the 2025 CACM article on AWS practices returned HTTP 403 to my tools, so its storage-specific sentences are not quoted here; [model checking](../finding_bugs/model_checking.md) has what another agent got from it
 - Aurora DSQL, [Brooker et al., arXiv 2607.13276](https://arxiv.org/abs/2607.13276), section 6 read from a scratch copy
   - "We specified the core protocols in TLA+ and P, and performed extensive model checking"

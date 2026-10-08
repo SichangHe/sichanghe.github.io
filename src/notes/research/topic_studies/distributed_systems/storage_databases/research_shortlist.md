@@ -92,8 +92,11 @@ remaining work
   - these notes contain proposals rather than results
 - consultation
   - earlier ChatGPT attempts produced no opinion
-  - the 8 Oct retry failed with picker_effort_not_verified
+  - the temporary retry failed with picker_effort_not_verified
+  - the support-provided saved route failed with picker_deadline
     - no ChatGPT answer was obtained or attributed
+    - a later saved-route retry submitted successfully
+    - the answer remains pending
 
 reading rule
 
