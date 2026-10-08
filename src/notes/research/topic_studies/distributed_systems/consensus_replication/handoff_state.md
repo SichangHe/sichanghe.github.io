@@ -18,7 +18,8 @@
 current continuation on 2026-10-08 UTC
 - the three existing extended reviews are linked from the local index
 - merged experiments and remaining coverage gaps are in [the research shortlist](research_shortlist.md)
-- `bft_protocols.md` is absent
-- the manager lifted the reconciliation hold
-  - shared git publication awaits an exclusive mutation window
+- the absent protocol draft was replaced by a new bounded [follow-up](bft_protocols.md)
+  - selected recent proofs and artifacts remain unread
+- the assigned notes were pushed to `main` from a separate clean checkout on 2026-10-08 UTC
+  - global book navigation remains with its coordinating owner
 - paused Claude workers remain paused

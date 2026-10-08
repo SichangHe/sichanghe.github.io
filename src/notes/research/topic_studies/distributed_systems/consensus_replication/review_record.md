@@ -95,7 +95,8 @@ continuation review on 2026-10-08 UTC
 - retried ChatGPT with requested effort “Extra High”
   - helper returned “picker_effort_not_verified”
   - no assistant answer captured; consultation remains incomplete
-- additional Byzantine protocol review from the Claude handoff remains absent
+- the additional Byzantine draft was absent at continuation start
+  - replaced below by a new bounded follow-up
 - publication authorization confirmed by the coordinating manager
   - only assigned notes may be published
   - other writers’ files must be preserved
@@ -114,8 +115,27 @@ continuation review on 2026-10-08 UTC
   - the advisory’s internally conflicting patch chronology remains unresolved
 - deepened Twins from abstract-only to coverage, injected restart defects, and future-work sections
   - its membership-change testing proposal is direct prior art
-- Pipes and BumbleBee full-text retrieval returned HTTP 403
-  - both remain abstract-only leads
+- Pipes and BumbleBee full-paper retrieval returned HTTP 403
+  - the Pipes author tutorial was subsequently read; BumbleBee remains abstract-only
 - independent follow-up review verified the material corrections
   - no new blocking technical finding in those corrections or the DispersedLedger follow-up
   - reading gaps and pending consultation remain explicit
+- published 18 owned Markdown files from a clean checkout based on current `origin/main`
+  - other writers’ working files preserved
+  - local links and staged whitespace checks passed
+  - book build reached HTML, then failed sitemap because `lua` was unavailable
+  - global book navigation requested from its coordinating owner
+- saved ChatGPT route successfully submitted with explicit GPT-6.1 Sol and requested “Extra High”
+  - answer remains pending
+- inspected Angelfish’s model assumptions and Appendix E
+  - its TLC model explicitly omits Byzantine behavior
+- read the Pipes authors’ tutorial fully
+  - its model assumes fault-free participants and omits computation costs
+- direct primary PDF retries and a separate web connector did not retrieve Pipes or BumbleBee
+  - full proofs remain unread
+- coordinating build owner reports deployment installs Lua
+  - the local missing dependency does not establish a deployment failure
+- final independent goal review found the literature tree substantially addressed
+  - clarified separate crash-only and Byzantine experiments
+  - corrected stale reading status
+  - consultation and follow-up publication remain to finish
