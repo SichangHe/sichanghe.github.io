@@ -187,3 +187,47 @@ closest-work follow-up: model comparison already has a foundation
     - retain client acknowledgments and inter-replica messages alongside storage operations
     - separate the model's representable states from the schedules a test campaign actually visits
     - no such mismatch has been demonstrated in these notes
+
+PACE follow-up: distributed crash consequences are established
+
+- inspected paper sections 2.2, 3, and 5 and artifact README on 8 Oct 2026
+  - no experiment reproduced
+- PACE traces file operations and network dependencies
+  - paper section 3.1: “identifies cross node dependencies”
+  - generates persistent states from consistent execution cuts and supplied local persistence models
+  - restarts the service and applies a user-written checker
+  - [Alagappan et al., correlated crash vulnerabilities, OSDI 2016](https://pages.cs.wisc.edu/~ra/pace-osdi16.pdf)
+- scope is correlated fail-recover crashes affecting all replicas of the studied data
+  - section 5: “bugs due to network message re-orderings cannot be discovered by PACE”
+  - alternative network schedules require complementary testing
+- artifact contains a ZooKeeper initialization, update workload, and recovery checker
+  - [PACE maintainers, example and caveats](https://github.com/ramanala/PACE)
+  - README: “PACE is not complete”
+  - implementation applies one common reordering across selected nodes at a time
+  - dynamically linked binaries and reliable tracing are assumptions
+- research consequence
+  - distributed effects of local crash behavior are already studied
+  - candidate 1 must demonstrate a consequential mismatch between a simulator and a justified production behavior
+  - distinguish an impossible simulator state, an enabled state not reached by search, and a failure missed by the checker
+  - a different internal state with equivalent correct service behavior is insufficient
+
+formal persistence and crash-search comparisons
+
+- [PerSeVerE, Kokologiannakis et al., POPL 2021, section 2](https://plv.mpi-sws.org/persevere/paper.pdf)
+  - formal ext4 model integrated with C/C++ concurrency
+  - paper: “We further do not model I/O failures and the direct memory access features of ext4”
+  - model assumes one directory and one process
+  - apply its semantics only where those assumptions match
+  - it does not establish every production filesystem/device crash state
+- [Pathfinder, Gu et al., section 7](https://arxiv.org/html/2503.01390#S7)
+  - explores representative crash states from captured execution traces
+  - paper: “strictly fewer crash states than is otherwise allowed by concurrent execution”
+  - traces threads without their synchronization and assumes stronger ordering
+  - search heuristics and supplied workloads can also miss failures
+  - [artifact](https://github.com/efeslab/Pathfinder) provides POSIX workloads and configurations
+  - its PerSeVerE implementation is not automatically identical to the original model
+- assessment
+  - persistence semantics and efficient crash-state exploration already have substantial prior work
+  - audit a specific omitted service-relevant behavior rather than inventing another generic explorer
+  - primary paper sections and artifact README inspected on 8 Oct 2026
+  - no artifacts executed

@@ -23,7 +23,13 @@ recommendation
     - lower-level persistence testing must be compared before claiming an adapter is new
   - [BOB and ALICE](history_checking.md)
     - already measure persistence properties and analyze application dependence on them
-    - contribution needs a demonstrated distributed-service or simulator boundary beyond that analysis
+    - contribution needs a demonstrated simulator mismatch beyond existing application and distributed crash analysis
+  - [PACE](history_checking.md)
+    - already combines local persistence models, cross-node dependencies, and recovered service checks
+    - adding distributed consequences to ALICE is insufficient as a contribution
+  - [PerSeVerE and Pathfinder](history_checking.md)
+    - formal filesystem semantics and representative crash-state exploration
+    - match their assumptions before comparing omitted behaviors
   - [Jepsen disk-fault analyses](fault_injection_and_chaos.md)
     - real-system fault injection with client-visible checks
 - possible contribution
@@ -56,6 +62,7 @@ recommendation
     - completed writes are immediately durable
     - synchronization establishes durability; a crash may lose later writes
     - documented unsynchronized writes may also tear or reorder
+  - compare PACE and applicable formal filesystem semantics before choosing the contracts
   - justify each contract against the actual filesystem, device, and API
     - these three variants are experimental choices, not an exhaustive storage taxonomy
   - preserve the same operation and crash traces when comparing contracts
@@ -82,6 +89,8 @@ recommendation
   - [ModelFuzz](deterministic_simulation_testing.md)
     - already uses abstract model coverage to guide executable tests
 - possible contribution
+  - measure corrupted property translation, shared event-mapping errors, or illegal reproduction states
+  - compare existing bidirectional validation and reproducer checks
   - measure failures of the correspondence between code events and model actions
   - improve evidence for distinguishing model errors, logging errors, and implementation errors
   - generating counterexamples and replaying them alone is already demonstrated

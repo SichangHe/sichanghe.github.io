@@ -60,8 +60,8 @@ publication and consultation
 - a saved GPT-6.1 Sol consultation at Extra High was then started through the support-confirmed route
   - initial submission timed out
   - resuming the owned conversation reported “submitted”
-  - answer capture remains pending
-  - no opinion from this pending consultation is used as evidence
+  - final answer recovered on 8 Oct 2026
+  - [assessment and primary checks](consultation_assessment.md)
 
 independent goal assessment, 8 Oct 2026
 
@@ -72,6 +72,7 @@ independent goal assessment, 8 Oct 2026
   - source: independent reviewer message in this task after the serving and peer artifact checks
 - review sampled the key proposals
   - it does not certify every inherited source card or establish novelty
-- remaining requested deliverable is the pending Extra High opinion and assessment
+- requested Extra High opinion is recovered and assessed
+  - [consultation assessment](consultation_assessment.md) records corrections and limits
   - experiments and runnable prototypes are future research steps
   - they were not added as blanket completion requirements

@@ -277,3 +277,24 @@ follow-up reading boundaries
 - [A First Look at Bugs in LLM Inference Engines, arXiv 2506.09713, abstract](https://arxiv.org/abs/2506.09713)
   - authors construct “a comprehensive dataset of 929 real-world bugs” from five engines
   - possible follow-up: identify which cases require multiple nodes before drawing distributed-system conclusions
+
+recovered consultation follow-up, 8 Oct 2026
+
+- inspected current SysMoBench and Specula artifact documentation and relevant paper sections
+  - artifacts not executed
+- [SysMoBench README](https://github.com/specula-org/SysMoBench)
+  - existing invariant templates are “hand-written”
+  - translation into generated variables is agent-driven
+  - [paper section 3.2.4 and section 4](https://arxiv.org/html/2509.23130v3#S3.SS2.SSS4)
+    - authors inspect mappings and test renamed or regranularized gold models
+    - these controls do not prove correctness for arbitrary semantic corruption
+- [Specula section 5.5](https://arxiv.org/html/2607.25333#S5.SS5)
+  - weaker-model experiment reports six manufactured reproductions
+  - exact words: “illegal states directly into the running system”
+  - no such violation reported for its stronger model
+  - written prohibitions already exist in the confirmation prompt
+  - [current reproduction prompt](https://github.com/specula-org/Specula/blob/main/src/specula/prompts/confirmation/reproduce.md)
+- narrowed research question
+  - can existing checks detect corrupted invariant translation, shared event mapping, and illegal reproduction preconditions
+  - a new instruction to keep checks independent is insufficient
+  - evaluate concrete enforcement and missed cases before designing another pipeline
