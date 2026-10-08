@@ -77,9 +77,9 @@ Alpenglow model gap reassessed on 2026-10-08 UTC
 
 coverage and publication limits
 - three extended reviews are integrated into the [reading tree](index.md)
-- the additional `bft_protocols.md` mentioned in the previous handoff is absent
-  - existing [Byzantine consensus](byzantine_consensus.md) and [its source record](byzantine_sources.md) remain available
-  - deeper coverage from that planned review remains unfinished
+- the interrupted additional Byzantine draft was absent
+  - [new protocol follow-up](bft_protocols.md) covers Angelfish’s model limits and the Pipes author tutorial
+  - selected recent proofs remain unread because primary PDFs could not be retrieved
 - the [Byzantine data-availability follow-up](data_availability_followup.md) deepens one material abstract-only comparison
   - DispersedLedger already addresses backlog and invalid-transaction spam
   - retention across restart and membership changes needs a separate implementation assessment

@@ -26,6 +26,7 @@ reading tree
   - [source ledger](byzantine_sources.md)
   - [data availability, backlog controls, and retention follow-up](data_availability_followup.md)
   - [Byzantine testing, restart, and voter-change follow-up](byzantine_testing_followup.md)
+  - [protocol performance assumptions and checked models](bft_protocols.md)
 - [blockchains and validators](blockchain_validators.md)
   - fork choice, finality, execution, signing history, and client diversity
   - [source ledger](validator_sources.md)
@@ -72,10 +73,11 @@ relation to existing work in these notes
 status
 - selected studies written on 2026-10-07 UTC
 - extended reviews integrated on 2026-10-08 UTC
-- the planned additional `bft_protocols.md` review is absent
-  - use the existing malicious-machine consensus study and source ledger
-  - its absence is a coverage gap, not evidence that the planned review finished
-- notes are saved locally; publication is pending
+- the interrupted additional protocol draft was absent
+  - a new bounded follow-up now covers Angelfish and the Pipes author tutorial
+  - selected full proofs and artifacts remain unread
+- notes pushed to the repository on 2026-10-08 UTC
+  - website navigation and deployment remain to be confirmed
 - recent primary sources include work published or updated in 2026
 - literature breadth does not establish completeness
 - paper performance results are author reports

@@ -42,9 +42,12 @@ how to make the experiment distinguishable
 
 remaining reading limits
 - [data-availability follow-up](data_availability_followup.md) deepens DispersedLedger
-- Pipes and BumbleBee remain abstract-only leads
+- Pipes now has a fully read author tutorial
+  - its full paper remains unread
+- BumbleBee remains abstract-only
   - direct primary PDF requests returned HTTP 403 on 2026-10-08 UTC
-  - their full assumptions and proofs remain unchecked
+  - full proofs remain unchecked
 - these follow-ups narrow concrete research proposals
-  - they do not replace a full review of the absent `bft_protocols.md` draft
+  - the new [bounded protocol follow-up](bft_protocols.md) replaces the interrupted draft
+  - selected full proofs and artifacts remain unread
 - no experiment or novelty result is claimed
