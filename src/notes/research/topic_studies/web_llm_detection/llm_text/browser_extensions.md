@@ -21,7 +21,8 @@ the plain picture and main takeaways
 - takeaway 4: a detector that labels only some pages hands the unlabeled ones a free pass
     - this is the "implied truth effect" for fake-news tags (Pennycook 2020)
     - a 2026 test on AI images found the same, about one-fifth the size (Pawelczyk)
-    - inference: for a text detector that misses a lot, this applies directly; nobody has tested it with real detector errors
+    - hypothesis: missed text detections could produce a similar effect
+        - this review found no test with actual text-detector errors
 - takeaway 5: price per page is about 7-9 cents per 1000 words at list price
     - my own arithmetic from the pricing pages, in the price section
 - takeaway 6: crowd labeling for AI content is tiny

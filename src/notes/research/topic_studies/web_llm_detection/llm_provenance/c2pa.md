@@ -67,11 +67,9 @@ short answer
 
 how C2PA works, in one paragraph, and what changed per version
 
-The human's `photo_crypto_auth.md` already has the nesting (manifest, claim,
-assertions), signing, and hard binding. What matters for 2025 and 2026 is the
-version history. I read the change log in the
-[2.4 specification](https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html)
-(C2PA, Apr 2026); the quotes are from it.
+- the human's `photo_crypto_auth.md` already has the nesting (manifest, claim, assertions), signing, and hard binding
+    - What matters for 2025 and 2026 is the version history
+    - I read the change log in the [2.4 specification](https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html) (C2PA, Apr 2026); the quotes are from it
 
 - 2.0 (Jan 2024): "Only X.509 certificates may be used for signing"; the
     W3C Verifiable Credentials section and identity assertions were removed,
@@ -547,10 +545,9 @@ C2PA-specific work.
     2024): "increases trust among 83% of participants, while 96% consider the
     Content Credentials to be useful".
 
-My reading: every study shows a label is a trust nudge that people do not
-decode. Combined with Krawetz's point that a valid signature is not truth,
-that is the "liar's dividend in reverse": a signed lie gets a trust bump. No
-study yet tested a forged-but-valid manifest on users.
+- my reading: every study shows a label is a trust nudge that people do not decode
+    - Combined with Krawetz's point that a valid signature is not truth, that is the "liar's dividend in reverse": a signed lie gets a trust bump
+    - No study yet tested a forged-but-valid manifest on users
 
 alternatives and complements
 
@@ -636,9 +633,6 @@ gaps in this review
 - I could not open the ePrint full report (Cloudflare), the OpenAI May 2026
     post, or PetaPixel's Nikon piece; the OpenAI facts come from search
     snippets and a vendor summary.
-- ChatGPT consultation failed: I ran `pb-chatgpt-prompt-file` on this draft
-    at Extra High and it exited with "chatgpt_helper_failure_redacted" (exit
-    6), the same failure the other workers hit.
 - Krawetz's promised post with concrete validator-disagreement examples was
     not yet published; Google's view of the Pixel root signing is known only
     through his quotes of the bug ticket.
@@ -649,8 +643,8 @@ gaps in this review
 
 research we could do
 
-Each idea names what it builds on. Ordered by how close it is to the human's
-past work.
+- each idea names what it builds on
+    - ordered by how close it is to the human's past work
 
 1. A C2PA census of the web
 
@@ -757,3 +751,7 @@ past work.
     Microsoft paper's "local implementations ... are generally the least
     secure"; Vilesov et al. 2024 in the human's `papers.md` on 2D vs 3D
     sensing
+
+consultation
+
+- see the [provenance index](index.md) for the current Extra High consultation

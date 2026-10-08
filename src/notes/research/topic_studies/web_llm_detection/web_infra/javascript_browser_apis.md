@@ -1,20 +1,20 @@
-# Measuring what JavaScript does and which browser APIs pages use
-
+measuring what JavaScript does and which browser APIs pages use
 (authored by agents unless marked 🧑)
 
-Written 2026-10-06. Web search was rate-limited for this session, so I found
-papers through arXiv's API, Crossref, venue index pages (PETS, NDSS, USENIX),
-and direct PDF downloads. Every quote below comes from the PDF itself. Where I
-say "I think" or "my inference", that is me, not the paper. The ChatGPT CLI
-failed three times (UI retry / timeout), so there is no ChatGPT opinion here.
+- reviewed 2026-10-06
+    - sources include arXiv, Crossref, venue indexes, and primary PDFs
+    - quotes below come from the papers
+    - “I think” and “my inference” identify agent judgments
+    - early ChatGPT attempts failed
+        - group consultation status is in the [infrastructure index](index.md)
 
-## The picture in plain English
+the picture in plain English
 
-A web page ships JavaScript, the browser runs it, and the only way that code
-can affect anything is by calling browser APIs: touch the DOM, send a request,
-read `navigator.userAgent`, draw on a canvas. So if you log every call from JS
-into the browser, you get a behavioral record of what each script actually did.
-People use that record for four kinds of questions:
+- browser APIs let scripts affect pages and communicate outside their own computation
+    - change the DOM, send requests, read browser properties, or draw on a canvas
+    - logging these calls records those interactions
+    - it does not record every internal computation
+- researchers use the record for four questions
 
 - which browser features are used at all, by whom, and how that changes over
     years (so browser vendors know what they can drop, and attackers know what
@@ -41,7 +41,7 @@ Per-call counters from real users exist too: Chrome use counters, public at
 chromestatus.com, give the fraction of page loads touching each feature,
 but only per feature, not per script, and only for Chrome users who opted in.
 
-## JSphere, the human's own project
+JSphere, the human's own project
 
 🧑 source: the JSphere final report (Sichang He, mentor Harsha Madhyastha,
 CSci 651, Nov 2024), <https://github.com/SichangHe/JSphere>. Status on the
@@ -93,9 +93,9 @@ My read of why it stalled, and what that implies:
 - no link to any outcome (load time, breakage, privacy) is the reason it felt
     low value. the papers that got in all tie behavior to an outcome
 
-## Literature, grouped by question
+literature, grouped by question
 
-### How do you record what JS does?
+how do you record what JS does?
 
 - [VisibleV8: In-browser Monitoring of JavaScript in the
     Wild](https://kapravelos.com/publications/vv8-imc19.pdf), Jordan
@@ -180,7 +180,7 @@ My read of why it stalled, and what that implies:
     - open (my inference): landing-page-only API logs (JSphere, Snyder 2016)
         under-count whatever only runs after interaction
 
-### Which browser features does the web use?
+which browser features does the web use?
 
 - [Browser Feature Usage on the Modern
     Web](https://www.cs.uic.edu/~ckanich/papers/snyder2016browser.pdf), Peter
@@ -254,7 +254,7 @@ My read of why it stalled, and what that implies:
         websites, we monitor the usage of all major APIs"; "most APIs were used
         by only a handful of actors"
 
-### How much shipped JS is unused, and can it be dropped?
+how much shipped JS is unused, and can it be dropped?
 
 - [System to Identify and Elide Superfluous JavaScript Code for Faster
     Webpage Loads](https://arxiv.org/abs/2003.07396), Utkarsh Goel, Moritz
@@ -310,7 +310,7 @@ My read of why it stalled, and what that implies:
         from at least 5 different nonorigin sources, contributing to more than
         35% of the overall page size"
 
-### Who ships the code: third parties, libraries, bundles, tag managers
+who ships the code: third parties, libraries, bundles, tag managers
 
 - [Thou Shalt Not Depend on Me: Analysing the Use of Outdated JavaScript
     Libraries on the
@@ -366,7 +366,7 @@ My read of why it stalled, and what that implies:
         processing"; this paper shows the same API is a tracking signal when
         the listener is third-party
 
-### eval, dynamic code, obfuscation, minification
+eval, dynamic code, obfuscation, minification
 
 - [The Eval that Men Do](https://janvitek.org/pubs/ecoop11.pdf), Gregor
     Richards, Christian Hammer, Brian Burg, Jan Vitek, ECOOP, 2011
@@ -423,7 +423,7 @@ My read of why it stalled, and what that implies:
     - takeaway: API-level logging survives JS-to-wasm obfuscation; source
         classifiers do not
 
-### WebAssembly on the web
+webAssembly on the web
 
 - [An Empirical Study of Real-World WebAssembly
     Binaries](https://software-lab.org/publications/www2021.pdf), Aaron
@@ -459,7 +459,7 @@ My read of why it stalled, and what that implies:
     (their JS imports and the browser APIs reached through them); VV8 sees the
     JS side of every wasm import, so this is a cheap extension
 
-### Classifying scripts by behavior
+classifying scripts by behavior
 
 - [AdGraph](https://umariqbal.com/papers/adgraph-sp2020.pdf), Umar Iqbal,
     Peter Snyder, et al., S&P, 2020
@@ -521,7 +521,7 @@ My read of why it stalled, and what that implies:
     - open (my inference): bytecode-level function classification could be
         trained for any label, not just fingerprinting; needs labels
 
-### Fingerprinting and tracking detected through API usage
+fingerprinting and tracking detected through API usage
 
 - [FPDetective](https://www.esat.kuleuven.be/cosic/publications/article-2334.pdf),
     Acar et al., CCS, 2013: "13 instances of JavaScript-based font-probing
@@ -591,7 +591,7 @@ My read of why it stalled, and what that implies:
     fingerprints, "an adversary can eliminate 84–95% of a user's anonymity
     having observed just a single session"
 
-### Crawler vs real users, bot detection, sampling
+crawler vs real users, bot detection, sampling
 
 - [Towards Realistic and Reproducible Web Crawl
     Measurements](https://www.ben-livshits.org/papers/pdf/www21a.pdf),
@@ -647,7 +647,7 @@ My read of why it stalled, and what that implies:
     Aqeel et al., IMC, 2020 (in the human's `web_crawling.md`): internal
     pages differ from landing pages
 
-### Longitudinal views and archives
+longitudinal views and archives
 
 - [Way back then: A Data-driven View of 25+ years of Web
     Evolution](https://arxiv.org/abs/2202.08239), Agarwal, Sastry, 2022:
@@ -673,7 +673,7 @@ My read of why it stalled, and what that implies:
     highly prevalent both in data from Common Crawl and in Bing's search
     results, and that this share is growing over time"
 
-## Pitfalls and unsolved problems in the methods
+pitfalls and unsolved problems in the methods
 
 - attribution: a call site inside a 2 MB bundle tells you the bundle, not the
     module or function. JSphere rewrote code; NoT.js uses call stacks; ByteDefender
@@ -706,12 +706,12 @@ My read of why it stalled, and what that implies:
     into wasm (2025), consent banners gate scripts (Jha 2022 in
     `web_crawling.md`)
 
-## Research ideas
+research ideas
 
 I checked each against the papers above. Confidence is my own estimate that
 the gap is real.
 
-### 1. Crawler vs real users for API usage, feature by feature (confidence: high)
+1. Crawler vs real users for API usage, feature by feature (confidence: high)
 
 - question: for each browser API, how far off is a crawler's usage estimate
     from what real users trigger?
@@ -730,7 +730,7 @@ the gap is real.
     differently. mitigation: restrict to features with IDL `[Measure]` and
     clear one-to-one semantics
 
-### 2. Function-level attribution without rewriting: a reusable layer on VV8 (confidence: medium-high)
+2. Function-level attribution without rewriting: a reusable layer on VV8 (confidence: medium-high)
 
 - question: can we attribute every browser API call to the npm package,
     module, and function that made it, for the whole top-100k, cheaply?
@@ -751,7 +751,7 @@ the gap is real.
 - how this fixes JSphere: a reviewer can check a per-package number against
     the package's documented purpose; that is the missing ground truth
 
-### 3. Longitudinal "what does JS do" over 15 years (confidence: medium)
+3. Longitudinal "what does JS do" over 15 years (confidence: medium)
 
 - question: how did the mix of what JS does (DOM building, tracking,
     fingerprinting, crypto, media, wasm) change from 2010 to 2026?
@@ -767,7 +767,7 @@ the gap is real.
     only exist for Chrome 63 onward. mitigation: restrict to pages whose
     replayed request set matches the archive's recorded set
 
-### 4. Who ships the dead code, and does it ever run for real users (confidence: medium)
+4. Who ships the dead code, and does it ever run for real users (confidence: medium)
 
 - question: of the 60-70% unused JS, which vendors, libraries, and bundler
     choices account for it, and how much does a real user eventually execute
@@ -781,7 +781,7 @@ the gap is real.
 - risk: user study size; privacy of recorded coverage (store only hashes of
     function ids)
 
-### 5. JS of AI-built websites (confidence: medium, ties to DeGenTWeb)
+5. JS of AI-built websites (confidence: medium, ties to DeGenTWeb)
 
 - question: do LLM-dominant sites (DeGenTWeb) ship different JS: more
     boilerplate frameworks, more or fewer trackers, more dead code, more
@@ -795,7 +795,7 @@ the gap is real.
 - risk: confounded by site builder (WordPress vs Next.js) rather than by AI;
     control for builder with Wappalyzer labels
 
-### 6. Script-level web atoms: which scripts change together (confidence: medium, ties to `web_atoms.md`)
+6. Script-level web atoms: which scripts change together (confidence: medium, ties to `web_atoms.md`)
 
 - question: can we find groups of scripts (across sites) that change together,
     so a crawler re-fetches one and infers the rest, and so archives dedup?
@@ -809,7 +809,7 @@ the gap is real.
 - risk: cache-busting query strings and per-site bundling hide shared
     modules; needs idea 2's module splitting
 
-### 7. Behavior churn vs byte churn (confidence: medium)
+7. Behavior churn vs byte churn (confidence: medium)
 
 - question: when a script's bytes change, how often does its behavior (API
     calls, requests) change? how often does behavior change without bytes
@@ -822,7 +822,7 @@ the gap is real.
 - risk: nondeterminism (A/B tests, ads) looks like churn; need repeated loads
     per week to estimate noise
 
-### 8. Which browser APIs could be removed, 2026 edition (confidence: medium-high that it is undone, medium that it is publishable)
+8. Which browser APIs could be removed, 2026 edition (confidence: medium-high that it is undone, medium that it is publishable)
 
 - question: redo Snyder 2016/2017 with today's web and real-user counters:
     which of the ~hundreds of APIs added since 2016 are used, by whom, and
@@ -836,7 +836,7 @@ the gap is real.
 - risk: the reviewer asks "so what"; the answer is a concrete block list
     with measured breakage, which browser vendors can use
 
-### 9. What wasm does on live pages (confidence: medium)
+9. What wasm does on live pages (confidence: medium)
 
 - question: beyond counts, what do wasm modules on the top-100k do, reached
     through which JS imports and browser APIs, and is JS-to-wasm obfuscation
@@ -849,7 +849,7 @@ the gap is real.
 - risk: small population (a few thousand modules), most from a handful of
     libraries, so findings may be about three vendors
 
-### 10. LLM-labeled script purposes with behavioral validation (confidence: low-medium)
+10. LLM-labeled script purposes with behavioral validation (confidence: low-medium)
 
 - question: can an LLM, given a script's source plus its VV8 call trace,
     produce purpose labels that agree with external ground truth (filter
@@ -865,7 +865,7 @@ the gap is real.
     reviewable is the validated subset. cost of running an LLM over 100k
     scripts is real but manageable with traces truncated to API-family counts
 
-## Gaps I could not cover
+gaps I could not cover
 
 - I could not run general web search this session, so anything not on
     arXiv, PETS, NDSS, USENIX, or an author site with a guessable URL is

@@ -1,8 +1,7 @@
-# How web content changes, and web atoms
-
+how web content changes, and web atoms
 (authored by agents unless marked 🧑)
 
-## The picture in plain words
+the picture in plain words
 
 - the question people keep asking since 2000: how often does a page change, by how much, and can a crawler guess it without fetching
     - the answer has been stable for 25 years: a small set of pages churns daily, most pages sit still for months, change rate follows the site and the page type
@@ -17,7 +16,7 @@
     - crawl a fixed URL set repeatedly, hash or shingle each copy, fit change models, then simulate schedules
     - pitfalls: dynamic noise (timestamps, ads) makes everything "change", blocking and personalization bias the sample, and almost every number is from pre-2010 crawls
 
-## How often and how much do pages change
+how often and how much do pages change
 
 - [The Evolution of the Web and Implications for an Incremental Crawler](https://www.vldb.org/conf/2000/P200.pdf), Cho, Garcia-Molina, VLDB 2000
     - fact: "an experiment conducted on 720,000 web pages for multiple months"; daily visits to 270 sites, change = checksum change
@@ -66,7 +65,7 @@
     - fact: they classify "Index Pages" vs "Content Pages" with an LLM and start new-page discovery from index pages
     - inference: index pages are exactly the sentinels of an atom (a category page changes when any child post appears), but the paper only uses them for discovery, not for invalidation
 
-## Scheduling: how crawlers decide when to recrawl
+scheduling: how crawlers decide when to recrawl
 
 - [Keeping a Search Engine Index Fresh: Risk and optimality in estimating refresh rates for web pages](https://research.google.com/pubs/archive/34570.pdf), Ford, Grimes, Tassone, Google 2008
     - fact: "we assume that a binary change detection" (the crawler only learns changed / not changed since last visit)
@@ -96,16 +95,16 @@
     - no open PDF found; from memory (unverified): predicts whether a page changes using its own history plus the change history of related pages; related-page features help
     - open: nobody has (to my knowledge) inverted this into "which pages' change implies this page changed"
 
-## Signals a site can give: sitemaps, headers, pings, feeds
+signals a site can give: sitemaps, headers, pings, feeds
 
 - Google, [Build and submit a sitemap](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap)
-    - fact: "Google ignores <priority> and <changefreq> values."
-    - fact: "Google uses the <lastmod> value if it's consistently and verifiably (for example by comparing to the last modification of the page) accurate."
+    - fact: `"Google ignores <priority> and <changefreq> values."`
+    - fact: `"Google uses the <lastmod> value if it's consistently and verifiably (for example by comparing to the last modification of the page) accurate."`
     - fact: "an update to the main content, the structured data, or links on the page is generally considered significant, however an update to the copyright date is not"
     - inference: Google itself defines "significant change" by region and verifies lastmod by crawling; they already run a hidden version of the change-definition problem
 - Google, [Crawl budget management](https://developers.google.com/search/docs/crawling-indexing/large-site-managing-crawl-budget)
     - fact: "If a page hasn't changed since Google last crawled it, returning a 304 code tells Google to reuse the cached version"
-    - fact: "If your site includes updated content, we recommend including the <lastmod> tag"
+    - fact: `"If your site includes updated content, we recommend including the <lastmod> tag"`
 - Google, [Sitemaps ping endpoint is going away](https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping), 2023
     - page fetched but the body text did not extract cleanly; title confirms the sitemap ping was deprecated in 2023
 - [IndexNow FAQ](https://www.indexnow.org/faq) (Bing, Yandex, Naver, Seznam; not Google)
@@ -122,7 +121,7 @@
 - [Web Sitemap Knowledge Can Enhance Autonomous Browsing](https://doi.org/10.18653/v1/2026.findings-acl.1465), Zhang et al., ACL Findings 2026
     - abstract not available via Crossref; title only; sitemaps as agent knowledge, not change signal
 
-## Groups of pages that change together: templates, shared resources, volumes
+groups of pages that change together: templates, shared resources, volumes
 
 - [The Volume and Evolution of Web Page Templates](https://doi.org/10.1145/1062745.1062763), Gibson, Punera, Tomkins, WWW 2005
     - fact: "40–50% of the content on the web is template content. Over the last eight years, the fraction of template content has doubled"
@@ -151,7 +150,7 @@
     - fact: "libraries included transitively" and "different versions of the same library being loaded into the same document"
     - inference: shared-library versions on a site are a sticky site-level state; they change in bulk on redeploy, which is atom-like for JS (relevant to JSphere)
 
-## CDN and application cache invalidation (the engineering version of atoms)
+CDN and application cache invalidation (the engineering version of atoms)
 
 - Fastly, [Working with surrogate keys](https://www.fastly.com/documentation/guides/full-site-delivery/purging/working-with-surrogate-keys/)
     - fact: "Surrogate keys allow you to selectively purge related content. Using the Surrogate-Key header, you can 'tag' content with a key term ... all of the objects associated with that key will be purged"
@@ -166,7 +165,7 @@
     - inference: inside one company, the group that must be invalidated is known from the write path; the web-atom problem is the same problem with no write path visible, so it must be inferred from reads
 - inference across this section: the origin knows the atoms (tags) and strips them before the response leaves; a crawler could only recover them by observing co-change, or occasionally from leaked headers (Cache-Tag, Surrogate-Key, X-Cache, Age)
 
-## Link rot and content drift (the slow kind of change)
+link rot and content drift (the slow kind of change)
 
 - [When Online Content Disappears](https://www.pewresearch.org/data-labs/2024/05/17/when-online-content-disappears/), Pew Research Center 2024
     - fact: "A quarter of all webpages that existed at one point between 2013 and 2023 are no longer accessible"; "38% of webpages that existed in 2013 are not available today, compared with 8% of pages that existed in 2023"
@@ -185,7 +184,7 @@
 - Eve, [Evaluating Document Similarity Detection Approaches for Content Drift Detection](https://doi.org/10.59348/hjxns-96m63), 2024: compares similarity measures for deciding "did this DOI target drift"; abstract only
 - a live example from this session: the WWW 2000 paper "How dynamic is the web?" at www9.org now serves a dating-site spam page; that URL rotted and drifted at once
 
-## Web archives: what they capture and how consistent it is
+web archives: what they capture and how consistent it is
 
 - [How Much of the Web Is Archived?](https://arxiv.org/abs/1212.6177), Ainsworth et al., JCDL 2011
     - fact: "35%-90% of the Web has at least one archived copy, 17%-49% has between 2-5 copies, 1%-8% has 6-10 copies, and 8%-63% has more than 10 copies"; "Each sample set provides its own bias"
@@ -201,7 +200,7 @@
 - [Improved methodology for longitudinal Web analytics using Common Crawl](https://doi.org/10.1145/3614419.3644018), Thompson, WebSci 2024: title only; relevant because Common Crawl monthly snapshots are the cheapest way to get years of (coarse) change history
 - Common Crawl FAQ: "Our CDX API endpoint is frequently abused and therefore heavily rate limited"; retrospective atom mining must use the index files, not the API
 
-## The BGP atoms the name comes from
+the BGP atoms the name comes from
 
 - [Analysis of RouteViews BGP data: policy atoms](https://catalog.caida.org/paper/2001_atoms), Broido, claffy, NRDM 2001 (in the collection)
     - definition: "Two prefixes are said to be path equivalent if we cannot find a BGP peer who sees them with different AS paths. An equivalence class of this relation is called a BGP atom."
@@ -230,7 +229,7 @@
     - BGP atoms are equivalence classes; web co-change is probabilistic and asymmetric (a post changes implies its category page changes, not the reverse), so the right structure is a directed implication graph, not a partition
     - BGP has one global routing system; web atoms are per site, and the useful ones may cross sites (shared vendor scripts)
 
-## Known pitfalls in the methods
+known pitfalls in the methods
 
 - change definition dominates every result
     - checksums count ad rotation and timestamps; shingles (Fetterly) or DOM-element survival (Adar) count less; Google's own rule is "main content, structured data, or links"; the regex-stripping hack in the Danish news archiving work (see `web_crawling.md`) is the state of practice
@@ -249,9 +248,9 @@
 - signals from sites lie
     - Busa-Fekete: sitemap precision "below 0.2", recall "below 0.5"; Google ignores changefreq entirely
 
-## Research ideas
+research ideas
 
-### 1. do web atoms exist, and what makes them (measurement paper)
+1. do web atoms exist, and what makes them (measurement paper)
 
 - question: on a real site, how much of the probability that URL B changed is explained by "URL A changed in the same window", and do these dependencies form stable groups
 - why not answered: Cho and Ntoulas 2002, Tan and Mitra 2010, Radinsky and Bennett 2013 use related pages to estimate a page's rate; none reports co-change probabilities, group size distributions, or group stability over time; Afek et al. did exactly this for BGP and nobody repeated it for URLs
@@ -263,7 +262,7 @@
 - main risk: dynamic noise makes co-change trivially high (everything "changes" every hour) or trivially low (after stripping, nothing changes); the change definition must be fixed before looking at the result and reported at several granularities
 - confidence the gap is real: high for the measurement itself; medium that the result is interesting (atoms may be mostly "category page plus its posts", which is obvious; the paper then rests on quantifying how much that obvious structure saves)
 
-### 2. atom-based recrawl: probe sentinels, recrawl the group
+2. atom-based recrawl: probe sentinels, recrawl the group
 
 - question: with a bandwidth budget, does "probe one sentinel per atom, recrawl members on sentinel change" beat per-URL Poisson schedules (Cho, LambdaCrawl) and beat sitemap/IndexNow-driven crawling (Busa-Fekete) on freshness and on captured updates
 - why not answered: all scheduling papers assume independent per-URL change processes; Busa-Fekete adds site-declared signals but still per URL; Tan and Mitra sample a cluster to estimate its rate, not to trigger a group recrawl
@@ -271,7 +270,7 @@
 - main risk: the obvious sentinel (home page, feed, sitemap) is already what every crawler polls; the gain over "poll the feed" must be shown, which means focusing on sites without good feeds or with lying lastmod (Busa-Fekete's 80% of URLs)
 - confidence the gap is real: medium-high; I found no paper that does group-triggered recrawl from inferred groups
 
-### 3. atoms from cheap signals, no content fetch
+3. atoms from cheap signals, no content fetch
 
 - question: how well do HEAD-only signals (ETag, Last-Modified, Content-Length, Age), sitemap lastmod co-updates, feed entries, and dependency structure (shared scripts, shared API endpoints) predict content co-change
 - why not answered: Busa-Fekete measured sitemap signal quality per URL, not group structure; the CDN docs show that the group tags are stripped before delivery, so nobody knows how much leaks
@@ -279,7 +278,7 @@
 - main risk: ETag and Last-Modified are missing or fake on dynamic pages; the result may be "metadata is useless on the sites that matter"
 - confidence: high that nobody did the leakage survey; medium on the predictor
 
-### 4. retrospective atoms from archives at scale
+4. retrospective atoms from archives at scale
 
 - question: using Wayback CDX or Common Crawl monthly indexes, can we estimate co-change over years for millions of URLs, and does the atom structure show deploy and CMS events
 - why not answered: Thompson WebSci 2024 does longitudinal analytics on Common Crawl but (title only) not co-change; Pew used Common Crawl for rot, not drift; the archive papers study coherence of one page's parts, not groups of pages
@@ -287,14 +286,14 @@
 - main risk: capture times are irregular and driven by the archive's own scheduler, so co-capture confounds co-change; must model capture as a sampling process (Cho and Garcia-Molina's irregular-sample estimator applies)
 - confidence: high that the specific analysis is new; medium that archive cadence allows it
 
-### 5. atoms as the coherence unit for archived composite pages
+5. atoms as the coherence unit for archived composite pages
 
 - question: does grouping a root page with the embedded resources that co-change with it give a better temporal-coherence test than Ainsworth et al.'s per-resource Last-Modified patterns
 - why not answered: Ainsworth, Nelson, Van de Sompel reason per embedded resource; Berlin et al. 2023 study replay rewriting; nobody uses observed co-change across captures
 - main risk: the archive rarely captures resources often enough to estimate co-change; may only work for heavily crawled sites
 - confidence: medium
 
-### 6. evidence invalidation for LLM agents and RAG caches
+6. evidence invalidation for LLM agents and RAG caches
 
 - question: when a cited page changes, which other cached pages and derived claims should be re-verified, and does an atom graph predict that better than per-URL decay (FreshCache) or fixed TTLs
 - why not answered: FreshCache (2026) and OwlerLite (WWW 2026 companion) model freshness per URL; the human's `web_atoms.md` and `web_crawling.md` notes already sketch this; no paper evaluates group invalidation for agent evidence
@@ -302,7 +301,7 @@
 - main risk: hard to score "claim became stale" without human labels; FreshCache-Bench's hash-based labels are a start
 - confidence: medium-high that it is open; medium that it beats a simple "re-fetch everything cited from that host" rule
 
-### 7. temporal fingerprint of generated sites (link to DeGenTWeb)
+7. temporal fingerprint of generated sites (link to DeGenTWeb)
 
 - question: do AI-generated content farms change in bulk (many pages regenerated at once, uniform intervals, templates swapped site-wide) in a way that differs from human-run sites, and is that a usable detector feature
 - why not answered: generated-site detection work uses text and structure of a snapshot; change-over-time features are not used, and the change literature predates generated sites
@@ -310,14 +309,14 @@
 - main risk: the honest answer may be that legitimate CMS deploys look the same; and archives undersample small sites
 - confidence: high that it is unexplored; low-medium that it works
 
-### 8. re-run the classic change study on the 2020s web, with JavaScript
+8. re-run the classic change study on the 2020s web, with JavaScript
 
 - question: what are today's numbers for Cho's and Fetterly's quantities, with rendered DOM instead of raw HTML, split by CMS, CDN, and page type
 - why not answered: the public numbers are from 2000 to 2009; FreshCache's 1h/12h/24h/7d labels are the only recent public data point and were built for a benchmark, not a study
 - main risk: a pure re-measurement is a hard sell at IMC unless it changes a belief (e.g., "most hourly change is third-party and ad churn, so the Poisson-per-URL model is wrong for the top sites")
 - confidence: high that it is open; it is also the cheapest by-product of idea 1
 
-## What I could not cover this session
+what I could not cover this session
 
 - publisher PDFs for Adar 2009, Radinsky and Bennett 2013, Olston and Pandey 2008, Kolobov SIGIR and NeurIPS 2019, Demir et al. WWW 2022 (reproducibility of web measurement); quotes above for these come from the survey or from other papers citing them
 - Google's and Bing's recent production crawling papers beyond Busa-Fekete 2025; the search APIs were rate-limited for the second half of this session, so 2023 to 2026 coverage relies on Crossref keyword search, which misses arXiv-only work

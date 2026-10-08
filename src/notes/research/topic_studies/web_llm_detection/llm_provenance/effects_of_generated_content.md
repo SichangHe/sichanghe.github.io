@@ -1,10 +1,10 @@
-what AI-Generated Content Does to the Web: Measured Effects
+what AI-generated content does to the web: measured effects
 (authored by agents unless marked 🧑)
 
-Literature review of the harm AI-generated text, images and code suggestions
-have been shown to cause on the web, as of 7 Oct 2026. About 60 sources.
+- literature review of the harm AI-generated text, images and code suggestions have been shown to cause on the web, as of 7 Oct 2026
+    - about 60 sources
 
-Related notes, not repeated here:
+related notes
 
 - the human's notes in [gen_ai](../../../gen_ai.md), section "Issues from
     AI-generated text": Liang 2024 (peer reviews, papers), Brooks 2024
@@ -17,21 +17,16 @@ Related notes, not repeated here:
 - detectors: [llm_text](../llm_text/index.md)
 - crawler load on sites: [crawling](../web_infra/crawling.md)
 
-How to read this file: each section opens with what I think the evidence
-adds up to, split into measured in the wild, measured only in a lab, and
-only argued. "In the wild" means someone observed real sites, real users or
-real traffic. "Lab" means the authors built the generated content themselves
-and tested a system on it.
+- each section separates observation, laboratory tests, and arguments
+    - “in the wild” means observations of real sites, users, or traffic
+    - “lab” means authors generated content and tested a system on it
 
 models trained on generated data
 
-My take: every result that shows models getting worse comes from a lab loop
-the authors built. Nobody has shown a deployed model that got worse because
-the web filled with generated text. The lab results also disagree on how bad
-it is, and the disagreement comes down to one assumption: whether old human
-data stays in the training set. The first study that trains on generated text
-actually found on the web (Russell 2026) reports harm, but the detector vendor
-wrote it.
+- my take: every result that shows models getting worse comes from a lab loop the authors built
+    - this review found no deployed-model study isolating harm caused by generated web text
+    - the lab results also disagree on how bad it is, and the disagreement comes down to one assumption: whether old human data stays in the training set
+    - the first study that trains on generated text actually found on the web (Russell 2026) reports harm, but the detector vendor wrote it
 
 Lab, shows harm:
 
@@ -130,14 +125,10 @@ Closest to the wild:
 
 search and retrieval
 
-My take: that rankers prefer generated text is well shown in the lab, on
-benchmark collections where the authors rewrote human passages with an LLM.
-What I could not find is anyone measuring this on a live search engine.
-DeGenTWeb's Bing result (16.4% of how-to result sites) is prevalence in
-results, which is a different thing from the ranker favoring them.
-Search spam in general is in
-[seo_search_quality](../web_user/seo_search_quality/index.md), including
-Bevendorff 2024.
+- my take: that rankers prefer generated text is well shown in the lab, on benchmark collections where the authors rewrote human passages with an LLM
+    - What I could not find is anyone measuring this on a live search engine
+    - DeGenTWeb's Bing result (16.4% of how-to result sites) is prevalence in results, which is a different thing from the ranker favoring them
+    - Search spam in general is in [seo_search_quality](../web_user/seo_search_quality/index.md), including Bevendorff 2024
 
 Lab:
 
@@ -188,13 +179,10 @@ Lab:
 
 human knowledge sites: Stack Overflow, Wikipedia
 
-My take: this is the best measured harm in the whole file. Two independent
-studies with comparison groups found Stack Overflow lost activity right after
-ChatGPT, and the site has since nearly emptied. Wikipedia is less clear: early
-studies found little, and the 8% drop in human views that Wikimedia reported
-in 2025 is a before and after number with a cause the foundation asserts but
-did not test. Note that this harm comes from people asking a chatbot instead,
-not from generated content sitting on the web.
+- my take: this is the best measured harm in the whole file
+    - Two independent studies with comparison groups found Stack Overflow lost activity right after ChatGPT, and the site has since nearly emptied
+    - Wikipedia is less clear: early studies found little, and the 8% drop in human views that Wikimedia reported in 2025 is a before and after number with a cause the foundation asserts but did not test
+    - Note that this harm comes from people asking a chatbot instead, not from generated content sitting on the web
 
 - [Large language models reduce public knowledge sharing on online Q&A
     platforms](https://academic.oup.com/pnasnexus/article/3/9/pgae400/7754871),
@@ -263,11 +251,9 @@ not from generated content sitting on the web.
 
 misinformation and fake news sites
 
-My take: generated misinformation exists and is counted, but the counts are
-small next to ordinary misinformation, and I found no study that measures
-harm to readers in the wild. The one persuasive measured case is a single
-Russian-linked site that produced more after adopting an LLM. Hanley 2024
-also sits in [seo_search_quality](../web_user/seo_search_quality/index.md).
+- my take: generated misinformation exists and is counted, but the counts are small next to ordinary misinformation, and I found no study that measures harm to readers in the wild
+    - the one persuasive measured case is a single Russian-linked site that produced more after adopting an LLM
+    - Hanley 2024 also sits in [seo_search_quality](../web_user/seo_search_quality/index.md)
 
 In the wild:
 
@@ -353,10 +339,10 @@ vendor study with its own detector.
 
 fake reviews
 
-My take: thin evidence. I found only detector vendor reports, each on a small
-or oddly chosen sample, with no false positive rate measured on reviews.
-Nobody has shown generated reviews change what people buy. Fake reviews and
-their detection from before LLMs are a large literature that I did not cover.
+- my take: thin evidence
+    - I found only detector vendor reports, each on a small or oddly chosen sample, with no false positive rate measured on reviews
+    - nobody has shown generated reviews change what people buy
+    - Fake reviews and their detection from before LLMs are a large literature that I did not cover
 
 - [Pangram Amazon review study](https://www.pangram.com/blog/ai-amazon-reviews),
     Pangram Labs blog, dated 4 May 2026 on the page.
@@ -379,13 +365,10 @@ their detection from before LLMs are a large literature that I did not cover.
 
 academic publishing and peer review
 
-My take: use is well measured; harm is partly measured. The harm with the
-cleanest evidence is made-up references, because a reference either exists or
-it does not, so no detector is needed. Claims that LLMs flood science with
-weak papers rest on detectors and on one Science paper whose main number has
-been challenged. Liang 2024 and Latona 2024 are in the human's
-[gen_ai](../../../gen_ai.md) notes; prevalence counts are in
-[generated_web_measurement](generated_web_measurement.md).
+- my take: use is well measured; harm is partly measured
+    - the harm with the cleanest evidence is made-up references, because a reference either exists or it does not, so no detector is needed
+    - Claims that LLMs flood science with weak papers rest on detectors and on one Science paper whose main number has been challenged
+    - Liang 2024 and Latona 2024 are in the human's [gen_ai](../../../gen_ai.md) notes; prevalence counts are in [generated_web_measurement](generated_web_measurement.md)
 
 Made-up references (measured, no detector needed):
 
@@ -494,10 +477,8 @@ What venues did about it (shows the cost was real to them):
 
 made-up package names, court citations, bug reports
 
-My take: models make up names at a measured and still nonzero rate, and the
-downstream damage is counted in courts and in open source bug trackers. For
-packages, the attack is shown to be possible, but I found no measured case of
-an attacker registering a made-up name and getting installs.
+- my take: models make up names at a measured and still nonzero rate, and the downstream damage is counted in courts and in open source bug trackers
+    - For packages, the attack is shown to be possible, but I found no measured case of an attacker registering a made-up name and getting installs
 
 - [We Have a Package for You! A Comprehensive Analysis of Package
     Hallucinations by Code Generating LLMs](https://arxiv.org/abs/2406.10279),
@@ -549,10 +530,10 @@ an attacker registering a made-up name and getting installs.
 
 writing style and language
 
-My take: LLM word habits have clearly entered human writing and even speech.
-That is measured. Whether this is harm is opinion. The stronger harm claim,
-that people who write with an LLM end up sounding and thinking alike, is shown
-only in small lab studies.
+- my take: LLM word habits have clearly entered human writing and even speech
+    - That is measured
+    - Whether this is harm is opinion
+    - the stronger harm claim, that people who write with an LLM end up sounding and thinking alike, is shown only in small lab studies
 
 - [Empirical evidence of Large Language Model's influence on human spoken
     communication](https://arxiv.org/abs/2409.01754), Hiromu Yakura, Ezequiel
@@ -594,10 +575,9 @@ only in small lab studies.
 
 money: publishers, freelancers, creators
 
-My take: the money harm to publishers is real and now has causal evidence,
-but it comes from AI answers shown in place of links, not from generated pages
-competing with human ones. I found no study that measures human sites losing
-readers or ad money to generated sites. That is the gap closest to DeGenTWeb.
+- my take: the money harm to publishers is real and now has causal evidence, but it comes from AI answers shown in place of links, not from generated pages competing with human ones
+    - I found no study that measures human sites losing readers or ad money to generated sites
+    - That is the gap closest to DeGenTWeb
 
 AI answers taking clicks:
 
@@ -727,12 +707,11 @@ research we could do
     Overflow used to answer. Joins the knowledge site section with DeGenTWeb's
     how-to query set.
 
-I would start with 1 and 2. Both reuse data DeGenTWeb already has, and both
-answer the question a reviewer will ask of a prevalence paper: so what?
+- I would start with 1 and 2
+    - both reuse data DeGenTWeb already has, and both answer the question a reviewer will ask of a prevalence paper: so what?
 
 gaps in this review
 
-- ChatGPT was not consulted; the tool fails on login.
 - I read abstracts and summary pages for most papers, not full texts. The
     Lancet letter, the Agarwal and Sen experiment, Hui 2024 and the Ahrefs
     study were read only through secondary pages, as marked.
@@ -740,3 +719,7 @@ gaps in this review
     deepfake fraud, education and student cheating, generated books on
     Amazon, social media bots (the human's notes list them), and the fake
     review literature from before LLMs.
+
+consultation
+
+- see the [provenance index](index.md) for the current Extra High consultation

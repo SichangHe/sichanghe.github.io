@@ -1,5 +1,10 @@
-measuring How Much of the Web Is AI-Generated
+measuring how much of the web is AI-generated
 (authored by agents unless marked 🧑)
+
+- targeted review of generated-content prevalence studies
+    - compares their populations, units, definitions, and detector assumptions
+    - reviewed 7 Oct 2026
+- consultation status is in the [provenance index](index.md)
 
 Sibling notes: [image_watermarking](image_watermarking.md),
 [labeling_rules_and_practice](labeling_rules_and_practice.md); detectors
@@ -8,7 +13,10 @@ themselves are covered under [llm_text](../llm_text/), search and SEO under
 
 open web and web crawls
 
-pew Research Center, "How Much of the Internet Is Written With AI?" (2026)
+- closest reviewed studies sample Common Crawl or the Internet Archive
+    - historical positive rates and known-authorship error rates must be distinguished
+
+Pew Research Center, "How Much of the Internet Is Written With AI?" (2026)
 
 [Main report](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/)
 and [methodology](https://www.pewresearch.org/data-labs/2026/08/20/methodology-ai-content/),
@@ -581,10 +589,55 @@ prevalence. What exists:
     provenance labels rather than detectors are the plausible path to counting
     images
 
+This is a real gap: nobody has done for images what Pew or DeGenTWeb did for
+text, probably because in-the-wild image detectors fail after resizing and
+recompression (see the "Navigating the Challenges of AI-Generated Image
+Detection in the Wild" line of work,
+[arXiv 2507.10236](https://arxiv.org/html/2507.10236v2)).
+
 cross-cutting lessons on trusting the numbers
 
-- nobody has a prevalence number for images on the open web, and nobody has
-    a non-English web number beyond Thompson's machine translation work
+What I take away after reading all of the above, and what I think the
+DeGenTWeb intro should say instead of "claims vary widely":
+
+- the unit decides the number. On the same 2025 web: 2.5% of pages are pure
+    AI (Ahrefs), 6% of sites are LLM-dominant over 2020 to 2025 and 28.6% of
+    new sites in 2025H1 (DeGenTWeb), 35% of dated pages show AI signs (Pew),
+    35% of new URLs are AI or AI-assisted (Dolezal), 27.5% of filtered tokens
+    are AI (Russell), 50% of articles are mostly AI (Graphite), 74% of pages
+    contain some AI (Ahrefs). These are not contradictions, they are different
+    questions. A paper that states its unit and its threshold up front, as
+    DeGenTWeb does with "LLM-dominant", is answering one of them
+- historical positive rates reveal a useful negative-control problem
+    - they equal false-positive rates only if the sampled text is known human
+    - reviewed examples include Originality.ai's historical search and review flags
+        - 2.27% in 2019 search results, 5.01% in Google reviews, 4.49% in TripAdvisor
+    - Graphite reports 2.2% in 2020
+- Pangram is now the detector behind most 2026 headlines (Pew, Dolezal,
+    Russell twice, Graphite's update, ICLR 2026, Amazon, social feeds). When
+    one proprietary model produces most of the numbers, agreement between
+    studies is not independent confirmation. DeGenTWeb's open zero-shot
+    scorer is a real differentiator here, and the draft should say so
+- "AI-assisted" buckets double the number. Dolezal's 35% is AI plus assisted;
+    Ahrefs' 74% is any AI span; Originality counts posts with 15% AI.
+    Sem-Detect vs EditLens on the same reviews (5% vs 24% fully AI) shows the
+    fully-AI share is a detector choice once mixed writing is common. The
+    MAGE testbed 8 check in the draft (98.9% of GPT-4 paraphrased human text
+    still scores human) is the right kind of evidence that LLM-dominant is a
+    stricter and more stable label
+- corpus-level word statistics (Liang, Kobak) give a fraction without individual labels, so they
+    cannot support site characterization, incentive analysis or search
+    ranking comparisons. DeGenTWeb needs per-site labels and so needs a
+    detector; the trade is worth stating
+- plateaus are ambiguous. Liang 2025 (society), Graphite (50%) and Pew all
+    show growth slowing in 2024 to 2026. DeGenTWeb's frontier-model
+    experiment (accuracy 0.58 on 2025 models, Pearson -0.88 with model
+    strength) is evidence that apparent slowing may reflect detectors
+    going blind rather than adoption stopping. That is a stronger framing
+    for the limitations section than "would current detection work on newer
+    LLMs"
+- this review found no comprehensive open-web image prevalence estimate
+    - multilingual web measurement coverage is thin beyond Thompson's translation work
 
 research we could do
 
@@ -645,4 +698,3 @@ research we could do
 - builds on Chen, DiResta, Brooks, Hanley, and [image watermarking](image_watermarking.md)
 - measures detectable evidence rather than total generated-image prevalence
 - no comprehensive open-web estimate was identified in this review
-

@@ -103,6 +103,51 @@ recapture attacks already appear in the cryptographic literature
     - bibliographic record checked through publisher-deposited Crossref metadata
     - publisher full text could not be retrieved during this pass
     - no accuracy or generalization claim is inferred from its title
+- [mToFNet: Object Anti-Spoofing with Mobile Time-of-Flight Data](https://arxiv.org/abs/2110.04066), Jeong et al., inspected 2021 preprint
+    - §4: pairs ordinary colour photos with measured depth
+        - time of flight measures distance from the return time of emitted light
+        - targets photographs of objects displayed on screens
+    - authors, figure 1: “The unique patterns per display makes it challenging to develop a generalized method”
+        - moiré means interference patterns from overlapping display and camera pixel grids
+        - depth adds evidence about physical shape rather than relying only on those patterns
+    - §4: 12,529 colour/depth pairs, 27 object categories, 16 display media
+        - captured with a Samsung Galaxy Note 10
+        - screen copies photographed on a tripod with lights off
+        - includes projectors as well as phones, tablets, and monitors
+    - table 3: 96.67% accuracy on unseen displays
+        - 100% on the training display type
+        - tests display transfer, not transfer to a different depth camera
+    - relevance to Sony, our inference
+        - measured depth for detecting screen copies already has an evaluated research baseline
+        - dark-room screen results do not establish performance on sunlight, prints, flat genuine subjects, or Sony hardware
+- [Domain Generalization for Document Authentication against Practical Recapturing Attacks](https://arxiv.org/abs/2101.01404), Chen et al., inspected June 2021 revision
+    - §III: compares a questioned document with reference document patches
+        - learns which differences resemble a second print-and-capture cycle
+    - authors, §III: “recapturing traces, such as halftone and color degradation”
+        - halftone means the small printed dots used to reproduce shades
+        - ordinary image pixels can carry these clues without a depth sensor
+    - §IV: synthetic identity and certificate templates manufactured as physical originals
+        - two main datasets contain 672 and 432 images
+        - tests different printers, cameras, scanners, substrates, and screen recapture
+    - abstract: below 5% accepted attacks and 5.56% rejected genuine documents in its hardest cross-device, cross-document setting
+        - these are separate errors, not a single accuracy score
+        - comparison relies on reference samples and document structure
+    - relevance to Sony, our inference
+        - a real document is flat but may still have meaningful capture evidence
+        - general photo verification cannot assume document references are available
+- [Learning Feature Disentanglement and Dynamic Fusion for Recaptured Image Forensic](https://arxiv.org/abs/2206.06103), Miao, Zheng, and Jin, inspected 2022 preprint
+    - combines separate detectors for moiré, visible device edges, reflections, and other clues
+    - authors, introduction: “other recaptures (e.g., the cursor of the mouse appeared in the image)”
+    - table 1: 75,000 originals and 75,000 recaptured images in the RUR dataset
+    - table 2: 98.1% precision and 95.3% recall
+        - precision asks how often a recapture warning is correct
+        - recall asks how many recaptures receive a warning
+    - limitation: the inspected four-page report does not specify train/test splitting or held-out camera/display evaluation
+        - its large dataset alone does not establish transfer to unseen devices
+        - our inference: visible frames and pointers may disappear when an attacker crops tightly
+    - relevance to Sony, our inference
+        - compare depth with ordinary visual clues on the same cases
+        - success on easy visible clues should not conceal failures when only the screen content fills the image
 - implication for Sony experiment
     - depth-based copy detection is not a new research concept
     - independently testing a deployed signed-camera workflow may still be useful
@@ -135,11 +180,13 @@ second experiment: test the screen-copy claim
 - measure false acceptance of copies and false rejection of genuine subjects
     - report results for each condition, not one pooled accuracy
 - research novelty remains unverified
-    - complete the recapture-detection literature search before claiming a new method
+    - the reviewed papers already establish depth and pixel-based recapture methods
+    - check additional device-transfer work before claiming a new method
 
 remaining scope
 
-- independent evidence for depth-based copy detection is missing from this note
+- independent evaluation of Sony’s deployed depth verification remains missing
+    - mToFNet evaluates a different capture device and workflow
 - the four collected edit-proof PDFs were compared above
     - shared-task reproduction and later versions remain unchecked
 - current camera firmware, access costs, and supported models need checking before an experiment
