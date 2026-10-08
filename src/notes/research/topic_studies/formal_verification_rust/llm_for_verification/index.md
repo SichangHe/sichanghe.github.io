@@ -14,6 +14,10 @@ start here
   - research novelty needs a narrower question and direct comparisons
 
 read by question
+- [C code and operating-system proofs](c_and_systems_proofs.md)
+  - agents generating C specifications, Isabelle proofs, Rocq proofs, and checked program cores
+- [invariants and models](invariants_models_autoformalization.md)
+  - candidate invariants, model checking, and requirements translated into formal descriptions
 
 - [proof synthesis](proof_synthesis.md)
   - Lean, Rocq/Coq, Isabelle, Dafny, F*/Pulse
