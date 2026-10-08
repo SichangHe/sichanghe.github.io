@@ -38,7 +38,7 @@ what the topic is
     - proofs apply to a particular version
   - the VM and its bytecode checker (shared by all contracts)
   - the client (consensus, networking, storage, runtime), covered elsewhere
-    - for consensus proofs see [distributed_protocols.md](distributed_protocols.md) and [../../distributed_systems/](../../distributed_systems/index.md)
+    - for consensus proofs see [distributed_protocols.md](distributed_protocols.md) and ../../distributed_systems/ (local note; not yet published)
     - for ZK and crypto code see [crypto.md](crypto.md)
 
 what existing work shows
@@ -269,7 +269,7 @@ idea 1: proof versus differential fuzzing on one agave piece
 - builds on
   - [agave_verification_scope.md](../../../agave_verification_scope.md): 349-line sanitizer, 5-8 week estimate
   - [solana-conformance](https://github.com/firedancer-io/solana-conformance) as the fuzz baseline
-  - [verus_frontier_20261006.md](../../../verus_frontier_20261006.md) for the verifier choice
+  - verus_frontier_20261006.md (local note; not yet published) for the verifier choice
 - what is new
   - an equal-budget comparison of a proof and fuzzing on a real validator pair
 - why it matters
