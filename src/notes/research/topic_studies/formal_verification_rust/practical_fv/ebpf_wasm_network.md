@@ -4,13 +4,14 @@ verifying the code between untrusted programs and the system: eBPF, WebAssembly,
 short version
 - the eBPF verifier is mostly not verified; people verify slices of it, test it, or replace it
   - the slices proved so far: range analysis (Agni), the bit-tracking domain (tnum), JITs (Jitterbug)
-  - the biggest open piece is path pruning, plus everything else the verifier does
+  - path pruning and the remaining verifier stages are outside the reviewed component proofs
+    - path pruning skips executions judged already covered by an earlier analysis state
   - inference: the "verified verifier" is a patchwork of unrelated proofs, with no map of what remains
 - testing found verifier bugs despite existing proofs of selected components
   - Sun and Su found 15 new verifier bugs in one month; Agni found 27 in older kernels
 - the Wasm sandbox has verified pieces but no verified chain
   - pieces: mechanized semantics, verified instruction selection (Crocus, Arrival), binary checkers (VeriWasm, the LFI verifier), a verified runtime boundary (WaVe)
-  - nobody has joined them end to end (inference, from what I found)
+  - this review did not find an end-to-end proof joining them
 - verified parsing is the most mature part of network verification
   - EverParse runs in Hyper-V; Vest, Verdict, VUPER are newer
   - the new pattern: use the verified parser as a test oracle against other implementations (VUPER found 20 kinds of mismatch)
@@ -105,13 +106,28 @@ testing as the practical competitor
   - fact: LLM repair gets 0 to 37% one-shot success on 75 tasks; with bpfix localization it gains 11 to 21 points
   - this is about usability of the verifier, not soundness; it shows the cost of false rejections
 
+- [Sun and Su, Approximation Enforced Execution of Untrusted Linux Kernel Extensions, USENIX Security 2025](https://www.usenix.org/conference/usenixsecurity25/presentation/sun-hao)
+  - primary-source depth: official abstract checked; full paper and artifact not inspected in this follow-up
+  - method: insert runtime checks that stop an extension when its actual state leaves the states predicted by the verifier
+    - the complicated state prediction can then be wrong without silently allowing an unchecked memory access
+    - simpler verifier safety checks and the inserted enforcement remain trusted
+  - authors claim spatial memory safety under this smaller trusted boundary
+    - abstract: “formally prove its soundness”
+    - spatial memory safety concerns accesses staying inside permitted memory regions
+  - authors report 4.5× smaller trusted code, 1.2% average runtime overhead, and 4.8% average binary growth
+    - measurements describe their prototype and workloads
+    - results were not reproduced here
+  - limit: this is not a proof of the entire Linux verifier or of every property an eBPF program should satisfy
+  - implication: runtime enforcement is another direct alternative to proving or replacing the whole verifier
+    - inspect this paper before proposing a new way to reduce trust in verifier state prediction
+
 replacing or moving the checker
 - Rex, Jia and others, USENIX ATC 2025, peer reviewed, opened abstract and TCB section
   - [paper](https://arxiv.org/abs/2502.18832)
   - fact: extensions written in safe Rust, no in-kernel verifier; a small runtime handles exceptions, stack, termination
   - fact: the TCB becomes "the Rust toolchain, the Rex kernel crate" and more
   - claim: closes the "language-verifier gap", where a safe program is rejected by the verifier
-  - inference: this swaps a verifier you cannot prove for a compiler and runtime you also have not proved; no proof of Rex's own safety exists in the paper
+  - inference: this changes the trusted boundary to a compiler and runtime; the paper does not prove Rex's own safety
 - Heimdall, Dasu, Santra and others (Gang Tan's group), arXiv May 2026 (v2 August), preprint, opened abstract and limits
   - [paper](https://arxiv.org/abs/2605.25411)
   - fact: translates C eBPF to Rust (Aya); "109 formally proven-equivalent translations (94.8%)" of 115 programs, using symbolic execution and Z3
@@ -236,7 +252,7 @@ other items near this
   - [paper](https://arxiv.org/abs/2604.03539)
   - fact: modular verification of properties that "eventually stabilize"; it "checks the necessary component-by-component requirements in parallel using an SMT solver"
   - fact: the verification algorithm is formalized and proved sound in Lean
-  - this is a proved checker for network configurations, like Agni is a proved check of a checker
+  - this checks network configurations; Agni instead verifies range-analysis properties through a trusted C-to-SMT translation
   - not implementation verification: the router software is outside the model
 - Batfish, Minesweeper, Lightyear, Hoyan: seen in search results only, not opened
   - [Lightyear on arXiv](https://arxiv.org/abs/2204.09635) (search result)
@@ -248,10 +264,10 @@ what is missing
   - evidence: Agni says it covers "Only Range Analysis"; Sun and Su found bugs even in the proved range analysis; Jitterbug leaves out the checker; I found no paper that sorts verifier bugs by which proof would have caught them
 - path pruning, pointer typing, and the verifier's treatment of helper functions have no proofs I could find
   - evidence: the Rutgers page says the group looks at "path-exploration logic" but lists no finished paper on it
-- no end-to-end Wasm chain from spec to machine code
+- this review did not find an end-to-end Wasm proof from specification to machine code
   - evidence: pieces exist (WasmCert, Crocus, Arrival, VeriWasm, LFI proof, WaVe), and WaVe says multi-thread sandboxes are out of scope
 - no study of the cost of false rejections against the cost of unsound acceptance, in proof terms
-  - evidence: bpfix measures rejections; the proofs measure soundness; nobody joins them
+  - evidence: bpfix measures rejections; the proofs measure soundness; the inspected sources do not join them
 - I did not find a production TCP, QUIC, or TLS implementation proof within the searches listed below
   - evidence: in my search, QUIC work was spec-based testing (Ivy); Vigor is the latest full-NF proof I found
   - caveat: broad search was patchy; I did not search for seL4 network stacks or HACL-style TLS beyond [crypto.md](crypto.md)
@@ -297,7 +313,7 @@ research we can do
   - [Verus systems work](../rust_verifiers/verified_systems.md)
   - the Wasm threads proposal
 - what is new: the thread case, which WaVe lists as outside the proof, and a time-of-check to time-of-use argument (a bug where state changes between a check and its use)
-- why it may matter: real Wasm use is moving toward threads; a runtime proof that stops at one thread will not be adopted
+- why it may matter: threaded runtimes need guarantees beyond the reviewed single-thread proof
 - first experiment: port the hostcalls that touch paths (`path_open`, `fd_read`) to Verus; add a second thread that races on file descriptors; see which WaVe invariants break
 - convincing result: a proof of the fd-table invariants under races, with overhead below WaVe's mean of 2.16x on hostcalls
 - cost: 2 to 3 months; the OS specification is the hard part

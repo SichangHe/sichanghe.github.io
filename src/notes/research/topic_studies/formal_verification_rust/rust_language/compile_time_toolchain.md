@@ -73,6 +73,18 @@ compiler correctness research
   - limit: the generator and execution comparison are part of the trusted test machinery
     - a disagreement requires investigation
     - agreement does not establish absence of bugs
+- [Liu et al., An Empirical Study of Bugs in the rustc Compiler, OOPSLA 2025](https://doi.org/10.1145/3763800)
+  - primary-source depth: [publisher-deposited abstract](https://api.crossref.org/works/10.1145/3763800) checked; full paper and artifact not inspected in this follow-up
+  - population: issues and fixes from 2022–2024, with 301 valid issues manually reviewed
+    - focuses on semantic analysis and intermediate program representations
+    - not every compiler stage or every Rust application bug
+  - method: classify causes, symptoms, affected stages and test cases; evaluate existing compiler-testing tools
+  - authors' reported limitation: “existing testing tools struggle to detect non-crash errors”
+    - abstract-level finding; no tool-specific detection rate checked here
+  - implication: a new compiler-bug corpus or testing proposal must compare its failure categories with this study
+    - inspect its full text before claiming edit histories expose a previously unstudied class
+    - this abstract alone does not establish whether the study already evaluates incremental-compilation histories
+
 - Clozemaster: Gao, Yang, Sun, Wu, Zhou, and Xu, ICSE 2025
   - [Clozemaster: Fuzzing Rust Compiler by Harnessing LLMs for Infilling Masked Real Programs](https://doi.org/10.1109/ICSE55347.2025.00175)
   - title quotation: “Infilling Masked Real Programs”

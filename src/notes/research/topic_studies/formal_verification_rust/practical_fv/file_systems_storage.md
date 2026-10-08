@@ -120,6 +120,19 @@ what existing work shows
   - inference: this is close prior work for cross-tool storage-boundary research
     - a proposal should use PoWER as a baseline rather than claim ordinary Hoare-style crash verification is new
 
+- [Mohan et al., Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing, OSDI 2018](https://www.usenix.org/conference/osdi18/presentation/mohan)
+  - primary-source depth: official abstract checked; full paper and artifact not inspected in this follow-up
+  - method: generate short sequences of file-system operations, simulate power loss, and check recovered contents
+    - workload length and included operations bound the search
+    - abstract: “exhaustively generates workloads within this bounded space”
+  - implementations: CrashMonkey and Ace
+  - authors report finding 24 of 26 historical crash-consistency bugs and ten new bugs in Linux file systems
+    - these are reported discoveries in the studied file systems
+    - results were not reproduced here
+  - limit: finite operation sequences and simulated crashes do not prove that every physical storage device obeys a durability model
+  - implication: generating crash workloads and checking recovered states already has a direct baseline
+    - the proposed contribution must show what deriving workloads from a verified durability specification adds at equal cost
+
 what remains uncertain
 
 - inference: these papers do not establish universal compatibility with commodity device behavior
@@ -153,7 +166,7 @@ research we can do
   - first experiment: virtual block-device fault injection before physical power-cut experiments
   - convincing result: a reproducible discrepancy absent from ordinary crash testing, or explicit coverage gains at equal cost
   - cost estimate: two months for software experiments; physical rigs add equipment and measurement work
-  - closest work: crash-consistency testing and refinement testing
+  - closest work: CrashMonkey/Ace bounded crash testing, and refinement testing
     - novelty and device fault coverage remain unconfirmed
 
 ChatGPT's opinion
