@@ -1,0 +1,401 @@
+anatomical simulation and real-time hand deformation
+(authored by agents unless marked 🧑)
+
+takeaway
+- agent recommendation: study when a fast learned hand model should request a slower physical calculation
+  - the nearest work already achieves multiresolution deformation in milliseconds
+  - useful uncertainty concerns unfamiliar poses, contact, anatomy, and missed timing deadlines
+- human interest comes from [reading notes](../../../../reading_notes/index.md)
+  - 🧑 quote: “Real-time Multi-Resolution Neural Networks for Hand Simulation”
+  - [USC defense announcement](https://viterbi.usc.edu/events/event_details.php?events_id=106125) confirms this title and September 19, 2024 defense
+- this is a graphics and systems research study
+  - shape agreement, physical force accuracy, and medical usefulness require different evidence
+- evidence checked on 7 Oct 2026 UTC
+  - selected dissertation chapters 3–5, corresponding 2022/2024 paper methods and evaluations, and their limitations inspected
+  - selected methods inspected in plastic-strain reconstruction, PIANO, and the 2021 dynamic emulator
+  - selected methods, evaluation split, and limitations inspected in NePHIM, 2025
+  - older baseline project descriptions inspected separately
+  - no experiments run; proposed originality remains unconfirmed
+
+the problem from first principles
+- an animator provides joint angles and needs a hand shape before the next image is displayed
+- bones constrain motion; tendons transmit tension; soft tissues change shape and slide
+- a finite element method, FEM, divides tissue into small elements and computes their mechanical interaction
+  - finer meshes can represent more detail but require more computation
+- a learned approximation can predict a shape quickly from examples
+  - matching its training simulator does not establish that the simulator matches real tissue
+- distinguish three questions
+  - reconstruction: does the shape match a scanned pose?
+  - prediction: does it match an unseen pose or interaction?
+  - timing: does the complete pipeline finish before its deadline?
+
+the dissertation and physical model
+- Mianlun Zheng, [Real-time Simulation of Hand Anatomy Using Medical Imaging, USC dissertation](https://zhengmianlun.github.io/publications/papers/thesis.pdf), 2024
+  - PDF title page says December 2024; author publication list says October 2024
+  - chapter 3 develops the anatomy simulator; chapter 4 develops fast mesh deformation
+  - chapter 5 quote: “Our work processed a single subject”
+  - simulated motion is not evidence of generalization across people
+- Zheng, Wang, Huang, and Barbič, [Simulation of Hand Anatomy Using Medical Imaging, SIGGRAPH Asia 2022](https://zhengmianlun.github.io/publications/papers/handAnatomy.pdf), §§3–8
+  - quote: “substantial manual effort”
+    - refers to delineating anatomy on MRI slices
+  - MRI means magnetic resonance imaging
+  - six scanned poses guide the model; six other dataset poses test it
+  - separate layers simulate bones, tendons, ligaments, muscles, fascia, and fat
+    - fascia is a tissue sheath represented here by a cloth-like mesh
+  - tendons use rod mechanics and sliding attachments
+  - muscles and fat use volume meshes
+  - fitted plastic strains guide each organ toward its scanned shape
+    - here plastic strain is a fitted change in the tissue's preferred local shape
+    - it is a modeling parameter rather than a demonstrated measurement of permanent tissue damage
+  - simulation proceeds through layers with one-way coupling
+    - later tissue calculations do not fully feed forces back into earlier layers
+  - evaluation compares external surfaces to optical scans and internal contours to MRI
+  - Table 4 separates average, median, and maximum surface errors
+    - held-out poses have mean errors of 0.54–0.89 mm and maximum errors of 2.70–4.98 mm
+    - submillimeter average error does not imply every location has submillimeter error
+    - internal-organ comparisons are not equivalent to force validation
+  - MRI resolution leaves two small muscles unresolved across poses
+  - tendons are modeled only where visible in the scans
+  - relaxed motion dominates the fitted examples
+    - heavy grasping, lifting, and externally imposed contact remain outside the validated scope
+  - veins visible in volume rendering are not separate validated blood-flow simulations
+    - the human's talk notes list more anatomy than the mechanically evaluated organ models
+
+the fast multiresolution model
+- Zheng and Barbič, [Multi-Resolution Real-Time Deep Pose-Space Deformation, SIGGRAPH Asia 2024](https://viterbi-web.usc.edu/~jbarbic/fastDefo/ZhengBarbic-SIGGRAPH-Asia-2024.pdf), §§3–6
+  - quote: “quality outside of the training dataset diminishes”
+  - trains on skeleton poses and high-quality simulated mesh shapes
+  - hand example uses 3,607 FEM frames
+  - coarse predictions are enlarged onto finer meshes
+    - local neural networks predict the remaining deformation detail
+  - overlapping local predictions blend with weights that sum to one
+  - linear blend skinning moves vertices using weighted bone transformations
+    - neural predictions correct its shape errors before that transformation
+  - four illustrated meshes contain 1,133 to 72,414 vertices
+  - finest illustrated corrective computation takes 548 microseconds
+    - skinning adds 1,156 microseconds in the same example
+    - rendering, tracking, and other application work are additional costs
+  - runtime uses custom inference rather than a general neural library
+  - memory is allocated in advance and related data stored together
+  - authors identify memory reads and upsampling as major costs
+  - integrated OpenGL demonstration already includes dynamic normals and rendering
+  - authors distinguish hot and cold caches and report up to a twofold slowdown
+    - cold caches lack recently used deformation data because other work displaced it
+  - reported speedup compares a learned shape calculation against its slow FEM source
+    - the output is not a fresh mechanical equilibrium solve
+  - finer resolution adds available training detail
+    - it does not automatically remove model error
+  - poses outside the training range visibly degrade
+  - “hard-real-time” is the paper's target terminology
+    - measured short runtime does not by itself prove a worst-case execution bound on arbitrary hardware
+- [project artifacts](https://viterbi-web.usc.edu/~jbarbic/fastDefo/)
+  - code and supplementary data are offered for reproduction
+  - reproduce total deformation time before introducing a new scheduler
+
+nearest earlier work
+- Wang, Matcuk, and Barbič, [Hand Modeling and Simulation Using Stabilized MRI, SIGGRAPH 2019](https://viterbi-web.usc.edu/~jbarbic/hand-mri/), project description
+  - quote: “complete human hand bone anatomy”
+  - stabilizes scanning poses and reconstructs bone geometry and motion
+  - relevant baseline for scanned skeletons and skin-shape comparison
+- Wang, Matcuk, and Barbič, [Modeling of Personalized Anatomy using Plastic Strains, TOG 2021](https://arxiv.org/pdf/2008.00579), reconstruction methods
+  - quote: “large spatially varying and/or anisotropic strains”
+  - fits anatomy using landmarks, image surface points, attachments, and regularization
+  - regularization discourages irregular fitted shape changes
+  - directly precedes the hand paper's organ fitting
+  - plausible fitted geometry does not uniquely identify tissue stiffness or force response
+- Romero, Tzionas, and Black, [MANO, SIGGRAPH Asia 2017, author manuscript deposited in 2022](https://arxiv.org/pdf/2201.02610), §§3.2, 4.3, 5.1, and 6
+  - authors: “we currently do not explicitly reason about this”
+    - refers to self-contact
+  - compact hand-surface model uses learned shape and pose-dependent corrections
+    - mirrored left-hand scans augment right-hand training
+  - pose evaluation fits 50 scans of six unseen people after excluding severely occluded scans
+    - uses personalized templates and optimizes pose
+    - scan-to-mesh error measures fitted geometry rather than force prediction
+  - shape generalization uses leave-one-person-out evaluation on training subjects
+    - this differs from the independent pose dataset
+  - full-body sequence optimization takes about four minutes per frame on the reported Xeon
+    - efficient model evaluation is distinct from fitting unknown parameters to scans
+  - small self-contact appears in demonstrations without explicit contact reasoning
+    - object surfaces are removed from training scans rather than jointly solved during fitting
+  - implication: surface fitting, shape prediction, and physical contact remain distinct baselines
+  - reading limit: selected full registration, fitting, evaluation, and limitations inspected
+    - supplementary results and artifact not independently reproduced
+- Li et al., [PIANO, IJCAI 2021](https://arxiv.org/pdf/2106.10893), §§3–5
+  - quote: “parametric bone model”
+  - learns bone shape and pose from annotated MRI
+  - evaluates bone fitting and MRI segmentation
+  - compact bone anatomy does not provide the hand paper's sliding soft-tissue simulation
+- Bailey et al., [Fast and Deep Deformation Approximations, 2018](https://jamesobrien.com/papers/Bailey-FDD-2018-08/Bailey-FDD-2018-08.pdf), §§3.4–5.1
+  - authors: “cannot handle dynamics or non-deterministic behavior”
+  - learns nonlinear corrections to skeleton-driven deformation
+  - training poses independently sample manually bounded joint ranges
+    - visually implausible whole-body poses can still supply useful local deformation examples
+  - evaluates four production character rigs on walking and selected martial-arts animations
+    - facial controls disabled
+    - stretched kicks outside training produce larger local errors
+  - CPU timing compares deformation computation against the optimized Libee rig engine
+    - skeleton computation and rendering are additional work
+    - the iPad demonstration substitutes a simplified skeleton computation
+  - static per-pose learning does not model contact forces or motion history
+  - implication: fast rig replacement and observed out-of-range failures already precede the hand model
+    - compare calibrated fallback decisions rather than claiming either basic mechanism is new
+  - reading limit: selected full training, accuracy, timing, application, and limitation sections inspected
+    - original proprietary rigs and artifacts not independently reproduced
+- Li et al., [NIMBLE, SIGGRAPH 2022](https://arxiv.org/pdf/2202.04533), selected registration, evaluation, and conclusion sections
+  - quote: “We only use right-handed data”
+  - represents twenty bones, seven muscle groups, and skin
+  - registers an anatomical volume template to MRI and supplements pose coverage with surface scans
+  - registration penalties discourage muscle and skin intersections
+  - learned parameters control pose, shape, and appearance
+  - compares surface fitting and generalization against MANO
+  - anatomical mesh structure does not establish force-valid muscle mechanics
+  - conclusion identifies two-hand contact and object interaction as further work
+  - closer anatomy-aware learned comparator than MANO alone
+
+motion and contact change the problem
+- Zheng, Zhou, Ceylan, and Barbič, [A Deep Emulator for Secondary Motion of 3D Characters, CVPR 2021](https://arxiv.org/pdf/2103.01261), §§3–5
+  - quote: “the quality of our output decreases”
+    - concerns local geometric detail absent from training
+  - predicts each vertex from a local volume-mesh neighborhood
+  - recent positions supply velocity and acceleration information
+  - a simulated sphere supplies training motions for transfer to other meshes
+  - evaluates repeated prediction over complete motion sequences
+    - a small one-step error can grow when predictions feed later predictions
+  - this is a dynamics comparator rather than a static joint-angle-to-shape comparator
+- Wagner, Schwanecke, and Botsch, [NePHIM, Computer Graphics Forum 2025](https://onlinelibrary.wiley.com/doi/full/10.1111/cgf.70045), §§3–5
+  - quote: “random train/test splits (90%/10%)”
+  - volumetric head model includes skull constraints, pushing paths, and skin pulling
+  - efficient neural approximation uses reduced shape coordinates and recent state
+  - approximately 50,000 frames come from eight recorded identities
+    - participants are Caucasian men aged 26–54
+  - random frames from recordings evaluate approximation accuracy
+    - inference: this is weaker evidence for new interaction sequences than holding whole recordings out
+  - realism study asks 53 participants to compare animations
+    - preference establishes perceived naturalness rather than measured mechanical accuracy
+  - missing cartilage and unresolved self-collisions limit the source simulator
+  - already demonstrates learned temporal contact approximation
+    - adding contact history alone is not an original contribution
+- Huang et al., [Volume Rendering of Human Hand Anatomy, 2024 full preprint](https://arxiv.org/html/2411.18630v1), selected methods and evaluation
+  - quote: “improves hand anatomy visualization”
+  - visualization is a separate stage from reconstruction, deformation, and force computation
+  - authors: “We do not investigate segmentation”
+  - inherits MRI, segmented meshes, and simulated animations
+    - missing wrist bones, thumb tendons, and many ligaments limit anatomy coverage
+  - camera rays intersect organ meshes; tissue priorities resolve overlapping rendering samples
+    - this does not repair mechanical mesh penetration
+  - tissue-specific color and opacity emphasize interior anatomy or fat
+  - five simulated animations, two styles, and three viewpoints produce 30 sequences
+    - these are not five new dynamic MRI acquisitions
+  - CPU renderer on i7-7700K averages 3.7 and 4.7 seconds per 1024² image for the two styles
+    - maximum memory: 612.3 MB
+    - interactive GPU rendering remains future work
+  - image comparisons do not establish blinded recognition, clinical validity, or mechanical accuracy
+  - inference: visualization baseline for inspecting failures; diagnostic usefulness needs a separate test
+  - selected full primary methods and comparisons read; implementation not executed
+
+- Malleval et al., [residual-aware material approximation, 2025, primary manuscript §§3–4](https://hal.science/hal-05070128/document)
+  - authors: “used as an initialization for the conventional algorithm”
+  - checks the neural prediction against the local material equation
+    - accepts it below a residual threshold
+    - otherwise starts the conventional solver from that prediction
+    - global equilibrium solution remains separate
+  - final-iteration correction can restore the original local solver
+    - turbine-blade example's 1.95× total speedup includes reduced-order modeling
+    - neural approximation adds 1.42× relative to reduced-order modeling alone
+  - direct overlap: residual-triggered physical correction already exists
+    - applies to a specified material law, not automatically to anatomical contact accuracy
+  - reading limit: full manuscript recovered despite earlier access failures
+    - selected local safeguard and final-correction accounting inspected
+    - training details, solver artifact, and complete evaluation not independently audited
+
+physical contact validation and parameter ambiguity already have close prior work
+
+- Wei et al., [subject-specific finite-element hand, 2020, methods, validation, and discussion](https://link.springer.com/article/10.1007/s10439-019-02439-2)
+  - authors: “Angular displacements were finally specified at each joint according to the measured angles”
+  - reconstructs one healthy 23-year-old man's hand from CT and MRI
+    - same person performs three grasps, six repetitions each
+    - glove measures fingertip pressure; painted handprints measure contact area
+  - uses literature-derived tissue properties and muscle forces estimated from surface electrical signals
+    - assumes a linear force relationship for isometric contraction
+    - imposed joint angles mean validation does not independently predict movement
+  - reported pressure differences below 20% and area differences below 15% concern this subject and these grasps
+  - varies tissue properties and muscle forces to test sensitivity
+    - sensitivity is not proof that measurements uniquely determine parameters
+  - implication: measured contact validation and parameter sensitivity are established baselines
+  - reading limit: selected complete primary methods, validation, sensitivity, and discussion inspected
+    - supplementary tables and experiments not reproduced
+- Hao and Nichols, [finger-tip contact models, 2021, methods and discussion](https://pmc.ncbi.nlm.nih.gov/articles/PMC8044057/)
+  - authors: “a massless, spherical representation of the fingerpad”
+  - compares Hunt-Crossley and Elastic Foundation contact in OpenSim
+    - one moving index-finger joint, two held fixed, four extrinsic muscles
+    - sphere presses against a plane
+  - 432 simulations vary target force, contact area, and stiffness
+    - compares simulated force against prescribed targets, not newly measured participant forces
+    - target forces are 5, 12, and 20 N
+  - normal force averaged immediately after contact
+    - motion, friction, and anatomical detail are restricted
+  - implication: sweeping contact parameters and scoring force agreement already exist
+    - use these simple contact models before attributing improvement to anatomical layers
+  - reading limit: full primary manuscript recovered through NCBI's full-text service
+    - selected model, simulation, accuracy, and discussion sections inspected
+    - supplementary parameter derivation not checked
+- Diaz et al., [hand personalization benchmark, 2026, §§II–IV](https://pmc.ncbi.nlm.nih.gov/articles/PMC13551466/)
+  - authors: “normalized EMG is not exactly equal to muscle activations”
+    - EMG measures electrical muscle activity
+  - evaluates 13 participants with MRI and fine-wire muscle recordings
+    - compares scaling, optimization, MRI, combined MRI/optimization, and neural-network personalization
+    - two repetitions per task tune optimization; three remaining repetitions evaluate it
+    - repetition holdout is not an unseen-task evaluation
+  - MRI-derived forces still assume muscle-specific tension and fiber-scale lengths
+    - tendon slack length cannot be measured directly this way
+    - muscle paths and hand joint centers are not personalized
+  - prediction accuracy and anatomical parameter agreement differ
+    - inverse static optimization takes measured joint angles and external forces as inputs
+    - activation agreement does not independently validate motion or contact-force prediction
+    - lower activation error does not validate contact pressure or unique tissue parameters
+  - implication: anatomy versus prediction accuracy is an existing research question
+  - reading limit: full primary manuscript recovered through Europe PMC
+    - selected acquisition, personalization, split, evaluation, and limitation sections inspected
+    - raw recordings and supplementary material not reanalyzed
+
+frame budgets and character detail already have direct prior work
+
+- Funkhouser and Séquin, [adaptive display, SIGGRAPH 1993](https://www.cs.princeton.edu/~funk/sig93.pdf), §§3–8
+  - authors: “do as well as possible in a given amount of time”
+  - chooses object resolution and rendering methods to maximize estimated visual benefit within a predicted frame-time budget
+    - incremental allocation adds valuable detail and removes less valuable detail
+    - previous-frame choices supply the starting allocation
+  - pipeline cost model assumes other operations do not compete for its stages
+    - host must supply graphics work fast enough
+  - building walkthrough compares fixed, screen-size, feedback, and predictive policies
+    - scene stays in memory to exclude memory-management effects
+    - more uniform measured frame times do not prove a hard deadline
+  - implication: aggregate resolution allocation under predicted frame costs already exists
+    - this evaluates static-object rendering rather than neural deformation under shared-resource contention
+  - reading limit: selected full cost model, allocation, and evaluation inspected
+    - artifact not reproduced
+- Carlson and Hodgins, [Simulation Levels of Detail for Real-time Animation, 1997](https://graphicsinterface.org/wp-content/uploads/gi1997-1.pdf), pp3–6
+  - authors' title: “Simulation Levels of Detail for Real-time Animation”
+  - switches legged creatures between full dynamics, mixed prescribed/dynamic motion, and point-mass simulation
+    - importance depends on viewer distance, visibility, and impending interactions
+    - switching occurs during a restricted part of flight to reduce discontinuity
+  - puck-avoidance experiment measures frame rates with and without graphics
+    - cheaper simulations can change trajectories and eventual game state
+  - implication: allocating different simulation effort across animated creatures already exists
+    - visual agreement and behavioral agreement require separate evaluation
+  - reading limit: selected full switching and evaluation passages inspected
+    - damaged extracted numerals prevent reliable numerical transcription
+
+- Stancu, Weiss, and dos Anjos, [Foveated Animations for Efficient Crowd Simulation, 2025 author preprint](https://lfirsl.github.io/foveated-animations-project/assets/pdf/Foveated_Animations_for_Efficient_Crowd_Simulation.pdf), §§3–4
+  - authors: “just a marginal reduction in frames-per-second in our prototype implementation”
+  - animation updates become less frequent farther from the viewer's focus
+    - one variant stops peripheral skeletal updates while navigation continues
+  - twelve institutional students/staff perform trained flat-screen detection and headset eye-tracking tasks
+    - flat-screen scenes are prerecorded; headset viewing allows changing gaze
+    - eye-tracking delays can briefly expose frozen characters
+  - 1500-character comparison counts animation updates
+    - reported 78.7% and 99.3% reductions concern updates, not measured elapsed-time speedups
+    - quoted FPS wording does not establish an end-to-end speedup
+  - implication: perception-based reduction of character updates is an established comparison
+    - it does not demonstrate a shared deadline guarantee under resource contention
+  - reading limit: another agent read selected full PDF methods and preserved bounded notes
+    - this writer's later primary download failed; numerical transcription and full artifacts not independently reproduced
+- Pilgrim, [Progressive skinning for character animation, 2007](https://onlinelibrary.wiley.com/doi/abs/10.1002/cav.181), publisher abstract
+  - authors: “throttle the computational load of a character model in real-time”
+  - describes continuous detail controlled through skeleton and skinning parameters
+  - hardware constraints and scene position influence selection
+  - reading limit: full methods and evaluation remain unrecovered
+    - cannot exclude closer deadline-allocation overlap
+
+- Savoye and Meyer, [Multi-Layer Level of Detail for Character Animation, 2008](https://liris.cnrs.fr/Documents/Liris-3547.pdf), §§4–5
+  - authors: “according to the distance between the character and the camera”
+  - adjusts skeleton, mesh, and motion detail together
+    - joint-motion energy guides skeleton simplification
+    - mesh changes update skinning weights; motion simplification preserves clip duration
+  - camera-distance interpolation maintains position continuity
+    - this does not prove deadline completion or physical accuracy
+  - evaluates crowds containing up to 250 skeletons and a separate simplified character mesh
+  - implication: coordinated multi-character detail control already exists
+    - compare view-based selection before claiming adaptive detail allocation is new
+  - reading limit: selected full selector and evaluation inspected
+    - artifacts and perceptual claims not independently reproduced
+- Kavan and colleagues, [Compressed Skinning for Facial Blendshapes, 2024](https://arxiv.org/pdf/2406.11597), §§4–5 and Table 6
+  - authors: “in all of our scenarios the CPU is the bottleneck”
+  - learns sparse transformation coefficients and skinning weights offline
+    - runtime blends transformations and applies skinning
+    - this is fixed compression rather than online budget selection
+  - Unity stress test displays ten copies of four characters
+    - compares CPU and GPU times separately against Dem Bones and ordinary blendshapes
+    - lower GPU compute does not proportionally improve CPU-limited frame rate
+  - implication: simultaneous-character deformation measurement and bottleneck analysis already exist
+  - reading limit: selected full representation and runtime evaluation inspected
+    - no controlled background-contention or adaptive deadline experiment demonstrated by these selected passages
+
+bounded research possibilities
+- candidate 1: deformation quality under a complete application deadline
+  - hypothesis: contention and memory traffic change the best mesh resolution more than isolated inference measurements suggest
+  - reproduce the published CPU implementation at each resolution
+  - run multiple hands alongside tracking, rendering, and controlled background memory load
+  - hold pose sequence, machine, thread placement, and image quality target fixed
+  - compare fixed resolution with a deadline-aware resolution policy
+  - measure complete-frame latency, deadline misses, memory use, and shape error
+  - competing explanation: rendering or thread scheduling dominates every policy
+  - nearest work already optimizes memory layout, provides progressive resolution, and demonstrates rendering/cache interference
+  - merely measuring cold-cache slowdown repeats known work
+  - aggregate cost/benefit resolution allocation and multi-creature simulation switching already have direct prior work
+  - possible increment: identify when contention invalidates isolated cost predictions for simultaneous deforming characters
+    - compare fixed budgets, foveated updates, measured-cost feedback, and predictive aggregate allocation
+    - include policy cost and switching discontinuities
+    - a new policy needs evidence beyond applying existing allocation to another model
+  - falsifier: isolated timing predicts complete-frame behavior and adaptive selection adds no benefit
+- candidate 2: detect when learned shapes need physical correction
+  - hypothesis: training-pose distance alone misses large errors on unfamiliar poses of the same anatomy
+  - first experiment fixes anatomy and excludes external contact
+    - the published predictor takes pose inputs rather than contact or anatomy parameters
+    - contact-aware transfer requires a separately validated contact-conditioned simulator and predictor
+  - compare pose distance, local geometric novelty, and disagreement between mesh resolutions
+  - hold out entire pose families and motion sequences
+    - do not distribute adjacent frames across training and testing
+  - compare against always-fast, always-physical, and periodic physical recalculation
+  - measure warning accuracy, missed large errors, correction cost, and temporal discontinuities
+  - first target is agreement with the source simulator
+    - independent scans are needed before claiming real-anatomy accuracy
+  - competing explanation: resolution disagreement measures approximation detail rather than actual error
+  - nearest work reports out-of-range failure and already uses hierarchical residuals
+    - Malleval already proposes residual-triggered physical fallback in material-law evaluation
+    - compare that safeguard before claiming a new failure-warning or fallback mechanism
+  - proposed increment: demonstrate a warning signal that predicts held-out failures at low cost
+  - falsifier: simple pose distance performs equally well or physical correction exceeds the application budget
+- candidate 3: separate pose fit from contact validity
+  - hypothesis: several parameter choices fit relaxed scans equally well but predict different contact deformations
+  - prerequisite: a mechanical model independently validated for contact and mutual tissue forces
+    - the source's one-way layered simulator cannot supply established contact-force ground truth
+  - fit an ensemble using plausible tissue and attachment parameters
+  - test standardized low-load interactions on a synthetic hand or physical phantom
+    - a phantom is a fabricated test object with known geometry and material properties
+  - compare surface-only fitting, bone-aware fitting, and layered tissue fitting
+  - measure held-out displacement and reaction-force error separately
+  - competing explanation: segmentation error dominates material uncertainty
+  - nearest work includes Wei's same-subject pressure/area validation, Hao's contact-parameter sweep, and Diaz's anatomy-versus-prediction benchmark
+    - none of these selected comparisons establishes uniqueness from relaxed surface fit
+    - this does not establish absence of closer identifiability work
+  - include simple contact models, literature-fixed parameters, and measurement-constrained ensembles
+    - separate uncertain applied muscle force from uncertain tissue properties
+    - hold out entire object shapes and loading conditions, not repetitions alone
+  - proposed increment: identify which additional measurements resolve force-prediction ambiguity
+    - test whether contact area, pressure, or independent material measurements shrink the range of held-out predictions
+    - a sensitivity sweep or improved training-fit score alone repeats established work
+  - falsifier: equally good pose fits yield indistinguishable contact predictions within measurement noise
+
+first experiment and limits
+- agent recommendation: begin with candidate 1 and the released multiresolution artifacts
+  - it addresses the human's systems background without requiring new human imaging
+  - successful replication comes before a claim of a new scheduling mechanism
+- candidate 2 needs accessible training and held-out simulator outputs
+- candidate 3 needs independently measured material and contact data
+- clinical, prosthetic, and therapy applications mentioned in the defense remain possible uses
+  - the reviewed graphics evaluations do not establish clinical effectiveness
+- remaining reading
+  - inspect MANO's remaining model-learning and supplementary sections and Bailey's remaining architecture and skinning comparisons before claiming superiority
+  - expand contact-correction and reduced-physics literature before implementing candidate 2
+  - search broader 2026 biomechanical validation literature before making force-prediction claims

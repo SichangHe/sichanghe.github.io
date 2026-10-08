@@ -1,0 +1,348 @@
+non-Rust language infrastructure for reliable analysis
+(authored by agents unless marked 🧑)
+
+why study this
+- 🧑 the human's interests in [about.md](../../../../../about.md)
+  - “Programming language infrastructure to enable robust static analysis.”
+  - “Programming languages: Rust, Elixir, and other modern expression languages with algebraic types, first-class pattern matching, function composition, etc. without class inheritance.”
+- recommendation: first test whether an analysis stays correct after edits
+  - compare a running language server with a fresh analysis of the same files
+  - this isolates stale results from ordinary checker limitations
+  - start with one BEAM language or the human's existing mdBook tooling
+- second project: measure which real bugs Elixir's new checker finds
+  - compare against Dialyzer on the same Elixir packages
+  - keep Erlang checker comparisons in a separate corpus
+- research proposals below are hypotheses
+  - no prototype, benchmark run, bug confirmation, or novelty proof has been completed
+
+reading status, checked 7 October 2026 UTC
+- inherited research notes were leads rather than trusted evidence
+  - primary pages and paper abstracts were fetched again
+  - the search tool failed; direct HTTP fetching worked
+  - selected success-typing and incremental-algorithm methods, theorems, and evaluations subsequently read in full papers
+  - complete proof appendices and implementation histories have not been audited
+- corrected inherited citation errors
+  - [arXiv:2411.12136](https://arxiv.org/abs/2411.12136) is a loss-landscape paper
+    - excluded from the Erlang typing review
+  - Gleam's project-wide rename shipped in April 2025
+    - not a feature first introduced in 2026
+- current release claims describe fetched pages
+  - pin versions before experiments
+  - mutable project documentation is not historical evidence of an earlier release
+
+BEAM typing: different promises require different measurements
+- BEAM is the Erlang virtual machine used by Erlang, Elixir, and Gleam
+  - [Gleam's project page](https://gleam.run/): “Gleam programs can use thousands of published packages”
+  - inference: shared runtime does not imply shared source syntax or equivalent checker inputs
+- Castagna, Duboc, and Valim, [The Design Principles of the Elixir Type System, 2023 preprint](https://arxiv.org/pdf/2306.06391), §§1, 3.4, 4.3, 5, and 7
+  - authors: “without modifying the compilation of the source code”
+  - set-theoretic types describe allowed values using union, intersection, and exclusion
+  - existing VM checks and programmer-written guards justify precise results at dynamic boundaries
+    - an identity function guarded by an integer test can return an integer or fail the check
+    - an unguarded identity can return any dynamically supplied value
+    - adding an annotation does not insert the missing runtime check
+  - a precise result type permits nontermination or a runtime type-check failure
+    - successful compilation alone does not promise successful execution
+  - §4.3 outlines rules for propagating dynamic uncertainty
+    - the detailed extension is delegated to another cited work
+  - the partial prototype received internal tests and scattered community feedback
+    - the paper leaves large-codebase performance, usability, and adoption unestablished
+  - proposed corpus experiment must distinguish ordinary warnings from results justified by existing guards
+  - reading limit: selected full design and implementation-status sections inspected
+    - proofs, prototype, and current compiler implementation not independently audited
+- José Valim, [Elixir 1.20 release, 3 June 2026](https://elixir-lang.org/blog/2026/06/03/elixir-v1-20-0-released/)
+  - release description: “every program is now gradually type checked in search for verified bugs and typing violations”
+  - dynamic values retain runtime uncertainty
+    - inference: successful compilation is not a guarantee that every execution avoids type errors
+  - recursive types, parametric types, and user-written signatures remain development concerns on this page
+    - avoid treating the research design's full feature set as shipped behavior
+- Erlang/OTP, [Dialyzer manual](https://www.erlang.org/doc/apps/dialyzer/dialyzer.html)
+  - “Dialyzer bases its analysis on the concept of success typings, ensuring sound warnings without false positives”
+  - this is the project's stated guarantee
+    - it is not independent evidence that every reported warning is a confirmed user bug
+  - inference: absence of warnings is weaker than accepting a program under a complete static type discipline
+  - the manual also provides incremental analysis
+    - compare incremental and fresh runs before blaming checker theory for disagreements
+- [Gradualizer project](https://github.com/josefs/Gradualizer)
+  - “Without any type specs, no static typing happens”
+  - “The more type specs, the more static typing”
+  - inference: annotation coverage is part of the experimental treatment
+    - raw warning counts across differently annotated projects would mislead
+- [eqWAlizer project](https://github.com/WhatsApp/eqwalizer)
+  - “eqWAlizer is integrated and distributed with ELP (Erlang Language Platform)”
+  - README: “The eqWAlizer repository is moving into ELP”
+  - evaluate the pinned ELP integration rather than an abandoned standalone packaging assumption
+- [Gleam 1.10 release, Louis Pilfold, 14 April 2025](https://gleam.run/news/global-rename-and-find-references)
+  - “The compiler has been upgraded to retain more information about the types and values and how they reference each other”
+  - that information supports project-wide references and rename
+  - inference: analysis information reused by IDE features is already implemented
+    - merely exposing a reference graph would be engineering rather than an established research contribution
+
+success typing theory: what a warning does and does not prove
+- Lindahl and Sagonas, [Practical Type Inference Based on Success Typings, PPDP 2006](https://user.it.uu.se/~kostis/Papers/succ_types.pdf)
+  - definition: “whenever an application” returns a value, its arguments and result belong to the inferred signature
+  - consequence: the signature includes every successful input
+    - can also include failing inputs
+    - membership is not a promise of successful execution
+    - being outside the inferred input set rules out successful return under the model
+  - algorithm generates type constraints from expressions
+    - solves mutually recursive functions together
+    - repeats constraint solving until answers stop changing
+  - termination uses bounded structural depth and limited unions
+    - replaces deeper structure with an unrestricted type
+    - precision is deliberately lost to keep analysis finite
+  - refinement uses observed calling contexts and control flow
+    - external callers restrict refinement
+  - historical evaluation: about 700,000 library lines in half an hour
+    - earlier commercial bug counts concern an older analysis
+  - experimental implication
+    - classify each warning by its guarantee and assumptions
+    - distinguish definite inability to return from a violation of programmer intent
+    - do not measure false negatives by assuming every accepted call is safe
+
+incremental analysis: speed creates another correctness obligation
+- incremental analysis reuses previous answers after an edit
+  - correctness requires discarding every answer whose inputs changed
+- [Salsa overview](https://salsa-rs.github.io/salsa/overview.html)
+  - “The goal of Salsa is to support efficient incremental recomputation”
+  - “re-using some of the results from the first call”
+  - inference: a reusable dependency engine does not prove that a particular analyzer records every dependency
+- Microsoft, [Language Server Protocol 3.17 specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)
+  - document synchronization includes “both full and incremental synchronization”
+  - inference: correctness must include client buffers and message ordering
+    - reading only files on disk can miss the editor's actual input
+- [Hazel project](https://hazel.org/)
+  - “There are no meaningless editor states”
+  - typed holes give unfinished code a defined interpretation
+  - inference: robust analysis should be tested during unfinished edits
+    - a benchmark containing only compiling snapshots misses this use case
+  - project news lists “Incremental Bidirectional Typing via Order Maintenance” at OOPSLA 2025
+    - important prior work before claiming a new incremental typing algorithm
+    - full paper studied below; implementation and proof artifact not independently run
+- [Unison's design explanation](https://www.unison-lang.org/docs/the-big-idea/)
+  - “the hash of increment uniquely identifies its exact implementation and pins down all its dependencies”
+  - inference: persistent definition identity is an alternative to repeatedly recovering identity from text
+    - assess its editing and interoperability costs before adopting it
+
+incremental algorithms: reuse already has established correctness frameworks
+- Busi and colleagues, [Using Standard Typing Algorithms Incrementally](https://arxiv.org/pdf/1808.00225), 2018 preprint, §§3–7
+  - authors: “Typing coherence”
+  - caches a term, its typing environment, and its answer
+    - environment means the variable/type information available while checking that term
+  - reuses the answer only when the new environment is compatible
+    - compatibility must preserve the original algorithm’s result
+    - caller supplies and justifies this condition
+  - theorem connects incremental answers to the original checker
+    - relies on correct cache entries and the compatibility condition
+    - does not make an incorrect underlying checker correct
+  - prototype includes ordinary functional checking and type inference
+  - evaluation uses generated syntax trees and simulated invalidation
+    - authors request further real-program experiments
+    - reported memory overhead depends on both program size and stored environments
+  - direct prior work for wrapping an existing checker with proven cache reuse
+- Pacak, Erdweg, and Szabó, [A Systematic Approach to Deriving Incremental Type Checkers, OOPSLA 2020](https://szabta89.github.io/publications/inca-typechecking.pdf), §§3–8
+  - authors: “compiling inference rules to Datalog”
+  - Datalog is a rule language that derives facts from other facts
+  - encodes typing rules as finite relations and incrementally updates derived facts after insertions or deletions
+  - transformations avoid explicitly storing full typing contexts and derivation trees
+    - collecting errors is a separate transformation
+  - preliminary evaluation uses two generated programs with 200 dependent functions
+    - edits the common dependency and applies inverse edits
+    - compares incremental variants with a recursive Java checker
+    - most edits temporarily produce type errors
+  - limitations stated in the paper
+    - unification and Hindley–Milner inference are not established as supported
+      - unification solves equalities between types containing unknowns
+    - dependent types unsupported
+    - externally implemented nominal-subtyping checks introduce dependencies not currently tracked
+  - implication: a language feature can break the assumed dependency boundary even when the incremental engine works
+- Porter and colleagues, [Incremental Bidirectional Typing via Order Maintenance, OOPSLA 2025](https://arxiv.org/pdf/2504.08946), §§3–7 and §9.1
+  - authors: “equivalent to naive re-analysis”
+  - stores expected and inferred types, error marks, and links between variable uses and their bindings
+  - propagates changes in small steps rather than rechecking the whole expression tree
+    - maintains ordering information to find bindings and prioritize updates
+    - permits editing between propagation steps
+  - equivalence is proved in Agda for the specified calculus
+    - equivalence holds after interleaved edits and propagation have fully quiesced, not at every intermediate displayed state
+    - not a proof of Elixir, Gleam, or an arbitrary language-server implementation
+  - evaluation constructs 100 nested merge-sort implementations and applies randomized edits and reversions
+    - stresses shadowing, reused names, and distant bindings
+    - reported speedup belongs to this synthesized trace
+    - earlier workshop description of real-user traces is not the inspected full-paper evaluation
+  - remaining costs
+    - one propagation step can traverse all uses of a binding
+    - type-level consistency computations are rerun in full
+  - direct prior work for live propagation during edits with correctness guaranteed after propagation settles
+
+how this narrows the BEAM and language-server proposals
+- a generic cache, dependency graph, fresh-run comparison, or live type propagation algorithm is established prior work
+- Elixir candidate obstacle: changing inferred set-theoretic types across recursive callers
+  - hypothesis: refinement and exported-function assumptions create dependency classes worth testing
+  - first identify actual implementation boundaries in a pinned compiler
+  - compare both warning content and type-summary changes after edits
+- Gleam candidate obstacle: keeping diagnostics, references, and rename targets consistent after one edit
+  - its compiler already retains reference/type information
+  - seek a confirmed cross-feature mismatch rather than propose the graph itself
+- language-server testing remains an empirical candidate
+  - theorem-level equivalence does not cover unsaved buffers, generated files, configuration, or dependency loading automatically
+  - distinguish the semantic update algorithm from the surrounding synchronization machinery
+  - reproduce one known dependency bug before expanding the corpus
+- algorithm research requires a narrower gap
+  - incrementalizing expensive set-type operations or recursive refinement may be interesting
+  - must compare with existing compatibility, Datalog, and small-step approaches
+  - a speedup alone cannot establish a stronger correctness guarantee
+
+live programming: reloading code changes running behavior
+- Erlang/OTP, [code loading manual](https://www.erlang.org/doc/system/code_loading.html)
+  - “Both old and current code are valid, and can be evaluated concurrently”
+  - “Fully qualified function calls always refer to current code”
+  - processes can remain in old code
+    - a successful load does not imply every process now executes the new version
+  - inference: any automated editing environment needs explicit version and process observations
+- [Revise.jl limitations](https://timholy.github.io/Revise.jl/stable/limitations/)
+  - macro edits “will not be propagated to functions that have already evaluated the macro or generated function”
+  - inference: “reload succeeded” needs a precise definition across environments
+    - file acceptance, definition replacement, and running-task behavior are separate measurements
+- research possibility: explain whether an edit needs restart or state migration
+  - start with a restricted set of Erlang module edits
+  - record process entry points, outstanding messages, old code, and state schemas
+  - test predictions against executions under controlled schedules
+  - novelty remains uncertain
+    - a dedicated dynamic-software-updating literature review is needed before selecting this project
+
+LLMs already use language analysis
+- Blinn, Li, Kim, and Omar, [statically contextualizing large language models with typed holes, 2024](https://arxiv.org/abs/2409.00921)
+  - “AIs need IDEs, too!”
+  - the Hazel language server supplies hole types and local typing context
+  - abstract: “even in the presence of errors”
+  - inference: supplying typed context to an agent is established prior work
+- Mündler and colleagues, [type-constrained code generation, 2025](https://arxiv.org/abs/2504.09246)
+  - “extend it to TypeScript to demonstrate practicality”
+  - evaluation: “reduces compilation errors by more than half”
+  - scope: HumanEval and MBPP tasks in that paper
+    - do not transfer the numerical result to Elixir services or long-running repair tasks
+- Agrawal and colleagues, [monitor-guided decoding, NeurIPS 2023](https://arxiv.org/abs/2306.10763)
+  - “a monitor uses static analysis to guide the decoding”
+  - repository-level Java completion is the main evaluation setting
+  - inference: a BEAM extension needs a language-specific technical obstacle and stronger evaluation
+    - changing the target language alone does not establish novelty
+- Cassano and colleagues, [MultiPL-T, 2023](https://arxiv.org/abs/2308.09895)
+  - Code LLMs “struggle with low-resource languages that have limited training data available”
+  - inference: better results in one language do not isolate the effects of pattern matching or algebraic types
+    - model familiarity, library access, and task translation are confounders
+
+historical implementation evidence for choosing edit sequences
+- florius0, [Elixir issue about external-resource timestamps, 2024](https://github.com/elixir-lang/elixir/issues/13298)
+  - reporter: “module may not be recompiled when manifest is newer than the external resource”
+  - reported Elixir 1.15.6 reproduction changes resource contents and makes the build manifest newer
+  - replies clarify that the actual workflow restored copied build caches after fetching source changes
+    - maintainer discusses timestamp preservation and concurrent cache generation
+  - implication: content, timestamp, cache restoration, and dependency state need independent controls
+  - reading limit: issue body and all ten public comments inspected
+    - reproduction, proposed fix, and current compiler behavior not independently checked
+- Gleam maintainers, [1.15 changelog](https://github.com/gleam-lang/gleam/blob/main/changelog/v1.15.md), March 2026
+  - release note: “renaming would not work properly if there was an error in target file”
+  - records fixes involving incomplete programs and pattern aliases
+  - implication: rename tests must include temporarily invalid edits
+    - this historical report does not identify cache invalidation as the cause
+  - reading limit: selected release entries inspected
+    - fixing commits and regression tests not audited
+
+recommended first experiment: replay edits and compare fresh analysis
+- question: when do reused analysis results disagree with analysis from scratch?
+- initial scope
+  - one server with reproducible builds and accessible issue history
+  - references, diagnostics, and rename results
+  - file changes, unsaved buffers, include changes, configuration changes, and dependency updates
+- method
+  - record an edit sequence and the exact text seen by the server
+  - run the sequence in a persistent server
+  - start a fresh server on each equivalent final snapshot
+  - compare normalized outputs after both servers finish processing
+    - normalize ordering and temporary paths
+    - preserve source ranges, severities, and target identities
+  - reduce each difference to its smallest triggering sequence
+  - verify whether it is stale analysis, nondeterminism, unsupported synchronization, or a real semantic difference
+- validity limits
+  - fresh and incremental analyses can share the same bug
+    - add known-answer fixtures and confirmed historical regressions
+  - a stale result observed before analysis finishes is not automatically a correctness bug
+    - distinguish eventual correctness from response delay
+  - restart changes caches and dependency state
+    - pin files, generated artifacts, configuration, and tool versions
+- measurements
+  - confirmed distinct defects rather than raw differences
+  - affected feature, missed dependency, shortest trigger, and fix
+  - time until correct output, memory, and median plus tail response latency
+- feasibility checkpoint
+  - first build a small replay harness and recover one known regression
+  - proceed to a broader study only if the fresh-state comparison is reproducible
+  - stop or narrow scope if server startup cannot reproduce equivalent state
+- possible contribution
+  - an edit-sequence corpus and reusable correctness method
+  - evidence about missing dependency classes across servers
+  - publication value depends on confirmed findings and prior-work search
+
+second experiment: Elixir checker bug yield
+- question: which confirmed bugs does the new built-in checker add beyond Dialyzer?
+- collect buildable Hex packages with pinned compiler and dependency versions
+  - record exclusions rather than silently dropping difficult packages
+- run both tools on the same source revision
+  - separate incorrect contracts, unreachable branches, definite bad calls, and uncertain dynamic boundaries
+  - verify warnings using reduced executions or maintainer-confirmed fixes
+  - count shared bugs once
+- report precision, distinct bug classes, analysis cost, and annotation effort
+  - false negatives require a separate known-bug corpus
+  - warning-free packages alone cannot measure recall
+- use a separate Erlang corpus for Dialyzer, Gradualizer, and eqWAlizer
+  - translation to Gleam changes the program and introduces translation errors
+  - a translated corpus would answer a different question
+
+document tooling: accessible starting point, crowded prior art
+- [Marksman project](https://github.com/artempyanykh/marksman)
+  - already offers “completion, goto definition, find references, rename refactoring, diagnostics”
+  - inference: Markdown links as references are already an implemented idea
+- narrower possibility: mdBook includes and generated anchors under edits
+  - compare server references with actual rendered-book targets
+  - include duplicate headings, included fragments, renamed files, and changed SUMMARY entries
+  - measure missed and incorrect targets against rendered output
+  - distinguish a useful tool improvement from a publishable general result
+- recommendation: choose this scope if it provides faster access to realistic edit histories
+  - retain the same fresh-analysis and known-answer evaluation method
+
+staged language design: separate syntax from generation safety
+- additional lead: [Trail note](../../../../programming/trail.md)
+  - unattributed wording: “The program is interpreted into a program that gets compiled”
+  - file has no authorship declaration; this is an agent extension rather than a confirmed human quotation
+  - staging means running part of a program to generate another program
+- Oleg Kiselyov, [MetaOCaml: Ten Years Later, FLOPS 2024](https://www.cs.ox.ac.uk/jeremy.gibbons/flops2024.pdf), selected §§2/4, printed pp222–231
+  - author: “Every code-generating combinator performs the scope extrusion check on its arguments”
+  - code values represent future computations; quoting and splicing preserve types and lexical names
+  - generated code can compile separately or run inside its generator
+  - storing code containing bound variables can move those variables outside their valid scope
+    - generation-time checks detect this invalid movement
+  - inserting shared bindings avoids duplicated computations and effects
+  - well-typed generated code alone does not prove intended behavior
+  - reading limit: selected examples and scope-check implementation, without full theory or reproduction
+- [Forth usage requirements](https://forth-standard.org/standard/usage), selected §§3.1/3.4
+  - standard: “No data-type checking is required of a system”
+  - stack values and separate interpretation/compilation semantics supply an existing comparison
+  - Trail's argument placement is not equivalent to stack semantics without a formal mapping
+  - specification supplies no usability experiment
+- possible experiment: error localization and unintended effects in equivalent small staged programs
+  - vary trailing syntax, staging rules, and name binding separately
+  - compare typed staging and stack-language implementations
+  - measure invalid variable scope, generated-code validity, and intended behavior separately
+  - compile-time generation alone is established prior art
+  - Trail implementation and precise semantics remain unreviewed; novelty unconfirmed
+
+remaining evidence gaps
+- no claim that these projects are first-of-their-kind
+- success typing and three incremental typing algorithms received selected full-text study
+  - proof definitions and assumptions inspected, not independently mechanically checked
+  - the corrected Uppsala PDF URL now returned the original paper
+- Elixir’s set-type operations and actual incremental dependency boundaries still need source-level inspection
+- systematic search still needed for differential language-server testing and dynamic software updating
+- broader repository issue histories, fixing commits, and historical versions remain unread
+- the parent study handles independent ChatGPT consultation
+  - no consultation result is assumed in these recommendations

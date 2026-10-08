@@ -1,0 +1,276 @@
+how reliably agents finish long tasks, and how they recover from mistakes
+(authored by agents unless marked 🧑)
+
+written 7 Oct 2026; builds on [agent frontier](../../../agent_frontier.md) missions 1 and 2, its [source cards](../../../agent_frontier_papers/source_cards.md), and the narrower [recovery](recovery.md) study
+
+short version
+
+- the things worth knowing
+  - 1. "can do it once" and "does it every time" are different numbers, and the gap is large
+    - fact: METR's 80% horizon is 4–6x shorter than its 50% horizon
+    - fact: on OSWorld one strong agent reached pass@10 of about 78% but pass^10 of about 36%
+    - fact: on SWE-Bench Verified, single-run pass@1 moves by 2.2–6.0 points depending on which run you pick, even at temperature 0
+  - 2. long tasks fail mostly by execution drift, not by lack of reasoning
+    - fact: a model's per-step accuracy falls when its own earlier mistakes sit in context ("self-conditioning"), and bigger models do not fix that; thinking does help
+    - fact: horizon length grows hyperbolically with per-step accuracy, so small per-step gains buy long horizons
+  - 3. agents get stuck in early assumptions and do not notice
+    - fact: UltraHorizon names "In-context Locking" as a root cause; entropy of actions falls over a trajectory
+    - fact: in a tool-output corruption study, 54.8% of recoveries happened without the agent ever saying the earlier evidence was wrong
+    - fact: in a duplicate-side-effect study, agents reported "completed" in 90% of episodes where they had duplicated an effect
+  - 4. tool-failure recovery is its own capability and scales slower than task skill
+    - fact: ToolMaze reports fault tolerance improving with model scale 3.66x slower than plain task execution
+    - fact: cheap structure helps a lot: outcome contracts plus a list of recovery tools raised ToolMaze completion from 10.9% to 28.1%
+  - 5. rollback is now a crowded area, and the [recovery](recovery.md) proposal is largely scooped
+    - fact: LIMBO (Sep 2026) ran 25,930 episodes with 12 fault modes, 9 models, 3 production harnesses, idempotency keys, and 15 recovery conditions
+    - fact: AgentRewind, Rollback-Induced Reflection, GA-Rollback, and LongHorizonUI all checkpoint and roll back agent context and/or environment
+    - inference: what remains open is cost accounting, real services, and bounding in-flight time, not "does rollback help"
+  - 6. the strongest reliability numbers come from preprints with few repeats
+    - fact: the main repeated-run studies use k=3 (computer use, reliability-science framework) or k=5 (Vending-Bench)
+    - inference: nobody has yet published a frontier-model reliability curve with k≥20 and a fixed dollar budget
+- my best research ideas
+  - A. cost-matched reliability: at a fixed dollar budget, does checkpoint-and-restart with verification beat one long run, and by how much at pass^k, k≥20
+  - B. isolate self-conditioning in real agent work: after a mistake, compare keeping it in context, replacing it with a note, and rolling context back while keeping the environment, under equal tokens
+  - C. honest status after faults: measure whether an agent's final report matches real state after injected faults, then test a cheap reconciliation step as the fix
+
+what the topic is
+
+- an agent is a model that acts in a loop: read state, pick a tool call, read the result, repeat
+- reliability here means how often a run finishes correctly, measured over repeats and over task length
+  - pass@k: at least one of k independent runs succeeds; measures what the agent can do
+  - pass^k: all k runs succeed; measures what you can count on
+  - time horizon: the human task length at which the agent's fitted success rate hits a target, e.g. 50% or 80%
+- the two failure engines
+  - compounding: a per-step error rate p over n steps gives about p^n overall, so long tasks fail even with high per-step accuracy
+  - drift: later steps get worse because the context now holds the agent's own mistakes and wrong assumptions
+- recovery means getting back to a good state after a wrong assumption, a tool failure, or an environment change
+  - reasoning recovery: dropping a wrong hypothesis
+  - state recovery: restoring files, context, or external service state, e.g. via checkpoint and rollback
+  - the two are different; the [recovery](recovery.md) note covers the external-service case
+
+what existing work shows
+
+- repeated-run reliability: single-run scores overstate what you can count on
+  - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499), Kwa et al., NeurIPS 2025, peer reviewed
+    - reading: local full text
+    - fact: "models' 80% time horizons are 4-6x shorter, suggesting that even models that sometimes succeed on difficult and diverse tasks cannot reliably perform tasks of moderate length"
+    - fact: "we cannot confidently measure time horizons at very high success rates (e.g. 95%)"
+    - fact: "An increase in task messiness by 1 point reduces mean success rates by roughly 8.1%"; mean messiness 3.2/16, none above 8/16
+    - limit: 8 runs per task; software-heavy tasks; horizon is "always measured relative to a task distribution"
+  - [Time Horizon 1.1](https://metr.org/blog/2026-1-29-time-horizon-1-1/), METR blog, Jan 2026, plus the [live page](https://metr.org/time-horizons/); not peer reviewed
+    - fact: tasks grew from 170 to 228; 8h+ tasks from 14 to 31
+    - fact: 50% horizons: Claude Opus 4.5 320 [170,729] min; GPT-5 214 [117,480] min; o3 121 [74,201] min
+    - fact: hybrid doubling time "196 days (7 months)"; post-2024 doubling fell to 89 days
+    - fact: "these confidence intervals are still very wide"; "we measured human baseline times for only 5 of our 31 long (8h+) tasks"
+    - fact, live page, May 2026: "Measurements above 16 hrs are unreliable with our current task suite"
+    - inference: the 50% number is saturating the suite; the 80% number is the one to watch, and METR still reports it well under the 50% figure
+    - not opened: secondary pages quoting Opus 4.6 at 11h59m (50%) and 1h10m (80%); I did not verify these on metr.org
+  - [tau-bench](https://openreview.net/forum?id=roNSXZpUDN), Yao et al., ICLR 2025, peer reviewed
+    - reading: local full text via source card
+    - fact: GPT-4o retail pass^1 61.2%, "passˆ8 drops to < 25%"
+    - fact: 55% of analyzed retail failures were wrong or omitted information
+    - limit: simulated user, final-state reward, no human baseline
+  - [On the Reliability of Computer Use Agents](https://arxiv.org/abs/2604.17849), Gonzalez-Pumariega et al., Apr 2026, preprint
+    - reading: abstract and body
+    - fact: OSWorld, 3 runs per task, GPT-5, Claude Sonnet 4.6, Kimi 2.5, and three open agents
+    - fact: "Pass@10 reaches approximately 78%, the corresponding Pass^10 indicates that the agent succeeds on all 10 executions for only about 36% of tasks"
+    - fact: deterministic decoding "did not consistently improve reliability"
+    - claim: "Clarifying task instructions before execution leads to substantial improvements in reliability"
+    - fact: plan extraction from prior runs gave GPT-5 +4.2% pass^3 but hurt other models
+    - limit: "we manually corrected 25 out of 361 tasks, including 20 cases where clarification introduced impossible constraints"
+    - inference: a chunk of "unreliability" is task ambiguity, so pass^k partly measures the benchmark, not the agent
+  - [On Randomness in Agentic Evals](https://arxiv.org/abs/2602.07150), Bjarnason, Silva, Monperrus, Feb 2026, preprint (a search result lists an ICLR 2026 entry; I did not verify it)
+    - fact: 60,000 SWE-Bench Verified trajectories, 3 models, 2 scaffolds
+    - fact: "single-run pass@1 estimates vary by 2.2 to 6.0 percentage points depending on which run is selected"; std > 1.5 points at temperature 0
+    - fact: "trajectories diverge early, often within the first few percent of tokens"
+    - claim: 2–3 point improvements in papers may be noise
+    - inference: infrastructure nondeterminism alone makes pass^k < 1 for a deterministic policy; any reliability study must report k and seeds
+  - [Beyond pass@1: A Reliability Science Framework for Long-Horizon LLM Agents](https://arxiv.org/abs/2603.29231), Khanal, Tao, Zhou, Mar 2026, preprint
+    - fact: 396 tasks in 3 domains x 4 human-time buckets (≤5 min to ≥120 min), 33 per cell, k=3, 10 open models, 23,392 episodes
+    - fact: metrics are a pass^k-by-duration curve, variance amplification, a partial-progress score (GDS), and a "meltdown" detector from entropy of tool-call sequences
+    - fact: software GDS fell from 0.90 to 0.44 across buckets; meltdown up to 19% (DeepSeek V3, very long bucket)
+    - fact: "memory scaffolds universally hurt long-horizon performance across all 10 models"
+    - limit: open models only; k=3; "human time as an imperfect proxy"; live web tasks
+    - inference: closest existing work to mission 1 of agent_frontier; its gaps are k, frontier models, and cost
+  - [Beyond Pass@k: Measuring Reliability and Security of Agentic Code Generation](https://arxiv.org/abs/2608.14711), Jiang et al., Aug 2026, preprint
+    - fact: proposes reliability@k, "n = independent rollouts and c = fully-passing rollouts per (task, agent) pair"
+    - fact: "a cheap single-rollout proxy fails to substitute for repeated runs (Spearman ρ = 0.417)"
+    - limit: the security adjustment "did not change any ranking"
+  - [Vending-Bench](https://arxiv.org/abs/2502.15840), Backlund and Petersson, Feb 2025, preprint; [Vending-Bench 2 page](https://andonlabs.com/evals/vending-bench-2)
+    - fact: runs exceed 20M tokens; "all models have runs that derail, either through misinterpreting delivery schedules, forgetting orders, or descending into tangential 'meltdown' loops"
+    - fact: "no clear correlation between failures and the point at which the model's context window becomes full"
+    - fact, v2 page: score is end-of-year balance averaged across runs; GPT-6 Astra $15,514.70 ± $1,074; Gemini 4 Argon $13,718.16 ± $3,100; authors estimate a competent strategy at about $63,000
+    - limit: 5 runs per model; a private simulation; no measured human baseline
+- compounding and drift over many steps
+  - [The Illusion of Diminishing Returns: Measuring Long Horizon Execution in LLMs](https://arxiv.org/abs/2509.09677), Sinha et al., ICLR 2026, peer reviewed
+    - fact: horizon at success rate s with step accuracy p is "Hs(p) = ⌈ln(s)/ln(p)⌉"
+    - fact: task is key-value lookup plus running sum with the plan given, to isolate execution
+    - fact: single-turn executed steps: GPT-5 2,176; Claude 4 Sonnet 432; Grok 4 384; Gemini 2.5 Pro 120; non-thinking models fail past 4–6 steps
+    - claim: "Models become more likely to make mistakes when the context contains their errors from prior turns. Self-conditioning does not reduce by just scaling the model size."
+    - claim: "Thinking mitigates self-conditioning"
+    - limit: "improvement on our task is necessary, but not sufficient for long-horizon execution on real-world tasks"
+  - [UltraHorizon](https://openreview.net/forum?id=qRNtMWrTvo), Luo et al., ICML 2026, peer reviewed
+    - reading: local full text
+    - fact: "Takeaway 4. Simply increasing interaction steps does not reliably improve long-horizon task performance."
+    - fact: GLM-4.5 grid score peaked at 125 steps (7.30) then fell to 6.56 at 150; the genetics environment peaked at 25 steps
+    - fact: their fix, "Context Refresh with Notes Recall", clears all turns except the system prompt near the context limit and has the agent reread its own notes
+    - fact: "Takeaway 5. Agents tend to get stuck in early assumptions and narrow strategies, with entropy analysis confirming this in-context locking effect."
+    - fact: 33 humans averaged 26.52 vs 14.33 for the best LLM
+    - limit: synthetic hidden-rule games; a model judge; costs not reported
+  - [LongDS-Bench](https://arxiv.org/abs/2605.30434), Xu et al., EMNLP 2026, peer reviewed
+    - fact: 68 Kaggle-derived tasks, 2,225 turns; "performance drops nearly 47 points from early to late turns, and long-horizon errors account for 52%--69% of failures"
+    - claim: "the key bottleneck is maintaining a correct analytical state rather than increasing interaction budget"
+  - LongHorizonUI: A Unified Framework for Robust long-horizon Task Automation of GUI Agent, Kang et al., ICLR 2026, peer reviewed
+    - reading: full text in the local paper collection
+      - public source link remains unverified
+      - this reading record is not a portable access link
+    - claim: "errors to accumulate exponentially as sequence length increases. Once the sequence length exceeds a certain threshold, the agent system collapses"
+    - fact: rollback fires in 12–19% of episodes and "approximately 70% of these episodes eventually succeed"; full restarts under 3%
+    - fact: on OSWorld the gain over UI-TARS-72B is 1.1–1.3% at 15 steps but 4.8% at 50 steps (29.4% vs 24.6%)
+    - limit: GUI agents only; it is a system paper with many parts, so the rollback effect is not isolated
+  - [SWE-Bench Pro](https://openreview.net/forum?id=uEVTdoAbnK), ICML 2026, and [TheAgentCompany](https://openreview.net/forum?id=LZnKNApvhG), NeurIPS 2025, both peer reviewed, via source cards
+    - fact: Pro success falls with more changed files; best public score 25.9%
+    - fact: TheAgentCompany failures include "fabricated completion"
+- wrong assumptions and silent recovery
+  - [When Tool Outputs Go Wrong: Belief Revision in Tool-Using Agents](https://openreview.net/forum?id=IFPcrT092O), Mittal, ICML 2026, peer reviewed
+    - fact: false evidence injected into successful ReAct runs on HotpotQA; "3,175 perturbed runs on three models and six perturbation types"
+    - fact: "87.5% of judged runs still reach the correct final answer, while 54.8% do so without explicitly acknowledging that earlier evidence was wrong"
+    - fact: gpt-4.1 recovered in 94–98% vs Llama-3.3-70B in 71–78%
+    - limit: short QA tasks; a judge decides recovery
+    - inference: silent recovery is fine for QA but dangerous when the wrong belief already caused an action
+  - [Where Does Exactly-Once Live?](https://arxiv.org/abs/2609.29095), Li, Sep 2026, preprint
+    - fact: LIMBO sandbox of six services, 12 faults: timeout_pre, timeout_post, timeout_late, timeout_late_tail, http500_pre, http500_post, partial_timeout, duplicate_delivery, http503_transient, rate_limit, outage, schema_drift
+    - fact: 9 models, GitHub Copilot CLI, Hermes Agent, Codex CLI plus a minimal scaffold; 25,930 episodes
+    - fact: with read-back available, frontier models duplicated writes in 0.5% of lost-ack episodes; under late commits "56% and 74%"; idempotency keys cut duplicates "from 28% to 4%"
+    - fact: "In 90% of episodes that produced at least one duplicate, the agent finished with status completed"
+    - fact: transparent client-side retries cut exactly-once success from 72% to 50%
+    - claim: "When an immediate read-back can reveal what happened, the model decides"; otherwise the tool contract decides (81% of variance)
+    - claim: "No verification-only policy is exactly-once under late commits without a bound on in-flight time"
+    - limit: simulated services; one gateway; several analyses "exploratory rather than preregistered"
+    - inference: this runs most of the [recovery](recovery.md) experiment; the distributed-systems part (a lease or fence on in-flight time) is what it leaves open
+- tool failures and recovery as a capability
+  - [When Tools Fail (ToolMaze)](https://arxiv.org/abs/2606.05806), Zhu et al., Jun 2026, preprint
+    - fact: 270 tools, 400 base tasks, 2,000 instances; a 2x2 of explicit/implicit x transient/permanent faults
+    - fact: Perturbation Recovery Rate is the conditional chance of a valid recovery "retrying for transient faults, utilizing an alternative path, or wisely aborting unsolvable tasks"
+    - fact: best PRR per cell: 90.41% (explicit-transient) down to 26.63% (implicit-permanent)
+    - claim: "fault-tolerance improves with model scale 3.66x slower than basic task execution"
+    - limit: procedural DAG tasks; no cascading or adversarial faults
+  - [Outcome Monitors](https://arxiv.org/abs/2608.19303), Panthi and Abdelfattah, Aug 2026, preprint
+    - fact: monitors check tool results against outcome contracts; on violation they attach "a nonbinding receipt naming the violated property and public recovery tools"
+    - fact: ToolMaze completion 10.9% to 28.1% across four models; tau-bench retail +14.0 and +12.0 points
+    - fact: detection fell to 46% outside the mined vocabulary; removing the recovery-tool list removed the gain
+    - inference: the model is not the bottleneck when a fault is named and a way out is listed
+  - [ToolFailBench](https://openreview.net/forum?id=JhaxRN8QDV), Soni, ICML 2026, peer reviewed
+    - fact: 1,000 tasks; failure modes Tool-Skip, Result-Ignore, Output-Fabrication, Unnecessary-Tool-Use; best "86.33% Clean Tool-Use Rate"
+  - [PALADIN](https://arxiv.org/abs/2509.25238), Vuddanti et al., Sep 2025, preprint
+    - fact: fine-tuned on 50,000+ recovery-annotated trajectories from failure injection; recovery rate 32.76% to 89.68% on ToolBench
+    - limit: ToolBench-style API calls; recovery judged by the benchmark's own criteria
+  - [Where LLM Agents Fail and How They Can Learn From Failures (AgentDebug)](https://arxiv.org/abs/2509.25370), Zhu et al., Sep 2025, preprint
+    - fact: taxonomy over memory, reflection, planning, action, system; annotated failures from ALFWorld, GAIA, WebShop
+    - fact: "a single root-cause error propagates through subsequent decisions"; root-cause feedback gave "up to 26% relative improvements"
+  - [Model or Harness?](https://arxiv.org/abs/2607.28802), Raj et al., Jul 2026, preprint
+    - fact: 41 failure modes assigned to component edges with a fault side; κ=0.76 against human labels
+    - claim: "the same visible failure may call for model post-training, harness engineering, environment redesign, or benchmark repair"
+- checkpoint, rollback, and long-running harnesses
+  - [GA-Rollback](https://aclanthology.org/2025.emnlp-main.892/), Li et al., EMNLP 2025, peer reviewed
+    - claim: step-by-step agents have a "one-pass issue whereby each generated intermediate thought is plugged into the trajectory regardless of its correctness, which can cause irreversible error propagation"
+    - fact: an assistant model checks each action and triggers rollback; gains on three benchmarks (not named in the abstract)
+  - [AgentRewind](https://arxiv.org/abs/2608.14380), Zhuang et al., Aug 2026, preprint
+    - fact: "records aligned checkpoints of the agent context and controlled environment, allowing agents to return to an earlier state and resume execution with information from previous attempts"
+    - fact: new MettleBench of multi-requirement engineering tasks; gains in success and checklist progress
+    - limit: numbers not in the abstract; environment must be controlled
+  - [Rollback the World, Keep the Reflection](https://arxiv.org/abs/2609.18304), Yu et al., Sep 2026, preprint
+    - claim: recovery is "a rollback-boundary control problem that jointly determines when to intervene, where to resume, and what information should survive recovery"
+    - limit: no numbers in the abstract
+  - [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents), Anthropic, 26 Nov 2025, engineering blog, not peer reviewed
+    - fact: two failure modes: agents tried to "one-shot" the app and ran out of context; later sessions would "look around, see that progress had been made, and declare the job done"
+    - fact: fix is an initializer agent, a progress file, a feature list (200+ items), one feature per session, git commits, end-to-end tests
+    - inference: this is the industrial version of UltraHorizon's notes-recall; neither reports a controlled comparison
+  - [Engineering Reliable Coding Agents](https://arxiv.org/abs/2608.13867), Jarmak, Aug 2026, 314-page preprint monograph
+    - claim: "AI coding agents are commonly evaluated as models but deployed as systems"
+    - fact: 206 "reliability records" from 164 papers and 100 practitioner records; useful as a practice index, not as evidence
+  - the human's own long-running autonomy instructions (local source: `../../../../automation_software/agent_instructions/long_running_autonomy.md`; not published in this study) already encode the same pattern: a plan file, STUCK checks, assumption tests, and delete-done-tasks loops
+
+what is missing
+
+- a reliability curve with real k
+  - evidence: k=3 (computer use; reliability framework), k=5 (Vending-Bench), k=8 (tau-bench, METR); METR says it cannot estimate 95% horizons
+  - evidence: run-to-run noise alone is >1.5 points at temperature 0
+  - inference: pass^20 on frontier models under a fixed budget has not been published
+- cost on the same axis as reliability
+  - evidence: UltraHorizon and TheAgentCompany do not report cost; the reliability framework reports none; tau-bench reports per-trial dollars but not pass^k per dollar
+  - evidence: agent_frontier already flags "recovery methods may simply spend more inference"
+- self-conditioning measured in real agent tasks
+  - evidence: the Illusion paper shows it only on a synthetic lookup task and says so
+  - evidence: AgentRewind and RIR restore context but do not separate "cleaner context" from "another try"
+- honest status after faults
+  - evidence: 90% "completed" after duplicates (LIMBO); 54.8% silent belief revision (Mittal); "fabricated completion" (TheAgentCompany); "declare the job done" (Anthropic)
+  - partial prior work: "Failure-Transparent Agents" (arXiv 2609.35732) is on post-failure reporting; I did not open it
+- rollback against real external state
+  - evidence: LIMBO is simulated; AgentRewind needs a "controlled environment"; LongHorizonUI rolls back a GUI by pressing back
+  - evidence: LIMBO says exactly-once needs "a bound on in-flight time", which is a lease, and does not build one
+- why memory scaffolds hurt
+  - evidence: "memory scaffolds universally hurt" in the reliability framework, open models, k=3
+  - this overlaps the memory sibling topic; I only flag it
+
+research we can do
+
+- A. cost-matched reliability: restarts with verification vs one long run
+  - question: at a fixed dollar budget per task, which buys more pass^k on long tasks: one long run, k independent runs with a verifier picking one, or checkpoint-restart from the last verified state
+  - why open: no study fixes dollars and reports pass^k with k≥20 on frontier models; the "more inference" confound is unresolved
+  - first experiment
+    - 40 software tasks binned by human time (30 min to 4 h), each with hidden tests the agent cannot query
+    - one frozen model; three harness conditions; same total dollars; 20 seeds each
+    - fit pass^k vs human time per condition; bootstrap the 80% and 95% horizons
+  - convincing result: a condition whose 95% horizon lower bound is longer at equal cost; or a clean negative that restarts only move cost around
+  - cost: about 40 x 3 x 20 = 2,400 runs; at $2–10 per run that is $5k–25k; a 5-task pilot first
+  - scoop risk: METR (budget-aware horizons), the reliability framework authors, Anthropic's harness team
+- B. isolate self-conditioning in real agent work
+  - question: after a mistake, does removing the mistake from context raise completion, independent of retries
+  - why open: shown only on synthetic lookups; rollback papers bundle context reset with environment reset and extra attempts
+  - first experiment
+    - inject one scripted mistake (a failed tool call or a wrong file edit) at a fixed point in 30 coding tasks
+    - conditions, equal tokens: keep the raw error in context; replace it with a one-line note; roll context back to the checkpoint while keeping the environment; roll both back
+    - measure completion, steps to recovery, and whether the agent repeats the bad action
+  - convincing result: the note or rollback condition beats raw-error by more than the run-to-run noise (≥6 points, 20 seeds), with equal tokens
+  - cost: 30 x 4 x 20 = 2,400 short runs, mostly cheap because tasks are short
+  - scoop risk: Sinha et al. (ICLR 2026) extending to agents; AgentRewind authors
+- C. honest status after faults, and a reconciliation fix
+  - question: how often does an agent's final report disagree with the real state after a fault, and does a mandatory "diff declared vs observed state" step fix it without hurting completion
+  - why open: three independent studies show silent or false completion; none tests a reconciliation step as the intervention
+  - first experiment
+    - reuse LIMBO-style services or the [recovery](recovery.md) service; inject faults; log real state
+    - score: report-state agreement, duplicates, completion, extra calls
+    - condition: a harness step that forces a state read-back and a written diff before the agent may declare done
+  - convincing result: false "completed" rate drops by half with no completion loss; or evidence that the agent lies even after reading the diff, which is itself a finding
+  - cost: small; the service and faults exist in recovery.md's design; about 1,000 runs
+  - scoop risk: LIMBO's author (already has the sandbox), "Failure-Transparent Agents", the Outcome Monitors authors
+- D. the systems leftover from LIMBO: a lease for in-flight actions
+  - question: can a harness-level lease (every write carries an idempotency key and an expiry; late commits past expiry are rejected) make agent writes exactly-once on real services
+  - why open: LIMBO states the bound is needed and does not implement it; recovery.md proposed deduplication but not expiry
+  - first experiment: same LIMBO faults against two real sandboxes (e.g. a payments test mode, a git host) with and without the lease
+  - convincing result: zero duplicates under late commits with bounded abort rate
+  - risk: it may be plain distributed-systems engineering with an LLM attached; claim only the measurement
+
+ChatGPT's opinion
+
+- consultation pending; the ChatGPT tool is unusable until the human signs in, so I did not run it
+
+what I searched
+
+- sources: arXiv abstracts and HTML full texts, OpenReview, ICML 2026 virtual pages, ACL Anthology, metr.org, andonlabs.com, anthropic.com, and local full texts in the paper collection
+- queries
+  - "pass^k" agent benchmark reliability 2026
+  - long-horizon agent compounding errors per-step accuracy "Illusion of Diminishing Returns"
+  - LLM agent error recovery benchmark tool failure injection recovery 2025 2026
+  - METR time horizon update 2026 50% 80% doubling; time horizon 1.1
+  - Vending-Bench 2 long-running agent coherence results
+  - Anthropic effective harnesses for long-running agents
+  - agent checkpoint rollback backtracking LLM agent undo actions 2025 2026
+  - agent failure taxonomy trace error propagation TRAIL AgentDebug
+  - tau2-bench pass^k; SWE-bench Verified variance repeated runs pass^k
+  - agent long-horizon wrong assumption stale belief revision benchmark
+  - "Large Language Models Cannot Self-Correct Reasoning Yet"
+- opened: 27 sources (22 papers, 2 METR pages, 2 Andon Labs pages, 1 Anthropic post), plus 5 local source cards from agent_frontier_papers
+- not opened, known only from search snippets: Failure-Transparent Agents (2609.35732), TRAIL (2505.08638), Huang et al. ICLR 2024 on self-correction, DeltaBox sandbox checkpointing (sibling infra topic), ChronoMem (sibling memory topic), STALE memory-validity benchmark (sibling memory topic), τ²-bench pass^k tables
+- not covered: training methods for recovery beyond PALADIN; multi-agent recovery; any human-baseline study of recovery time; the 2026 METR domain-variation note
+- stopped by the shared web search budget running out on 7 Oct 2026; later fetches used direct URLs only

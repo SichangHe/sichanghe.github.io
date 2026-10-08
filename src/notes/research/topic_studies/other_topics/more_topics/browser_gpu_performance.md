@@ -1,0 +1,308 @@
+browser GPU performance and correctness
+(authored by agents unless marked 🧑)
+
+what is worth studying
+- GPU speed depends on the whole path from input to usable output
+  - a GPU runs many calculations in parallel
+  - preparing work, copying data, compiling programs, and waiting for results can cost more than the calculation
+- measuring the size where GPU execution wins is already established work
+- tentative opportunity: predict that choice while competing pages change GPU availability
+  - contribution would require useful predictions or scheduling beyond existing browser resource-contention studies
+  - no novelty claim or experiment result established here
+
+human starting point 🧑
+- [reading notes](../../../../reading_notes/index.md), “From WebGL to WebGPU: A Reality Check of Browser-Based GPU Acceleration,” Sthitadhi Sengupta
+  - “GPU slower for smaller size, faster for larger size”
+  - “similar for GPU from WASM/JS”
+
+reading scope
+- checked primary literature and artifacts on 7 October 2026
+- inspected full HTML methods or evaluation sections for WebLLM, LlamaWeb, Maczan's two dispatch studies, and Wang et al.'s browser inference study
+- additional selected full methods: WebGlitch and DarthShader generation, correctness checks, campaign, and limitations
+- inspected official abstracts or artifact descriptions for the IMC comparison, GL2GPU, and WeInfer
+  - full IMC comparison paper and GL2GPU PDF remain unread
+  - distinguish these reading depths below
+- new proposals below are agent hypotheses
+- no measurements run
+
+why the API name does not determine speed
+- an API is the interface a program uses to request work
+- WebGL exposes graphics operations
+  - computation can be expressed using programs originally designed to produce pixels
+- WebGPU also exposes compute shaders
+  - a shader is a small GPU program
+  - WGSL is WebGPU's shader language
+- François Beaufort, [Chrome's migration guide](https://developer.chrome.com/docs/web-platform/webgpu/from-webgl-to-webgpu), updated September 2025
+  - quote: “WebGL supports vertex and fragment shaders, while WebGPU also supports compute shaders”
+  - WebGPU records work in command streams and uses explicit pipeline objects
+  - inference: the same arithmetic can still have different preparation and submission costs
+  - neither additional features nor a newer API establishes faster end-to-end execution
+
+the human's comparison paper
+- Sthitadhi Sengupta, Nan Wu, Matteo Varvello, Krish Jana, Songqing Chen, and Bo Han, [IMC 2025 official abstract](https://conferences.sigcomm.org/imc/2025/program/#session10)
+  - paper title: From WebGL to WebGPU: A Reality Check of Browser-Based GPU Acceleration
+  - quote: “both WebGPU and WebGL underperform for smaller input data because of setup and synchronization overheads”
+  - authors compare computational kernels across input sizes and complexity
+  - their abstract reports WebGL winning for complex inputs and WebGPU winning for less complex inputs and functions with a central CPU loop
+  - WebAssembly provides little improvement over JavaScript when CPU work is not the bottleneck
+  - scope limit: these are tested kernels and implementations
+    - the abstract does not specify enough hardware, warmup, repetition, or numerical-validation detail to reproduce the study
+    - do not infer a universal WebGL/WebGPU ranking
+- WebAssembly, Wasm, is a portable compiled program format
+  - compiling the host program to Wasm does not automatically change the GPU shader or eliminate data transfers
+- replication needs separate timings
+  - first execution, later executions, input upload, shader compilation, submission, GPU execution, output retrieval
+  - preserve identical arithmetic and precision before interpreting runtime differences
+
+browser inference already measures user experience
+- Qipeng Wang et al., [Anatomizing Deep Learning Inference in Web Browsers, arXiv v2](https://arxiv.org/html/2402.05981v2), §§3, 5, 7
+  - quote: “resource contention within the browser”
+  - nine models, 50 PC devices, 20 mobile devices
+  - TensorFlow.js 4.2.0 and ONNX Runtime Web 1.14.0
+  - Wasm and WebGL; WebGPU omitted in that version
+  - methods distinguish model loading, first execution, and later predictions
+  - authors inject inference into Speedometer, YouTube, and Google Docs
+  - they measure responsiveness, rendered frames, and task accuracy affected by skipped frames
+  - implication: showing inference slows rendering repeats established work
+  - limitation: historical frameworks and backends do not establish current WebGPU behavior
+  - caution: the inspected v2 abstract gives a 4.9× PC GPU gap while its introduction gives 30.6×
+    - this note uses neither number as a baseline until its denominator or version discrepancy is resolved
+  - artifact: [InBrowserInference](https://github.com/qipengwang/InBrowserInference)
+
+modern inference engines change the comparison
+- Charlie F. Ruan et al., [WebLLM, December 2024](https://arxiv.org/html/2412.15803v1), §§2–3
+  - quote: “up to 80% native performance on the same device”
+  - this is an author-reported best case, not a general browser performance fraction
+  - GPU kernels generated through MLC-LLM and Apache TVM
+  - Wasm handles CPU subsystems including grammar processing and tensor management
+  - a web worker moves computation off the page's main JavaScript thread
+    - this helps CPU responsiveness but does not create a separate physical GPU
+  - implication: comparing language wrappers alone misses compiler and scheduling differences
+- [WeInfer, WWW 2025](https://openreview.net/pdf?id=Qu2itILaoZ), indexed primary methods/evaluation excerpts, §§4–5
+  - quote: “parallelized computation and deferred result fetching”
+  - reuses buffers and batches GPU-to-CPU token retrieval while GPU decoding continues
+  - evaluates decode against WebLLM 0.2.46, modified for GPU post-processing
+    - greedy sampling and identical prompts in both frameworks
+    - Chrome 131; different GPUs and operating systems
+    - model sweep on RTX 3060; device sweep has unavailable configurations due to memory/features
+  - separate RTX 3060 ablations remove buffer reuse or asynchronous pipelining
+    - fetch-interval sweep trades result-delivery frequency against batching
+    - average decode time is not visible first-token or inter-token latency
+  - indexed discussion reports smaller gains when GPU computation dominates
+    - this does not establish gains under competing pages
+  - full PDF still blocked, including retry of the download endpoint
+  - [author artifact](https://github.com/csAugust/WeInfer)
+    - README describes WebLLM 0.2.46 integration
+    - current bench.md describes a later 0.2.80 comparison with changed SmolLM/SmolLM2 models
+    - treat this as a different experiment, not a reproduction of the paper
+  - consequence: reuse and deferred readback are required baselines; match model/version and output-delivery cadence
+- [Llamas on the Web, May 2026](https://arxiv.org/html/2605.20706v1), §§6–8
+  - LlamaWeb implements a WebGPU backend for llama.cpp
+  - supports several model weight formats and tuned kernels across devices
+  - quote: “prefill performance lags behind”
+    - prefill processes an input prompt; decode generates subsequent tokens
+  - authors compare frameworks separately for those stages
+  - §6.3 reports better decode throughput but worse prefill than WebLLM in their matched framework comparison
+  - §6.2 compares native execution with safety checks enabled and disabled
+    - disabling checks is an experimental comparison, not a browser deployment recommendation
+  - implication: selecting one tokens-per-second number can reverse the apparent winner
+  - limitation: newer GPU features available in native Dawn were unavailable in the tested browsers
+
+timing a dispatch without timing a separate wait each time
+- a dispatch requests execution of a compute shader
+- Jędrzej Maczan, [Characterizing WebGPU Dispatch Overhead, preliminary 2026 study](https://arxiv.org/html/2604.02344v1), §§3, 7
+  - quote: “torch-webgpu backend specifically was tested only on RTX 5090/Dawn”
+  - broad device coverage belongs to dispatch measurements and selected comparisons
+    - it does not imply that every engine/model combination ran on every device
+  - native ONNX Runtime's WebGPU provider is distinct from ONNX Runtime Web
+  - useful method: batch repeated dispatches before one synchronization
+  - compare API cost with framework cost and GPU calculation cost
+- Maczan, [Measuring and Reducing WebGPU Dispatch Overhead, August 2026](https://arxiv.org/html/2608.08730v1), §§4–6
+  - quote: “conflating dispatch with synchronization”
+  - this is a revised presentation of the earlier investigation, not independent corroboration
+  - one isolated operation includes a wait that normally occurs less frequently
+  - authors submit many operations and synchronize once to estimate marginal dispatch cost
+  - controlled fusion experiment reduces dispatch count while retaining the same shader calculations
+  - conclusion about dispatch dominance belongs to tested batch-one inference pipelines
+    - large matrix operations and other pipelines can have different limiting costs
+  - implication: a study proposing simply to batch or fuse WebGPU operations must exceed these results
+
+usable benchmark infrastructure
+- GoogleChrome, [Web AI Compute Benchmark README](https://github.com/GoogleChrome/webai-compute-benchmark#benchmark-methodology), inspected 7 October 2026
+  - quote: “Initialization Time: Time spent on model loading and data preparation is not included”
+  - runner repeats inference on the same input after initialization
+  - Wasm and WebGPU workloads can be selected separately
+  - source includes Transformers.js and LiteRT workloads
+  - useful baseline for steady execution
+  - insufficient alone for a study of first use, changing inputs, or contention from unrelated pages
+  - record exact repository revision and browser build
+    - hosted demo versions and main-branch descriptions can differ
+- Yudong Han et al., [GL2GPU, WWW 2025 primary paper](https://openreview.net/pdf?id=dyFPBgMdii), indexed §§3–4 excerpts
+  - quote: “dynamically translates WebGL to WebGPU at JavaScript runtime”
+  - intercepts JavaScript calls and tracks WebGL state until drawing
+  - shader bodies can be pretranslated; linking merges shared-variable records to assign WGSL locations
+  - two caches reuse state transitions and resources
+  - uniform batching copies each draw's parameters into one CPU buffer
+    - dynamic offsets select each draw's parameters after upload
+  - a prefix tree reuses drawing sequences as render bundles
+    - submission waits for uniform upload
+  - evaluation covers MotionMark, JSGameBench, and Aquarium
+    - visual comparison matches 100 frames after initialization
+    - disables antialiasing and controls randomness and animation time
+    - M1 ablations remove caches, batching, or bundles separately
+  - Chrome 114.0.5735 selected after Firefox implementation problems
+    - historical support, not a statement about present Firefox
+  - full PDF remains blocked, including the alternate hashed download
+    - [author project](https://gl2gpu.github.io/) links the ACM paper, not a recovered full manuscript
+    - selected indexed methods are evidence beyond the abstract, not a complete methods review
+- [GL2GPU artifact at inspected revision](https://github.com/yudshj/GL2GPU/blob/3dec70bd73dd0ab44f9714fc7878460a74642e5a/src/components/hydWebGLStatic.ts#L144)
+  - frame end flushes uniforms and submits pending commands
+  - [mipmap operation](https://github.com/yudshj/GL2GPU/blob/3dec70bd73dd0ab44f9714fc7878460a74642e5a/src/components/hydWebGLStatic.ts#L786) quote: “generateMipmap is not implemented”
+  - inference: three successful benchmarks do not establish complete WebGL API coverage
+  - no artifact execution performed
+- proposal implication
+  - cache reuse, uniform batching, and bundle reuse are existing baselines
+  - hold supported API behavior and shader preparation fixed when measuring contention
+  - test changing state sequences alongside repeated sequences
+    - agent hypothesis: cache misses alter backend rankings; not established by this paper
+
+an accessible comparison shows why implementation matching matters
+- Sung et al., [Real-Time Cloth Simulation Using WebGPU, full methods and §4](https://arxiv.org/pdf/2507.11794), July 2025 preprint
+  - authors: “in WebGL, parallel-based acceleration using GPU was not possible”
+  - this describes their compared implementation, not a general inability to compute with WebGL
+  - tested one i7-7700 and RTX 4070 Ti system with Chrome 122
+    - increased cloth-node counts from 4K and compared frame rates
+    - WebGPU simulation uses GPU parallelism; their WebGL comparison does not
+    - §4.1 compares performance “excluding collision processing algorithm”
+      - collision experiments evaluate WebGPU separately
+  - inference: its headline frame-rate gap bundles a change of algorithm execution location with the API change
+    - does not isolate WebGPU submission overhead against equivalent GPU-resident WebGL computation
+    - no cross-device or contention evidence established by this experiment
+  - required control: compare equivalent numerical updates, iteration counts, collision handling, and output accuracy
+    - report simulation time separately from drawing time
+    - retain CPU-based simulation as an additional application baseline, not the sole WebGL baseline
+  - read-depth limit: selected full methods and performance evaluation read; implementation not executed
+
+correctness is a separate requirement
+- Matthew K. L. Wong and Alastair F. Donaldson, [WebGlitch, ECOOP 2025](https://drops.dagstuhl.de/storage/00lipics/lipics-vol333-ecoop2025/LIPIcs.ECOOP.2025.39/LIPIcs.ECOOP.2025.39.pdf), selected full §§3–6
+  - quote: “random, valid-by-construction programs”
+  - generates API calls after recursively creating their required resources
+  - uses crashes, sanitizer reports, differing implementations, and unexpected validation errors
+  - 24 previously unknown bugs reported at publication
+  - passing the official conformance suite does not establish absence of implementation bugs
+  - manually authored requirements supply prerequisite objects and states
+    - near-valid mode skips checks and disables rejection-of-valid-program checks
+  - cross-platform buffer/error differences require specification and root-cause investigation
+  - five-month campaign uses evolving versions rather than a fixed prevalence sample
+    - 24 new bugs plus five rediscoveries; 15 new bugs fixed and five confirmed
+  - coverage comparison: three repetitions of 2000 programs per tool on one macOS backend
+    - supports 75% of API functions; complementary coverage does not establish universal superiority
+  - authors: “required frequent manual intervention”
+  - selected full generation, checks, campaign, and limitations read; bugs not reproduced
+- Lukas Bernhard et al., [DarthShader, CCS 2024](https://arxiv.org/pdf/2409.01824), selected full §§3–6
+  - quote: “combines mutators based on an intermediate representation with those using a more traditional abstract syntax tree”
+  - targets WGSL translation and compilation
+  - complements API-sequence testing
+  - seeded variant uses 7267 Tint test files; seedless variant separates generator comparisons
+  - instrumented translators and AddressSanitizer detect crashes for manual inspection
+    - downstream dxc sees only accepted Tint translations
+    - rendered-output equivalence is not its general check
+  - coverage evaluation: 24 hours per target, ten repetitions, pinned replay binaries
+    - Naga line coverage differs from other targets' branch coverage
+  - accepted-and-translated fraction of 12–18% does not establish correct execution results
+  - separate multiweek campaigns report 39 bugs and 15 CVEs at publication
+    - unresolved reports included; some Rust bounds failures affect availability
+  - selected full mechanisms, setup, coverage, and bug cases read
+    - artifact, exploits, and current-version status not independently verified
+- correctness checks for performance experiments
+  - validate outputs before timing and after each backend change
+  - test odd shapes, empty inputs where valid, large offsets, and numerically difficult reductions
+  - compare mathematically justified tolerances rather than requiring identical floating-point bits everywhere
+  - unexplained wrong outputs invalidate a speed claim
+- adjacent existing studies
+  - [hardware side channels](hardware_side_channels.md) studies information leaked by execution
+  - [formal verification compiler review](../../formal_verification_rust/practical_fv/compilers.md) explicitly leaves GPU compilers underexplored
+  - these are boundaries, not evidence that all GPU correctness topics have an owner or complete review
+
+experiment one: when does a saved threshold stop working?
+- hypothesis: a backend choice learned on an idle device becomes unreliable under competing rendering or compute
+- nearest work
+  - Sengupta et al. already measure input-size crossover
+  - Wang et al. already measure inference/rendering interference
+  - Maczan already separates dispatch from synchronization
+  - GL2GPU already batches uniforms and reuses rendering state and command sequences
+- proposed addition: predict changes in the preferred backend and resulting deadline failures
+  - test whether a small online probe provides information beyond input size and device identity
+- first implementation
+  - vector reduction, matrix multiplication, and one image-processing pipeline
+  - equivalent JavaScript, Wasm, WebGL, and WebGPU implementations
+  - fixed CPU threading and numerical accuracy settings
+  - record power mode, temperature, chosen GPU adapter, and tab visibility/throttling
+    - these can change execution time independently of competing workloads
+  - isolated page, concurrent animation, another compute tab, and background-to-foreground transition
+  - GPU-resident intermediate results and CPU-readable outputs as separate cases
+- baselines
+  - always CPU, always GPU, idle-device size threshold, periodic retiming
+  - published buffer reuse and batched dispatch where applicable
+  - GL2GPU for supported rendering workloads, with cache state and shader preparation recorded
+- measurements
+  - total response time and missed application deadlines
+  - render-frame delays, probe cost, backend-switching cost, and memory use
+  - first execution and steady execution separately
+  - randomized run order and repeated independent browser sessions
+- evaluation split
+  - choose policy on some devices and loads; test on unseen devices and changed loads
+  - compare against the fastest backend observed for each tested condition
+- stop rule
+  - reject the project if ordinary periodic retiming gives the same results at comparable cost
+  - reject a broad novelty claim until current WebGPU scheduling and adaptation work is fully read
+
+experiment two: do optimization claims survive changing the observation boundary?
+- hypothesis: a claimed speedup depends on excluding compilation, preparation, or result retrieval
+- nearest work already separates stages and dispatch costs
+  - a timing breakdown alone is replication
+- proposed addition: measure reproducible ranking reversals across application boundaries
+  - one-off operation versus repeated resident pipeline
+  - outputs consumed by another GPU kernel versus read by JavaScript
+  - cold browser session versus previously compiled shaders
+  - benchmark input versus fresh user inputs
+- compare existing WebLLM, LlamaWeb, WeInfer, and kernel benchmarks where reproducible
+  - match model, precision, prompt length, generated length, and correctness
+  - sweep fetch interval; report visible first-token delay, delivery gaps, and cancellation latency
+    - higher throughput with delayed delivery is not automatically a user-experience improvement
+  - verify identical greedy token sequences before interpreting pipeline speedups
+  - separate framework changes from API changes
+- publish raw event traces and denominator definitions
+  - aggregate speedups only across explicitly matched configurations
+- stop rule
+  - ranking reversals that merely restate published limitations are useful replication, not a new result
+
+remaining literature before committing
+- retrieve Sengupta et al.'s full seven-page paper and artifact
+  - verified [DOI 10.1145/3730567.3764504](https://doi.org/10.1145/3730567.3764504)
+  - [Bo Han's author publication list](https://people.cs.gmu.edu/~bohan/papers.html) gives pages 1018–1024 but its title link is empty
+  - ACM download returned HTTP 403; ResearchGate lists no full text
+- retrieve complete GL2GPU and WeInfer PDFs
+  - GL2GPU and WeInfer indexed evaluations deepened; complete related work, repetition protocol, and full coverage remain unchecked
+  - additional October 7 recovery routes did not close GL2GPU or the IMC paper's full-method gaps
+    - PKU's GL2GPU institutional record timed out
+    - title searches and author/project metadata yielded existing publisher links rather than a new manuscript
+    - ResearchGate's IMC record explicitly reports no full text
+    - [Yudong Han's current author page](https://hanyd.site/) links GL2GPU to its existing DOI rather than an author manuscript
+      - exact publication link text: “Paper”
+    - [WWW 2025 conference archive](https://archives.iw3c2.org/www2025/www2025-proceedings.pdf) recovered successfully
+      - lists the GL2GPU title and page range; this file contains proceedings metadata rather than the article's full methods
+    - Songqing Chen's university author page could not be recovered through the new route
+    - [coauthors' 2024 university abstract](https://journals.gmu.edu/jssr/article/view/4222) compares JavaScript with WebGPU
+      - “Traditional JavaScript and JavaScript leveraging WebGPU”
+      - this earlier abstract neither supplies the IMC 2025 methods nor substitutes for its WebGL comparison
+    - no identical blocked download was repeated in this pass
+- inspect current browser GPU scheduling and background-tab policies
+- compare adaptive offloading with [nnWeb's published description](https://www.sciencedirect.com/science/article/pii/S1389128625004566)
+  - dynamic client/server partitioning already considers device load and network bandwidth
+  - full methods unread; local CPU/GPU choice could overlap its mechanism
+- investigate GPU compiler correctness separately
+  - earlier search leads include GPUVerify, Faial, Kuiper, Descend, Volta, and tile-compiler bug studies
+  - these names are leads, not verified conclusions in this page
+- ChatGPT Extra High consultation remains coordinated by the study owner
+  - no opinion from an unavailable response is attributed here

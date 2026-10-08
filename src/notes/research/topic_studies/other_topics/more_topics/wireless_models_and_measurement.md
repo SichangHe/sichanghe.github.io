@@ -1,0 +1,303 @@
+wireless models and immersive media measurement
+(authored by agents unless marked 🧑)
+
+research direction
+
+- recommendation: test whether an accurate radio model predicts useful application decisions after the room, radio, or software changes
+    - a signal prediction can be accurate while a throughput or frame deadline prediction is wrong
+    - novelty remains unconfirmed
+    - start with public measurements before committing to a 60 GHz testbed
+- definitions
+    - RF: radio frequency
+    - mmWave: millimeter-wave radio
+    - RSSI: a device's reported received signal strength
+    - CSI: channel state information describing how a radio signal changes between transmitter and receiver
+    - ray tracing: predicting radio paths through a model of the room and its objects
+    - calibration: fitting model parameters to measurements
+    - transfer: using a model under conditions different from its training conditions
+- scope: indoor wireless prediction and mobile immersive applications
+    - Internet routing belongs in the distributed systems study
+    - this page does not infer that a seminar note establishes a current research priority
+
+human evidence 🧑
+
+- [reading notes](../../../../reading_notes/index.md): Zihao Feng's NSL presentation
+    - “per-beam received signal strength (RSS, physical layer) → RL → simulator”
+    - “KL divergence loss between simulator throughput and measured ground truth”
+    - interpretation: the human recorded interest in connecting radio measurements to protocol-level performance
+- [reading notes](../../../../reading_notes/index.md): LiVo presentation
+    - “dynamic bandwidth splitting between color vs depth to balance RMSE”
+    - interpretation: geometry quality and visual quality can compete for network capacity
+- [reading notes](../../../../reading_notes/index.md): SplatPose presentation
+    - “appearance modeling to deal w/ different lighting”
+    - interpretation: changes in the physical environment matter beyond the radio channel
+- [About](../../../../../about.md): “Previous: Federated learning, Internet routing, content provenance (C2PA).”
+    - routing is explicit previous interest
+    - immersive media is supported by reading notes rather than About's stated current interests
+
+literature and evidence limits
+
+- Zihao Feng, Xingyu Chen, Xuyang Cao, Xinyu Zhang, Hybrid Data-Driven and Simulation-Driven Prediction of mmWave Network Performance, MobiCom workshop 2024
+    - [author's publication list](https://zihaofeng.com/): “MobiCom Workshop 2024”
+    - [paper DOI](https://doi.org/10.1145/3636534.3694725)
+    - status: bibliographic record and human seminar notes read
+    - renewed ACM full-paper retrieval returned HTTP 403
+        - author homepage still links ACM; no verified full-text mirror recovered
+        - additional UCSD author publication data and workshop routes yielded no full methods
+    - reinforcement learning and throughput-distribution fitting are seminar-note evidence
+        - neither implementation details nor numerical results independently verified
+    - unresolved: which protocol parameters are learned, what training traffic is used, and whether evaluation changes hardware or environment
+- Xingyu Chen et al., RFCanvas, SenSys 2024
+    - [author-hosted paper](https://xyzhang.ucsd.edu/papers/Xingyu.Chen_SenSys24_RFCanvas.pdf), sections 4–5
+    - status: methods, experimental setup, results, and discussion read
+    - learns room geometry and radio properties from visual information and sparse RF samples
+    - measured WiFi at 2.4/5 GHz and WiGig at 60 GHz
+    - roughly 200 samples per scene and band
+        - 80% used to reconstruct models
+    - author result: “an overall median error of 2.2 dB”
+    - dynamic-scene evaluation covers moved, added, and removed objects
+    - reports a 5 Hz scene update rate
+        - camera depth/motion estimation limits that rate
+        - additions or major rearrangements require roughly five seconds of multipath tracing
+    - training a room takes about five minutes on an RTX A6000
+    - compares ray tracing, interpolation, NeRF2, and NeWRF
+    - inference: these indoor signal results do not establish throughput, packet delay, or deadline reliability
+    - random nearby samples may make interpolation easier than transfer to another room or another day
+        - this is a proposed test concern, not a demonstrated flaw
+- Xingyu Chen et al., RFScape, CVPR 2025
+    - [published record](https://openaccess.thecvf.com/content/CVPR2025/html/Chen_Radio_Frequency_Ray_Tracing_with_Neural_Object_Representation_for_Enhanced_CVPR_2025_paper.html)
+    - [published full paper](https://openaccess.thecvf.com/content/CVPR2025/papers/Chen_Radio_Frequency_Ray_Tracing_with_Neural_Object_Representation_for_Enhanced_CVPR_2025_paper.pdf), §§4–5
+    - status: published methods and evaluation now read, beyond the previously inspected preprint
+    - each object has a learned geometry and material representation
+        - representations enter a ray tracer and can move with the object
+    - authors assume newly added objects already have trained representations
+    - object experiment uses a kettle, teacup, and robot
+        - 50% of rotation measurements train the model
+        - remaining angles test it
+    - room-change experiment assumes camera-provided object identity and pose or collects 3–5 additional RF points
+    - author result: “median RSSI errors of 2.9 and 3.2 dB, respectively”
+    - inference: this supports assisted scene updates
+        - it does not establish unknown-object transfer or continuously moving human blockage
+    - object baseline uses visually scanned meshes and literature material parameters
+        - a fitted-material ray tracer is a necessary additional proposed control
+    - antenna simulation assumes isotropic gains or supplies known directional patterns
+    - signal errors from different experiments cannot rank RFCanvas against RFScape
+- Jakob Hoydis et al., Sionna RT, 2023
+    - [paper](https://arxiv.org/abs/2303.11103)
+    - status: abstract skimmed
+    - authors demonstrate “learning radio materials and optimizing transmitter orientations by gradient descent”
+    - role: reusable simulator baseline
+        - differentiability means model outputs can guide parameter fitting
+        - it does not establish accuracy without physical measurements
+- Jakob Hoydis et al., Learning Radio Environments by Differentiable Ray Tracing, 2023
+    - [official artifact](https://github.com/NVlabs/diff-rt-calibration)
+    - status: README and reproduction instructions read
+    - authors used “both synthetic data and real-world indoor channel measurements”
+    - artifact points to DICHASUS measurements and includes scene geometry, receiver coordinates, checkpoints, and comparison notebooks
+    - role: lower-cost first experiment for calibration and spatial transfer
+    - artifact documented Sionna 0.18-era dependencies
+        - reproducing that environment requires version pinning
+- Ahmed Alkhateeb, DeepMIMO, ITA 2019
+    - [paper](https://arxiv.org/abs/1902.06435)
+    - status: abstract skimmed
+    - “constructed based on accurate ray-tracing data obtained from Remcom Wireless InSite”
+    - parameters and selected ray-tracing scenario define a reproducible dataset
+    - role: controlled synthetic experiments and beam-selection baselines
+    - inference: agreement with DeepMIMO does not independently validate physical radio behavior
+- Clement Ruah et al., Calibrating Wireless Ray Tracing for Digital Twinning using Local Phase Error Estimates, 2024 revision
+    - [paper](https://arxiv.org/html/2312.12625v2), introduction and conclusion
+    - status: these sections read; equations and experiments skimmed
+    - models geometric mismatch through uncertain signal phases
+    - authors explicitly leave “the validation of the proposed approach on real-world measurements” to future work
+    - inference: phase uncertainty is a concrete baseline concern
+        - laboratory validation remains needed for this method
+- Weiwu Pang et al., SplatPose, ACM Multimedia 2025
+    - [author's abstract and publication record](https://govindan.usc.edu/publications/)
+    - [paper DOI](https://doi.org/10.1145/3746027.3755709)
+    - status: author abstract skimmed; publisher PDF blocked and no matching author mirror found
+        - other papers called SplatPose have different authors and tasks
+        - their evaluations cannot fill this paper's evidence gap
+    - trained Gaussian Splatting model renders a view near an estimated device position
+        - matching it against the camera image estimates position and orientation
+    - author's claim: “up to an order of magnitude faster on a mobile device”
+    - inference: benchmark speed alone does not establish sustained thermal behavior or reliable pose under a changed scene
+- Rajrup Ghosh et al., LiVo, CoNEXT 2025
+    - [author's record](https://nsl.usc.edu/people/rajrup-ghosh/), [official code](https://github.com/USC-NSL/LiVo), [paper DOI](https://doi.org/10.1145/3768981)
+    - [author-hosted full paper](https://taojin.io/pdf/LiVo_Paper.pdf), sections 3–4 and appendix A
+    - status: methods, evaluation, and transport appendix read
+    - sender encodes, locally decodes, and measures color/depth pixel RMSE every three frames
+        - RMSE means square root of the average squared pixel error
+        - adjusts the depth bandwidth fraction in steps of 0.005 within 0.5–0.9
+        - compares the two errors rather than directly optimizing viewer-rated quality
+        - paper footnote 7: “Other objectives are possible, such as minimizing a weighted sum of the two errors”
+    - predicts viewer pose with a Kalman filter and adds a 20 cm margin before removing unseen points
+    - evaluation: five replayed Panoptic videos, viewer traces, and two replayed Wi-Fi traces
+        - throughput traces scaled 10× and 15× to means near 217 and 90 Mbps
+        - desktop GPUs; mobile deployment remains future work
+    - table 6: mean latency about 252 ms, including a 100 ms WebRTC jitter buffer
+        - frame rate and full capture-to-display delay are different measurements
+    - baselines differ: Draco-Oracle uses offline compression choices and 15 fps; MeshReduce sends meshes over TCP
+    - appendix implements WebRTC loss feedback and larger socket buffers
+        - inference: proposing adaptive splitting or basic loss feedback alone duplicates existing mechanisms
+- Ankur Aditya et al., ReVo, April 2026 preprint
+    - [full paper](https://arxiv.org/html/2604.27441v1), sections 3–5 and appendix B
+    - status: design, experimental setup, timing, and training limits read
+    - protects critical frames using redundant packets and reconstructs damaged color/depth frames with separate neural models
+        - different training objectives for color and depth
+        - codec-specific fine-tuning on offline simulated losses
+    - authors target “real-time constraints on desktop-grade hardware”
+    - evaluates RTX 4070/5070, 30 talking-head videos, and replayed Ethernet/Wi-Fi/cellular loss traces
+        - prepares input color/depth videos offline
+        - reported quality metrics cover corrupted frames, not all displayed frames
+        - receiver processing budget is distinct from total network delay
+        - §5.2 reports processing above 33 ms on RTX 4070 with the tested `k = 7` model setting
+            - meeting the budget depends on both device and model settings
+    - [project and artifact links](https://umassos.github.io/revo-website/)
+        - reproduction not attempted
+    - inference: robust joint color/depth recovery is already a direct baseline
+        - sustained mobile behavior under competing computation remains a hypothesis to test
+- Peiqing Chen et al., Protocol Compliance in Popular RTC Applications, IMC 2025
+    - [author-hosted full paper](https://zaoxing.github.io/papers/2025/IMC25_RTC.pdf), sections 3–6
+    - status: capture method, parser, compliance metrics, and limitations read
+    - RTC means real-time communication
+    - studies Zoom, FaceTime, WhatsApp, Messenger, Discord, and Google Meet on two iPhone 11 devices
+        - Wi-Fi direct/relay configurations and cellular calls
+        - section 3.1.2 reports 15 configurations, six repetitions, five-minute calls
+        - internal count inconsistency: sections 3.1.2/3.3 report six apps and 90 calls; section 3 opening and conclusion say five apps, with 75 calls in the opening
+    - scans UDP payload offsets to find standard messages behind proprietary headers
+        - then checks message fields and reports message-count and message-type compliance separately
+        - does not establish complete stateful protocol conformance or demonstrate cross-app calls
+    - encrypted media remains encrypted; analysis uses visible headers
+    - section 6: “without access to the application source code, we cannot determine the exact intent behind these design choices”
+    - inference: undocumented extensions warrant measurement, but are not automatically security defects or proven causes of failed interoperability
+- Rajrup Ghosh et al., GS-NFS, June 2026 preprint
+    - [paper](https://arxiv.org/html/2606.05650v1), sections 1 and 5.4
+    - status: introduction and mobile results read; remaining evaluation skimmed
+    - GPU-based compression of moving Gaussian scenes
+    - authors report mobile decoding “17–25 fps” for scenes using only constant color coefficients
+    - inference: codec, decoder, renderer, and network delays must share the same frame budget
+        - fast desktop coding is insufficient evidence for smooth mobile viewing
+
+- Xingyu Chen et al., RFDT, MobiCom 2026 author-listed paper
+    - [March 2026 preprint](https://arxiv.org/html/2603.18026v1), introduction, §§3–6, §7.2, and appendices A/C.1–C.4
+    - selected full prose read; equations, all plots, proofs, and artifact not audited
+    - learns scene parameters and models path-visibility changes
+    - reflecting-surface case study measures radio accuracy and coverage, not protocol throughput or frame deadlines
+    - authors state the model uses “high-frequency and far-field assumptions inherent to geometric optics”
+    - jointly fits geometry and materials from radar
+        - 20-second stationary samples; 20 Vayyar frames averaged; depth-camera shape reference
+        - independent held-out reconstruction scenes and unique parameter identification unspecified
+        - §6.2 and appendix C.1 disagree on Vayyar frequency; unresolved
+    - A6000 forward simulation: about 0.01 seconds/frame
+        - differentiation takes 0.05–0.2 seconds; shape updates about 0.03 seconds
+        - roughly 300 fitting iterations; forward timing excludes this cost
+    - finite-difference gradient checks and selected full-wave references
+    - Sionna comparison: non-coherent radio maps, extended coherent radar solver
+    - [WiTwin project](https://witwin.ai/) advertises a channel module and links code
+        - installation and reproduction not tested
+    - inference: compare calibration against RFDT under matched solvers
+
+project A: uncertainty in radio predictions that actually helps a protocol
+
+- hypothesis: an interval for future delivered bytes improves deadline decisions under changed conditions
+    - delivered bytes means application data arriving before a specified time
+    - uncertainty means a measured range of plausible outcomes
+- minimal experiment
+    - reproduce the official Sionna calibration artifact with DICHASUS
+    - compare fixed material parameters, fitted material parameters, and neural materials
+    - fit an initial prediction interval from errors on separate calibration data
+        - reserve calibration locations separately from final test regions
+        - this is a proposed baseline, not a guarantee under changed rooms or devices
+    - reserve whole spatial regions for testing
+        - also reserve different collection sessions if the dataset supplies them
+    - report signal error and interval coverage separately
+        - coverage: fraction of measurements falling inside the predicted interval
+        - a very wide interval can have high coverage while being useless
+- protocol extension requires new hardware data
+    - record beam changes, retries, traffic load, device identity, RSSI, and delivered bytes together
+    - use an ordinary measured-history predictor and a radio-only predictor as baselines
+    - estimate delivered-byte intervals from earlier sessions and freeze their calibration before evaluation
+    - reserve entire days, devices, and room arrangements
+    - freeze all tuning before opening each reserved group
+- primary endpoint: deadline misses at equal useful data delivery
+    - secondary endpoints: interval width, calibration cost, measurement count, and update time
+- failure criterion
+    - uncertainty estimates add no decision benefit over recent measured throughput
+    - improvement disappears when protocol state is observed
+- feasibility limit
+    - public channel data enables the calibration study
+    - it cannot replace real protocol traces for the extension
+- novelty check still required
+    - compare against Feng's full workshop paper before claiming a new hybrid simulator
+    - compare uncertainty methods against Ruah, RFDT, and measurement-based Sionna calibration
+
+project B: when does an editable object model stop transferring?
+
+- hypothesis: a small set of targeted measurements can detect when an object model needs refitting
+- intervention: reuse the same trained object in a different room and orientation
+    - then change device antenna, frequency, or surrounding objects one at a time
+- baselines: RFCanvas scene update, RFScape object reuse, Sionna calibration, and direct measurements
+    - include both literature-default and measurement-fitted materials in conventional ray tracing
+    - match RF sample counts, camera coverage, geometry access, and fitting time
+    - separate known-object movement from new-object training
+    - include a no-visual-information baseline and a pose-error sweep
+    - report update delay and unavailable predictions while retracing or refitting
+    - freeze test-region RF samples until evaluation; identify any adaptation samples separately
+    - if code for RFCanvas or RFScape cannot be obtained, report a reproduction limit
+- measure error before and after change
+    - include worst errors near beam switches and blockage events
+    - record both sensing errors in object pose and errors in radio prediction
+- contribution would be a tested transfer boundary and measurement rule
+    - moving known furniture alone is already demonstrated in RFScape
+- stop if gains depend on using test measurements to initialize the model
+
+project C: shared deadlines for wireless delivery and immersive rendering
+
+- hypothesis: adapting scene quality using both network and device time reduces late frames
+    - use a recorded sequence before attempting live conferencing
+- baseline applications: LiVo, GS-NFS, and ReVo
+    - SplatPose supplies a related pose workload if its implementation becomes available
+- record frame timestamps at capture, encode, send, receive, decode, and render
+    - also record viewer motion and sustained device temperature
+- vary network blockage, competing traffic, pose error, and GPU load independently
+- compare recent-throughput adaptation with measured joint network-and-device adaptation
+    - add radio-model prediction only after demonstrating benefit from ordinary measurements
+- primary endpoint: late or missing frames at matched displayed quality
+    - also report geometry error and visual error separately
+- novelty constraint
+    - bandwidth adaptation already exists in LiVo
+    - faster Gaussian coding already exists in GS-NFS
+    - combined color/depth loss recovery already exists in ReVo
+    - proposed contribution is robust end-to-end behavior under combined changes
+        - narrow initial target: sustained mobile operation with network loss and competing GPU work
+        - keep total capture-to-display delay separate from per-frame processing time
+- failure criterion: device-aware adaptation gives no benefit over an existing application's controller
+
+project D: how protocol observations change across application updates
+
+- hypothesis: application updates change message formats enough to break otherwise accurate measurement parsers
+- reproduce Chen's offset-search parser before designing a replacement
+    - reserve whole application versions, device models, and operating-system versions for testing
+    - use controlled protocol implementations with known messages to measure false matches and missed messages
+    - independently review visible messages in held-out application traces
+        - retain uncertain labels as unknown
+        - controlled messages do not establish accuracy on proprietary application traffic
+        - agreeing parsers do not supply independent ground truth
+    - report unknown payloads rather than forcing them into a known protocol
+- endpoint: correctly identified messages and parser maintenance effort after an update
+    - actual interoperability requires a separate client-to-client experiment
+- failure criterion: an ordinary extensible parser remains accurate without special adaptation
+
+recommended sequence and unresolved evidence
+
+- first: public calibration reproduction and realistic held-out-region tests
+- second: recover Feng's still-unavailable full method and confirm runnable RFCanvas/RFScape artifacts
+- third: collect physical traces only if the first experiment exposes a reproducible failure
+- fourth: integrate one immersive workload after separating radio, transport, and device delays
+- no experiments were executed for this literature study
+- no claim that the hypotheses are novel or that any reported paper result reproduces on our hardware
+- reading priority
+    - Feng's complete workshop paper
+    - reproduce LiVo and ReVo under matched input, quality, and deadline conditions
+    - SplatPose's full evaluation and implementation availability
+    - newer papers citing RFCanvas and RFScape that evaluate protocol outcomes

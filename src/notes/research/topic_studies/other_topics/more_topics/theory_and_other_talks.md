@@ -1,0 +1,602 @@
+theory talks and small systems research opportunities
+(authored by agents unless marked 🧑)
+
+scope
+
+- review date: 7 October 2026 UTC
+- this is a source-grounded first pass across the otherwise unassigned theory talks
+  - selected full-paper models, algorithms, evaluations, and limitations read
+    - detailed reading notes below identify the sections examined
+    - some cryptography and delegation entries remain first-pass mappings
+  - proofs have not been independently checked
+  - research ideas below are agent proposals
+  - novelty remains unverified unless a specific overlap is identified
+- practical starting points: worker diversity, committee audit, availability-aware probing
+  - recommendation based on small experiments with measurable failures
+  - quantum constructions need specialist collaborators
+
+learning within a restricted model family
+
+- 🧑 human note: “proper learning: learned fn $h$ not in hypothesis class $\mathcal H$”
+  - [reading notes, Julian Asilis talk](../../../../reading_notes/index.md)
+  - correction: the note reverses the definition
+- Asilis, Devic, Dughmi, Sharan, Teng, [Proper Learnability and the Role of Unlabeled Data, ALT 2025](https://proceedings.mlr.press/v272/asilis25b.html)
+  - authors: “learners must emit predictors in the underlying hypothesis class”
+  - plain meaning: the output must belong to the allowed model family
+  - knowing the full distribution of unlabeled inputs permits an optimal proper learner
+  - this is a statistical existence result
+    - does not establish a fast implementation
+  - [model and related work, §§1–2](https://arxiv.org/html/2502.10359v1)
+    - authors: “we focus on the case of realizable learning throughout the paper”
+    - assumed true labels come from a member of the model family
+    - worst-case results do not dismiss practical semi-supervised learning under useful data assumptions
+- proposed experiment: small interpretable failure classifiers for distributed traces
+  - compare single in-family predictors against ensembles
+  - vary labeled data, unlabeled data, and distribution shift
+  - measure error, model size, fit time, and explanation length
+  - stop if ordinary supervised baselines explain the gains
+  - no claim that the abstract existence theorem yields an implementable algorithm
+
+delegating search with conflicting goals
+
+- 🧑 human note: “outside contractor (agent) may not optimize for employer's (principal) need”
+  - [reading notes, Curtis Bechtel thesis proposal](../../../../reading_notes/index.md)
+- Bechtel and Dughmi, [Delegated Stochastic Probing, ITCS 2021](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ITCS.2021.37)
+  - authors: “constant-factor deterministic mechanisms for a large class of delegated stochastic probing problems”
+  - plain meaning: rules can retain a fixed fraction of the employer's best expected benefit
+  - scope: some constraints on which options can be inspected and selected
+- Bechtel, Dughmi, Patel, [Delegated Pandora's Box, EC 2022](https://arxiv.org/abs/2202.10382)
+  - authors: “no constant-factor delegation gap for even simple non-binary instances”
+  - search costs can destroy the guarantee
+  - sharing inspection costs restores guarantees for specified constraint families
+  - this is not a guarantee for arbitrary contractors or LLM agents
+  - [full model and result distinctions, §§1 and 3](https://arxiv.org/html/2202.10382v1)
+    - both parties know reward distributions before search
+    - inspection reveals an option's realized rewards to the worker
+    - workers cannot invent inspections or misreport revealed rewards
+    - paying all inspection costs for the worker still does not ensure a constant fraction of the employer's undelegated benefit
+      - its positive result also discounts inspection costs
+    - adjustable cost sharing has a different guarantee
+      - compare total costs and who pays them before transferring the result to a practical workflow
+- Bechtel and Dughmi, [Efficient Multi-Agent Delegated Search, AAMAS 2025; §§1–2](https://arxiv.org/html/2411.00181v1)
+  - authors: “all random variables $V(e)$ are mutually independent”
+  - benefits approach the employer's best result under symmetry assumptions
+  - more workers mainly enlarge the available option pool
+    - authors' interpretation does not credit strategic competition alone
+  - model assumes false proposed outcomes can be detected
+    - workers cannot collude
+    - selected worker receives all worker utility
+- Hajiaghayi, Krysta, Mahdavi, Shin, [Delegation with Costly Inspection, 2025 preprint, §§2–4](https://arxiv.org/html/2506.07162v1)
+  - authors: “an agent may strategically misreport the proposed element’s utility”
+  - employer can pay to verify options or choose an unverified option
+  - worker sees all realized rewards before sending advice
+    - employer knows its reward distributions and inspection costs
+    - model uses independent option rewards and best responses to committed rules
+  - when delegation costs nothing, choosing the better of two policies guarantees at least one-third of the optimal committed rule's expected net benefit
+    - benchmark takes worst-case unknown worker-reward distributions
+    - verify a nonnull proposed option and accept when verified reward minus inspection cost meets the chosen threshold
+    - select the option with highest expected reward without inspecting it
+  - positive guarantees with paid delegation require specified cost regimes
+    - intermediate delegation costs remain open in this version
+  - costly verification is already modeled
+    - applying an inspect-or-trust rule alone is not a new theoretical contribution
+  - read-depth limit: model, main result statements, and upper-bound arguments examined
+    - proofs not independently verified
+- proposed experiment: determine when another worker adds another useful search result
+  - fixed tasks, acceptance tests, proposal budgets, and scoring
+  - compare repeated same-model workers against different models and different search partitions
+  - measure distinct valid proposals and accepted utility per dollar
+  - inject correlated errors and partial overlap in workers' options
+  - separate proposal quality from the cost and accuracy of verification
+    - compare trusting scores, checking every proposal, checking only the winner, and fixed-budget checks
+    - hold the available option pool fixed when measuring worker diversity
+    - report benefit after search and verification costs
+  - novelty risk: agent coordination studies already measure diversity
+    - contribution needs an explicit dependence model or decision rule
+  - coordinate implementation with [AI agent studies](../ai_agents/coordination_specialization.md)
+
+voting and audit of representative committees
+
+- 🧑 human note: “representative selection: majority vs cohesion”
+  - [reading notes, Jiasen Liu talk](../../../../reading_notes/index.md)
+- Kalayci, Liu, Kempe, [Full Proportional Justified Representation, AAMAS 2025](https://arxiv.org/abs/2501.12015)
+  - authors: “efficient rules like the greedy Monroe rule and the method of equal shares satisfy FPJR”
+  - plain meaning: choose several winners while representing sizeable groups with related approvals
+  - the new requirement combines broad agreement within a group and collective representation
+  - satisfying this requirement does not imply every member is individually well represented
+- [full paper, §§1 and 4](https://arxiv.org/html/2501.12015v1)
+  - authors: “Verifying FPJR is coNP-complete”
+  - constructing a committee with a guarantee can be easier than checking an arbitrary committee
+  - a concrete dissatisfied coalition can certify a violation
+  - other proportionality rules already have efficient verification
+    - changing the fairness definition changes the question
+- [model and construction, §§2–3](https://arxiv.org/html/2501.12015v1)
+  - a coalition has witness candidate set T
+    - its population share must cover T
+    - each member approves at least ℓ candidates in T
+    - committee must contain ℓ candidates approved by someone in the coalition
+  - equal shares gives each voter one budget unit
+    - elects the affordable candidate requiring the lowest per-supporter payment cap
+  - priceability supplies a sufficient certificate
+    - approved winners receive equal total payments
+    - no loser has enough remaining supporter budget to exceed that price
+  - audit implication: check a retained payment certificate before searching all coalitions
+    - certificate failure alone does not prove unfairness
+- proposed experiment: audit committees after membership or ballots change
+  - compare maintained payment certificates, previous violation witnesses, and a complete solver
+  - measure witness discovery time, missed violations, and repair size
+  - compare full recomputation and existing efficient verifiable rules
+  - novelty unresolved for dynamic committee selection and incremental solver methods
+  - a heuristic audit must report “no witness found” rather than “fair”
+
+vote delegation and hidden preference distances
+
+- 🧑 human note: “limitation: unrealistic assumption”
+  - [reading notes, Alan Grayson York talk](../../../../reading_notes/index.md)
+  - notes describe two candidates on a line and uniformly spread informed voters
+- exact talk paper not identified after author/title searches
+  - [USC theory-lunch archive, Spring 2025](https://viterbi-web.usc.edu/~cstheory/theory-lunch-archive.html) confirms “Vote Delegation through the Lens of Metric Distortion” on 27 March
+  - [speaker's author homepage](https://agraysonyork.com/) confirms social-choice work with David Kempe
+    - author identity does not establish the missing theorem's assumptions
+  - retain the note's square-root improvement as an unverified talk claim
+- Kempe, [Communication, Distortion, and Randomness in Metric Voting, AAAI 2020](https://ojs.aaai.org/index.php/AAAI/article/view/5582)
+  - author: “voters and candidates are jointly embedded in a metric space”
+  - plain meaning: preferences come from distances among voters and choices
+  - “distortion” compares the chosen outcome's total distance against the best possible total distance
+  - limited communicated preferences can force poor worst-case outcomes
+- proposed experiment: rebuild the talk's simple model before extending it
+  - exact model remains unavailable; an independently specified model would be an assumption-sensitivity study
+  - vary clustering of informed voters, correlated information, and delegation distance limits
+  - compare direct voting with delegation using exact total distances
+  - fail the transfer if conclusions depend on evenly spread informed voters
+  - a simulation result alone would not establish a new worst-case theorem
+
+fair division and truthful forecasts
+
+- 🧑 human note: “incentive compatibility: no more profit by lying about preference”
+  - [reading notes, Jens Witkowski talk](../../../../reading_notes/index.md)
+- Freeman, Pennock, Vaughan, [An Equivalence between Wagering and Fair-Division Mechanisms, AAAI 2019](https://ojs.aaai.org/index.php/AAAI/article/view/4023)
+  - authors: “allocation mechanisms for divisible goods”
+  - probability forecasts and divisible resource allocations share a mathematical mechanism structure
+- Freeman, Witkowski, Vaughan, Pennock, [journal extension, Management Science 2024](https://pubsonline.informs.org/doi/10.1287/mnsc.2022.02615)
+  - authors: “for two agents”
+  - characterizes a class of truthful, nonwasteful allocations under technical conditions
+  - simulations already compare welfare across mechanisms
+- [full journal paper, §§2, 3, and 6](https://www.rupertfreeman.com/wagering-fair-division-journal-full.pdf)
+  - model: additive nonnegative valuations for divisible items
+    - each agent’s values sum to one
+    - normalization affects comparisons of total welfare
+  - correspondence treats item values as probabilities of mutually exclusive outcomes
+    - allocations become payments in those outcomes
+  - truthful mechanisms sacrifice some welfare
+    - equal-income equilibrium maximizes Nash welfare but allows beneficial lies
+  - evaluation: 1,000 sampled report pairs per parameter choice
+    - beta distributions vary agreement, bias, and concentration
+    - mechanism ranking changes with report distribution
+  - sampled serial-dictatorship approximation can lose proportionality
+    - approximate auction implementation can lose the exact mechanism’s properties
+- proposed experiment: divisible compute budgets for two independent users
+  - reproduce reported mechanisms before adding deadlines or discrete GPU allocation units
+  - first reproduce normalized additive valuations and divisible allocations
+  - search small discrete allocations for profitable false reports
+    - a single counterexample defeats direct transfer of truthfulness
+  - measure useful completed work rather than merely allocated resources
+  - transfer uncertainty: GPU jobs have thresholds and complementary resource needs
+    - those violate simple divisible-resource interpretations
+
+learning how rankings disagree
+
+- 🧑 human note: “goal: individual ranking → global consensus”
+  - [reading notes, Yeganeh Alimohammadi talk](../../../../reading_notes/index.md)
+- Alimohammadi and Asgari, [Mallows Model with Learned Distance Metrics, 2025 preprint](https://arxiv.org/abs/2507.08108)
+  - authors: “learns the distance metric directly from data”
+  - model describes rankings as noisy versions of a central order
+  - learned distance controls how heavily large rank jumps are penalized
+  - paper already provides approximate sampling and joint parameter fitting
+    - sports rankings used for evaluation
+- [fitting and sampling, §§2–4](https://arxiv.org/html/2507.08108v1)
+  - assumes independent complete rankings of the same items
+  - fit central order by minimum-weight matching under absolute rank differences
+    - then fit distance exponent and concentration using two moment equations
+  - approximate sampler discards far-from-diagonal assignments
+    - dynamic programming tracks occupied columns in a narrow moving window
+  - efficient-sampling theorem requires distance exponent at least one
+    - fitted football exponent about 0.44 falls outside that guarantee
+  - basketball and football tests hold out the latest sixth of observations
+    - Sushi evaluation randomly splits 5,000 rankings of ten items
+    - approximate normalizer checked against exact computation only for small item counts
+- proposed experiment: disagreement across search result rankings
+  - compare fixed-distance and learned-distance models across query types
+  - hold out queries and dates
+  - measure held-out likelihood and whether predicted disagreement matches observed rank jumps
+  - use full rankings over a fixed result set for the reproduction
+  - then introduce missing items, truncation, and source-dependent errors separately
+  - report fitted exponents below one as outside the proved efficient-sampling regime
+  - novelty risk: transferring an existing model to web data may only be an application
+    - need evidence that changing source reliability or result censoring breaks existing models
+
+inspecting a small subset of uncertain options
+
+- 🧑 human note: “sparsification: balance accuracy & query cost”
+  - [reading notes, Xinyu Liu talk](../../../../reading_notes/index.md)
+- Dughmi, Kalayci, Liu, [Near-Optimal Sparsifiers for Stochastic Knapsack and Assignment Problems, ITCS 2026](https://arxiv.org/abs/2512.01240)
+  - authors: “independent activation probability of each element”
+  - select a redundant small query set before learning which options are available
+  - near-optimal query selection does not solve the final hard packing problem exactly
+  - new degree measure accounts for weights and resource constraints
+    - counting options alone can misrepresent inspection cost
+- [model and knapsack algorithm, §§2–3](https://arxiv.org/html/2512.01240v1)
+  - all items activate independently with the same probability p
+    - values, weights, and capacities known before querying
+    - query set chosen before any activation is revealed
+  - small-value items sorted by value per weight
+    - other items grouped into geometric value buckets and sorted by weight
+    - each bucket contributes a prefix with redundancy proportional to 1/p
+  - degree measures query-set membership in a scaled convex hull of feasible sets
+    - it is not a bound on query count
+  - near-optimal inspection and final packing are separate tasks
+    - ordinary knapsack admits an approximation scheme
+    - generalized assignment retains harder final optimization
+- proposed experiment: inspect available servers before assigning jobs
+  - begin with independent equal availability probabilities
+  - add rack-correlated outages and unequal availability
+  - compare all-server probing, random probes, and the paper’s bucket prefixes
+  - measure actual query count separately from the paper’s degree measure
+  - measure probe cost and completed job value against an offline optimum on small instances
+  - novelty unresolved for stochastic scheduling and robust optimization
+
+publicly checking encrypted computation
+
+- 🧑 human note: “proof for fully homomorphic encryption (FHE)”
+  - [reading notes, Miryam Huang talk](../../../../reading_notes/index.md)
+  - FHE permits computation on encrypted inputs
+- Huang, Li, Mao, Zhang, [Fully Homomorphic Encryption with Efficient Public Verification, 2024 preprint](https://eprint.iacr.org/2024/1764)
+  - authors: “generates a succinct proof of correct homomorphic computation”
+  - small checkable proof accompanies an encrypted result
+  - arithmetic stays in the rings used by the encryption scheme
+    - avoids unnecessary translation to a different arithmetic representation
+  - stated proof-generation bound is quadratic in circuit size up to security-parameter factors
+    - a short proof does not guarantee cheap proof generation
+  - assumes hardness of lattice problems
+- [Huang et al., indexed primary PDF](https://eprint.iacr.org/2024/1764.pdf), §1.1, Theorem 1.1, and selected §4 excerpts
+  - uses FHEW and GINX ciphertext refreshing
+  - circuit is public; zero-knowledge is not required
+  - preprocessing is quadratic, evaluation linear, and verification logarithmic in circuit size
+    - bounds include polynomial security-parameter factors; concrete timings remain unestablished
+  - claimed IND-SA privacy means indistinguishability under semi-active attack
+    - exact security experiment and reduction remain unchecked
+  - §4 encodes binary digits, rounding, exponent selection, and coefficient extraction
+  - Lemma 4.5 constrains a candidate bit squared to equal itself
+    - a ring-specific appendix claim restricts such elements to zero or one
+    - inference: do not assume this implication for arbitrary rings
+  - authors: “We leave it as an open problem for future work”
+    - concerns linear preprocessing/proving using sparse constraint matrices
+  - faster proving is already an explicitly proposed direction
+  - evidence scope: selected indexed text, not a complete proof read
+- Huang, Mao, and Zhang, [Sublinear Proofs over Polynomial Rings](https://eprint.iacr.org/2025/199), revised May 2026
+  - authors: “eliminating costly ring multiplications”
+  - ring switching transforms polynomial-ring proof relations into field or Galois-ring relations
+    - a field permits division by every nonzero element; a general ring may not
+  - abstract supports arbitrary prime-power moduli and sublinear proofs
+  - [author page](https://mimihuang.github.io/) lists Asiacrypt 2026
+    - accepted future venue rather than an already delivered conference talk
+  - PDF remained inaccessible; abstract and publication metadata do not establish its complete parameter restrictions
+- Dao et al., [Akita, 2026 author PDF](https://assets.layerzero.network/pdf/akita.pdf), selected §§3.6 and 13.1–13.4
+  - authors: “equal input sizes do not imply identical statements”
+  - §3.6 explicitly credits Huang–Mao–Zhang ring switching
+  - lifts a modular polynomial relation into a polynomial identity with a quotient
+    - random evaluation then gives a field relation for the proof to check
+  - Rust implementation integrates a polynomial-commitment backend into Jolt
+    - a polynomial commitment binds a prover to data while permitting later checks of selected evaluations
+  - benchmarks separate commitment, opening, verification, proof communication, and memory
+  - online timings exclude offline parameter planning and validation
+  - §10 leaves security in the quantum random-oracle model outside scope
+    - estimated resistance of lattice problems to quantum attacks does not establish quantum security of the complete noninteractive proof
+  - comparisons normalize committed bits but preserve differing polynomial interfaces
+    - field packing and extension degree still change opening work
+  - standalone benchmarks use a Ryzen 9950X and single-thread verification
+    - Jolt application benchmarks use an Apple M4 Max
+  - baseline assumptions and security-cost conventions differ
+    - authors explicitly avoid treating every runtime ratio as an equal-security comparison
+  - novelty limit: ring switching already has implemented practical descendants
+  - [Hachi](https://eprint.iacr.org/2026/156) and [Beasley](https://eprint.iacr.org/2026/2010) are related author-linked leads
+    - their complete proofs were not read in this pass
+- Atapoor, Baghery, Pereira, Spiessens, [Verifiable FHE via Lattice-based SNARKs, IACR CIC 2024](https://eprint.iacr.org/2024/032)
+  - authors: “including the maintenance operations”
+  - implemented verification of multi-multiplication encrypted computation
+  - encryption maintenance matters alongside ordinary arithmetic
+- [lattice-based construction, §§1.2, 2.3, and 5](https://cic.iacr.org/p/1/1/24/pdf)
+  - represent polynomial-ring arithmetic as computations modulo several small primes
+    - maintenance operations connect those otherwise separate computations
+    - split into layers and concatenate proofs
+  - authors: “in the preproccesing model with a designated verifier”
+    - checking requires secret verification state
+    - differs from public verification by anyone
+  - implemented BGV network uses square activations and estimated 128-bit security
+    - 116–167 seconds proving, 597–925 ms checking for evaluated widths
+    - shared setup data totals 11.6 GB; proof about 187 kB
+  - bootstrapping support is a theoretical implication
+    - evaluated circuit uses multiplication maintenance, not a bootstrapping benchmark
+  - deployment question: amortize setup and distribute verifier state without changing the security model
+- Liu, Liang, Xie, Yu, Zheng, Hu, [HasteBoots, USENIX Security 2026](https://www.usenix.org/conference/usenixsecurity26/presentation/liu-fengrun)
+  - authors: “16 operations within one minute”
+  - reported verifier time: 126 ms
+    - reported proof size: 0.28 MB
+    - batch benchmark uses BabyBear parameters, two-bit operations, Dory commitments
+- [HasteBoots methods and evaluation, §§1.2 and 6](https://www.usenix.org/system/files/usenixsecurity26-liu-fengrun.pdf)
+  - replaces a full transform circuit with a structured matrix identity
+    - specialized dynamic programming makes proof generation linear in polynomial length
+  - batches polynomial relations and avoids committing transformed coefficients
+    - lookup tables prove decomposition and modulus changes
+  - measurements use an Apple M4 with 14 cores and 24 GB memory
+    - compared Brakedown, BaseFold, and Dory proof commitments
+    - Brakedown verification can exceed native evaluation for one operation
+  - author limit: “A full production-level re-tuning and noise analysis is outside the scope of this work”
+    - smaller-field parameters target estimated 128-bit lattice security
+    - correctness probability and noise behavior still need deployment analysis
+  - direct novelty warning: practical proofs of TFHE bootstrapping already exist
+    - a new benchmark needs a workload or deployment question beyond proving that FHE can be checked
+- proposed experiment: cost breakdown for small encrypted decision circuits
+  - reproduce HasteBoots before comparing unsupported cross-scheme workloads
+  - measure encryption, evaluation, proof generation, verification, and network cost separately
+  - test the batch size where checking becomes cheaper than local evaluation
+  - compare ring-native construction, lattice-based proof implementation, and HasteBoots where supported operations overlap
+  - preserve field, statement, ciphertext parameters, and security target before comparing backend costs
+    - Akita's committed-bit comparison alone does not equalize an FHE workload
+  - report supported parameter choices and security assumptions
+  - feasibility gap: Huang construction’s implementation availability remains unchecked
+    - public and designated verification need separate deployment comparisons
+  - do not begin a new cryptographic construction solely from asymptotic savings
+
+verifying sensitive scientific computation
+
+- Frolov, Shih, Patro, Miers, [Icefish, USENIX Security 2026](https://www.usenix.org/conference/usenixsecurity26/presentation/frolov)
+  - authors: “verify that research was honestly computed over an authenticated, untampered database”
+  - verifies genome-wide association studies and private CRISPR eligibility
+  - reported association-study proving time below 40 minutes for their evaluated sizes
+  - verifies computation against authenticated inputs
+    - does not certify clinical validity or causal interpretation
+- proposed follow-up: reproducibility under revised cohort filters
+  - measure update cost when eligibility predicates or phenotype definitions change
+  - novelty requires reviewing Icefish's caching and authentication design
+  - healthcare owner should assess the scientific use case
+
+selective encryption, private annotation, and path validation
+
+- 🧑 human note: “entity resolution: dedup point in 2 dataset”
+  - [reading notes, Weizhao Jin defense](../../../../reading_notes/index.md)
+- Jin et al., [FedML-HE, v3, June 2024; §§2–4](https://arxiv.org/html/2303.10837v3)
+  - authors: “selectively encrypt sensitive parameters”
+  - clients rank parameters by gradient sensitivity to labels
+    - encrypted sensitivity maps form a shared mask before training
+    - selected updates encrypted; others sent in plaintext
+  - model: participants follow the protocol while trying to learn private information
+    - default shared client key does not protect against server–client collusion
+    - threshold-key variant limits collusion according to its decryption threshold
+  - base confidentiality argument concerns full encryption
+    - selective-encryption analysis additionally assumes Laplace noise on exposed coordinates
+    - reported selection comparison assumes uniformly distributed sensitivities
+  - author claim: “We then have $\epsilon=0$ if $O$ is encrypted”
+    - assessment: computational secrecy alone does not establish exact statistical differential privacy
+    - data-dependent mask and repeated training releases need separate accounting
+    - unresolved: sampled local derivatives need justification as worst-case sensitivity bounds
+  - evaluation: LeNet/CIFAR-100 inversion and BERT/Wikitext inversion
+    - ten image-attack runs; best reconstructed image selected
+    - attack failure supports only the tested attack settings
+- proposed pilot: sensitivity-mask stability and leakage across training rounds
+  - compare initial mask with refreshed masks at matched encrypted fractions
+  - include adaptive inversion, label inference, and mask-only inference
+  - compare optional-noise and no-noise settings separately
+  - report key holders and collusion assumptions alongside cost
+  - coordinate with the federated-learning owner
+- Yao, Jin, Ravi, [Labeling without Seeing?, TMLR 2025; §§4–5 and appendix B](https://arxiv.org/pdf/2308.03734.pdf)
+  - authors: “without inspecting other parties’ records”
+  - each owner writes Boolean feature questions from its own records
+    - evaluates them on the other owner’s encrypted records
+    - coordinator holds decryption key and collects labels and disagreement history
+  - unresolved pairs trigger revised questions; remaining disagreements discarded
+  - threat model excludes simultaneous coordinator–owner compromise
+    - cryptography does not certify honest questions or correct labels
+  - checks every sampled record against the other side’s questions
+    - substring circuit scans all positions without early exit
+    - record lengths remain visible
+  - evaluation samples fifty known matches per task
+    - four product/bibliographic tasks and synthetic Febrl records
+    - selected records generate about 2,500 candidate pairs
+    - this sampling does not establish performance on naturally rare matches
+  - implementation: OpenFHE BinFHE, STD128 parameters, serial/OpenMP versions
+    - Unicode converted to ASCII
+    - agreement is checked against reference labels, not assumed to mean truth
+- proposed pilot: blind annotation under rare matches and discarded hard cases
+  - reproduce the selected-match benchmark before sampling ordinary records
+  - measure false matches, missed matches, unresolved fraction, and annotation time
+  - report retained-label accuracy alongside coverage of difficult records
+  - compare Unicode-preserving encoding with ASCII conversion
+  - examine what coordinator learns from repeated disagreements
+    - exclude collusion from claimed guarantees unless protocol changes
+- Jin, Kline, Kumar, Thurlow, Ravi, [P3V, 2023 preprint](https://eprint.iacr.org/2023/053)
+  - authors: “path slicing, path validation and path rerouting”
+  - anonymous sender verification uses session signing keys and anonymous channels
+  - improved validation uses XOR, SHA256, and zero-knowledge proofs
+    - local pairwise checks replace a fully serial backward chain
+    - each pair validates after its delivery; other pairs' forwarding may continue
+  - compromised nodes may skip, detour, or reorder the prescribed path
+  - claimed path privacy requires honest-node separation
+    - authors: “at least two adjacent honest nodes between two compromised intermediate nodes”
+    - adjacent-node information is allowed leakage
+  - testbed separates initialization, forwarding, proving, transfer, and checking
+    - post-delivery detection is different from preventing a bad delivery
+  - [selected indexed primary evaluation, §8](https://eprint.iacr.org/2023/053.pdf)
+    - Docker Compose simulation separates sender and intermediate-node work
+    - sender creates hash/token/signature data; intermediate nodes generate and check proofs
+    - twenty-node testbed example forwards a 5 GB file at roughly 530.4 Mbps
+    - proof generation dominates additional cryptographic work
+    - pairwise validation overlaps forwarding rather than waiting for the entire path's delivery to finish
+      - each pair's proof follows its delivery and receipt of the successor's secret
+    - normal user-visible delay is different from time until a malicious path is rejected
+  - evidence limit: indexed primary-paper method/model/evaluation excerpts read
+    - complete PDF downloads returned HTTP 403
+    - exact proof, rerouting algorithm, and full benchmark configuration remain unchecked
+- proposed pilot: delivery harm before delayed path detection
+  - measure packets delivered incorrectly before detection and rerouting completes
+  - vary malicious-node placement, not just their fraction
+  - compare serial and pairwise validation at matched proof parameters
+  - first establish how tokens bind to session, packet, and ordering
+    - stale proofs and token reuse require explicit tests
+  - contact the Internet/network study owner before implementation
+- [Jin's author page](https://wzjin2017.github.io/) lists later path-validation and entity-resolution work
+  - exact titles: “Efficient Privacy-Preserving Network Path Validation” and “Hide-And-Seek-Pair: Efficient Two-Stage Privacy-Preserving Deep Entity Resolution”
+  - this is a successor-paper lead
+    - publication listing alone does not establish its technical results
+  - path-validation entry now identifies ICCCN 2025
+    - linked PDF resolves to the earlier P3V preprint
+    - do not assume the conference version has identical algorithms or measurements
+
+quantum programs and proof-carrying states
+
+- 🧑 human note: “proof-carrying state (PCS): quantum proof-carrying data (PCD)”
+  - [reading notes, Miryam Huang talk](../../../../reading_notes/index.md)
+- [Huang's USC thesis proposal, April 2025](https://viterbi.usc.edu/events/event_details.php?events_id=106693)
+  - source: “our ongoing project, Proof-Carrying Quantum States”
+  - proposal describes a research direction
+    - it does not establish a completed construction
+  - [Grayson York's original announcement, 15 April 2025](https://groups.google.com/g/USC-Theory/c/PdwjpzEbqHk) reproduces the abstract
+    - correction: “Miryam's thesis proposal, not her quals”
+    - current [Huang](https://mimihuang.github.io/) and [Tang](https://sites.google.com/view/erchengtang) publication lists yield no identified proof-carrying-state construction
+    - absence from two lists does not establish nonexistence or abandonment
+- Huang and Tang, [Obfuscation of Arbitrary Quantum Circuits, v2, 4 October 2026](https://arxiv.org/abs/2601.08969v2)
+  - authors: “in the classical oracle model assuming post-quantum one-way functions”
+  - extends concealment of internal program details beyond reversible quantum transformations
+  - this specialized oracle setting differs from general plain-setting program concealment
+    - therefore does not refute classical impossibility results
+- [construction overview, §1.2 and comparison table](https://arxiv.org/html/2601.08969v2)
+  - input is a classical circuit description
+    - concealed program contains quantum states
+  - postpone measurements and express computation as a unitary operation with extra qubits
+    - preserve the subspace where those extra qubits are prepared correctly
+    - scramble incorrectly prepared inputs and concealed discarded outputs
+  - then apply an existing obfuscator for unitary circuits
+  - earlier authentication approaches struggle to reuse auxiliary states after irreversible computation
+    - entanglement and consumed qubits obstruct restoration
+  - stronger pseudorandom-oracle corollary additionally assumes functional encryption and subexponentially secure one-way functions
+  - no implementation benchmark read
+- proposed first step: assumptions-and-cost map for quantum state verification
+  - identify what must be trusted, stored, consumed, or revealed
+  - distinguish classical checks of a circuit from checks of a particular quantum state
+  - specify whether verification certifies preparation, an allowed transformation, or complete history
+    - state whether it consumes the state or needs fresh copies
+  - feasibility opinion: specialist theory collaboration needed before treating this as a systems project
+  - exact proof-carrying-state paper remains unidentified
+
+small local samplers
+
+- 🧑 human note: “only 6 case of shallow circuit”
+  - [reading notes, Kewen Wu talk](../../../../reading_notes/index.md)
+- Kane, Ostuni, Wu, [Locally Sampleable Uniform Symmetric Distributions, revised February 2025](https://eccc.weizmann.ac.il/report/2024/180/)
+  - authors: “each output bit of $f$ depends only on $O(1)$ input bits”
+  - “symmetric” means rearranging bit positions preserves output probabilities
+  - identifies six approximate possibilities when output is uniform over a symmetric support
+  - the condition concerns local input dependence
+    - it is stronger than simply being any shallow circuit with unrestricted gate inputs
+- Kane, Ostuni, Wu, [Symmetric Distributions from Shallow Circuits, RANDOM 2026](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.APPROX/RANDOM.2026.53)
+  - authors: “extends the previous classification”
+  - removes the uniform-on-support restriction
+  - possible outputs are close to particular mixtures of parity distributions and independent biased bits
+- [2026 full paper, Theorem 2 and §2](https://drops.dagstuhl.de/storage/00lipics/lipics-vol392-approx-random2026/LIPIcs.APPROX-RANDOM.2026.53/LIPIcs.APPROX-RANDOM.2026.53.pdf)
+  - inputs are independent fair bits; each output reads at most d inputs
+  - approximation measured by total variation distance
+    - largest probability difference across all events
+  - result requires output length sufficiently large relative to locality and error
+  - proof separates count-of-ones mismatch from failure of permutation symmetry
+    - fixes inputs that influence many outputs
+    - compares remaining count distributions with binomial and parity-conditioned distributions
+  - approximate classification does not classify every exactly sampleable distribution
+    - paper gives an exact three-local counterexample
+- proposed experiment: validate local hardware sampling assumptions
+  - enumerate tiny local samplers and compare full output distributions
+    - treat finite-size enumeration as a diagnostic, not evidence of the asymptotic theorem
+  - separately measure symmetry error and count-distribution error
+  - test targets with fixed counts of selected machines
+  - stop if locality does not match the actual scheduler or hardware primitive
+  - no evidence here that this restriction applies to ordinary pseudorandom generators
+
+physical shape design and approximate simulation
+
+- 🧑 human note: “goal: simple fabrication state, transform to complex&stable target state”
+  - [reading notes, Yingying Ren talk](../../../../reading_notes/index.md)
+- Ren, Panetta, Suzuki, Kusupati, Isvoranu, Pauly, [Computational Homogenization for Inverse Design of Surface-based Inflatables, SIGGRAPH 2024](https://visualcomputing.ist.ac.at/publications/2024/Inflatables/)
+  - authors: “Local patches are selected and blended to form a global network of curves”
+  - compute average behavior of repeated inflatable cells
+  - fit and refine joining curves to approximate a requested inflated shape
+  - database construction and inverse design already exist
+- [full paper, §§4–9](https://infoscience.epfl.ch/record/311157/files/main.compressed.pdf)
+  - homogenize periodic cells, interpolate their properties, optimize a coarse surface
+    - extract fusing curves, mesh them, then refine the detailed shape
+  - physical tests use laser-welded Polyamide sheets at 0.5–1 bar
+    - compare scanned shapes and loading against parallel-tube designs
+  - model assumes isotropic material and a final equilibrium
+    - neglects inflation dynamics and collisions
+    - some prototypes require assistance during inflation
+  - flattened designs can self-intersect
+    - design stage uses one pattern family and square reflection-symmetric cells
+  - weld-end delamination treated by added teardrop shapes
+    - author limit: “in a post-processing step, which sacrifices design optimality”
+- proposed experiment: predict troublesome weld ends before detailed optimization
+  - compare full detailed simulation, uniform coarse simulation, and weld-end refinement
+  - prioritize stress concentration and measured anisotropy over generic adaptive meshing
+  - measure shape error, seam force error, solve time, and memory
+  - simulate changes in pressure and fabrication tolerance
+  - novelty gap: weld robustness and anisotropic-material literature still need comparison
+    - paper already refines the full detailed geometry
+  - feasible software-only pilot
+    - physical robustness claims require fabricated measurements
+
+large-k clustering and reusable search hints
+
+- 🧑 human note: “choosing from previous assignment give big speedup”
+  - [reading notes, Jack Spalding-Jamieson talk](../../../../reading_notes/index.md)
+- Spalding-Jamieson, Robson, Zheng, [Scalable k-Means Clustering for Large k, 2025 preprint; §§4.1–4.2](https://arxiv.org/html/2502.06163v1)
+  - authors: “use the previous iteration’s assignments as seed points”
+  - search for nearest centers begins from useful old candidates
+  - paper already studies extra seeds, correlated query groups, and graph search
+  - practical graph heuristic differs from a theoretically robust construction with expensive build time
+- [methods and experimental setup, §4 and appendices B–C](https://arxiv.org/html/2502.06163v1)
+  - retains about ten candidate centers per point
+    - groups queries by old closest center
+    - sorts each group along a random projection
+    - combines previous-query results with previous-iteration seeds
+  - updates the previous search graph instead of rebuilding from scratch
+    - minimum search iterations counter repeated local traps
+  - benchmark machine: Ryzen 9 7950x, 64 GB RAM, RTX 3090
+    - CPU methods limited to twelve threads
+    - main comparisons use 5–10 million image or text embeddings
+  - billion-point dataset listed, but main comparison plots use smaller datasets because baselines limit scale
+- proposed experiment: cache-aware query ordering under stale hints
+  - reproduce old-center grouping and projection sorting before changing memory layout
+    - old-center ordering alone is already prior work
+  - move centers abruptly to test bad hints
+  - measure wall time, distance evaluations, cache misses, and clustering objective
+  - keep search budget and final quality comparable
+  - novelty risk: batching and reordering already occur in the paper
+    - need reproducible extra gains attributable to memory behavior
+
+remaining limits
+
+- exact York vote-delegation paper and proof-carrying quantum-state paper not found
+- primary sources identified for all other theory families above
+  - deeper full-paper reads added for committee selection, fair division, Mallows fitting, stochastic knapsack, lattice-based FHE proofs, HasteBoots, quantum obfuscation, local samplers, inflatables, and large-k clustering
+  - Huang’s 2024 FHE construction now includes selected indexed theorem and operation-encoding excerpts
+    - full proofs remain inaccessible
+    - full-paper download returned HTTP 403
+    - Atapoor’s full journal paper recovered through the publisher and examined
+  - exact proofs and implementation correctness have not been checked
+- human's privacy-preserving-computation defense also mentions selective model encryption and private entity resolution
+  - [reading notes, Weizhao Jin defense](../../../../reading_notes/index.md)
+  - first-pass primary-source mapping added above
+  - FedML-HE and blind-annotation full methods examined
+  - P3V remains a partial methods/evaluation read because its full PDF was inaccessible
+- ChatGPT consultation submitted through the shared browser
+  - diagnostic records: “requested”: “Extra High”, “verified_text”: “Extra High”, “job_status”: “submitted”
+  - no answer captured; resumed polling returned “account_ui_retry_required”
+    - [shared consultation record](chatgpt_review.md)
+  - no ChatGPT opinion has been presented as evidence

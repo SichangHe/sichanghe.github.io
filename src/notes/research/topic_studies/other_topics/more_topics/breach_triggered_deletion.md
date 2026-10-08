@@ -1,0 +1,191 @@
+does a data breach cause people to request deletion?
+(authored by agents unless marked 🧑)
+
+takeaway
+- agent recommendation: measure actual deletion requests and their completion separately
+  - nearby studies measure attitudes, continued use, reported account deletion, photo deletion, or service compliance
+  - these outcomes do not by themselves establish exercise of a statutory deletion right after a breach
+- the question comes from an attribution-limited [removal-services note](../../../removal_services.md)
+  - exact passage: “find out if exercised when data breach occur”
+  - parent passage: “right to be forgotten: EU & California law”
+  - the existing file declares no default authorship
+    - this study does not upgrade it to a verified human-authored interest
+- the manager explicitly requested rescue of this uncovered follow-up on 7 October 2026
+- [ordinary removal services](../web_trust/removal_content_theft.md) remain a separate study
+
+separate the steps
+- a breach exposes data to an unauthorized party
+- notification tells a person about the exposure
+  - knowing that a company was breached differs from knowing that one's own records were affected
+- a person can intend to leave, remove a photo, close an account, or submit a deletion request
+  - record these as different actions
+- the company can acknowledge, grant, partially complete, or refuse a request
+  - acknowledgment is not evidence that every stored copy disappeared
+- inference: deleting the company's retained data does not demonstrate deletion of an attacker's copied data
+
+closest evidence on affected people
+- Mayer et al., [Awareness, Intention, (In)Action, TOCHI 2023 author paper](https://yixinzou.github.io/publications/pdf/tochi2023-mayer.pdf), §§3.2, 3.5, and 5
+  - authors: “both surveys rely on participants’ self-reported data”
+  - main survey reveals up to three email-linked breaches to 413 participants
+    - chosen Have I Been Pwned access route excludes sensitive breaches
+  - six-month follow-up invites 187 eligible affected participants without an earlier recording error
+    - 108 return
+    - asks whether and when affected accounts were deleted or deactivated
+  - reported completed behavior is closer to action than an intention survey
+    - no service records verify request submission, completion, or statutory erasure
+    - attrition and recall constrain generalization
+  - deletion paragraph combines 37 responses, denominator 116, and 23%
+    - Table6 instead uses denominator 164
+    - inconsistent presentation; no percentage adopted without reconciliation
+  - implication: independently verified request logs are the narrower possible contribution
+    - do not claim existing breach studies only measure intentions
+  - reading limit: selected full collection, follow-up, and deletion results inspected
+    - underlying responses and service behavior not independently reproduced
+- Schlackl, Pethig, Hoehle, and Sabherwal, [Reactions by Actual Data Breach Victims over Time, 2026](https://pubsonline.informs.org/doi/10.1287/isre.2023.0391), §§3–5
+  - authors: “we cannot establish parallel trends with only two survey rounds”
+  - surveys U.S. Facebook users recruited through Mechanical Turk before and after individual breach-status notification
+    - the scandal was already public before the first survey
+    - 380 retained respondents include 104 affected and 276 unaffected users
+  - participants consult Facebook's breach-status page during the second survey
+  - compares attitude changes between the two groups
+    - trust, continued-use intention, perceived violation, belongingness, and anxiety
+    - victim status is not randomly assigned; number of friends affects exposure
+  - this comparison concerns additional information about personal exposure
+    - it does not isolate the whole scandal's effect
+  - measured attitudes and intentions do not establish submitted deletion requests
+  - reading limit: selected full outcome, collection, analysis, and identification-limit sections inspected
+    - later mechanism experiment and supplementary robustness analyses not independently audited
+- Turjeman and Feinberg, [When the Data Are Out, online 2023, issue 2024](https://pubsonline.informs.org/doi/10.1287/mksc.2019.0208), [author-linked manuscript §§2–3 and Appendix B](https://drive.google.com/file/d/1sbNi3uh5nOHMMO4qHaGY3SVN_464diCy/view)
+  - authors: “deletion of photos was the only observable measure”
+  - company-provided records cover about 52,000 paying U.S. male users
+    - joined one to six months before the announcement and had prior activity
+    - follows three post-announcement weeks before leaked records became public
+    - concerns announcement effects, not subsequent publication effects
+  - compares later joining cohorts against earlier cohorts' prebreach behavior at matched membership ages
+    - everyone eventually encounters the announcement; controls are historical observations, not unexposed contemporaries
+    - assumes comparable activity trajectories absent the announcement
+    - inspected placebo checks support this comparison without proving the assumption
+  - reports reduced searching and messaging alongside increased photo deletion
+    - profile-deletion availability and price changed during observation
+    - photo deletion is observed protective behavior, not account-wide erasure or a statutory request
+    - deleted photos remaining absent complicates interpreting declining deletion activity as recovery
+  - reading limit: full author manuscript recovered through the author's research page
+    - selected population, outcome definitions, historical controls, and placebo methods inspected
+    - complete estimation, robustness results, and underlying records not independently reproduced
+
+notification and request wording already change other privacy decisions
+- Feri, Giannetti, and Jentzsch, [Disclosure of Personal Information under Risk of Privacy Shocks, 2016 author working paper](https://amsacta.unibo.it/4854/1/WP1055.pdf), §§2–4
+  - authors: “only on a sub-group of consumers”
+  - 228 participants in thirteen laboratory sessions can exchange their name and relative logic-test score for a voucher discount
+  - two shopping periods expose disclosed information to independently drawn breach risks
+    - notification treatment tells voucher buyers whether a breach occurred
+    - a later lottery selects either shopping period
+    - exposure requires a discounted purchase and a breach in that selected period
+  - people below the test-score median disclose less after a breach message
+    - the notification procedure has no general first-period disclosure effect
+  - information sensitivity comes from social comparison in the laboratory
+    - this is not a deletion request or removal of previously leaked information
+  - implication: notification effects can depend on the information's meaning to the affected person
+  - reading limit: selected full experimental design and main results inspected
+    - working-paper version; theoretical appendix and original data not reproduced
+- Kumar, Miller, and Milne, [Navigating a Changing Privacy Landscape, 2026](https://journals.sagepub.com/doi/10.1177/10949968261417676), study overview and Study 4
+  - authors: “participants chose to keep or delete that information, depending on the condition”
+  - [publisher Web Appendix H, pp21–22](https://journals.sagepub.com/doi/suppl/10.1177/10949968261417676/suppl_file/sj-pdf-1-jnm-10.1177_10949968261417676.pdf)
+    - authors: “ensured that their information was deleted”
+  - 100 U.S. undergraduates supply 23 answers and identifiers for class credit
+    - seventy complete both surveys one week apart
+    - second survey offers keep versus delete choices and recipient-specific sharing choices
+  - request wording and intended recipient affect sharing choices
+    - several recipients show differences; health professionals and researchers do not show detected differences
+  - study collects real answers and consequential-seeming sharing choices
+    - no breach-notification comparison
+    - offered keep/delete controls are initiated by the firm
+    - responding to them differs from independently initiating a rights request
+    - IRB-approved deception is followed by debriefing and eventual deletion of all information
+    - durable differential retention and actual downstream recipient disclosure are not established
+  - implication: hold request wording and recipient constant when measuring notification effects
+  - reading limit: selected full main results and Appendix H protocol inspected
+    - appendix does not specify randomization or additional exclusions
+    - underlying data, code, and recipient-specific exclusions not independently audited
+
+closest evidence on completed erasure
+- Rupp, Syrmoudis, and Grossklags, [Leave No Data Behind, PoPETs 2022](https://petsymposium.org/popets/2022/popets-2022-0080.pdf), §§3–5
+  - authors: “Whether messages also get deleted from servers cannot be assessed”
+  - creates researcher-controlled accounts on 90 selected services
+    - starts from popularity rankings and expands represented categories
+    - language, EU operation, account availability, and other exclusions constrain the sample
+  - enters data and uses services for six weeks before requesting erasure
+  - uses account controls where available and written requests otherwise
+    - request channel is not randomly assigned across otherwise equivalent services
+  - checks publicly accessible data and asks for data access more than six months later
+  - classifies 27% of services as showing observed noncompliance
+    - this is the authors' assessment in the selected historical sample
+    - no observed residual data is weaker than inspecting every backend and backup
+  - follow-up reveals account closure can differ from data erasure
+    - newsletter and other database synchronization failures appear in explanations
+  - study measures service response to submitted requests
+    - it does not measure whether a breach causes users to submit them
+  - reading limit: selected full sampling, account-use, request, verification, and follow-up sections inspected
+    - original accounts, supplementary material, and legal classifications not independently reproduced
+
+legal scope needed for a research protocol
+- California Privacy Protection Agency, [official FAQ](https://cppa.ca.gov/faq.html), checked 7 October 2026
+  - agency: “Some exceptions apply, such as if the business is legally required to keep the information”
+  - describes deletion requests to covered businesses and corresponding service-provider obligations
+  - identity verification, applicable exceptions, and statutory coverage affect response classification
+  - inference: an experiment should not label every denied request a compliance failure
+  - reading limit: selected current rights, request, response, and exception sections
+- [GDPR Article 17, adopted text from UK National Archives](https://www.legislation.gov.uk/eur/2016/679/article/17/adopted/data.xml)
+  - text: “where one of the following grounds applies”
+  - establishes conditional grounds and exceptions for erasure
+  - [Article 33, adopted text](https://www.legislation.gov.uk/eur/2016/679/article/33/adopted/data.xml)
+    - text: “not later than 72 hours after having become aware”
+    - supervisory-authority notification has a risk exception and provisions for delay or phased information
+  - [Article 34, adopted text](https://www.legislation.gov.uk/eur/2016/679/article/34/adopted/data.xml)
+    - text: “a high risk”
+    - communication to individuals is required without undue delay under that threshold
+    - protection, subsequent risk removal, or disproportionate effort with effective public communication can change this duty
+  - inference: a breach and a deletion request are distinct events to record
+  - reading limit: complete adopted Articles 17, 33, and 34 inspected
+    - these are EU adopted texts, separate from amended UK versions
+    - current EUR-Lex consolidated text and subsequent interpretive case law not fully recovered
+
+bounded research question
+- hypothesis: confirmed personal exposure increases requests more than a generic breach announcement
+- preferred design: partner with one service that already records notifications and deletion requests
+  - use authorized, minimized records rather than a leaked database
+  - distinguish announcement date, notification delivery, confirmed exposure, request initiation, and completion
+  - measure requests per active eligible account over time
+    - a raw count can rise because the user population or interface changes
+  - separate account closure, selective content deletion, opt-out, and formal erasure
+  - record friction, identity-verification steps, data sensitivity, and service dependence
+- causal limits
+  - affected and unaffected users can differ before the incident
+  - notification order can follow severity or investigation progress
+  - simultaneous publicity, policy changes, and easier deletion controls can explain an increase
+  - inspect multiple pre-notification periods and matched unaffected cohorts
+    - if comparable trends cannot be supported, report association rather than a causal effect
+- controlled pilot alternative
+  - use a fictional breach scenario and a study-owned account with a real optional deletion action
+  - randomize generic versus confirmed-personal-exposure wording and deletion friction
+  - distinguish experimental account deletion from exercising rights against a real breached service
+  - no false notifications about actual personal data
+- measures
+  - request initiation, completion, partial completion, refusal reason, and delay
+  - persistence over days and weeks rather than only immediate intention
+  - comprehension of which data remain, including externally copied data
+- competing explanations
+  - notification teaches an existing deletion route rather than increasing concern
+    - include an equally informative neutral privacy reminder
+  - lower friction explains all changes
+    - vary information and interface friction separately
+- nearest work already establishes announcement-associated photo deletion using historical controls and general erasure audits
+  - proposed increment: verified exposure linked to actual rights requests and completion in one measured process
+  - originality remains unconfirmed until direct request-behavior literature and administrative records are checked
+  - stop or narrow the project if that complete comparison already exists
+
+remaining work
+- inspect Turjeman–Feinberg complete estimation and robustness results
+- inspect the complete Kumar behavioral protocol and notification-study data
+- verify current EU notification and erasure exceptions against accessible official full text
+- no experiments, legal recommendations, or independent novelty proof completed

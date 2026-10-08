@@ -1,0 +1,302 @@
+huge security holes
+(authored by agents unless marked 🧑)
+
+scope and answer
+- 🧑 human question: "what are the huge security holes"
+  - source: [research notes, topic section](../../../index.md)
+  - 🧑 human preference: "significant & popular, easy sell" and "easy to implement"
+- my answer: study where a working defense stops protecting the next component
+  - a signed package can still be malicious
+  - a correctly authenticated service can act for the wrong customer
+  - a memory-safe component can call unsafe code
+  - an isolated component can return dangerous data to its caller
+- these are research directions, not a ranking of today's most exploited weaknesses
+  - I have no representative incident dataset supporting such a ranking
+- reviewed 2026-10-07
+  - primary papers, author abstracts, standards, and implementation documentation
+  - full texts read for Cornucopia and Cornucopia Reloaded
+  - selected full methods subsequently checked for in-toto, Macaroons, Zanzibar, VerioT, ConfFuzz, Kalu, DiVerify, and root-scoped revocation
+  - USENIX pages and PDFs returned HTTP 403 here
+  - the web-search tool returned HTTP 404
+  - a working search connector subsequently supported targeted closest-work checks
+  - recent-paper coverage and novelty checks remain incomplete
+- related studies
+  - [hardware and timing side channels](hardware_side_channels.md)
+  - [AI agents](../ai_agents/)
+  - [web trust and abuse](../web_trust/index.md)
+  - [formal verification and Rust](../../formal_verification_rust/)
+
+1 software supply chains: knowing who built code does not establish what it does
+- provenance: a record of a program's sources and build steps
+- [in-toto](https://in-toto.io/), Torres-Arias et al., USENIX Security 2019
+  - [full primary paper](https://www.usenix.org/system/files/sec19-torres-arias.pdf), §§2–5 and 7
+  - authors: “assumes that there are no rogue developers wishing to subvert the supply chain”
+  - owner signs expected steps, authorized actors, artifact rules, and required agreement thresholds
+    - actors sign records of inputs, outputs, and commands
+    - consumer checks signatures, artifact continuity, required steps, and thresholds
+  - base threat model trusts the owner's key and uncompromised actor keys
+    - later analysis distinguishes actor-key compromise from owner compromise
+    - trusted-root distribution remains an external requirement
+  - implication: verification establishes conformance to the owner's declared process
+    - it does not certify that the approved source behavior is harmless
+  - historical comparison classifies thirty selected incidents from 2010–2019 against three deployment configurations
+    - counterfactual analysis, not thirty attacks independently executed against deployments
+    - effectiveness changes with agreement thresholds and secure-update integration
+    - one uncertain key-compromise incident is classified as compromised
+  - reading limit: selected full threat, verification, compromise, and historical-incident sections inspected
+    - original deployments and attack classifications not independently reproduced
+- [SLSA v1.2 threat overview](https://slsa.dev/spec/v1.2/threats-overview), specification authors
+  - source's stated limit: "does not currently address all of the threats presented here"
+  - malicious-producer case: "SLSA does not provide any solutions for malicious producers"
+  - interpretation: distinguish tampering after approval from harmful behavior approved by the producer
+  - the page separately considers source control, builds, publication, distribution, package selection, and dependencies
+- [Sigstore overview](https://docs.sigstore.dev/about/overview/), project authors
+  - "verify the identity in the certificate matches an expected identity"
+  - "verify proof of inclusion in Rekor"
+  - interpretation: identity and recorded signing events are useful checks
+    - neither quoted check says that the code's behavior is safe
+  - assumption to test: users may verify a signature without restricting the expected signer or build workflow tightly enough
+- [The Update Framework specification](https://github.com/theupdateframework/specification/blob/master/tuf-spec.md), Cappos et al., version 1.0.36
+  - "The framework should provide means to minimize the impact of key compromise"
+  - "We are not providing a means to bootstrap security"
+  - interpretation: update freshness, delegated trust, and compromised keys are already established research problems
+  - new work must go beyond adding signatures or rejecting an old version
+- my inference: a promising remaining question is whether deployed consumers enforce the complete chain of restrictions
+  - package identity, source revision, build identity, dependency identity, allowed runtime access
+  - an inventory of dependencies only lists what is present
+  - a runtime restriction controls what those dependencies can do
+
+2 identity and authorization: the right service can act for the wrong person
+- authentication: establishes who a caller is
+- authorization: decides what that caller may do
+- confused deputy: a powerful service is tricked into using its authority for someone without permission
+- [AWS IAM confused-deputy documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html), AWS
+  - "The ExternalId value must be unique among Example Corp's customers and controlled by Example Corp, not its customers"
+  - context: a third-party service assumes roles for several customers
+  - another customer supplies the victim's role identifier
+  - interpretation: the role identifier identifies a resource but does not prove who requested its use
+  - scope: the documented AWS delegation pattern
+    - not evidence that all cloud platforms or integrations have this bug
+- [Macaroons](https://research.google/pubs/macaroons-cookies-with-contextual-caveats-for-decentralized-authorization-in-the-cloud/), Birgisson et al., NDSS 2014
+  - "attenuate and contextually confine"
+  - caveat: a restriction attached to a credential
+  - interpretation: reducing delegated permissions is established work
+  - limit: the receiving service must interpret and enforce the restrictions
+  - [full paper, revocation and versioning](https://www.cs.wm.edu/~smherwig/readings/papers/14-ndss-macaroons.pdf)
+    - authors: “via embedding expiry times or epoch counters”
+    - short-lived credentials, state-based allow/deny lists, epochs, and fresh discharge checks are already described
+    - primitive measurements and the image-sharing prototype do not establish queue-to-effect race protection
+    - an expiry or version caveat alone is not new revocation machinery
+- [Zanzibar](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/), Pang et al., USENIX ATC 2019
+  - "Its authorization decisions respect causal ordering of user actions"
+  - "provide external consistency"
+  - interpretation: permission changes and content changes must agree about their order
+  - example hypothesis: a queued request authorized before revocation may execute after access is removed
+    - whether this violates security depends on the application's stated revocation rule
+  - [full paper, §§2.2–2.4](https://www.usenix.org/system/files/atc19-pang.pdf)
+    - authors: “with cooperation from Zanzibar clients”
+    - clients store a freshness token atomically with a content version and supply it on later authorization checks
+    - this binds permission freshness to the associated content
+    - it does not automatically serialize a prior allow decision against a later external effect
+- my inference: the research question is whether the original user's restrictions survive delegation, queues, retries, and caches
+  - authenticate every service is an insufficient specification
+  - specify whose request it is, which resource it concerns, and when permission must still hold
+  - coordinate any distributed authorization work with the distributed-systems group
+
+3 memory safety: incremental adoption leaves interfaces worth measuring
+- memory safety: prevents accesses outside a live object's permitted memory
+  - spatial error: access outside the object
+  - temporal error: access after the object's lifetime ends
+- [Google's Android report](https://security.googleblog.com/2024/09/eliminating-memory-safety-vulnerabilities-Android.html), Vander Stoep and Rebert, 2024
+  - "dropped from 76% to 24% over 6 years"
+  - "the data for 2024 is extrapolated to the full year"
+  - interpretation: useful deployment evidence for shifting new development to safe languages
+  - limit: Android's reported vulnerabilities and concurrent defenses
+    - not a randomized estimate of language choice alone
+    - not a current worldwide vulnerability percentage
+- [CHERI project](https://www.cl.cam.ac.uk/research/security/ctsrd/cheri/), Cambridge and SRI
+  - "fine-grained memory protection and highly scalable software compartmentalization"
+  - interpretation: hardware can restrict pointers and separate components
+  - distinguish pointer bounds from lifetime enforcement
+- [Cornucopia](https://www.cl.cam.ac.uk/research/security/ctsrd/pdfs/2020oakland-cornucopia.pdf), Filardo et al., IEEE S&P 2020
+  - abstract: "for standard heap allocations"
+  - section I-C: "bugs within the allocator, kernel, or any other part of the trusted runtime"
+  - scope: heap allocations and cooperating allocator, compiler, OS, and hardware
+  - Cornucopia delays reuse until old pointers are revoked
+    - harmless accesses before reuse may still succeed
+    - its guarantee concerns preventing access to a different allocation
+  - lifetime protection does not establish application authorization or cover every trusted component
+- [Cornucopia Reloaded](https://www.cl.cam.ac.uk/research/security/ctsrd/pdfs/202404asplos-cornucopia-reloaded.pdf), Filardo et al., ASPLOS 2024
+  - abstract: "impractical “stop-the-world” pause times"
+    - quotation marks normalized from PDF typography
+  - abstract: "applications no longer experience significant revocation-induced stop-the-world periods"
+  - method: Morello hardware, compatible SPEC CPU2006 integer workloads, pgbench, and gRPC QPS
+  - interpretation: low average cost alone hid a deployment obstacle
+  - proposed research must compare pauses and tail latency as well as throughput
+- my inference: target mixed-language interfaces rather than propose another general Rust rewrite
+  - define ownership, lengths, callback lifetimes, and failure behavior across the interface
+  - test where an interface accepts a stale object or a mismatched size
+  - implementation and Rust tool comparisons belong with the Rust group
+
+4 isolation: an imprisoned library can still lie to its caller
+- sandbox: restricts a program's access to the surrounding system
+- [RLBox](https://github.com/PLSysSec/rlbox-book/blob/main/src/chapters/overview.md), Narayan et al., USENIX Security 2020 and project documentation
+  - "RLBox ensures that a sandboxed library is *memory isolated* from the rest of the application"
+  - "all *boundary crossings are explicit*"
+  - emphasis is part of the original quote
+  - interpretation: isolation and checking returned values are separate responsibilities
+- [RLBox migration documentation](https://github.com/PLSysSec/rlbox-book/blob/main/src/chapters/advanced/unsafe-unverified.md), project authors
+  - "A migration is not complete while application code relies on `UNSAFE_unverified`"
+  - context: a temporary operation removes the untrusted-value wrapper without verification
+  - inference: a migration can appear to work while bypassing the intended protection
+- [gVisor security model](https://gvisor.dev/docs/architecture_guide/security/), project authors
+  - "A sandbox is not a substitute for a secure architecture"
+  - "In general, gVisor does not provide protection against hardware side channels"
+  - interpretation: reduced kernel exposure does not remove reachable host services, granted files, network permissions, or physical leaks
+  - configuration matters
+    - the documentation distinguishes host networking and direct filesystem access
+- my inference: test the permissions intentionally exposed through a sandbox alongside attempts to escape it
+  - a plugin allowed to call a host callback may misuse that callback without corrupting memory
+  - separate forbidden host access, permitted but harmful access, and wrong validation of returned data
+
+research experiments, in my suggested order
+- 1 test release verification through installation and first execution
+  - hypothesis: some integrations accept a correctly signed artifact from an unexpected workflow or grant it excessive runtime access
+  - first study: 20 public projects with documented provenance verification
+  - controlled mutations: signer, workflow, source revision, dependency, stale metadata, requested file or network access
+  - run in disposable local environments with dummy credentials
+  - record accepted mutations, missing checks, false rejections, integration effort
+  - closest work: in-toto, SLSA, Sigstore, TUF
+    - difference sought: test consumer behavior across their combination and runtime permissions
+    - merely finding absent signing is weak novelty
+  - stop condition: existing tools reject every mutation and runtime permissions match the stated policy
+  - direct closest work
+    - [Kalu et al., 2026 longitudinal signing study](https://arxiv.org/abs/2603.17133)
+      - author abstract: "reported concerns concentrate in verification workflows, policy and configuration surfaces, and integration boundaries"
+      - method: roughly 3,900 GitHub issues across five signing ecosystems
+      - limit: reported usability concerns, not a census of exploitable installed configurations
+      - [selected full methods, §§4 and 6](https://arxiv.org/html/2603.17133v1)
+        - eight repositories over 48 months ending November 5, 2025; bot reports excluded
+        - 180 issues informed human coding; GPT 5.1 scaled annotation after calibration
+        - held-out assessment used 80 issues; component agreement was 66.7%, while usability-label F1 was 98.08%
+        - these different measures do not establish equal accuracy for every category
+        - repository reports omit silent workarounds and installations that never report problems
+        - implication: use issue categories to construct test cases, not estimate deployed vulnerability prevalence
+    - [DiVerify, Okafor et al., September 2026 revision](https://arxiv.org/abs/2406.15596v4)
+      - author abstract: "A machine-checkable policy language specifies the identity, authentication, and environment conditions required for accepting a signature"
+      - context-aware signing verification is already proposed
+      - narrow our experiment to actual consumer enforcement and runtime authority
+      - [selected full methods, §§4–6](https://arxiv.org/html/2406.15596v4)
+        - legacy-compatible mode adds policy checks without protecting a compromised signing client
+        - attested modes place checks at the certificate authority or consumer and trust SGX evidence
+        - tests local services on one SGX-capable host, ten iterations per configuration
+        - signing averages range from about 42 to 392 ms; this does not establish Internet-service tail latency
+        - provider independence and the enforced policy determine which compromised identities are tolerated
+        - integration case studies include prototypes and proposed designs, not evidence of widespread production adoption
+        - implication: benchmark its actual modes before claiming a new context-checking design
+    - [Cosign maintainer advisory, 2026](https://github.com/sigstore/cosign/security/advisories/GHSA-fx35-mq7g-6g98)
+      - title: "Verification bypass via public key in legacy bundle"
+      - use as a regression case, not as an undiscovered weakness
+- 2 test authorization after delegation and revocation
+  - root: the original permission grant
+    - epoch: its current version
+  - oracle: an independent checker deciding whether an effect was allowed
+  - fence: a boundary rejecting effects using a retired grant
+  - complete mediation: checking every protected effect path
+  - hypothesis: concrete service adapters omit an effect path required by their declared revocation rule
+  - distinguish authorization at admission from authorization at the protected effect
+    - a queued action completing after revocation is not automatically a violation of an admission-time rule
+  - choose one local queue-backed service and one effect adapter using dummy resources
+    - integration access and implementing the adapter are feasibility limits
+  - identify every authority-bearing record and effect path
+    - report unmediated paths explicitly
+  - compare expiry-only and root/epoch-checked credentials, correctly integrated Zanzibar freshness tokens, and a final policy check ordered with commit
+  - test revocation before enqueue, after dequeue, after final check, and before commit
+    - add lost acknowledgements, retries, duplicates, delayed discharge checks, and stale durable records after restart
+    - distinguish a derivative credential from independently valid authority
+  - use an independent policy oracle and recorded event order
+    - count unauthorized effects, legitimate denied effects, duplicates, stale intervals, throughput, and tail latency
+    - compare performance at matched cache hit rates and injected delays
+    - specify whether unavailable current policy rejects or postpones the action
+  - closest work: Macaroons, Zanzibar, AWS external IDs
+    - generic composition benchmarks and explicit revocation contracts already have direct prior work
+    - neither permission restriction nor consistent authorization alone is new
+  - direct closest work
+    - [Shattered Chain of Trust, Yuan et al., USENIX Security 2020](https://www.usenix.org/conference/usenixsecurity20/presentation/yuan)
+      - author abstract: "real-world IoT access delegation, based upon a semi-automatic verification tool we developed"
+      - existing cross-cloud delegation testing and end-to-end exploits
+      - compare its delegation rules and attack cases before constructing a benchmark
+      - [full methods, §§3–5](https://www.usenix.org/system/files/sec20-yuan.pdf)
+        - authors: “manually validated the reported counterexamples”
+        - VerioT models cloud-specific credentials, ACLs, delegation, unlinking, and revocation in Spin
+        - six delegation flaws in ten IoT clouds; five demonstrated using the authors' devices
+        - alternate-path authority surviving revocation is an established failure pattern
+    - [Permission Re-Delegation, Felt et al., USENIX Security 2011](https://www.usenix.org/conference/usenixsecurity11/permission-re-delegation-attacks-and-defenses)
+      - author abstract: "an application with permissions performs a privileged task for an application without permissions"
+      - establishes the same failure across isolated mobile applications
+    - [finality-bound revocation draft, September 2026](https://datatracker.ietf.org/doc/draft-das-finality-bound-revocation/)
+      - title: "Revoked but Still Executable: Closing the Authorization-to-Effect Gap with Finality-Bound Revocation"
+      - a proposal, not an accepted standard or deployment result
+      - directly overlaps revocation at the final protected action
+      - proposed prevention requires authoritative current policy, exact-operation binding, and complete mediation
+        - every effect path must check that operation
+        - revocation must be ordered with its commitment
+      - draft §8: “atomic/equivalent final check and commit”
+        - bounded stale checks alone provide mitigation under its stated rule
+    - Zhu and Wang, [Authorization Revocation for Long-Running AI Agents, September 2026 preprint, §§3–8](https://arxiv.org/html/2609.21284v1)
+      - authors: “Endpoint names in its 17-case corpus are semantic categories”
+      - tracks authority roots and epochs through queues, retries, timers, reservations, and cross-provider handoffs
+      - protected effect fences reject retired authority
+      - missing evidence leaves the conclusion undecided
+      - provider-free durable-ledger artifact reports seventeen matched outcomes and forty-four rejected rehashed regressions
+      - assumes complete mediation and correct correspondence between adapters and effects
+      - the corpus does not demonstrate actual remote-provider conformance
+      - this already supplies an explicit contract, late-effect benchmark, and separate trace checker
+  - possible contribution: demonstrated adapter gaps or independently derived tests missing from these baselines
+    - novelty remains unestablished
+  - useful null: existing cases explain every failure, or final ordering and epoch checks prevent every injected violation
+- 3 attack the host-facing interface of an isolated library
+  - hypothesis: checking pointer bounds and primitive types misses relationships among returned values and callback sequences
+  - first target: one parser used by a host application
+  - replace the parser with a hostile implementation inside its permitted sandbox
+  - mutate sizes, object identifiers, callback order, repeated calls, and valid-looking contradictory results
+  - compare existing RLBox checks with checks of complete interface rules
+  - report host crashes, unauthorized file access, leaked dummy data, false alarms, runtime cost
+  - closest work: RLBox already requires validation and supports library contracts
+    - [ConfFuzz, Lefeuvre et al., NDSS 2023](https://arxiv.org/abs/2212.12904)
+      - author abstract: "an in-memory fuzzer specialized to detect CIVs at possible compartment boundaries"
+      - CIV means a vulnerability at an interface between isolated components
+      - evaluation: 25 applications, 36 interfaces, 629 reported vulnerabilities
+      - this directly overlaps the proposed experiment
+      - use ConfFuzz as a baseline before designing a new fuzzer
+      - [full methods, §§III–V](https://arxiv.org/pdf/2212.12904)
+        - authors: “ConfFuzz is not coverage-guided”
+        - already mutates arguments, return values, shared memory, and callbacks
+        - workload coverage determines which interfaces are exercised
+        - AddressSanitizer crashes drive reproduction and minimization
+      - temporal callback support alone is not a new class
+      - a non-crashing unauthorized effect needs a policy-aware outcome oracle
+        - validate it on known seeded composition failures
+        - only claim a missing class after the existing baseline fails to generate or detect it
+    - new contribution must be a demonstrated missing class or a substantially easier systematic test method
+    - simply adding a verifier repeats existing work
+  - stop condition: existing boundary fuzzers already generate and detect the same failures
+- lower priority: mixed-language lifetime measurement
+  - a narrow interface experiment could be useful
+  - first establish that Rust-group work does not already cover it
+  - CHERI temporal safety is substantial existing work
+  - new hardware or a general language migration conflicts with the human's preference for easy implementation
+
+what remains before claiming novelty
+- read the unchecked Kalu and DiVerify sections and related deployment studies
+- compare authorization experiments with delegation-analysis and revocation benchmarks
+- reproduce ConfFuzz on the selected interface before claiming an uncovered failure class
+- inspect actual deployed policies before assuming permissive configurations are common
+- context-free reviewer completed
+  - corrected the temporal-error definition and links
+  - reviewer checked quotes against live ConfFuzz, DiVerify, Kalu, and RLBox sources
+  - reviewer agrees the remaining novelty comparisons are incomplete
+- ChatGPT Extra High second opinion requested
+  - helper timed out while waiting; no response captured
+  - research conclusions above do not rely on that consultation
+  - advice cannot establish novelty or replace reading the closest papers

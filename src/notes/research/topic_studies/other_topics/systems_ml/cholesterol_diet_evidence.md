@@ -1,0 +1,305 @@
+cholesterol, diet, and heart disease: evidence and reproducibility
+(authored by agents unless marked 🧑)
+
+starting point
+
+- inference: several apparent disagreements compare different experiments
+  - randomized statin treatment tests a drug strategy
+  - replacing food fat tests a diet strategy with other possible changes
+  - a change in blood cholesterol is a measurement
+  - heart attacks, strokes, and deaths are patient outcomes
+- proposed systems contribution: make these differences explicit and executable
+  - reproduce review results from source documents and recorded inclusion rules
+  - detect mismatched populations, event definitions, denominators, and statistical measures
+  - evaluate whether this catches errors beyond existing extraction tools
+
+scope and reading record
+
+- inherited worker-selected topic: “Cholesterol, diet, and heart disease”
+  - source: earlier worker list, item 14
+  - internal attribution file: `m3.txt` in the earlier worker's scratchpad, session `86a2e76a-fff9-41ab-8cd5-87800ae07035`
+  - no direct human paragraph naming this specific topic was verified
+- selected literature review completed on 8 Oct 2026
+  - relevant full-text methods, results, and limitations inspected for the papers below
+  - includes a 2025 dietary review and a 2024 statin adverse-effect analysis
+  - not an exhaustive review of clinical nutrition, cholesterol biology, or treatment
+  - research possibilities below are agent proposals
+- LDL means low-density lipoprotein
+  - LDL cholesterol is cholesterol carried in this class of particles in blood
+  - total blood cholesterol and LDL cholesterol are different measurements
+  - dietary cholesterol is another quantity and is not reviewed here
+- saturated fat is a category of fat in food
+  - reducing it requires specifying the replacement food or nutrient
+  - linoleic acid is a polyunsaturated fat used in the Minnesota intervention
+- statins are drugs used to lower LDL cholesterol
+- statistical terms used below
+  - a ratio of 1 means no estimated difference between groups
+  - RR means a risk or event-rate ratio, as defined by the paper
+  - OR means an odds ratio
+  - odds are the probability of an event divided by the probability of no event
+  - OR and RR are generally different
+  - CI means confidence interval
+  - intervals below are 95% unless specified otherwise
+
+randomized statin evidence
+
+- Cholesterol Treatment Trialists’ Collaboration, 2010
+  - [full paper, methods and table 1](https://pmc.ncbi.nlm.nih.gov/articles/PMC2988224/)
+  - exact analysis rule: “irrespective of whether they received their allocated treatment”
+  - included 26 randomized trials and 169,138 participants
+    - trials required at least 1,000 participants and at least two years of scheduled treatment
+    - five intensive-versus-less-intensive trials included 39,612 people with coronary disease
+    - 21 statin-versus-control trials included 129,526 people with mixed baseline risks
+    - median follow-up among survivors was 5.1 and 4.8 years respectively
+  - compared participants by randomized assignment
+    - this preserves the treatment comparison despite imperfect adherence
+  - primary major vascular event combined several outcomes
+    - coronary death or nonfatal heart attack
+    - coronary procedures to restore blood flow
+    - stroke
+  - reported 15% fewer major vascular events with more intensive treatment
+    - CI 11–18%
+    - additional mean LDL difference was 0.51 mmol/L at one year
+  - combined trials reported major vascular event RR 0.78 per 1 mmol/L LDL reduction
+    - CI 0.76–0.80
+    - all-cause mortality RR 0.90, CI 0.87–0.93
+    - normalization used each trial’s between-group LDL difference at one year
+    - individual changes in LDL were not randomly assigned
+  - missing individual data mattered for a safety endpoint
+    - three eligible trials lacked individual participant data
+    - adding published SPARCL and CORONA results changed the hemorrhagic-stroke estimate
+      - RR 1.21 per 1 mmol/L LDL reduction, CI 1.05–1.41
+      - hemorrhagic stroke means stroke caused by bleeding
+  - inference: this supports the studied statin strategies
+    - it does not isolate LDL as the only causal pathway
+    - it does not test replacing saturated fat with a particular food
+
+- Cholesterol Treatment Trialists’ Collaboration, 2012
+  - [full paper, methods, findings and discussion](https://pmc.ncbi.nlm.nih.gov/articles/PMC3437972/)
+  - exact absolute estimate: “11 fewer major vascular events per 1000 treated over 5 years”
+  - included 27 trials and 174,149 participants
+    - 22 statin-versus-control trials and five intensity comparisons
+    - substantial overlap with the 2010 analysis
+    - not an independent second set of 174,149 people
+  - estimated baseline five-year risk from participant characteristics
+    - trial-derived prediction models grouped people into five risk categories
+    - missing baseline measurements were imputed
+    - this is not a universally validated modern clinical risk score
+  - estimated the quoted absolute benefit for predicted five-year risk below 10%
+    - per 1 mmol/L between-group LDL difference
+    - event proportions were approximately 4.1% versus 5.2%
+    - the estimate depends on baseline risk, treatment effect, and time horizon
+  - exact limitation: “There were too few deaths among the lower risk participants”
+    - lower-risk mortality effects could not be assessed reliably on their own
+    - individual data were unavailable from two eligible higher-risk trials
+  - inference: fewer major vascular events and longer survival are separate claims
+
+- Cholesterol Treatment Trialists’ Collaboration, 2024, diabetes outcomes
+  - [full paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC7615958/)
+  - [machine-readable full text](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7615958/fullTextXML)
+  - exact measurement issue: “the extent of HbA1c measurement”
+    - HbA1c is a blood measure of glucose exposure over the preceding months
+  - analyzed 19 blinded statin-versus-placebo trials with 123,940 participants
+    - four intensity comparisons added 30,724 participants
+    - median follow-up was 4.3 and 4.9 years respectively
+  - harmonized participant records before defining diabetes
+    - diagnoses, medication starts, and qualifying blood tests contributed to the endpoint
+    - standardized record formats, adverse-event terms, and medication records
+  - low/moderate-intensity trials reported more new diabetes diagnoses
+    - 2,420/39,179 versus 2,214/39,266 participants without diabetes at baseline
+    - RR 1.10, CI 1.04–1.16
+    - estimated annual absolute excess was 0.12 percentage points
+  - high-intensity trials reported RR 1.36, CI 1.25–1.48
+    - 1,221/9,935 versus 905/9,859 participants
+    - follow-up HbA1c was available for 72% in these trials
+    - corresponding coverage was 3% in the low/moderate-intensity trials
+  - inference: randomized comparisons support an increase in diagnoses
+    - cross-trial differences in absolute diagnoses also reflect how often people were tested
+    - comparing raw absolute rates across intensity groups does not isolate dose effects
+    - a blanket statement that statins have no adverse effects would misread the evidence
+
+dietary intervention and incomplete historical data
+
+- Ramsden et al., 2016, recovered Minnesota Coronary Experiment
+  - [full paper, methods, recovered data and limitations](https://pmc.ncbi.nlm.nih.gov/articles/PMC4836695/)
+  - exact warning about the cholesterol–death analysis: “the analysis of the association between serum cholesterol and death is observational in nature”
+  - studied an institutional diet experiment conducted in 1968–1973
+    - six mental hospitals and one nursing home
+    - men and women aged 20–97
+    - paper mentions 9,570 randomized people in the historical account
+    - recovered completed analyses described 9,423 people
+    - longitudinal cholesterol analysis used 2,355 people exposed for at least a year
+    - only 149 of 295 autopsy files were recovered
+  - replaced saturated fat with corn oil and corn-oil margarine
+    - saturated fat fell from 18.5% to 9.2% of energy
+    - linoleic acid rose from 3.4% to 13.2%
+    - historical control and intervention margarines differed
+    - precise intervention trans-fat composition was unavailable
+  - mean total cholesterol fell 13.8% versus 1.0% in the long-stay subgroup
+    - LDL and HDL cholesterol fractions were not measured
+    - HDL means high-density lipoprotein
+  - reconstructed survival graphs showed no mortality benefit
+    - follow-up ended when participants left the institutions
+    - original complete mortality records were not recovered
+    - the recovered materials did not identify a single primary endpoint
+  - within the long-stay subgroup, larger cholesterol falls predicted more deaths
+    - adjusted hazard ratio 1.22 per 30 mg/dL fall, CI 1.14–1.32
+    - a hazard ratio compares estimated instantaneous death rates
+    - selection required surviving and remaining hospitalized for at least a year
+    - illness or other factors could influence cholesterol and death together
+    - inference: this association does not show that lowering LDL causes death
+  - paper also pooled five linoleic-acid intervention trials with 10,808 participants
+    - coronary mortality RR 1.13, CI 0.83–1.54
+    - all-cause mortality RR 1.07, CI 0.90–1.27
+    - eligibility favored provided linoleic-acid interventions without major additional changes
+    - wide intervals permit both benefit and harm
+  - nearest prior for data recovery is this paper itself
+    - it recovered magnetic-tape data, paper records, and earlier analyses
+    - another recovery project needs a distinct question and additional accessible records
+
+dietary reviews answer different questions
+
+- Hooper et al., Cochrane 2020, reducing saturated fat intake
+  - [full review, eligibility, analyses and excluded studies](https://pmc.ncbi.nlm.nih.gov/articles/PMC8092457/)
+  - searched through October 2019
+  - included 15 randomized trials with 16 comparisons and 56,675 participants
+    - intended intervention duration at least 24 months
+    - adults with varying cardiovascular risk
+    - women dominated because the Women’s Health Initiative was very large
+    - studies came from North America, Europe, Australia, and New Zealand
+  - eligibility allowed more than a single isolated nutrient change
+    - intention to reduce saturated fat qualified
+    - some general fat-reduction trials qualified through an observed saturated-fat reduction
+    - additional dietary changes were permitted
+    - unequal non-diet interventions were excluded
+  - combined cardiovascular events included more than heart attacks and strokes
+    - cardiovascular death, heart attack, angina, stroke, and heart failure
+    - peripheral vascular disease, atrial fibrillation, and unplanned coronary procedures
+    - counted people experiencing an event rather than adding every event they experienced
+  - reported combined-event RR 0.83, CI 0.70–0.98
+    - 12 trials, 13 comparisons, and 53,758 participants
+    - substantial between-study variation, I² 67%
+    - I² describes the estimated share of variation beyond sampling error
+  - mortality results were less conclusive
+    - all-cause RR 0.96, CI 0.90–1.03, 55,858 participants
+    - abstract/narrative cardiovascular RR 0.95, CI 0.80–1.12, 53,421 participants
+    - the same review's summary and analysis tables give RR 0.94, CI 0.78–1.13
+      - narrative reports ten trials; summary table reports eleven
+      - source representation and amended review version must accompany a reproduced estimate
+      - the reason for this internal difference remains unresolved
+  - sensitivity analyses weakened certainty about the combined-event result
+    - low overall risk-of-bias subset RR 0.96, CI 0.76–1.20
+    - excluding additional dietary interventions RR 0.86, CI 0.67–1.09
+    - these intervals include benefit, no difference, and increased event risk
+    - differences between polyunsaturated-fat and carbohydrate replacement subgroups were not significant
+  - exact Minnesota exclusion reason: “mean follow‐up was only 1 year”
+    - the experiment ran longer than individual participants generally remained
+    - this differs from the review’s minimum-duration rule
+  - exact missing-data rule: “we did not impute data for this review”
+    - investigators requested missing information from authors
+    - later feedback added missing Sydney death counts to the event analysis
+  - inference: the broad event result is not equivalent to proven mortality reduction
+    - trial-level cholesterol–event correlations do not isolate a nutrient-mediated causal effect
+
+- Yamada et al., 2025, saturated-fat restriction review
+  - [full paper, methods, table 1 and figures 2–5](https://www.jmaj.jp/detail.php?id=10.31662/jmaj.2024-0324)
+  - exact statistical description: “pooled ORs”
+  - searched through April 2023
+  - included nine trials and 13,532 participants
+    - two primary-prevention and seven secondary-prevention trials
+    - secondary prevention means preventing further events after established disease
+    - only two trials included women
+    - only one trial involved statin treatment
+    - excluded the Women’s Health Initiative’s general fat-reduction intervention
+  - prioritized cardiovascular mortality rather than Cochrane’s broad event composite
+    - abstract estimates: cardiovascular mortality 0.94, CI 0.75–1.19
+    - all-cause mortality 1.01, CI 0.89–1.14
+    - heart attacks 0.85, CI 0.71–1.02
+    - too few reported strokes to pool that outcome
+  - reporting inconsistency requires checking the analysis
+    - abstract calls these estimates relative risks
+    - methods and figure legends call them odds ratios
+    - table uses 9,057 Minnesota participants
+    - this differs from the 9,423-person recovered analysis
+    - cohort identity and event counts need checking before numerical comparison
+  - exact author qualification: “further RCTs are needed before recommendations can be fully supported or dismissed”
+  - inference: nonsignificant estimates do not establish equivalence or zero benefit
+    - the heart-attack interval includes a substantial reduction
+    - comparing this review with Cochrane requires matching eligibility and endpoints first
+
+research proposal: executable reconciliation of disagreeing reviews
+
+- question: can recorded rules explain which apparent disagreements are substantive?
+- nearest priors already cover reporting and extraction
+  - [PRISMA 2020 checklist, items 5, 10a, 12, 13 and 27](https://www.prisma-statement.org/s/PRISMA_2020_checklist-ab3g.pdf)
+    - exact instruction: “Specify for each outcome the effect measure(s)”
+    - already asks for eligibility, outcome selection, synthesis methods, and available data/code
+  - Marshall et al., [RobotReviewer, 2017, sections 2–4](https://aclanthology.org/P17-4002.pdf)
+    - exact interface description: “Clicking on the PDF icon in the report view”
+    - figure 4 links an extracted claim back to its location in the source PDF
+    - already extracts trial descriptions and risk-of-bias evidence from full-text PDFs
+    - recommends human checking because automated bias assessments remain imperfect
+  - Cochrane already publishes eligibility decisions and sensitivity analyses
+    - generic paper summarization or another checklist is insufficient novelty
+- proposed artifact: a versioned dataset plus executable inclusion and calculation rules
+  - start with the overlapping trials in Ramsden, Hooper, and Yamada
+  - distinguish trial identity from a report, follow-up, subgroup, or recovered subset
+  - store exact page/table evidence for each population and event count
+  - record replacement nutrient, additional diet changes, duration, and event definition
+  - preserve abstract, narrative, and analysis-table differences with their source/version
+  - preserve missing, unreported, and zero as different values
+  - encode RR versus OR explicitly
+  - prohibit summing overlapping participant cohorts or composite-event components
+  - generate an explanation when an eligibility rule changes the included trials
+- initial experiment
+  - two independent extractors establish a checked reference dataset
+  - reproduce each published aggregate using that review’s own rules first
+  - compare manual review, source-linked extraction, and extraction with executable checks
+  - measure wrong denominators, duplicate cohorts, wrong effect measures, and missed exclusions
+  - measure verification time and false alarms per trial
+  - test additional held-out reviews before claiming a general method
+- stop rules
+  - unresolved original counts must remain unresolved rather than silently reconstructed
+  - failure to reproduce a result requires locating missing inputs before interpreting disagreement
+  - abandon a general systems contribution if checks only catch this paper’s labeling error
+  - narrow to a reusable dataset if benefits disappear on held-out reviews
+- current status: proposed experiment only
+  - no event-count dataset or pooled result was recomputed for these notes
+  - novelty beyond existing review software remains unverified
+
+research proposal: preserve how outcomes were observed
+
+- question: can review tools prevent comparison of outcomes measured at different frequencies?
+- nearest prior is the CTT 2024 diabetes analysis
+  - already harmonizes records and investigates differences in blood-test coverage
+  - repeating its clinical estimate would add little
+- proposed extension: represent an outcome together with its observation process
+  - distinguish scheduled tests, symptom-driven diagnoses, and medication-based definitions
+  - store testing coverage, follow-up, and missingness by randomized arm
+  - attach these records to extraction and pooling decisions
+  - evaluate on independent adverse-event reviews with available measurement schedules
+- evaluate an explicit warning rather than an automatic causal correction
+  - compare with ordinary source-linked extraction and manual review
+  - measure detection of incompatible observation schedules
+  - measure unnecessary warnings and additional reviewer time
+- stop rules
+  - do not infer absent disease from absent tests
+  - do not estimate a correction from aggregate counts without defensible assumptions
+  - stop if independent reviews lack observation-process data
+  - stop if an existing tool already records and checks the same information adequately
+
+remaining reading and practical limits
+
+- reproduce original trial counts before choosing either reconciliation project
+  - Minnesota 1989 report, 1981 thesis, and recovered 2016 materials
+  - Women’s Health Initiative intervention and event papers
+  - Sydney trial and correction history
+  - Yamada analysis inputs or author clarification of RR/OR
+- expand nearest-prior search before claiming a new extraction or review method
+  - trial identity resolution, automated meta-analysis, and reproducible review software
+  - recent successors to RobotReviewer were not systematically reviewed here
+- clinical coverage remains selective
+  - dietary cholesterol, modern whole-food interventions, and genetic evidence are outside this review
+  - non-statin LDL treatments and newer comprehensive statin adverse-event analyses need separate reading
+- these notes support research planning
+  - treatment or diet choices require a different review with current clinical guidance

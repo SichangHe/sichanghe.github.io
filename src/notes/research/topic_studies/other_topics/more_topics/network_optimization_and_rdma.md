@@ -1,0 +1,386 @@
+network optimization, collectives, and RDMA
+(authored by agents unless marked 🧑)
+
+takeaway
+- good network decisions must remain useful while traffic, topology, and implementation change
+  - a fast optimizer does not establish fast packet recovery
+  - a faster collective does not establish faster training at equal model quality
+  - fine-grained telemetry can still measure the wrong congestion signal
+- agent recommendation: start with failure and timing replay in OnlineTE's public artifact
+  - collective-profile robustness is another feasible pilot when GPUs are available
+  - production RDMA replication still requires suitable telemetry and deployment access
+- scope: the human's five uncovered talk topics
+  - [networking and edge systems](../../distributed_systems/other_areas/networking_edge_p2p.md) covers transport and adjacent network systems
+  - [training and ML systems](../systems_ml/agent_and_ml_for_systems.md) covers distributed training more broadly
+  - no claim of an exhaustive review of network optimization
+
+human starting points 🧑
+- source: [reading notes](../../../../reading_notes/index.md)
+- “Near-Optimal Online Traffic Engineering, Arvin Ghavidel, NSL meeting”
+  - records switch-local optimization, repeated local steps, and coordinators grouped by round-trip delay
+- “Congestion Patterns in a Large-scale RDMA Datacenter, Soudeh Ghorbani”
+  - records congestion moving toward the core and the importance of telemetry type
+- “Collective Communication Algorithms, Arvin Ghavidel, NSL meeting”
+  - records topology-aware schedules and interference from other processes
+- “I/O Optimizations for Deep Learning on Distributed/Resource-Constrained Environments (Optimus-CC), Yaeyong Song, NSL meeting”
+  - records compressed backward communication and carried compression error
+- “MetaRL, Mahdi Alizadeh, NSL meeting”
+  - records reinforcement learning that searches for inputs exposing a heuristic's performance gap
+- these are talk records
+  - the collective-talk and MetaRL manuscripts were not identified
+  - related papers below are baselines, not invented identities for those talks
+
+terms
+- traffic engineering, TE: choose how traffic uses network paths or links
+- maximum link utilization, MLU: the largest ratio of assigned traffic to link capacity
+  - a ratio above one assigns more traffic than that link can carry
+- a traffic matrix specifies demand between source and destination pairs
+- maximum-flow objective: carry as much of the requested traffic as possible
+- a VM is a virtual machine used here to run a switch's optimization worker
+- round-trip time, RTT: time for a request and response to traverse the network
+- ADMM: an optimization method that divides a problem into coordinated subproblems
+- regret here: accumulated difference from the reference objective during changing conditions
+  - it is not a count of lost packets
+- RDMA: remote memory access supported by network hardware
+- Priority Flow Control, PFC: pause selected traffic classes when a receiving link faces buffer pressure
+- a collective performs one coordinated operation across participating devices
+  - AllGather gives each participant everyone's input
+  - ReduceScatter combines inputs and distributes different pieces of the result
+  - AllReduce gives every participant the combined result
+  - AllToAll sends different data to different participants
+- NCCL is NVIDIA's collective communication library
+  - MSCCL supplies a runtime for custom collective schedules
+- error feedback: keep compression error and include it in later communication
+- reinforcement learning, RL: learn a decision policy using rewards
+
+OnlineTE: reaction, convergence, and packet delivery differ
+- Arvin Ghavidel et al., [Near-optimal Online Traffic Engineering, SIGCOMM 2026, preprint](https://arxiv.org/pdf/2605.16187), §§3–7 and selected appendices
+  - §7 footnote: “We do not emulate actual traffic on the testbed”
+  - divides MLU and maximum-flow problems among switches and coordinators
+  - nested local optimization and hierarchical coordination reduce communication costs
+    - synchronization within regions; asynchronous coordination between regions
+  - evaluates KDL's 754 nodes and Cogentco's 190 nodes using switch VMs
+    - two CPU cores and 2 GB memory per switch VM
+    - link delays derived from router locations
+  - synthetic Uniform, Gravity, and Bimodal demands
+    - changes 5% of demands every twenty seconds
+    - separate experiments inject one to seven link failures every five minutes
+  - compares POP, DeDe, and NCFlow invoked every five minutes
+    - omits their demand-collection and switch-programming delays
+  - evaluates objective and capacity regret over ten-minute runs
+    - fifteen repetitions per setting
+  - some failure cases require 30–40 seconds to reconverge
+  - inference: strong optimization results are not measured packet-loss, queueing, or application recovery guarantees
+- [OnlineTE artifact](https://github.com/USC-NSL/OnlineTE)
+  - README: “The branch `sigcomm-ae` has been prepared for you”
+  - main branch explicitly includes later changes
+  - pin the paper branch and commit before reproducing a figure
+  - inspect solver licensing, worker dependencies, topology generation, and solution checks
+  - no artifact executed for this review
+
+candidate A: do optimizer improvements survive forwarding transitions?
+- hypothesis: solution quality during convergence can differ from actual traffic delivery during installation
+- first reproduce one public solver scenario
+  - use the published demand/failure schedule and compute regret independently
+  - then connect a small topology to packet forwarding with controlled traffic
+  - record allocation versions, installation times, queues, loss, and successful traffic
+- compare OnlineTE, its published centralized baselines, and those baselines at matched recomputation intervals
+  - separate algorithm quality from giving one method fresher demands
+  - include fixed-path fallback and measured programming delays
+- vary delayed/reordered control messages, partial installation, and one coordinator restart
+  - existing coordinator snapshots and retransmission handling are prior work
+  - target measured effects during transitions, not simply adding restart support
+- endpoints: delivered demand, packet loss, delay, capacity violation, and recovery time
+- useful null: solver regret predicts forwarding outcomes adequately
+  - stop if a realistic deployment model adds no consequential failure or decision change
+- novelty remains unverified
+  - review consistent network-update and distributed-TE literature before implementation
+
+RDMA congestion: the observed layer depends on flow control and telemetry
+- Soudeh Ghorbani et al., [IMC 2025 manuscript, uploaded by coauthor Yijing Zeng](https://www.researchgate.net/publication/396561710_Congestion_Patterns_in_a_Large-scale_RDMA_Datacenter), §§2–3 and appendix
+  - authors: “End-to-end performance impact analysis” lies beyond this measurement study
+  - non-oversubscribed RoCEv2 leaf–spine zones; PFC, deep spine buffers, ECMP/flowlets, DCQCN disabled, NCCL CTS pacing
+    - CTS reduces host-driven pauses; observed congestion location depends on this stack
+  - switch measurements: four randomly selected zones, hundreds of servers each, two separate two-week windows in 2024
+    - counters sampled each second, archived every 1–5 minutes
+    - appendix reports switch CPU overhead below 0.1% and consistency across another zone/window
+  - host measurements: two zones, hundreds of machines, twice over two days, primarily early 2024
+    - §3.3 says 4.8ms sampling over 500ms; §2.4 separately says 1,024 samples/run
+    - these imply different capture durations; exact run configuration needs clarification
+    - burst: consecutive samples above half line rate
+  - median measured bursts: 4.8ms/9.6ms across zones
+    - sampling limits duration estimates and misses shorter spikes
+  - pause-count imbalance exceeds minute-average byte-rate imbalance
+    - counters cannot match host bursts to individual switch ports or isolate workloads
+    - pause counts are a congestion proxy, not causal localization or completion-delay evidence
+  - public raw measurement artifact not established
+- adjacent baseline: [SIRD, NSDI 2025](https://www.usenix.org/conference/nsdi25/presentation/prasopoulos)
+  - already combines receiver scheduling with sender/switch congestion signals
+  - the [networking review](../../distributed_systems/other_areas/networking_edge_p2p.md) states its configured-marking assumptions
+  - transport design and production congestion measurement are different contributions
+
+closest diagnosis work already follows pause propagation
+- Wang et al., [Hawkeye, SIGCOMM 2025 author paper](https://zhangmenghao.github.io/papers/SIGCOMM2025-Hawkeye.pdf), §§3–5
+  - authors: “the exact anomaly case” and “the corresponding root causes”
+  - diagnosis success requires anomaly type and root-cause identification
+  - epoch buffers retain per-flow and per-port pause counts and queue depth
+    - host performance thresholds trigger asynchronous collection along victim and pause-propagation paths
+    - polling requests use a queue not paused by PFC
+  - simulation: twenty-switch fat tree, 100-Gbps links, empirical RoCEv2 traffic
+    - prototype: two logical switches from one Tofino's two pipelines, four servers
+  - tests contention, unfairness, head-of-line blocking, storms, and deadlock
+    - varies trigger thresholds and epochs from 100 microseconds to two milliseconds
+    - success depends on parameters and retained history
+  - implication: queue/pause root localization is established work
+    - §5 states “the PFC tracing will be interrupted at a non-Hawkeye switch”
+    - tracing depends on instrumenting every switch on the causal path
+    - partial flow telemetry at hotspots can miss causes elsewhere
+    - table collisions send evicted records to the controller rather than automatically discard them
+  - reading limit: selected telemetry, triggering, evaluation, and discussion
+    - no artifact reproduction or general completeness proof
+- Liu et al., [R-Pingmesh, SIGCOMM 2024 proceedings](https://cs.stanford.edu/~keithw/sigcomm2024/sigcomm24-final858-acmpaginated.pdf), §§3–6
+  - authors: “without clock synchronization between prober and responder RNICs”
+  - uses unreliable-datagram probes and completion timestamps to estimate delay
+    - subtracts responder processing time
+    - within-rack mesh and probabilistic cross-rack coverage rely on network symmetry and hash behavior
+  - rotates probe tuples and investigates actual service-flow tuples
+  - deployed for six months in clusters totaling tens of thousands of RNICs
+    - diagnosis combines probes, device counters, switches, and operator investigation
+  - inference: sampled probes need not observe every burst or application packet's queue experience
+  - reading limit: selected full probing and diagnostic deployment sections inspected
+    - original implementation and deployment records not reproduced
+
+- Lv et al., [Roundabout, ICNP 2024 author paper](https://liluyang.com.cn/uploads/2024/roundabout-icnp24.pdf), §§II–VII
+  - authors: “When a switch’s status changes, it promptly notifies the affected switches”
+  - probes carry origin switch/queue identifiers and random election priority
+    - queue registers retain initial and elected probes
+    - a returning elected probe identifies a paused dependency loop
+    - state changes invalidate old probes; overlapping loops compete for a coordinator
+  - coordinated buffer and credit-based forwarding resolves a selected loop
+  - prototype uses DPDK software switches
+    - simulations use sixteen-switch mesh and torus networks
+    - microbehavior experiments disable server flow control
+    - not a production hardware deployment
+  - implication: changing-state and stale-probe handling are existing deadlock-specific mechanisms
+  - reading limit: selected algorithms, prototype, simulation, and concurrent-loop discussion inspected
+    - no reproduction or proof under arbitrary lost control frames
+
+retention and causal explanations also have direct baselines
+- Wang et al., [SpiderMon, NSDI 2022](https://www.usenix.org/system/files/nsdi22-paper-wang_weitao_spidermon.pdf), §§3–4 and appendix E
+  - authors: “preserve history for 20 ms”
+  - circular epoch buffers retain flow logs; accumulated delay triggers collection of interfering flows
+    - prioritized collection packets and flow sequence numbers recover relevant history and align epochs
+    - retention estimate combines the detection threshold with collection propagation time
+  - tests seeded microbursts, priority contention, path imbalance, and loops
+    - Tofino hardware plus software-switch and simulation evaluations
+    - benchmark parameters are tuned for each system
+  - implication: short-event detection and history-preservation tradeoffs are existing mechanisms
+  - reading limit: selected full methods inspected
+    - finite history and reliable collection assumptions do not establish arbitrary-loss resilience
+- Lei et al., [PrintQueue, SIGCOMM 2022 coauthor paper](https://www.vincen.tl/files/printqueue-sigcomm22.pdf), §§2–3 and 7
+  - authors: “only provides an expected value without any error bounds”
+  - probabilistic windows compress historical queue contributors
+    - deeper history loses detail; small flows can disappear
+    - estimated packet counts lack per-query confidence bounds
+  - evaluates one Tofino and four servers using datacenter traces and synthetic distributions
+    - added per-packet headers supply ground truth
+    - query timing changes how compressed the observed history is
+  - implication: inaccurate attribution from finite history is already studied
+  - reading limit: selected full definitions, probability limits, and evaluation inspected
+    - implementation and artifacts not reproduced
+- Wu, Chen, and Phan, [Zeno, NSDI 2019](https://www.usenix.org/system/files/nsdi19-wu.pdf), §§3–7
+  - authors' retention warning: “can be incomplete”
+  - augments event dependencies with timing and sequencing explanations
+    - lock-contention edges require added instrumentation
+    - recorded inputs support replay under its execution model
+  - delay explanations concern a valid modeled execution that could finish earlier
+    - they do not uniquely identify an initiating physical fault
+  - seven incident-derived scenarios span routing, microservices, and emulated networks
+  - finite retention can prune older state explanations
+  - reading limit: selected full methods and proof statements inspected
+    - proofs not fully rederived; no arbitrary-missing-cause guarantee established
+- [DTaP, VLDB 2013 primary paper](https://netdb.cis.upenn.edu/papers/dtap-vldb2013.pdf), §§2–4
+  - authors: “we cannot always order concurrent events on different nodes”
+  - records tuple updates, derivations, and message dependencies
+    - proactive logging or recorded inputs with deterministic replay reconstruct explanations
+  - soundness permits an equivalent trace preserving local event order and message dependencies
+    - completeness concerns an explanatory trace under the recording model
+    - it does not establish one uniquely identifiable hidden cause
+  - evaluates declarative routing and instrumented Hadoop
+  - reading limit: selected full model and evaluation context inspected
+    - hidden device state is not automatically included; proofs and artifacts not reproduced
+
+candidate B: know when retained telemetry cannot identify the bottleneck
+- agent hypothesis: a localization method can abstain when delayed or missing history supports several root causes
+  - ordinary queue/pause localization is a reproduction baseline
+  - construct paired executions with different seeded root causes but identical retained observations
+    - specify absent switch, flow, epoch, and control-frame evidence
+    - match topology, configuration, timestamps, and workload information supplied to the diagnoser
+    - keep privileged seed labels and validation telemetry outside its inputs
+    - compare single-cause outputs with existing failure or inconclusive outcomes
+    - retain Roundabout's invalidation logic as a deadlock-specific baseline
+- reproduce the half-line-rate burst definition, then sweep thresholds and capture lengths
+  - include substantially finer sampling to estimate missed short events
+  - distinguish reproducing the measurement from testing its proposed explanation
+- use a small RDMA testbed with controlled offered traffic and known congested links
+  - compare counters, queue views, Hawkeye-style provenance, and service-aware probing at equal observation budgets
+  - vary sampling interval independently of signal type
+  - vary reporting delay, buffer overwrite, trigger thresholds, and missing observations independently of seeded faults
+  - record workload completion and end-host stalls
+- vary incast, synchronized bursts, background traffic, and PFC thresholds
+  - vary CTS pacing, spine buffers, path selection, and transport control separately
+  - preserve delivered work and link capacity when comparing configurations
+  - synchronize host and switch traces and retain port/path mappings
+  - count pause duration as well as frames; frame counts alone can change with refresh behavior
+  - calibrate instrumentation overhead and clock error against burst duration
+  - do not equate a pause event with congestion originating on the paused link
+  - trace upstream effects against the controlled source of overload
+- endpoints: location accuracy, missed episodes, false localization, justified abstention, telemetry cost, and completion delay
+- useful null: coarse counters already locate every consequential event
+  - report no benefit if extra telemetry only detects harmless fluctuations
+- remaining novelty check: uncertainty calibration under the same missing-history conditions
+  - these papers already expose finite retention, approximation, and recording-model limits
+  - distinguish unique identification from explaining contributors or reporting an incomplete graph
+  - one compatible alternative disproves uniqueness
+    - failure to find an alternative does not prove uniqueness
+  - check uncertainty-aware diagnosis beyond the selected baselines
+  - stop if existing methods already provide the proposed guarantee
+
+collective algorithms: synthesized schedules already exist
+- Zixian Cai et al., [Synthesizing Optimal Collective Algorithms, PPoPP 2021](https://arxiv.org/pdf/2008.08708), §§3–5
+  - abstract: “explicitly tailored to a particular hardware topology”
+  - SCCL encodes collective schedules as solver constraints
+  - explores a latency/bandwidth tradeoff using chunks, transfer steps, and communication rounds
+  - optimality applies to the encoded topology and cost model
+    - it does not prove the generated runtime is fastest under arbitrary contention
+  - evaluated NVIDIA and AMD configurations
+  - [SCCL artifact](https://github.com/microsoft/sccl)
+- Aashaka Shah et al., [TACCL, NSDI 2023](https://arxiv.org/pdf/2111.04867), §§3–6
+  - abstract: “communication sketch abstraction”
+  - a designer constrains routes, symmetry, and other choices to make synthesis tractable
+  - profiles link latency and transfer cost
+  - separates routing, ordering, and scheduling stages
+  - evaluates AllGather, AllToAll, and AllReduce on DGX-2 and Azure NDv2
+    - also measures end-to-end BERT and Transformer-XL training
+  - scaling examples differ sharply
+    - eight NDv2 nodes: synthesis under five minutes
+    - eight DGX-2 nodes: approximately eleven hours
+  - authors leave further hierarchical composition as future work
+  - [TACCL artifact](https://github.com/microsoft/taccl) outputs schedules for MSCCL execution
+    - requires topology profiles, sketches, solver access, and compatible runtime versions
+    - artifact inspection does not establish successful execution here
+- [NVIDIA collective documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html)
+  - current semantics are the runtime baseline
+  - pin NCCL version rather than treating a historical ring/tree choice as today's universal behavior
+- the human's optical-circuit-switch direction remains a separate lead
+  - it changes topology as well as schedule
+  - no exact talk manuscript or complete optical-topology review was established
+
+candidate C: when does a synthesized collective profile become stale?
+- hypothesis: a schedule tuned without competing traffic loses its advantage when link sharing changes
+- reproduce one TACCL schedule and compare with pinned NCCL/MSCCL baselines
+  - use several message sizes and the same topology
+  - check outputs against the defined collective semantics before timing
+- vary controlled competing transfers and asymmetric link slowdown
+  - compare unchanged schedules, regenerated schedules, and simple runtime selection
+  - charge profiling, synthesis, switching, and GPU occupancy costs
+- endpoints: collective latency distribution and complete training-step time
+  - use equal arithmetic precision and model quality
+  - reduced bytes alone is not success
+- useful null: existing runtime selection remains competitive without regeneration
+- novelty search required: online collective adaptation and contention-aware synthesis
+  - topology-aware synthesis itself is established
+
+Optimus-CC: compress the exposed training communication
+- Jaeyong Song et al., [Optimus-CC, ASPLOS 2023](https://arxiv.org/pdf/2301.09830), §§4–9
+  - authors: “selective stage compression”
+  - combines compressed inter-stage backpropagation, carried error, fused embedding synchronization, and selective data-parallel compression
+  - epilogue-only compression targets transfers not hidden by computation
+  - error from a micro-batch carries into later backward communication
+    - cancellation needs similar errors, or zero-mean errors independent of activation differences
+    - the derivation omits bias terms and nonlinear activation functions
+    - it is not a universal guarantee for arbitrary nonlinear training
+  - experiments use 128 A100 GPUs with 200 Gbps InfiniBand
+  - GPT-8.3B and GPT-2.5B pretraining runs use 230,000 iterations
+  - table 2 exposes the speed/quality tradeoff
+    - CB: compressed backpropagation; FE: fused embedding synchronization; SC: selective stage compression
+    - GPT-8.3B baseline: 37.27 days, validation perplexity 8.10
+    - CB+FE: 32.84 days, perplexity 8.10
+    - CB+FE+SC: 25.72 days, perplexity 8.20
+  - lower perplexity indicates better prediction under that evaluation
+  - inference: fastest fixed-iteration training is not automatically fastest time to the same quality
+- [Optimus-CC artifact](https://github.com/MachineLearningSystem/Optimus-CC)
+  - README: “Megatron-LM” version “v2.5” and PowerSGD
+  - provides pretraining, throughput, memory, and quality-evaluation scripts
+  - historical stack includes PyTorch 1.8, CUDA 11.1, and NCCL 2.8.3
+  - upgrading dependencies is an experimental change requiring verification
+  - the paper spells the first author's name Jaeyong; the human's talk record spells Yaeyong
+    - no claim that the talk and paper had identical evaluation details
+
+candidate D: compare compression at equal training quality
+- hypothesis: a policy based on measured exposed communication beats compressing a fixed fraction when workload overlap changes
+- first reproduce one small artifact configuration
+  - compare no compression, PowerSGD-style compression, published Optimus-CC variants, and measured critical-path selection
+  - include residual storage, compression kernels, and synchronization costs
+- vary network bandwidth, pipeline depth, and micro-batch size independently
+  - freeze data order and report multiple training seeds
+  - measure time to predefined quality thresholds and any thresholds never reached
+  - evaluate downstream tasks as well as training loss
+- existing error feedback and critical-path selection are direct prior work
+  - possible increment: robust selection under changing overlap with equal-quality evaluation
+  - publication novelty remains unknown
+- useful null: published selection already gives the same tradeoff
+  - stop if a policy only improves iteration throughput while worsening convergence
+
+MetaRL: adversarial search needs a reproducible comparison
+- the [human notes](../../../../reading_notes/index.md) record soft actor-critic learning to maximize a performance gap
+  - the exact paper, code, reward, and constraints were not located
+  - no experimental result is attributed to MetaRL here
+- Pooria Namyar et al., [MetaOpt, NSDI 2024](https://arxiv.org/pdf/2311.12779), §§2–4 and selected appendices
+  - authors: “performance gaps and their corresponding adversarial inputs”
+  - encodes a heuristic and comparator in a constrained optimization problem
+  - studies traffic engineering, vector bin packing, and packet scheduling
+  - rewrites and partitions problems to improve solver scaling
+  - compares against random search, hill climbing, and simulated annealing
+  - reported TE searches use time limits and specified demand constraints
+  - found counterexamples establish achievable gaps under those constraints
+    - a timed-out search does not establish that the largest possible gap was found
+    - a model counterexample still needs implementation replay
+- [MetaOpt artifact](https://github.com/microsoft/MetaOpt)
+  - contains TE encoders, adversarial generation, topologies, tests, and reproduction scripts
+  - distinguish current repository extensions from the NSDI 2024 evaluation
+
+candidate E: can learned search find different consequential failures?
+- hypothesis: RL finds verified counterexamples faster than solver or simple-search baselines after counting training cost
+- first select one released MetaOpt TE heuristic with executable checks
+  - reuse the same demand/topology constraints and objective
+  - compare MetaOpt, random search, hill climbing, simulated annealing, and a small RL searcher
+  - the RL searcher is a new pilot, not a reproduction of unidentified MetaRL
+- charge training, solver, environment, and validation time
+  - separately report reuse across later searches
+  - hold out topologies and heuristic settings
+- independently recompute comparator solutions and replay heuristic outputs
+  - reject inputs violating the declared constraints and outputs violating routing constraints
+    - overloaded demand can still be a valid adversarial input
+    - reject numerically invalid solver outputs
+  - log solver bounds and termination status
+- endpoints: verified gap found per total compute budget, valid-case yield, and transfer to held-out problems
+- useful null: simple search finds equivalent gaps sooner after counting RL training
+  - no claim that sampling-based search certifies a worst-case upper bound
+- novelty check: black-box adversarial optimization and RL-based heuristic testing
+
+reading depth and remaining work
+- checked October 7, 2026 UTC
+- selected full methods, evaluations, and limits read for OnlineTE, SCCL, TACCL, Optimus-CC, and MetaOpt
+  - selected artifact READMEs inspected for OnlineTE, TACCL, Optimus-CC, and MetaOpt
+  - no solvers, GPU benchmarks, or training jobs executed
+- RDMA manuscript §§2–3 and appendix recovered from the coauthor upload
+  - raw traces, capture-length discrepancy, and causal performance attribution remain unresolved
+- exact collective-talk and MetaRL manuscripts remain unidentified
+  - those gaps limit talk-specific claims, not the identified baseline literature
+- remaining closest-work checks
+  - optical-circuit topology plus collective scheduling
+  - consistent network updates and online/distributed TE
+  - modern collective adaptation, RDMA telemetry, and communication-compression policies
+- candidates are bounded hypotheses with baselines and null outcomes
+  - none has an established novelty claim

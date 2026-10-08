@@ -1,0 +1,471 @@
+CPU cache optimization
+(authored by agents unless marked 🧑)
+
+takeaway
+- recommendation: study whether locality optimizations survive changing memory placement and competing workloads
+    - locality means using nearby data or reusing data before it leaves the CPU cache
+    - candidate contribution: predictable request latency rather than another best-case speedup
+    - novelty remains unconfirmed
+- ordinary field reordering, automatic prefetch insertion, and profile-guided code layout already have substantial prior work
+    - do not propose these alone as new research
+- literature checked 7 Oct 2026
+    - evidence ranges from full paper sections to author abstracts and tool documentation
+    - no new hardware measurements performed
+
+why this topic belongs here
+- local evidence: [reading notes](../../../../reading_notes/index.md) contains “Measuring context switching and memory overheads for Linux threads”
+    - the human recorded “comparison: memcpy 64 KiB took 3µs, Goroutine switching took 170ns”
+    - the cited experiment used an i7-4771 in 2018
+    - inference: distinguish switching machinery from the later cost of refilling caches
+    - these old timings do not establish current processor costs
+- scope: CPU instruction and data caches
+    - instruction cache holds machine code
+    - data cache holds memory contents in small blocks called cache lines
+    - NUMA means access speed depends on which processor socket owns the memory
+    - CXL is a connection standard used here to attach extra memory
+- neighboring topics use different meanings of cache
+    - storage and object caches retain files or application objects
+    - LLM key/value caches retain intermediate model state
+    - their replacement algorithms are not automatically CPU-cache contributions
+    - [hardware side channels](hardware_side_channels.md) covers security consequences
+
+first principles
+- a cache miss matters when useful work must wait for the missing data
+    - reducing misses need not reduce runtime equally
+    - several independent reads can overlap
+    - one pointer chain cannot reveal its next address until the current read finishes
+- three different interventions
+    - move data less: compact records, reorder fields, process data in blocks
+    - fetch data earlier: hardware or software prefetching
+    - reduce interference: change core placement, sharing, or cache allocation
+- recommendation: explain a speedup through stalls and traffic as well as elapsed time
+    - an optimization can reduce one program's stalls while increasing another's traffic
+    - request latency and total throughput can favor different choices
+
+literature: data layout and algorithms
+- Chilimbi, Davidson, and Larus, PLDI 1999, [Cache-Conscious Structure Definition](https://www.microsoft.com/en-us/research/publication/cache-conscious-structure-definition-2/)
+    - [full author paper](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/definition_distr.pdf), §§2–4
+    - authors: “bbcache’s recommendations must be examined by a programmer”
+    - splitting separates frequently used fields from rarely used fields
+        - cold-field access gains an extra pointer indirection
+        - Vortex compiler and cache-conscious garbage collection implement the Java transformation
+    - five Java programs run on one 167 MHz UltraSPARC processor
+        - five repetitions; test inputs differ from profiling inputs except for cassowary
+        - against the original program, splitting adds about 10–27 percentage points of L2 miss-rate reduction and 6–18 points of runtime reduction
+        - combined reductions are about 29–43% for L2 miss rate and 18–28% for runtime
+    - bbcache recommends C field ordering from temporal access profiles
+        - pointer aliasing can merge distinct instances in its approximation
+        - persistent formats and casting dependencies constrain permissible changes
+    - SQL Server 7.0 trial selects five unconstrained structures with high predicted benefit from 25 active structures
+        - reports 2–3% overall improvement on TPC C
+        - favorable selection limits generalization
+    - implication: profile-guided record layout and compatibility screening are established baselines
+    - reading limit: selected transformation and evaluation sections
+        - old workloads and hardware; original implementation not reproduced
+- Chilimbi, Hill, and Larus, PLDI 1999, [Cache-Conscious Structure Layout](https://www.cs.cmu.edu/afs/cs/academic/class/15745-s05/www/papers/p1-chilimbi.pdf)
+    - abstract: “the cache-conscious structure layouts produced by ccmorph and ccmalloc offer large performance benefits”
+    - ccmorph reorganizes an existing pointer structure
+    - ccmalloc places newly allocated related objects together
+    - evaluated microbenchmarks and applications
+    - implication: moving whole objects together predates field-layout tools
+- Chilimbi and Larus, ISMM 1998, [Using Generational Garbage Collection To Implement Cache-Conscious Data Placement](https://www.microsoft.com/en-us/research/publication/using-generational-garbage-collection-implement-cache-conscious-data-placement/?lang=zh-cn)
+    - abstract: “objects with high temporal affinity are placed next to each other”
+    - temporal affinity means objects are accessed near each other in time
+    - implication: runtime relocation through garbage collection is already an approach
+    - candidate extensions must account for relocation cost and changed access patterns
+- [Cache-Conscious Coallocation of Hot Data Streams](https://www.microsoft.com/en-us/research/publication/cache-conscious-coallocation-hot-data-streams/)
+    - author abstract: “Automatic object coallocation improves execution time by 13% on average in the presence of hardware prefetching”
+    - groups allocation sites belonging to repeated access sequences
+    - implication: combining allocation placement with existing hardware prefetching is also prior work
+- Frigo, Leiserson, Prokop, and Ramachandran, FOCS 1999 / TALG 2012, [Cache-Oblivious Algorithms](https://cs.uwaterloo.ca/~imunro/cs840/frigo.pdf)
+    - abstract: “no variables dependent on hardware parameters”
+    - recursively divide work without selecting a machine-specific cache block size
+    - proves asymptotic transfer bounds for transpose, FFT, sorting, and matrix multiplication
+    - analysis uses an ideal cache and a tall-cache assumption
+        - tall cache means its capacity grows at least quadratically with line length in the model
+    - inference: these proofs do not by themselves predict CXL tail latency, cache coherence, or real prefetch behavior
+    - use recursive and explicitly blocked implementations as algorithm baselines
+
+literature: software prefetching
+- Ainsworth and Jones, CGO 2017, [Software Prefetching for Indirect Memory Accesses](https://www.cl.cam.ac.uk/~tmj32/papers/docs/ainsworth17-cgo.pdf)
+    - abstract: “automatically generate software prefetches for indirect memory accesses”
+    - indirect access example: `values[indices[i]]`
+    - compiler looks ahead in the index array and fetches the eventual target early
+    - reports average 1.3× speedup on Haswell and 1.1× on Cortex-A57 for its memory-bound benchmarks
+    - placement and distance interact with bandwidth and added instructions
+    - section 4.2: “intermediate loads used to calculate addresses can”
+        - context: those loads can cause faults even when the final prefetch instruction does not
+        - preserve bounds and validity of look-ahead loads
+    - pure pointer chains differ from array-indexed accesses
+        - latter expose independent future iterations
+- Ainsworth and Jones, TOCS 2019, [Software Prefetching for Indirect Memory Accesses: A Microarchitectural Perspective](https://www.repository.cam.ac.uk/items/cfdef932-ee9b-457d-a54a-c9ecf2e3b062)
+    - author abstract: “good prefetch instructions are architecture dependent”
+    - expands analysis of where prefetching helps
+    - [author reproduction artifact](https://github.com/SamAinsworth/reproduce-tocs2019-paper) provides automatic, manual, and no-prefetch configurations
+    - artifact instructions: “we do not expect absolute values to match”
+        - compare trends within the appropriate processor class
+    - recommendation: port the artifact rather than reconstructing only a favorable microbenchmark
+- Sergey Shcherbinin, 2026 [LLVM loop-prefetcher RFC](https://discourse.llvm.org/t/rfc-universal-profile-guided-automatic-software-loop-data-prefetcher-for-llvm/90916)
+    - full discussion retrieved through [topic JSON](https://discourse.llvm.org/t/90916.json)
+    - quote: “The current implementation covers a practical subset of this design”
+    - samples memory loads and estimates their latency from where data was fetched
+    - clones calculations that produce future addresses, schedules dependent prefetches, and limits added instructions
+    - [full design, §§3.4–3.6, 5.1](https://gist.github.com/SergeyShch01/d7cc2a19122d3ca4944bfb0d156735ac)
+        - guards unsafe speculative loads through bounds sanitization, bypass branches, or non-faulting loads
+        - moving original calculations earlier requires stronger correctness conditions than issuing an ineffective prefetch
+        - current implementation excludes inner loops and switches within address calculations
+        - cross-function handling, recursive outer-loop promotion, and runtime loop versioning remain planned
+    - tuned on NVIDIA Grace; public examples are serial benchmarks
+    - discussion reports no sufficiently important eligible loads in examined SPEC2017 cases
+        - database address calculations involving inner loops, volatile loads, or atomic loads remain uncovered
+    - [September LLVM commit](https://chromium.googlesource.com/external/github.com/llvm/llvm-project/+/3993ccd4f07a5feee69764efa5bc9b53a0ce19ae) adds AArch64 branch-profile support
+        - this verifies one infrastructure change, not upstream availability of the complete prefetch pass
+    - implication: safety-aware distance selection and overhead budgeting already exist in this proposal
+
+literature: instruction locality
+- Panchenko, Auler, Nell, and Ottoni, CGO 2019, [BOLT](https://doi.org/10.1109/cgo.2019.8661201)
+    - final abstract reports up to 7% additional performance beyond existing optimizations
+    - [full 2018 preprint](https://arxiv.org/pdf/1807.06735), §§3 and 6
+        - authors: “using inaccurate profile data can actually lead to performance degradation”
+        - reports up to 8%; final publication's complete methods not recovered
+    - five Facebook binaries compare against profile-guided function ordering
+        - HHVM additionally uses link-time optimization
+        - production compiler-profile comparisons unavailable
+    - Clang's compiler profiles train on building Clang; BOLT's sampled profiles train on building GCC
+        - evaluation builds Clang and compiles three files
+        - some workload transfer is tested, but traffic drift and co-tenancy are not independently varied
+    - GCC comparison disables function partitioning for compatibility
+    - uncertain reconstructed functions remain untouched
+        - moved cold blocks can enlarge branches and hot code
+    - reading limit: selected full preprint methods inspected; implementation not reproduced
+- Shen and colleagues, [Propeller](https://research.google/pubs/propeller-a-profile-guided-relinking-optimizer-for-warehouse-scale-applications/)
+    - [coauthor-hosted ASPLOS 2023 paper](https://snehasish.net/assets/pdf/shen-asplos23.pdf), §§3–5
+    - authors: “profiling the application has to be performed in a synthetic, yet realistic environment”
+    - branch samples map to compiler block metadata; cached objects are relinked
+    - evaluates four internal services, eight SPEC integer benchmarks, Clang, and MySQL
+        - baselines use compiler profile-guided optimization and ThinLTO
+        - BOLT and Propeller receive the same hardware profiles
+        - BOLT uses an unconstrained workstation; production Propeller build actions have memory limits
+    - endpoints include compilation time, database latency, and service throughput
+        - three internal BOLT binaries fail at startup; Search succeeds
+        - historical failures do not establish current tool compatibility
+    - Propeller's file size grows about 1% on average
+        - unloaded metadata and retained original code make file size different from instruction-cache footprint
+    - total release-build time grows 78% on average against ordinary optimized builds
+        - includes the profile-guided workflow, not just extra relinking cost
+    - implication: a new layout tool must beat existing compiler and post-link optimization together
+    - reading limit: selected full methods inspected
+        - proprietary profiles and current implementation not independently reproduced
+- Zhang et al., [OCOLOS, MICRO 2022 author paper](https://zyuxuan0115.github.io/files/OCOLOS_MICRO55.pdf), §§IV-C–VI
+    - authors: “this prevents us from evaluating continuous optimization”
+    - running-process samples guide Lightning BOLT layout and replacement that pauses all threads
+    - periodic re-profiling targets program phases and daily workload changes
+        - repeated replacement is proposed but contemporary BOLT cannot reoptimize its own output
+    - default profiles last sixty seconds; most results measure steady state after replacement
+    - evaluates databases and other workloads on one dual-socket Broadwell machine with five-run means
+        - original baselines do not use compiler profile-guided optimization
+        - comparisons include same-input oracle and pooled-input BOLT profiles
+    - one MySQL trace shows a 669 ms pause and recovery of lost transactions about thirty seconds later
+        - this is not a general tail-latency guarantee
+    - implication: phase-aware profiling, online layout, and cost recovery are existing work
+    - reading limit: selected full methods and evaluation inspected
+        - continuous replacement explicitly unevaluated; current successors and implementation not reproduced
+- Ananda and colleagues, [AI-PROPELLER, 2026 preprint](https://arxiv.org/html/2606.00131v1), §§4–5
+    - quote: “it did not generalize well to the warehouse-scale Search workload”
+    - AlphaEvolve edits a Propeller layout heuristic; Vizier tunes exposed numerical parameters
+    - layout decisions split block chains, consider longer-distance edges, and preserve global cross-function order
+    - trains on 100 Clang build modules with 12 evolution rounds and 1,200 tuning trials over 2.7 days
+    - hardware rewards use ten runs per binary with Turbo Boost, SMT, and address randomization disabled
+        - fixes CPU frequency to limit thermal effects
+    - Clang-trained policy transfers to the full build, LevelDB, and Redis
+        - Search requires separate training and parameter tuning
+    - Clang ablation makes each function contiguous while retaining its internal order
+        - improvement falls from 1.6% to about 0.3% over Ext-TSP
+    - Search's reported 0.23% gain concerns a proprietary workload against deployed Ext-TSP
+    - no public reproduction artifact found in the paper or targeted search
+        - Figure 3 presents a discovered policy; it does not supply the full training and measurement pipeline
+    - implication: evolving layout heuristics is established work
+        - policy transfer and training cost require measured comparison
+- [AutoCO, TACO 2026 author-laboratory entry](https://solelab.tech/publications/), [publisher record](https://dl.acm.org/doi/10.1145/3832323)
+    - authors: “filters candidate phase changes through a lifetime-aware trigger”
+    - author summary describes repeated profiling, profile conversion, live injection, and obsolete-code reclamation
+    - direct overlap: repeated phase adaptation and cost-aware triggering
+    - reading limit: author abstract and indexed opening manuscript pages only
+        - full evaluation remains inaccessible
+        - phase definitions, thresholds, tail latency, overhead accounting, and co-tenancy controls remain unchecked
+- [OCOLOS current author repository, inspected revision](https://github.com/upenn-acg/ocolos-public/tree/857ef7144213b4e8ae7676b7efba696d2dec5fef)
+    - documentation: “UPDATES: Continuous Optimization - use profile from C1 to build new BOLTed binary”
+    - provides mappings and modified BOLT support for converting profiles of optimized code
+    - [demo script](https://github.com/upenn-acg/ocolos-public/blob/857ef7144213b4e8ae7676b7efba696d2dec5fef/scripts/C1_BOLTed_performance_test.sh) shuts down MySQL and starts another optimized binary
+        - demonstrates second-profile conversion, not repeated injection into one uninterrupted process
+    - reading limit: current README and script inspected; no execution
+
+literature: sharing and remote memory
+- Liu, Xu, Berger, Aguilera, and Li, ASPLOS 2026, [Performance Predictability in Heterogeneous Memory, Camp](https://people.cs.vt.edu/jinshu/docs/papers/Camp_ASPLOS.pdf)
+    - selected full-paper reading: §§4.4, 5.4–5.5, 6.3
+    - predicts slow-memory effects using processor counters, then chooses memory interleaving and colocated workload placement
+    - tested 265 workloads, three Intel processor generations, NUMA, and three CXL devices
+    - already tracks changing workload phases
+    - §4.4.6: “currently applies to regimes where device bandwidth is not saturated”
+    - reported errors include device tail latency, extreme parallelism, and missing precise counters
+    - interleaving model uses fixed weighted placement
+        - migration and cross-tier interference remain stated extensions
+    - colocation demonstration selects three latency-bound pairs with conflicting predictor rankings, plus one mixed pair
+        - this selection does not establish performance across arbitrary service mixes
+    - implication: prediction, phase tracking, and interference-aware placement are established closest work
+        - candidate A needs joint prefetch/layout choices and request-tail evaluation beyond this baseline
+- Mahling, Weisgut, and Rabl, DaMoN 2025, [Fetch Me If You Can](https://hpi.de/oldsite/fileadmin/user_upload/fachgebiete/rabl/publications/2025/Mahling-DaMoN25-Prefetching.pdf)
+    - full methods read, §§3–4; authors: “CPUs either drop prefetches or halt until all can be executed”
+    - context: CPU fill buffers are full
+    - evaluates seven systems and high-latency memory
+        - tested remote placements include NUMA and NVLink-attached GPU memory
+        - mentioning CXL in the introduction does not mean these experiments measured CXL devices
+    - reports up to 2.6× and 2.8× gains for B+-Tree and binary search workloads
+    - reports one 8 KiB B+-Tree-node case with 2× speedup versus 2.5× slowdown under different prefetch behavior
+    - implication: buffer capacity and prefetch behavior must enter candidate A's experiment
+    - reliability test separately times prefetching and later accesses in dependent random batches
+        - batch dependence prevents the next batch from hiding this one's stalls
+        - configurable A64FX reliability provides an explicit comparison
+    - closely overlaps a generic study of prefetch distance on high-latency memory
+    - [author code](https://github.com/hpides/prefetching) supplies characterization microbenchmarks
+- Jiménez et al., [Adaptive Prefetching on POWER7, TOPC 2014 full paper](https://people.ac.upc.edu/fcazorla/articles/vjimenez_topc_2014.pdf), §§5–6
+    - extends the PACT 2012 study; not independent corroboration
+    - authors: "we use the interval lengths Te = 10ms and Tr = 100ms"
+    - tests available hardware settings and selects the highest measured instructions per cycle
+        - moving averages reduce phase-change noise
+        - exploration can itself run harmful settings
+    - evaluates real POWER7 microbenchmarks, SPEC CPU2006, mixed workloads, and SPECjbb2005
+    - mixed-workload results separate total throughput from harmonic speedup
+        - one pair loses 4% total throughput while one participant slows 35% and the other nearly doubles
+        - improved aggregate fairness does not establish a per-service latency guarantee
+    - static best settings often equal or slightly beat adaptation for stable SPEC workloads
+    - implication: phase-aware prefetch control and exploration-cost concerns are already implemented
+- Srinath et al., [Feedback Directed Prefetching, HPCA 2007 full paper](https://users.ece.cmu.edu/~omutlu/pub/srinath_hpca07.pdf), §§2–5
+    - authors: "prefetch accuracy, timeliness, and cache pollution"
+    - hardware counters track useful prefetches, late requests, and estimated displacement of useful cache lines
+    - adjusts degree/distance and insertion position in the cache replacement order
+    - evaluates an execution-driven Alpha processor simulation and SPEC CPU2000 workloads
+        - not a deployable software controller or measured CXL machine
+    - implication: useful-request rate alone is an incomplete control signal
+        - increasing distance can hide latency while adding pollution and traffic
+- Hundt, Mannarswamy, and Raman, [structure layout optimization for multi-threaded programs](https://patents.google.com/patent/US7765242B2/en), detailed technical description and figures 3–8
+    - technical disclosure: “maximizing spatial locality while minimizing false sharing”
+    - estimates field affinity from profiled loops/basic blocks
+    - synchronized program-counter samples estimate concurrently executing code blocks
+        - these approximate sharing risk rather than directly count every ownership transfer
+    - forms a weighted field graph and clusters fields into cache-line-sized groups
+        - cycle-gain estimates favor co-access; concurrency estimates penalize conflicting placement
+    - publication 2010, filing 2007
+    - technical prior work, not an empirical deployment result or legal conclusion
+    - implication: concurrency-aware source-field grouping is already an explicit algorithm
+- [Linux false-sharing documentation](https://www.kernel.org/doc/html/latest/kernel-hacking/false-sharing.html)
+    - documentation: “perf-c2c can capture the cache lines with most false sharing hits”
+    - false sharing means threads modify different data that occupy the same coherence unit
+    - packing read-only fields together can help locality
+    - packing independently written fields together can hurt concurrent execution
+    - implication: field affinity without write ownership is an incomplete optimization target
+- Lo and colleagues, ISCA 2015, [Heracles](https://research.google/pubs/heracles-improving-resource-efficiency-at-scale/)
+    - [full author paper](https://research.google.com/pubs/archive/43792.pdf), §§4.2–5.1
+    - authors: “The controller polls the tail latency and load of the LC workload every 15 seconds”
+    - allocates cores, shared cache, memory bandwidth, power, and network resources to colocated jobs
+    - disables background work above 85% of the foreground service's peak load
+        - resumes below 80%; thresholds were empirically tuned
+        - negative latency slack also disables background work before a later retry
+        - slack means the difference between the latency target and measured tail latency
+    - evaluates three Google production services on individual servers and a websearch cluster with tens of servers
+        - cluster load follows a daily traffic trace
+        - latency targets use 60-second windows
+    - reports 90% average utilization without violations in evaluated scenarios
+        - effective machine utilization sums throughput normalized to running alone
+        - this quantity can exceed 100%; it is not CPU occupancy
+    - implication: protecting latency through adaptive shared-resource control is established
+        - top-level polling is slower than its power and network subcontrollers
+        - these measurements do not guarantee every request's deadline or performance under faster changes
+    - reading limit: selected controller and evaluation methods
+        - implementation and production traces not reproduced
+- Liu and colleagues, ASPLOS 2025, [Melody](https://people.cs.vt.edu/~huaicheng/p/asplos25-melody.pdf)
+    - section 1: “265 workloads across 4 CXL devices”
+    - covers five Intel platforms and seven latency configurations
+        - three configurations use NUMA-based simulation
+        - four devices operate as CXL 1.1 memory expanders
+    - section 1: “some CXL devices exhibit significant µs-level tail latencies”
+    - identifies CPU prefetch limitations under prolonged memory latency
+    - Spa diagnoses slowdown using nine CPU performance counters
+    - reported accuracy and latency findings belong to its tested configurations
+    - scope limit: baseline comparison excludes complex tiering and interleaving setups
+    - [Melody artifact](https://github.com/MoatLab/Melody) supplies a starting point
+    - implication: characterizing CXL cache misses or building a counter-based slowdown predictor alone overlaps this work
+- Guo, Shriver, and Liu, [MemChannel, 2026](https://arxiv.org/html/2608.21731v1), §§3–5
+    - quote: “evaluated at rack scale rather than at cluster scale”
+    - controls competing CXL streams by changing how long application threads may run
+    - samples remote cache-line counts; shares aggregate rates across hosts
+    - estimates each path's limiting bandwidth and applies weighted fair allocation
+    - congestion feedback uses device-load indications and telemetry
+        - fabric support is part of the design, not a portable compiler-only feature
+    - prototype uses 100 µs scheduling windows
+        - shorter windows trade tighter control for more interrupts
+        - reported scheduling overhead is 1.7%
+    - evaluates MICA, Silo, graph kernels, SPEC, and PARSEC on a real switched pool
+    - compares with TPP under changing contention
+        - TPP performs better without background traffic; MemChannel wins under heavy contention
+    - inference: fabric fairness and reduced memory-access tails do not prove request deadlines for arbitrary services
+    - implication: generic CXL contention control and tail-latency reduction are already studied
+- Ping She et al., [CXL vector-search optimization, 2026 full paper](https://www.jstage.jst.go.jp/article/elex/advpub/0/advpub_23.20260223/_pdf/-char/en), §§3–4
+    - quote: “The scheduler is static at batch granularity”
+    - divides FAISS-Flat vectors into contiguous segments proportional to measured node bandwidth
+    - initializes pages on their intended nodes and pins scanning threads
+    - stages CXL segments into two alternating DRAM buffers while computing distances
+        - bulk staging differs from a CPU cache-prefetch instruction
+    - compares default placement, partitioning plus affinity, and added staging
+    - evaluates SIFT1M and GloVe on one dual-socket server, sweeping 1–32 threads
+    - reported latency measures a batch of 10,000 queries
+        - this does not establish the proposed 99th/99.9th percentile individual-request contract
+    - reported large gains chiefly come from partitioning and affinity against NUMA-unaware placement
+    - inference: adding placement, scheduling, and prefetch together is already an implemented combination
+- Kandemir et al., [Reducing False Sharing and Improving Spatial Locality in a Unified Compilation Framework, TPDS 2003](https://www.ece.lsu.edu/jxr/papers-pdf/tpds03.pdf), §§2–5
+    - quote: “We prefer the option with the larger cumulative weight”
+    - represents parallel array accesses and layouts as matrix constraints
+    - compares locality-first and write-sharing-aware choices
+        - conflicting constraints are dropped by profiled access frequency
+    - model conservatively assumes loop bounds and stride conditions hold
+    - evaluates 20 array-oriented programs on an eight-processor SGI Origin
+    - implication: jointly balancing locality and false sharing is longstanding work
+        - this array formulation does not by itself implement source-field advice for irregular concurrent objects
+- Chen, Varbanescu, and Naumann, [reflmem++, ICPE 2025 work in progress](https://repository.cern/records/eg35k-w7b24/files/3680256.3722203.pdf), §§2–3
+    - quote: “Our current prototype only supports converting AoS to SoA”
+    - AoS stores whole records together; SoA stores each field's values together
+    - manual layout experiments include threads writing distinct fields
+    - experimental reflection generates SoA storage and proxies preserving record-style access
+    - benchmark gains belong to manual conversions
+        - proxy runtime cost and compile-time growth remain open
+        - variable-sized members and additional layouts remain planned
+    - implication: preserving familiar source syntax during layout transformation is already a prototype goal
+- [Intel false-sharing advice](https://github.com/intel/intel-performance-skills/blob/main/skills/performance-patterns/patterns/false-sharing.md), source inspected
+    - quote: “grouping struct members by access pattern”
+    - links per-offset writer profiles to padding, writer-group separation, and read-mostly packing
+    - implication: generic actionable field advice already has a concrete vendor example
+        - candidate B needs evidence of a failure in existing advice, not merely a clearer explanation
+- [Intel Memory Latency Checker](https://www.intel.com/content/www/us/en/developer/articles/tool/intelr-memory-latency-checker.html)
+    - official description: “how they change with increasing load on the system”
+    - measures memory latency and bandwidth under contention
+    - use for hardware calibration rather than as an application result
+- [Intel top-down analysis](https://www.intel.com/content/www/us/en/docs/vtune-profiler/cookbook/2024-2/top-down-microarchitecture-analysis-method.html)
+    - official documentation: “find the sources of high latency”
+    - separates front-end and back-end bottlenecks
+    - recommendation: check whether the program waits for code, data, execution units, or branches before optimizing cache misses
+
+candidate research A: locality choices that protect CXL request latency
+- question: does jointly choosing record layout and prefetch distance beat choosing each independently under changing contention?
+- hypothesis, untested
+    - compact layouts change how much useful work each fetched line contains
+    - a distance tuned on quiet local memory may behave poorly under CXL queues or competing traffic
+- smallest experiment
+    - one read-heavy hash-table service with controlled request arrival
+    - compare original layout, hot-field split, and packed records
+    - sweep no prefetch, fixed distances, and a simple feedback policy
+    - run local memory, remote NUMA memory, and actual CXL separately
+    - add read-stream and write-stream competing processes
+    - keep placement, core allocation, and traffic throttling identical across layout/prefetch alternatives
+        - compare with placement and contention controls separately where hardware support permits
+- necessary measurements
+    - throughput and median, 99th, and 99.9th percentile request latency
+    - useful bytes per fetched line, bandwidth, CPU stalls, and added instruction count
+    - initialization, profiling, and any data-relocation costs
+    - phase changes in key popularity and read/write ratio
+    - each competing workload's slowdown, useful throughput, and latency violations
+        - aggregate throughput or harmonic speedup can conceal a harmed participant
+    - adaptation exploration time, worst transient slowdown, and recovery after a phase change
+        - compare an offline best fixed setting as a reference, not an implementable oracle
+    - useful-prefetch fraction, late prefetches, and pollution where counters permit
+        - disclose approximations and model-specific counter definitions
+- closest-work falsification
+    - Melody already diagnoses CXL slowdown and prefetch limitations
+    - Chilimbi already optimizes layout and allocation
+    - Ainsworth/Jones and the LLVM RFC already automate indirect prefetching
+    - Heracles already protects latency under shared-resource contention
+    - Camp already predicts slowdown, follows phases, and guides colocated placement
+    - Fetch Me If You Can already studies prefetch reliability on high-latency memory
+    - IBM's POWER7 work already adapts prefetch settings
+    - MemChannel already controls competing CXL streams and measures tail latency
+    - the vector-search study already combines placement, affinity, and staged prefetch
+    - remaining possible contribution: record-layout and CPU-prefetch interaction under an explicit individual-request latency budget
+        - no claim that this combination is absent from all literature
+- proposed stop rule
+    - stop if joint tuning brings no repeatable advantage over separately tuned baselines
+    - stop if advantage comes only from giving the candidate more cores or faster memory
+    - without physical CXL, report NUMA results as preliminary rather than CXL validation
+
+candidate research B: layout advice that accounts for write ownership
+- question: can a compact advisory tool explain when field packing becomes false sharing?
+- possible deliverable: source-level explanation plus a small set of layout suggestions
+    - combine access-frequency profiles with which threads write each field
+    - output an explanation such as separate this counter from this shared read-mostly field
+    - avoid silent changes to externally visible object layouts
+- closest-work falsification
+    - bbcache already recommends C field reorderings
+        - source and short quote: Cache-Conscious Structure Definition above
+    - Linux documentation and perf c2c already identify shared cache lines
+    - the 2007 structure-layout disclosure already combines locality and false sharing
+    - reject generic ownership-aware reordering as a novelty claim
+    - novelty needs a verified gap in actionable advice or profile robustness
+    - Intel already gives actionable writer-group layout advice
+    - reflmem++ already prototypes layout changes preserving familiar access syntax
+    - remaining possible contribution: demonstrate and repair advice failures when writer ownership changes across phases
+        - compare against existing advice and report memory-size tradeoffs
+- proposed evaluation
+    - compare manual padding, affinity-only packing, and ownership-aware advice
+    - account for extra object size and degraded single-thread locality
+    - test changing thread counts and read/write phases
+    - compare direct per-offset writer evidence with sampled concurrent-code estimates
+    - report counter/profile attribution errors and unobserved writers
+    - use held-out phases for advice validation; count padding and relocation costs
+    - null result: ordinary writer-group separation matches the proposed advice across phases
+- recommendation: smaller starting project than a new compiler pass
+    - publication potential remains unknown
+
+candidate research C: code layouts under changing traffic and shared execution
+- agent hypothesis: pooled profiles or selective retraining improve request latency enough to repay profiling and deployment costs
+- full BOLT and Propeller methods already include layout optimization and some workload transfer
+    - OCOLOS already proposes phase-aware online layout and compares pooled profiles
+    - its repeated replacement was unevaluated; that historical limit does not establish a present gap
+    - adaptive and multiple-profile layout literature remains a novelty check
+    - no demonstrated gap is claimed
+    - AutoCO already proposes repeated adaptation and a lifetime-aware trigger
+        - recover its full methods before designing another controller
+- compare original layout, original-traffic training, new-traffic retraining, and pooled profiles
+    - add oracle per-phase layout and an OCOLOS-style periodic policy
+    - cross traffic changes with isolated execution and controlled instruction-heavy co-tenancy
+    - hold compiler profile, binary version, core placement, frequency, and resource limits fixed
+- measure latency or throughput alongside instruction-cache misses, branch misses, and loaded hot-code size
+    - count sampling, rebuilding, deployment, and warm-up costs
+    - separate pausing replacement from deployment that lets requests continue
+    - vary phase duration to test whether improvement repays its cost before the next change
+    - isolate co-tenant interference during profiling from a real workload change
+        - candidate increment: distinguish those causes before triggering costly reoptimization
+        - novelty remains unconfirmed against AutoCO's unread full evaluation
+- useful null: pooled profiles suffice, every fixed layout degrades similarly, or shared-resource contention dominates layout choices
+
+what would not yet justify a research claim
+- a favorable microbenchmark with one warm cache and one input
+- comparing optimized code against an unoptimized compiler build
+- reporting fewer misses without runtime or latency improvement
+- calling remote NUMA memory equivalent to a real CXL device
+- presenting one machine's speedup as a portable result
+
+remaining work
+- full selected methods now read for POWER7 adaptation, feedback-directed hardware prefetching, Fetch Me If You Can, and the concurrency-layout disclosure
+    - no hardware adaptation or layout transformation reproduced
+    - simulated feedback signals do not establish available counters on the target processor
+- full LLVM RFC/design and AI-PROPELLER selected methods now read
+    - complete upstream prefetch-pass status and AI-PROPELLER reproduction artifact remain unverified
+- selected newer CXL and concurrency methods now read: MemChannel, vector staging, reflmem++
+    - broader checks remain for CXL-Interplay, Colloid, APT-GET, RPG², and irregular-object advice tools
+- independent ChatGPT Extra High review requested through the coordinating agent
+    - no returned opinion incorporated yet
+- earlier independent selective review checked the prior AI-PROPELLER and Camp summaries
+    - no material mismatch found in those checks
+    - this does not review the newer method additions
+- fresh independent selective review checked POWER7, feedback-directed prefetching, Fetch reliability, concurrency-layout mechanisms, and added controls
+    - no actionable source mismatch found
+- recommendation: choose a pilot only after those novelty checks
+    - current evidence supports concrete experiments, not a proven new research direction

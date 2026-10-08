@@ -1,0 +1,414 @@
+GPU correctness: what is proved, tested, and still trusted
+(authored by agents unless marked 🧑)
+
+takeaway
+- GPU correctness has several independent obligations
+  - memory accesses stay inside live allocations
+  - concurrent accesses obey synchronization rules
+  - every required participant reaches a barrier
+  - the algorithm computes the intended mathematical function
+  - rounded numerical results satisfy an application error budget
+  - compilation and launching preserve those properties
+- current tools cover different combinations
+- agent recommendation: investigate preservation of tile ownership and ordering through generated launch code and compiler output
+  - a narrower first experiment than creating another GPU verification language
+  - mathematical error budgets are a second credible direction
+  - neither proposal has established novelty or a working prototype
+
+scope and evidence
+- literature checked on 7 October 2026
+- selectively read full methods, assumptions, evaluation, or limitations
+  - Kuiper, its KernelBench study, RESOLVE, Volta, Dirigo
+  - tile compiler bug study, cuTile Rust, Descend, SHARD
+  - GPUVerify and Faial selected foundational methods and evaluation
+  - SuperCollider and SIMT-Step
+  - FaialAA, GPUMC, FPTaylor, and FPTuner selected algorithms, assumptions, and evaluation
+- artifact instructions inspected without executing them
+- newer preprints are author claims pending independent reproduction
+- no experiments or proof replays run
+- links to adjacent studies
+  - [general compiler verification](../../formal_verification_rust/practical_fv/compilers.md)
+  - [Verus](../../formal_verification_rust/rust_verifiers/verus.md)
+  - [browser GPU performance](browser_gpu_performance.md)
+  - [hardware side channels](hardware_side_channels.md)
+
+basic vocabulary
+- a kernel is a GPU function executed by many threads
+- CUDA is NVIDIA's GPU programming platform
+- a block groups threads that share fast local memory
+  - CTA is another name for a CUDA block
+- a warp is a group of NVIDIA GPU threads, normally 32
+- a data race involves conflicting memory accesses without the required ordering
+  - at least one access writes
+  - observing identical output repeatedly does not prove race freedom
+- a barrier waits for a specified group of participants
+- PTX is NVIDIA's public virtual instruction language
+  - further compilation produces device-specific machine instructions, often called SASS
+- a tile is an array-shaped unit of calculation
+  - the compiler chooses how physical threads implement tile operations
+- a specification states the behavior a proof establishes
+  - a proof of a weak specification can be correct while leaving important behavior unspecified
+
+older static checking establishes the safety baseline
+- Adam Betts et al., [GPUVerify, OOPSLA 2012 paper](https://www.doc.ic.ac.uk/~afd/papers/2012/OOPSLA.pdf)
+  - [official repository](https://github.com/mc-imperial/gpuverify) quote: “verifying race- and divergence-freedom”
+  - analyzes CUDA and OpenCL source
+  - reasons about two arbitrary distinct threads after abstracting shared-memory contents
+    - unproved candidate loop invariants are discarded by Houdini
+    - inability to prove safety can reflect weak inferred invariants
+  - abstraction changes the accepted safety property
+    - paper §4.2: “GPUVerify tolerates this kind of race”
+    - equality abstraction can accept concurrent identical-value writes
+    - equality-based divergence checking excludes divergence only until a race occurs
+    - adversarial abstraction supports unconditional divergence checking
+    - record this policy before equating acceptance with absence of every conflicting access
+  - 163-kernel study separates 92 training kernels from 71 previously unseen evaluation kernels
+    - inference rules tuned on the training set
+    - five-minute timeout per kernel; results concern those kernels and settings
+  - reading limit: selected full abstraction, invariant inference, and evaluation methods inspected
+  - guarantee concerns races and barrier divergence, not arbitrary functional correctness
+  - mode selection matters
+    - [usage documentation](https://github.com/mc-imperial/gpuverify/blob/master/Documentation/basic_usage.rst) permits an intra-group-only checking mode
+    - record options before describing a successful run as grid-wide safety
+- Tiago Cogumbreiro et al., [Checking Data-Race Freedom of GPU Kernels, Compositionally, CAV 2021](https://link.springer.com/chapter/10.1007/978-3-030-81685-8_19)
+  - quote: “memory access protocols”
+  - Faial abstracts kernel control and memory access into protocols for compositional reasoning
+  - aligns loops and divides protocols into independent intervals between barriers
+    - proved preservation and reflection concern well-formed protocols
+    - source extraction and unsupported constructs remain separate obligations
+  - [primary artifact manuscript, §§4–6](https://zenodo.org/records/4726300/files/main.pdf?download=1)
+    - authors: “does not support synchronized conditionals that appear within synchronized loops”
+    - shared-memory function calls are inlined; calls without shared-memory access are discarded
+    - recursive functions unsupported
+    - barriers require uniform synchronized control flow
+  - real-kernel comparison removes GPUVerify-specific annotations
+    - retains minimal conditions such as thread count
+    - rewrites array lookups and inlines array-using calls in 22 kernels
+    - simplifies control flow in eight more
+    - sixty-second timeout; five-run averages
+  - implication: replay original and normalized kernels separately
+    - compare inferred versus supplied invariants and identical launch assumptions
+    - absence of a race report does not establish arbitrary atomics or weak-memory correctness
+  - reading limit: selected full protocol theory, extraction, restrictions, and evaluation inspected
+    - artifact manuscript has inconsistent aggregate success counts between introduction and evaluation figure
+    - no aggregate superiority figure adopted here
+    - Coq proofs and implementation not independently replayed
+- Dennis Liew, Tiago Cogumbreiro, and Julien Lange, [FaialAA, OOPSLA 2024 author PDF](https://dennisliew11.gitlab.io/dennisliew/papers/oopsla24-sound-and-partially-complete.pdf), §§3–6
+  - authors: “memory accesses are unaffected by input”
+    - describes the control-independent and data-independent class, abbreviated CIDI
+  - analyzes inferred memory-access protocols and identifies where abstraction may introduce false alarms
+    - input-loaded values must not affect branch choices, loop traversal, or accessed indices for the full CIDI guarantee
+    - thread identifiers and fixed launch parameters can still determine access locations
+  - returns proved race freedom, confirmed races, or potential races
+    - approximation analysis can confirm individual accesses even outside the whole-kernel CIDI class
+  - theorem concerns the core calculus and inferred protocols
+    - unsupported numeric expressions become symbolic variables
+    - unsupported loops use symbolic bounds; increased approximation can reduce precision
+    - protocol phases separate accesses between supported barriers
+  - 59.5% of inferred protocols in a 2,770-kernel corpus met both independence conditions
+    - extraction sometimes elides missing third-party dependencies and produces partial kernels
+    - classification does not establish completeness for every original CUDA file
+  - [artifact instructions](https://zenodo.org/records/12666682/files/README.md?download=1) include Coq proofs and result-reproduction scripts
+    - quote: “GPUVerify v2014-01-31”
+    - comparison uses that historical GPUVerify version and Faial 2021
+    - does not establish superiority over current versions
+- implication
+  - another checker for ordinary shared-memory barriers must compare against these tools
+  - unsupported instructions must produce an explicit unknown result, not apparent success
+
+ownership languages remove some unsafe programs
+- Bastian Köpcke, Sergei Gorlatch, and Michel Steuwer, [Descend](https://arxiv.org/html/2305.03448v1), §§2–5
+  - quote: “views describing safe parallel access patterns”
+  - ownership narrows from grid to distinct block regions, then distinct thread regions
+    - giving every block the whole writable array fails checking
+  - array views reshape access without moving data
+    - grouping requires exact divisibility; splitting requires an in-bounds split position
+    - conflicts between named memory regions are checked syntactically
+  - block barriers clear recorded earlier accesses, permitting subsequent sharing
+    - barriers nested inside a split block are rejected
+  - launch shapes must match function types
+    - CPU launch waits for completion
+    - higher-order functions are excluded
+  - generated CUDA replaces views with index transformations and drops static memory annotations
+  - evaluation uses four algorithms, three sizes, 100 repetitions, one Tesla P100
+    - matched handwritten CUDA uses the same access patterns and optimizations
+    - reported median runtime differences are below 3%
+  - inference: performance parity on these cases does not establish arbitrary-kernel coverage
+  - proposal implication: independently check view-to-index preservation as a small compiler experiment
+    - ownership and launch checking themselves already exist
+    - separate this synchronous example from cuTile Rust's asynchronous lifetime guarantees
+  - safety does not establish the intended mathematical algorithm
+- Melih Elibol et al., [Fearless Concurrency on the GPU, cuTile Rust preprint](https://arxiv.org/html/2606.15991v1), §§3, Appendix A
+  - quote: “assumes the generated launcher and kernel entry realize the disjoint partitions and token threading”
+  - writable outputs are split into nonoverlapping regions
+  - typed host operations retain ownership while asynchronous work remains in flight
+  - compiler-generated tokens order mutable memory operations inside a tile program
+  - Appendix A gives a race-freedom argument under Tile IR's model
+    - assumes generated code implements the stated partitioning and ordering
+    - raw pointers and unchecked accesses are excluded
+  - inference: compiler preservation of those invariants is a concrete trust boundary
+  - existing theorem is not an independent verification of the entire lowering implementation
+- NVIDIA, [CUDA Rust announcement, 8 September 2026](https://developer.nvidia.com/blog/introducing-cuda-rust-two-tracks-for-writing-gpu-kernels/)
+  - quote: “The launch is checked rather than trusted”
+  - cuda-oxide uses typed thread indices, disjoint slices, and checked launch contracts
+  - cutile-rs offers a higher-level tile interface
+  - these are distinct programming models
+  - source inspection needed before asserting ordinary Rust atomics or arbitrary synchronization are supported safely
+  - code generation, unsafe runtime internals, and specification correspondence remain separate obligations
+
+Kuiper proves kernel properties in a GPU model
+- Guido Martínez et al., [Kuiper, PLDI 2026](https://tyler-utah.github.io/files/kuiper.pdf), §§2–4
+  - quote: “Whether or not this model is an accurate representation of the actual behavior of CUDA kernels is outside the scope”
+  - embedded in F*, using Pulse's concurrent separation logic
+    - separation logic tracks ownership of distinct memory resources
+  - models memory locations, kernel launches, barriers, and selected GPU primitives
+  - supports functional proofs for tiled matrix multiplication, including tensor-core operations
+  - §3.3 explicitly identifies the launch model and verification tools as trusted
+    - tensor-core multiplication is treated as a primitive
+  - implication: a checked proof is conditional on the chosen semantics and primitive contracts
+  - [official artifact](https://github.com/FStarLang/kuiper)
+- Martínez and Tyler Sorensen, [The Next Frontier for AI-Generated Kernels: Correctness, PAgE 2026](https://mtzguido.github.io/pubs/kuiperbench.pdf), §§3–5
+  - quote: “not suited for proving concrete error bounds”
+  - verified implementations for all 100 KernelBench Level 1 tasks
+  - 14 specifications use exact floating-point equality
+  - remaining 86 relate outputs to ideal real-number computations
+    - this relation ignores numerical error
+    - it does not state a finite maximum distance from the real result
+  - authors show tolerance tests accepting incorrect algorithms and rejecting algebraically correct alternatives
+  - human review checks specification strength and unverified CPU bridges
+  - consequence: repeating the 100-task exercise in a different syntax needs a substantial new guarantee or effort reduction
+
+Verus is already used in GPU verification
+- [SHARD: Securing GPU Kernels with Lightweight Formal Methods, 2025 author PDF](https://csslab-ustc.github.io/publications/2025/gpu-security-full.pdf), §§4.5–5
+  - quote: “Verus as the core tool for symbolic state machine verification”
+  - CUDA annotations produce verification tasks
+  - Dafny checks kernel obligations; Verus checks concurrency state machines
+  - prototype has rules for three host APIs and an evaluation with ten constructed examples plus sixteen benchmark-derived cases
+  - implication: claiming the first use of Verus for GPU correctness would be wrong
+  - open question: how generated state-machine obligations preserve CUDA and compiler semantics
+  - annotation burden and limited API coverage are material comparison points
+  - bibliography contains a suspect Verus publication-year entry
+    - use the formal-verification group's primary Verus sources for its history
+- tentative Rust contribution
+  - provide a precisely defined GPU subset and explain how thread ownership, synchronization, and launch assumptions enter Verus
+  - compare proof effort and expressive coverage with Kuiper and SHARD
+  - borrowing alone is not a proof of numerical or algorithmic correctness
+
+equivalence checking moves closer to compiled code
+- [Equivalence Checking of ML GPU Kernels, Volta, November 2025 preprint](https://arxiv.org/html/2511.12638v1), §§4–6
+  - quote: “models tensor elements as reals”
+  - symbolic execution of PTX followed by algebraic equivalence checks
+  - soundness and completeness theorems concern the paper's restricted structured-block language
+  - implementation supports instructions present in its benchmarks
+  - handles selected convolution, matrix multiplication, attention, and tensor-core patterns
+  - not a theorem for arbitrary PTX, floating-point accuracy, or SASS lowering
+  - distinction: kernel-to-kernel equivalence can help translation validation but does not automatically certify a source-language ownership proof
+- [The Output-Space Hypothesis, Dirigo, September 2026 preprint](https://arxiv.org/html/2609.19611v1), §§3–5
+  - quote: “floats as reals, since we deem precision errors as out of scope”
+  - symbolically models PTX and reference tensor operations
+  - fixes an output location and asks whether any input causes disagreement
+  - assumes input-value-independent memory access and control flow
+  - samples output locations to make checks tractable
+    - no counterexample at sampled locations is not a proof for all output locations
+  - counterexamples are replayed against original programs to suppress misleading reports
+  - shared-memory races, bounds, and warp communication receive dedicated modeling
+  - paper reports 600 bugs among 6,988 kernels previously marked correct by differential testing
+    - this population is an AI-generated dataset, not deployed GPU software prevalence
+
+binary testing plus proof has a conditional boundary
+- Ashkan Vedadi Gargary et al., [RESOLVE, 5 October 2026 preprint](https://arxiv.org/html/2610.05683v1), §§3–6
+  - quote: “The dashed conclusion for the originals relies on those tests”
+  - instrument NVIDIA binaries to perturb execution timing
+  - agents reduce original and reference kernels to simpler concurrency
+  - bitwise tests connect originals, reductions, and Kuiper translations
+  - proofs establish a shared algebraic specification for the Kuiper versions
+  - inference: the original-binary guarantee remains conditional on tested correspondence
+    - no all-input end-to-end binary refinement theorem is established
+  - §3 limitations include asynchronous-load perturbation, intra-warp perturbation, and blocks never simultaneously resident
+  - legitimate nondeterministic floating-point reductions can be rejected
+  - full proof workflow applied to fourteen selected KernelBench candidates
+    - do not describe all 100 as end-to-end proven by RESOLVE
+  - differing polynomial approximations can fail real-number equivalence despite acceptable numerical closeness
+  - this motivates explicit approximation budgets
+
+dynamic race testing already reaches production kernels
+- Mark Stephenson et al., [SuperCollider, PLDI 2026](https://research.nvidia.com/publication/2026-06_supercollider-scalable-and-effective-data-race-detection-cuda), manuscript §§3, 5, 7
+  - quote: “cannot detect races in atomic and strong operations”
+  - perturbs ordinary memory operations and detects changed values
+  - covers multiple memory spaces and execution scopes without per-address access histories
+  - compiler instrumentation differs from RESOLVE's binary instrumentation
+  - already studies sampled low-overhead execution, block shuffling, and production-library bugs
+  - value-based testing can miss same-value writes and other races
+  - GPU-only instrumentation misses some CPU-read/GPU-write races
+  - consequence: a generic always-on CUDA race tester substantially overlaps this contribution
+- NVIDIA, [Compute Sanitizer documentation](https://docs.nvidia.com/compute-sanitizer/ComputeSanitizer/index.html)
+  - quote: “Racecheck – The shared memory data access hazard detection tool”
+  - tools separate memory checking, shared-memory race checking, initialization, and synchronization checking
+  - record toolkit version and feature support in any comparison
+  - testing a set of executions remains different from a static proof
+- source correction
+  - search metadata associated SuperCollider with arXiv 2606.15991
+  - that identifier opens the cuTile Rust paper above
+  - use the SuperCollider manuscript linked by NVIDIA, not that mismatched identifier
+
+subgroup and weak-memory semantics are not interchangeable
+- Zheyuan Chen et al., [SIMT-Step, PLDI 2026](https://arbersephirotheca.github.io/files/PLDI-simt-step.pdf), §§4.5–7
+  - quote: “a full treatment is left to future work”
+  - executable subgroup models written in TLA+
+  - distinguishes collective operations, control flow, and synchronization
+  - most formal and executable treatment assumes sequentially consistent memory
+  - release/acquire extension outlines only a fragment
+  - absence of observed weak behavior on tested devices does not select a uniquely correct formal model
+- Soham Chakraborty et al., [GPUMC, CAV 2025](https://arxiv.org/html/2505.20207v1)
+  - quote: “scoped-RC11 weak memory concurrency model”
+  - model checker explores races, barrier divergence, and assertions under scoped weak memory
+  - selected full methods checked: §§3–5 and appendix completeness argument
+  - extends GenMC-Trust at LLVM IR level for scoped C/C++ programs
+    - dynamic partial-order reduction explores distinct permitted execution graphs without storing every explored state
+    - scope inclusion participates in synchronization; barriers are modeled using auxiliary acquire-release atomic operations
+  - authors: “unrolling them by a user-specified number of times”
+    - context: loops in the implementation
+    - all-execution claims apply to the selected finite model and loop expansion, not arbitrary loop iterations or launch sizes
+  - theorem establishes soundness, completeness, and visiting each execution graph once under SRC11
+    - this does not establish that SRC11 equals every PTX or Vulkan behavior
+  - evaluation compares four synchronization primitives with Dartagnan on a CPU workstation
+    - baseline uses different GPU memory models
+    - selected XF-Barrier failures persisted with baseline loop bound 12; bound 13 exhausted its heap
+    - comparisons mix model, algorithm, and bound choices
+  - application benchmarks from older GPU checkers were changed to use atomic accesses
+    - include a deliberately introduced histogram barrier bug
+    - sampled launch sizes remain part of each verified instance
+  - repairs selected heterogeneous races by widening operation scopes
+    - sufficient for rechecking those modeled races
+    - stronger scopes can cost performance; do not assume preservation of a broader functional specification
+  - [supplementary proofs](https://figshare.com/articles/dataset/Supplementary_material_for_GPUMC/29143991) inspected as an artifact pointer
+    - no checker run or artifact proof replay performed
+  - proposal implication: scope-aware model checking and scope repair are existing work
+    - use this as a baseline for bounded synchronization cases
+- Daniel Lustig, Sameer Sahasrabuddhe, and Olivier Giroux, [PTX memory-model analysis, ASPLOS 2019](https://github.com/NVlabs/ptxmemorymodel)
+  - quote: “A Formal Analysis of the NVIDIA PTX Memory Consistency Model”
+  - official formalization and proofs provide a foundation
+  - current instructions, scopes, and architecture features require checking newer PTX documentation
+- implication
+  - a Rust acquire/release ordering name alone does not specify which GPU threads participate
+  - scope and reconvergence assumptions must be explicit in a proof or test
+
+compiler bugs and benchmark defects change the starting point
+- Ravishka Rathnasuriya et al., [Tile-program code-generation bug study, ISSTA 2026](https://arxiv.org/html/2605.19652v1), §§3–8
+  - quote: “filtered to ensure relevance, correctness, and fix confirmation”
+  - 401 collected reports; 301 selected code-generation bugs
+  - analyzes control flow, transformations, mappings, memory, operators, and device-specific failures
+  - dimensions, types, and backends interact
+  - §8 states public-report and confirmed-fix selection bias
+    - category frequencies do not estimate all deployed compiler bugs
+  - useful source for held-out regression cases and targeted mutants
+  - random tile-compiler fuzzing alone repeats existing methods
+- Yunxiang Zhang et al., [KernelBench-Verified, 2026](https://arxiv.org/html/2607.16241v1), §§2–4, Appendices F/J
+  - quote: “four-distribution hidden test suite”
+  - strengthens input distributions and changes baseline precision settings
+  - reports a 1.43× to 0.88× aggregate-speedup change for its best evaluated model
+  - those figures concern a specified single-turn, H200, model/precision protocol
+    - they do not show all AI kernel optimization is slower
+    - BF16 fused-kernel results show genuine speedups in the same paper
+  - hidden tests still do not constitute a proof
+- numerical analysis baseline
+  - [FPTaylor](https://github.com/soarlab/FPTaylor), quote: “Rigorous Estimation of Round-off Floating-point Errors”
+  - [FPTuner, POPL 2017](https://soarlab.org/papers/2017_popl_cbbsgr.pdf) combines error analysis with precision selection
+  - [FPChecker](https://github.com/LLNL/FPChecker) instruments runtime numerical behavior
+  - integrating existing analysis into GPU proofs must explain new GPU-specific difficulties
+  - Alexey Solovyev et al, [FPTaylor technical report](https://www.cs.utah.edu/docs/techreports/2015/pdf/UUCS-15-001.pdf), selected §§3–5 and limitations
+    - quote: “cannot handle conditionals and loops directly”
+    - replaces individual rounding operations with bounded error variables
+    - first-order Taylor terms retain symbolic input dependencies; rigorous bounds cover the remainder
+    - global optimization bounds the resulting error over declared input ranges
+    - rounding model assumes no overflow or invalid operations
+      - smoothness and bounded input-domain assumptions enter the Taylor argument
+    - emits HOL Light certificates for supported analysis results
+    - inference: an unrolled, fixed reduction tree fits this expression approach more directly than arbitrary data-dependent GPU code
+  - Wei-Fan Chiang et al, [FPTuner, POPL 2017](https://soarlab.org/papers/2017_popl_cbbsgr.pdf), §§2–6 and §7
+    - authors: “conditional expressions and loops are not handled”
+    - combines symbolic error bounds with constrained optimization of operator precisions
+    - includes precision-conversion errors and constraints limiting casts or tying operators to one precision
+    - one evaluation used unoptimized compilation; a separate ARM experiment used size optimization and NEON options
+      - authors inspected assembly because compiler transformations can alter prescribed mixed precisions
+      - those measurements do not predict optimized GPU speedups
+    - inference: generating a mathematical bound and certifying the compiler's actual operation sequence remain separate tasks
+
+candidate one: certify the tile compiler's safety boundary
+- hypothesis: partition metadata and memory-order tokens can be checked after lowering without re-verifying the entire compiler
+- nearest work
+  - Descend already checks hierarchical regions and launch shapes before generating raw CUDA indices
+  - cuTile Rust already gives ownership discipline and a conditional race-freedom argument
+  - Volta already checks restricted PTX equivalence
+  - SHARD already generates Verus state-machine tasks
+  - tile bug study already characterizes compiler faults
+- first prototype
+  - accept safe tile kernels with affine indexing and synchronous memory operations
+    - affine indexing uses constants, addition, and multiplication by constants
+  - capture source output regions, legal launch dimensions, and required operation order
+  - require live allocations and explicit input/output alias restrictions
+    - trust the launcher for these conditions until its allocation and lifetime checks are independently validated
+  - inspect generated launch descriptors and Tile IR
+  - verify injective output ownership, bounds, and token dependencies
+  - reject unsupported lowering features explicitly
+- evaluate
+  - replay independently selected mapping, bounds, and ordering bugs
+  - mutate partition shape, stride, grid, and token edges independently
+  - compare existing type checking, sanitizers, and numerical differential tests
+  - include GPUVerify and Faial for their supported ordinary barrier/indexing subset
+    - preserve identical launch constraints and report normalization and same-value-write policies
+  - report accepted subset, proof time, false reports, and unexplained cases
+- falsifiers and limits
+  - stop if the compiler already independently checks these exact invariants
+  - stop if invariants cannot be recovered without trusting the same lowering code
+  - a Tile IR certificate does not prove subsequent PTX/SASS preservation
+  - a follow-up must either validate the next stage or state that residual trust
+
+candidate two: turn algebraic proofs into numerical contracts
+- hypothesis: a restricted GPU reduction family can carry useful certified output-error bounds across optimization variants
+- nearest work
+  - Kuiper and RESOLVE explicitly omit concrete bounds
+  - FPTaylor and FPTuner already analyze roundoff and mixed precision
+  - their selected algorithms directly cover fixed expressions rather than arbitrary branching kernels
+- first prototype
+  - sum and dot product with a known reduction tree
+  - bounded finite inputs and explicit accumulation precision
+  - specify rounding mode, fused multiply-add behavior, and permitted compiler reassociation
+  - derive absolute-error bounds and document overflow/subnormal assumptions
+  - connect the bound to the actual lowered operation sequence
+- evaluation
+  - compare sequential, pairwise, compensated, and tiled reductions
+  - high-precision references, cancellation-heavy inputs, and seeded algebraic bugs
+  - measure bound tightness, analysis cost, and incorrect acceptance
+  - compare fixed tolerances and existing rigorous analyzers
+- falsifiers and limits
+  - stop if bounds are too loose to distinguish realistic implementation bugs
+  - reject relative-error claims near zero without suitable additional assumptions
+  - do not begin with tensor-core internals unless their documented arithmetic semantics suffice
+  - merely computing a standard sum-error formula is not a new contribution
+
+candidate three: close one measured testing blind spot
+- hypothesis: combined host/device instrumentation finds ownership-lifetime failures that current GPU-only tests miss
+- nearest work
+  - SuperCollider explicitly proposes a combined CPU/GPU detector
+  - RESOLVE explicitly lists perturbation gaps
+  - cuTile Rust already owns asynchronous-launch lifetimes
+- first experiment
+  - construct small CPU-read/GPU-write and stream-completion cases
+  - include safe wrapper code and explicit unsafe integrations separately
+  - pair sanitizer reports with actual launch/completion traces
+- contribution threshold
+  - must identify a new scalable mechanism or previously unknown consequential failures
+  - implementing SuperCollider's stated extension alone is incremental
+  - same-value races and intentionally nondeterministic algorithms need separate treatment
+
+before choosing a project
+- replay one Kuiper proof and one compiler-bug regression
+- inspect cuTile Rust's generated launcher and token implementation
+- replay the selected FaialAA and GPUMC cases and inspect implementation correspondence
+  - selected algorithm reading above does not establish implementation correctness
+- examine source-to-PTX and PTX-to-SASS translation-validation related work
+  - no claim that nobody has addressed these boundaries
+- obtain independent review of guarantee scope and novelty
+- ChatGPT Extra High consultation is coordinated by the study owner
+  - no uncaptured response is treated as evidence
