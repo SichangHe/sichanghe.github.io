@@ -233,3 +233,22 @@ consultation correction: durable transactions and trusted-code testing are exist
   - require one allowed serial explanation for observations and recovered state
   - this is an unexecuted proposed test
     - it must be checked against the exact transaction contract
+
+GoTxn contract comparison
+- [Theng thesis](https://pdos.csail.mit.edu/papers/mtheng-meng.pdf), chapter 4, figure 4-3, and section 5.2
+  - the log specification separates submitting a write from waiting for durability
+  - after recovery, a prefix survives that contains every write covered by the completed flush
+    - later submitted writes may also survive
+  - the journal contract gives all-or-nothing crash behavior
+  - locks make the transaction appear atomic to the caller
+    - a crash after durable journal commitment but before returning is covered by the crash specification
+- comparison with the proposed combination
+  - GoTxn already specifies concurrency, durable commitment, and recovery together
+  - vMVCC instead supplies concurrent transaction reasoning without durability
+  - PoWER's concurrent shared API is non-transactional
+  - combining the latter two needs a new shared invariant
+    - it is not automatically a new transaction guarantee
+  - a possible Rust result must justify an implementation or proof-method benefit against GoTxn
+- read depth
+  - inspected log interface and crash-prefix rules, journal crash atomicity, and locking-layer commit proof outline
+  - no full proof audit or reproduction

@@ -196,3 +196,26 @@ reading and search limits
   - no consultation result was available
   - details are recorded in [the study overview](index.md)
 - no experiments or proofs were run
+
+Ferrite comparison, primary paper recovered
+- [Bornholt et al., ASPLOS 2016](https://sandcat.cs.washington.edu/ferrite/ferrite-asplos16.pdf), sections 4–5
+  - evidence: “formalizations (dis)allow representative behaviors encoded in litmus tests”
+  - context: the model checker compared with execution against a real file system
+  - the toolkit records disk commands from a QEMU guest
+  - it enumerates reorderings and crash prefixes allowed by its disk model
+  - it remounts the resulting disk images and checks the test's final predicate
+  - its default model constrains flushes, same-block changes, and externally visible marks
+- limitation
+  - evidence: “It cannot prove that two system calls must always be ordered”
+  - context: observing no contrary execution is insufficient
+  - disk corruption and unsupported hardware behaviors are outside the described scope
+- implication for the proposed proof/simulator study
+  - model-to-execution crash comparison is established prior work
+  - a new project needs a specific verified-storage contract, storage adapter, or fault-model discrepancy
+  - matching fault names is insufficient
+- read depth
+  - inspected axiomatic/operational models, implementation execution, disk model, and stated limits
+  - no experiment or tool build
+- access
+  - author-hosted PDF returned HTTP 403
+  - the project-hosted primary PDF above worked

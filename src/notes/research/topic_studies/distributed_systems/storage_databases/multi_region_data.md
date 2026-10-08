@@ -330,3 +330,56 @@ LEGOStore mechanism check
   - the attempted SPANStore author URL returned HTTP 404
   - title search did not resolve a SkyPIE primary copy
   - bibliographic discovery alone supplies no mechanism evidence
+
+regional placement candidate remains deferred
+
+recommendation
+- retire regional placement from the active research shortlist pending direct mechanism checks of SPANStore and SkyPIE
+  - retain the four-paper survey as literature notes
+  - the narrower total-cost question remains an unconfirmed possibility
+  - do not present it as a research gap
+
+why the remaining comparison matters
+- SkyStore explicitly compares with SPANStore
+  - [SkyStore primary paper](https://www.vldb.org/pvldb/vol18/p2084-liu.pdf), introduction: "SPANStore does not account for replication costs"
+  - this is SkyStore's characterization of another paper
+    - I have not verified SPANStore's own objective, cost exclusions, consistency constraints, or adaptation mechanism
+  - the total-cost question could already be addressed by SPANStore or by the difference SkyStore addresses
+- SkyPIE has an accessible author-maintained implementation
+  - [primary repository README](https://github.com/hydro-project/cloud_oracle_skypie/blob/main/README.md): "how to use the oracle API or the ILP baseline"
+  - the README lists a real-trace experiment and precomputed oracles for different deployments and service objectives
+  - this establishes available comparison machinery
+    - it does not establish the paper's migration assumptions or which transition costs its objective includes
+- my inference: these are material closest comparisons
+  - without them, enough uncertainty remains to defer the candidate
+  - no claim that the topic is exhausted or uninteresting follows
+
+access attempts on 8 Oct 2026
+- SPANStore, [primary DOI](https://doi.org/10.1145/2517349.2522730)
+  - OpenAlex metadata resolved title and authors
+  - ACM PDF with download parameter returned HTTP 403
+  - UCR author-paper paths returned HTTP 404
+  - Michigan author-site alternatives failed to connect
+  - Columbia author-site alternatives returned HTTP 404
+  - arXiv title search returned no matching paper
+- SkyPIE, [primary DOI](https://doi.org/10.1145/3639310)
+  - OpenAlex metadata resolved title and authors
+  - ACM PDF with download parameter returned HTTP 403
+  - Berkeley author-paper alternatives returned HTTP 404
+  - Cornell author-site alternative returned HTTP 404
+  - guessed project sites failed or returned HTTP 404
+  - arXiv search returned unrelated astronomy results
+  - GitHub primary repositories were accessible
+    - recursively listed trees contained no PDF
+- shared web search returned HTTP 404
+  - response: "Cannot POST /alpha/search"
+- conclusion: paper copies were not recovered through these alternatives
+  - the blocker is access to these two primary papers in this session
+  - it does not imply that all literature access is blocked
+
+read depth and limits
+- SPANStore: metadata and SkyStore's related-work characterization only
+- SkyPIE: metadata and primary implementation README only
+- objectives, constraints, adaptation and migration assumptions remain unverified against both papers
+- this retrieval follow-up ran no experiments
+  - the coordinator's completed Extra High consultation is recorded in the storage index

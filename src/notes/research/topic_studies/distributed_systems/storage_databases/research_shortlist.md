@@ -44,9 +44,13 @@ second: check one object-table recovery baseline
   - a new record must improve cost or freshness at the same guarantee
   - a shallow clone is not the complete-copy baseline
 
-third: prove one history-checking rule
+deferred: prove one history-checking rule
 
 - use the [checker candidate](consistency_guarantees.md)
+- defer project selection until Viper's relevant paper theorem is inspected
+  - author artifact inspection exposes the parser, graph, and solver boundaries
+  - attempted paper retrieval remains blocked
+  - the candidate is not an established proof gap
 - question: can an executable Rust checker prove that one reported anomaly violates a stated history definition?
 - first deliverable
   - one workload with explicit write identities
@@ -78,7 +82,10 @@ larger projects to defer until reconnaissance succeeds
   - check one released artifact and its promised failure model first
   - failures outside a promise are robustness observations
     - they do not refute the promised isolation or durability guarantee
-- regional placement and residency measurements
+- regional placement is retired from active selection
+  - SPANStore and SkyPIE primary mechanisms could not be recovered after publisher, author, and repository attempts
+  - the existing regional notes preserve the survey and concrete access limits
+- residency measurements
   - finish the interrupted citation search before asserting an unmeasured gap
   - marker traffic can establish observed exposure
     - absence of a marker cannot establish that no copy, encrypted record, or derived value left a region
@@ -102,8 +109,8 @@ remaining work
   - [saved conversation](https://chatgpt.com/c/6ac7beb1-8ac4-832e-b2f7-f046c874ccbd)
   - it supplied leads rather than independent validation
     - primary checks confirmed Rocq isolation characterizations, S3 Tables, lakeFS mirroring, and GoTxn
-    - Ferrite's primary PDF returned HTTP 403
-      - its specific comparison remains an unverified lead
+    - Ferrite's primary PDF was subsequently recovered from its project site
+      - [verification boundaries](verification_boundaries.md) records its existing model-to-execution comparison
 
 reading rule
 

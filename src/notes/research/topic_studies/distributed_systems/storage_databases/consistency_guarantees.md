@@ -344,3 +344,78 @@ consultation correction: weak-isolation theory has mechanized proofs
     - proving graph traversal alone is insufficient
   - this is a reasoning obligation raised by the consultation
     - no checker was executed here
+
+Plume proof-to-code reconnaissance
+- inspected repository revision `979b7833e7037481263836483ee0dce3d655b5cb`
+  - [mechanization README](https://github.com/dracoooooo/Plume/blob/979b7833e7037481263836483ee0dce3d655b5cb/Mechanization/README.md)
+    - evidence: “TAP-o and TAP-p are additions to the paper's fourteen patterns”
+  - [proof build](https://github.com/dracoooooo/Plume/blob/979b7833e7037481263836483ee0dce3d655b5cb/Mechanization/Makefile)
+    - compiles the Rocq file separately
+  - [Java pattern enumeration](https://github.com/dracoooooo/Plume/blob/979b7833e7037481263836483ee0dce3d655b5cb/Plume/src/main/java/taps/TAP.java)
+    - lists patterns a–n
+  - [Java decision code](https://github.com/dracoooooo/Plume/blob/979b7833e7037481263836483ee0dce3d655b5cb/Plume/src/main/java/alg/Plume.java)
+    - maps detected patterns to the chosen isolation level
+- interpretation: the checked theory and Java implementation require an explicit correspondence check
+  - different pattern inventories alone do not demonstrate a runtime failure
+  - the inspected files supply no proved correspondence between the Java decision and Rocq characterization
+  - another code path could enforce a refined rule without naming its pattern
+- this closes the immediate source-inventory question
+  - executable soundness and the session-order counterexample remain future artifact checks
+  - no artifact was executed
+  - the local environment had no `coqc` command for proof reproduction
+
+Viper correctness comparison
+
+bounded primary-artifact inspection, 8 Oct 2026
+- inspected the [Viper authors' repository](https://github.com/Khoury-srg/Viper/tree/8345cd46a5886394a3a4909d0f089b8f88d7c592)
+  - README, read/write parser, Adya-SI graph builder and MonoSAT checker
+  - did not execute the artifact or audit every checker path
+- [paper DOI](https://doi.org/10.1145/3552326.3567492) remains inaccessible through ACM PDF retrieval
+  - HTTP 403
+  - OpenAlex and Semantic Scholar point to the same PDF
+  - repository contains no paper PDF or identified Coq, Isabelle or Lean source
+  - this does not establish absence of a mechanized proof elsewhere
+
+what the artifact actually checks
+- authors' [README, final note](https://github.com/Khoury-srg/Viper/blob/8345cd46a5886394a3a4909d0f089b8f88d7c592/Readme.md)
+  - “`Viper` checks Adya SI by default”
+  - stronger session ordering requires enabling a graph-construction parameter
+- [graph builder, lines 122–149](https://github.com/Khoury-srg/Viper/blob/8345cd46a5886394a3a4909d0f089b8f88d7c592/src/buildgraph/build_graph4adyaSI.py#L122)
+  - indexes writers by key and value
+  - builds a read-from edge when exactly one matching writer exists
+  - asserts against multiple matching writers
+    - “There shouldn't be two txns writing the same value for the same key!”
+- [read/write parser, lines 5–20](https://github.com/Khoury-srg/Viper/blob/8345cd46a5886394a3a4909d0f089b8f88d7c592/src/parse/wr_parse.py#L5)
+  - requires successful transaction records
+  - maps write and insert operations to writes
+  - maps other operation tags to reads
+  - inference: a verified replacement must state its accepted input tags explicitly
+- [MonoBCPolyGraphChecker, lines 398–484](https://github.com/Khoury-srg/Viper/blob/8345cd46a5886394a3a4909d0f089b8f88d7c592/src/checker/checkers.py#L398)
+  - creates start and commit nodes for transactions
+  - encodes dependency edges and exclusive choices between alternatives
+  - asks MonoSAT for an acyclic satisfying graph
+
+comparison with the proposed verified checker
+- Viper already supplies an executable SI graph-construction and solver pipeline
+  - a replacement needs a concrete benefit beyond being executable
+- duplicate-value histories cross an explicit Viper input boundary
+  - VeriStrong addresses this boundary
+  - do not present duplicate-value support alone as new
+- graph characterization and executable pipeline correctness are separate obligations
+  - accepted log format and transaction-outcome treatment
+  - parser output matching the recorded operations
+  - inferred dependencies matching the chosen history semantics
+  - solver encoding matching the graph property
+  - solver result interpreted correctly
+- artifact inspection identifies these boundaries but proves none of them
+  - paper theorem coverage remains unverified because its body was not retrieved
+
+recommendation
+- defer calling the Verus checker a selected research project
+  - preserve it as a candidate for a bounded correctness study
+  - compare Viper's paper theorem assumptions with the inspected pipeline before claiming a proof gap
+  - compare the newer Plume mechanization with executable pattern implementations before claiming no machine-checked checker foundation exists
+- concrete remaining blocker
+  - Viper paper body is unavailable through the attempted primary PDF and metadata alternatives
+  - this blocks precise comparison of its soundness theorem with implementation and input assumptions
+  - it does not block inspecting the artifact or documenting those assumptions

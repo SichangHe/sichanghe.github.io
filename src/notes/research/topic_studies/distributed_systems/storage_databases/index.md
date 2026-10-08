@@ -11,7 +11,9 @@ start here
   - [verification boundaries](verification_boundaries.md) supplies the proof-assumption angle
   - proposed contribution: explain which executable integration tests a formal contract can provide
   - stop if MongoDB's existing model-generated tests already do the same thing
-- second candidate: regional data movement under conflicting transactions
+- deferred candidate: regional data movement under conflicting transactions
+  - SPANStore and SkyPIE mechanism checks remain blocked
+  - this is retired from active project selection
   - compare PolyBase's row reassignment with Bonspiel's geographic concurrency control
   - measure movement cost and slow responses during shifting demand before inventing a policy
   - stop if the combined policy adds no benefit at equal load and guarantees
@@ -196,3 +198,26 @@ consultation review outcome
   - review record: `/tmp/cx_storage_consult_review.md`
 - next useful work is to choose one precise contract and inspect its existing implementation
   - a broad claim about new snapshot tracking or new weak-isolation theory is no longer supported
+
+final assessment against the human goal
+- independent reviewer: “the storage literature survey can now close with disclosed access and coverage limits”
+  - scope: this storage slice only
+  - source: `/tmp/cx_storage_goal_final.md`
+- completed bounded comparisons
+  - Plume theory/code inventory and Viper artifact boundaries
+  - Ferrite crash-model/execution connection
+  - GoTxn write/flush, incomplete commitment, and recovery contract
+- source-access blockers handled through deferral
+  - Viper paper theorem remains unread
+  - SPANStore and SkyPIE mechanisms remain unread
+  - dependent project selection is deferred rather than presented as a new research gap
+- future research
+  - artifact builds, experiments, full proof audits, and exhaustive citation closure
+  - none is claimed as a result of this survey
+- publication evidence
+  - repository notes and storage navigation were pushed through isolated worktrees
+  - HTML-only build and publication-tree link checks passed
+  - the consultation-correction deployment succeeded
+    - [GitHub Actions run](https://github.com/SichangHe/sichanghe.github.io/actions/runs/37807615060)
+  - fetched the live shortlist with HTTP 200 and its S3 Tables correction present
+  - deployment of this final assessment must be confirmed separately
