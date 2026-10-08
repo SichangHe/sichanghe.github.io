@@ -9,9 +9,10 @@ short version
     - inference from Leontiadis 2014 and Bevendorff 2024: spam enters, an update pushes it out, it returns
   - LLMs made mass production cheap; the share of generated text on the open web is now large
     - how much reaches search results is disputed and depends on the detector
-  - nobody has measured, on a live engine, whether excluding spam helps people find answers
+  - this selected reading did not establish whether exclusion helps people find answers on live engines
     - Cormack 2011 did it once on a frozen 2009 collection with TREC judges
-    - tools that exclude spam today (uBlacklist, Kagi, Brave Goggles, Marginalia) have no academic evaluation; our searches found none, a reviewer may know one
+    - the recorded searches found no matched academic evaluation of uBlacklist, Kagi, Brave Goggles, and Marginalia
+      - a missed evaluation could change the proposed contribution
 - strongest research ideas, agent ranking
   1. does blocking spam fix search? run existing blocklists and quality classifiers as filters over real results and measure what users gain and lose (idea 1 below)
   2. do answer engines cite generated sites more than organic search does? a field version of the lab finding that rankers prefer LLM text, reusing the human's DeGenTWeb detector (idea 2)
@@ -245,7 +246,7 @@ literature 5: what the engines say they do
   - Google said it would "study the resulting feedback and explore using it as a potential ranking signal" (snippet only)
   - precedent for the human's "ranking based on user feedback"; no published evaluation
 
-literature 6: tools that already exclude spam, none evaluated
+literature 6: deployed exclusion tools and their evidence limits
 
 - [uBlacklist](https://github.com/iorate/ublacklist), 6.7k stars
   - "Blocks specific sites from appearing in Google search results"; subscribes to public rule lists
@@ -268,22 +269,27 @@ literature 6: tools that already exclude spam, none evaluated
   - no independent test
 - [Stract](https://github.com/StractOrg/stract): Goggles-like "optics", archived April 2026
 - [OpenWebSearch.eu](https://openwebsearch.eu/) Open Web Index: federated crawl, about 28M hosts, research-only access; funded Bevendorff's paper
-- LLM pretraining quality filters are web quality classifiers nobody tested on search
+- LLM pretraining quality filters supply web classifiers worth comparing with search-specific filters
+  - this reading did not establish whether that comparison is already published
   - [FineWeb-Edu classifier](https://huggingface.co/HuggingFaceFW/fineweb-edu-classifier), Penedo et al. 2024: Llama-3-70B labeled 450k pages; card warns of "potential bias toward academically-formatted material"
   - DCLM, Li et al. 2024: "fastText OH-2.5 + ELI5 classifier score to keep the top 10% of documents"
   - Klimaszewski and Andruszkiewicz, [Is a Document Educational or Just Wikipedia-Style?](https://aclanthology.org/2026.acl-short.10/), ACL 2026 short: "a straightforward Wikipedia-style reformatting operation can substantially alter a model's quality assessment"; FineWeb-Edu flips about 7% of documents
 - takeaway: the "search engine that excludes spam" exists in at least five forms
-  - all rely on hand-made lists, hidden seeds, or per-user votes
-  - nobody knows how much they remove, whether they agree, how fast they catch new spam, or whether users end up better off
+  - the examples use lists, trusted seeds, and user preferences among their mechanisms
+  - this reading did not establish a matched comparison of coverage, agreement, discovery delay, and user outcomes
 
-gaps I infer from all of the above
+candidate questions and closest-work checks
 
-- no outcome measurement: every paper measures classifier accuracy or prevalence, never whether people found the answer
-- no field test of source bias: lab retrievers prefer LLM text; real engines and answer engines untested
-- no evaluation of deployed exclusion tools: blocklists and alt engines are popular and unstudied
-- no operator-level view of LLM-era spam: who runs the thousands of generated sites and what they earn
-- no prospective multi-engine longitudinal study with a detector whose false positives are measured
-- Bevendorff's own future work, "robust web IR systems in competitive environments", is unclaimed
+- these are unresolved questions in this selected reading
+  - no field-wide absence or novelty claim follows
+  - check the nearest prior evaluations before building an experiment
+- does exclusion improve correct answers as well as classifier accuracy or measured prevalence?
+- do real search and answer engines reproduce the source preferences observed in laboratory retrievers?
+- how do deployed blocklists and alternative engines compare under matched queries and human judgments?
+- who operates the generated sites, and which revenue observations support attribution?
+- can a prospective multi-engine study retain measured detector false positives as content changes?
+- Bevendorff names "robust web IR systems in competitive environments" as future work
+  - a later paper may already have addressed it
 
 idea 1: does blocking spam fix search?
 
@@ -384,7 +390,10 @@ idea 3: follow the money
   - start from the LLM-dominant sites found in ideas 1 and 2 plus the Common Crawl sample
   - extract AdSense publisher IDs (the `ca-pub-` strings in page source), analytics IDs, Amazon Associates tags, shared page templates (Geraci-style structure hashes), shared hosting and DNS
   - cluster into operators
-    - IDs are shared by agencies, ad networks, and CMS themes too, so an ID cluster is an upper bound on one operator; require two independent signals before merging
+    - agencies, ad networks, and CMS themes can share IDs across operators
+      - one operator can also use several IDs
+      - clusters can therefore merge distinct operators or split one operator
+      - require independent corroborating signals and report uncertain attribution
     - control: run the same clustering on a matched set of human-written sites from the same result panels, so concentration can be compared
   - estimate each cluster's exposure from the weekly panels; public traffic estimates are unreliable for small sites, so use them only as a secondary check
   - check whether Google's ad network serves ads on the pages Google ranks: NewsGuard found 90% of brand ads on AI news farms were served by Google
@@ -399,8 +408,10 @@ idea 3: follow the money
 idea 4: crowd feedback as a ranking signal
 
 - the human's idea: "ranking based on user feedback"
-- what exists: Google's 2011 blocklist experiment, Kagi's votes, the leaked click attributes; no public evaluation of any of them
-- the open question is robustness, not whether it works: how many colluding voters flip a domain, and does weighting by voter history fix it
+- what exists: Google's 2011 blocklist experiment, Kagi's votes, and the leaked click attributes
+  - this selected reading did not recover a matched public outcome evaluation
+- candidate question: how many colluding voters flip a domain, and does weighting by voter history preserve useful results?
+  - effectiveness needs outcome evidence as well as resistance to collusion
   - needs users or a simulation with planted colluders, so it is not easy to implement
   - SybilGuard is already in the human's notes
 - recommendation: use the Kagi leaderboard as one list in idea 1 now, and leave collusion resistance for later
@@ -422,7 +433,11 @@ review limits
 - sources read in full: Bevendorff ECIR 2024, Puccetti ACL 2024, McCreadie CIKM 2012, Geraci WWW 2015, the DeGenTWeb draft abstract
 - other quotes come from abstracts and pages fetched on 7 Oct 2026 by three search subagents; items marked "snippet only" were not verified against the source
 - not found despite searching: an academic study of users appending "reddit" to queries; an academic measurement of made-for-advertising sites; a peer-reviewed study of expired-domain SEO abuse; any evaluation of blocklists or pretraining filters on search usefulness
-- novelty of ideas 1 to 3 rests on those absences; a reviewer may know a paper we missed
+- ideas 1 to 3 remain candidate experiments
+  - unsuccessful searches do not establish novelty
+  - check the closest prior methods and evaluations before claiming a contribution
 - numbers from Originality.ai, Graphite, Ahrefs, NewsGuard, and Google are vendor or self-reported and are not comparable with each other
-- the ChatGPT second opinion the human asked for did not happen; the tool fails with "account_ui_login_required"
+- the 7 October topic-specific ChatGPT attempt failed with "account_ui_login_required"
   - a context-free Claude reviewer checked this file instead; its objections are folded into the ideas above
+- the [8 October cross-topic consultation](../more_topics/chatgpt_review.md) completed with Extra High selected
+  - its selected scope does not certify every search-spam proposal
