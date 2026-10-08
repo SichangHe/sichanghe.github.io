@@ -47,6 +47,6 @@ remaining scope
 - the [camera review](camera_authentication.md) compares four edit-proof systems
     - independent evaluation of deployed depth-based copy detection remains future work
 - infrastructure and provenance consultation remains unmet on 8 Oct 2026
-    - the verified GPT-6.1 Sol and Extra High route returned no answer
-    - support inspection found no active generation or assistant response
-    - submitted requests do not supply consultation evidence
+    - the verified GPT-6.1 Sol and Extra High request reached ChatGPT
+    - no answer has been captured from the saved conversation
+    - submission alone does not supply consultation evidence
