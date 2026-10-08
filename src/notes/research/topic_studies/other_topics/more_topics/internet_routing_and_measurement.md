@@ -1,0 +1,650 @@
+Internet routing and measurement
+(authored by agents unless marked 🧑)
+
+takeaway
+- agent recommendation: study when several network measurements fail together
+  - counting observers, addresses, or organizations can overstate independent evidence
+  - strongest starting points: route withdrawal failures, cloud observer dependence, and outage measurement bias
+- scope: Internet routes, routing security, address ownership, IPv6, DNS, time synchronization, and traffic measurement
+  - peer-to-peer retrieval, transport scheduling, and edge systems are in [networking, peer-to-peer, and edge systems](../../distributed_systems/other_areas/networking_edge_p2p.md)
+  - this page studies infrastructure beneath web content
+- human interest
+  - [About, research interests](../../../../../about.md): “Previous: Federated learning, Internet routing, content provenance (C2PA).”
+  - [reading notes](../../../../reading_notes/index.md) record the routing and measurement talks discussed below
+- evidence checked on 7–8 Oct 2026 UTC
+  - initial 13 IMC 2025 paper abstracts inspected on the [official program](https://conferences.sigcomm.org/imc/2025/program/)
+  - two routing/DNS standards and two CAIDA descriptions inspected
+  - seven student-workshop topics confirmed in the official program
+  - full methods, related work, evaluations, and limitations inspected for BGP zombies, ru-RPKI-ready, and MPIC using author PDFs
+  - selected threat model, design, deployment, and formal-model limitations inspected for Cryptographically-Secured Domain Validation, PoPETs 2026
+  - current follow-up search found operator experience and an ongoing 2026 zombie survey
+  - selected methods and limits inspected in TurboTest, CAF evaluation, BQT, BQT+, Borges, ASINT, Sibling Prefixes, TTL Jumps, IPv6 Scanning Dynamics, SYN Payloads, DarkVec, and DarkSim
+  - selected full methods and limits inspected for DNS readiness, Time To Scan, and Ukraine disruptions
+  - September 2026 manuscript inspected for Cleaning the NTP Pool
+  - NTP independence checked against RFC 8633, RFC 9523, and selected DNS attack methods
+  - Happy Eyeballs follow-up inspected at abstract level
+  - other listed papers retain abstract-level coverage
+  - Chunk-fu, the honey-domain poster, and the 2025 darknet benchmark remain workshop-record leads
+  - the whole field and all 2026 follow-ups are not exhaustively covered
+  - no experiments run; originality of proposals unconfirmed
+
+routes that survive withdrawal
+- Border Gateway Protocol, BGP, lets independently operated networks advertise reachable address ranges
+  - an autonomous system, AS, is a network identified by an AS number
+  - a prefix identifies an address range
+  - withdrawal says an advertised route should disappear
+- Iliana Maria Xygkou et al., [A first look into long-lived BGP zombies, IMC 2025](https://doi.org/10.1145/3730567.3764469), abstract
+  - quote: “zombie routes can persist in RIBs for days, weeks, or even months”
+  - RIB means routing information base, a router's stored route information
+  - authors revise earlier beacon measurements to address double-counting
+  - beacons are controlled prefixes repeatedly advertised and withdrawn
+  - authors introduce beacons to reduce periodicity, diversity, and noise limitations
+  - authors report withdrawn routes later reaching additional networks
+  - scope limit: a route in stored routing information does not alone establish packet delivery
+- full-paper method and limits, [author PDF](https://pdf.daknob.net/academic/zombies-imc-2025.pdf), §§2–6
+  - authors reconstruct prefix state from raw RIPE RIS messages
+  - Aggregator IP Address identifies older beacon announcements to avoid recounting one surviving route
+  - outlier collector peers are filtered separately
+  - controlled beacons originate from one personal AS and announce 96 IPv6 /48 prefixes daily
+  - two schedules reuse prefixes after one day or fifteen days
+  - initial detection uses an eighteen-day interval and a ninety-minute survival threshold
+  - subsequent eight-hour routing snapshots follow detected routes from June 2024 to May 2025
+  - coverage omits RouteViews, IPv4 experiments, and routes lasting under ninety minutes
+  - root-cause inference uses the common chain before zombie paths branch
+    - the branching AS may be innocent if its upstream failed to send the withdrawal
+    - invisible exchange route servers further weaken attribution
+  - nearest older work already used timely traceroutes and RIPE Atlas to locate affected networks
+    - merely adding traceroute is therefore not a new contribution
+- proposal: connect stale route records to actual reachability and recovery
+  - hypothesis: some long-lived records cause persistent forwarding failure; others are inactive alternatives
+  - nearest work already establishes persistence and later propagation
+  - proposed contribution: separate convergence delay from a persistent software failure and test repair across router implementations
+  - collect beacon announcements, withdrawals, collector records, traceroutes, and successful connections
+  - for forwarding failure, keep a working covering or alternate route and declare the expected reachability before withdrawing the tested route
+  - separately withdraw all intended routes and test unintended continued reachability
+  - compare affected and unaffected observers for the same prefix and withdrawal
+  - measure stale-record lifetime, failed-connection duration, and recovery after controlled session changes
+  - competing explanations: collector lag, legitimate reannouncement, incomplete visibility, and stored but unused routes
+  - distinguish origins' event logs from remote inference
+  - falsifier: stale records have no consistent relation to forwarding or recovery
+- recent prior work narrows this proposal
+  - Bryton Herdes and Mingwei Zhang, [BGP zombies and excessive path hunting, Cloudflare, 2025](https://blog.cloudflare.com/going-bgp-zombie-hunting/), withdrawal experiments and mitigation
+    - quote: “the same-length prefix (198.18.0.0/24) remains in the global routing table”
+    - operators already connect stale routes to loops and compare more-specific withdrawal with same-length fallback
+    - operators describe graceful forwarding and staged draining as mitigation
+    - a new experiment must compare against those methods
+  - Iliana Xygkou, [BGP Stuck Routes Operational Experience Survey, RIPE list, April 2026](https://mailman.ripe.net/archives/list/ripe-list%40ripe.net/thread/HDHKWWGTRUQDBUSVZKBGUALVRB47WPIB/)
+    - quote: “there is a gap in understanding the operational reality of this issue”
+    - survey announcement is evidence of ongoing related work, not its results
+  - agent decision: retain repair reproducibility; drop a broad claim that user impact is unstudied
+
+routing authorization and change
+- Resource Public Key Infrastructure, RPKI, supplies signed routing authorization
+  - a Route Origin Authorization, ROA, authorizes an AS to originate a prefix
+  - origin validation checks that authorization
+- P. Mohapatra et al., [RFC 6811, §2](https://www.rfc-editor.org/rfc/rfc6811.html#section-2)
+  - quote: “Valid: At least one VRP Matches the Route Prefix.”
+  - a validated ROA payload, VRP, includes prefix, permitted maximum prefix length, and origin AS
+  - valid requires the route prefix to fall within the authorized prefix, its length to be at most the authorized maximum, and its origin AS to match
+  - implication: counting signed prefixes does not establish that routers reject invalid announcements
+- Deepak Gouda, Romain Fontugne, and Cecilia Testart, [ru-RPKI-ready, IMC 2025](https://doi.org/10.1145/3730567.3764452), abstract
+  - quote: “47% IPv4 and 71% IPv6 prefixes not in RPKI could be covered with minimal technical efforts”
+  - authors supply a planning framework and prioritize uncovered routed space
+  - authors' percentages describe their dataset and definition of technical effort
+  - interpretation limit: operator approval, leasing contracts, and operational risk are separate costs
+- full-paper method and limits, [author PDF](https://faculty.cc.gatech.edu/~ctestart8/publications/ruRPKIready.pdf), §§5–7
+  - tool already generates ROA configuration and safe issuance order
+    - most-specific prefixes first; covering prefixes after their routed subprefixes are authorized
+  - combines RouteViews and RIPE RIS, validated ROAs, resource certificates, registry ownership, and administrative agreement information
+  - drops prefixes visible at fewer than 1% of collectors
+  - drops prefixes more specific than IPv4 /24 or IPv6 /48
+  - planning recommendations use public BGP feeds from the latest month
+  - authors require operators to check internal announcements and private peering separately
+  - authors explicitly propose historical routing to capture intermittent mitigation and load-balancing routes
+- proposal: evaluate safe ROA changes during real routing changes
+  - hypothesis: seemingly simple issuance becomes risky when leases, subprefixes, or alternate origins change
+  - nearest work already handles adoption planning
+  - historical replay alone repeats the authors' stated future work
+  - proposed contribution: combine public history with operator-provided private route intents and test planned fallback under held-out failures
+  - replay historical BGP and ROA snapshots in timestamp order
+  - add Internet Routing Registry, IRR, declarations as separate evidence of intended routing
+    - disagreement among IRR, ROA, and BGP is a question to investigate, not proof of malicious routing
+  - compare ru-RPKI-ready's issuance order with history-only and public-plus-private intent recommendations
+  - measure legitimate announcements made invalid, authorization changes, and operator corrections
+  - competing explanations: clock misalignment, incomplete collectors, authorization expiry, and intentional restrictive policy
+  - falsifier: private route intents add no useful missed-route detection beyond historical recommendations
+  - feasibility limit: public data alone cannot validate this contribution
+  - additional reading needed: validator failures, operational transition guidance, and IRR accuracy studies
+
+independent certificate checks
+- Multiple Perspective Issuance Corroboration, MPIC, checks domain control from several network locations before certificate issuance
+- Henry Birge-Lee et al., [A Framework to Evaluate MPIC Security using Real-World BGP Announcements, IMC 2025](https://doi.org/10.1145/3730567.3764495), abstract
+  - quote: “different routing behaviors by cloud providers, such as cold potato routing, have a substantial effect”
+  - authors run approximately 1,500 controlled hijacks against their own domains
+  - authors consider more than 100 locations across three cloud providers
+  - authors report over 87% prevention for optimized deployments in these experiments
+  - scope limit: this is measured attack prevention under tested deployments and attacks
+- full-paper method and threat limits, [author PDF](https://liangw-sec.github.io/pub/mpicmeasure.pdf), §§2–5
+  - MarcoPolo measures HTTP domain-control checks routed to victim or attacker machines
+  - victim and attacker announce the same prefix; five minutes are allowed for propagation
+  - both can answer the validation token so early checks do not suppress later observer requests
+  - successful fake issuance is inferred afterward from observer destinations and quorum rules
+    - quorum rules state how many observers must agree
+    - no publicly trusted certificate is issued by the experiment
+  - 106 candidate observers span AWS, Azure, and GCP
+  - victims and attackers are all Vultr locations; experiments ran in April–May 2025
+  - resilience is the median over victims of the fraction of tested attackers prevented
+    - it is not a population-weighted probability for all domains and adversaries
+  - RPKI conditions are modeled through extra attacker path length and route-validation information
+    - the experiment does not directly create and revoke victim ROAs for every attack
+  - authors identify simultaneous announcement order, one hosting provider, and victim/attacker weighting as limits
+  - MPIC does not defeat a globally effective more-specific hijack
+  - same-cloud routing and allowed observer failures already explain dependence in this paper
+- proposal: choose observers using failure dependence that changes over time
+  - hypothesis: geographically separate observers sometimes share the route segment an attack affects
+  - nearest work already optimizes locations and analyzes provider routing
+  - a static location optimizer would repeat that contribution
+  - proposed contribution: detect when a previously good observer set becomes dependent after routing changes
+    - evaluate on different attacker/victim hosting providers and later periods
+    - compare median optimization with a worst-case or lower-percentile objective
+  - reconstruct observer paths over several months
+  - compare geographic spread, provider spread, shared-path avoidance, and periodic reselection
+  - measure simultaneous attack exposure, legitimate-check failure, reselection cost, and stability
+  - competing explanations: destination-specific routing and differences between traceroute paths and validation traffic
+  - falsifier: time-aware selection offers no held-out improvement over the published static optimizer
+  - controlled tests require cooperating networks and owned address space
+- a stronger 2026 defense changes the research target
+  - Grace Cimaszewski et al., [Cryptographically-Secured Domain Validation, PoPETs 2026](https://petsymposium.org/popets/2026/popets-2026-0056.pdf), §§3–6
+    - quote: “Our threat model is a global network adversary”
+    - design authenticates the owner's certificate-issuance policy in DNS and requires cryptographic domain-control proof
+    - CAA is the DNS record that states certificate-issuance policy
+    - a critical policy tag prevents an honest CA that does not implement the policy from silently ignoring it
+    - threat model assumes honest CAs, uncompromised domain servers and keys, and correct authenticated DNS verification
+    - formal Tamarin model proves properties under explicit assumptions
+    - model includes event order but excludes concrete timing intervals and cached validation lifetimes
+    - deployment measurements cover certificate requests for more than 400 million domains from one collaborating CA
+    - paper studies adoption burden and practical CA implementation, not just protocol proof
+  - agent inference: optimizing MPIC locations remains relevant to domains lacking the stronger defense
+    - it is a weaker research target if a proposed result merely substitutes extra observers for authentication
+  - candidate extension: test policy/key transitions against CA caches and partial deployment
+    - nearest paper already handles downgrade resistance and key agility
+    - proposed increment must concern timed implementation behavior omitted by its formal model
+    - compare fresh and cached checks during controlled policy and key changes
+    - measure rejected legitimate renewal and acceptance under obsolete policy
+    - competing explanation: permitted caching behavior rather than a vulnerability
+    - falsifier: implemented cache rules preserve intended guarantees for all tested transitions
+
+groups of prefixes and organizations
+- Weili Wu et al., [Replication: A Two Decade Review of Policy Atoms, IMC 2025](https://doi.org/10.1145/3730567.3764432), abstract
+  - quote: “groups of prefixes that share the same Autonomous System (AS) paths as observed by BGP collectors”
+  - this defines a policy atom
+  - authors replicate Afek et al.'s earlier study of a concept introduced by Broido and Claffy
+  - authors find the concept remains useful and release code and data
+  - scope limit: grouping is relative to the available observers
+- Carlos Selmo et al., [Learning AS-to-Organization Mappings with Borges, IMC 2025](https://doi.org/10.1145/3730567.3732918), abstract
+  - quote: “automatically extract sibling information from embedded text fields”
+  - authors combine registry information, PeeringDB identifiers, and LLM extraction
+  - authors report improved identification of AS numbers belonging to the same organization
+  - scope limit: common ownership does not establish common network operation or shared failure exposure
+- CAIDA, [Inferred AS to Organization Mapping Dataset](https://www.caida.org/catalog/datasets/as-organizations/)
+  - quote: “uses WHOIS information available from Regional and National Internet Registries”
+  - baseline maps AS numbers to inferred operating organizations using quarterly registry snapshots
+- Borges full-paper checks, [author PDF](https://nu-aqualab.github.io/borges-website/assets/borges-paper.pdf), §§5.3–5.4 and §7
+  - validates information extraction and organization-name classification separately with manually labeled cases
+  - Organization Factor measures how strongly a mapping groups AS numbers
+  - quote: “does not distinguish between correct and incorrect mappings”
+  - a higher grouping score alone does not establish more accurate ownership
+  - website signals lack a longitudinal archive; voluntary PeeringDB registration leaves networks uncovered
+- Sebastian Kappes et al., [TTL Jumps, accepted IMC 2026](https://pure.mpg.de/rest/items/item_3705389_1/component/file_3705390/content), §§4–5
+  - TTL is a packet's remaining hop allowance; traceroute varies it to reveal successive routers
+  - some devices increase TTL, hiding intermediate routers and creating apparent links
+  - quote: “it is not possible to infer this”
+    - applies when a silent target and missing error messages leave no evidence separating rewriting from ordinary missing responses
+  - controlled destination packet captures check whether received TTL exceeds the sent value
+  - first phase uses all active RIPE Atlas probes toward one controlled target
+  - expanded phase selects previously affected source networks and one hundred destinations
+  - 950 affected probes in 471 ASes describe this selected experiment
+    - one destination explains much of the spread; removing it leaves 335 probes in 140 ASes
+    - neither figure estimates an unbiased Internet-wide prevalence
+- proposal: measure how observer and ownership uncertainty changes network conclusions
+  - hypothesis: apparent infrastructure diversity shrinks after accounting for shared paths and common organizations
+  - compare AS counts, Borges organizations, registry organizations, and policy atoms
+  - distinguish legal ownership, operational control, hosting, and route origination
+  - retain source text, its date, and confidence for every inferred relationship
+  - measure changes in outage exposure and observer independence under plausible alternative mappings
+  - compare traceroute-only paths with destination packet captures and routing records
+    - path dependence must account for TTL rewriting and unobserved hops
+  - competing explanation: a corporate acquisition changes ownership while operations remain separate
+  - nearest work: Borges supplies better mappings; policy-atom replication supplies route grouping
+  - proposed contribution: determine which conclusions survive uncertainty in both mappings
+  - falsifier: realistic mapping errors rarely change conclusions
+  - Yongzhe Xu et al., [ASINT, 2025 preprint](https://weitongli.com/publications/papers/xu-2025-asint.pdf), pipeline and §5.3
+    - quote: “Temporal dynamics remain a major challenge”
+    - combines registry/PeeringDB records with web evidence, organization-name extraction, and LLM relationship decisions
+    - retrieval filters evidence before relationship inference
+    - comparisons restrict each pair of datasets to their common AS numbers
+    - authors manually inspect selected merges and attribute mistakes to stale acquisition history, ambiguous names, and LLM errors
+    - reported 6.4% false-positive merges concern the inspected cases
+      - not an independently established population error rate
+    - Borges comparison was unavailable because its dataset had not been released at submission
+    - proposed periodic updates and stronger source checking already belong to this paper
+    - narrower candidate: propagate dated ownership uncertainty into routing-security conclusions
+
+IPv6 and DNS
+- Fariba Osali, Khwaja Zubair Sediqi, and Oliver Gasser, [Sibling Prefixes, IMC 2025](https://doi.org/10.1145/3730567.3732917), abstract
+  - quote: “identify 47k IPv4-IPv6 sibling prefixes”
+  - authors group address ranges using overlap in DNS names
+  - authors report greater stability over one year than over longer intervals
+  - human reading notes record 76k; the inspected official abstract reports 47k
+    - [author PDF](https://olivergasser.net/papers/osali2025sibling.pdf), abstract and §4, reports 76k pairs in September 2024
+    - the inspected texts differ; count and version must accompany any reported number
+  - scope limit: serving similar names does not prove shared machines or shared failures
+- Sibling Prefixes full methods and limits, [author PDF](https://olivergasser.net/papers/osali2025sibling.pdf), §§3.1–3.7
+  - pair IPv4 and IPv6 ranges using domain-set intersection divided by union
+    - this is Jaccard similarity
+  - retain the highest-similarity match and all ties
+  - tune prefix sizes to improve matching
+  - validation uses independent address-alias techniques and dual-stack RIPE Atlas probes
+  - 89.36% agreement applies to the 2,200 probes fully covered by the sibling dataset
+    - uncovered probes cannot validate coverage of the wider Internet
+  - domain selection and CDN hosting can change inferred similarities
+  - proposed measurement must hold out names and time periods rather than validate against the same DNS observations
+- Tobias Fiebig and Anja Feldmann, [How I learned to stop worrying and love IPv6, IMC 2025](https://doi.org/10.1145/3730567.3764439), abstract
+  - quote: “The negative impact of DNS resolution via IPv6 is negligible”
+  - authors test name-server groups for ten million domains under packet-size and path-discovery scenarios
+  - conclusion belongs to those scenarios and measured name servers
+  - authors also identify an influential transit network in earlier fragment-dropping measurements
+- DNS readiness full methods and limits, [publisher PDF in the authors' repository](https://pure.mpg.de/rest/items/item_3670144_3/component/file_3693111/content), §§3–6
+  - authors: “we only use hosts in one AS as vantage points”
+  - two prefix sets route replies through Liberty Global or other transit providers
+  - daily measurements run from April to September 2025
+  - one random domain represents each distinct authoritative name-server set
+    - March sampling yields 58,983 DNSSEC sets and 666,318 other sets
+    - equal set weighting differs from weighting domains or user requests
+  - Unbound 1.19.2 tests IPv4-only, IPv6-only, and dual-stack resolution
+    - dual-stack data are released; analysis mainly compares single-stack cases
+  - four path-size scenarios combine 1500/1280-byte links with working/broken path-size discovery
+  - DNS UDP size settings are 512, 1232, and 4096 bytes
+    - DNSSEC checks and empty caches are controlled separately
+  - TCP socket exhaustion affected measurements before 24 May
+    - authors label that interval and increase the socket allowance
+  - scope omits NAT64, disabled fallback, and other resolver implementations
+    - NAT64 translates IPv6 client traffic to IPv4 services
+    - one resolver's success does not establish all clients' success
+  - [daily DNS data and configuration artifacts](https://data.measurement.network/dns-mtu-msmt/) support replication
+- Patrick Sattler et al., [Lazy Eye Inspection, IMC 2025](https://doi.org/10.1145/3730567.3732925), abstract
+  - authors: “despite a fully functional IPv6 setup”
+    - describes interrupted or delayed Chrome/Firefox connectivity when IPv4 DNS lookup fails
+  - Happy Eyeballs selects between IPv4 and IPv6 connection attempts
+  - authors already test browser/resolver fallback choices and release a test framework
+  - full methods and tested versions remain unread
+- K. Fujiwara and P. Vixie, [RFC 9715, §3.1](https://www.rfc-editor.org/rfc/rfc9715.html#section-3.1)
+  - quote: “UDP responders should not use IPv6 fragmentation”
+  - fragmentation splits one packet into several packets
+  - standard gives concrete behavior to test alongside failure and fallback
+- proposal: identify where dual-stack operation hides single-stack failure
+  - dual stack means both IPv4 and IPv6 are available
+  - hypothesis: automatic fallback hides DNS or path failures until IPv4 becomes unavailable
+  - compare IPv4-only, IPv6-only, and ordinary dual-stack clients on matched sibling prefixes
+  - vary response size, fragment handling, TCP fallback, and location
+  - measure resolution success, fallback frequency, and user-visible delay
+  - competing explanations: DNS name overlap reflects a CDN rather than common infrastructure; resolver caching hides failure
+  - nearest work already compares all three address-family modes and tests client fallback implementations
+    - matched sibling prefixes and a new fallback census alone are insufficient
+  - proposed contribution: test failures shared by DNS transport fallback and client address-family selection
+    - combine path-size failures, unavailable IPv4, resolver socket pressure, and cold/warm caches
+    - hold out resolver/browser versions and network locations
+    - test a repair against the published DNS setup and Happy Eyeballs framework
+  - feasibility gate: inspect Lazy Eye Inspection's full methods before claiming this combination is new
+  - falsifier: dual-stack success predicts IPv6-only success after conditioning on tested configuration
+
+outages and who the measurement sees
+- Florian Holzbauer, Sebastian Strobl, and Johanna Ullrich, [Tracking Internet Disruptions in Ukraine, IMC 2025](https://doi.org/10.1145/3730567.3764449), abstract
+  - quote: “probing the Ukrainian address space at two-hour intervals since March 2, 2022”
+  - authors refine geographic mapping and combine three disruption signals
+  - scope limit: external probes observe response, not the cause of every missing response
+- Ukraine full methods and limits, [author manuscript](https://publications.sba-research.org/publications/IMC25_Tracking_Internet_Disruptions_Ukraine_p_Florian%20Holzbauer.pdf), §§3–6
+  - authors: “may go undetected”
+    - applies to outages starting and ending between two probing windows
+  - one European data-center observer sends ICMP probes to IPv4 addresses delegated to Ukraine in December 2021
+    - study ends on 24 February 2025
+    - observer outages are explicitly marked as missing data
+    - fixed delegation excludes later additions and foreign-registered space used inside Ukraine
+  - signals count routed /24 blocks, responsive /24 blocks, and responding addresses
+    - block eligibility requires three ever-responsive addresses per month
+    - address-count signal requires a monthly average above ten responses
+  - thresholds compare each signal with its previous seven-day average
+    - thresholds differ by AS/region; zero routed blocks keep a long outage flagged
+    - address reallocation checks already reduce false block-outage alarms
+  - twenty-minute scans leave roughly one hundred minutes without probing
+  - validation compares IODA and reported power/war events
+    - agreement is not complete labeled ground truth for every inferred outage
+  - §6 already proposes IPv6 signals and NTP discovery of residential routers
+    - simply adding NTP-discovered IPv6 targets repeats stated future work
+- Michael Klopsch et al., [Time To Scan: Digging into NTP-based IPv6 Scanning, IMC 2025](https://doi.org/10.1145/3730567.3764502), abstract
+  - quote: “mainly cover core Internet infrastructure and servers”
+  - authors describe a bias in conventional IPv6 target lists
+  - NTP Pool observations reveal additional consumer-device deployments in their dataset
+  - implication: changing how addresses are discovered changes the measured population
+- Time To Scan full methods and limits, [author PDF](https://www.comsys.rwth-aachen.de/publication/2025/2025_klopsch_digging-into-ntp-ipv6-scanning/2025_klopsch_digging-into-ntp-ipv6-scanning.pdf), §§3–6 and appendix A.3
+  - authors: “hard lower bound”
+    - describes distinct certificates/SSH keys used as proxies for distinct hosts
+  - eleven Pool servers in eleven countries collect addresses from 20 July to 16 August 2024
+    - locations favor countries with few Pool servers relative to routed IPv6 space
+    - operator-set server weights change how many clients arrive
+    - India contributes 2.6 billion of 3.04 billion distinct addresses
+  - newly arriving addresses trigger application scans
+    - full TUM hitlist comparison runs during the final week
+    - unequal address freshness is part of the comparison
+  - dynamic addresses can recount one host; shared keys can merge different hosts
+  - security comparison concerns 73,975 NTP-sourced and 854,704 hitlist-sourced SSH/IoT host proxies
+    - neither sample estimates all end-user devices
+  - TLS checks without a hostname fail for many CloudFront hitlist addresses
+    - observed handshake failure alone does not establish missing TLS support
+  - authors already propose richer device fingerprints and other fresh address sources
+  - raw address and scan data are not published
+    - authors: “refrain from publishing any of the collected data”
+- Erik Rye and Robert Beverly, [Cleaning the NTP Pool, September 2026 manuscript](https://arxiv.org/pdf/2607.21903), §§3–4
+  - authors: “lower bound on the number of back-scanning servers”
+    - back-scanning means probing a client address learned from its earlier request
+  - unique random source addresses identify each NTP-server/probe-hop pair
+    - addresses are used for no other traffic
+    - varying the packet's hop allowance separates observed on-path harvesting from endpoint harvesting
+  - one US cloud observer tests 2,335 DNS-discovered Pool servers from February 2025 to April 2026
+  - identifies 22 harvesting servers in four scanner groups
+    - low-rate address sampling, low-weight Pool servers, and residential-only targeting can evade observation
+  - inference: discovery-channel attribution already has a strong controlled NTP baseline
+    - compare new attribution methods against its unique-address and on-path controls
+- proposal: estimate outage uncertainty when observation populations differ
+  - hypothesis: infrastructure probes and client-originated time requests detect different portions of an outage
+  - Network Time Protocol, NTP, synchronizes clocks
+  - a missing client request may indicate an outage, a reassignment, a device shutdown, or a changed server
+  - compare controlled outages, server reassignment, device sleep, and IP-address changes
+  - use consenting clients with local logs as known outcomes
+  - compare active probes, passive requests, route changes, and combinations
+  - report false alarms, missed outages, detection delay, and affected-population uncertainty
+  - split evaluation by network and time to avoid memorizing recurring devices
+  - nearest work: Ukraine active scans, NTP address sourcing, and Paul Chung et al.'s workshop proposal
+    - [official workshop program](https://conferences.sigcomm.org/imc/2025/events/student-workshop/) lists “Passively Inferring Network Availability and Configuration from NTP Pool Clients”
+    - the listing supplies no validated performance result
+  - proposed contribution: quantify error from device sleep and server reassignment using known client outcomes
+    - compare against Ukraine's existing address-reallocation filter
+    - use fresh NTP addresses; treat server weights and location as selection variables
+    - keep device identities distinct from addresses and certificates
+    - estimate which consenting-client events remain visible after changing the Pool observer
+  - novelty limit: IPv6/NTP integration and richer device fingerprints already appear in nearest work
+  - falsifier: mixed observations do not improve controlled-event discrimination
+
+traffic without a responding service
+- a network telescope records traffic sent to unused addresses
+- CAIDA, [Network Telescope description](https://www.caida.org/projects/network_telescope/)
+  - quote: “a continuous view of anomalous unsolicited traffic”
+  - CAIDA includes misconfiguration, scanning, attack responses, and other unintended behavior
+  - implication: changes in traffic volume have multiple possible causes
+- Dario Ferrero et al., [Have you SYN what I see?, IMC 2025](https://doi.org/10.1145/3730567.3764498), abstract
+  - quote: “a large passive and a reactive network telescope”
+  - reactive means the measurement sends selected responses
+  - authors inspect TCP connection-opening packets containing payloads over two years
+  - authors report HTTP GET requests make up approximately 75% of those payloads
+  - denominator is observed SYN payloads, not all packets or all scanning
+- proposal: benchmark outage detectors against changing background traffic
+  - hypothesis: a detector can mistake a scanner's disappearance for a network outage
+  - compare count thresholds with models separating recurring sources and traffic types
+  - create held-out events with known outages and independent scanner-rate changes
+  - include spoofed addresses, traffic bursts, address reassignment, and observer failure
+  - measure false alarms per day and missed events at fixed detection delay
+  - competing explanation: a scanner and its network can disappear together
+  - nearest student-workshop work
+    - Max Gao et al.: “Towards a systematic benchmark framework for evaluating darknet-analysis methodologies”
+    - Xie Qiu et al.: “Identifying Disruptive Patterns in Internet Background Radiation”
+    - both titles verified in the [official program](https://conferences.sigcomm.org/imc/2025/events/student-workshop/)
+    - benchmark novelty cannot be claimed before reading their manuscripts
+- adjacent workshop leads
+  - Sebastian Kappes: “How Do You Know My Name?”
+    - [official program](https://conferences.sigcomm.org/imc/2025/events/student-workshop/) concerns domain names and scanner reconnaissance
+    - research question: can publishing a name change which IPv6 addresses a telescope sees?
+  - Andrea Sordello et al.: “The Potential of Erroneous Outbound Traffic Analysis to Unveil Silent Internal Anomalies”
+    - [official program](https://conferences.sigcomm.org/imc/2025/events/student-workshop/)
+    - research question: distinguish harmless stale configuration from internal failures using outbound errors
+  - proposals need manuscripts and known outcomes before interpreting detected anomalies
+
+protocol behavior and trustworthy time
+- Peiqing Chen et al., [Protocol Compliance in Popular RTC Applications, IMC 2025](https://doi.org/10.1145/3730567.3764438), abstract
+  - quote: “None of the studied applications strictly follow all RTC protocol specifications”
+  - [selected full-method review](wireless_models_and_measurement.md) explains the paper's conflicting application and call counts
+  - scope limit: observed message departures do not alone establish interoperability or security failure
+- Mahmoud Attia, Ilies Benhabbour, and Marc Dacier, [The Developer, the RFC, and the Middlebox, IMC 2025](https://doi.org/10.1145/3730567.3764447), abstract
+  - quote: “a suite of 156 tests”
+  - authors test HTTP/2 behavior in twelve proxies and three cloud proxies
+  - intermediate proxies can change behavior attributed to an endpoint
+- proposal: explain which protocol departures change outcomes
+  - hypothesis: application success hides incompatible interpretations that appear when a proxy or client changes
+  - nearest work already builds compliance tests
+  - proposed contribution: pair each failed requirement with a reproducible failed call or inconsistent request interpretation
+  - vary endpoint, proxy, message sequence, and protocol version independently
+  - compare strict rejection, tolerant handling, and documented vendor extensions
+  - measure failed sessions, differing interpretations, and repair compatibility
+  - competing explanation: an intentional negotiated extension rather than an implementation error
+  - falsifier: departures have no outcome differences within a realistic deployment matrix
+- Zhentian Huang et al., [Measuring the Time Source Vulnerabilities in the NTP Ecosystem, IMC 2025](https://doi.org/10.1145/3730567.3764478), abstract
+  - quote: “NTS does not address issues related to erroneous time sources”
+  - Network Time Security, NTS, authenticates communication with a time server
+  - authors distinguish open servers, Pool servers, and referenced upstream servers
+  - full manuscript remains unlocated after publisher, repository, and author-profile searches
+    - time-error thresholds, source-graph inference, attack configurations, and client validation remain unread
+    - no originality claim against this paper is justified yet
+- D. Reilly et al., [RFC 8633, §§3.2–3.3](https://www.rfc-editor.org/rfc/rfc8633.html#section-3.2)
+  - authors: “at least four independent, diverse sources of time”
+  - guidance already covers shared vendors, chipsets, firmware, and systemic clock errors
+    - independence is an existing requirement, not a new research insight
+- N. Rozen-Schiff et al., [RFC 9523, §§3 and 5](https://www.rfc-editor.org/rfc/rfc9523.html#section-5), Khronos
+  - authors: “a higher fraction of the servers”
+    - §5.1 excludes attackers affecting more servers than its bounded-fraction model
+  - companion client samples from hundreds of candidate servers and discards extreme time readings
+  - model includes compromised authenticated servers and shared-path attackers
+    - adding authentication or a larger server count alone does not supply a new defense
+- Philipp Jeitner, Haya Shulman, and Michael Waidner, [The Impact of DNS Insecurity on Time, DSN 2020](https://arxiv.org/pdf/2010.09338), introduction and attack design
+  - authors: “redirect the NTP clients to attacker controlled servers”
+  - DNS attacks can corrupt server discovery before an older Chronos client selects its time sources
+  - selected methods inspected; this is not an evaluation of present NTS/Khronos deployments
+- proposal: evaluate client clock error under shared upstream-source failures
+  - hypothesis: authenticated servers sharing a wrong upstream can defeat apparent server diversity
+  - test cooperating or simulated server graphs with known upstream clocks
+    - public reference identifiers alone cannot establish the complete graph
+  - inject clock errors while holding network delay constant
+    - separately vary path asymmetry and client oscillator drift
+  - compare ordinary NTP selection, Khronos, and selection by known upstream failure groups
+  - measure accepted clock error, detection delay, availability, and queried-server cost
+  - separate server-discovery poisoning from genuine servers following the same wrong source
+  - nearest standards already require independence and handle a bounded bad-server fraction
+  - proposed increment: measure whether observed upstream dependence violates that fraction and whether grouping repairs it
+  - falsifier: grouping adds no benefit after ordinary selection and Khronos controls
+  - originality gate: read Huang et al.'s full source-configuration attacks and client evaluation first
+
+broadband service, price, and measurement
+- human [IMC student keynote notes](../../../../reading_notes/index.md) record “100+billion spent, based on fake data from ISP oligopoly”
+  - this is a human record of a talk claim
+  - it is not a verified funding total or proof that all provider data are false
+  - same notes identify subscription tier as missing speed-test context
+- Udit Paul et al., [BQT, SIGCOMM 2023](https://sites.cs.ucsb.edu/~arpitgupta/pdfs/bqt_sigcomm23.pdf), tool design and §4.3
+  - [full primary manuscript](https://arxiv.org/pdf/2302.14216), sampling, competition comparison, and limits
+  - authors: “Our dataset does not discriminate between normal and discounted offers”
+  - queries provider websites for address-specific speed and price offers
+  - offers differ from purchased subscriptions and delivered throughput
+  - selects thirty cities across 27 states and seven large queryable providers
+    - omits Xfinity from main collection after six-city checks find location-invariant offers
+    - samples 10% of addresses and at least thirty per census block group within each provider/city
+    - Zillow source covers residential addresses with recorded transactions, not every U.S. address
+    - satellite providers and selected other providers are excluded
+  - one-tailed two-sample Kolmogorov–Smirnov tests compare offered-plan distributions across competition categories
+    - provider entry, infrastructure, and residential selection are not randomly assigned
+    - distribution differences do not identify competition's causal effect
+  - reading limit: selected full sampling, comparison, and limitation sections inspected
+    - urban offered-plan sample does not establish nationwide inequality or actual subscription spending
+- Galperin et al., [USC BEAD baseline policy brief, November 2025](https://arnicusc.org/wp-content/uploads/2026/02/Policy-Brief-BEAD-3.pdf), pp2–5
+  - authors: “the analysis is limited to four states”
+  - examines California, Michigan, Oklahoma, and Virginia
+    - joins provider-reported availability, state eligible-location lists, census data, and advertised offers
+    - compares areas with at least 50% versus at least 80% eligible locations
+    - these groups overlap rather than form independent populations
+  - February–June 2025 collection uses original eligibility lists
+    - later analysis restricts the sample to locations still eligible after revised guidelines
+    - changing sample composition can change observed results without changed service
+  - affordability benchmark is 2% of monthly income at the area's twentieth income percentile
+    - area estimate differs from each household's income, adoption, and paid price
+  - implication: predeployment advertised-plan baselines in eligible areas already exist
+    - separate eligibility reclassification from changed offers, subscriptions, and delivered service
+  - reading limit: selected full methods inspected
+    - complete findings and current program rules not independently audited
+- Haarika Manda et al., [The Efficacy of the Connect America Fund, SIGCOMM 2024](https://sites.cs.ucsb.edu/~arpitgupta/pdfs/caf-sigcomm24.pdf), §§3–4 and appendix §8.1
+  - quote: “our serviceability reporting is subject to errors”
+  - CAF is a US program subsidizing broadband deployment
+  - method samples certified addresses and comparison addresses, then queries advertised plans through BQT
+  - residential and data-center proxy addresses distribute website queries
+  - observed serviceability is 55.45% in the studied address samples
+    - this is a website-query result under the authors' classification and sampling
+    - it does not establish that the other addresses can never receive service
+  - “Call to Order” addresses are excluded and replaced in the sample
+    - those might be serviceable within the program's allowed provisioning interval
+  - appendix limitations are explicitly outside peer review
+  - comparison of funding areas is observational
+    - geography, selection into funding, and prior infrastructure can also explain differences
+- Haarika Manda et al., [TurboTest, NSDI 2026](https://www.usenix.org/system/files/nsdi26-manda.pdf), §§3–5
+  - quote: “the true throughput from a full-length run”
+  - predicts the complete speed-test estimate from partial transport measurements
+  - separates throughput regression from the decision to stop
+  - uses throughput, round-trip delay, retransmissions, and congestion-window history
+  - compares against BBR saturation signals and throughput-stability heuristics
+  - final paper evaluates approximately one million M-Lab tests
+    - older search abstract reports 173,000; use the final paper's evaluation description
+  - training balances speed tiers; later-period tests examine temporal change
+  - excludes tests already stopped by the platform's byte cap
+  - accuracy means agreement with the complete test
+    - it does not certify purchased-plan performance or identify the limiting link
+- [BQT+, February 2026 preprint](https://arxiv.org/pdf/2602.16969), design and appendix §A.2
+  - quote: “declarative state/action specifications”
+  - represents provider querying as possible interaction states and chooses an execution path at runtime
+  - supports longitudinal rather than single-snapshot plan collection
+  - separates serviceable, no-service, and unknown query outcomes
+  - service availability without listed plans can still count as serviceable
+    - classification differs from the earlier CAF paper's exclusion of “Call to Order” cases
+  - baseline comparisons must harmonize outcome definitions before interpreting a change as new infrastructure
+- proposal: connect address-level offers, subscribed plans, and bottleneck evidence
+  - hypothesis: apparent provider underperformance partly comes from mixing purchased tiers and local Wi-Fi limits
+  - first study uses consenting households with verified plans and repeated measurements
+  - compare wired and Wi-Fi clients on the same connection
+  - randomize full and early-stopped tests, server location, and time of day
+  - repeat address-offer queries from fixed residential and cloud source IPs
+  - retain address location, plan, modem/router/client capabilities, source IP class, and server path
+  - measure error near plan thresholds, failed availability queries, within-household variation, and transferred bytes
+  - competing explanations: Wi-Fi interference, server load, peering congestion, promotions, and website anti-bot behavior
+  - nearest work already measures offers, audits funding, and saves speed-test traffic
+  - proposed increment: show which policy conclusions survive controlled plan and bottleneck context
+  - falsifier: context adds no explanatory value after ordinary location/provider/time controls
+  - funding-effect claims need a separate causal design
+    - compare pre/post changes with suitable unfunded controls and inspect differences before funding
+    - a low speed test alone cannot establish subsidy noncompliance
+
+scanner discovery and attribution
+- Hammas Bin Tanveer et al., [Unveiling IPv6 Scanning Dynamics, CoNEXT 2025 preprint](https://arxiv.org/pdf/2508.07506), §§3–5
+  - quote: “four proactive attraction features”
+  - controlled signals include BGP announcements, domain registration, certificates, and address-list inclusion
+  - study combines a regional ISP telescope with two passive comparison networks
+  - different prefixes receive different signal combinations
+  - counterfactual models estimate traffic without each intervention
+  - adding signals changes the population of scanners observed
+    - counts from an attractive telescope cannot represent all Internet scanning without adjustment
+  - source IP, source AS, traffic similarity, and known scanner identity are distinct evidence
+    - NAT, spoofing, and a coordinated distributed scanner prevent treating each address as one actor
+  - exposing domain names to discover IPv6 scanners already has extensive prior work
+- Dario Ferrero et al., [SYN Payloads full paper](https://gsmaragd.github.io/publications/IMC2025-Payloads/IMC2025-Payloads.pdf), §§3–5
+  - passive data spans two years; reactive collection spans three months
+  - reactive telescope sends SYN-ACK and observes whether a connection continues
+  - reactive collector was designed for another experiment and does not implement every TCP Fast Open behavior
+  - authors replay representative payloads against virtualized operating systems
+  - source/header signatures suggest scanner behavior but do not prove motive or operator identity
+  - limited address space and geographic diversity restrict generalization
+- Sebastian Kappes et al., honey-domain poster
+  - title confirmed in the [official poster program](https://conferences.sigcomm.org/imc/2025/accepted-posters/)
+    - “How Do You Know My Name?”
+  - full primary manuscript was not located
+  - human notes describe domains attracting scanners and delays between DNS resolution and probing
+  - those details remain talk notes rather than independently verified measurements
+- proposal: estimate discovery-channel attribution despite signal reuse
+  - hypothesis: the first published signal need not be the source a scanner used
+  - randomly assign fresh names/addresses to zone-file, certificate-log, address-list, and unpublished-control groups
+  - delay subsequent publication channels and keep their times explicit
+  - compare passive and responding services across independent network locations
+  - log authoritative DNS queries and later probes with resolver/scanner distinction
+  - measure probe arrival time, discovery probability, and repeated scanner signatures
+  - competing explanations: recursive DNS caches, resolver prefetch, shared target lists, and rediscovery through another scanner
+  - nearest work already compares attraction channels
+  - proposed increment requires demonstrated cross-channel spillover and an identifiable correction
+  - falsifier: controlled publication timing changes neither attribution nor coverage conclusions
+
+darknet analysis compares different tasks
+- Luca Gioacchini et al., [DarkVec, CoNEXT 2021](https://nonsns.github.io/paper/rossi21conext-a.pdf), §§3–5
+  - quote: “the lack of ground truth”
+  - embeds source addresses using temporal co-occurrence among senders contacting services
+  - known scanner addresses and malware packet signatures supply selected labels
+  - evaluates classification of labeled senders and clustering of unknown senders
+  - reported accuracy on those labels does not measure outage detection
+- Max Gao et al., [DarkSim, IMC 2024](https://estcarisimo.github.io/assets/pdf/papers/2024-imc-darksim.pdf), §§3–6
+  - quote: “improved event labels”
+  - compares time-series segments using dynamic time warping
+    - this permits similar patterns to differ in timing
+  - evaluates detected events against DarkGLASSO and manually classified events
+  - high background volume can hide small anomalies
+  - authors explicitly propose better labels, broader comparisons, and online evaluation
+- Max Gao et al.'s 2025 workshop benchmark remains unlocated as a full primary manuscript
+  - human notes say “DarkVec not much better than random; DarkSIM works somewhat”
+  - this cannot support a general ranking
+    - clustering sources and detecting time-series events are different tasks
+    - benchmark labels, populations, thresholds, and baselines remain unknown
+- narrower experiment: compare methods only on separately defined common tasks
+  - source grouping: known coordinated scanners and synthetic distributed campaigns
+  - event detection: controlled outages and independent scanning-rate changes
+  - vary background load, spoofing, observer location, and missing traffic
+  - split by event, source group, network, and time rather than by random packets
+  - report recall at fixed false-alarm rate, labeling uncertainty, and processing cost
+  - a benchmark alone repeats stated future work
+  - retain only if it reveals a specific failure mechanism and a validated correction
+
+QUIC implementation fingerprints
+- QUIC is an encrypted transport protocol over UDP
+- Seungju Lee, [Fingerprinting QUIC browser clients, 2025 poster](https://seungjulee.com/publication/fingerprinting-poster), author abstract
+  - quote: “connection IDs, and transport parameters”
+  - author also tests interoperability with different servers as a distinguishing signal
+  - fingerprint identifies an implementation class, not necessarily an individual user
+  - full measurement artifact and error rates were not available on the inspected page
+- Karthik Nishanth Sengottuvelavan et al., Chunk-fu
+  - [official workshop program](https://conferences.sigcomm.org/imc/2025/events/student-workshop/) lists “Fingerprinting QUIC implementations using fragmented frames”
+  - full primary manuscript was not located
+  - frame-fragmentation and algorithmic-runtime details in human notes remain unverified talk observations
+- proposal: distinguish implementation signatures from path and version effects
+  - same client talks to several server implementations under controlled delay, loss, packet size, and migration
+  - hold out client versions, operating systems, and network paths
+  - compare connection identifiers, transport parameters, fragmentation behavior, and combined signals
+  - report implementation-class accuracy and uncertainty for unseen versions
+  - competing explanations: server negotiation, randomized identifiers, network loss, and middlebox rewriting
+  - first output should be a reproducibility/robustness result
+    - claiming a new fingerprint requires the missing poster methods and broader QUIC fingerprint literature
+
+first experiment and remaining reading
+- agent recommendation: start with public BGP/ROA replay and mapping sensitivity as a replication pilot
+  - fewer operational dependencies than controlled hijacks or private client traffic
+  - first output: a reproducible list of conclusions that change under timestamp or organization-mapping uncertainty
+  - advance only if these changes are substantial and unexplained by known measurement limits
+  - stronger ROA contribution needs a cooperating operator's private route intents
+  - history-only planning is already proposed by ru-RPKI-ready
+- collect remaining full papers and reproduce core artifacts before claiming a new research contribution
+  - highest priority: policy-atom replication and the darknet benchmark
+  - next: Huang et al.'s NTP time-source manuscript and Lazy Eye Inspection
+  - reproduce released DNS dual-stack cases before extending fallback measurements
+  - reproduce sibling-prefix and ASINT artifacts before relying on their mappings
+  - inspect related-work sections for the older studies cited above
+  - broader 2026 follow-up coverage still needed for IPv6, NTP, and protocol compliance
+- distinguish three outcomes
+  - replication: reproduce a published result
+  - measurement correction: show a conclusion depends on observer or population bias
+  - new mechanism: fix a measured failure and compare with the nearest existing method

@@ -1,0 +1,511 @@
+science, organizations, and incentives
+(authored by agents unless marked 🧑)
+
+why these topics are here
+
+- these are explicit interests and reading notes outside the main technical families
+  - 🧑 “human health, general Biology, aviation, spaceflight”
+    - source: [about page](../../../../../about.md)
+  - 🧑 “writer responsible to make reader understand”
+  - 🧑 “proper timeline & cost (talk to financial expert)”
+  - 🧑 “ordinary people pay for the benefit high-end card user get”
+  - 🧑 “lower down can brick president order by delaying”
+    - source for these four quotations: [reading notes](../../../../reading_notes/index.md)
+- the common systems question is whether a useful local action produces the intended whole-system result
+  - passing a component test may leave a flight-level assumption unchecked
+  - making prose easier may raise confidence more than understanding
+  - increasing automatic payments may reduce manual payments
+  - issuing an order may leave the necessary information and authority elsewhere
+- my recommendation: start with assumption checking in open flight software or comprehension of systems claims
+  - both permit small experiments without restricted bank or government records
+  - the other candidates need collaborators or data access before a substantial study
+- healthcare and general biology connect to the [healthcare study](../systems_ml/)
+  - this page covers scientific communication and research organization rather than making medical claims
+  - voting and mathematical delegation are covered in [theory and other talks](theory_and_other_talks.md)
+
+aviation and spaceflight: assumptions must survive composition and reuse
+
+- ESA's Ariane-501 follow-up, J de Dalmau and J Gigou, ESA Bulletin 89, 1997
+  - [primary report](https://www.esa.int/esapub/bulletin/bullet89/dalma89.htm), technical evaluation and improvement of working methods
+  - reported cause: “specification and design errors in the software of the Inertial Reference System”
+  - reported organizational change: “formally establish the role of 'Software Architect'”
+  - the report describes near-simultaneous loss of active and backup reference systems
+  - it also describes separating embedded software into configuration-controlled items and checking its system implications
+  - the lesson I draw: two copies can preserve the same bad assumption
+    - this incident supports investigating shared failure causes
+    - it does not measure their prevalence in modern flight software
+- NASA's Flight Software Complexity report, 2009
+  - [primary report](https://www.nasa.gov/wp-content/uploads/2015/04/418878main_fswc_final_report.pdf), fault protection verification discussion
+  - “testing is the primary tool for fault protection V&V”
+    - V&V means verification and validation: checking implementation against requirements and checking suitability for its intended use
+  - the report distinguishes unit, integration, and flight-like scenario testing
+  - research implication: a unit test can check a fault handler without checking how handlers interact during a mission
+  - read-depth limit: selected fault-protection passages from a 264-page report
+- Levison, Reder, Watney, Canham, and Bocchino, F Prime, 2018
+  - [full NASA-hosted paper](https://s3vi.ndc.nasa.gov/ssri-kb/static/resources/CL18-2993.pdf), §§2.1 and 2.5
+  - authors' serialized-to-typed connection warning: “the F Prime tools can’t check this for you”
+  - active components own dispatch threads; queued components depend on another thread to dispatch messages
+  - typed ports enforce declared interfaces
+    - serialized bytes connected to typed inputs leave actual data-type correctness to the developer
+    - wrong types can cause runtime assertion failure
+  - generated component tests provide input drivers, output handlers, and fixed-capacity histories
+    - topology and simulator substitutions support integration testing
+  - framework reuse and testing support do not establish safety of a particular mission
+  - reading limit: selected full component and test mechanisms inspected
+    - historical implementation; current behavior and flight systems not independently tested
+- Starch, Levison, and Bocchino, FPP, 2022
+  - [full author paper](https://rob-bocchino.net/Professional/bocchino-ieee-aero-2022.pdf), §§3–6
+  - authors: “identify scenarios that potentially violate specified timing constraints”
+  - models components, ports, connections, queue size, and thread settings before generated implementations are completed
+  - async-port queue-full policies include assertion failure, sender blocking, and message dropping
+  - structural and type checks precede XML/C++ generation
+  - paper already describes a CMU collaboration prototype for performance analysis
+    - annotations encode probabilistic execution estimates and environment details such as processor count
+    - discrete-event simulation checks possible timing overruns and queue overflows
+    - this is a stated prototype, not proof of present production support
+  - implication: generic architecture, environment, timing, and queue checks already overlap the proposed project
+    - compare current [language specification](https://nasa.github.io/fpp/fpp-spec.html) and this prototype before claiming a missing check
+  - reading limit: selected full syntax, tool pipeline, experience, and prototype discussion inspected
+    - simulator implementation and present capabilities not independently reproduced
+  - current [official specification, §5.13](https://nasa.github.io/fpp/fpp-spec.html) describes internal state machines
+    - documentation: “causes an implementation to be generated”
+    - static checks include initialization, reachability, transitions, and types
+    - [official guide, §10.3.4](https://nasa.github.io/fpp/fpp-users-guide.html) states “the handling of that signal is atomic”
+    - serialized queue handling still calls component-provided actions and guards
+    - documents are labeled unreleased after v3.4.0
+      - pin a released version before claiming supported behavior
+  - the 2022 absence of direct state-machine support is a historical limit
+  - separate full-method paper or artifact for the performance simulator remains unidentified
+    - distribution fitting, dependence assumptions, validation, and detection accuracy are unchecked
+- NASA Operational Simulator for Small Satellites, NOS3
+  - [official software catalog](https://software.nasa.gov/software/GSC-17737-1), overview
+  - “an open source software only test bed for small satellites”
+  - catalog describes Linux simulations intended to interface with NASA's Core Flight Software
+  - useful for controlled sensor and software experiments
+  - simulated fault response is evidence about the simulated configuration
+    - hardware timing, physical sensors, and flight qualification require separate evidence
+- R2U2 runtime monitoring
+  - [NASA tool overview](https://ntrs.nasa.gov/citations/20190026747), abstract
+  - “can monitor hardware, software, or a combination of the two”
+  - monitoring means checking requirements while the system runs
+  - later [aircraft neural-network integration](https://ntrs.nasa.gov/citations/20220002238) reports support for ROS, cFS/cFE, and Simulink
+    - these are software environments and tools used to connect or simulate components
+  - novelty obstacle: adding a general flight monitor is already an established approach
+  - [Johannsen et al., R2U2 Version 3.0, CAV 2023](https://link.springer.com/chapter/10.1007/978-3-031-37709-9_23), selected full methods in §§1–4
+    - authors: “we first need a validated set of runtime requirements”
+    - streams timestamped values through compiled temporal checks
+    - configurations can change with mission state or specification version without redeploying the engine
+    - optional three-valued contract reporting distinguishes an inactive assumption from a guarantee violation
+      - an inactive contract need not mean the deployment is defective
+      - without this option, an implication with a false assumption reports true
+    - software timing estimates use configurable operation-cycle costs
+      - architecture, compiler, and build affect runtime
+      - these estimates are not measured bounds under arbitrary interference
+    - fixed queues reflect temporal propagation delays
+    - FPGA resource estimates checked against three hardware models
+    - chapter does not evaluate held-out configuration changes that invalidate previously measured evidence
+    - reading limit: selected full publisher sections, without reproducing referenced proofs or case studies
+  - unanswered here: how deployment changes invalidate the assumptions underlying a particular monitor
+- FAA AC 20-193, January 2024
+  - [official advisory circular](https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_20-193.pdf), purpose and shared-resource discussion
+  - “an acceptable means of compliance”
+  - “do not have the force and effect of law”
+  - its subject is airborne equipment using multiple processor cores
+  - tasks on different cores can interfere through shared hardware even without explicit program connections
+  - guidance scope includes specified assurance levels and activated-core configurations
+    - this is a research starting point rather than a certification checklist for an arbitrary computer
+- VanderLeest and Thompson, Measuring the Impact of Interference Channels on Multicore Avionics, DASC 2020
+  - [author manuscript](https://arxiv.org/abs/2101.02204), abstract
+  - “uses interference generators to stress interference channels in multicore systems”
+  - method separates platform characterization from application timing under shared-resource stress
+  - novelty obstacle: running a memory stressor beside an avionics task is already prior work
+  - read-depth: full eight-page author manuscript, with attention to method assumptions
+  - a claimed execution-time bound depends on the stressor covering interference that real applications could produce
+    - the paper's discussion leaves interactions among multiple interference channels as further work
+  - connection to [CPU cache experiments](cpu_cache_optimization.md)
+    - distinguish observed slowest execution from a proven upper limit
+
+candidate A: detect invalidated assumptions after a flight-software configuration change
+
+- hypothesis: explicit assumptions about input ranges, queue capacity, timing, and startup order identify failures missed by ordinary component tests
+  - this is an agent proposal, not an established gap or a safety guarantee
+  - FPP's existing probabilistic performance prototype directly overlaps timing and queue checks
+  - narrower possible contribution: detect when a configuration change invalidates previously measured assumptions
+    - requires a concrete failure not already caught by existing modeling and simulation
+- initial subject: one open F Prime example with queued components
+  - record the version, component connections, queue sizes, and scheduling configuration
+  - select assumptions already stated in code, tests, or requirements
+  - introduce controlled changes to rates, delays, startup order, or input ranges
+  - make the expected failure observable before evaluating a checker
+- compare against existing FPP checks, component tests, integration tests, and a simple threshold monitor
+  - generic architecture checking is excluded from the novelty claim
+  - compare temporal checks with R2U2 before designing a replacement
+    - distinguish an intentionally inactive contract from a configuration change that invalidates earlier measurements
+    - report unavailable signals, stale mappings, interval changes, and inactive contracts separately from guarantee violations
+- measure failures detected, false alarms, time to diagnosis, monitor cost, and assumptions left unchecked
+  - use independently written mutations as a held-out test set
+  - a mutation is a deliberately introduced change
+- useful null: existing integration tests already detect all relevant mutations cheaply
+  - then document which tests carry each assumption
+  - stop building the checker unless a missing class remains
+- strongest possible contribution: evidence connecting configuration changes to specific invalidated assumptions
+  - no claim of flightworthiness from software-only experiments
+  - coordinate formal proof extensions with the [formal verification group](../../formal_verification_rust/)
+
+scientific writing: test understanding and unjustified confidence separately
+
+- Gopen and Swan, The Science of Scientific Writing, American Scientist 1990
+  - [human-linked full text](https://www.usenix.org/sites/default/files/gopen_and_swan_science_of_scientific_writing.pdf), concluding principles
+  - “None of these reader-expectation principles should be considered ‘rules.’”
+  - their examples place context early, emphasized material late, and actions in verbs
+  - this is an argument developed through worked revisions
+    - it is not a randomized demonstration that one sentence arrangement always improves understanding
+    - their approach clarifies specialist writing without necessarily removing technical terms
+- Plavén-Sigray, Matheson, Schiffler, and Thompson, eLife 2017
+  - [full paper and data](https://elifesciences.org/articles/27725), discussion and limitations
+  - “Changing a text solely to improve readability scores does not automatically make a text more understandable”
+  - study measures 709,577 abstracts from 123 journals, 1881–2015
+  - sentence and word formulas indicate a worsening trend in that corpus
+  - formulas omit meaning, argument structure, and several visual features
+  - implication: a writing tool should not optimize sentence length as its final outcome
+- Kerwer, Chasiotis, Stricker, Günther, and Rosman, Collabra: Psychology 2021
+  - [full paper](https://online.ucpress.edu/collabra/article/7/1/18898/116069/Straight-From-the-Scientist-s-Mouth-Plain-Language), abstract and experimental-design discussion
+  - “laypeople actually understood the corresponding information more correctly for plain language summaries”
+  - preregistered within-person study with 166 participants
+    - each participant encounters multiple summary conditions
+  - plain summaries also raised perceived credibility and confidence in decisions
+  - several properties changed between technical abstracts and plain summaries
+    - the experiment does not isolate subject–verb distance or jargon removal
+  - implication: higher confidence can accompany better understanding without proving justified confidence
+
+uncertainty comprehension already has experimental baselines
+
+- [Message Lab, JMIR 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC11962331/), full design, outcomes, and discussion
+  - authors: “3 to measure understanding of overall uncertainty”
+  - two randomized web-panel trials summarize one glasses/COVID experiment
+    - US and Norwegian adults who do not regularly wear glasses
+    - 730 and 497 randomized; 543 and 452 analyzed after eligibility and response-quality exclusions
+  - six summaries combine technical, plain, or no explicit uncertainty language with or without a margin of error
+  - four answer-keyed main outcomes test benefit uncertainty, harm uncertainty, evidence sufficiency, and statistical precision
+    - plain language improves evidence-sufficiency understanding relative to no explicit language
+    - margin-of-error displays help statistical interpretation only for a minority
+    - they also reduce correct understanding of overall certainty
+      - numerical precision and overall evidential confidence are distinct outcomes
+  - numerical displays also add another stated reason for low certainty
+    - translation changes and exclusions complicate comparisons
+  - implication: measuring correct understanding of evidential limits already exists
+    - this does not test transfer to unfamiliar computer configurations with identical caveat content
+  - reading limit: selected full methods and discussion inspected through NCBI full-text service
+    - supplementary stimuli and questionnaires not separately audited
+- [Communicating Uncertainty in Written Consumer Health Information, JMIR 2020](https://www.jmir.org/2020/8/e15899/), full design, measures, and results
+  - authors: “The outcomes were self-assessed”
+  - German adult web-panel participants read a hypothetical tinnitus-drug summary
+    - 1727 randomized; 1633 retained after response-quality exclusions
+  - eight versions vary certainty wording, uncertainty sources, and source count
+    - sources include population applicability, imprecision, and publication bias
+    - numerical effects and other summary content remain fixed
+  - main outcome is perceived effectiveness
+    - secondary outcomes include confidence, evidence quality, text quality, and intended choice
+    - these are not independently keyed tests of applying a caveat correctly
+  - wording and source-type variations show little effect on perceived effectiveness
+    - three sources modestly reduce perceived effectiveness compared with two
+    - no corresponding difference versus one source; no broad monotonic effect established
+  - implication: scope caveats and confidence measures already have direct prior work
+  - reading limit: selected full methods and results inspected through NCBI full-text service
+    - supplementary stimuli and sensitivity analyses not independently reproduced
+
+- Schwartz and Woloshin, [Communicating Uncertainties About Prescription Drugs, 2011](https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/1105910), methods and results
+  - authors: “The primary outcome was choice of the better drug”
+  - probability-based US panel: 2944 of 4316 invited adults participate
+  - two sequential randomizations compare no explanation, explanation, and explanation plus advice
+    - one contrast distinguishes a surrogate measurement from a patient outcome
+    - another distinguishes newly approved from established drugs
+    - stipulated costs, side effects, and applicable efficacy conditions are fixed
+  - explanations improve answer-keyed choices under those conditions
+    - these are hypothetical choices, not observed treatment behavior
+    - fixed question order and 2–5% item nonresponse remain limits
+  - implication: applying a stated evidence limitation to a decision already has an experimental precedent
+  - reading limit: selected full methods and results inspected
+    - supplementary screenshots not independently audited
+- Peoples, Milne, Luo, and Yan, [FACTS proposal, 2026](https://www.nature.com/articles/s41746-026-03160-w.pdf), page 2
+  - authors: “A concise summary of uncertainties and limitations”
+  - proposes reader-facing fields for claim, causal status, context, generalizability, limits, prohibited inference, and recommended interpretation
+  - commentary supplies an example rather than a reader experiment
+  - implication: putting explicit limits and possible misreadings beside a result already has a direct conceptual precedent
+    - a new label alone is insufficient evidence of originality
+  - reading limit: full commentary recovered; selected framing section inspected
+
+candidate B: can readers recover the limits of a systems result?
+
+- hypothesis: plain summaries with explicit assumptions improve readers' ability to identify where a reported result stops applying
+  - investigate systems researchers and graduate students first
+  - the claim is narrower than plain language being easier to read
+- prepare three versions of the same short result
+  - original-style technical summary
+  - plain wording preserving every claim and caveat
+  - plain wording with assumptions and limits placed next to the result
+  - keep claims, assumptions, caveats, and examples identical across versions
+    - vary wording and placement only
+- ask readers to choose valid applications and reject invalid ones
+  - allow insufficient-information answers when a case cannot be decided
+  - distinguish recalling a caveat from applying it to an unfamiliar case
+  - examples: performance on one workload versus all workloads
+  - example: testing one configuration versus proving a property for every configuration
+  - establish answer keys with source authors or independent specialists
+- measure accuracy, answer confidence, reading time, and mistaken generalizations
+  - measure confidence in correct versus incorrect answers separately
+  - counterbalance passages so a reader does not learn answers from another version of the same passage
+  - preserve length where possible and report remaining differences
+  - predefine the main outcome and sample-size calculation
+- compare with existing plain-summary and confidence studies
+  - generic plain-language benefits are already known
+  - compare FACTS-style limits and existing answer-keyed uncertainty tasks
+  - possible contribution: assumption-transfer accuracy on technical systems claims
+    - originality remains unconfirmed beyond the selected comparison papers
+- useful null: readers understand limits equally well in all versions
+  - or added labels improve confidence without improving answers
+  - neither result licenses deploying a persuasive writing tool as an accuracy tool
+
+research proposals and founder lessons: distinguish testable decisions from success stories
+
+- 🧑 WinCC notes, Tamim Ahmed
+  - “find application of thing you worked a lot on”
+  - “can reuse stuff; do not reinvent the wheel”
+  - source: [reading notes](../../../../reading_notes/index.md)
+  - these are recorded seminar lessons
+    - no public transcript or empirical evaluation was established here
+- 🧑 Steve Jobs, MIT Sloan speaker-series notes, 1992
+  - “attack operational productivity w/ software, not management”
+  - “all decision maker should buy into the decision”
+  - source: [reading notes and linked talk](../../../../reading_notes/index.md)
+  - these motivate questions about reuse and coordination
+    - one successful founder's recollection cannot establish which practices caused success
+- Camuffo and colleagues, Scientific Approach to Entrepreneurial Decision-Making, Strategic Management Journal 2024
+  - [author manuscript](https://iris.unibocconi.it/retrieve/a0e6e21c-f804-4dfe-8b56-4e39f7d7e25a/SMJ-CamuffoGambardella-2024.pdf), §§5–6
+  - “759 firms in four randomized control trials”
+  - “positive impact on idea termination”
+  - training taught participants to derive and test hypotheses and revise beliefs from evidence
+  - an important outcome is abandoning an idea
+    - more persistence is not automatically a better decision
+  - both groups received the same frameworks, evidence-gathering techniques, and number of sessions
+    - treatment taught explicit theory, derived hypotheses, tests, and belief revision
+    - instructors taught both groups and knew their assignments
+  - interviews collected project changes and revenues for up to sixteen months
+    - the London trial observed only nine months
+  - pooled estimate increases project termination by 9.8 percentage points
+    - termination is stopping a project within the observation window
+    - does not directly establish whether the stopped projects deserved to stop
+  - read-depth limit: full selected training, measurement, and outcome sections read
+    - appendix attrition procedures and trial-level data not checked
+    - transferring founder training to systems-research stop decisions remains a hypothesis
+- NSF merit review
+  - [official process](https://www.nsf.gov/funding/merit-review)
+  - “intellectual merit and broader impacts”
+  - these describe NSF evaluation criteria rather than a general success formula
+  - proposal preparation must also follow the actual solicitation
+- Pier and colleagues, Low Agreement Among Reviewers Evaluating the Same NIH Grant Applications, PNAS 2018
+  - [primary article record](https://pubmed.ncbi.nlm.nih.gov/29507248/), abstract
+  - “43 individual reviewers' ratings and written critiques” of “25 NIH grant applications”
+  - study examines agreement in a replicated review process
+  - [primary indexed methods and results](https://pmc.ncbi.nlm.nih.gov/articles/PMC5866547/)
+    - oncology applications only
+      - sixteen funded initially and nine funded after revision
+      - this is a narrow high-quality pool, not proposals across the full quality range
+    - analyzes 83 primary-reviewer preliminary ratings and critiques before panel discussion
+    - low agreement within this pool does not measure every stage of funding selection
+  - read-depth limit: indexed primary methods and results read
+    - direct full-page access blocked; supplementary analyses not read
+  - disagreement alone does not show that funding is useless or that random allocation is always better
+- Erosheva, Martinková, and Lee, [When Zero May Not Be Zero, JRSS A 2021 author deposit](https://hal.science/hal-03522263v1/file/ErosMartLee-JRSS-A-2021.pdf), §§2–5
+  - authors: “zero range-restricted IRR estimates should not be interpreted as indicating complete arbitrariness in peer review”
+  - reviewer agreement is estimated as between-proposal variation divided by total rating variation
+    - restricting proposals to similar scores can shrink that ratio without making all reviewers random
+    - few ratings per proposal can also produce a zero estimate when the underlying ratio is positive
+  - examines 72 AIBS applications with three reviewers each and 2076 randomly sampled NIH applications
+    - NIH sample covers specified racial groups and years, not every applicant population
+    - compares subsets across the observed score range
+  - inference: low agreement within highly rated proposals does not establish zero discrimination across the full quality range
+    - neither result identifies whether funding causes useful science
+  - reading limit: selected full datasets, model, range-restriction analysis, and discussion inspected
+    - raw scores, estimation code, and correction assumptions not independently reproduced
+- The Impact of Winning Funding on Researcher Productivity, Science and Public Policy 2024
+  - [primary paper](https://academic.oup.com/spp/article/51/6/1042/7729313), abstract and indexed limitations
+  - “no clear benefit to winning funding on multiple outcomes”
+  - “intervals for most estimates were wide”
+  - New Zealand's shortlisted Explorer grants were allocated by lottery
+  - comparison concerns that grant scheme and its measured outputs
+  - uncertainty allows meaningful positive or negative differences
+    - absence of a clear effect is not evidence of no effect
+  - indexed primary methods follow eighty-eight researchers for an average of 3.8 years
+    - annual publication counts are the primary outcome
+    - citations and Altmetric scores are additional outputs, not direct measurements of scientific usefulness
+    - repeated applicants can switch funding status
+      - follow-up stops at the next allocation and restarts for the new allocation
+  - read-depth limit: publisher-indexed passages; full page access failed
+
+candidate C: make research-project stop decisions reproducible
+
+- hypothesis: a short record of assumptions, cheapest discriminating experiment, and stop conditions reduces continuing projects after their premise fails
+- feasible initial study: retrospective reconstruction of open systems projects
+  - compare proposed performance assumptions with reported experiments and issue history
+  - annotate dates of adverse evidence and documented direction changes
+  - ask independent annotators whether the evidence really refutes the premise
+- an intervention requires consenting teams
+  - compare normal planning with a structured hypothesis record
+  - measure time to a justified stop or change, investigation cost, and useful surviving work
+  - do not score every stopped project as a success
+- novelty obstacle: hypothesis-driven entrepreneurial training already exists
+  - likely contribution would be a precise measure or a software research setting
+  - neither has been established as new by this review
+- useful null: the record only adds paperwork or rewards prematurely abandoning difficult work
+
+payment incentives: two different routes can fund rewards
+
+- 🧑 human note: “ordinary people pay for the benefit high-end card user get”
+  - this is a useful question, but the population and mechanism need specifying
+- Schuh, Shy, and Stavins, Who Gains and Who Loses from Credit Card Payments?, Boston Fed 2010
+  - [full primary paper](https://www.bostonfed.org/-/media/Documents/Workingpapers/PDF/ppdp1003.pdf), abstract and model
+  - “merchants generally do not set differential prices for card users”
+  - fees can then enter common retail prices paid by cash users and card users
+  - the paper models and calibrates transfers from cash-paying households to card-paying households
+  - income patterns depend on payment use, rewards, and pricing assumptions
+  - these are model-based estimates for their data and assumptions
+    - they are not direct observation that each particular purchase subsidizes a richer person
+- Agarwal, Presbitero, Silva, and Wix, Who Pays for Your Rewards?, Federal Reserve 2023
+  - [full primary paper](https://www.federalreserve.gov/econres/feds/files/2023007pap.pdf), introduction and data sections
+  - “our study focuses on the redistribution within credit card users”
+  - compares reward and classic cards across credit-score groups
+  - main sample uses March 2019 accounts at large reporting banks
+  - higher-score users tend to receive more favorable net rewards after interest and fees
+  - credit score is used as a proxy for financial sophistication
+    - it is not a direct measure of knowledge or a synonym for income
+  - the authors estimate rewards from reported account information
+    - nonmonetary benefits are outside their measurement
+  - implication: rich versus poor is an incomplete description of transfers among card users
+  - this does not negate the separate merchant-price route
+- Gathergood, Mahoney, Stewart, and Weber, American Economic Review 2019
+  - [primary abstract](https://swlb2.aeaweb.org/articles?id=10.1257%2Faer.20180288)
+  - “Balance matching captures more than half of the predictable variation in repayments”
+  - balance matching means spreading repayments according to balances instead of prioritizing the highest interest rate
+  - the study uses linked data on multiple cards
+  - observed repayment patterns motivate interface experiments
+    - they do not establish why every borrower behaves this way
+- Guttman-Kenney and colleagues, The Semblance of Success in Nudging Consumers to Pay Down Credit Card Debt
+  - [2025 journal article](https://pubs.aeaweb.org/doi/abs/10.1257/pol.20230568) and [working paper](https://www.nber.org/papers/w31926)
+  - “The nudge reduces manual payments by autopay enrollees”
+  - experiment changes how borrowers choose automatic payments
+  - implication: a larger automatic payment is not sufficient evidence of larger total repayment
+  - read-depth limit: primary abstracts and indexed passages
+- Chak and colleagues, Improving Household Debt Management with Robo-Advice, 2022 working paper
+  - [primary abstract and experiment registration link](https://www.nber.org/papers/w30616)
+  - “We find no evidence of learning from robo-advice”
+  - experiment with UK consumers improves assisted repayment choices on average
+  - subsequent unassisted choices barely improve
+  - computer help can improve an immediate answer without teaching the user the reasoning
+
+candidate D: evaluate a payment interface using whole-budget outcomes
+
+- hypothesis: showing total interest and payment substitution reduces interest without increasing missed minimums or cash-buffer violations
+  - compare against rewards-only displays and minimum-payment prompts
+- start with an incentivized simulated budget task
+  - compare interfaces while keeping balances, interest rates, and available cash identical
+  - include automatic payments, manual payments, missed minimums, and a cash-buffer requirement
+  - report assumptions about predictable income and fixed rates
+- measure total interest, liquidity shortfalls, total repayment, and later unassisted choices
+  - predefine total interest as the primary outcome and cash-buffer violations as a constraint
+  - comparing one displayed payment misses substitution
+  - real repayment impact requires a bank or regulator partner
+- generic debt advice and automatic-payment nudges already have strong prior work
+  - possible contribution: exposing substitution and liquidity tradeoffs together
+  - novelty remains unverified
+- useful null: an explanatory interface adds no benefit beyond a simple interest-minimizing plan
+  - or it improves repayment while increasing cash shortfalls
+- data-access constraint
+  - restricted account data used by the Federal Reserve paper are not a publicly reusable benchmark
+  - a public fee survey could describe charges but would not identify who ultimately bears them
+    - identifying price effects requires an appropriate change in fees and a comparison group
+
+organizational coordination: formal authority differs from effective control
+
+- Aghion and Tirole, Formal and Real Authority in Organizations, Journal of Political Economy 1997
+  - [primary abstract](https://www.journals.uchicago.edu/doi/10.1086/262063)
+  - “formal authority (the right to decide) and real authority (the effective control over decisions)”
+  - a theory of information, initiative, and decision rights
+  - it supplies a precise distinction for the human's political-delay note
+    - it is not evidence that a particular presidential order was intentionally obstructed
+  - [full primary model, §II](https://people.duke.edu/~qc2/BA532/1997%20JPE%20Aghion%20and%20Tirole.pdf)
+    - costly effort raises the probability of learning all project payoffs
+      - otherwise parties learn nothing
+    - uninformed parties prefer no project to choosing blindly
+    - informed superiors can override recommendations under retained formal authority
+    - hard information is costlessly verifiable; soft information is only a suggestion
+  - implication: signature or approval rights alone do not identify who shaped the decision
+    - the paper models information acquisition, not a causal test of real organizational delays
+  - read-depth limit: full model and selected authority arguments read
+    - proofs and empirical applications not independently checked
+- Garicano, Hierarchies and the Organization of Knowledge in Production, Journal of Political Economy 2000
+  - [primary abstract](https://www.journals.uchicago.edu/doi/10.1086/317671)
+  - “matching problems with those who know how to solve them is costly”
+  - models specialized knowledge and escalation of harder problems
+  - implication: some delay can arise from finding expertise rather than opposition
+  - [full primary model, §§II and VI](https://pdodds.w3.uvm.edu/files/papers/others/2000/garicano2000a.pdf)
+    - workers know the problem-frequency distribution
+    - asking consumes the helper's time even when the helper cannot solve the problem
+    - exact problems almost never recur in the model
+      - passing an answer does not teach a reusable solution there
+    - conclusions assume homogeneous workers and observable problem flow
+  - implication: reusable documentation and uncertain expertise change the modeled escalation problem
+  - read-depth limit: model and simplifying assumptions read
+    - proofs not independently checked
+- Cataldo, Herbsleb, and Carley, Socio-Technical Congruence, ESEM 2008
+  - [author manuscript](https://herbsleb.org/web-pubs/pdfs/cataldo-socio-2008.pdf), method and limitations
+  - “Our analysis examined only one system”
+  - “the study does not consider all forms of coordination”
+  - congruence here means matching observed coordination to dependencies among assigned tasks
+  - study covers 114 developers, eight teams, 39 months, and 2,375 multi-team change requests
+  - records include code changes, work tracking, and chat
+  - measured alignment is associated with shorter resolution time
+    - observational association does not prove that adding messages causes faster delivery
+    - absent recorded communication does not prove absent coordination
+- GAO, Managing for Results, 2018
+  - [primary audit](https://www.gao.gov/products/gao-18-609sp), recommendation for action plans
+  - asks plans to include “those responsible for leading implementation” and “time frames”
+  - gives concrete observable fields for studying implementation
+  - audit recommendations and open status do not establish motives for delays
+
+candidate E: distinguish waiting for information from waiting for approval
+
+- hypothesis: labeling a blocked software change by its missing input predicts delays better than counting comments or elapsed time alone
+- initial setting: public issue and pull-request records
+  - annotate explicit waits for review, permissions, upstream fixes, decisions, and missing information
+  - compare with dependency-based coordination and simple age or workload predictors
+  - keep time order intact so future comments cannot leak answers into prediction
+  - compare multiple projects and leave entire projects out of training
+- measure prediction accuracy, false escalation, annotation agreement, and time saved in a consenting team trial
+  - an accurate prediction alone does not establish that an intervention helps
+- novelty obstacle: dependency-aware coordination tools are an old research direction
+  - possible contribution is separating actionable reasons for waiting
+  - related issue-triage and process-analysis work needs a fuller search before claiming novelty
+- useful null: labels reproduce current workload or maintainer availability
+  - then workload measurement is the simpler explanation
+- political extension is a separate study
+  - public implementation milestones could describe timing
+  - attributing delay to deliberate resistance requires evidence of decisions, constraints, and competing explanations
+  - no such causal attribution is made here
+
+reading limits and next decisions
+
+- reviewed on 7 October 2026
+- full-text reading was concentrated on Gopen–Swan, scientific readability, plain-language comprehension, Cataldo's study, ESA's follow-up, FAA guidance, and the two reward-payment papers
+  - other records are explicitly marked where only abstracts or selected passages were read
+  - no exhaustive review of aviation certification, biology, organizational economics, or consumer finance is claimed
+- none of the five candidate contributions has an established novelty claim
+  - strongest next step: search the closest existing methods before implementing
+  - measure a narrow failure or decision first
+  - abandon the candidate when a simpler existing method covers it
+- consulting another model cannot replace primary evidence
+  - this page does not claim an Extra High consultation occurred
+
+cultural heritage, music, and food
+
+- [museum accessibility, historical reconstruction, piano transcription, and ingredient substitution](cultural_heritage_music_and_food.md)

@@ -1,0 +1,686 @@
+software complexity: how it is measured and what real code bases show
+(authored by agents unless marked 🧑)
+
+takeaway
+
+- 🧑 question: “how to avoid the monotonic growth of software complexity”
+  - source: [research notes](../../../index.md)
+  - this file: how complexity and its growth are measured, and what the data says
+  - causes and cures: [sibling file](software_complexity_causes_cures.md)
+- fact: size grows almost everywhere it was measured, but the shape differs
+  - Linux: faster than linear in the 1990s, about linear since 2.6
+  - whole collections (Debian, all public code): exponential, mostly because more projects exist
+  - one third of 1,519 Android apps shrank over their life
+- fact: per-function complexity in Linux and Unix did not grow; it fell
+  - mostly because many small functions were added
+  - so “complexity grows monotonically” is true for size, options and dependencies, not for the classic per-function scores
+- fact: most code-level scores add little once you know the size
+  - 121 scores failed to predict how well people understood code
+  - I think size plus a few structure counts is the honest baseline for any new score
+- fact: most installed code is not used, by every definition tried
+  - reported unused share runs from 20% to over 99%
+  - the definitions differ, so these numbers cannot be compared
+- fact: LLM agents add code faster; whether the code is worse per line is disputed
+  - best study so far: Cursor adoption gave +28.6% lines added, and about +9% complexity after controlling for code size
+  - agents rarely add new dependencies in the one study that checked: 1.3% of pull requests
+- opinion: the best openings are measurements nobody has redone or joined up
+  - Linux size, options and deletions for 2008 to 2026
+  - Rust dependency growth and its build cost since 2022
+  - which code properties make coding agents fail on later changes
+  - details in “research we can do”
+
+how to read the source entries
+
+- each source has a `read:` line
+  - full: whole text read by me or by a reading agent I started
+  - part: abstract, method, results and limits read, not every page
+  - abstract: abstract or landing page only
+- quotes are verbatim and were checked by program against the downloaded text
+  - exception: the 8 sources kept from the first version of this file, and Wirth (a scan)
+- “I” is the agent that wrote this file
+
+quantities to keep separate
+
+- size: amount of maintained code and supported behavior
+  - source lines, tokens, functions, dependencies and configuration options
+  - distinguish handwritten, generated, vendored and test code
+- dependency complexity: what must be considered together when making a change
+  - direct imports and calls
+  - indirect dependencies through other components
+  - shared state, schemas and compatibility rules
+  - files repeatedly changed together
+    - a historical association, not proof of a runtime dependency
+- cognitive difficulty: how hard one person finds one understanding task
+  - time to a correct explanation or prediction
+  - wrong answers and missed cases
+- maintenance cost: resources needed to complete a correct change
+  - implementation, validation and review time
+  - regressions and rework
+  - elapsed issue time includes waiting, so it is not engineering effort
+- technical debt: extra future cost blamed on a present decision
+  - warning counts and tool-estimated repair time are stand-ins for this cost
+  - I would call tool output “static-analysis findings” unless cost was checked separately
+
+part 1: do the scores measure anything beyond size?
+
+- Thomas J. McCabe, [A Complexity Measure, 1976](https://ics.uci.edu/~jajones/INF102-S18/readings/03_mccabe.pdf)
+  - read: full
+  - cyclomatic complexity: number of branches in a function plus one
+  - “complexity depends only on the decision structure of a program”
+  - says nothing about names, unfamiliar APIs or coordination between machines
+- Landman, Serebrenik, Bouwers, Vinju, [CC and SLOC in Java methods and C functions, JSEP 2016](https://ir.cwi.nl/pub/23938/)
+  - read: part
+    - summary, results on trimming, conclusion
+  - 17.6 million Java methods, 6.3 million C functions
+  - “linear correlation between SLOC and CC is only moderate”
+  - “CC summed over larger code units measures an aspect of system size rather than internal complexity of subroutines”
+  - best fit when trimming large functions: R² 0.60 for Java, 0.67 for C
+  - so a per-file or per-repository branch total is mostly a size count
+  - a [2017 corrigendum](https://doi.org/10.1002/smr.1914) exists
+    - still unread; the publisher blocked the download
+- El Emam, Benlarbi, Goel, [The Confounding Effect of Class Size on the Validity of Object-Oriented Metrics, 1999 report; TSE 2001](https://www.ehealthinformation.ca/web/default/files/wp-files/1062.pdf)
+  - read: part
+  - one large C++ telecom system; class scores against field faults
+  - “After controlling for size none of the metrics we studied were associated with fault-proneness anymore.”
+  - “future validation studies should always control for size”
+  - limit: one system; fault severity ignored
+- Chowdhury, Holmes, Zaidman, Kazman, [Revisiting the debate: are code metrics useful for measuring maintenance effort?, EMSE 2022](https://www.cs.ubc.ca/~rtholmes/papers/emse_2022_chowdhury_preprint.pdf)
+  - read: part
+  - about 730,000 Java methods, 47 projects
+  - outcome: how often a method later changes
+  - “the widely adopted size normalization approach fails to neutralize the size influence”
+  - “code metrics can in fact help estimate maintenance effort, such as change proneness, even when the confounding influence of size is eliminated”
+  - limit: “changes often” is not cost
+  - this is the main counterweight to El Emam
+- Scalabrino and colleagues, [Automatically Assessing Code Understandability, TSE 2019](https://www.cs.wm.edu/~denys/pubs/TSE'19-Understandability.pdf)
+  - read: part
+  - 444 human evaluations from 63 developers, 121 scores
+  - “none of the 121 experimented metrics is able to capture code understandability, not even the ones assumed to assess quality attributes apparently related, such as code readability and complexity”
+  - limit: short snippets
+- Peitek, Apel, Parnin, Brechmann, Siegmund, [Program Comprehension and Code Complexity Metrics: An fMRI Study, ICSE 2021](https://www.se.cs.uni-saarland.de/publications/docs/PAP+21.pdf)
+  - read: part
+  - 19 people reading short snippets in a brain scanner, more than 41 scores
+  - “a code's textual size drives programmers' attention, and vocabulary size burdens programmers' working memory”
+  - “there is no single metric that predicts the overall cognitive effort”
+- Muñoz Barón, Wyrich, Wagner, [An Empirical Validation of Cognitive Complexity, ESEM 2020](https://arxiv.org/pdf/2007.12520)
+  - read: full
+  - Cognitive Complexity: SonarSource's score that adds a penalty for nesting
+  - about 24,000 evaluations of 427 snippets from ten studies
+  - “Cognitive Complexity positively correlates with comprehension time and subjective ratings of understandability”
+  - correctness gave mixed results
+  - data: [Zenodo](https://zenodo.org/records/3949828)
+- Lavazza, Abualkishik, Liu, Morasca, [An empirical evaluation of Cognitive Complexity, JSS 2023](https://doi.org/10.1016/j.jss.2022.111561)
+  - read: abstract and publisher excerpts
+  - “the performance of models that use “Cognitive Complexity” is extremely close”
+    - compared with models using only older scores
+  - data: [Zenodo](https://zenodo.org/records/7327409)
+- Gopstein and colleagues, [Understanding Misunderstandings in Source Code, FSE 2017](https://ssl.engineering.nyu.edu/papers/gopstein_atoms_fse_2017.pdf)
+  - read: full
+  - tiny C patterns that people misread, such as assignment inside a condition
+  - “a significantly increased rate of misunderstanding versus equivalent code without the patterns”
+  - 73 participants on snippets, 43 on larger programs
+  - spelling out steps can help even when code gets longer
+- Sjøberg, Yamashita, Anda, Mockus, Dybå, [Quantifying the Effect of Code Smells on Maintenance Effort, TSE 2013](https://ieeexplore.ieee.org/document/6392174/)
+  - read: abstract
+  - six paid developers, three tasks, four equivalent Java systems, measured hours
+  - “None of the 12 investigated smells was significantly associated with increased effort”
+    - after adjusting for file size and number of changes
+  - rare: real effort, not a stand-in
+- Nagappan and Ball, [Use of Relative Code Churn Measures to Predict System Defect Density, ICSE 2005](https://www.microsoft.com/en-us/research/publication/use-of-relative-code-churn-measures-to-predict-system-defect-density/)
+  - read: abstract
+  - churn: lines added, deleted or changed
+  - “absolute measures of code churn are poor predictors of defect density”
+  - churn relative to component size works better; Windows Server 2003
+- Banker, Datar, Kemerer, Zweig, [Software Complexity and Maintenance Costs, 1990 working paper; CACM 1993](https://www.archive.org/download/softwarecomplexi90sloa/softwarecomplexi90sloa.pdf)
+  - read: part
+  - maintenance projects at one large COBOL site, real project cost
+  - high-complexity projects “cost approximately 35% more than similar projects dealing with less complex code”
+  - limit: 1980s, one site; size and branching mixed together
+  - still one of the few studies with money as the outcome
+- Besker, Martini, Bosch, [Software developer productivity loss due to technical debt, JSS 2019](https://research.chalmers.se/publication/511450/file/511450_Fulltext.pdf)
+  - read: abstract
+  - “developers waste, on average, 23% of their time due to TD”
+  - limit: 43 developers reporting their own time
+- Tornhill and Borg, [Code Red: The Business Impact of Code Quality, TechDebt 2022](https://arxiv.org/pdf/2203.04374)
+  - read: part
+  - 39 company code bases, 30,737 files, issue-tracker time per file
+  - “low quality code contains 15 times more defects than high quality code”
+  - limit: the authors work for CodeScene, which sells the score
+    - “Code Health is a proprietary metric that is automatically calculated in the CodeScene tool.”
+    - I did not find a size control
+- Baldwin, MacCormack, Rusnak, [Hidden Structure: Using Network Methods to Map System Architecture, Research Policy 2014](https://dash.harvard.edu/bitstream/handle/1/10646422/baldwin%2cmaccormack%2crusnak_hidden-structure.pdf?sequence=3)
+  - read: part
+  - 1,286 releases of 17 systems as file dependency graphs
+  - core: the largest group of files that all depend on each other, directly or indirectly
+  - “we find that the majority of releases possess a "core-periphery" structure”
+  - “open, distributed organizations develop systems with smaller Cores, while closed, co-located organizations develop systems with larger Cores”
+  - limit: describes structure, does not test cost
+- Mo, Cai, Kazman, Xiao, Feng, [Decoupling Level: A New Metric for Architectural Maintenance Complexity, ICSE 2016](https://www.cs.drexel.edu/~yc349/papers/2016/icse2016-DL.pdf)
+  - read: part
+  - 108 open source and 21 industrial projects
+  - “we still cannot reliably measure if one design is more maintainable than another”
+  - own limit: “the maintenance measures we proposed in Section 4 may not reflect the true maintenance effort”
+- Arif, Kuutila, Ralph, [Assessing the Construct Validity of Object-Oriented, Class-Level Code Quality Metrics, arXiv, September 2026](https://arxiv.org/pdf/2609.20411)
+  - read: abstract
+  - not peer reviewed
+  - “Ten metrics did not correspond to any known dimension of software quality and were removed in the exploratory analysis.”
+  - the remaining 24 scores group into 6 things: size, cohesion, coupling in, coupling out, and two about inheritance
+- Kudrjavets, Rastogi, Thomas, Nagappan, [On Quantifying the Benefits of Dead Code Removal, ICSME 2022](https://research.rug.nl/en/publications/on-quantifying-the-benefits-of-dead-code-removal)
+  - read: abstract
+  - one page; “However, not all LOC are equal”
+  - asks for a way to rank removal work; gives none
+- what I take from part 1
+  - any claim “X raises complexity” must show the effect per line of code or with size controlled
+  - scores for single functions say little about a whole system
+  - structure scores (core size, decoupling) are promising but were never tested against real effort in what I read
+  - real effort or money was measured only by Sjøberg 2013 and Banker 1993
+
+part 2: how real code bases grow
+
+- my own check: Linux release archive sizes on [kernel.org](https://cdn.kernel.org/pub/linux/kernel/), listed 7 October 2026
+  - read: full (directory listings; sizes rounded to MB by the server)
+  - `.tar.xz` size: 25 MB (2.6.0, Dec 2003), 61 MB (3.0, Jul 2011), 78 MB (4.0, Apr 2015), 100 MB (5.0, Mar 2019), 128 MB (6.0, Oct 2022), 153 MB (7.2, Aug 2026)
+  - about 5 to 8 MB added per year in every span since 2003
+  - 2011 to 2026: 2.5 times larger, about 6% per year
+  - so growth is about linear, never negative across these releases
+  - limit: compressed archive size is a rough stand-in for lines
+- Godfrey and Tu, [Evolution in Open Source Software: A Case Study, ICSM 2000](https://plg.uwaterloo.ca/~migod/papers/2000/icsm00.pdf)
+  - read: full
+  - 96 Linux versions, 1994 to 2000
+  - Linux has been “growing at a super-linear rate for several years”
+  - “more than half of the code consists of device drivers, which are relatively independent of each other”
+  - any compiled kernel is “likely to include only fifteen to fifty percent of the source files in the full source tree”
+  - so most of the growth is optional code a given user never builds
+- Israeli and Feitelson, [The Linux kernel as a case study in software evolution, JSS 2010](https://www.cse.huji.ac.il/~feit/papers/LinuxEvol10JSS.pdf)
+  - read: part
+  - 810 versions, 1994 to 2008
+  - growth is faster than linear up to 2.5, then “closer to linear” in 2.6
+  - median branches per function: “This was 4 in 1994, 3 from 1995 to the beginning of 2003, and 2 since then.”
+  - “the average complexity of functions is decreasing with time, but this is mainly due to the addition of many small functions.”
+  - configuration options “seem to be growing at an ever increasing rate.”
+- Robles, Amor, Gonzalez-Barahona, Herraiz, [Evolution and Growth in Large Libre Software Projects, IWPSE 2005](https://herraiz.org/papers/english/iwpse05.pdf)
+  - read: part
+  - 18 large open source projects
+  - “super-linearity occurs only exceptionally, that many of the systems follow a linear growth pattern and that smooth growth is not that common.”
+  - dips come from removed or restructured code
+    - the Evolution mail client shrank at least twice after heavy refactoring
+- Herraiz, Rodriguez, Robles, Gonzalez-Barahona, [The Evolution of the Laws of Software Evolution, ACM CSUR 2013](https://doi.org/10.1145/2543581.2543595)
+  - read: part
+  - a review of how Lehman's laws were tested
+  - on a study of 8,621 SourceForge projects: “around 40% of the projects showed a superlinear pattern, incompatible with the laws.”
+  - results depend on the level you measure: whole system, subsystem or file
+- Hatton, Spinellis, van Genuchten, [The long-term growth rate of evolving software, JSEP 2017](https://www.spinellis.gr/pubs/jrnl/2016-JSME-cagr/html/HSG17.pdf)
+  - read: part
+  - 2,118 projects, 404 million lines, 9 closed source systems
+  - “software source code in systems doubles about every 42 months on average, corresponding to a median compound annual growth rate (CAGR) of 1.21 ± 0.01.”
+  - “There was no evidence to suggest any obvious relationship between either project duration in years and CAGR, or project size in LOC and CAGR.”
+  - limit: one growth rate from first to last release hides the shape
+  - compare: Linux since 2011 grew about 6% per year by archive size, well under 21%
+- Gonzalez-Barahona, Robles, Michlmayr, Amor, German, [Macro-level software evolution: a case study of a large software compilation, EMSE 2009](https://www.cyrius.com/publications/barahona_et_al-macro_evolution.pdf)
+  - read: part
+  - Debian 2.0 to 4.0, 1998 to 2007
+  - “stable releases double in size (measured by number of packages or by lines of code) approximately every two years.”
+  - “the mean size of packages has remained almost constant”
+  - so Debian grew by adding packages, not by packages growing
+  - limit: six releases
+- Rousseau, Di Cosmo, Zacchiroli, [Software provenance tracking at the scale of public source code, EMSE 2020](https://arxiv.org/pdf/1906.08076)
+  - read: part
+  - all of Software Heritage: 4 billion distinct files, 1 billion commits
+  - “We find the growth rates to be exponential over a period of more than 40 years.”
+  - new distinct files double about every 22 months, new commits about every 30 months
+  - this counts how much code exists in public, not how big one system is
+- Dorner, Capraro, Barcomb, Wnuk, [Quo Vadis, Open Source? The Limits of Open Source Growth, arXiv 2022](https://arxiv.org/pdf/2008.07753)
+  - read: part
+  - 172,833 projects tracked by Open Hub
+  - “After an initial exponential growth, all measurements show a monotonic downwards trend since its peak in 2013.”
+  - limit: Open Hub is a hand-picked sample; half the projects had no activity data
+- Kuiter and colleagues, [How Configurable is the Linux Kernel? Analyzing Two Decades of Feature-Model History, TOSEM manuscript, 2025](https://raw.githubusercontent.com/SoftVarE-Group/Papers/main/2025/2025-TOSEM-Kuiter.pdf)
+  - read: part
+  - build options of Linux, 2002 to 2024, all processor families
+  - “The total number of features grows linearly over time for both extractors (r = 0.99, p < 0.001).”
+  - a typical release “adds 221 features” and “removes 69 features”
+  - about 20,000 options in September 2024
+  - a drop in 2018 came from removing several processor families
+  - the number of possible kernel builds grows exponentially
+- Lotufo and colleagues, [Evolution of the Linux Kernel Variability Model, SPLC 2010](https://gsd.uwaterloo.ca/sites/default/files/splc-2010-fm-evol.pdf)
+  - read: part
+  - x86 build options, 2.6.12 to 2.6.32
+  - 3,284 options grew to 6,319
+  - “the number of features had doubled, and still the structural complexity of the model remained roughly the same.”
+  - “removing features is a rare motive for edits.”
+- Bagherzadeh, Kahani, Bezemer, Hassan, Dingel, Cordy, [Analyzing a Decade of Linux System Calls, EMSE 2018](https://sail.cs.queensu.ca/data/pdfs/EMSE2017_AnalyzingADecadeOfLinuxSystemCalls.pdf)
+  - read: part
+  - 2005 to 2014
+  - “76 system calls were added to and 6 system calls were removed from the kernel”
+  - “40 out of 76 (53%) new system calls were sibling calls”
+    - sibling: a near copy of an old call that fixes its interface
+  - public interfaces pile up because old ones cannot be removed
+- Zhou, Chen, Mockus, Wu, [On the Scalability of Linux Kernel Maintainers' Work, FSE 2017](https://par.nsf.gov/servlets/purl/10063576)
+  - read: part
+  - 2009 to 2016
+  - “the number of files does not appear to be increasing for a median maintainer”
+  - “adding more maintainers to a file yields only a power of 1/2 increase in productivity”
+  - Linux held load per person flat by adding maintainers
+- Spinellis and Avgeriou, [Evolution of the Unix System Architecture: An Exploratory Case Study, TSE 2021](https://repository.tudelft.nl/file/File_597e2702-4dc7-463e-9523-a2b3dd486c4f)
+  - read: part
+  - Unix from 1970 to today's FreeBSD
+  - “the system's source code grew by three orders of magnitude, from 13 thousand to more than ten million lines of code.”
+  - “cyclomatic complexity has been religiously safeguarded.”
+  - per-function complexity rose steeply, then slowly fell
+- Nayebi, Kuznetsov, Chen, Zeller, Ruhe, [Anatomy of Functionality Deletion, MSR 2018](https://old.ruhe.cpsc.ucalgary.ca/downloads/publications/conference/MSR_2018_deletion%20(18).pdf)
+  - read: part
+  - 1,519 open source Android apps, 14,238 releases
+  - “98.8% of apps had decreased their size at least once over their lifetime.”
+  - “33.3% of apps even had a decreasing size trend over time”
+  - the clearest evidence that growth is a choice, at least for small apps
+- Azad, Laperdrix, Nikiforakis, [Less is More: Quantifying the Security Benefits of Debloating Web Applications, USENIX Security 2019](https://www.usenix.org/system/files/sec19-azad.pdf)
+  - read: part
+  - across the versions studied: “82% LLOC increase for phpMyAdmin, 99% for MediaWiki, and 171% for Magento”; WordPress went down 2%
+- Bijlani, Ramachandran, Campbell, [Where did my 256 GB go?, POMACS 2021](https://par.nsf.gov/servlets/purl/10298042)
+  - read: part
+  - Android apps, 2014 to 2019
+  - “average app size in each category grew at least by 50% in five years”
+- Prokhorenko and colleagues, [Analyzing the Evolution of Inter-package Dependencies in Operating Systems: A Case Study of Ubuntu, ECSA 2023](https://arxiv.org/pdf/2307.04458)
+  - read: part
+  - 84 Ubuntu images, 2005 to 2023
+  - “the live Ubuntu image size grew from 600MB (version 5.04) to 3.7GB (version 23.04)”
+  - “whereas the average total number of dependencies largely stays the same, developer-facing complexity tends to decrease over time”
+- HTTP Archive, [Web Almanac 2025, Page Weight](https://almanac.httparchive.org/en/2025/page-weight)
+  - read: part
+  - “Year over year, the median home page size grew 7.8% to 2.7 MB.”
+  - chart: mobile median 505 KB in October 2014, 2,559 KB in July 2025
+  - median mobile home page carries 632 KB of JavaScript
+  - the chapter text gives 2,362 KB in one place; I think that is a typo, the chart is consistent
+- Gerard Holzmann, [Code Inflation, IEEE Software 2015](https://spinroot.com/gerard/pdf/Code_Inflation.pdf)
+  - read: full
+  - opinion column with numbers
+  - the shell grew “From about 11K bytes in 5th Edition Unix in 1974, to 2.1M bytes for bash forty years later: an increase of 191 times.”
+  - “So, why does software grow with time? The answer seems to be: because it can.”
+- Niklaus Wirth, [A Plea for Lean Software, IEEE Computer 1995](https://cr.yp.to/bib/1995/wirth.pdf)
+  - read: part (scanned pages 1 to 4; quote typed from the scan)
+  - opinion
+  - “Software is getting slower more rapidly than hardware becomes faster.”
+- Ben Kero, [Trends in Mozilla's central codebase, blog, 2015](https://bke.ro/trends-in-mozillas-central-codebase/)
+  - read: full
+  - not peer reviewed
+  - “Firefox 5 is about 3.4 million lines of code while Firefox 35 is almost exactly 6.6 million lines”
+    - 2011 to 2015
+  - I found no peer-reviewed size series for any browser
+- what I take from part 2
+  - growth of one mature system looks linear, set by how many people work on it
+  - exponential numbers come from whole collections, where the count of projects grows
+  - what grows without limit is the set of things kept alive: options, drivers, system calls, packages
+  - removal happens (69 Linux options per release, a third of apps shrink) but is always smaller than addition in big systems
+  - per-function scores miss all of this
+
+part 3: dependencies and unused code
+
+growth of dependencies
+
+- Kikas, Gousios, Dumas, Pfahl, [Structure and Evolution of Package Dependency Networks, MSR 2017](https://pure.tudelft.nl/ws/files/41902509/ecosystems_evolution.pdf)
+  - read: part
+  - npm, RubyGems, and Rust projects on GitHub, to 2016
+  - transitive dependency: a package you get because something you use needs it
+  - “the number of transitive dependencies for JavaScript has grown 60% over the last year”
+  - mean transitive dependencies per project: JavaScript 54.6, Ruby 34.1, Rust 9.3
+- Decan, Mens, Grosjean, [An Empirical Comparison of Dependency Network Evolution in Seven Software Packaging Ecosystems, EMSE 2019](https://arxiv.org/pdf/1710.04936)
+  - read: part
+  - data to early 2017
+  - “We observe that Cargo and CPAN reveal a linear growth for both size metrics”
+  - npm and CRAN grew exponentially
+  - half the packages that have dependencies in Cargo, npm and NuGet “have at least 41, 21 and 27 transitive dependencies, respectively, where their median number of direct dependencies is only 2.”
+- Zimmermann, Staicu, Tenny, Pradel, [Small World with High Risks: A Study of Security Threats in the npm Ecosystem, USENIX Security 2019](https://arxiv.org/pdf/1902.09217)
+  - read: part
+  - “the number of transitive dependencies of an average package has increased to a staggering 80 in 2018”
+  - maintainers able to affect more than 10,000 packages: 59 in 2015, 391 in 2018
+- Schueller, Wachs, Servedio, Thurner, Loreto, [Evolving collaboration, dependencies, and use in the Rust Open Source Software ecosystem, Scientific Data 2022](https://doi.org/10.1038/s41597-022-01819-z)
+  - read: full
+  - a dataset, not an analysis: 91,437 crates, 5.6 million commits, to September 2022
+  - growth numbers are only in its figures and [data](https://doi.org/10.6084/m9.figshare.c.5983534.v1)
+- Li and colleagues, [Demystifying Compiler Unstable Feature Usage and Impacts in the Rust Ecosystem, ICSE 2024](https://arxiv.org/pdf/2310.17186)
+  - read: abstract
+  - “We have analyzed the whole Rust ecosystem with 590K package versions and 140M transitive dependencies.”
+  - useful as a method for resolving every dependency tree on crates.io
+- Arafat, [How Deep Does Your Dependency Tree Go?, arXiv, December 2025](https://arxiv.org/pdf/2512.14739)
+  - read: abstract and method
+  - one author, not peer reviewed, 50 popular packages per ecosystem
+  - Maven projects pull in 24.7 times their direct dependencies on average, npm 4.3 times
+
+how much is unused
+
+- Soto-Valero, Harrand, Monperrus, Baudry, [A Comprehensive Study of Bloated Dependencies in the Maven Ecosystem, EMSE 2021](https://arxiv.org/pdf/2001.07808)
+  - read: part
+  - 9,639 Java packages, 723,444 dependency relations
+  - “(75.1%) of all dependencies are bloated, they are not needed to compile and run the code.”
+  - 18 of 21 answered removal requests were merged
+- Drosos, Sotiropoulos, Spinellis, Mitropoulos, [Bloat beneath Python's Scales, FSE 2024](https://dimitro.gr/assets/pdf/DSSM24.pdf)
+  - read: part
+  - 1,302 Python projects
+  - “more than 50% of dependencies are bloated”
+  - “on average, 87% of the dependency source files are bloated.”
+  - 28 of 36 removal requests were merged
+- Jokūbauskas, [Investigating dependency code reuse using callgraphs, TU Delft MSc thesis](https://repository.tudelft.nl/file/File_62b11f83-5d2f-45ba-ba9c-f944a2765e23)
+  - read: part
+  - thesis, year not checked (around 2020), not peer reviewed
+  - all of crates.io
+  - “on average 91% of lines of code come from external dependencies”
+  - “in 95% of packages, 71% of their callgraphs are never used”
+  - the only whole-ecosystem Rust number I found; old and never repeated
+- Latendresse, Mujahid, Costa, Shihab, [Not All Dependencies are Equal, ASE 2022](https://arxiv.org/pdf/2207.14711)
+  - read: part
+  - 100 JavaScript projects
+  - “less than 1% of the installed dependencies are released to production”
+  - installed includes build and test tools, hence the tiny share
+- Liu, Tiwari, Bogdan, Baudry, [Detecting and removing bloated dependencies in CommonJS packages, arXiv 2024](https://arxiv.org/pdf/2405.17939)
+  - read: abstract
+  - 91 packages; 50.6% of 50,488 dependencies never loaded when tests run
+- Quach, Prakash, Yan, [Debloating Software through Piece-Wise Compilation and Loading, USENIX Security 2018](https://www.usenix.org/system/files/conference/usenixsecurity18/sec18-quach.pdf)
+  - read: part
+  - “only 5% of libc is used on average across the Ubuntu Desktop environment (2016 programs); the heaviest user, vlc media player, only needed 18%.”
+- Kurmus and colleagues, [Attack Surface Metrics and Automated Compile-Time OS Kernel Tailoring, NDSS 2013](https://www.ndss-symposium.org/wp-content/uploads/2017/09/03_2_0.pdf)
+  - read: part
+  - building Linux for one workload removes much of what an attacker can reach: the reduction “ranges from about 50% to 85%”
+- Kupoluyi and colleagues, [Muzeel: A Dynamic JavaScript Analyzer for Dead Code Elimination in Today's Web, arXiv 2021](https://arxiv.org/abs/2106.08948)
+  - read: abstract
+  - about 40,000 web pages
+  - “70% of JavaScript functions on the median page are unused”
+  - unused means not triggered by a bot's clicks
+- HTTP Archive, [Web Almanac 2024, JavaScript](https://almanac.httparchive.org/en/2024/javascript)
+  - read: part
+  - 206 KB, “44% of bytes delivered”, unused during page load on the median mobile page
+- Zhang and colleagues, [Machine Learning Systems are Bloated and Vulnerable, arXiv 2024](https://arxiv.org/pdf/2212.09437)
+  - read: abstract
+  - 15 container images
+  - “bloat accounts for up to 80% of machine learning container sizes”
+- Brown and colleagues, [A Broad Comparative Evaluation of Software Debloating Tools, USENIX Security 2024](https://www.usenix.org/system/files/usenixsecurity24-brown.pdf)
+  - read: part
+  - 10 removal tools on 20 programs
+  - “only 13% of our debloating attempts produced a sound and robust debloated program”
+  - automatic removal after the fact mostly fails on real programs
+
+what dependencies cost
+
+- Weeraddana and colleagues, [Dependency-Induced Waste in Continuous Integration, FSE 2024](https://rebels.cs.uwaterloo.ca/papers/fse2024_weeraddana.pdf)
+  - read: part
+  - 20,743 commits in 1,487 npm projects
+  - “55.88% of the CI build time that is associated with dependency updates is only triggered by unused dependencies”
+  - update bots cause most of it, “contributing 92.93% of the CI build time”
+  - the only paper I found that prices a dependency in time; it is machine time
+- Pashchenko, Plate, Ponta, Sabetta, Massacci, [Vulnerable Open Source Dependencies: Counting Those That Matter, ESEM 2018](https://arxiv.org/pdf/1808.09753)
+  - read: part
+  - 200 Java libraries used at SAP
+  - “about 20% of the dependencies affected by a known vulnerability are not deployed”
+- Bogart, Kästner, Herbsleb, Thung, [How to Break an API, FSE 2016](https://www.cs.cmu.edu/~ckaestne/pdf/fse16.pdf)
+  - read: part
+  - 28 interviews in Eclipse, npm and CRAN
+  - ecosystems differ in who pays for a breaking change
+    - “long-term stability is a key value of the Eclipse community: this shifts costs to the developers making the change”
+  - no hours measured
+- what I take from part 3
+  - dependency counts grew fast in npm; the data for Rust stops at 2017 for analysis and 2022 for raw data
+  - “unused” has at least five meanings
+    - not needed to build (Maven 75%)
+    - not reachable in the call graph (Python over 50%, Rust 71%)
+    - not loaded when tests run (JavaScript 51%)
+    - not shipped to production (JavaScript over 99%)
+    - not run in a page visit (web 44% of bytes, 70% of functions)
+  - nobody applied two definitions to the same projects
+  - cost in human hours is unmeasured
+
+part 4: LLM-written code
+
+studies of whole projects
+
+- He, Miller, Agarwal, Kästner, Vasilescu, [Speed at the Cost of Quality: How Cursor AI Increases Short-Term Velocity and Long-Term Complexity in Open-Source Projects, MSR 2026](https://arxiv.org/pdf/2511.04427)
+  - read: full (I read the main text, not the appendix)
+  - 806 GitHub projects that committed a Cursor rules file, 1,380 similar projects that did not
+  - method: compare each group's change before and after adoption, month by month, January 2024 to August 2025
+  - “Lines added increase by about 28.6% (Table 2). There is no statistically significant effect for the volume of commits.”
+  - “The only significant development velocity gain is in the first two months post Cursor adoption.”
+  - “static analysis warnings increase significantly by 30.3%, and code complexity increases by 41.6%. The effect on duplicate line density is insignificant.”
+    - complexity here is SonarQube's Cognitive Complexity summed over the code base
+  - size matters most: “increases in codebase size are a major determinant of increases in static analysis warnings and code complexity, and absorb most variance”
+  - after controlling for size, Cursor still gives “a 9% baseline increase” in complexity; the warning effect is no longer significant
+  - their second model: “A 100% increase in code complexity and static analysis warnings causes a 64.5% and 50.3% decrease in development velocity as measured by lines added”
+  - limits the authors state
+    - adoption is seen only through a committed file: “our sample represents repositories with observable Cursor adoption rather than all possible Cursor-adopting repositories”
+    - they do not know how much Cursor was used
+    - mostly TypeScript, Python and JavaScript
+  - limits I see
+    - the discussion says complexity rose 25.1% and cites the same table that says 41.6%
+    - velocity is lines added, so “complexity slows velocity” partly says big projects add proportionally less
+  - data: [Zenodo](https://doi.org/10.5281/zenodo.18368661)
+- GitClear, [Coding on Copilot, 2024](https://gwern.net/doc/ai/nn/transformer/gpt/codex/2024-harding.pdf)
+  - read: part
+  - vendor report, not peer reviewed, 153 million changed lines
+  - churn here: code “pushed to the repo, then subsequently reverted, removed or updated within 2 weeks”
+  - 2020 to 2023: moved lines 25.0% to 16.9%, copied lines 8.3% to 10.5%, churn 3.3% to 5.5%
+  - limit: no label says which code an LLM wrote; it is a trend over years
+  - its 2024 numbers are a projection, not data
+  - the [2025 report](https://www.gitclear.com/ai_assistant_code_quality_2025_research) says copied lines reached 12.3% in 2024
+    - read: landing page only
+- Daniotti, Wachs, Feng, Neffke, [Who is using AI to code?, Science 2026](https://arxiv.org/pdf/2506.08945v2)
+  - read: part
+  - a classifier guesses which Python functions on GitHub an LLM wrote
+  - “AI writes an estimated 29% of Python functions in the US”
+  - measures share and output, not quality
+- Mao and colleagues, [A Large-Scale Comprehensive Measurement of AI-Generated Code in Real-World Repositories, arXiv 2026](https://arxiv.org/pdf/2603.27130)
+  - read: part
+  - finds LLM code through comments that admit it
+  - “Human-written code shows substantially higher duplication rates than AI-generated code, mainly due to cross-file duplication rather than within-file clones.”
+  - LLM-involved code gets more follow-up changes later
+
+studies of agent pull requests
+
+- Li, Zhang, Hassan, [The Rise of AI Teammates in Software Engineering 3.0, arXiv 2025](https://arxiv.org/pdf/2507.15003)
+  - read: part
+  - the AIDev dataset; the [2026 version](https://arxiv.org/pdf/2602.09185) has 932,791 agent pull requests in 116,211 repositories
+  - most studies below use it
+- Huang and colleagues, [More Code, Less Reuse, MSR 2026](https://arxiv.org/pdf/2601.21276)
+  - read: part
+  - “While traditional metrics show minimal differences between agentic-PRs and human-PRs, redundancy metric analysis shows code in agentic-PRs contain significantly more redundancy”
+  - limit: the redundancy result uses 617 pull requests from one repository
+- Popescu and colleagues, [Investigating Autonomous Agent Contributions in the Wild, MSR 2026](https://arxiv.org/pdf/2604.00917)
+  - read: part
+  - about 110,000 pull requests; do lines survive 3 weeks?
+  - “the fraction of commits where all lines survived is consistently higher for humans than for any agent”
+  - the gap is small
+- Xia, Miller and colleagues, [Do These Violent Delights Have Violent Ends? Measuring the Post-Merge Fate of Agentic Code, arXiv, July 2026](https://arxiv.org/pdf/2607.09902)
+  - read: part
+  - 182 repositories, not peer reviewed
+  - “agentic code receives a 46% higher corrective maintenance rate and a 45% higher bug-fixing rate on average”
+  - worse where pull requests merge without review
+- Sawada and colleagues, [To What Extent Does Agent-generated Code Require Maintenance?, EASE 2026](https://arxiv.org/pdf/2605.06464)
+  - read: abstract and limits
+  - “AI-generated files receive less frequent maintenance than human-authored code”
+  - only 508 agent-written files
+- Horikawa and colleagues, [Do AI Agents Really Improve Code Readability?, MSR 2026](https://arxiv.org/pdf/2603.13723)
+  - read: abstract
+  - 403 agent commits that claim to improve readability
+  - “the Maintainability Index decreased in 56.1% of commits, while Cyclomatic Complexity increased in 42.7%”
+- Hasan, Rabbi, Zibran, [The Quiet Contributions, MSR 2026](https://arxiv.org/pdf/2601.21102)
+  - read: abstract and first result
+  - 4,762 agent pull requests merged without discussion
+  - 59.89% leave branch count unchanged, 36.88% raise it, “only 3.23% of the SPRs reduce complexity”
+- Twist and Zhang, [A Study of Library Usage in Agent-Authored Pull Requests, arXiv 2025](https://arxiv.org/pdf/2512.11589)
+  - read: abstract
+  - 26,760 pull requests
+  - “Agents often import libraries (29.5% of PRs) but rarely add entirely new dependencies (1.3% of PRs).”
+- Cotroneo, Improta, Liguori, [Human-Written vs. AI-Generated Code, ISSRE 2025](https://arxiv.org/pdf/2508.21634)
+  - read: part
+  - over 500,000 single functions written from a description
+  - “AI-generated code is generally simpler and more repetitive, yet more prone to unused constructs and hardcoded debugging”
+
+benchmarks with many changes in a row
+
+- Orlanski and colleagues, [SlopCodeBench, arXiv v2, May 2026](https://arxiv.org/pdf/2603.24755)
+  - read: part
+  - agents extend their own code over 196 checkpoints in 36 problems
+  - erosion: share of all branch count sitting in functions with more than 10 branches
+  - “structural erosion rising in 77% of trajectories and verbosity in 75.5%”
+  - “agent code is 2.3x more verbose and 2.0x more eroded”
+    - than human repositories
+  - “Explicit quality guidance reduces initial verbosity and erosion by up to a third, without affecting degradation rates.”
+  - limit: small made-up command-line tasks; human baseline is whole repositories of other sizes
+- Chen and colleagues, [SWE-CI, arXiv 2026](https://arxiv.org/pdf/2603.03823)
+  - read: part
+  - 100 tasks replaying months of real project history
+  - “most models achieve a zero-regression rate below 0.25”
+  - “all 20 LLMs underperform on MI score”
+    - MI: Maintainability Index, a formula from lines, branches and operator counts
+    - the paper never checks that MI means anything here
+- Deng and colleagues, [EvoClaw, ICML 2026](https://arxiv.org/abs/2603.13428)
+  - read: part
+  - replays sequences of real milestones
+  - scores drop “from >80% on isolated tasks to at most 38% in continuous settings”
+  - measures tests passed and broken, not code properties
+
+speed and delivery
+
+- METR, [Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity, arXiv 2025](https://arxiv.org/pdf/2507.09089)
+  - read: part
+  - 16 developers, 246 tasks in their own large projects, AI allowed or not at random
+  - “allowing AI actually increases completion time by 19%”
+- METR, [uplift update, blog, 24 February 2026](https://metr.org/blog/2026-02-24-uplift-update/)
+  - read: full
+  - later cohorts were 4% to 18% faster with AI, with wide error bars
+  - “our data is only very weak evidence for the size of this increase”
+  - many developers no longer submit tasks they would have to do without AI
+- DORA, [2024 report](https://services.google.com/fh/files/misc/2024_final_dora_report.pdf) and [2025 report](https://services.google.com/fh/files/misc/2025_state_of_ai_assisted_software_development.pdf)
+  - read: part (AI chapter of 2024; summary of 2025)
+  - industry surveys of self-reported numbers
+  - 2024: delivery stability falls by “an estimated 7.2% reduction for every 25% increase in AI adoption”
+  - 2025: throughput now improves, but “it still increases delivery instability.”
+- two more are covered in the [sibling file](software_complexity_causes_cures.md)
+  - Debt Behind the AI Boom: 22.7% of tool findings from AI commits still alive later
+  - Echoes of AI: 151 developers, no later slowdown from AI-written code
+- what I take from part 4
+  - agents add more code; that part is solid
+  - “worse per line” rests on one +9% number, tool warnings, and custom scores
+  - duplication results conflict: GitClear and Huang say more, Mao says less, He says no change
+  - maintenance results conflict: Xia says more fixes, Sawada says fewer changes
+  - no study follows a real code base under agents for more than about a year
+  - no study uses structure measures (core size, dependency graph) on agent code
+  - every “quality” outcome here is a score that part 1 says is weak
+
+where the sources disagree
+
+- shape of growth
+  - one system: linear (Robles, Israeli, Kuiter, my archive sizes)
+  - many systems pooled: exponential (Hatton, Debian, Software Heritage)
+  - I think both hold; the pooled numbers count new projects
+- is open source still growing?
+  - Software Heritage says exponential, Open Hub says decline since 2013
+  - different populations: everything public versus tracked team projects
+- is code ever removed?
+  - Lotufo: rarely; Kuiter: 69 options per release; Nayebi: a third of apps shrink
+- does a score add anything beyond size?
+  - no: El Emam, Scalabrino, Peitek
+  - yes, somewhat: Chowdhury, Landman, Muñoz Barón
+- how many options does Linux have?
+  - Kuiter counts about 20,000; an [LWN article](https://lwn.net/Articles/1034811) reportedly counts over 32,000 for one build target
+  - I only saw a summary of the LWN article and did not trace the difference
+- do dependency counts keep growing?
+  - npm: yes to 2018; Ubuntu binaries: flat over 18 years; Rust: unknown after 2017
+
+what nobody has measured
+
+- Linux lines, functions and per-function complexity after 2008, in a paper
+- code per feature over time
+  - Lotufo found constant lines per option over 5 years; nobody extended it
+- lines deleted as a share of lines added, per year, in mature systems
+- Rust dependency counts after 2022, and build time or binary size caused by dependencies
+- a dependency's cost in human hours
+- whether unused share per project rises over time
+  - every study is one snapshot
+- peer-reviewed build-time or browser size series
+- whole-project growth and structure under coding agents over years
+- whether any score predicts that a coding agent fails on the next change
+
+research we can do
+
+- 🧑 wants: “significant & popular, easy sell” and “easy to implement” ([research notes](../../../index.md))
+- 1. what makes code hard for agents to change?
+  - my pick for the best fit
+  - idea: the reader of code is now often an agent, so measure complexity by agent failure
+  - data: SWE-CI and EvoClaw replays, both public
+  - at each step compute size, branch counts, Cognitive Complexity, file coupling, core size
+  - test which ones predict that the agent breaks something in the next step
+  - baseline: size alone, as part 1 demands
+  - new because: benchmarks report scores next to failures but never link them
+  - nearest work: SWE-CI, SlopCodeBench, Scalabrino for humans, Complexity Backpressure (in the sibling file; I have not read its full paper)
+  - cost: compute only, no human subjects
+  - risk: size alone may explain everything; that is still a publishable negative result
+- 2. Rust dependency growth and what it costs
+  - data: the daily crates.io database dump, Schueller's dataset to 2022
+  - resolve the full tree for each release, 2015 to 2026; plot median and worst cases per year
+  - add build time and binary size caused by dependencies for the top 1,000 crates
+  - add wasted CI time from unused crates, repeating Weeraddana for Rust
+  - new because: Rust analysis stops in 2017, and nobody priced Rust dependencies
+  - nearest work: Decan 2019, Kikas 2017, the Delft thesis, Weeraddana 2024
+  - risk: Rust builds are cached and the linker drops dead code, so cost may be small
+- 3. Linux 2008 to 2026: lines, options, system calls, deletions
+  - data: the kernel git history
+  - redo Israeli and Feitelson, then add two new things
+    - lines per option and per system call over time
+    - lines deleted over lines added per release, and what got deleted
+  - new because: last full measurement ended in 2008
+  - nearest work: Israeli and Feitelson 2010, Kuiter 2025 for options
+  - risk: reviewers may call it a replication; the deletion and per-feature parts must carry it
+- 4. one set of projects, five meanings of “unused”
+  - take 200 projects in one language and apply all five definitions from part 3
+  - shows how much of the 20% to 99% spread is definition and how much is real
+  - nearest work: each definition has its own paper, none compares
+  - risk: tooling for five analyses in one language; JavaScript or Java is the practical choice
+- 5. agent adoption and whole-project structure
+  - data: AIDev repositories and He's Cursor dataset
+  - monthly snapshots: lines, deletion share, dependency graph, core size
+  - compare before and after adoption against matched projects, always per line
+  - new because: nobody used structure measures or deletion share on agent code
+  - nearest work: He 2026, Popescu 2026, Xia 2026, Baldwin 2014
+  - risk: crowded area; several MSR 2026 papers and a planned study by Coppola are close
+- 6. scripts and bundled packages per web page, 2016 to 2026
+  - data: HTTP Archive monthly crawls
+  - count script sources, bundled packages and unused bytes per page over time
+  - nearest work: Web Almanac (bytes only), Swierzy 2025 (update speed), Lauinger 2017 (one snapshot)
+  - risk: the crawl's site sample changed over the years
+- I would not build a new complexity score first
+  - part 1 shows new scores rarely beat size
+  - the sibling file's plan, measuring whether removal makes later changes cheaper, fits with idea 1
+
+advice for any of these studies
+
+- outcome first: correct completion of a later change, by a person or an agent
+  - define correct before running
+  - count failures and timeouts, not only time
+- always report size next to any score
+  - totals, distributions and the worst components, not only averages
+  - averages fall when many small functions are added
+- separate prediction from cause
+  - prediction: train on some projects, test on others, compare against size alone
+  - cause: assign the treatment at random when possible; otherwise matched projects, before and after
+- count units honestly
+  - functions in one project are not independent projects
+- traps
+  - lower function scores by splitting functions, with no gain in later work
+  - a warning that vanishes because the file was deleted or the rule changed
+  - tests that pass because removed behavior was never tested
+  - keeping only attempts that passed
+  - a “human” baseline that used unmarked AI help
+  - newer code had less time to be fixed or removed; compare equal time windows
+
+coverage
+
+- researched 7 October 2026 UTC
+- 80 sources with a `read:` line
+  - 10 read in full: McCabe, Muñoz Barón, Gopstein, He, Godfrey, Holzmann, Schueller, Kero's blog, METR's 2026 blog, the kernel.org listings
+  - 54 read in part, 16 abstract only
+- three reading agents did most of the reading; I read He and the Landman results myself and rechecked 80 quotes by program
+- wanted but not obtained
+  - Potvin and Levenberg on Google's repository; Koch on SourceForge growth
+  - Gil and Lalouche 2017 and Fenton and Neil 1999 on size and score validity
+  - Hassan 2009 on change entropy; MacCormack and Sturtevant 2016 on coupling and defects
+  - Abdalkareem 2017 on trivial npm packages; Kuo 2020 on kernel debloating
+  - the GitClear 2025 report itself; the Landman corrigendum
+- not a systematic review
+- ChatGPT was not consulted for this file; the tool needed a sign-in

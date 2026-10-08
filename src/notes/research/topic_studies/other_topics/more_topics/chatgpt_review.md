@@ -1,0 +1,53 @@
+cross-topic consultation record
+(authored by agents unless marked 🧑)
+
+- human request
+    - 🧑 “Also consult ChatGPT for opinions after turning it to Extra High”
+    - source: research-study email excerpt supplied with this task
+- status on 7 October 2026 UTC
+    - the helper verified Extra High and submitted the theory/coverage and security consultations
+    - no complete answer was captured
+    - resumed polling returned “account_ui_retry_required”
+        - source: local helper diagnostic `coverage-theory-resumed.md.private.json`
+    - another cross-topic attempt failed before submission
+        - a fresh attempt returned “account_ui_login_required”
+        - source: local helper diagnostic `rt_other_sweep_fresh_consultation_answer.md.private.json`
+- no research choice in the 7 October snapshot was attributed to a ChatGPT answer
+    - independent agents reviewed completed studies separately
+    - review does not establish novelty or reproduce published experiments
+- recovery on 8 October 2026
+    - a saved-background consultation completed with GPT-6.1 Sol and Extra High
+    - [saved conversation](https://chatgpt.com/c/6ac7be0e-3cc8-8327-8e81-b753829f7fff)
+    - local helper record: `rt_other_completion_consultation_answer.md.private.json`
+        - recorded model `gpt-6.1-sol`, effort `Extra High`, and status `complete`
+        - the answer's inability to inspect its UI does not replace the helper's setting check
+    - local prompt: `rt_other_completion_consultation.md`
+    - local unedited captured answer: `rt_other_completion_consultation_answer.md`
+- scope of the successful consultation
+    - selected proposals from the inherited AI-agent, systems-ML, web-trust, and residual-topic studies
+    - adviser: ChatGPT
+    - exact shortlist: “browser replay, genomic resume correctness, and checked distributed inference”
+    - exact scope limit: “not an exhaustive review of the seventy drafts”
+    - ranking is an opinion; no pilot was run
+- agent assessment
+    - retain browser replay as a cheap contract-screening candidate
+        - inspect whether the method supports writes before testing backend-state divergence
+    - retain genomic resume as a conditional scientific-systems pilot
+        - compare strong cache settings and existing biological-output assertions
+        - answer-level validation alone cannot establish novelty
+    - narrow inference to a specified distributed-state guarantee
+        - TBIK already demonstrates tested cross-TP reproducibility
+        - Vosti supplies a narrower engine proof and names multi-GPU obligations
+    - mathematical integration remains conditional on a precision-policy gap beyond existing adaptive methods
+- checked follow-ups
+    - independent source review corrected TBIK coverage, GPU requirements, Vosti attribution, and passing-test dismissal
+    - [systems group](../systems_ml/index.md) records the narrowed experiments and nearest priors
+    - [AI-agent group](../ai_agents/index.md) records browser, recovery, memory, and monitoring limits
+    - [web-trust group](../web_trust/index.md) records its intervention and campaign reviews
+    - selected full methods independently inspected for nf-test, Romano dead-code trials, CodeThread, Demanded Summarization, and ECOOP cache/invariant reuse
+        - semantic workflow assertions, timed maintenance comparisons, sequential tasks, and sound incremental reuse already exist
+        - the detailed studies narrow claims to particular policies, checked relationships, and failure cases
+    - other suggested leads remain unadopted unless individually checked
+- evidence limits
+    - selected source checks and independent reviews do not certify the entire field or proposal novelty
+    - no published experiment was independently reproduced during this sweep

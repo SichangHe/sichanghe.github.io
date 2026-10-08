@@ -1,0 +1,455 @@
+# signed photos and content provenance: what broke in 2025–2026, and what to research
+(authored by agents unless marked 🧑)
+
+read this first
+- this extends your [photo crypto auth notes](../../../photo_crypto_auth.md) and the [c2pa folder](../../../c2pa/papers.md), both from Dec 2024
+- short version of what happened since
+    1. C2PA shipped on phones and cameras, then got broken in public
+        - Pixel 10 signs every photo in hardware (Sep 2025); a rooted Pixel can still make the chip sign any file (Aug 2026); Google: "Won't Fix (Infeasible)"
+        - Nikon Z6 III shipped C2PA (Aug 2025), a hobbyist signed an AI image with it, Nikon revoked every certificate and suspended the service
+        - a university team did the first formal analysis and says "it should not yet be relied upon for high-stakes uses"
+    2. the "photo of a photo" question you marked ❗ now has a real literature, and it is an arms race
+        - attack (Chimera, USENIX Sec 2025) → depth defense (Scoop, USENIX Sec 2025) → $210 optical attack (WOOT 2026) → dual-pixel defense (lab only)
+    3. almost nothing on the web carries C2PA: 27 of 6,580 news images in Oct 2026, none from a camera; platforms strip it
+    4. proving edits in zero knowledge went from a server with 120 GB RAM to a laptop in 6.6 min; still trusts the camera
+- my top three research ideas, details under "research ideas" below
+    1. a differential tester for C2PA validators: feed the same crafted files to every validator, reproduce known disagreements, then test for new failures under matched specification and trust settings
+    2. an evidence package that keeps a signed photo verifiable for 10 years: trusted timestamps already permit validation after certificate expiry; measure missing archival evidence and policy changes
+    3. a repeatable platform and CDN audit of what survives upload; the only numbers are one-off tests by journalists and a 59-upload preprint
+- fact vs opinion
+    - cards quote the sources verbatim; "what it shows" lines are my plain reading
+    - the ideas and rankings are my opinion
+    - papers from 2025–2026 are the ones you most likely have not seen; your notes already cover most of 2023–2024
+
+what changed since your notes
+- phones and cameras
+    - Google Pixel 10 (Sep 2025): keys in the Titan M2 chip, one certificate per photo, "Pixel maintains a trusted clock in a secure environment ... to generate its own cryptographically-signed time-stamps" ([Google security blog](https://security.googleblog.com/2025/09/pixel-android-trusted-images-c2pa-content-credentials.html))
+        - the only product at C2PA "Assurance Level 2" for a phone app, per Krawetz
+    - Samsung Galaxy S25 and S26 Ultra: C2PA on Galaxy AI edits only ([c2paviewer device list](https://c2paviewer.com/supported-devices), secondary)
+    - Apple: announced "Apple Reference Image" with iPhone 18 Pro and iOS 27 (Sep 2026), proprietary, not C2PA; signs "raw pixel data at the camera sensor", opt-in per shot ([MacRumors](https://www.macrumors.com/2026/08/10/ios-27-apple-reference-image/), news)
+    - Nikon Z6 III: C2PA firmware Aug 2025, suspended Sep 2025, all certificates revoked; still suspended early 2026 ([PetaPixel](https://petapixel.com/2025/09/22/nikon-cant-fully-solve-the-z6-iiis-c2pa-problems-alone/), news)
+    - Sony, Leica, Canon: Leica M11-P and SL3-S, several Sony bodies, Canon "still developing" (secondary sources, not verified by me)
+- governance
+    - C2PA Conformance Program launched 2025; two assurance levels; signing certificates last at most 366 days (level 1) or 90 days (level 2); details in the conformance card under "trusting a signature for years"
+    - EU AI Act Article 50 and an EU Code of Practice on AI transparency drive AI-labeling; platform audits below show labeling reaches a minority of fakes
+- your platform notes need updates
+    - X still strips everything: "Twitter's CDN strips all embedded metadata on upload" (Zewde 2026)
+    - TikTok reads C2PA and writes its own AI label into downloads; YouTube reads C2PA and showed a "captured with a camera" box that Buchanan forged
+    - LinkedIn still shows the icon; Meta reads only the "AI generated" signal
+    - Cloudflare Images can keep and extend manifests on resize (opt-in per zone)
+
+answers to your open questions
+- "Taking photo of photo ... Literatures? ... Bad search term"
+    - search terms that work: "recapture attack", "rebroadcast attack", "screen recapture", "moiré"
+    - state: image-only detectors reach 97–99% on fixed datasets but a trained attacker drops them to near zero (Farid 2018, Chimera 2025); phone depth sensors catch TV recaptures (Scoop, 94.81% on iPhone) but a hot mirror plus a cardboard cutout beats that 100% (WOOT 2026); next defense (dual-pixel sensors) is lab-only
+    - Apple and Samsung "responded that recapture detection via Scoop is not a security feature of their products"
+    - your RGBD idea: already built (Scoop) and already broken; the open gap is a defense that works inside a signing pipeline and a benchmark that counts false alarms on honest flat scenes (murals, documents)
+- "PKI: long term verification support? Literatures? Trusting signed document long term"
+    - mechanisms exist and are old: RFC 3161 timestamps, RFC 4998 evidence records with renewal, RFC 9921 (Feb 2026) for putting a timestamp on a COSE signature, OpenTimestamps and transparency logs for an independent witness
+    - C2PA practice: a timestamp lets a 90-day certificate stay valid, but the timestamp covers only the signature bytes, exclusion ranges can empty the hash, and validators need not check revocation
+    - measured problem: "some C2PA-signed media have already become unverifiable—sometimes within months" (Golaszewski et al.); an Arizona pilot image "validated in January 2025, but fails to validate a year later"
+    - the archival-measurement gap remains unconfirmed; this is idea 2 under "research ideas"
+- "Removing metadata rids hard binding. Soft binding improvements?"
+    - C2PA's plan: watermark carries an ID, a manifest store returns the manifest, a fingerprint checks the match (CAI "Durable Content Credentials", 2024, no evaluation)
+    - evidence for: one 2026 paper found a Meta watermark survived JPEG, crop and screenshot-like degrading with bit accuracy ≥0.902 (Nemecek 2026)
+    - evidence against: MarkNull (USENIX Sec 2026) pushes watermark bit accuracy to 53.14% and beats SynthID-Image on 20 images; Fairoze et al. prove a robust, unforgeable, publicly checkable watermark needs "a leap in deep learning capabilities"
+    - Microsoft Research: fingerprinting "is not a viable path to high-confidence validation and faces significant scaling costs"
+    - nobody has tested the whole recovery loop (strip → watermark → store → match) end to end on real platform pipelines; part of idea 3 under "research ideas"
+- "build open-source solution for mobile?" and "PKI: get certificate? scaling? revocation?"
+    - the design is now public (Google): key in StrongBox, Android Key Attestation at enrollment, a CA issues one certificate per photo, no account, on-device trusted clock
+    - the cost side you worried about is gone: Google's CA charges nothing and ProofMode is GPL; Truepic pricing is irrelevant now
+    - the hard part is not cost, it is meaning: "an attacker does not need the raw key material! As root, they can ask StrongBox to use these keys to sign whatever data they like" (Buchanan); all Android C2PA camera apps he checked are "broken in the same way"
+    - Microsoft Research agrees in principle: "available protections to stop a key being used by an unauthorized application are very limited"
+    - revocation versus privacy is unsolved: one certificate per photo means you cannot revoke a compromised device without revoking every real Pixel photo (Krawetz)
+    - my take: an open-source phone signer is cheap to build and would be no worse than Pixel Camera, but a paper needs a claim beyond "we built it"; the candidate claim is a privacy-preserving revocation handle, or binding the signature to sensor data via the OS camera HAL, which Buchanan says needs "completely rearchitecting the software stack"
+- "influencer have posted genuine photo but for irrelevant event" and Ardi & Madhyastha
+    - their PDF is a 3-page proposal (created Sep 2024, no venue, nothing evaluated); it assumes "every photo and video" will carry signed time and place
+    - the vision side has datasets and models (NewsCLIPpings 2021, COSMOS 2021, COVE at NAACL 2025) that use pixels and text only, no signed metadata
+    - the signed-metadata premise is weaker than in 2024: Pixel 10 puts EXIF and GPS in an exclusion range, "enabling an attacker to insert a false GPS location" (Golaszewski et al.); Scoop notes GPS "vulnerable to spoofing through low-cost tools"
+    - still unbuilt; see idea 5 under "research ideas"
+- "Camera private key leak"
+    - happened in practice without a leak: Nikon multiple-exposure trick, Pixel rooted signing; the key stays in hardware, the signing path is abused
+    - validators mostly ignore revocation, and a timestamp can "un-revoke" a certificate, so a stolen key plus backdating is the open attack (Krawetz; SEAL review by UMBC)
+
+research ideas
+- 1. differential testing of C2PA validators (strongest, my opinion)
+    - claim: "the same file gets different verdicts from different conforming validators, here are N classes of disagreement, and M of them let a forged or edited file pass"
+    - why it sells: Golaszewski et al. found validator inconsistency by hand and call for "Mandate consistency across validation tools"; Buchanan's empty-hash file passed "all the C2PA verification tools I can find"; CVE-2026-34668 is a parser crash in c2pa-rs; the official public test files are an additional baseline; broader automated testing coverage is unconfirmed
+    - build: a generator of mutated manifests (exclusion ranges, timestamp payloads, revoked and expired certificates, trust-list choice, multiple claims, redactions); run c2pa-rs, c2pa-web, Adobe Inspect, CAI Verify, Truepic, Verifieddit, Google Photos, YouTube; cluster the disagreements
+    - baseline to beat: UMBC's manual tests and the public test-file set
+    - risk: web validators rate-limit or change; mitigate by local libraries plus a small browser harness
+    - venue: USENIX Security or CCS; also IMC if framed as measurement
+    - your fit: it is a systems and testing project, no vision, no crypto
+- 2. long-lived evidence for signed photos
+    - claim: "a signed photo verified today fails in T months under policy P, and this package of K bytes keeps it verifiable for 10 years across validators"
+    - why it sells: 90-day certificates, "unverifiable—sometimes within months", "16 of 22" TSA certificates without revocation (Krawetz), timestamps that un-expire keys, no validator agreement; archives and courts are a real customer (CITP newsroom guide, Krawetz's court post)
+    - build: an archiver that stores bytes, manifest, chain, OCSP responses, RFC 3161 token, an OpenTimestamps or transparency-log receipt, the trust list snapshot; a replay harness that advances the clock and rotates trust lists; RFC 4998 renewal
+    - measure: which validators change verdicts and when; storage and renewal cost; share of real C2PA files in the wild that already fail
+    - baseline: ETSI long-term signature profiles (CAdES/PAdES) and RFC 4998, which solve this for documents but are not wired to C2PA
+    - risk: it may turn out that "just add an RFC 3161 token and a log receipt" is enough; then the paper is a measurement of how much of the deployed base lacks it, still publishable
+    - venue: USENIX Security, or a systems venue if the archive design is the contribution
+- 3. a repeatable upload audit: what survives each platform and CDN
+    - claim: "across P platforms and C CDNs, hard binding survives in x%, the AI label in y%, soft-binding recovery works in z%, and here is a monthly dashboard"
+    - why it sells: the only numbers are the Washington Post test, Indicator's 516-post audit (30% labeled), Rijsbosch's 59 uploads (61%), Metawatch's lead-photo crawl; nobody tests the recovery loop
+    - build: sign test images with a camera (Pixel 10), an AI tool and your own signer; embed TrustMark or Video Seal; upload to Instagram, TikTok, X, YouTube, LinkedIn, Bluesky, Mastodon, Telegram, WhatsApp; download; check manifest, watermark, fingerprint match against a local manifest store
+    - risk: terms of service and account bans; use few accounts and public posts
+    - venue: IMC, WWW, or CSCW if paired with the label-display question
+    - overlaps with the sibling web measurement group; coordinate
+- 4. sensor-bound signing on a phone: what would it take
+    - claim: "an Android camera HAL extension can bind a signature to sensor frames so a rooted OS cannot sign arbitrary files, at cost X ms and Y mW"
+    - why it sells: Google calls the fix infeasible; Microsoft Research says enclaves are "essential"; ProvCam shows a full custom module costs 53.8M transistors and under 1 W, but no one has tried the cheaper middle (TEE-side frame hashing in the camera HAL, or a dual-pixel depth check inside the TEE)
+    - build: on a dev board with an open camera stack (or an AOSP phone with a GKI kernel and a Trusty TA), hash frames in the TEE before the ISP hands them to Android; sign in StrongBox over that hash
+    - risk: hardware access and vendor blobs; may only work on a dev kit, which reviewers may accept as a feasibility study
+    - venue: MobiSys, MobiCom, or USENIX Security
+    - this is the open-source mobile signer you wanted, with a claim attached
+- 5. caption-versus-capture contradictions with private predicates (Ardi & Madhyastha, built)
+    - claim: "signed capture time and place reject x% of fact-checked wrong-context posts with y% false alarms, while disclosing only interval membership"
+    - build: corpus from fact-checker archives (place, time of the real photo), caption parser (LLM), predicate check on intervals; compare against COVE and NewsCLIPpings-style models; optional zero-knowledge interval proofs later
+    - risk: the premise needs signed, protected time and place, which Pixel 10 does not give; the honest paper measures the gap and says what metadata must be inside the hash
+    - venue: WWW, ICWSM, or CSCW
+- 6. revocation that keeps per-photo privacy
+    - claim: "a device can be revoked without linking its photos, using group signatures or a per-device blinded handle in the certificate, at cost X"
+    - why: Krawetz shows the dilemma on Pixel; VerITAS slides list "Privacy → group signatures" as open; ProvCam says DAA "might not be ideal"
+    - risk: it is crypto design, outside your stated strengths; reviewers at S&P would want proofs
+- ideas I would skip
+    - a new recapture detector from images alone: Farid 2018 and Chimera show it is a losing loop, and vendors say it is not a security feature
+    - blockchain-anchored C2PA: covered by Bureacă 2024, Numbers, Nodle; a log receipt (SCITT, OpenTimestamps) gives the same guarantee without the baggage
+    - another user study on labels: four already exist (Feng 2023, Trattner 2026, Höltervennhoff 2026, Pawelczyk 2026, Koech 2026), all agree labels help and create over-reliance
+
+literature cards: attacks on deployed C2PA
+- Golaszewski, Krawetz, Sherman, Zieglar, Matukumalli, Yus, Kegley, Barthel, Bowman, Barot, Kullman, "Verifying Provenance of Digital Media: Why the C2PA Specifications Fall Short", arXiv 2604.24890, Apr 2026; long version "Security Analysis of C2PA and its Implementation", IACR ePrint 2026/804, revised Jun 2026
+    - label: preprint (UMBC with NSA co-authors); no venue found
+    - "Our study includes the first formal-methods analysis of C2PA's core protocols. We find that the current C2PA specifications fail to achieve their claimed security goals."
+    - "Conforming validators are not required to check for revoked certificates, allowing adversaries to use compromised keys without detection"
+    - "Nothing in the signed data references the timestamp, allowing removal and replacement without detection."
+    - "Google's conforming Pixel 10 Pro camera places GPS information in an exclusion range, enabling an attacker to insert a false GPS location."
+    - Nikon test: after revocation, "Adobe Inspect (pictured here) reports the signature as valid, while Verifieddit reports it as invalid. Neither conforming validator reports the revocation."
+    - "Certification is based largely on self-reported compliance with no examination of the product's functionality or source code"
+    - shows: six weakness classes (timestamps, revocation, validator inconsistency, exclusion ranges, certificate expiry, weak certification); spec 2.2, conformance 0.1; "The Pixel 10 Pro and Version 2.3 (January 2026) of the specifications incorporated some of our suggestions. Version 2.4 (April 2026) does not address any of our concerns."
+    - limits: hand-tested on a few validators; no measurement of exploitation in the wild
+    - links: [arXiv](https://arxiv.org/abs/2604.24890), [ePrint](https://eprint.iacr.org/2026/804)
+- David Buchanan (retr0id), "C2PA Cameras Do Not Survive Contact With Reality", personal blog, 25 Aug 2026
+    - label: personal blog by a hardware security researcher, with a public tool (keystork) and demo files
+    - "if you root a device via an exploit, the attestation mechanism has no reliable way to 'notice'. The bootloader is still locked, the AVB keys are unmodified"
+    - "an attacker does not need the raw key material! As root, they can ask StrongBox to use these keys to sign whatever data they like."
+    - "At time of writing, one-click root exploits exist in-the-wild for fully-patched Google Pixel devices (via CVE-2026-43499)."
+    - Google's VRP: "Won't fix (infeasible)", "$7500 bounty"
+    - fix in his words: "The entire image processing pipeline, including all the fancy AI stuff, would need to run inside a secure enclave with strong hardware memory protection."
+    - shows: a signature from Pixel Camera means "a registered app on a genuine Pixel asked the chip to sign this", not "the sensor saw this"; a forged AI photo passed Verify and a forged video got YouTube's "captured with a camera" box
+    - limits: one researcher; hardware details withheld; iPhone not tested
+    - link: [blog](https://www.da.vidbuchanan.co.uk/blog/android-c2pa.html)
+- David Buchanan, "How to Hack Time, With C2PA", personal blog, 2 Oct 2026
+    - label: personal blog with a proof-of-concept file
+    - "We can exclude the entire file, to produce an entirely valid signature over an empty string. This allows the file to be tampered with after the fact, without invalidating the signature, and without invalidating the TSA's timestamp proof."
+    - manifest dump: exclusion length 3,995,383 equals the file size; hash is the empty-string hash
+    - "as of today all the C2PA verification tools I can find don't flag anything as unusual."
+    - fix: "carefully and explicitly specify which parts of a file are allowed to be excluded, for each supported file format, and require that verifiers enforce these constraints."
+    - shows: a timestamp proves a hash existed; if the hash covers nothing, it proves nothing; demo edits a lottery ticket after the draw
+    - link: [blog](https://www.da.vidbuchanan.co.uk/blog/hacking-time.html)
+- Neal Krawetz, Hacker Factor blog posts, 2025–2026
+    - label: personal blog by a critic who runs FotoForensics and designed the rival SEAL format; he has a stake; the Pixel forgery is confirmed by Buchanan
+    - "Google Pixel 10 and Massive C2PA Failures" (5 Sep 2025): "everything that identifies when, where, and how this image was created is unprotected by the C2PA signature."; he backdated EXIF by "One month, 8 days, and 12 hours" and "the entire file is still cryptographically sound"; Truepic's validator said untrusted while Adobe's said valid ([post](https://hackerfactor.com/blog/index.php?/archives/1077-Google-Pixel-10-and-Massive-C2PA-Failures.html))
+    - "C2PA in a Court of Law" (20 Oct 2025): Pixel 10 has an on-device TSA with "two separate clocks"; "The manifest can be changed after the trusted timestamp is generated, as long as the change doesn't touch the few bytes that the C2PA specifications says to use with the trusted timestamp." ([post](https://hackerfactor.com/blog/index.php?/archives/1080-C2PA-in-a-Court-of-Law.html))
+    - "C2PA and Pixel Glitter Milk" (25 Aug 2026): "The picture is AI generated and the news article is fiction, but Google's signatures are real."; Google revoked the one certificate, but "revoking the glitter-milk certificate only invalidated that one specific photo" while revoking the intermediate "would instantly invalidate every authentic, legitimate Pixel photo"; "I am unaware of any conforming validator products that check" revocation; Evergreen Labs GreenCheckmark "received approval for Level 2, but only implemented Level 1" ([post](https://hackerfactor.com/blog/index.php?/archives/1102-C2PA-and-Pixel-Glitter-Milk.html))
+    - "Validation Workflows" (22 Sep 2026): C2PA validation "has 10 steps, 6 with optional implementations ... every validator can generate different and conflicting responses to the exact same media."; four trust lists with no overlap; "C2PA explicitly forbids CRLs; C2PA only supports OCSP"; a timestamp "permits the continued use of an expired or revoked signing cert (effectively un-expiring or un-revoking it)" ([post](https://hackerfactor.com/blog/index.php?/archives/1106-Validation-Workflows.html))
+    - "SEAL Tested, Hardened, and Honest" (18 Sep 2026): UMBC's formal review of SEAL; "An attacker with the stolen key can easily backdate new media to a time before the revocation date. (Ouch!) C2PA currently has no solution to this problem."; "C2PA currently has 22 C2PA-approved TSA certificates, of which 16 do not have any kind of revocation enabled." ([post](https://hackerfactor.com/blog/index.php?/archives/1105-SEAL-Tested,-Hardened,-and-Honest.html))
+    - shows: the concrete, checkable claims a validator-testing paper should reproduce or refute
+    - limits: handfuls of files; opinions mixed with findings; he benefits if C2PA looks bad
+- Nikon Z6 III incident, Aug–Sep 2025
+    - label: news (PetaPixel, Heise, c2paviewer); primary posts by Adam Horshack not fetched (403)
+    - firmware 2.00 on 27 Aug 2025 added C2PA; the multiple-exposure function let the camera sign "a 1:1 digital copy of an AI-generated source image"; Nikon revoked all certificates and suspended the service, still suspended early 2026
+    - shows: the first camera-maker revocation; validators then disagreed on the revoked files (Golaszewski)
+    - link: [PetaPixel](https://petapixel.com/2025/09/22/nikon-cant-fully-solve-the-z6-iiis-c2pa-problems-alone/)
+- Nemecek, He, Cheng, Ayday, "Authenticated Contradictions from Desynchronized Provenance and Watermarking", CVPR Workshop APAI 2026, arXiv 2603.02378
+    - label: peer-reviewed workshop; code at github.com/ANCP2021/integrity-clash
+    - "a digital asset carries a cryptographically valid C2PA manifest asserting human authorship while its pixels simultaneously carry a watermark identifying it as AI-generated, with both signals passing their respective verification checks in isolation."
+    - "The complete difference between an honestly declared AI-generated image and an authenticated fake reduces to the omission of a single assertion field"
+    - 500 SDXL images with Meta's Pixel Seal; after JPEG Q80, 10% crop, or a screenshot simulation the minimum bit accuracy stays 0.902; a joint check gets "100% classification accuracy across 3,500 test images"
+    - shows: "provenance laundering": an AI image re-signed through an edit tool looks human-made; nobody joins the two checks; a trivial join fixes it
+    - limits: one watermark, self-signed chain, no camera-pointed-at-screen test
+    - future work: "extend the cross-layer audit to video and audio"; make signers "inspect data for pre-existing watermark signals before issuing a manifest"
+    - link: [arXiv](https://arxiv.org/abs/2603.02378)
+
+literature cards: photo of a photo (recapture)
+- Park, Vilesov, Zhang, Khalili, Tian, Kadambi, Sehatbakhsh, "Chimera: Creating Digitally Signed Fake Photos by Fooling Image Recapture and Deepfake Detectors", USENIX Security 2025
+    - label: peer-reviewed; code at github.com/ssysarch/Chimera; same UCLA group as the Vilesov survey you starred
+    - "Chimera can reduce the detection accuracy of state-of-the-art recapture and deepfake detection by more than 50% while increasing the success rate of fooling a layered defense scheme (both deepfake and recapture detector) by about 15%."
+    - "Chimera significantly increases the success rate of the attack—from less than 1% to approximately 14% in the best case."
+    - threat model: "the camera and its hardware, including the signature generation logic, are trustworthy ... The attacker, however, has access to an arbitrary camera and a display and can take pictures at will."
+    - numbers: iPhone 12 plus MacBook screen; MoireDet on recaptured fakes 0.810 → 0.045; TwoB_DWT 0.952 → 0.283; needs "at least several hundred recaptured images" per camera-screen pair; adversarial training "fails to generalize to images taken from a different screen"
+    - shows: pre-distort the fake so screen artifacts cancel, defocus a little, photograph with a signing camera; per-try success is low but tries are free
+    - also: detectors "had a strong propensity to classify all blurry or out-of-focus images as recaptured", so honest blurry photos get flagged
+    - future work: attacks that need few training images; "realistic and inconspicuous patches"
+    - link: [USENIX](https://www.usenix.org/conference/usenixsecurity25/presentation/park)
+- Liu, Farrukh, Amiri Sani, Agarwal, Tsudik, "Scoop: Mitigation of Recapture Attacks on Provenance-Based Media Authentication", USENIX Security 2025
+    - label: peer-reviewed (UC Irvine, Microsoft)
+    - "the iPhone 14 Pro (w/ dToF) based prototype achieves exceptional overall results with 94.81% of TPR and only 0.02% of FPR; The Galaxy S20 Plus (w/ iToF) based prototype achieves good overall results as well with 74.03% of TPR and 17.78% of FPR."
+    - people: "participants' (correct classification) accuracy 50.15% (SD = 13.89%) is close to pure chance" (43 people, TV recaptures)
+    - blind spot: "Scoop cannot distinguish between a flat surface such as a wall, and a display showing an image of a wall ... such as a recapture of a digitally modified signed contract."
+    - cost: +648 KB (about 26.9%) per photo on iOS; 56.2% energy overhead per capture on the Samsung; viewer check 69 s unoptimized on an RTX 4090
+    - shows: your RGBD idea, built: the phone's depth sensor sees a flat screen while a depth-from-image model sees a 3D scene; disagreement flags the region; the depth map is signed with the photo
+    - future work: "a future user study", "3D display-based attacks", binocular and thermal sensors
+    - link: [USENIX](https://www.usenix.org/conference/usenixsecurity25/presentation/liu-yuxin)
+- Ishizue, Rampazzi, Sugawara, "Breaking Infrared Recapture Detection: Optical-Synthesis Attacks and Depth-Aware In-Sensor Countermeasures", USENIX WOOT 2026
+    - label: peer-reviewed workshop; artifacts at doi 10.5281/zenodo.19704181
+    - "SynthIR ... evades detection by independently manipulating the views of the RGB camera and the IR depth sensor across different optical spectra through an inexpensive optical filter"
+    - "we successfully bypass Scoop with 100% ASR by creating 50 cardboard 2D objects for 50 images from the Celeb-DF v2 dataset" (iPhone 15 Pro, hot mirror about $210)
+    - printed images already hurt image-only detectors: "96-99% TPR ... degrades to 37-72% TPR with recapture of paper-printed images"
+    - iPhone fuses LiDAR with the image inside the OS: "the feature cannot be disabled, and raw LiDAR measurement is inaccessible"
+    - defense: dual-pixel sensors (Pixel phones, Canon DSLRs) give two views from one lens and one spectrum; "100% TPR ... 100% TNR" on 100 public DP captures plus 2,880 synthesized
+    - vendors: "Both vendors responded that recapture detection via Scoop is not a security feature of their products and closed the cases without patches."
+    - limits: portrait scenes; defense not run inside a signing pipeline ("we capture the DP images and the RGB images separately")
+    - future work: multifocal displays against DP sensors; integration into phones
+    - link: [USENIX](https://www.usenix.org/conference/woot26/presentation/ishizue)
+- Agarwal, Fan, Farid, "A Diverse Large-Scale Dataset for Evaluating Rebroadcast Attacks", ICASSP 2018; Fan, Agarwal, Farid, "Rebroadcast Attacks: Defenses, Reattacks, and Redefenses", EUSIPCO 2018
+    - label: peer-reviewed
+    - "14,500 rebroadcast images captured from a diverse set of devices: 234 displays, 173 scanners, 282 printers, and 180 recapture cameras"; a CNN gets "more than 97% on both datasets"; old features drop to "only a 4.9% detection accuracy" on the new set
+    - re-attack: "The true positive rate ... is 98.54%. This rate plunges to 0.005% on the attack-rebroadcast images ... MSE ... is only 0.96"
+    - shows: the 2018 baseline and the first attacker-versus-defender loop; the attacker wins with small learning rates
+- Chen, Lin, Chen, Li, Zeng, Huang, "CMA: A Chromaticity Map Adapter for Robust Detection of Screen-Recapture Document Images", CVPR 2024
+    - label: peer-reviewed
+    - "reducing the average EER from 26.82% to 16.78%"; "there is no depth difference between genuine and recaptured document images"
+    - shows: for documents, depth gives nothing and the best detector still errs one time in six; confirms Scoop's contract blind spot
+- Sood, Natgunanathan, Praitheeshan, Kirupananthan, "Mitigating S-RAHA: An On-device Framework to Prevent Forwarding of Re-Captured Images", arXiv 2604.12178, Apr 2026
+    - label: preprint
+    - 98.89% detection with a small CNN on moiré, edge and illumination cues (secondary summary; abstract read)
+    - shows: another image-only detector; by Chimera's result it would fall to a trained attacker; low value
+- Cheng, Ji, Wang, Pang, Chen, Xu, "mID: Tracing Screen Photos via Moiré Patterns", USENIX Security 2021
+    - label: peer-reviewed
+    - "an average bit error rate (BER) of 0.6% and can successfully identify an ID with an average accuracy of 96%"
+    - shows: a defender who controls the screen can plant moiré; loosely related, shows the artifact Chimera cancels
+
+literature cards: trusted capture hardware
+- Liu, Yao, Chen, Amiri Sani, Agarwal, Tsudik, "ProvCam: A Camera Module with Self-Contained TCB for Producing Verifiable Videos", MobiCom 2024
+    - label: peer-reviewed; code at github.com/trusslab/provcam
+    - "It remains secure even against a powerful adversary that owns the device and can physically attack hardware buses!"
+    - cost: "720p ... 60fps ... (≈ 53.8M transistors) ... (< 1Watt)" on a Xilinx ZCU106 FPGA
+    - "The adversary could use ProvCam to record a video of a fake video played on a screen in front of it ... We leave addressing this attack vector to future work."
+    - fixed per-device key: "videos captured by the same user can be linked together"; "We leave finding a desirable solution to this problem to future work."
+    - shows: the full-hardware answer to Buchanan's root attack, and what it costs; recapture and privacy still open
+- Liu, Nakatsuka, Amiri Sani, Agarwal, Tsudik, "Vronicle: Verifiable Provenance for Videos from Mobile Devices", MobiSys 2022
+    - label: peer-reviewed
+    - per-video keys: "the camera app generates a fresh key-pair and uses the hash of the public key as a nonce to conduct the first round of SafetyNet attestation ... erases that key"
+    - edits run as fixed filters in TEEs; a 10-second video with 6 filters "takes an average of about 44 seconds" versus about 31 s for YouTube
+    - shows: the closest worked design for a phone signer without new hardware; its attestation is the same kind Buchanan defeats
+- Google, "How Pixel and Android are bringing a new level of trust to your images with C2PA Content Credentials", security blog, 10 Sep 2025
+    - label: industry blog (vendor claim)
+    - "Android Key Attestation in Pixel 10 is built on support for Device Identifier Composition Engine (DICE) by Tensor, and Remote Key Provisioning (RKP)"
+    - "C2PA claim signing keys are generated and stored using Android StrongBox in the Titan M2 security chip"; "Each key and certificate is used to sign exactly one image."; CA has "a strict no-logging policy for information like IP addresses"
+    - honest limit: "the security of any claim is fundamentally dependent on the integrity of the application and the OS"
+    - shows: the public blueprint for an open-source phone signer; it never claims sensor binding
+    - link: [post](https://security.googleblog.com/2025/09/pixel-android-trusted-images-c2pa-content-credentials.html)
+- Apple Reference Image, iPhone 18 Pro, iOS 27, Sep 2026
+    - label: news (MacRumors); no Apple spec fetched
+    - "Images captured with an opt-in Reference mode can be authenticated to confirm they were taken with an iPhone."; the phone sends "the raw image, sensor signatures, capture time frame, and the unique hardware identifiers of the sensor" to Private Cloud Compute; proprietary, not C2PA
+    - shows: Apple chose sensor-level signing plus a server check, the design Buchanan predicted would push attacks "into the optical domain"
+    - link: [MacRumors](https://www.macrumors.com/2026/08/10/ios-27-apple-reference-image/)
+- Kamimura (VeritasChain), "Content Provenance Profile (CPP) Core", IETF Internet-Draft draft-vso-cpp-core-03, Aug 2026
+    - label: individual Internet-Draft, not a working-group item
+    - "CPP is complementary to the C2PA specification. C2PA tracks edit history of content; CPP proves capture provenance with deletion detection."; RFC 3161 anchoring; Merkle trees; a "Completeness Invariant" against omitted evidence
+    - shows: someone is standardizing "a collection of captures with nothing deleted", which is what a court or archive wants; unvetted
+    - link: [draft](https://www.ietf.org/archive/id/draft-vso-cpp-core-03.html)
+
+literature cards: proving edits in zero knowledge (follow-ups to VerITAS, VIMz, Trust Nobody)
+- Greiner, Mowery, Soni, "HyperVerITAS: Verifying Image Transformations at Scale on Boolean Hypercubes", PoPETs 2026(2)
+    - label: peer-reviewed
+    - "On commodity hardware (Apple M3, 36 GB RAM), HyperVerITAS generates proofs for 33 MP images using only 27 GB of RAM and 6.6 minutes of proving time, whereas VerITAS fails to scale beyond 4 MP."
+    - VerITAS "ranged from 75 GB to 120 GB for a single 30 MP"; "VIMz takes nearly 2 hours, and TilesProof-MT takes over 30 minutes"
+    - shows: laptop-scale edit proofs; same trust model, camera trusted, editor not
+    - link: [doi](https://doi.org/10.56553/popets-2026-0036)
+- Zhang, Zhou, Bünz, "SPEG: Verifiable Compression of Images", IACR ePrint 2026/1598, Aug 2026
+    - label: preprint
+    - first proof system covering JPEG compression of a C2PA-signed original; Full HD compression proof 47 s (Poseidon mode) or 2 s (fast mode) versus 227 s for VerITAS resizing on the same hardware; "addresses a security vulnerability in VIMz" (summary from the ePrint page, abstract not quoted verbatim)
+    - shows: compression, the edit every phone applies, is now provable
+    - link: [ePrint](https://eprint.iacr.org/2026/1598)
+- Frolov, Guo, Zhao, Datta, Boneh, Miers, "zk-Cinema: Proving Video Provenance in Zero Knowledge", IACR ePrint 2026/1717, Aug 2026
+    - label: preprint
+    - "we show how to represent common video edits as matrix multiplications in a form that is particularly friendly for zero-knowledge provers ... a SNARK-friendly video representation, which we call sfvr"
+    - shows: the Boneh group moved to video; "competitive performance and scale relative to prior work", no numbers on the abstract page
+    - link: [ePrint](https://eprint.iacr.org/2026/1717)
+- Datta, Chen, Boneh, VerITAS talk slides (Simons Institute, 2025)
+    - label: talk slides
+    - "Many other challenges (1) Key extraction and revocation (PKI) (2) Privacy → group signatures (3) GPS spoofing"; "Now every verifier must run a brittle filter: Is this a picture-of-picture? Can attacker defeat the filter?"
+    - shows: the crypto authors' own list of open problems is your list
+- Fairoze, Ortiz-Jimenez, Vecerik, Jha, Gowal, "On the Difficulty of Constructing a Robust and Publicly-Detectable Watermark", arXiv 2502.04901, 2025
+    - label: preprint (Google DeepMind)
+    - C2PA-style metadata is unforgeable and publicly checkable but not robust; ML watermarks are robust but not the rest; a scheme with all three exists on paper but "it is intractable to build certain components of our scheme without a leap in deep learning capabilities"
+    - shows: do not expect a watermark that replaces the signature
+
+literature cards: watermarks and soft binding
+- CAI (Parsons), "Durable Content Credentials", 8 Apr 2024
+    - label: industry blog, proposal, no data
+    - "none of these techniques is durable enough in isolation to be effective on its own."; recipe: watermark carries an ID, look up the manifest, "Check that the manifest and the content match by using the fingerprint"; "Fingerprint retrieval is fuzzy"; not for photojournalists who "may not wish to store anything ... on any server"
+- Cao, Li, Zhang, Wu, Liu, Li, Ni, "MarkNull: Model-Agnostic Watermark Removal in AI-Generated Images via On-Manifold Latent Manipulation", USENIX Security 2026
+    - label: peer-reviewed
+    - "MarkNull reduces average bit accuracy to 53.14%, approaching random-guessing (50%), without perceptible image degradation."; "our attacks successfully compromise Google's SynthID-Image system" (20 images, 100% success)
+    - limits: SynthID test tiny; mostly 512×512
+- Gowal et al. (Google DeepMind), "SynthID-Image: Image watermarking at internet scale", arXiv 2510.09263, Oct 2025
+    - label: preprint; abstract page only
+    - shows: the one watermark deployed at scale; MarkNull above attacks it
+- Zhao, Gunn, Christ, et al., "SoK: Watermarking for AI-Generated Content", IEEE S&P 2025
+    - in your paper collection; abstract page only here; the survey to cite for the watermark side
+- Microsoft Research (Young, Vaughan, Jenks, Malvar, Paquin, England, Roca, Lavista Ferres, Poursabzi, Coles, Archer, Horvitz), "Media Integrity and Authentication: Status, Directions, and Futures", technical report Jan 2026, arXiv 2602.18681
+    - label: industry research report, not peer reviewed
+    - "To make the provenance of captured images, audio, and video trustworthy, it is essential to implement secure enclaves within the device hardware."
+    - "available protections to stop a key being used by an unauthorized application are very limited."
+    - "Fingerprinting is not a viable path to high-confidence validation and faces significant scaling costs."
+    - "Recovering a C2PA provenance manifest created and signed in a high security environment with an imperceptible watermark ID offers a promising option"
+    - open problems named: "Manifest Stores. Further research is needed to define best practices"; "how to best verify if detected provenance information relates to expected provenance information"; "ongoing intensive red-teaming"
+    - also optimistic that "both Android and iOS can distinguish rooted from non-rooted devices", which Buchanan refutes for exploit-rooted devices
+    - link: [arXiv](https://arxiv.org/abs/2602.18681)
+- Krawetz on watermark error rates ("Mark My Words", 14 Aug 2026)
+    - personal blog, numbers cited without data: "Adobe's TrustMark has a 10%-20% false-positive rate. Meta's Stable Signature has a collision rate of 1 in 4."; treat as a hypothesis to test
+
+literature cards: trusting a signature for years
+- conformance and certificate policy
+    - C2PA Conformance Program v0.2 and Certificate Policy v0.2, 31 Jul 2026; label: spec or standard
+    - leaf certificate "Max 366 days (Assurance Level 1)" and "Max 90 days (Assurance Level 2)"; OCSP mandatory, "This CP does not require the use of certificate revocation lists (CRLs)"
+    - level 2 requires keys in "an environment with a higher privilege level than the privilege level of the Claim Generator", hardware attestation of the binary, patch recency; no secure sensor path required
+    - "On-Device TSA, intended for use on mobile/edge devices to support local time-stamping without requiring a network connection"; accuracy "SHOULD be of 1 second or better"
+    - getting on the list: legal agreement, intake form, an architecture document in Markdown, "sample output media files"; no fee
+    - shows: a 90-day certificate makes a timestamp mandatory for anything older than a season; the on-device TSA means the phone vouches for its own clock
+- Gondrom, Brandner, Pordesch, RFC 4998 "Evidence Record Syntax", 2007; Birkholz, Fossati, Riechert, RFC 9921 "COSE Header Parameters for Carrying Timestamp Tokens", Feb 2026; IETF SCITT architecture draft; Merkle Tree Certificates draft; OpenTimestamps
+    - label: standards and drafts
+    - RFC 4998: "long-term non-repudiation of existence of data"; "Timestamps have to be renewed by generating a new Archive Timestamp"
+    - RFC 9921: carries an RFC 3161 token inside a COSE signature, which is what a C2PA claim signature is
+    - SCITT: "digital signatures may fail to verify past their expiry date even though the signed item itself remains completely valid."; receipts prove a statement was logged at time T
+    - OpenTimestamps: "A timestamp proves that a message existed prior to some point in time", Bitcoin-anchored, accurate "within two or three hours"
+    - shows: the stack for idea 2: sign, timestamp, log receipt, periodic renewal; C2PA already supports trusted timestamps; additional evidence renewal and content coverage need separate checks
+- NCC Group (McCollum), "Privacy and Security Challenges of Content Provenance and Authenticity Systems", 3 Aug 2026
+    - label: industry blog summarizing WITNESS and UMBC
+    - "signed content can quietly stop validating within a year due to temporal fragility, even when the underlying file remains unchanged"
+    - "even a modern privacy fix, such as generating a unique certificate per photo, still leaves manifests carrying enough consistent metadata (like editing tool versions and action sequences) to link separate images back to the same device."
+    - "public, web-based 'upload-to-verify' services receive the full media file, all provenance metadata, the user's IP address, and the precise timing"
+    - link: [post](https://www.nccgroup.com/research/privacy-and-security-challenges-of-content-provenance-and-authenticity-systems/)
+- WITNESS (Castellanos), "C2PA Content Credentials and the Surveillance Risk: Adversarial Scenarios and Governance Gaps in the Content Provenance Ecosystem", 2026
+    - label: NGO report; only the landing page read
+    - "real-world scenarios and the voices of journalists, human rights defenders, and filmmakers"
+    - link: [WITNESS library](https://library.witness.org/product/c2pa-privacy/)
+
+literature cards: how much provenance exists and survives
+- IPTC Metawatch, monthly crawl, Oct 2026 run
+    - label: standards-body measurement with open data (CC BY 4.0)
+    - 508 publishers in 122 countries, lead photo of up to 20 articles each; October: 425 publishers, 6,580 images
+    - "27 of the 6,580 images we analysed carried a C2PA manifest, and all but one were signed by an AI or design tool: OpenAI, Adobe, Canva or Google ... None came from a camera or a newsroom's own signing."
+    - "Only 11% of the 6,580 images carried any IPTC metadata at all."; credit or copyright on 7.2% (8% in 2018)
+    - "Images served through Cloudflare, Akamai, CloudFront and Fastly lost their metadata 87% to 95% of the time, but images served with no CDN at all also lost metadata 87% of the time."
+    - limits: lead photos only; presence counted only when the served file still has the manifest; AP and USA Today began blocking the crawler
+    - link: [dashboard](https://metawatch.iptc.org/c2pa/)
+- Rijsbosch, Bekavac, Tari, van Dijck, Kollnig, "Drowning in AI Slop: How Social Media Platforms (Do Not) Label AI and Deepfake Content under EU law", arXiv 2609.38571, 29 Sep 2026
+    - label: preprint, "under submission"
+    - "only 33% of expert-identified deepfakes in systemic risk contexts carried a platform-applied AI label, while reaching a median of 160,000 views." (14 of 43)
+    - uploads: "platforms labelled only 61% of uploads, and commonly strip those signals after uploading." (36 of 59; Instagram 14/17, TikTok 10/17, X 7/17, YouTube 5/8)
+    - "TikTok is the only platform that thereby seems to consistently embed signals from its own platform-based AI-labels ... only YouTube showed C2PA-signals in some of the downloaded posts."
+    - limits: 500 annotated posts, one account, Aug–Sep 2026 snapshot
+- Zewde, Ren, Shen, et al., "GPT-Image-2 in the Wild: A Twitter Dataset of Self-Reported AI-Generated Images from the First Week of Deployment", arXiv 2604.25370, May 2026
+    - label: preprint (scam.ai)
+    - "platform-level provenance signals (C2PA content credentials) are systematically destroyed by Twitter's CDN on upload"; 10,217 confirmed images; X's "Made with AI" badge on 53.7% of checked tweets
+    - limits: the C2PA finding is stated, not tabulated
+- Mantzarlis, Dutta (Indicator), "Tech platforms fail to label AI content", 23 Oct 2025
+    - label: journalism audit
+    - 516 AI images and videos posted to Instagram, LinkedIn, Pinterest, TikTok, YouTube; 169 (about 30%) labeled correctly; Pinterest best at 55% (from the first-round note; article not re-fetched)
+- Rijsbosch, van Dijck, Kollnig, "Missing the Mark" (adoption of watermarking by AI generators), ACM CS&Law 2025, arXiv 2503.18156
+    - label: peer-reviewed short paper
+    - "only a minority number of AI image generators currently implement adequate watermarking (38%) and deep fake labelling (18%) practices"; C2PA in 5 of 50 generators (early 2025)
+- CAI (Parsons), "The State of Content Authenticity in 2026", 18 Jan 2026
+    - label: industry blog
+    - the only adoption number is "more than 6,000 members"; no count of signed or verified files
+- Cloudflare (Allen), "Preserving content provenance by integrating Content Credentials into Cloudflare Images", 3 Feb 2025
+    - label: industry blog
+    - "If you use Cloudflare Images to dynamically resize or transform this image, then Cloudflare automatically appends and cryptographically signs any additional actions in that same manifest."; opt-in per zone
+    - shows: a CDN as a re-signing intermediary; Metawatch shows most publishers do not turn it on
+
+literature cards: people and labels
+- Trattner, Forstner, Starke, Knudsen, "C2PA Provenance Labels Increase Trust in Digital News Platforms Across Western Countries", ICWSM 2026
+    - label: peer-reviewed; "N=6,114 participants, reflecting audiences of six major news sources in the US, UK, and Norway."
+    - "Presenting provenance metadata to participants significantly improved their perceptions of an image's transparency and credibility, and also increased feelings of trust in a presented news source."
+    - limits: genuine images only; no stripped or invalid condition
+- Höltervennhoff et al., "'That's another doom I haven't thought about': A User Study on AI Labels as a Safeguard Against Image-Based Misinformation", CHI 2026, arXiv 2505.22845
+    - label: peer-reviewed; 5 focus groups plus 1,354 survey participants
+    - "While labels reduced participants' belief in false claims supported by AI-generated images, we found evidence of overreliance ... Participants were more susceptible to false claims accompanied by human-made images"
+    - limits (theirs): "our survey setting is artificial and does not fully correspond to a realistic interaction with social media."
+- Pawelczyk, Dimmery, Yan, "Implied Authenticity Effect? The Impact of Explicit Labels on AI-Generated Content", ICWSM 2026
+    - label: peer-reviewed; 877 German Instagram users
+    - "exposure to labeled content slightly increased perceived authenticity in unlabeled images."
+    - limits (theirs): "the sample's mean internet skills score of 4.30 (on a 5-point scale) indicates a highly digitally literate population overall."
+- Koech, "Results Data for C2PA Credentials Study", IEEE DataPort, Jul 2026
+    - label: dataset page; 358 participants, control versus valid versus invalid credentials, 12 stimuli
+    - finds "gaps in visual noticeability and user comprehension errors that conflate technical verification with factual accuracy"
+- Feng, Ritchie, Blumenthal, Parsons, Zhang, "Examining the Impact of Provenance-Enabled Media on Trust and Accuracy Perceptions", CSCW 2023
+    - label: peer-reviewed; the baseline the above cite: "provenance, although enlightening, is still not a concept well-understood by users."
+- CITP and NYU, "Newsroom Guide: Authentication and Verification in the AI Age", Aug 2026
+    - label: workshop report
+    - "Authentication makes a determination limited to the provenance of an item."; "Verification confirms that the contents of that media represent the truth; for example, whether a photo depicts what it claims to depict (rather than, say, a photo of an unrelated event)."
+    - "a number of these tools speak the language of probability, when journalists are often looking for certainty."
+    - Nieman Lab's headline on the companion report: tools are built without enough journalist input (article returned 403, headline only)
+    - link: [guide PDF](https://citp.princeton.edu/sites/g/files/toruqf6781/files/documents/Newsroom_Guide_Holding%20The%20Line_%20CITP%20August%202026_.pdf)
+- Schiff, Schiff, Bueno, "The Liar's Dividend", APSR
+    - label: peer-reviewed, not opened; search snippet says false claims of fakery work against text reports but are "largely ineffective against video evidence"
+    - relevance: with C2PA present on 0.4% of news images, "no credential" is the normal state and cannot answer "that real video is fake"
+
+literature cards: genuine photo, wrong caption
+- Ardi, Madhyastha, "Mitigating Image-based Misinformation Campaigns", 3-page proposal, PDF dated Sep 2024, no venue
+    - label: proposal, nothing evaluated; in your paper collection
+    - "Our research goal is to flag misinformation by using this secure metadata to detect a mismatch in location or time between visual media and associated text."
+    - privacy knob: "the location can be specified at the state- or country-level, and time can be at the month-year or year-only granularity."
+    - plan: parse captions, evaluate on fact-checker archives where the true place and time are known, measure false alarms on random viral posts
+    - assumes "every photo and video" will carry signed time and place; nothing on stripping, spoofed GPS, or recapture
+- Tonglet, Thiem, Gurevych, "COVE: COntext and VEracity prediction for out-of-context images", NAACL 2025
+    - label: peer-reviewed
+    - "Images taken out of their context are the most prevalent form of multimodal misinformation. Debunking them requires (1) providing the true context of the image and (2) checking the veracity of the image's caption."
+    - uses image and caption; no signed metadata; the baseline idea 5 must beat
+- Luo, Darrell, Rohrbach, "NewsCLIPpings", EMNLP 2021 and Aneja et al., "COSMOS", 2021
+    - label: peer-reviewed datasets of unmanipulated image plus mismatched caption; no capture metadata
+
+gaps the sources themselves name
+- Golaszewski et al.: "Require strict certificate revocation checking (including via privacy-preserving methods)"; "Ensure timestamps are securely bound to content and cannot be altered without detection"; "Mandate consistency across validation tools"; "Protect the entire file (including non-C2PA metadata), not just selected portions"; "Establish independent security audits for certified products"
+- Buchanan: "carefully and explicitly specify which parts of a file are allowed to be excluded, for each supported file format, and require that verifiers enforce these constraints."
+- Chimera: training "with a very small number of training images, which can be an avenue for future work"
+- Scoop: "a future user study needs to be conducted"; 3D display attacks "will be a future work"
+- WOOT 2026: "integration of our proposed detection pipeline into current smartphones that already deploy DP image sensors can be an easy-to-deploy solution"; "potential attacks targeting DP sensors, including the use of multifocal displays"
+- ProvCam: recapture "to future work"; linkable fixed key "to future work"; "existing key revocation solutions should be applicable here as well" (asserted, not shown)
+- HyperVerITAS: "develop a new code based multilinear PCS that has better proof sizes"
+- Nemecek et al.: "extend the cross-layer audit to video and audio"; signers should "inspect data for pre-existing watermark signals before issuing a manifest"
+- Microsoft Research: "Manifest Stores. Further research is needed to define best practices"; "how users comprehend and respond to a mix of provenance-enabled and non-enabled content"; "ongoing intensive red-teaming and analysis"
+- Metawatch: reading individual assertions is "planned"
+- Rijsbosch 2026: "whether multi-content LLM-based (agentic) classifiers could be used to reliably scale the assessment of deepfakes"
+- Höltervennhoff et al.: survey setting "artificial"; Pawelczyk et al.: "whether the spillover effect interacts with the type of image shown (authentic vs. AI-generated)"
+
+my own inferences
+- the field moved from "will C2PA work" to "C2PA is deployed and the validators are the weak layer"; every public break in 2025–2026 (timestamps, exclusions, revocation, trust lists, Nikon) is caught or missed by validator behavior, and existing validator tests are a required baseline
+- nobody has measured the age distribution of real C2PA files versus their certificate and TSA status; Metawatch could be extended to do it in a week, and the result ("x% of signed news images already fail") would be quoted everywhere
+- the privacy-versus-revocation knot (one certificate per photo) is a genuine open design problem that a systems person can attack with existing crypto (blinded device handles, group signatures) plus measurement of how often revocation is needed
+- "photo of a photo" will not be solved by detection; the honest framing is "signed sensor geometry plus a false-alarm budget per honest scene class", which no paper has reported
+- the wrong-caption idea is still unbuilt after two years, and its premise got weaker; I would only do it as a measurement of how much signed metadata is actually inside the hash on shipping devices
+- an open-source phone signer is now a weekend project and not a paper on its own; its value is as a testbed for ideas 1, 2, 4 and 6
+- I could not get ChatGPT's opinion (tool failed twice: login required, then "terminal_deadline_expired"); the first-round prompt is saved in the scratchpad if you want to rerun it
+
+coverage
+- searches: 25 web searches this pass plus about 12 in the first round (searcher E); 2 ChatGPT attempts, both failed
+- sources opened: 13 papers read in full text from local copies (Chimera, Scoop, WOOT 2026, ProvCam, Vronicle, HyperVerITAS, Farid ×2, mID, CMA, Ardi & Madhyastha, Nemecek, Rijsbosch 2026) plus 5 more from your collection at abstract-and-results depth; 11 blog posts and vendor pages in full; 3 C2PA governance documents; 5 standards; about 20 abstract pages; 3 first-round cards (Trattner, Höltervennhoff, Pawelczyk) read in full by searcher E
+- quotes marked "(summary)" or "secondary" come from search snippets or fetch summaries, not the primary text
+- not found or not opened: Horshack's own Nikon write-up (403); the Nieman Lab article (403); full WITNESS report PDF; Apple's own Reference Image documentation; the Washington Post upload test; a peer-reviewed end-to-end evaluation of soft-binding recovery (I believe none exists); any paper measuring certificate or TSA expiry across real C2PA files (none found)
+- scratchpad with raw cards and downloaded texts: `scratchpad/provenance/` in this session's temp directory (G_cards_recapture_hardware.md, H_cards_deployment_blogs.md, E_security_measurement_hci.md)
+
+8 October checks after the cross-topic consultation
+
+- validator disagreement already has direct prior work
+    - Golaszewski et al., [Why C2PA Falls Short](https://eprint.iacr.org/2026/804), section 3, tests multiple widely used validators
+    - checked the [full short paper](https://arxiv.org/pdf/2604.24890), sections 1–6 and its stated security goals
+    - extend its cases only after matching specification version, trust roots, validation clock, revocation evidence, and connectivity
+    - count independent validator implementations separately from products sharing one library
+    - possible contribution: reproducible new failure classes or checked repairs
+        - a disagreement count alone repeats the existing result
+- expiry alone does not make a correctly timestamped signature fail
+    - [C2PA 2.4, time-stamp validation](https://spec.c2pa.org/specifications/specifications/2.4/specs/ContentCredentials.html#_time_stamp_validation): “validators shall use the attested time, and not the current time”
+    - requirement applies when the timestamp is present, trusted, and validated
+    - test certificate expiry separately from revocation, missing timestamp evidence, and changed trust policy
+    - a simulated clock advance checks policy behavior
+        - it cannot establish ten years of real service availability or cryptographic durability
+- manifest recovery already has an implementation example
+    - [Adobe TrustMark C2PA integration](https://github.com/adobe/trustmark/blob/main/c2pa/README.md), Durable Content Credentials: “the TrustMark identifier carried inside the watermark can be used as a key to look up that information from the database”
+    - the repository links a soft-binding assertion example
+    - measure metadata removal, broken cryptographic binding, absent reader UI, watermark decoding, and external recovery separately
+    - new platform measurements need pinned transformations and an existing recovery baseline
+    - no implementation or platform experiment was run in this continuation

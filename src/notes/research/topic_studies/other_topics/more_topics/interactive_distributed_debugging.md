@@ -1,0 +1,259 @@
+interactive distributed debugging
+(authored by agents unless marked 🧑)
+
+takeaway
+- agent recommendation: measure when pausing changes the bug being investigated
+  - DDB already supplies distributed backtraces, breakpoint requests that follow replacement processes, and pause-adjusted time
+  - strongest bounded questions concern uncovered clocks, external dependencies, and evaluation baselines
+- 🧑 human [reading notes](../../../../reading_notes/index.md) identify two Yibo Yan NSL discussions
+  - “DDB: Source-Level Interactive Debugging for Distributed Applications”
+  - “Discussion: User-study Design in DDB”
+  - earlier study plans are distinct from the subsequently reported experiment
+- evidence checked on 7 Oct 2026 UTC
+  - selected full DDB §§4–8 and appendix time-interception limitations inspected
+  - Friday methods inspected in primary full HTML
+  - full D3S and event-loop debugger methods inspected
+  - selected rr full methods and Antithesis implementation account inspected
+  - GDB, Ray, V8, and OpenTelemetry documentation inspected
+  - no public DDB implementation repository located in targeted searches
+  - no experiments run; originality of proposals unconfirmed
+
+what the debugger changes
+- a debugger stops execution so a developer can inspect variables and step through code
+- a distributed application spans processes that communicate through remote procedure calls, RPCs
+  - a caller's local stack usually stops at an RPC boundary
+  - another process may mistake a debugging pause for failure
+- inference: debugging changes both scheduling and elapsed-time observations
+  - preventing artificial timeouts does not establish preservation of every original execution
+  - bugs depending on a particular event ordering can disappear under pausing
+
+DDB methods and boundaries
+- Yan, He, and Park, [DDB, 2026 paper](https://arxiv.org/pdf/2607.06107), §§4–8 and appendix A
+  - quote: “supports only synchronous, blocking RPCs”
+  - RPC metadata carries the caller's register values for stack reconstruction
+  - asynchronous calls or terminated callers truncate the backtrace
+  - breakpoint intent targets logical services and follows process churn
+    - runtime state does not survive restart
+  - default behavior pauses attached processes; individual stepping remains possible
+  - Pause-Erased Time subtracts pause duration from intercepted time reads
+  - timer waits recheck virtual deadlines before returning to application code
+  - pause skew is the difference between the times processes stop
+  - cross-process timeout protection requires that difference to stay below the time remaining before a timeout
+    - DDB does not enforce this network-latency bound
+  - external service deadlines remain real
+  - raw system calls, direct vDSO access, hardware timestamps, and unwrapped cycle-counter reads escape the shim
+    - vDSO supplies selected kernel interfaces through mapped user-space code
+  - uncontrolled external traffic can exhaust buffers during a pause
+  - paper reports up to 122 processes and roughly 30 ms median backtrace latency
+  - throughput costs depend on application
+    - socialnet drops 0.6% or 3.8%; gRPC Raft drops 20.1% versus GDB's 18.4%
+    - the abstract's small-overhead range is not a universal guarantee
+
+published study versus the seminar plan
+- [human notes](../../../../reading_notes/index.md) propose “2 case per category: crash, deadlock, logical bug”
+  - notes propose localization time, repair time, success, and questionnaires
+  - proposed counts and questionnaires do not establish what was eventually conducted
+- [DDB §6.1](https://arxiv.org/pdf/2607.06107) reports two controlled studies
+  - five researchers perform integration tasks
+    - success requires caller-state inspection and concurrent fan-out visibility
+    - DDB supplies these together; OpenTelemetry needs separate instrumentation
+    - inference: this definition tests the chosen workflow rather than equivalent generic integration effort
+    - DDB completes both goals in 5/5 trials; OpenTelemetry completes the first in 1/5 and second in 0/5
+  - nine participants perform three reproducible Raft debugging cases
+  - tools are DDB, GDB, and OpenTelemetry
+    - all conditions also have structured logging and traffic replay
+  - each participant uses a different tool per case
+    - partial Latin-square ordering addresses some order and learning effects
+  - each task has a twenty-minute limit
+  - twenty-seven diagnostic trials give nine trials per tool and three per tool per fault case
+  - DDB localizes all nine assigned trials across three fault cases
+    - this is a small selected-task result rather than a population success probability
+  - reported localization rates are DDB 9/9, GDB 4/9, and OpenTelemetry 3/9
+  - repair rates are DDB 8/9, GDB 2/9, and OpenTelemetry 1/9
+    - localizing a fault does not establish a correct repair
+  - inference: repeated participants and shared cases mean trials are not independent population samples
+  - unsuccessful trials time out
+    - successful-only timing plots omit their diagnostic time
+  - inference: baseline instrumentation effort contributes to the measured difference
+    - distinguish adoption cost from diagnostic benefit after equal preparation
+  - traffic replay is not full execution record-and-replay
+    - this experiment does not compare DDB directly against deterministic replay debugging
+  - inference: three Raft cases do not cover diverse frameworks or irreproducible production failures
+
+existing alternatives
+- [GDB non-stop mode documentation](https://www.sourceware.org/gdb/current/onlinedocs/gdb.html/Non_002dStop-Mode.html)
+  - quote: “only that thread is stopped”
+  - useful baseline for selective stopping
+  - inference: independent threads can change state while inspection proceeds
+- [Ray distributed debugger documentation](https://docs.ray.io/en/latest/ray-observability/ray-distributed-debugger.html)
+  - quote: “Add `breakpoint()` in the Ray task”
+  - framework-specific interactive workflow is an existing alternative
+  - assess supported call navigation and timeout behavior directly before claiming superiority
+- [OpenTelemetry propagation documentation](https://opentelemetry.io/docs/languages/js/propagation/)
+  - quote: “causal information about a system across services”
+  - tracing helps reconstruct request flow
+  - inference: recorded attributes and live arbitrary variable inspection answer different questions
+- Geels et al., [Friday, NSDI 2007](https://www.usenix.org/legacy/events/nsdi07/tech/full_papers/geels/geels_html/index.html), §§2–3
+  - quote: “maintaining Lamport clocks”
+  - records nondeterministic system-call effects for consistent replay
+  - combines per-process symbolic debugging with global predicates and actions
+  - replaying only selected components requires retaining their incoming traffic
+  - §3.3 identifies log storage, watchpoint overhead, and rebuilding diagnostic state from checkpoints as limitations
+  - interactive distributed state inspection therefore predates DDB
+    - live pause-adjusted debugging and replay-based debugging have different prerequisites
+- Liu et al., [D3S, NSDI 2008, §§2–6](https://www.microsoft.com/en-us/research/wp-content/uploads/2008/02/d3s_nsdi08.pdf)
+  - authors: “if the failure detector outputs correctly for timestamp t, the corresponding snapshot will be complete”
+  - inserts binary instrumentation to expose selected state as tuples
+    - developers specify sequential C++ checks over distributed snapshots
+    - logical clocks order updates; verifier stages partition and incrementally check the data
+  - snapshot correctness depends on the estimated set of live processes
+    - wrong membership can cause false alarms and missed violations
+    - buffering longer improves completeness but delays detection and consumes memory
+    - one storage deployment uses a two-second buffer after observing sub-350-ms message delay and one-second keep-alives
+  - sampling reduces checking cost at the risk of missing violations
+  - evaluates five systems and CPU-intensive state-exposure microbenchmarks
+    - application overhead depends on selected state, exposure frequency, and thread scheduling
+    - reported worst overhead below 8% is not a general bound
+  - useful checks require specifications or iteratively developed diagnostic predicates
+    - this preparation differs from arbitrary live variable inspection
+  - implication: measure monitoring incompleteness separately from application failure in the clock benchmark
+  - read-depth limit: full methods, deployment examples, evaluation, and limitations read
+- O’Callahan et al., [rr technical report, §§2 and 4–5](https://arxiv.org/html/1705.05937)
+  - authors: “bugs due to weak memory models cannot be observed”
+  - records system-call results and asynchronous event timing for a group of Linux processes
+  - schedules one application thread at a time to remove uncontrolled memory races
+    - recording can still expose races through preemption
+    - recording already changes available schedules and suppresses weak-memory failures
+  - replay restores recorded user-space effects rather than reexecuting external filesystem and network operations
+    - a replayed external response does not exercise a live external lease authority
+  - published evaluation emphasizes low-parallelism workloads
+    - high parallelism suffers from serialized execution
+  - implication: define the recorded process boundary and captured external inputs before calling a baseline complete
+  - read-depth limit: selected full design, evaluation, and hardware constraints inspected
+    - this 2017 report does not establish current rr platform support or coordinated multi-host replay
+- Will Wilson, [Antithesis multiverse-debugging implementation account, 2024](https://antithesis.com/blog/multiverse_debugging/)
+  - author: “our hypervisor also supports fast and efficient snapshotting of the state of the guest system”
+  - describes deterministic guest execution, snapshot-based rewind, retrospective debugger attachment, and changed fault injection
+  - implication: whole-environment replay and deliberate interventions are existing diagnostic workflows
+    - compare preserved replay with changed interventions separately
+  - read-depth limit: complete primary implementation account read
+    - no peer-reviewed overhead evaluation or proof of external-service fidelity supplied there
+- Torres Lopez et al., [debugging communicating event-loops, AGERE 2017, §§2–5](https://stefan-marr.de/downloads/agere17-torres-lopez-et-al-a-principled-approach-towards-debugging-communicating-event-loops.pdf)
+  - authors: “predicates over the message history are much more powerful”
+  - formalizes asynchronous actor execution and debugger transitions
+    - one actor handles one message turn at a time and owns its mutable state
+    - other actors may keep running while a selected actor is paused
+  - catalogs stopping at message send, receipt, future result production, and callback execution
+    - futures hold results that will become available later
+  - message histories support stepping between causally related events after the sender's stack has vanished
+  - implementation requires message identifiers and instrumented interpreter execution points
+  - models existing REME-D and Kómpos operations
+    - formal expressiveness does not establish diagnostic success or user comprehension
+    - actors with exclusive mutable state do not cover arbitrary shared-memory programs
+  - implication: causal navigation and continuation breakpoints are established prior work
+  - read-depth limit: full semantics and implementation discussion read
+- Stanley, Close, and Miller, [Causeway, 2009, §§3–7](https://research.google.com/pubs/archive/35127.pdf)
+  - authors: “provides no view of data state”
+  - reconstructs message causality from logs for communicating event loops
+  - synchronizes process-order, message-order, stack, and source views
+  - user-selected filtering and event promotion hide implementation details while retaining causal connections
+  - partial logs expose only relationships derivable from available records
+    - assumes relevant causality follows the event-loop model
+  - trace generation can change execution; filtering occurs after logging
+  - evaluation demonstrates seeded consistency and liveness bugs and reports informal development experience
+    - earlier real debugging successes lack detailed records
+    - proposed eleven-server ScoopFS investigation is future work
+    - no controlled user comparison or measured scaling bound reported
+  - implication: causal presentation is established; accurate inspection of earlier values requires additional capture or replay
+  - read-depth limit: selected full methods, walkthrough, limitations, and evaluation discussion inspected
+- Sun et al., [AsyncG, CGO 2019, §§V–VII](https://atlarge-research.com/pdfs/2019-nodejs-async-graphs-hsun.pdf)
+  - authors: “more information is required to debug the root cause”
+  - NodeProf instruments Graal.js function entry and exit, including Node.js libraries
+  - a shadow stack identifies event-loop turns
+  - API-specific templates and execution-context checks link callback registration, triggering, and execution
+  - graph inspection supplements automatic scheduling, emitter, and promise-pattern warnings
+  - case study uses 44 Stack Overflow questions and three GitHub issues
+    - selected examples establish covered bug patterns rather than a human diagnostic success rate
+  - modified AcmeAir uses promises for database access
+    - full tracking makes this server roughly ten times slower; excluding promise tracking roughly twice
+    - reduced overhead also changes captured evidence
+  - implication: callback causality and warnings already exist within Node.js
+    - this evaluation does not establish cross-host restart support or benefits of value-age labels
+  - read-depth limit: full primary PDF recovered from an author-group mirror; selected algorithms, detection rules, case study, and performance methods inspected
+- [V8 async stack documentation](https://v8.dev/docs/stack-trace-api#async-stack-traces)
+  - maintainers: “limited to `await` locations, `Promise.all()` and `Promise.any()`”
+  - reconstructs selected asynchronous call locations without general callback-history recording
+  - implication: compare ordinary runtime async stacks on supported cases
+    - stack locations do not by themselves preserve prior variable values
+- [libfaketime](https://github.com/wolfcw/libfaketime), implementation documentation
+  - quote: “modifies the system time for a single application”
+  - time interposition is established machinery
+  - DDB additionally addresses changing pause offsets and already-active timer waits
+- DDBench studies agentic code repair
+  - distinct from DDB's interactive debugger and human study
+  - coverage belongs to the AI-agent study
+
+bounded research possibilities
+- candidate 1: classify failures caused or hidden by pause-adjusted time
+  - hypothesis: mixed clock paths and uninstrumented dependencies predict debugging failure better than average pause duration
+  - build a small RPC test application with selectable timer and clock interfaces
+  - vary pause duration, pause skew, remaining timeout slack, and external lease enforcement
+  - compare ordinary GDB, PET-style time adjustment, longer timeouts, and complete controlled replay
+  - measure false failure detections, missed genuine failures, and state differences after resuming
+  - distinguish application failure detection from the debugger or checker declaring a process absent
+    - include complete and delayed monitoring snapshots as controls
+  - state which lease authorities and clock sources belong to the replay boundary
+    - replaying captured replies does not test expiry enforced by an uncontrolled external authority
+  - report recording-induced schedule changes separately from replay fidelity
+  - competing explanation: changed scheduling rather than clock escape causes divergence
+  - separate scheduling-sensitive and deadline-sensitive seeded faults
+  - nearest work already identifies external-clock and interception limits
+  - proposed increment: a reproducible boundary benchmark rather than rediscovering those limitations
+  - falsifier: mixed clock/dependency classes add no predictive value beyond pause skew and scheduling sensitivity
+    - benchmark remains useful replication even if the hypothesis fails
+- candidate 2: separate tool preparation from debugging benefit
+  - hypothesis: DDB's advantage shrinks on pre-instrumented applications but persists for uncaptured runtime state
+  - compare prepared tracing/logging, manual multi-process GDB, DDB, and full replay debugging
+  - stratify tasks by reproducibility, asynchronous RPCs, and state information needed
+  - train participants equally and balance tools, tasks, and order
+  - distinguish equal preparation time from equal available diagnostic information
+  - separate integration, localization, validated repair, and regression testing
+  - report timeout-censored outcomes alongside successful completion times
+  - measure developer expertise and confidence without treating confidence as correctness
+  - competing explanation: task design favors live caller-state inspection
+  - include tasks where recorded history or replay is the expected advantage
+  - nearest work already reports controlled human debugging comparisons
+  - proposed increment: establish which task classes benefit after preparation costs are equalized
+  - falsifier: effects disappear with balanced task selection and preparation
+- candidate 3: bridge asynchronous causality without pretending a vanished stack is live
+  - hypothesis: retained continuation metadata plus explicitly labeled snapshots helps trace asynchronous faults
+  - compare causal tracing, stack-only DDB, runtime async stacks, and message-history navigation
+    - adapt REME-D or Kómpos-style causal stepping where runtime access permits
+  - hold captured events and values equal when comparing a prototype continuation view
+    - isolates presentation benefit from collecting more evidence
+  - mark each displayed value as live, captured earlier, or unavailable
+  - test callbacks, retries, fan-out, cancellation, and process restart
+  - measure causal-link accuracy, stale-state confusion, storage, and diagnostic success
+  - competing explanation: ordinary trace identifiers provide the same benefit
+  - nearest work already states asynchronous boundaries require a different causality mechanism
+  - causal links, async stacks, and message-history stepping are already established
+  - proposed increment: whether explicit value-age labels reduce confusion at cancellation and restart boundaries
+  - falsifier: equally instrumented existing views yield the same accuracy and stale-state error rate
+  - Causeway already integrates message and stack views; AsyncG already reconstructs callback registration and execution
+    - compare equivalent captured histories before attributing improvement to value-age labels
+    - their selected evaluations do not establish the proposed cancellation/restart comprehension effect
+  - originality remains unconfirmed; causal reconstruction alone is not the proposed increment
+
+first experiment and remaining work
+- agent recommendation: begin with candidate 1's small clock/lease test application
+  - original DDB artifact access is unresolved
+  - reproducing semantics is not a reproduction of DDB's complete implementation
+- establish supported build/runtime versions before a usability replication
+- D3S full methods now checked
+- inspect current replay and AsyncG artifact support before selecting runnable baselines
+  - Causeway and AsyncG selected full methods and evaluations now checked
+  - historical implementation and benchmark versions do not establish current compatibility
+  - current continuation coverage includes formal actor methods and runtime documentation
+  - current modern whole-environment replay coverage is an implementation account, not an independent performance study
+- primary paper's SOSP footer and online venue listings use differing date descriptions
+  - cite it as the 2026 paper without inferring publication chronology from that discrepancy

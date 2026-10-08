@@ -1,0 +1,418 @@
+attention, learning, and tools
+(authored by agents unless marked 🧑)
+
+takeaway
+
+- research direction: help people retain technical knowledge while keeping useful external tools available
+  - test recall and transfer to new problems days later, alongside immediate task completion
+  - app use, prediction accuracy, and feeling productive are different outcomes
+- evidence supports retrieval practice and spacing in studied tasks
+  - their benefit does not establish one best schedule for every learner or task
+- evidence about merely having a phone nearby is mixed
+  - an alert, an accessible phone, and actively using a phone are different interventions
+  - the cited experiments measured performance, not brain size
+
+human starting points
+
+- 🧑 “testing help remember; test ASAP after exposure”
+  - source: [reading notes, study and learning talk](../../../../reading_notes/index.md)
+- 🧑 “do not matter for memory if wrong”
+  - source: same study-talk note
+- 🧑 “How Smartphones Shrink Our Brains”
+  - source: [reading notes, smartphone video](../../../../reading_notes/index.md)
+- interpretation: these notes motivate questions about learning and tools
+  - the video titles and summaries are leads, not experimental evidence
+
+scope of this review
+
+- retrieved primary papers and checked selected methods and results
+  - full text: Roediger and Karpicke 2006, Kornell et al 2009, Cepeda et al 2008, Fordyce et al 2025, Ward et al 2017, Walker et al 2002, Settles and Meeder 2016, Tabibian et al 2019, Iqbal and Bailey 2008
+  - additional selected full methods: Parnin and Rugaber 2009, Parnin and DeLine 2010, Pham et al 2025, Runge et al 2021, Tsai et al 2023, mobile-Internet blocking trial 2025
+  - additional full texts: Karpicke and Blunt 2011 with supporting methods, Stothart et al 2015 author manuscript, Sparrow et al 2011 main paper, Rasch et al 2007 main paper
+  - additional selected full methods: Risko et al 2019, Lu et al 2020, Pataranutaporn et al 2025, Sim et al 2026
+  - indexed selected methods only: Ruiz Pardo and Minda 2022
+  - Storm and Stone 2015 and Tsai et al 2023: recovered primary manuscripts; selected full methods, main results, and limitations inspected
+- proposals below are agent hypotheses
+  - novelty has not been established
+  - this is a research review, not a personal sleep or treatment protocol
+- additional unattributed lead: [USC training note](../../../../usc/index.md)
+  - “for automatically completing part of the "training"”
+  - file has no authorship declaration; this is an agent extension
+  - clicking lesson controls establishes interface completion rather than retained understanding
+  - possible evaluation separates required completion, immediate comprehension, delayed recall, and transfer
+    - compare equal material and time; keep retrieval-practice baselines
+    - interface automation alone supplies no new learning mechanism
+
+retrieval practice: try remembering before seeing the answer
+
+- Roediger and Karpicke, Psychological Science 2006, [paper, experiment 1 methods and results](https://learninglab.psych.purdue.edu/downloads/2006/2006_Roediger_Karpicke_PsychSci.pdf)
+  - authors: “restudying produced better recall than testing (81% vs. 75%)”
+  - experiment 1: 120 undergraduates aged 18–24 read two short prose passages
+    - each passage had 30 scored ideas
+    - compared an additional reading with writing remembered content without the passage
+    - counterbalanced passage and activity order within learners
+  - after one week, recall was 56% after initial testing and 42% after restudy
+    - after five minutes, the direction reversed, as the quotation reports
+    - tests supplied no corrective feedback
+  - inference: immediate fluency can favor the activity that produces worse delayed recall
+    - the study does not compare all possible first-test delays
+    - “ASAP” is therefore a possible starting policy, not a universal optimum demonstrated here
+- Karpicke and Blunt, Science 2011, [full paper](https://learninglab.psych.purdue.edu/downloads/2011/2011_Karpicke_Blunt_Science.pdf) and [supporting methods](https://learninglab.psych.purdue.edu/downloads/2011/2011_Karpicke_Blunt_ScienceSupportingMaterial.pdf)
+  - authors: “practicing retrieval produces greater gains in meaningful learning than elaborative studying with concept mapping”
+  - extends the question beyond word lists to science texts and comprehension
+  - experiment 1: 80 undergraduates, four conditions, a 276-word science passage, and a one-week final test
+    - retrieval alternated five-minute reading with ten-minute free recall twice
+    - concept mapping allowed the source text throughout; total time matched retrieval
+  - experiment 2: 120 undergraduates, different text structures, and final short-answer or concept-map tests
+  - inference: comparison changes whether the text is available, not simply the visual form of the notes
+    - include closed-text concept mapping when isolating retrieval from note format
+    - one-week short-passage results do not establish benefits for every technical task
+- Kornell, Hays, and Bjork, Journal of Experimental Psychology: Learning, Memory, and Cognition 2009, [paper, experiments 1–6](https://sites.williams.edu/nk2/files/2011/08/Kornell.Hays_.Bjork_.2009.pdf)
+  - authors: “Unsuccessful retrieval attempts enhanced learning with both types of materials”
+  - tested fictional trivia and weakly associated word pairs
+    - attempted answers were followed by presentation of the target answer
+    - removed rare correctly guessed word-pair trials
+  - equalizing time changed the result for fictional trivia
+    - experiment 1 favored failed attempts when answer exposure time was equal
+    - experiment 2 found equal accuracy when total trial time was equal
+  - inference: trying and failing can prepare learning from subsequent feedback
+    - errors without reliable correction are a different intervention
+    - the human's note should motivate this narrower question rather than an assumption that wrong answers never matter
+- Fordyce, Redick, Bedwell, and Karpicke, Journal of Memory and Language 2025, [paper, experiments 1–3](https://learninglab.psych.purdue.edu/downloads/2025/2025_Fordyce_et_al_JML.pdf)
+  - authors: “this benefit held regardless of individual differences in working memory ability”
+  - tested whether working-memory differences change the advantage of retrieval over restudy
+    - working memory means temporarily holding and manipulating information
+    - first two experiments included initial learning until items could be recalled successfully
+    - third used general-knowledge questions with a preregistered design and exclusions
+  - third experiment analyzed 148 participants after exclusions
+    - changed some procedures from the earlier study it sought to replicate
+  - inference: do not withhold retrieval practice solely because a learner scores lower on a working-memory test
+    - a missing statistical interaction within these samples does not prove equal benefits for every population
+
+spacing: return later, with the target retention time in mind
+
+- Cepeda, Vul, Rohrer, Wixted, and Pashler, Psychological Science 2008, [paper, current study and appendix](https://labs.biology.ucsd.edu/rifkin/courses/bieb100/f14/Cepeda_et_al_2008_Psychological_Science_Spacing_Effects_in_Learning_A_Temporal_Ridgeline_of_Optimal_Retention.pdf)
+  - authors: “The optimal gap increased as test delay increased”
+  - 1,354 participants from an Internet memory panel learned 32 facts
+    - first session trained each fact to one successful recall
+    - second session tested each fact twice and supplied answers
+    - varied both the gap before review and the delay between review and final test
+  - increasing the review gap first helped, then hurt final performance
+    - results differ across the intended time until the final test
+  - inference: one fixed gap is a weak baseline for a tool used for both next-week exams and knowledge needed next year
+    - factual recall does not directly measure debugging or understanding a proof
+- Settles and Meeder, ACL 2016, [paper, sections 4.1–4.4](https://aclanthology.org/P16-1174.pdf)
+  - authors define daily student retention as “return to do it again the following day”
+  - half-life regression predicts how quickly a learner forgets a word
+    - trained and evaluated on 12.9 million learner-word session records
+    - compared prediction errors with fixed scheduling rules and logistic regression
+  - production experiments randomly assigned users to different models
+    - measured return visits and activities
+    - these engagement results do not directly measure knowledge retained on an independent delayed test
+  - richer word features sometimes caused frustratingly fast apparent decay
+    - removing them improved engagement
+  - inference: a learning scheduler needs checks for harmful feedback loops, not just lower prediction error
+- Tabibian et al, PNAS 2019, [paper, results](https://www.pnas.org/doi/10.1073/pnas.1815156116)
+  - authors: “whenever a specific learner follows MEMORIZE more closely, her performance is superior”
+  - MEMORIZE chooses review timing using a mathematical forgetting model and a cost for review effort
+  - empirical comparison grouped existing review sequences by similarity to proposed schedules
+    - checked selected explanations for differences, including item difficulty
+    - observational schedule matching remains weaker causal evidence than randomly assigning the schedules
+  - generic adaptive scheduling is already established work
+    - a new project needs a narrower question about tasks, constraints, reliability, or evaluation
+
+sleep: distinguish a memory mechanism from a scheduling rule
+
+- Walker, Brakefield, Morgan, Hobson, and Stickgold, Neuron 2002, [paper, methods](https://walkerlab.berkeley.edu/reprints/Walker%20et%20al._Neuron_2002.pdf)
+  - authors: “a night of sleep results in a 20% increase in motor speed without loss of accuracy”
+  - 62 healthy right-handed participants aged 18–25 practiced a five-key sequence with the other hand
+    - 12 trials of 30 seconds, separated by rest
+    - five groups compared daytime and overnight retesting
+    - one group of 12 had laboratory sleep recordings
+  - task displayed the sequence throughout, deliberately reducing the requirement to remember it
+  - inference: this supports investigating delayed changes in practiced motor performance
+    - it does not demonstrate a 20% benefit for learning programming or prove an optimal study bedtime
+    - sleep-stage correlations do not by themselves establish that manipulating that stage causes improvement
+- Rasch, Büchel, Gais, and Born, Science 2007, [main paper, experiments I–IV](https://mechanism.ucsd.edu/bill/teaching/f16/cogs200/rasch.sleep%20consoldiation%20and%20order%20cues.2007.pdf)
+  - authors: “Re-exposure to the odor during slow-wave sleep (SWS) improved the retention of hippocampus-dependent declarative memories”
+    - SWS means slow-wave sleep
+  - compared presenting a learning-associated odor during different states
+  - inference: controlled memory reactivation during sleep offers stronger mechanistic evidence than a simple morning-versus-evening comparison
+    - main object-location experiment used 18 volunteers and odor versus odorless-vehicle nights
+    - morning retention was 97.2% versus 85.8% of presleep learned pairs
+    - odor did not improve the separate finger-sequence task
+    - no benefit when odor was absent during learning, or delivered during REM sleep or wakefulness
+    - supplementary exclusions and sleep-staging procedures remain unchecked
+    - this evidence does not establish a software-learning intervention
+
+phones: presence, alerts, and use need separate tests
+
+- Ward, Duke, Gneezy, and Bos, Journal of the Association for Consumer Research 2017, [paper, experiments 1–2](https://www.journals.uchicago.edu/doi/epdfplus/10.1086/691462)
+  - authors: “the mere presence of these devices reduces available cognitive capacity”
+  - varied where participants kept their phones and measured cognitive-task performance
+  - inference: this is a causal claim about those task conditions
+    - it does not measure brain shrinkage, permanent damage, or everyday software productivity
+- Ruiz Pardo and Minda, Acta Psychologica 2022, [preregistered direct replication](https://doi.org/10.1016/j.actpsy.2022.103717)
+  - authors: “there was no difference between smartphone location conditions”
+  - publisher extract reports the same tasks and conditions as Ward et al's second experiment
+    - failed to reproduce location differences in operation-span or go/no-go performance
+    - operation span tests remembering information while doing another task
+    - go/no-go tests responding to selected signals while withholding other responses
+  - selected publisher methods indexed despite direct full-page access returning 403
+    - recruited 453 undergraduates; analyzed 383 after testing/confound exclusions and an operation-span math-accuracy threshold
+    - crossed three phone locations with power on or off
+    - full procedure and supplemental analyses remain unchecked
+  - inference: a blanket proximity penalty is an uncertain premise for a product or study
+- Stothart, Mitchum, and Yehnert, Journal of Experimental Psychology: Human Perception and Performance 2015, [author manuscript, methods and results](https://www.researchgate.net/publication/279457726_The_Attentional_Cost_of_Receiving_a_Cell_Phone_Notification)
+  - authors: “cellular phone notifications alone significantly disrupted performance on an attention-demanding task”
+  - participants could be distracted without directly interacting with the device
+  - inference: notification delivery is a more concrete systems variable than phone ownership
+    - 212 undergraduates randomized; 166 retained after 46 exclusions
+    - exclusions included checking the phone, a switched-off phone, and missing data
+    - authors report unchanged conclusions when including everyone; supplementary numerical estimates remain unchecked
+    - this does not quantify missed urgent messages or net benefit of batching
+- PNAS Nexus 2025, [randomized mobile-Internet blocking trial](https://doi.org/10.1093/pnasnexus/pgaf017)
+  - authors: “Complying with the intervention was evidently difficult for participants”
+  - assigned timing of a two-week block on phone Internet access
+    - allowed calls, texts, and Internet access through other devices
+    - measured sustained attention alongside self-reported outcomes
+  - 119 of 467 committed participants met the preregistered compliance threshold
+    - at least ten of fourteen intervention days with blocking active
+  - inference: accessibility restrictions and mere presence need separate interpretations
+    - noncompliance is central to whether a systems intervention works in practice
+    - selected full methods now checked: random assignment to immediate blocking or a two-week waitlist
+    - authors describe the primary analysis sample as “complete cases”
+      - analyses include noncompliers but require all three measurement times
+      - 313 completed all three surveys; retained participants had better baseline attention than those lost
+    - inference: complete-case results remain vulnerable to missing outcomes
+      - waitlist controls do not separate expectancy from effects of blocking
+      - attention-task improvement does not establish better debugging or technical retention
+- Iqbal and Bailey, CHI 2008, [paper, study 2 and discussion](https://interruptions.net/literature/Iqbal-CHI08.pdf)
+  - authors: “Our results did not show that scheduling notifications at breakpoints affects users’ resumption time”
+  - already implemented statistical detection of task boundaries in programming and diagram editing
+  - reduced frustration depended on task and notification conditions
+    - programming frustration differences did not reach significance
+    - a collapsed analysis of relevant-notification reaction time reported p < 0.056
+  - inference: task-boundary delivery is existing work, including programming
+    - a new experiment must isolate a distinct outcome or constraint
+
+recovering interrupted programming work
+
+- Parnin and Rugaber, ICPC 2009, [author PDF, sections 3–4 and validity discussion](https://chrisparnin.me/pdf/parnin-icpc09.pdf)
+  - authors: “we do not know the nature of an interruption”
+  - analyzed 9,899 IDE sessions from 85 developers, separating sessions at gaps of at least 15 minutes
+    - an IDE gap can include related work outside the editor
+    - first edit measures restarting activity, not correct reasoning
+  - inference: these observations motivate recovery support without identifying interruption's causal cost
+- Parnin and DeLine, CHI 2010, [author PDF, laboratory methods, table 3, and lag measures](https://chrisparnin.me/pdf/cues-chi09.pdf)
+  - authors: “These differences are also not statistically significant”
+    - context: edit-lag differences across recovery tools
+  - recruited 15 experienced professional programmers; one tool failure left 14 for analysis
+  - each modified three game programs with counterbalanced notes-only, code-symbol tree, and chronological code-history conditions
+    - all conditions allowed notes and up to one minute to prepare for the task switch
+  - each history condition yielded 7 completed tasks, versus 4 with notes alone
+    - completion comparison reported p < 0.1, a weak result
+    - edit-lag analysis excluded five people who completed no tasks, leaving nine
+  - inference: notes and recorded code history are necessary comparison tools
+- Pham, Zhou, and Kelleher, [Interruptions and Recovery, full paper, sections III–VIII](https://par.nsf.gov/servlets/purl/10660110)
+  - authors: “not leading to a significant reduction in overall recovery time”
+  - compared chronological code history with history grouped by development sub-goals, including related web pages and generated descriptions
+  - 23 student sessions included six pilots; results contain 68 interruption periods
+    - each interface accompanied a 45-minute programming task with two five-minute code-comprehension interruptions
+    - experimental games contained about 150–250 lines of code
+  - distinguished first non-comment edit from first execution demonstrating correct task progress
+  - grouped history was used in 73.5% of periods, versus 44.1% for the timeline
+    - optional use can reflect greater need for help; it does not establish causal benefit
+    - task types were not perfectly balanced across interfaces
+  - inference: generated summaries of prior work already exist in this setting
+    - compare a saved debugging hypothesis against these summaries
+    - measure correct reasoning, recovery speed, and delayed understanding separately
+- Leroy and Glomb, Organization Science 2018, [publisher abstract](https://doi.org/10.1287/orsc.2017.1184)
+  - authors: “performance on the interrupting task does not suffer”
+  - studied a brief plan for returning to unfinished work across four studies
+    - outcome concerns the new interrupting task
+    - full methods remain unchecked; this does not establish faster coding recovery
+- van Zoonen and Scharp, [2025 accepted manuscript](https://jyx.jyu.fi/bitstreams/17542bb9-8cb5-424d-9e71-e0238152c360/download), selected full methods/results/limitations
+  - authors: “Unexpectedly, the intervention increased general exhaustion”
+  - one Dutch technology-consulting branch during May 2021 remote-work mandates
+  - 500 invited, 80 volunteers, 58 survey completers randomly assigned
+    - eight provided no daily surveys; analysis uses 50 employees, 25 per group
+  - intervention records where work stopped, where to resume, and remaining challenges before externally triggered interruptions
+    - no-instruction control; no unrelated-writing control
+  - four days, 200 observations of daily self-reported attention residue and exhaustion
+    - attention residue means thoughts about unfinished work persisting during another task
+  - intervention associated with lower residue and a weaker residue–exhaustion relationship, alongside higher general exhaustion
+  - no measured coding recovery, task accuracy, or return speed
+  - selected single-employer sample, post-assignment missingness, and retrospective reports limit transfer
+  - manuscript read; original 2018 methods and intervention artifacts not independently reproduced
+- Stothart, [author description of the 2015 notification experiment](https://carystothart.com/publications/attentional-cost-cell-phone-notification)
+  - author: “We excluded data from anyone who looked at or handled their phone”
+  - two 360-trial attention blocks; random assignment to four calls, four texts, or no notifications in the second block
+    - task required pressing for digits except 3, not programming or learning
+    - selected original author-manuscript methods now checked above
+  - inference: a practical notification experiment should report assignment effects including people who respond
+
+external memory can help one task while changing what people remember
+
+- Sparrow, Liu, and Wegner, Science 2011, [published main paper, experiments 2–4, mirrored PDF](https://gwern.net/doc/psychology/2011-sparrow.pdf)
+  - authors: “enhanced recall instead for where to access it”
+  - reported lower recall of information itself when participants expected future access
+  - experiment 2 crossed saved-versus-erased expectations with explicit memorization instructions for 40 typed trivia statements
+    - tests expected availability, not actual search-engine use or long-term technical learning
+  - experiment 4 compared uncued statement recall with cued recall of one of six folder names
+    - authors: “Participants did have a cue to memory”
+    - different cues and answer spaces prevent treating the recall difference as a clean measure of memory allocation
+    - supporting sample and exclusion details remain unchecked
+  - inference: measure both unaided recall and the ability to retrieve useful information through a tool
+    - original study is a lead, not sufficient evidence of a universal Google effect
+    - replication evidence was not fully reviewed here
+- Storm and Stone, Psychological Science 2015, [recovered primary manuscript](https://citeseerx.ist.psu.edu/document?doi=9cf97e75e807cb0f92722d71dc52554d167fd414&repid=rep1&type=pdf)
+  - authors: “saving may have improved encoding or retrieval of the new information”
+  - experiment 1 uses 20 UCSC undergraduates, two ten-word files, and saving versus closing the first file
+    - second file always tested before saved first-file restudy and recall
+  - experiment 2 analyzes 48 undergraduates after replacing two affected by experimenter error
+    - eight-word files; 15-second study and 20-second recall
+    - random reliable versus unreliable saving; unavailable files produce an error at restudy
+    - primary analysis excludes the first two practice-experience trials
+    - second-file benefit appears with reliable saving, not unreliable saving
+  - experiment 3 randomly assigns 48 undergraduates to two-word versus eight-word first files
+    - benefit appears with eight words, not two
+  - inference: reliability and existing memory demand constrain the effect
+    - storage reliability differs from accuracy of generated summaries
+    - these experiments do not separate reduced interference at encoding from interference at retrieval
+  - read-depth limit: complete primary methods and main results inspected; supplemental materials and data not replayed
+- Tsai, Sachdeva, Gilbert, and Scarampi, [saving-enhanced memory and test order, 2023, §§2–4](https://discovery.ucl.ac.uk/id/eprint/10169254/1/An%20investigation%20of%20the%20saving%20enhanced%20memory%20effect.pdf)
+  - authors: “does not allow us to fully disentangle the influence of test order and retention interval”
+  - two preregistered online experiments use eight-word lists
+  - experiment 1 retains 102 participants after replacing eight memory-performance outliers and three reporting cheating
+    - within-person first-list saving, second-list saving, and no saving
+    - test order varies between participants
+    - saving the first list benefits second-list recall only when the second list is tested first
+    - saving the second list does not improve first-list recall
+  - experiment 2 retains 88 Prolific participants after replacing four reporting cheating
+    - participants choose which list to save
+    - chosen saved list available for restudy on only half the trials
+    - saving choices depend on test order
+  - saved-list recall immediately follows restudy; unsaved-list recall follows longer intervals
+    - apparent benefits combine storage, renewed exposure, and recall timing
+  - implication: distinguish recovery of saved work from learning new material
+    - test order can change the apparent benefit of a recovery aid
+  - artifacts: [experiment 1](https://osf.io/vb8te/), [experiment 2](https://osf.io/m9ths/), [materials](https://app.gorilla.sc/openmaterials/220207)
+  - read-depth limit: selected full methods, results, and limitations inspected; preregistration and supplements unchecked
+
+- Runge et al, European Journal of Neuroscience 2021, [full paper, methods and results](https://www.uni-trier.de/fileadmin/fb1/prof/PSY/AKP/Sekretariat/Paper/Electrophysiological_correlates.pdf)
+  - authors: “no statistically significant saving-enhanced memory effect”
+  - 52 undergraduates completed saving and no-saving word-list trials during EEG recording
+    - later-list recall averaged 4.93 saved-condition items versus 4.72 without saving
+  - inference: no statistically significant behavioral benefit prevents treating absent EEG differences as evidence for a shared mechanism
+
+saved information can also introduce errors
+
+- Risko, Kelly, Patel, and Gaspar, Cognition 2019, [accepted manuscript, experiments 1–3](https://uwspace.uwaterloo.ca/bitstreams/9b02175a-27c9-4f2f-a3e0-d83b85a43d95/download)
+  - authors: “individuals rarely noticed this manipulation”
+  - participants heard word lists and typed them into a file
+    - researchers secretly inserted a word on the fourth trial while the display was off
+    - experiment 1 analyzed 72 undergraduates; experiment 2 recruited 40
+  - experiment 2 added a surprise recognition test without the file after assisted recall and another 30-second distractor
+    - inserted words could be endorsed as originally heard
+    - experiment 3 participants nevertheless distinguished inserted from presented words overall
+  - inference: external-store acceptance and later unaided memory need separate measures
+    - short word-list manipulations do not establish the same effect for debugging notes
+  - artifact: [data and analysis](https://osf.io/3ce6u/)
+- Lu, Kelly, and Risko, Cognition 2020, [accepted manuscript, methods and results](https://uwspace.uwaterloo.ca/bitstreams/764284b6-d4ee-45b3-8b32-2e8a34949605/download)
+  - authors: “offloading decreased true recall of presented words while increasing false recall for unpresented critical words”
+  - word lists contained associates of an absent word, such as sleep-related words without the word sleep
+    - participants wrote both expected-access and expected-no-access material
+    - experiments 1a and 1b each analyzed 40 undergraduates
+    - on the final trial, expected access was withdrawn before recall
+  - experiment 2 analyzed 80 participants with one list per trial
+    - crossed advance notice versus last-minute notice of unavailable notes on the final two trials
+    - reduced explanations involving competition between two lists or different practice across earlier trials
+  - inference: false recall can arise without corrupting the saved file
+    - an unavailable-note test measures a failure of expected access, not ordinary assisted performance
+- Pataranutaporn et al, IUI 2025, [full paper, sections 2–3](https://dam-prod.media.mit.edu/x/2025/08/25/IUI-2025-Slip%20Through%20the%20Chat.pdf)
+  - authors: “180 participants were randomly assigned”
+  - authors report preregistration; recruited U.S. CloudResearch participants
+    - three articles, five conditions, planned allocation of 36 participants per condition
+    - no intervention, honest or misleading summary, honest or misleading chatbot
+  - article reading required at least three minutes, followed by a two-minute game and the intervention
+    - misleading material used five selected false points mixed with factual points
+    - chatbot began with the corresponding summary, then discussed ten supplied points
+    - immediate test asked whether 15 claims occurred in the original article
+  - misleading chatbot produced more false endorsements than the other conditions
+    - this comparison bundles interaction, repeated exposure, and initial summary
+    - it does not isolate conversation alone or establish long-term memory changes
+  - artifact: [repository](https://github.com/mitmedialab/slip-through-the-chat)
+- Sim, Eiger, and Kohno, AIES 2026 extended version, [full methods and results](https://arxiv.org/html/2609.28820v1#S3)
+  - authors: “the summary was identical for all participants”
+    - exception: the manipulated traffic-sign detail
+  - 328 analyzed U.S. Prolific participants watched a 25-second accident video
+    - 24–48 hours later read a selected, edited AI summary
+    - randomized accurate versus misleading sign and AI versus human authorship label
+    - immediately tested recognition of the original video
+  - correct sign responses were 83.6% after consistent summaries and 44.8% after misleading summaries
+    - authorship-label comparisons were not statistically significant
+    - this does not prove equivalent effects for every label or population
+  - separate model-output analysis used only two videos and 20 summaries
+    - experimentally controlled misinformation is not a measured natural error rate for debugging summaries
+  - artifact: [materials and data](https://osf.io/wmjtn)
+
+candidate experiments
+
+- first candidate: a technical reading tool that distinguishes recall from useful lookup
+  - hypothesis: briefly recalling without looking at the text or notes, then receiving verified feedback, improves delayed technical reasoning at an acceptable time cost
+  - compare three randomly assigned activities after the same text
+    - reread, unaided explanation plus feedback, searchable personal notes
+    - balance task content and allotted time
+  - outcomes: one-week unaided recall, new debugging or explanation problems, and time to answer with tools available
+    - score answers against a rubric without knowing the assigned condition
+    - keep assisted and unaided scores separate
+  - closest prior work: retrieval-practice comparisons and saving-enhanced memory already cover the broad mechanisms
+    - if comparing note formats, add closed-text concept mapping to separate retrieval from the format
+  - possible contribution: which forms of technical knowledge need unaided retention when search is available
+    - novelty remains unverified
+  - stop rule: abandon a universal recall-first claim if benefits appear only for rehearsed questions or disappear under equal time
+- second candidate: review scheduling with unreliable delivery
+  - hypothesis: a scheduler accounting for missed prompts and limited daily time improves independently tested retention over one that optimizes predicted recall alone
+  - baselines: fixed gaps, Leitner-style bins, half-life regression, MEMORIZE
+    - compare a recent production scheduler before claiming novelty
+  - randomize schedules; use identical material and prompt wording
+    - measure delivery, actual review, ignored prompts, time spent, and delayed transfer
+    - analyze assignment as well as actual usage, because ignoring prompts is an outcome
+  - contribution would be handling delivery and adherence constraints, not inventing spaced repetition
+  - stop rule: do not call higher app return rates better learning
+- third candidate: preserve technical reasoning across interruptions
+  - hypothesis: a short saved statement of the current debugging hypothesis helps recover correct reasoning after interruption
+    - test whether an unsupported summary claim is later mistaken for an observed program behavior
+    - memory distortion from external stores and AI output is established prior work, not a new general mechanism
+  - compare immediate delivery, fixed-time batching, and task-boundary batching
+    - counterbalance order across participants
+    - include both benign messages and explicitly urgent messages
+    - independently vary whether a brief task-state note is saved
+    - compare notes with chronological code history and generated sub-goal history
+    - add an equally timed manual return plan and neutral writing control
+    - count time spent saving and checking the aid, including incorrect generated summaries
+    - within one fixed notification policy, compare an ordinary current-task note with a matched note recording uncertainty and rejected hypotheses
+      - keep code history equally available in both conditions
+      - match preparation time and note length
+  - outcomes: correct fixes, time to resume, overlooked messages, delayed comprehension of the code
+    - record phone accessibility separately from notification policy
+    - separate aid-assisted resumption from unaided delayed comprehension
+      - match rereading opportunities and retention intervals
+      - counterbalance whether old interrupted work or new material is tested first
+      - record successful aid access separately from whether its contents are correct
+  - closest prior work: Iqbal and Bailey already tested task-boundary notifications during programming
+    - the candidate concerns reasoning accuracy and delayed comprehension, with saved task state as a separate intervention
+    - Parnin and DeLine and Pham et al already study coding recovery aids, including generated sub-goal summaries
+    - possible contribution: whether explicit uncertainty and rejected debugging hypotheses improve correct fixes and delayed comprehension beyond those aids
+    - that contribution remains unverified; merely saving context is existing work
+  - stop rule: reject the proposed policy if latency costs outweigh performance gains or fixed-time batching performs equally well
+    - separately reject the note-content intervention if it adds no correct-fix or delayed-comprehension benefit over the matched ordinary note
+
+remaining work before choosing a project
+
+- complete full-method checks for the abstract-only papers
+- examine direct replications of the Google-memory experiments and current phone-presence evidence
+- review task-boundary notifications, technical learning, and recent scheduling algorithms
+- obtain independent critique of causal design and novelty
+  - no ChatGPT opinion is claimed in this page

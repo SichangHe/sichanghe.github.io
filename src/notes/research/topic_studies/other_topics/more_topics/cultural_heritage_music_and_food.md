@@ -1,0 +1,365 @@
+cultural heritage, music, and food
+(authored by agents unless marked 🧑)
+
+
+- 🧑 “I go to cities like Shanghai, NYC, and Chicago only for museum and gallery”
+- 🧑 “I like some of the classical music, much of impressionist paintings, and some simplistic modern art”
+- 🧑 “I like food from natural ingredients and simple cooking”
+  - source: [about page](../../../../../about.md)
+- these interests justify investigating possible directions
+  - they do not establish that the human wants a career in these fields
+  - exercise connects to the healthcare study
+  - reading depth varies by source
+    - each source lists what was read and what remains unchecked
+- museum access through physical replicas
+  - Karaduman, Alan, and Yiğit, Beyond Do Not Touch, 2022
+    - [author-hosted full paper, §§3 and 6](https://avesis.anadolu.edu.tr/yayin/de22220e-c47b-4b84-9b59-349ed66b01b5/beyond-do-not-touch-the-experience-of-a-three-dimensional-printed-artifacts-museum-as-an-alternative-to-traditional-museums-for-visitors-who-are-blind-and-partially-sighted/document.pdf)
+    - “3D printed replicas of artifacts from famous museums around the world”
+    - studies a printed-artifact museum for blind and partially sighted visitors
+    - interviews eleven festival visitors
+      - nine blind and two severely vision-impaired
+      - convenience sample aged 16–42
+      - all read Braille and had previously visited museums
+    - authors: “interviews were the only means of data collection”
+    - white printed objects, Braille labels, and staff explanations were supplied together
+      - favorable interviews do not isolate the effect of printing or measure detail-recognition accuracy
+    - read-depth limit: full methods and limitations read
+      - no independent visitor experiment
+  - Liu and He, Effect of Scaling on 3D-Printed Replicas, 2025
+    - [full primary paper, methods and limitations](https://journals.sagepub.com/doi/full/10.1177/10711813251374237)
+    - “Twenty-eight sighted participants” used replicas “while being blindfolded”
+    - smaller replicas helped recognition for one of two warrior models
+    - size interacted with model type
+      - model type also interacted with task order
+    - blindfolded sighted participants are not interchangeable with experienced blind museum visitors
+    - compares 180 mm and 480 mm replicas
+      - six feature-location and eight descriptive questions per model
+      - a researcher supplies a human-figure hint when initial human-figure recognition fails
+        - the initial response remains scored incorrect
+    - authors: “timing data during exploration was not collected”
+      - recognition scores do not establish efficiency at equal exploration times
+    - read-depth limit: full methods, results, and limitations read
+  - tentative experiment: compare geometric simplification with uniform resizing for identifying specific artifact details
+    - printing a replica and testing scale are already prior work
+    - compare equal print cost and equal tactile exploration time
+    - measure detail identification, mistaken interpretation, and independent navigation with intended users
+    - useful null: a simple resized replica works equally well
+    - requires a museum and accessibility partner before claiming practical value
+- reconstruction quality differs from historical authenticity
+  - Knapitsch, Park, Zhou, and Koltun, Tanks and Temples, 2017
+    - [authors' benchmark](https://www.tanksandtemples.org/index)
+    - “a benchmark for image-based 3D reconstruction”
+    - images support reconstructing scene geometry
+    - inferred or filled surfaces do not establish how an artifact actually looked
+  - tentative direction: preserve which visible regions were measured, reconstructed, or invented in a museum model
+    - the [London Charter, principle 4.4](https://www.london-charter.org/documentation.html) already requires communicating “the extent and nature of any factual uncertainty”
+      - labeling reconstruction uncertainty alone is not a new contribution
+    - compare detail interpretation with and without those distinctions
+    - inspect existing heritage documentation and uncertainty-display methods before claiming novelty
+    - a model that looks convincing but teaches a false detail is a failed outcome
+  - Glaser, Lengyel, Toulouse, and Schwan, [How Do We Deal with Uncertain Information?, 2022, methods, results, and discussion](https://link.springer.com/article/10.1007/s10648-022-09659-4)
+    - authors: “The present study was not designed for addressing this issue”
+      - refers to long-term memory for content and uncertainty labels
+    - randomly assigns 124 analyzed participants to four visualization conditions
+      - mostly recruited through a student mailing list
+      - excludes ten participants who failed visualization-understanding checks
+    - all conditions receive the same audio explanation with verbal uncertainty markers
+      - compares added color, simplified geometry, both, or neither
+    - uncertainty degrees and justifications are fictional experimental assignments
+    - colors improve immediate recall of uncertainty compared to verbal markers alone
+    - simplified geometry reduces recall of uncertain architectural details
+    - implication: uncertainty display and immediate learning already have direct experimental evidence
+      - a narrower study could test delayed false certainty about specific reconstructed details
+      - compare existing color and geometry baselines with equal content and viewing time
+    - read-depth limit: full primary methods, results, and discussion read
+      - delayed learning, museum field use, and actual historical accuracy were not established
+  - Foschi, Fallavollita, and Apollonio, [Quantifying Uncertainty in Hypothetical 3D Reconstruction, 2024, §§3–6](https://cris.unibo.it/retrieve/3dd63964-1196-4ebc-98c1-e20fa5cc13da/2024_ApollonioEtAl_QuantifyingUncertainty.pdf)
+    - authors: “relevance factors are assigned subjectively but critically by the operator”
+    - assigns uncertainty levels from source availability, authorship, type, quality, and supplied detail
+    - averages assigned uncertainty using each architectural element's solid volume
+      - excludes empty room space
+      - splitting an element preserves the average if its assigned uncertainty stays the same
+      - larger elements dominate even when smaller details matter more historically
+    - a second formula also weights the operator's declared importance of each element
+      - this adds subjective judgments that must be documented
+    - illustrates formulas on simplified architectural models and compares alternative weights
+      - reports classroom application to hundreds of cases
+      - fuller testing results were deferred to later project publications
+    - requires closed solids without intersections or self-intersections
+    - inference: these percentages summarize assigned evidence categories
+      - they do not establish the probability that a reconstructed feature is historically correct
+    - implication: uncertainty aggregation and source-based labels already have explicit methods
+      - test whether an average hides an important unsupported detail
+      - compare volume weights, declared importance weights, and individual detail labels
+    - read-depth limit: full primary methods, examples, discussion, and conclusions read
+      - formulas not independently reproduced
+  - Colley and colleagues, [Visualising Authenticity in Historical Virtual Reality Environments, 2026, §§3–6](https://doi.org/10.1145/3797993.3798021)
+    - authors: “The statements were: I trust the accuracy of this reconstruction, It is clear to me which parts are based on uncertain data”
+    - eight design-course participants inform three styles: colored borders, grayscale, and blur
+    - twenty campus participants evaluate twelve static 360-degree images in a headset
+      - sixteen work or study in design
+      - each sees all conditions in randomized order, with one minute per image
+      - rates trust, perceived clarity, and disruption on seven-point scales
+    - authors report improved clarity across styles without a significant trust difference
+      - Black and White is preferred overall; blur is more disruptive
+    - small specialist sample and repeated exposure limit wider application
+    - inference: perceived clarity and preferred experience differ from measured historical accuracy or retained knowledge
+    - implication: comparing authenticity visualization styles in VR already has direct prior work
+      - a proposed study must distinguish user preference from correct identification of unsupported details
+    - read-depth limit: indexed primary methods, selected results, and limitations read
+      - linked repository PDF returned an access challenge; direct ACM full text returned HTTP 403
+      - complete statistics and interactive museum deployment not assessed
+- classical music has useful paired measurement data
+  - Hawthorne and colleagues, MAESTRO, ICLR 2019
+    - [official dataset](https://magenta.tensorflow.org/datasets/maestro)
+    - “about 200 hours of virtuosic piano performances”
+    - “the same composition” does not appear “in multiple subsets”
+    - paired audio and MIDI record sound and note events
+      - MIDI is a digital description of played notes and controls
+    - repertoire is mostly classical piano
+    - original data are competition performances on instruments that capture note events
+  - tentative systems direction: quantify how recording degradation changes timing and note-recovery errors
+    - compare codecs, microphone distortion, room effects, and processor budget
+    - separate held-out compositions from held-out performers or recording conditions
+    - measure recovery errors and resource use rather than musical quality
+    - generic piano transcription already has substantial prior work
+    - useful null: existing models are already robust within the proposed degradation range
+    - broader instrument or aesthetic claims need other data
+  - Edwards and colleagues, [A Data-Driven Analysis of Robust Automatic Piano Transcription, 2024, §§III–V](https://arxiv.org/html/2402.01424v1)
+    - authors: “we were unable to conduct precise tests of significance”
+    - re-records roughly 200 hours of MAESTRO MIDI on a studio Disklavier
+    - studies original, studio, and synthesized recordings with tuning, noise, equalization, and reverberation changes
+    - evaluates note onsets without training the pedal predictor
+    - shorter single-augmentation and ablation runs use 28,000 training steps rather than the main 200,000
+    - no repeated training runs to estimate variance
+    - implication: acoustic degradation and training augmentation are established baselines
+      - compare equal inference budgets against released robust models
+      - test a specific deployment failure rather than propose generic robustness evaluation
+  - [Towards Musically Informed Evaluation of Piano Transcription Models, 2024, §§3–6](https://arxiv.org/html/2406.08454v1)
+    - authors: “six (MAESTRO and Disklavier) audio recordings” in the perturbation study
+    - evaluates 105 performances of 27 pieces across original and re-recorded audio
+    - deliberately includes train, validation, and test splits to inspect generalization
+    - computes timing, articulation, harmony, and dynamics measures alongside note-level scores
+    - these computed features do not establish listener preference or aesthetic quality
+    - implication: reporting recovered notes alone misses established dimensions of transcription error
+      - preserve held-out pieces for a new deployment study
+      - compare feature fidelity and resource use at matched budgets
+  - Marták, Hu, and Widmer, [Sound and music biases in deep music transcription models, published December 2025, §§3–4 and 6](https://link.springer.com/article/10.1186/s13636-025-00428-z)
+    - authors: “Genre labels in this work are applied heuristically”
+    - evaluates five released models and checkpoints
+    - re-records 20 MAESTRO test performances on one Disklavier to compare sound conditions
+    - adds 100 filtered piano performances across ten genre labels and 72 randomly generated sequences
+    - average note-matching scores fall roughly 20 percentage points after changing sound and another 14 across genre collections
+      - this score requires matching note onset, offset, and velocity
+      - these averages do not describe every model, metric, or recording environment
+    - genre comparisons also change musical material and depend on source metadata
+      - they do not isolate a universal causal effect of genre
+    - random sequences deliberately include extreme numbers of simultaneous notes
+      - this tests model limits rather than ordinary listening conditions
+    - implication: changed sound, genre, dynamics, and note combinations already have controlled benchmarks
+      - a possible systems study must add a specific deployment constraint and compare these released models
+    - read-depth limit: primary methods, evaluation, and limitations read
+      - code and recordings not independently run
+- food data can measure recipes without measuring taste or health
+  - Ahn, Ahnert, Bagrow, and Barabási, Flavor Network, 2011
+    - [primary paper](https://www.nature.com/articles/srep00196)
+    - “a cookbook cannot represent a whole cuisine”
+    - analyzes ingredient co-occurrence and shared flavor compounds in recipe collections
+    - a correlation in online recipes is not proof that two ingredients taste good together
+    - read-depth limit: indexed primary passages; full page access failed
+  - Salvador and colleagues, Recipe1M, CVPR 2017
+    - [primary paper](https://openaccess.thecvf.com/content_cvpr_2017/papers/Salvador_Learning_Cross-Modal_Embeddings_CVPR_2017_paper.pdf)
+    - “image-recipe retrieval task”
+    - connects recipe text with images of prepared food
+    - finding a visually similar dish does not verify ingredients, cooking steps, nutrition, or allergens
+    - selected full methods, §§2.3–6.2
+      - authors: “we carefully removed any exact duplicates or recipes sharing the same image”
+      - roughly 70/15/15 training/validation/test split
+        - recipe-family separation and near-duplicate removal unverified
+      - learned ingredient-name extraction and text/image encoders align matched pairs
+      - retrieval evaluated on random 1000-pair candidate sets, repeated ten times
+        - image-to-recipe recall: 24% at rank one, 65% within ten
+        - matching the paired recipe does not validate ingredient constraints
+      - human ten-choice matching tasks do not test cooking or substitutions
+      - ingredient-name extraction does not establish quantities or complete compound constituents
+      - artifact and extraction annotations not independently audited
+  - tentative direction: detect unsupported ingredient substitutions in cooking tools
+    - define the exact constraint first
+      - explicit excluded-ingredient matches are mechanically testable when ingredient lists are complete
+      - compound ingredients and incomplete lists require separate checking
+      - safety and taste require qualified review or human experiments
+    - compare rule-based filtering, existing recipe retrieval, and generated substitutions
+    - measure stated-constraint violations and unsupported claims on held-out recipe families
+    - useful null: simple ingredient filters solve the chosen task
+    - generic recipe recommendation is already established
+    - no health recommendation follows from a food preference or an image dataset
+  - Shirai and colleagues, [Identifying Ingredient Substitutions Using a Knowledge Graph of Food, January 2021, §§2–4](https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2020.621766/full)
+    - authors: “Such linking errors caused our substitution filtering strategy to fail”
+    - combines explicit food classifications with word similarities to rank substitutions
+    - already supports dietary-category and nutrient constraints
+    - tests single-ingredient substitutions against 137 guide pairs, 2,360 thesaurus pairs, and 3,313 pairs extracted from recipe reviews
+      - excludes 100 development ingredients from the thesaurus evaluation
+      - ranks candidates against unranked reference substitutions
+      - candidates come only from ingredients present in each reference dataset
+      - this evaluates a restricted ingredient pool rather than unrestricted foods, cooked meals, or health outcomes
+    - incorrect ingredient-to-class links let varieties of the original ingredient pass its exclusion filter
+    - missing measurement-unit matches limit nutrient calculations
+    - reference lists omit some plausible substitutions
+      - disagreement alone does not establish an invalid substitution
+    - implication: generic constrained substitution is established prior work
+      - a narrower study separates extraction errors, incorrect food links, missing quantities, and incomplete reference answers
+      - check explicit constraints independently and compare answer rates
+    - read-depth limit: primary methods, results, and limitations read
+      - implementation not reproduced
+  - Bikakis and colleagues, [A Commonsense Reasoning Framework for Substitution in Cooking, 2026, §§8–10](https://discovery.ucl.ac.uk/id/eprint/10220617/1/dke-substitution-logic.pdf)
+    - authors: “secondary substitutions as being identified via inconsistencies with integrity constraints”
+    - represents ingredients, equipment, timed actions, quantities, and recipe steps in logic
+    - a rule violation can trigger further changes after the first ingredient substitution
+    - examples cover cooking duration, equipment availability, preparation, and ingredient quantities
+    - guarantees concern encoded rules and assumptions
+      - consistency does not independently verify that a meal tastes good or is safe
+    - recipe translation and richer computational integration remain future work in the discussion
+    - read-depth limit: selected definitions, constraint methods, proofs, and discussion
+      - no deployed-system benchmark reproduced
+    - implication: constraint checking and substitution repair are already prior work
+      - a possible study tests failures caused by incomplete ingredient data and inaccurate extraction
+      - compare abstention with explicit unknowns against confident completion
+        - report answer rate and violations among answered cases
+        - compare at matched answer rates so refusing every case cannot win
+      - useful null: simple explicit-ingredient filters match the richer system on the chosen task
+
+
+museum funding and artistic autonomy
+
+- motivation: the human's museum interest quoted above
+  - agent choice: study how funding affects exhibition choices and visitors' trust
+  - unmarked art-business notes were not attributed to the human
+- distinguish three questions
+  - selection: which exhibitions receive funding and get shown
+  - control: who can change or reject their content
+  - perception: what visitors believe about independence
+  - evidence for one does not establish the others
+- Victoria D. Alexander, [From philanthropy to funding, Poetics 1996](https://doi.org/10.1016/0304-422X(95)00003-3)
+  - author: “funders sponsor more of the exhibitions that suit their goals”
+  - primary abstract describes interviews and archives from 30 museums
+    - exhibition analysis covers more than 4000 exhibitions at 15 large American art museums, 1960–1986
+  - argues that exhibition mix changes through selective funding rather than direct pressure
+    - also describes curators gaining leverage from a larger set of funders
+  - implication: funding dependence need not imply one-way loss of autonomy
+    - distinguish selection, direct intervention, and alternative sources of support
+  - read-depth limit: [institutional abstract](https://openresearch.surrey.ac.uk/esploro/outputs/journalArticle/From-philanthropy-to-funding-The-effects/99516489802346) and publisher abstract inspected
+    - publisher full-text access returned HTTP 403; institutional record supplied no manuscript
+    - coding definitions, statistical adjustments, and archival missingness remain unchecked
+- Plets and Kuijt, [Gas, Oil and Heritage, revised March 2022 paper](https://bmgn-lchr.nl/article/download/7028/13336)
+  - authors: “we did not explore specific cases but discussed general funding practices”
+  - selects three publicly funded Dutch history museums receiving NAM or Shell support
+  - compares annual financial reports, exhibition developments, and oil-and-gas narratives
+    - interviews curatorial and funding staff about general practices
+    - Drents Museum supplied correspondence and exhibition designs
+    - other institutions had sparse archives or private contracts
+    - Boerhaave declined substantive interviews
+  - authors interpret selected narratives as favorable to hydrocarbon interests
+    - this is an argued case interpretation, not a randomized estimate of sponsor influence
+    - existing curatorial views, subject selection, funding needs, and archive access are alternative explanations
+  - [corrigendum](https://bmgn-lchr.nl/article/download/7028/13340) corrects a fundraiser quotation and adds clarification after criticism
+    - use the revised paper rather than treating the original wording as unchanged evidence
+  - read-depth limit: primary methods, selected museum cases, funding discussion, and complete corrigendum read
+    - underlying private contracts and original interview records not independently checked
+- Ad Maas, [Reply to Plets and Kuijt, 2022](https://bmgn-lchr.nl/article/download/11658/13320)
+  - author: “Shell had no influence on our story”
+  - curator disputes the inference about Boerhaave's exhibition
+    - challenges source selection, treatment of its accompanying essay collection, and omission of critical exhibition material
+  - this participant's denial is relevant evidence, not independent resolution of the dispute
+- Kuijt and Plets, [Reply to Maas, 2022](https://bmgn-lchr.nl/article/download/11667/13322)
+  - authors: “we drew on a wide range of sources”
+  - defend their reading using the accompanying book, public interviews, and visitor reports
+    - distinguish broader funding practices from accusations about one individual's intentions
+  - read-depth limit: both complete primary replies read
+    - this review does not adjudicate whose reconstruction of the exhibition is correct
+- Biraglia and Gerrath, [Corporate sponsorship for museums in times of crisis, 2021, methods and results](https://eprints.whiterose.ac.uk/165839/9/1-s2.0-S0160738320302000-main.pdf)
+  - authors: “we were not able to collect actual behavioral data”
+  - randomly assigns 358 Italian Prolific participants to four newspaper-article scenarios
+    - COVID-19 funding justification present or absent
+    - one large local sponsor or five small local sponsors
+  - fictional Uffizi exhibition offers promotional space and equal revenue sharing with sponsors
+  - measures stated visiting intention, additional willingness to pay, and perceived loss of authenticity
+    - authenticity here concerns perceived adherence to museum values
+    - it does not mean historical reconstruction accuracy
+  - crisis justification interacts with sponsor condition
+    - small sponsors fare better on stated visiting intention in the crisis scenario
+    - no significant visiting-intention difference outside that scenario
+  - sponsor number changes with size in the main experiment
+    - authors report a separate follow-up separating number and size
+    - its sample and full protocol are not supplied in the research note
+  - read-depth limit: complete primary research note read
+    - intentions do not establish attendance, revenue, or curator independence
+
+closest disclosure experiments: rights, reassurance, and understanding
+
+- Biraglia, Gerrath, and Usrey, [company support of tourist attractions, 2018, §§4–5](https://eprints.whiterose.ac.uk/id/eprint/116120/3/Exploring%20how%20companies%20support%20of%20tourist%20attractions.pdf)
+  - museum sponsorship terms have already been experimentally varied
+    - “the company will acquire the naming rights”
+  - study 2 randomly assigns 147 American MTurk respondents to four fictional newspaper articles
+    - existing Metropolitan Museum renovation versus construction of a new museum
+    - donation without commercial purposes versus commercial activities plus naming rights
+  - outcomes are visiting intention, perceived fairness, altruism, and authenticity
+    - commercial use and naming rights change together
+    - does not isolate a particular contractual right or test understanding of curatorial approval
+  - implication: introducing sponsorship terms is existing work
+    - the narrower candidate needs an objective rights-understanding outcome
+  - read-depth limit: full manuscript recovered; study 1 and study 2 methods and measures inspected
+- Hwang and Jeong, [sponsored blog disclosures, 2016, methods and results in author-uploaded manuscript](https://www.researchgate.net/publication/301705747_This_is_a_sponsored_blog_post_but_all_opinions_are_my_own_The_effects_of_sponsorship_disclosure_on_responses_to_sponsored_blog_posts)
+  - reassurance about independence is an existing manipulation
+    - “the contents are based on my honest opinions”
+  - 305 Korean panel participants analyzed after excluding 12 with direct or indirect destination experience
+    - random assignment to no disclosure, sponsorship alone, or sponsorship plus honest-opinions claim
+    - crossed with presence or absence of negative travel information
+    - skepticism measured and split at the median, rather than randomly assigned
+  - honest-opinions wording increases perceived credibility and message approval relative to sponsorship alone
+    - no significant main disclosure effect on destination attitude or visiting intention
+  - checks ask whether sponsorship and honesty statements appeared
+    - these are statement recognition, not knowledge of enforceable approval rights
+    - the experiment establishes neither actual independence nor truth of the honesty claim
+  - read-depth limit: selected complete methods, measures, checks, and main results read from author-uploaded full text
+- Hyman, Franklyn, Yee, and Rahmati, [Going Native, 2017, §IV](https://yjolt.org/sites/default/files/hyman_19yjolt77_0.pdf)
+  - understanding whose views content represents is also existing work
+    - “the views of the website, the brand owner, or both”
+  - January 2015 online survey retains 896 adults after completion, attention, and minimum-time exclusions
+    - each sees 18 images in random order, then two videos
+    - images include advertising and unpaid-content controls
+  - altered labels on two advertisements test paid-content recognition against original versions
+    - also asks source-of-views attribution after a disclosure pop-up and video advertisements
+  - label-only pop-up comparison is within-person before versus after
+    - not a separate randomized comparison of contract rights
+    - recognizing payment or attributing opinions does not establish understanding of veto powers
+  - read-depth limit: full primary PDF recovered; §IV methods and selected labeling and attribution results inspected
+
+bounded research possibility: understand the sponsorship contract
+
+- agent hypothesis: explicit decision-rights disclosure improves visitors' understanding of curatorial independence beyond a sponsor logo alone
+  - decision rights mean who can approve, change, or reject exhibition content
+- compare sponsor identity alone, a generic independence claim, and specific approval rights
+  - retain no disclosure as a payment-recognition control
+  - cross sponsor identity with curator-only versus sponsor-approval rights in fictional museum scenarios
+  - hold exhibition content, sponsor size, funding amount, and crisis justification constant
+  - match length across active disclosures
+  - distinguish permission to withdraw funding from permission to veto content
+  - clearly label scenarios as fictional
+- ask participants who can reject a label, choose a work, or withdraw funding
+  - score answers against the stated contract
+  - measure trust separately from correct understanding
+  - add a delayed question to test whether sponsor identity replaces remembered approval rights
+- compare plain prose with a simple diagram of the same rights
+  - use identical information and matched viewing time
+  - measure comprehension, mistaken attribution of control, recall, and reading time
+- proposed increment: accurate understanding of stated governance arrangements
+  - contract-term manipulations, independence reassurance, payment recognition, and attribution of views already exist
+  - the bounded question concerns understanding specific content-approval rights and its retention
+  - novelty remains unverified; a museum setting alone is not a sufficient increment
+  - do not claim disclosures change actual artistic freedom without organizational evidence
+- useful null: sponsor identity alone conveys the relevant rights equally well, or richer disclosure adds no retained understanding
+- stop condition: a prior experiment already tests the same rights-comprehension contrast
+  - replicate only with a concrete unresolved measurement or population question
+- remaining work: recover Alexander's full methods and broaden the targeted approval-rights search
+  - this search found close overlaps but did not establish absence of the exact experiment
+  - no experiment run and no governance recommendation established

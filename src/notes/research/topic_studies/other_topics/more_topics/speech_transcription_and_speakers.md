@@ -1,0 +1,451 @@
+speech transcription and speakers
+(authored by agents unless marked 🧑)
+
+takeaway
+- recommendation: build a local server baseline, then study how to spend extra computation on the parts most likely to be wrong
+    - output the words, their times, speaker labels, and unresolved regions
+    - measure completed recordings and human correction effort
+    - an attractive average error rate can hide a recording that repeats forever or loses a speaker
+- plausible systems question: can selective reprocessing improve complete-recording accuracy under a fixed GPU-time budget?
+    - novelty is unconfirmed
+    - chunk-size tuning, speaker memory, faster decoding, and diarization-based recognition already have close prior work
+- evidence checked 7 Oct 2026
+    - primary paper abstracts, selected full-paper methods/results/limitations, and official implementation documentation
+    - recent arXiv results below are authors' claims, not independently reproduced measurements
+    - no transcription service implemented or audio benchmark run for this review
+
+human scope 🧑
+- “processes MP3 or similar files into speakers + accurate transcripts, designed to be run on the server”
+    - supplied in the task delegation as the human's exact request
+
+first principles
+- speech recognition answers what was said
+- speaker diarization assigns anonymous speaker labels to time intervals
+    - speaker identification additionally maps those labels to known people
+    - inference: anonymous labels should remain anonymous without enrollment or human confirmation
+- forced alignment places an existing transcript on the audio timeline
+    - inference: a precise timestamp does not prove that a word was actually spoken
+- voice activity detection finds speech intervals
+    - inference: removing silence may reduce invented text but can also remove quiet speech
+- overlapping speakers require more than one active label
+    - inference: a single ordered text stream can lose one speaker's words
+- server requirements differ from a paper's isolated inference measurement
+    - decoding the MP3, queueing, loading models, reprocessing, and writing results all consume time
+    - retain original audio and intermediate results so a failed stage can resume
+
+established modular baselines
+- Radford et al., [Robust Speech Recognition via Large-Scale Weak Supervision](https://arxiv.org/abs/2212.04356), 2022
+    - [full ICML 2023 paper](https://proceedings.mlr.press/v202/radford23a/radford23a.pdf), task description and appendix A
+    - authors: “inaccurate transcription in one window may negatively impact transcription in the subsequent windows”
+    - trains on thirty-second chunks; predicted times advance long-form windows
+    - beam decoding and temperature fallback address repetitive or low-score output
+        - token-score and compression thresholds trigger retries
+        - preceding text conditions later windows under selected temperatures
+        - silence filtering combines no-speech and token probabilities
+    - these heuristics are not calibrated probabilities of transcript correctness
+    - long-form evaluation covers seven datasets and historical commercial defaults
+        - word errors do not measure speaker assignment or total server cost
+    - [OpenAI's model card](https://github.com/openai/whisper/blob/main/model-card.md), performance and limitations: “predictions may include texts that are not actually spoken in the audio input”
+    - the same card reports uneven performance across languages and accents
+    - implication: fluent output needs recording-specific evaluation
+        - charge fallback retries to the proposed repair budget
+    - reading limit: selected full task and long-form methods inspected
+        - model training and benchmark results not independently reproduced
+- Bain et al., [WhisperX: Time-Accurate Speech Transcription of Long-Form Audio](https://arxiv.org/abs/2303.00747), Interspeech 2023
+    - [full primary paper](https://www.isca-archive.org/interspeech_2023/bain23_interspeech.pdf), §§2–3
+    - authors: “without conditioning on previous text”
+    - cuts at low voice activity between fifteen and thirty seconds, merges chunks up to thirty seconds, and batches recognition independently
+    - phoneme alignment places recognized words in time
+        - unsupported transcript phonemes inherit neighboring timestamps
+        - translation cannot use this phonetic alignment
+    - evaluates meetings, telephone conversations, TED talks, and videos
+        - word timing scores require text agreement and timestamp overlap
+        - they do not score speaker assignment
+    - 11.8× transcription speed uses batch 32 on one A40 against full-audio batch 1
+        - not a complete diarization or arbitrary-hardware speed guarantee
+    - implication: batching and timing repair are established contributions
+    - [current repository](https://github.com/m-bain/whisperX), limitations: “Overlapping speech is not handled particularly well”
+        - investigate overlap separately from ordinary recognition
+        - repository performance claims depend on models, hardware, batching, and versions
+    - reading limit: selected full methods and tables inspected
+        - multilingual alignment examples lack quantitative evaluation
+- Bredin, [pyannote.audio 2.1 speaker diarization pipeline: principle, benchmark, and recipe](https://www.isca-archive.org/interspeech_2023/bredin23_interspeech.html), Interspeech 2023
+    - abstract: “speaker segmentation applied to a short sliding window”
+    - extracts a representation of each local voice, then groups similar voices across the recording
+    - includes adaptation using manually annotated target data
+    - implication: local detection plus global speaker grouping is an established baseline
+- Plaquet and Bredin, [Powerset multi-class cross entropy loss for neural speaker diarization](https://www.isca-archive.org/interspeech_2023/plaquet23_interspeech.html), Interspeech 2023
+    - [full primary paper](https://www.isca-archive.org/interspeech_2023/plaquet23_interspeech.pdf), §§1–5
+    - authors: “overlapping speech regions inferred automatically from the first step are discarded before computing the embeddings”
+    - five-second windows every 500 ms use three local speaker slots and seven silence/single/pair classes
+        - excludes three-or-more simultaneous speakers
+        - local slots do not identify people across windows
+    - voice embeddings and clustering join slots across a recording
+        - activity threshold is removed; clustering threshold remains tuned
+    - segmentation selection and whole-recording tuning use development data
+        - domain adaptation additionally uses target-domain training and development data
+        - ordinary results use no boundary tolerance; shaded comparisons allow 250 ms
+    - implication: overlap segmentation differs from recognizing simultaneous words and assigning each to a speaker
+    - reading limit: selected full pipeline and evaluation methods inspected
+        - artifacts and long-recording continuity not independently reproduced
+- [WhisperX speaker assignment, inspected revision](https://github.com/m-bain/whisperX/blob/d00ec69ac212d06de922e09bff56bcaca508ac76/whisperx/diarize.py#L185)
+    - assigns at most one speaker to a timed word by maximum summed temporal overlap
+        - words can remain unassigned
+    - optional nearest-speaker fallback handles no overlap
+    - inference: this join does not recover both speakers' words during simultaneous speech
+    - current code inspection, not an independently reproduced 2023 result
+- [pyannote.audio current repository](https://github.com/pyannote/pyannote-audio), community-1 example: “runs locally”
+    - model download requires accepting conditions and obtaining a Hugging Face token
+    - its benchmark, marked September 2025, reports community-1 DER of 17.0% on AMI headset audio and 19.9% on AMI single distant microphone
+    - Ego4D development DER is 46.8%
+    - these are vendor-maintained comparisons, not a universal accuracy promise
+    - premium precision-2 API and local community-1 have different execution locations
+- [SYSTRAN faster-whisper](https://github.com/SYSTRAN/faster-whisper), performance-comparison instructions: “make sure to run the comparison with similar settings”
+    - uses CTranslate2 to execute Whisper with batching and reduced numeric precision
+    - documentation asks for matching decoding settings, transcript error rate, and CPU thread count
+    - implication: a shorter, incomplete transcript can appear faster
+- [NVIDIA Canary-Qwen-2.5B model card](https://huggingface.co/nvidia/canary-qwen-2.5b), limitations: “The maximum audio duration in training was 40s”
+    - English-only recognition alternative using a speech encoder and language-model decoder
+    - model card warns that longer input may degrade accuracy
+    - implication: a short-input leaderboard result does not establish whole-meeting reliability
+
+joint and long-recording approaches
+- Park et al., [Sortformer, ICML 2025](https://proceedings.mlr.press/v267/park25h.html), [full author manuscript](https://arxiv.org/pdf/2409.06656), §5 and appendices A/D
+    - authors: “we include only sessions with four or fewer speakers”
+    - orders speaker channels by first arrival and combines ordering with best-permutation supervision
+    - ninety-second diarizer training samples truncate long sessions and exclude more than four speakers
+        - DIHARD evaluation also excludes those sessions
+        - overlap is scored, but boundary tolerances differ by dataset
+    - speaker activity supervises Canary-based recognition on ten-to-twenty-second training samples
+        - some word times are approximated; boundary overlap exclusions apply
+    - added runtime measurement uses synthetic three-speaker mixtures on one Ada GPU at batch 100
+        - not a low-batch or arbitrary-length server guarantee
+    - implication: local arrival ordering does not ensure speaker continuity across independently processed chunks
+    - reading limit: selected full loss, integration, and evaluation methods inspected
+        - later streaming releases and implementation not reproduced
+- [DiaPer: End-to-End Neural Diarization with Perceiver-Based Attractors](https://arxiv.org/abs/2312.04324), 2023
+    - abstract: “finding the quantity of speakers in a conversation more accurately”
+    - compares a compact end-to-end diarization model with cascaded methods across more than ten public wide-band datasets
+    - speaker counting belongs in the evaluation, alongside total diarization error
+- Wang et al., [DiarizationLM: Speaker Diarization Post-Processing with Large Language Models](https://arxiv.org/abs/2401.03506), Interspeech 2024
+    - abstract: “reduce the WDER by rel. 55.5% on the Fisher telephone conversation dataset”
+    - combines recognition and diarization output, then uses a finetuned language model to revise speaker labels
+    - WDER means word-level speaker-label error rate
+    - claim is relative improvement on that dataset, not a 55.5 percentage-point gain
+    - implication: text-based repair is prior work and may need domain-specific training
+- [Train Short, Infer Long](https://arxiv.org/abs/2511.16046), 2025 preprint
+    - [full primary methods](https://arxiv.org/html/2511.16046), §§2.2, 3.3–3.4 and algorithm1
+    - authors: “storing one utterance (audio clip and its transcription) for each previously observed speaker”
+    - JEDIS-LLM prepends cached voice clips and speaker-attributed text to each new chunk
+    - forced alignment selects long nonoverlapping clips up to five seconds per speaker
+        - updates depend on predicted labels/text, timing, and a separate speaker verifier
+        - incorrect cached labels can propagate
+    - global evaluation uses telephone subsets and chunks up to ten seconds
+        - compares VAD chunks with reference-derived sentence boundaries
+        - excludes edge regions without reference transcripts
+    - enrollment uses manually labeled clips from otherwise untranscribed audio
+        - supplied identity evidence differs from anonymous speaker discovery
+    - implication: cross-chunk speaker memory and enrollment already have direct prior work
+    - reading limit: selected full cache-update and evaluation methods inspected
+        - arbitrary multihour meeting continuity and prompt-growth cost not established
+- [Streaming Sortformer, 2025 primary paper](https://arxiv.org/pdf/2507.18446), §§3–4 and tables1–2
+    - authors: “declared latency values refer to the input buffer delay”
+    - orders cached acoustic frames by speaker and joins them with recent context and incoming audio
+        - compression favors recent, confidently single-speaker frames
+    - fine-tunes sequential windows within ninety-second training samples
+        - inference-only cache addition performs worse than cache-aware training
+    - maximum four output speakers
+        - evaluating five-plus-speaker subsets does not remove that architectural limit
+    - declared buffer delays exclude computation
+        - separate runtime factor uses batch1 on one RTX6000 Ada
+    - implication: speaker-cache tracking is an existing baseline
+    - reading limit: selected full cache, training, and evaluation methods inspected
+        - later releases, artifact execution, and arbitrary-length speaker continuity not verified
+- [VIBEVOICE-ASR Technical Report](https://arxiv.org/abs/2601.18184), January 2026 preprint
+    - abstract: “single-pass processing for up to 60 minutes of audio”
+    - jointly produces words, speaker labels, and times
+    - reports over 50 languages and context prompts for names and technical terms
+    - [Microsoft's implementation](https://github.com/microsoft/VibeVoice/blob/main/docs/vibevoice-asr.md) supplies file inference and vLLM execution paths
+    - inference: compare terminology prompts against both rare-word recovery and invented prompted words
+- Lee, Kamahori, and Kasikci, [MURMUR: An Efficient Inference System for Long-Form ASR](https://arxiv.org/html/2606.01483v1), May 2026 preprint
+    - limitation: all experiments are in English
+    - combines intermediate-size chunks with dropping old cached model state
+    - abstract reports 4.2× lower latency while matching single-pass AMI-IHM accuracy
+    - table 1: “Failed clips due to repetition loops are excluded”
+        - two of fourteen VibeVoice-ASR clips are excluded from that table
+        - inference: reproduce failures as part of the service result, rather than comparing only successful clips
+    - figure 3: “repetition loop failures counted as 100% error”
+        - the paper also reports failure-inclusive comparisons
+        - distinguish its fixed failure penalty from scoring actual repeated output and service completion
+    - experiments use VibeVoice-ASR, AMI, TED-LIUM3, and Earnings21
+    - implication: another chunk-size sweep alone is unlikely to establish novelty
+- [Grounding Spoken LLMs in Multi-Speaker Audio via Diarization Conditioning](https://arxiv.org/html/2606.18134), June 2026 preprint
+    - abstract: “condition the acoustic encoder on diarization masks”
+    - Dixtral uses speaker-time information to focus recognition on one speaker
+    - table 2 reports average cpWER of 15.4% for Dixtral and 14.0% for specialized DiCoW v3.3 across its listed conditions
+    - benchmark includes distant AMI and NOTSOFAR-1, mixed LibriSpeech, and Mixer6
+    - implication: supplying speaker intervals to recognition is an important stronger baseline
+    - downstream questions partly use machine-generated labels
+        - transcription evidence and downstream-question evidence need separate treatment
+
+invented text and compute controls
+- [Calm-Whisper](https://arxiv.org/abs/2505.12969), May 2025 preprint
+    - abstract: “over 80% reduction in non-speech hallucination”
+    - selectively finetunes three decoder attention heads using non-speech examples
+    - reported preservation of LibriSpeech accuracy does not establish preservation across languages or noisy meetings
+    - inference: retain a separate non-speech test rather than hiding insertions in speech-heavy averages
+- [Whisper-CD](https://arxiv.org/html/2603.06193), March 2026 preprint
+    - abstract: “contrasts clean-audio logits against negative logits”
+    - compares each proposed next word against predictions made from noise, silence, and shifted audio
+    - reports improved WER across five English long-form datasets
+    - table 1 contains baseline WER above 100%
+        - full results section attributes this to repetition that generates more words than the reference
+    - method adds three decoding paths
+        - fewer repeated words can offset added work
+        - turbo results still show extra runtime compared with its own unmodified baseline
+    - implication: measure total GPU work and completion time, not token generation speed alone
+- [Efficient and Robust Speaker Diarization via Structured Pruning of Self-Supervised Models](https://arxiv.org/abs/2506.18623), June 2025 preprint
+    - abstract: “up to 80% model size reduction and 4x faster inference”
+    - reports tests across eight diarization datasets and CHiME-6 transfer
+    - implication: model compression is an existing compute-saving alternative to selective reprocessing
+
+evaluation that matches the requested output
+- [Open ASR Leaderboard](https://arxiv.org/html/2510.06961), paper checked with results dated March 2026
+    - abstract: “English short- and long-form and multilingual short-form tracks”
+    - measures word error rate and audio duration divided by processing duration
+    - long-form datasets include CORAAL interviews, Earnings21/22 calls, and TED-LIUM talks
+    - short-form evaluation largely cuts audio to at most thirty seconds
+    - implication: choose the matching track and preserve full recordings
+- [CHiME-8 DASR organizers](https://www.chimechallenge.org/challenges/chime8/task1/index)
+    - task description: “high variability in the duration: from few minutes to hours”
+    - combines dinner parties, interviews, and office meetings
+    - ranking uses scenario-wise mean tcpWER with a five-second time tolerance
+    - its multichannel setup is richer than one uploaded MP3
+        - compare the same input channels when claiming improvements
+- [DIHARD III](https://arxiv.org/abs/2012.01477), challenge paper
+    - abstract: “two speech activity conditions”
+    - contrasts supplied reference speech intervals with detecting speech from scratch across eleven domains
+    - implication: measure failures in speech detection separately from voice grouping
+- [MeetEval toolkit](https://github.com/fgnt/meeteval), features: “Time-Constrained minimum-Permutation Word Error Rate (tcpWER)”
+    - WER counts substituted, deleted, and inserted words divided by reference word count
+    - cpWER groups words by speaker and chooses the best mapping between anonymous labels
+    - tcpWER also restricts matching to nearby times
+    - DER measures missed speech, false speech, and wrong-speaker time
+    - [pyannote.metrics reference](https://pyannote.github.io/pyannote-metrics/reference.html): “Defaults to False (i.e. keep overlap regions)”
+        - explicitly report excluded boundary intervals and whether overlapping speech is scored
+        - metrics with different tolerance or overlap rules are not directly comparable
+- recommendation: report recording-weighted completion and failure counts alongside aggregate WER, tcpWER, and DER
+    - retain per-recording errors and separate overlap, silence, terminology, language, and speaker-count breakdowns
+    - use one fixed text normalization and tokenization policy for every model
+        - report Chinese character error rate separately from English WER
+        - document how mixed-language words and characters are counted
+    - count invented words per silent audio hour
+        - ordinary WER has a zero denominator when the reference contains no words
+    - report correction minutes per audio hour and name/number errors
+    - fixed timeout prevents a repetition loop from consuming an unlimited service budget
+
+closest work: confidence is not expected repair benefit
+- [Identifying and Calibrating Overconfidence in Noisy Speech Recognition](https://arxiv.org/pdf/2509.07195), 2025 preprint, §§III–V
+    - authors: “temperature scaling selectively”
+    - learns a token-level overconfidence selector and a confidence adjustment
+    - training uses short LibriTTS utterances with controlled speech-shaped noise
+        - evaluation uses 400 R-SPIN sentences at multiple noise levels
+        - calibration module is trained for the low-signal range
+    - inputs include prediction probabilities, token features, and an acoustic summary
+    - reports better confidence calibration under severe noise
+        - this is not measured accuracy improvement from a second recognition pass
+        - controlled noise is not overlapping speakers, long silence, or whole meetings
+    - implication: probability calibration needs separate validation on the intended recording domain
+        - a low average calibration error does not establish useful ranking of repair candidates
+- Jitkrittum and colleagues, [When Does Confidence-Based Cascade Deferral Suffice?, NeurIPS 2023](https://arxiv.org/pdf/2307.02764), §§3–5
+    - authors: “not modelling the errors of downstream models”
+    - optimal deferral depends on the difference between the two models’ error probabilities
+        - uncertainty of the first model alone is insufficient
+    - experiments include specialist models, noisy labels, and distribution shifts
+        - primary settings are classification, not full-recording speech repair
+    - implication: identify regions the second pass can actually fix
+        - equally bad models can agree or disagree without offering repair benefit
+        - correcting confidence cannot create recoverable acoustic information
+- [A Unified Cascaded Encoder ASR Model for Dynamic Model Sizes](https://arxiv.org/pdf/2204.06164), 2022, §§2–4
+    - authors: “jointly training ASR models with different sizes”
+    - shares encoder computation across differently sized recognition paths
+    - uses separate decoders and joint training to trade quality against memory and computation
+    - selects deployment configurations rather than demonstrating a per-region repair controller
+    - direct baseline for adaptive resource use
+        - do not assume independent small/large models are the cheapest way to construct a cascade
+
+closest work: diarization confidence and active correction
+- Plaquet and Bredin, [On the calibration of powerset speaker diarization models, Interspeech 2024](https://www.isca-archive.org/interspeech_2024/plaquet24_interspeech.pdf), §§2–3
+    - authors: “oracle labeler”
+    - examines confidence across training-like domains and eleven DIHARD domains
+    - low-confidence five-second chunks have higher diarization error
+    - simulates annotation by revealing withheld reference labels
+        - compares low-confidence and random selection for training and validation
+        - equal annotation budgets do not necessarily improve DER more with low-confidence training
+        - confidence calibration and annotation-efficient validation can improve
+    - important scope limit
+        - local segmentation confidence is not confidence that global speaker clusters are correct
+        - reference-label duration does not measure actual human correction time
+    - direct prior work for choosing diarization regions using confidence
+- Prokopalo and colleagues, [Active correction for speaker diarization with human in the loop, IberSPEECH 2021](https://www.isca-archive.org/iberspeech_2021/prokopalo21_iberspeech.pdf), §§3–4
+    - authors: “User simulation and correction module”
+    - asks whether two clusters contain the same speaker
+    - answers merge or split a hierarchical clustering tree
+    - questions are ordered and stopped to limit intervention
+    - ALLIES experiments simulate correct human answers using reference labels
+        - includes an ideal-correction comparison
+        - human interaction cost uses an estimated per-question time
+    - limitation: perfect answers and estimated times do not establish real-user efficiency
+    - direct prior work for selective speaker repair and workload-aware stopping
+    - global cluster edits can improve many regions at once
+        - count affected words and intervals, not only queried duration
+
+closest work: real-user transcript correction under a time budget
+- Sperber and colleagues, [Transcribing Against Time, Speech Communication 2017](https://arxiv.org/pdf/1709.05227), §§4–8
+    - authors: “transcription is performed from scratch, but with the ASR hypothesis visible”
+    - chooses segment locations and lengths using predicted errors and human time
+    - updates a Gaussian-process time model and segment choices as the person works
+        - accounts for the overhead of starting another segment
+    - user study: twelve participants, four TED talks, twenty minutes per talk
+        - alternates dynamic and static methods and shuffles talk assignments
+        - static comparator uses the same initial time model without updates
+        - cost-insensitive comparators appear in simulations, not this user comparison
+    - reported mean productivity gain is 15% relative
+        - the slower six-person subgroup gains 42%, with a significant subgroup difference
+        - the overall simple-model difference is not statistically significant
+    - directly establishes budgeted transcript selection and adaptive human-cost modeling as prior work
+        - does not establish gains for automatic GPU reprocessing, overlapping meetings, or modern ASR post-editing
+        - proposed human comparison should measure actual correction time and include a time-adaptive selector
+
+research candidate: selective repair under a fixed budget
+- hypothesis: combine cheap error indicators to select regions for a stronger second pass
+    - indicators: disagreement between recognizers, low speech evidence, repeated text, speaker changes, overlap, and implausible times
+    - target: expected error reduction per additional GPU second
+        - predict second-pass benefit using separately labeled development recordings
+        - compare with merely ranking first-pass error probability
+    - these are candidate signals, not calibrated probabilities
+- proposed controller chooses between accepting, retranscribing, expanding surrounding audio, and requesting correction
+    - preserve accepted words and speaker assignments unless new acoustic evidence supports a change
+    - compare against random selection, fixed overlap repair, all-region second pass, and a larger single model
+        - enable and charge Whisper's built-in fallback in every appropriate baseline
+    - add confidence-only deferral, learned benefit prediction, and shared-computation cascades where available
+    - label reference-informed best-region selection as an oracle upper bound
+        - it is unavailable to the deployed controller
+    - include Whisper-CD, speaker-conditioned recognition, JEDIS-style memory, and MURMUR-style chunking where implementable
+- main result to seek: accuracy and correction effort versus total GPU seconds on held-out full recordings
+    - set equal budgets including the first pass, detection, and failed retries
+    - split by recording and speaker to reduce leakage
+    - validate chosen thresholds on data separate from the final test
+    - keep calibration, selection ranking, and actual repair benefit as separate measurements
+    - score regressions introduced by the second pass
+        - preserve speaker identities and timing outside the repaired region
+        - local retranscription can break cross-chunk consistency
+    - compare automatic repair and human correction using separate resource budgets
+        - GPU seconds and person-minutes are different costs
+- reject the research claim if a fixed rule or larger baseline achieves the same improvement within measurement uncertainty
+    - useful engineering can remain even if novelty disappears
+
+informative null results
+- no selector beats random selection
+    - likely explanation to test: available signals do not predict which errors the stronger pass can fix
+    - report the oracle’s improvement to distinguish selector weakness from absent repair opportunity
+- oracle has little advantage under the same budget
+    - stronger pass offers too little recoverable accuracy or costs too much
+    - a larger first pass or improved audio acquisition may be the better baseline
+- confidence calibration improves while repair quality stays flat
+    - calibrated uncertainty is useful for reporting uncertainty but not necessarily allocating computation
+- DER improves without speaker-attributed word accuracy improving
+    - corrected time intervals may contain recognition errors or few words
+    - report both metrics rather than treating them as interchangeable
+- simulated correction wins but human correction does not
+    - investigate listening time, ambiguity, incorrect answers, and interface cost
+    - a perfect-label simulation overestimates deployment benefit
+- these results can narrow an engineering design
+    - publication value still depends on systematic evidence across models and recording domains
+
+small server pilot
+- recommendation: begin with one queued worker using WhisperX/faster-whisper and local pyannote community-1
+    - pin library versions and model revisions
+    - decode uploaded files once and keep channel information
+    - write structured segments with words, start/end seconds, anonymous speaker, model revision, and review flags
+    - provide readable text and subtitles as derived outputs
+    - retain explicit unknown-speaker and unintelligible regions
+- evaluate a small collection of full lectures, interviews, and meetings before adding a second model
+    - include long silence, interruptions, several similar voices, technical names, English/Chinese switching, and files longer than an hour
+    - use human reference transcripts only for evaluation
+    - compare long-context VibeVoice-ASR when hardware permits
+- measure cold model loading, warm throughput, peak memory, queue delay, failure rate, and interrupted-job recovery
+    - multi-GPU service scheduling becomes a research question only after real concurrent jobs reveal a bottleneck
+
+adjacent question: listening to long documents
+- [Taming Long-form Text-to-Speech](https://arxiv.org/abs/2609.16989), September 2026 preprint
+    - authors: “roll back to the error onset and regenerate with temporary guardrails”
+    - reports a long-prompt reliability gap hidden by strong short-prompt scores
+    - proposed monitoring checks omitted/repeated words and voice drift
+    - recommendation: preserve document-to-audio section positions and verify content coverage
+    - this is a separate study direction from recognizing uploaded speech
+    - [full methods and results, §§3–5](https://arxiv.org/html/2609.16989v1)
+        - 144 call-center prompts, ten random seeds, three TTS variants
+        - word-error scoring uses an external speech recognizer
+        - monitors selected attention heads and retries only until a fixed cap
+        - detector latency is measured in generated-audio seconds
+            - this differs from wall-clock latency and required playback buffering
+        - authors: “neither repairs the tail” for VoxCPM2 beyond 1,300 words
+        - possible experiment: compare document section boundaries, coverage errors, and playback stalls at equal total compute
+            - include ordinary chunking, always-on attention constraints, and retry controls
+            - manually check content errors that the scoring recognizer may miss
+        - read-depth limit: full primary methods and results read; code promised on publication and not reproduced
+
+- Ghosh et al, [MagpieTTS-LF, full methods and evaluation](https://arxiv.org/pdf/2606.18485), June 2026
+    - authors: “without model retraining”
+    - splits text into sentences while retaining previous text tokens, encoder representations, and attention position
+        - soft attention guidance favors forward progress without discarding all earlier context
+        - this is a direct baseline for carrying context between document sections
+    - evaluates 20 English long texts on one A6000 GPU
+        - compares XTTS, Qwen3-TTS, and VibeVoice
+        - competitor sentence splitting or unsplit input uses whichever performs better
+        - Whisper-Large measures word errors; pitch and energy changes assess sentence boundaries
+    - inference: compare state carry against independent chunks using the same model
+        - cross-model differences do not isolate the benefit of state carry
+        - these scores do not measure section navigation, formula comprehension, or playback stalls
+- Pan et al, [Comprehensive Benchmarking of Long-Form Speech Generation in Diverse Scenarios, full paper](https://aclanthology.org/2026.findings-acl.112.pdf), ACL Findings 2026
+    - authors: “1,101 samples spanning 17 common speech scenarios”
+    - retrieved paper calls the benchmark SwanBench-Speech; Anthology abstract calls it LFSBench
+    - separates acoustic consistency, content accuracy, and expressive delivery
+        - word errors use speech recognition; some delivery scores use learned audio evaluators
+        - prosody validation compares 50 matched-text audio pairs rated by ten evaluators
+        - reported rank correlation with that human comparison is 0.82
+    - inference: content coverage and natural delivery require separate outcomes
+        - limited listening validation does not establish reliable scoring of technical-document comprehension
+- [MGM-Omni, full Long-TTS-Eval methods, appendix A.2](https://arxiv.org/pdf/2509.25131), September 2025
+    - authors: “formulas, URLs, or classical Chinese poetry”
+    - long-text set includes 341 Chinese and 353 English samples across six domains, including academic papers
+        - separate hard set contains URLs, email addresses, numbers, and formulas
+        - this already covers technical-text rendering beyond ordinary prose
+    - recognizers transcribe independent 28-second audio chunks
+        - computes English word errors and Chinese character errors
+        - takes the smaller error against written text or a GPT-5-generated spoken normalization
+    - inference: normalization avoids some false penalties but introduces another model's possible mistakes
+        - manually validate alternative readings of equations, identifiers, and URLs
+        - semantic correctness and usable navigation are not established by the smaller error score
+    - artifact: [evaluation scripts](https://github.com/JIA-Lab-research/MGM-Omni/tree/main/mgm/eval/long_tts_eval)
+- refined document-playback hypothesis
+    - preserving checked section positions and recovering locally from failed synthesis reduces missing content and playback stalls
+        - long-form synthesis, state carry, and technical-text benchmarks are established prior work
+        - compare independent chunks, state-carry chunks, and monitored retries at equal model and compute budget
+        - measure first-audio delay, stall duration, duplicate or missing sections, and successful navigation to requested content
+        - manually score technical meanings rather than relying solely on speech-recognizer agreement
+    - read-depth limit: selected full methods and evaluation read for all three sources; artifacts not executed
+
+remaining uncertainty
+- targeted full-method review now covers confidence calibration, cascade deferral, dynamic ASR configurations, diarization confidence, and active speaker correction
+    - selective repair itself is established prior work
+    - proposed distinction is validated whole-recording repair benefit under equal GPU budgets
+- real-user timing is reviewed for one older single-speaker transcript interface
+    - transfer to modern post-editing, multilingual meetings, and speaker corrections remains untested
+- artifact-level reproduction, confidence transfer across languages, and selector training remain untested
+- recent joint-model claims need reproduction on the user's actual server and recording types
+- model cards and rolling repositories can change
+    - record exact revisions when running the pilot
+- central study coordinator handles the requested ChatGPT opinion consultation
+    - this page does not claim that consultation has completed
