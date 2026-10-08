@@ -1,0 +1,222 @@
+blockchains and validators
+(authored by agents unless marked 🧑)
+
+main takeaway
+- recommendation: study the boundary between agreement and execution/recovery first
+  - inference: small experiments may expose mistakes hidden by a correct voting algorithm
+  - [source evidence and reading limits](validator_sources.md)
+- alternative: compare vote-retention rules under correlated outages
+  - Goldfish and RLMD-GHOST already study this problem
+  - novelty would need to come from implementation behavior or measured failure patterns
+- uncertainty: no candidate below has established novelty
+  - no publication-ready result or complete 2026 literature coverage is claimed
+
+what must agree
+- a validator is a voting participant identified by a signing key
+- a host is the machine running one or more validator identities
+- a signer controls a key and produces its signatures
+- a client is the software that runs the protocol
+- a fork is a competing history of blocks
+- fork choice selects the history to extend now
+- finality promises that an accepted prefix will remain accepted
+  - the promise has fault and timing assumptions
+- voting power is the weight assigned to a validator
+- safety means honest machines do not accept conflicting results
+- liveness means the system eventually makes progress
+- asynchronous means messages lack a known delivery-time bound
+- a Byzantine machine can send arbitrary or conflicting messages
+- speculation computes a tentative result before agreement
+- an invariant is a condition that must hold after every permitted step
+- a prefix is the initial part of a history
+- a payload is the block data passed to the execution client
+- a state hash is a short fingerprint of the application state
+- execution computes application state from agreed transactions
+- recovery restores durable state after a crash
+- inference: these form several different obligations
+  - agree on an order
+  - compute the same result
+  - remember the same committed prefix after restart
+  - use the right voters after membership changes
+  - avoid signing conflicting votes during migration or failover
+
+what the literature establishes
+- Casper separates an accountability claim from a progress claim
+  - [Buterin and Griffith, §2.1](https://arxiv.org/abs/1710.09437)
+    - the statement requires at least two thirds of validators to follow the protocol
+    - inference: proving that a legal next vote exists does not show clients will eventually cast it
+  - its membership construction requires approval from two neighboring validator sets
+    - [source details](validator_sources.md)
+    - inference: changing voters is part of the proof
+- Gasper combines fork choice and finality
+  - [Buterin et al., abstract](https://arxiv.org/abs/2003.03052)
+  - inference: name the precise theorem and assumptions before transferring its claim to real clients
+- composition can fail even when each component has a useful standalone guarantee
+  - [Neu, Tas, and Tse, abstract](https://arxiv.org/abs/2009.04987)
+  - their construction separates a progressing chain from a finalizing chain
+  - their appendix E analyzes how feedback between fork choice and justification can stop progress
+  - inference: the link between components deserves its own model
+- retained votes and fluctuating online participation interact
+  - [D'Amato et al., Goldfish §1](https://arxiv.org/abs/2209.03255)
+    - context: temporary crash faults rather than changes in stake ownership
+  - Goldfish expires votes and buffers messages
+  - RLMD-GHOST explores retaining only recent votes
+    - [D'Amato and Zanolini, abstract](https://arxiv.org/abs/2302.11326)
+    - its bounds and adversary restrictions matter
+  - inference: sleepy validators and replaced validators require separate experiments
+- message handling cost can affect agreement
+  - [Schwarz-Schilling et al., abstract](https://arxiv.org/abs/2110.10086)
+  - inference: a network-delay-only simulator can miss CPU and queue feedback
+  - unknown: whether the studied historical attacks apply to a current implementation
+- bootstrap trust depends on the design
+  - [ethereum.org, competing finalized blocks](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/weak-subjectivity/#difference-between-weak-subjectivity-checkpoints-and-finalized-blocks)
+  - [Badertscher et al., Ouroboros Genesis abstract](https://eprint.iacr.org/2018/378)
+  - inference: compare model assumptions before treating these as contradictory claims
+
+candidate 1: crash recovery across consensus and execution
+- research question: after successful recovery, do consensus and execution describe the same committed prefix at a matched height?
+- evidence
+  - [CometBFT Commit](https://github.com/cometbft/cometbft/blob/v0.38.x/spec/abci/abci%2B%2B_methods.md#commit)
+  - [CometBFT FinalizeBlock](https://github.com/cometbft/cometbft/blob/v0.38.x/spec/abci/abci%2B%2B_methods.md#finalizeblock)
+  - [CometBFT optimistic execution](https://github.com/cometbft/cometbft/blob/v0.38.x/spec/abci/abci%2B%2B_basic_concepts.md#deterministic-state-machine-replication)
+- hypothesis
+  - failures around persistence and delayed membership updates may expose inconsistencies absent from steady-state tests
+- bounded first experiment
+  - one pinned CometBFT release and a small application with membership-changing transactions
+  - kill and restart at each persistence boundary
+  - repeat committed requests during recovery
+  - compare with uninterrupted replay
+- comparison point
+  - successful completion of startup handshake and replay
+  - match heights before comparing hashes or validator sets
+  - permit documented intermediate persistence offsets
+    - temporary one-block lag during reconciliation is not a failure
+  - track membership changes at their specified activation height
+    - an update requested at `H` becomes active at `H+2`
+- properties to check
+  - same committed application hash as uninterrupted replay at the matched height
+  - same active and next validator sets as uninterrupted replay at the matched height
+  - no uncommitted proposal state exposed as committed state
+  - replay does not duplicate an application's external effect
+    - restrict this property to applications that explicitly provide such an effect
+- measurements
+  - number of distinct crash states explored
+  - shortest failure trace
+  - recovery time and extra writes
+- existing work to beat
+  - CometBFT already specifies recovery and delayed updates
+  - Tendermint light-client work already formalizes dynamic membership
+  - [Vegeta, NSDI 2025](https://www.usenix.org/conference/nsdi25/presentation/xu-tianjing) already studies malicious speculation metadata and deterministic replay
+    - appendix A starts from shared state and agreed dependencies
+    - inference: recovery through speculation is a narrower follow-up worth checking
+  - ordinary crash injection alone is insufficient novelty
+- later extension
+  - compare Ethereum consensus/execution API recovery
+  - [payload validation rules](https://github.com/ethereum/execution-apis/blob/main/src/engine/paris.md#payload-validation) distinguish final validity from incomplete validation
+  - use the API version for the chosen fork
+  - test that a previously invalid payload never becomes valid after recovery
+- possible contribution
+  - a reusable cross-component invariant checker
+  - a new failure plus minimized trace and fix
+  - a proof that implementation persistence order satisfies the interface contract
+- stop condition
+  - existing recovery tests cover the same state transitions and no new property emerges
+
+candidate 2: validator migration that preserves signing history
+- research question: can migration or failover preserve voting safety across crashes and mixed client versions?
+- evidence
+  - [EIP-3076 abstract](https://eips.ethereum.org/EIPS/eip-3076#abstract)
+- hypothesis
+  - a correct file format may leave operational gaps around import completion, durable storage, and simultaneous signer activation
+- bounded first experiment
+  - two compatible validator clients and their actual import/export implementations
+  - inject crashes before and after signing-history persistence
+  - try truncated records, duplicate records, and delayed activation
+  - inspect version-specific migration instructions before defining legal workflows
+- properties to check
+  - a signer refuses a conflicting vote already recorded by its predecessor
+  - failure cannot silently enable both signers
+    - this requires a defined ownership-transfer mechanism
+    - ordinary format interchange alone cannot enforce it
+- measurements
+  - conflicting signatures, refused safe votes, and downtime
+- possible contribution
+  - machine-checkable migration contracts with executable tests
+- novelty unknown
+  - review remote signer and slashing-protection test suites before proposing a new system
+
+candidate 3: correlated implementation failures and client diversity
+- research question: how much independent failure protection do multiple client implementations actually provide?
+- evidence
+  - [ethereum.org client diversity](https://ethereum.org/en/developers/docs/nodes-and-clients/client-diversity/#current-client-diversity)
+  - its page mixes historical percentages and inconsistent prose
+- hypothesis
+  - counts of client names may overstate protection when implementations share dependencies or reproduce the same specification mistake
+- bounded first experiment
+  - identify shared libraries and code paths in a pinned set of clients
+  - generate valid and invalid blocks around ambiguous edge conditions
+  - compare verdicts and completion times
+  - distinguish host counts, validator identity counts, and voting power
+  - weight results by validator voting power only when the measurement supports that mapping
+- properties to check
+  - independent clients agree on validity and resulting state
+  - disagreement cannot be dismissed as differing error strings
+  - a slow client does not accumulate an unbounded validation backlog
+- measurements
+  - clusters of identical failures
+  - correlated lag after the same input
+  - uncertainty in inferred stake exposure
+- existing work to beat
+  - cross-client execution testing and consensus specification tests
+  - client diversity measurement and fingerprinting studies
+- possible contribution
+  - a reproducible estimate of shared failure exposure
+  - a new divergence linked to a concrete shared cause
+- unknown
+  - current stake-weighted deployment shares
+  - access to a reliable mapping from validator identities to software
+
+candidate 4: vote expiry under realistic recovery workloads
+- research question: when do vote expiry and buffering improve recovery once processing cost is included?
+- hypothesis
+  - outage recovery can deliver stale votes in bursts
+  - processing backlog can prolong disagreement beyond the nominal network delay
+- bounded first experiment
+  - compare a clearly specified LMD-GHOST baseline, Goldfish, and RLMD-GHOST
+  - inject temporary correlated outages, slow validators, and queued-message bursts
+  - model or measure signature verification and vote-store costs
+- measurements
+  - time until honest validators select the same prefix
+  - reverted blocks before finality
+  - confirmation delay under an explicitly chosen rule
+  - maximum queue size and CPU cost
+- optional extension
+  - measure finality delay only after selecting a supported finality composition
+  - state its additional timing and participation assumptions
+  - RLMD-GHOST alone does not supply that composition
+- important distinctions
+  - temporary sleep differs from validator exit
+  - fast confirmation differs from finality
+  - adversarial timing differs from measured random delays
+- novelty unknown
+  - protocol design and simulation already have substantial prior work
+  - a result needs implementation evidence or a new failure regime
+
+fit with existing notes
+- [existing Agave scope](../../../agave_verification_scope.md)
+  - “both are better first targets than end-to-end consensus or networking”
+  - context: compute-budget instruction sanitizer and address lookup table parsing
+- inference: these candidates require separate scope and effort estimates
+  - existing bounded verification estimates do not transfer to consensus or recovery
+
+what remains before choosing a project
+- pin versions and inspect their tests
+- finish Ouroboros Genesis full-text review
+  - PDF retrieval returned HTTP 403
+- search 2024–2026 follow-up work and operational failure reports
+  - direct arXiv and OpenAlex search requests returned HTTP 429
+- confirm the proposed failure or invariant is missing from existing tools
+- obtain independent review of the strongest candidate
+- recommendation: begin with candidate 1
+  - smallest executable system boundary among these candidates
+  - this is an agent preference
+  - it is not a proven novelty or feasibility claim
