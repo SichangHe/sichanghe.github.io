@@ -1,0 +1,166 @@
+verification boundaries in replicated systems
+(authored by agents unless marked 🧑)
+
+purpose
+- identify research between a correct protocol and a correct running service
+- agent recommendation: begin with recovery and membership changes in one existing implementation
+  - measure a missing guarantee before proposing a new consensus protocol
+- terms
+  - safety: an incorrect result never occurs
+  - liveness: the system eventually makes progress under stated conditions
+  - refinement: each implementation behavior is allowed by its specification
+  - specification: the behavior we ask a proof or checker to enforce
+  - lease: permission that remains valid until a stated time
+
+what prior work already establishes
+- IronFleet, Hawblitzel et al., SOSP 2015
+  - author claim: “We prove that each obeys a concise safety specification, as well as desirable liveness requirements”
+    - [Microsoft Research abstract](https://www.microsoft.com/en-us/research/publication/ironfleet-proving-practical-distributed-systems-correct/)
+  - combines protocol refinement with reasoning about implementation code
+  - covers a Paxos-based replicated state machine and a lease-based sharded store
+  - implication: a generic proposal to prove consensus code correct repeats an established objective
+  - remaining question: which existing implementation feature or maintenance problem becomes tractable with a different boundary
+- Perennial, Chajed et al., SOSP 2019
+  - author description: “a framework for verifying concurrent, crash-safe systems”
+    - [paper, abstract and §1](https://pdos.csail.mit.edu/papers/perennial:sosp19.pdf)
+  - handles concurrency and crashes through machine-checked reasoning
+  - provides Goose, a Go subset translated into the proof model
+  - its replicated-disk example explains the core recovery obligation
+    - concurrent writes can be correct before a crash while leaving copies unequal afterward
+    - recovery must preserve completed writes
+  - implication: recovery is a state transition with a contract, rather than an informal repair script
+- Grove, Sharma et al., SOSP 2023
+  - author statement: “Grove cannot verify liveness properties”
+    - [paper, §1, printed p 114](https://pdos.csail.mit.edu/papers/grove:sosp23.pdf)
+  - verifies Go components combining leases, reconfiguration, recovery, threads, and unreliable networks
+  - the vKV case study supports reads during membership changes
+  - reported proof-to-code ratio is about 12×
+    - this is a case-study result, not an estimate for Rust or a production validator
+  - implication: proving lease and membership safety together is established prior work
+    - proposed novelty must concern a missing implementation boundary, different assumptions, or lower maintenance cost
+- smart casual verification of CCF, Howard et al., NSDI 2025
+  - author description: “binding the formal specification in TLA+ to the C++ implementation”
+    - [paper, abstract](https://www.usenix.org/system/files/nsdi25-howard.pdf)
+  - connects model checking and implementation traces in continuous integration
+  - reports six design and implementation bugs found before production impact
+  - §7 documents an optimization that could truncate entries needed to preserve committed transactions
+  - §7 also documents premature node retirement during membership changes
+  - inference: the transitions between consensus, application state, and membership are useful experimental targets
+  - limitation: this experience report does not prove arbitrary executions of CCF correct
+- Ellsberg, Ding et al., NSDI 2025
+  - author limitation: “it only suffices to detect protocol bugs that lead to changes in either the content or order of messages”
+    - [paper, §1, printed p 1306](https://www.usenix.org/system/files/nsdi25-ding.pdf)
+  - checks each process against allowed protocol executions using message traces
+  - evaluates Etcd, ZooKeeper, and Redis Raft
+  - assumes fail-stop faults and asynchronous or partially synchronous communication
+    - fail-stop means a failed process stops taking steps
+  - the paper excludes detection of stored-data corruption, deadlock, livelock, and performance degradation
+  - inference: a storage-aware checker may cover failures invisible at the network boundary
+    - novelty requires comparison with existing recovery and trace-checking tools
+- IronSpec, Goldweber et al., OSDI 2024
+  - author finding: “ten specification bugs across all six real-world verified systems”
+    - [paper, abstract](https://www.usenix.org/system/files/osdi24-goldweber.pdf)
+  - combines sanity checks, specification mutation, and manually written tests of specifications
+  - §5.3.2 studies Byzantine consensus and distributed-validator specifications
+  - §5.3.3 treats surviving mutations as hints requiring confirmation
+  - implication: an unrestricted adversary model and a meaningful success condition need independent scrutiny
+    - a passing proof cannot establish that its own assumptions describe the deployed environment
+
+research candidate A: recovery-aware protocol checking
+- hypothesis
+  - adding storage events exposes a useful class of violations that message-only checking misses
+- narrow first target
+  - one Raft implementation with a separable storage interface
+  - pin the implementation commit and storage configuration
+- observable events
+  - accepted write, durable write, outbound acknowledgement, snapshot publication, log deletion, restart
+  - distinguish completion of a storage call from durability under the actual storage contract
+- properties
+  - an acknowledgement requiring durable state has a valid durable predecessor
+  - restart preserves the protocol facts that justified earlier decisions
+  - snapshot installation never creates a log and application state from different histories
+- experiment
+  - reproduce known recovery bugs before injecting new mutations
+  - crash between each pair of storage and acknowledgement events
+  - interrupt recovery itself
+  - combine snapshot installation with leadership and membership changes
+- comparison
+  - message-only checking inspired by Ellsberg
+  - implementation-trace checking inspired by CCF
+  - existing crash tests without the added contract
+- measurements
+  - independently confirmed violations detected by each method
+  - false alarms, trace overhead, checker memory, and time to produce a minimal counterexample
+  - report separately mutations that alter the network trace and those that do not
+- reject or narrow the hypothesis
+  - if equivalent existing tools already check the same boundary
+  - if observations cannot distinguish faulty durability from delayed persistence
+  - if most apparent gains come from instrumentation unavailable in real implementations
+- novelty status: unestablished
+  - promising integration question, rather than a claimed new verification principle
+
+research candidate B: membership and snapshot contracts
+- hypothesis
+  - a small shared contract can make membership changes and snapshot restoration easier to check across implementations
+- contract state
+  - membership generation, last included log position, snapshot identity, application-state identity
+  - durable vote or signing history where the selected protocol requires it
+- experiment
+  - select two implementations with different snapshot APIs
+  - model an interrupted transfer, a removed replica returning, and an old snapshot arriving late
+  - compare a protocol-only model with the contract plus implementation traces
+- success criterion
+  - find an independently reproducible violation or prevent a real regression with a small maintained specification
+  - report the manual mapping needed for each implementation
+- nearest prior work
+  - Grove already composes recovery and reconfiguration proofs
+  - CCF already checks membership transitions against code traces
+  - the crash-replication review covers existing reconfiguration protocols
+- novelty status: unestablished
+  - the contribution would need reusable contracts and evidence across implementations
+
+research candidate C: test the assumptions of validator proofs
+- hypothesis
+  - specification mutations can reveal prohibited adversary behavior or omitted recovery behavior
+- first target
+  - one public proof of nonconflicting validator votes or attestations
+  - keep the original specification and record every modification
+- mutations
+  - restore an older durable signing record
+  - allow a valid old message in a new membership generation
+  - permit restart between authorization and signing
+  - let a node send any message the real cryptographic and key-access assumptions allow
+- independent oracle
+  - protocol-defined conflicting-vote or attestation condition
+  - use recorded duty and signing inputs, rather than the mutated proof predicate itself
+- comparison
+  - IronSpec-style generic mutations
+  - domain-specific mutations
+  - hand inspection with the same review time budget
+- success criterion
+  - confirmed missing assumptions with counterexamples accepted by domain experts
+  - distinguish an unrealistic environment from a defect under intended assumptions
+- novelty warning
+  - IronSpec already studies distributed-validator specifications
+  - a generic application of mutation testing to validators is insufficient
+
+what must be decided before implementation
+- which failure model the experiment represents
+  - process crash, power loss, storage corruption, malicious replica, and key compromise are different assumptions
+- what the storage API promises
+  - atomicity, ordering, durability, and rollback protection need separate contracts
+- what behavior counts as success
+  - agreement, client-visible operation order, durable recovery, and eventual progress need separate checks
+- who provides an independent expected behavior
+  - original protocol definition, implementation maintainers, and test oracle can disagree
+- agent preference
+  - start with candidate A
+    - it has an explicit limitation in recent prior work and a measurable comparison
+  - keep candidate C as a smaller alternative if a suitable public proof and signing-history implementation are available
+
+review scope
+- retrieved full PDFs for Perennial, Grove, CCF, Ellsberg, and IronSpec
+- retrieved the IronFleet first-party abstract
+- primary-source retrieval performed on 2026-10-07 UTC
+- these are research proposals, not findings in current implementations
+- current-source searches and a context-free consultation are recorded separately

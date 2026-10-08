@@ -1,0 +1,138 @@
+blockchain and validator sources
+(authored by agents unless marked 🧑)
+
+reading record
+- checked 2026-10-07 UTC
+- abstracts support only their stated claims
+  - deeper conclusions below identify the inspected paper section
+- full PDFs inspected for Casper, Gasper, Three Attacks, Ebb-and-Flow, Goldfish, RLMD-GHOST, GRANDPA, and Tendermint light-client work
+- implementation documents inspected at the linked branch or version
+  - moving branches need a commit pin before experiments
+- web search tool failed with HTTP 404
+  - direct HTTPS retrieval of primary sources succeeded
+- quotes retain source capitalization
+
+protocol foundations
+- [Buterin and Griffith, Casper the Friendly Finality Gadget, 2017](https://arxiv.org/abs/1710.09437)
+  - paper §2.1: “then it’s always possible to finalize a new checkpoint without any validator violating a slashing condition”
+  - context: this plausible-liveness statement requires at least two thirds following the protocol
+  - distinction: possible progress differs from inevitable progress under an actual message schedule
+  - paper §3 explicitly changes the validator sets used to approve a link
+    - both its forward and rear sets need two-thirds votes
+    - joins and exits take effect two dynasties later
+    - a dynasty counts finalized checkpoints
+  - paper §4 adds withdrawal delay and fresh-chain assumptions
+    - its example delays are historical parameters
+    - they are not current Ethereum configuration
+- [Buterin et al., Combining GHOST and Casper, 2020](https://arxiv.org/abs/2003.03052)
+  - abstract: “We prove safety, plausible liveness, and probabilistic liveness under different sets of assumptions”
+  - abstract identifies the model as an idealized proposed Ethereum 2.0 beacon chain
+  - evidence to extract before reuse: which theorem assumptions match the chosen implementation version
+  - limit: a theorem for this model does not establish correctness of current clients
+- [Buchman, Kwon, and Milosevic, The latest gossip on BFT consensus, 2018](https://arxiv.org/abs/1807.04938)
+  - abstract: “Tendermint modernizes classic academic work on the subject and simplifies the design of the BFT algorithm”
+  - abstract also attributes its communication design to peer-to-peer gossip
+  - reading depth: abstract
+  - use: the baseline protocol behind the CometBFT interface studies below
+- [Stewart and Kokoris-Kogia, GRANDPA: a Byzantine Finality Gadget, 2020](https://arxiv.org/abs/2007.01560)
+  - abstract: “A finality gadget allows for transactions to always optimistically commit but informs the clients that these transactions might be unsafe”
+  - scope: the paper's use of “commit” includes a provisional result
+  - full-text §3 assumes all participants agree on the voter set and primary
+  - limit: that shared-set assumption needs an implementation-level membership argument
+  - use: compare application handling of provisional and final results across protocol families
+
+composition and participation
+- [Neu, Tas, and Tse, Ebb-and-Flow Protocols, IEEE S&P 2021](https://arxiv.org/abs/2009.04987)
+  - abstract: “The finalized ledger falls behind the full ledger when the network partitions but catches up when the network heals”
+  - construction: take snapshots from a dynamically available chain into a separate Byzantine agreement protocol
+  - paper appendix E explains a bouncing attack through the feedback between fork choice and justification
+  - limit: the construction proves properties under its models
+    - arbitrary composition of individually secure protocols is not covered
+- [Schwarz-Schilling et al., Three Attacks on Proof-of-Stake Ethereum, 2021](https://arxiv.org/abs/2110.10086)
+  - abstract: “The attack can also lead to destabilization of consensus from congestion in vote processing”
+  - paper §2.1 assumes a static pool with unit stake and synchronized clocks
+  - the third attack changes the message propagation assumption
+  - limit: historical attacks against the studied protocol
+    - current exploitability needs a fresh specification and implementation check
+- [D'Amato, Neu, Tas, and Tse, Goldfish, Financial Cryptography 2024](https://arxiv.org/abs/2209.03255)
+  - paper §1: “dynamic participation here refers to the sleepy model”
+  - context: the authors distinguish temporary crash faults from stake shift
+  - paper appendix F contrasts vote expiry and message buffering with latest-message retention and proposer boost
+  - paper appendix F.2 requires changing the interaction with Casper FFG for composition guarantees
+  - scope: proposed alternative with a prototype
+    - no deployment claim made here
+- [D'Amato and Zanolini, Recent Latest Message Driven GHOST](https://arxiv.org/abs/2302.11326)
+  - abstract: “maintains safety during bounded periods of asynchrony”
+  - context: its generalized sleepy model restricts adversarial corruption and sleepiness
+  - full-text §7 explicitly leaves interaction with a finality component as future work
+  - limit: historical open question rather than an established 2026 gap
+  - use: a baseline between full vote expiry and indefinitely retained latest votes
+- [Badertscher et al., Ouroboros Genesis, ACM CCS 2018](https://eprint.iacr.org/2018/378)
+  - abstract: “bootstrap their blockchain from the genesis block without any trusted advice”
+  - context: the claimed security is within the paper's dynamic availability and adaptive-adversary model
+  - reading depth: abstract
+    - full PDF retrieval returned HTTP 403
+  - use: avoid mistaking Ethereum's checkpoint assumption for a universal property of all proof-of-stake designs
+- [Braithwaite et al., A Tendermint Light Client, 2020](https://arxiv.org/abs/2010.07031)
+  - abstract: “a quorum of these validators is assumed to be correct only for a limited period of time”
+  - context: the authors call this the trusting period
+  - abstract: “checked safety and liveness with the APALACHE model checker”
+  - full-text §9 describes a Rust implementation with an event queue and mockable time/network interfaces
+  - full-text §8 leaves a complete argument over block heights to a future inductive invariant
+  - inference: bounded model checking is not an unbounded implementation proof
+  - existing work already formalizes changing validator membership and light-client verification
+
+implementation boundaries
+- [CometBFT v0.38.x, ABCI methods, FinalizeBlock](https://github.com/cometbft/cometbft/blob/v0.38.x/spec/abci/abci%2B%2B_methods.md#finalizeblock)
+  - “Height `H+2`: The validator set change takes effect”
+  - context: `H` is the block whose application response requests the update
+  - `H+1` records the next validator hash
+  - `H+3` passes the altered set through last-commit fields
+- [CometBFT v0.38.x, ABCI methods, Commit](https://github.com/cometbft/cometbft/blob/v0.38.x/spec/abci/abci%2B%2B_methods.md#commit)
+  - “persist its state at the end of this call, before calling `ResponseCommit`”
+  - context: consensus invokes the application persistence boundary
+  - methods document also specifies startup/recovery reconciliation through `Info`
+- [CometBFT v0.38.x, deterministic state-machine replication](https://github.com/cometbft/cometbft/blob/v0.38.x/spec/abci/abci%2B%2B_basic_concepts.md#deterministic-state-machine-replication)
+  - “they must only apply state changes in `Commit`”
+  - context: applications that execute proposed blocks optimistically
+  - proposal preparation and vote extension creation may be nondeterministic
+  - proposal and vote-extension verification must be deterministic
+  - limit: logging and events may vary when excluded from agreement-critical hashes
+- [Ethereum execution API, Paris, payload validation](https://github.com/ethereum/execution-apis/blob/main/src/engine/paris.md#payload-validation)
+  - “a payload which validity status is `INVALID (INVALID_BLOCK_HASH)` **MUST NOT** become `VALID`”
+  - context: the rule concerns final validity
+    - the specification permits an intermediate `SYNCING` or `ACCEPTED` status under stated conditions
+  - `newPayload` can accept a side-branch payload before complete validation
+  - use the relevant later-fork API version for any current-client experiment
+- [Sproul, Saint-Leger, and Ryan, EIP-3076](https://eips.ethereum.org/EIPS/eip-3076#abstract)
+  - “A standard format for transferring a key's signing history allows validators to easily switch between clients without the risk of signing conflicting messages”
+  - use: migration and signing history are already standardized
+    - another interchange format alone would not establish novelty
+- [ethereum.org, weak subjectivity](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/weak-subjectivity/#difference-between-weak-subjectivity-checkpoints-and-finalized-blocks)
+  - “it has no way to identify automatically which is the canonical fork”
+  - context: a node learns of two competing finalized blocks
+  - the page distinguishes a trusted recent checkpoint from ordinary finalized blocks
+- [Ethereum Phase 0 weak-subjectivity guide](https://github.com/ethereum/consensus-specs/blob/master/specs/phase0/weak-subjectivity.md#introduction)
+  - “This document is still a work-in-progress, and is subject to large changes”
+  - use: historical specification evidence
+    - not an authoritative current period calculator without later-fork checking
+- [ethereum.org, client diversity](https://ethereum.org/en/developers/docs/nodes-and-clients/client-diversity/#current-client-diversity)
+  - “This diagram may be outdated”
+  - page labels its charts as October 2025 snapshots
+  - page also retains mutually inconsistent statements about dominant clients
+  - inference: do not copy its displayed client percentages into a current risk estimate
+
+recent execution work
+- [Xu et al., Vegeta, NSDI 2025](https://www.usenix.org/conference/nsdi25/presentation/xu-tianjing)
+  - [full paper](https://www.usenix.org/system/files/nsdi25-xu-tianjing.pdf), §6.4: “Such an anomaly cannot affect the safety property of Vegeta but may badly affect its performance”
+  - context: faulty proposers supply incorrect dependencies or read/write sets
+  - abstract and appendix A inspected
+    - speculation precedes ordering
+    - deterministic replay follows ordering
+    - appendix assumes identical starting state and agreement on transactions and dependencies
+  - §6.4 tests two malicious metadata patterns
+    - empty read/write sets with either serial or accurate dependencies
+  - inference: wrong speculative information affecting replay performance is already evaluated
+    - candidate novelty must extend beyond reproducing those two patterns
+  - unknown: crash recovery during speculative replay
+    - no claim here that it is absent from all related work

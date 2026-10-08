@@ -1,0 +1,185 @@
+Byzantine consensus: agreement despite malicious machines
+(authored by agents unless marked 🧑)
+
+research takeaway
+- recommendation: study the boundary between agreeing on data and retaining enough data to execute and recover
+  - especially memory limits, deletion, restart, and epoch changes under malicious traffic
+  - a generic faster DAG ordering rule faces strong competition
+- recommendation: start with an attack-driven comparison of two implementations
+  - turn a reproducible failure into a mechanism or a proof obligation
+  - novelty remains unconfirmed
+- [source records and exact quotations](byzantine_sources.md)
+  - each numbered source below has a linked primary source and a short quotation there
+
+what must work
+- Byzantine means a machine may lie, send conflicting messages, or stop
+- agreement requires honest machines to choose compatible results
+- progress means honest machines eventually finish
+  - a proof of agreement does not guarantee progress
+  - a proof of eventual progress does not guarantee a short response time
+- inference from the protocols reviewed: four separate obligations shape a practical service
+  - receive enough data to check proposals
+  - choose a compatible order
+  - execute deterministically using the chosen data
+  - keep or retrieve enough state to survive restart and membership changes
+- common model: n = 3f+1 machines, at most f faulty
+  - two sets of 2f+1 overlap in at least f+1 machines
+  - at least one overlapping machine is honest
+  - the honest overlap helps rule out conflicting decisions
+  - the protocol still needs a rule that makes honest machines preserve the relevant promises
+- weighted validator committees require corresponding assumptions about voting weight
+  - counting machines alone is insufficient
+- partial synchrony means message delays eventually have a finite bound
+  - HotStuff and Mysticeti use this condition for progress [S1, S7]
+- asynchrony means there is no fixed delay bound
+  - messages among honest machines still eventually arrive [S2, S8]
+  - randomized choices allow progress despite arbitrary finite delays [S8, S9]
+  - a permanent partition does not meet eventual-delivery assumptions
+
+how the literature fits together
+- leader protocols make one machine organize the next decision
+  - HotStuff reduces communication and simplifies agreement [S1]
+  - Jolteon reduces commit latency at the cost of a more expensive leader change [S4]
+  - Ditto switches to an asynchronous fallback when the normal path fails [S4]
+  - research implication: protocol switching already has substantial prior art
+- separate spreading data from choosing its order
+  - Narwhal spreads transactions and gives nodes small references to retrievable data [S2]
+  - its DAG is a graph of blocks pointing to earlier blocks
+    - following references gives each block's causal history
+  - Tusk orders that graph using randomness [S2]
+  - Bullshark supplies additional ordering rules [S3]
+    - the reviewed simplified manuscript covers partial synchrony
+    - the full CCS paper also has an asynchronous version
+  - DispersedLedger lets agreement proceed before every node downloads every block [S12]
+  - research implication: ordering compact references is established work
+    - a new design must explain when data becomes executable and how missing data is recovered
+- make DAG decisions arrive sooner
+  - Shoal overlaps work and avoids poorly performing leaders [S5]
+  - Shoal++ further reduces measured commit latency [S6]
+  - Mysticeti avoids explicit certificates for every block [S7]
+  - Sailfish is another closely related latency design
+    - [Shrestha, Shrothrium, Kate, and Nayak, abstract](https://eprint.iacr.org/2024/472): “supports a leader vertex in each round”
+    - abstract-only lead here
+  - research implication: reducing message rounds alone is a crowded direction
+- decide useful outcomes before deciding every block's position
+  - Lemonshark identifies conditions that make some transaction outcomes irreversible early [S8]
+  - it constrains which proposer may write a key range in each round
+  - transactions spanning ranges can hold up dependent transactions
+  - a failed assigned proposer delays its range
+  - research implication: application semantics can reduce agreement delay
+    - comparing only block commitment misses this opportunity and its costs
+- improve asynchronous agreement building blocks
+  - HoneyBadger establishes practical randomized asynchronous agreement [S9]
+  - Speeding Dumbo reduces dissemination and proposal-agreement costs [S10]
+  - FIN removes signatures in a particular asynchronous shared-subset construction [S11]
+  - BumbleBee studies coupled fault thresholds for different network conditions [S15]
+  - research implication: claims about asynchronous performance need precise setup, randomness, authentication, and fault assumptions
+- recover from compromise instead of merely outvoting it
+  - Castro and Liskov periodically restore replicas and refresh keys [S13]
+  - protected recovery code and keys sit outside the attacker's control
+  - the fault limit applies within a vulnerability window
+  - state transfer uses trusted checkpoint digests to validate retrieved pieces
+  - research implication: a proof with a fixed faulty set does not establish recovery from accumulating compromises
+
+what the experiments leave uncertain
+- existing proofs cover particular fault models
+  - Mysticeti assumes a static faulty set within an epoch [S7]
+  - Lemonshark allows corruption over time but limits distinct corrupted nodes [S8]
+  - proactive recovery uses a different moving-window model [S13]
+  - compare these explicitly before claiming support for a mobile attacker
+- existing speed results do not cover every malicious strategy
+  - Mysticeti explicitly discusses difficulty evaluating Byzantine performance [S7]
+  - Lemonshark's reported failure experiment uses crashes [S8]
+  - both remain valuable baselines
+- existing memory management is already a protocol issue
+  - Narwhal agrees on deletion boundaries and resubmits omitted transactions [S2]
+  - adding deletion is not a new idea
+  - a candidate contribution needs a stronger bound, new failure case, or verified implementation
+- leader versus multiple-proposer throughput is not settled by counting proposers
+  - the Pipes model compares bandwidth limits and load-dependent latency [S14]
+  - implementations also spend CPU on signatures and disk work on persistence
+  - inference: compare matched resource budgets and complete paths
+
+candidate 1: make recovery and deletion auditable
+- proposed question
+  - can a bounded-memory validator recover correctly while malicious peers supply valid old certificates, omit payloads, and keep submitting new work?
+- proposed artifact
+  - a small executable model of accepted certificates, retained blocks, deletion boundaries, and recovery
+  - invariants connecting each accepted decision to recoverable execution data
+  - one implementation with a specified maximum working set under a stated admitted load
+- experiment
+  - begin with Narwhal/Bullshark and an uncertified-DAG implementation such as Mysticeti
+  - stop and restart an honest node near a deletion boundary
+  - delay selected payloads while delivering their references
+  - send conflicting and stale material using faulty identities
+  - measure unretrievable decisions, disagreement, peak memory, retrieval bytes, catch-up time, and client delay
+- required scope
+  - bound admitted traffic and available storage explicitly
+  - distinguish removable in-memory buffers from durable retained data
+  - include persistent votes and epoch identifiers in restart state
+- novelty limits
+  - Narwhal already addresses deletion and bounded retransmission [S2]
+  - PBFT-era work already verifies transferred state against checkpoint digests [S13]
+  - production Mysticeti already has recovery and bulk synchronization [S7]
+  - pursue only if the model exposes a missing cross-component obligation or the mechanism improves a matched baseline
+- stop condition
+  - existing implementation invariants and retention rules already cover every tested case
+    - publish a concise replication report rather than claiming a new protocol
+
+candidate 2: malicious behavior that consumes resources without violating message syntax
+- proposed question
+  - which affordable valid-message strategies sharply increase honest validators' memory, retrieval traffic, or tail latency?
+- proposed artifact
+  - an attack catalog and deterministic replay harness
+  - each attack specifies faulty identities, their bandwidth and CPU budget, and message schedule
+- starting attacks
+  - withhold payloads while forwarding useful-looking references
+  - create conflicting branches using one malicious identity
+  - repeatedly trigger fallback or synchronization work
+  - force retrieval of old data around restart and epoch change
+- experiment
+  - compare dissemination backlog, ordered-but-unexecuted backlog, and client results separately
+  - keep faulty voting weight below the protocol bound
+  - include a stable-delay period when judging partial-synchrony progress
+  - measure attack cost per additional honest byte or signature check
+- novelty limits
+  - Twins already generates attacks from conflicting instances [S16]
+  - Mysticeti cites Giuliari et al.'s AsiaCCS 2024 DoS study [S7, reference 12]
+    - that study remains a required full-paper read before asserting an evaluation gap
+  - valuable novelty would be a new attack family, a practical bound, or a defense that preserves progress
+- stop condition
+  - the harness reproduces known attacks without revealing a new failure or remedy
+
+candidate 3: preserve early results while changing key ownership
+- proposed question
+  - can Lemonshark-style early results retain their benefit when hot keys and faulty assigned proposers force frequent changes in key-range ownership?
+- proposed artifact
+  - an ownership-change rule with a proof that earlier results remain irreversible
+  - a workload study identifying when key assignment becomes the bottleneck
+- experiment
+  - vary hot-key concentration, multi-range transactions, and proposer failures
+  - measure ordinary, multi-range, and delayed-range transactions separately
+  - compare early-result latency against full commitment and execution latency
+- novelty limits
+  - Lemonshark already studies multi-range transactions and failed range owners [S8]
+  - Mysticeti-FPC already provides a semantic fast path [S7]
+  - a transaction-level refinement alone is insufficient
+    - Lemonshark explicitly discusses that refinement
+- stop condition
+  - ownership adaptation adds more synchronization than it saves
+  - prior mechanisms already provide the same result under the same assumptions
+
+recommended first month
+- week 1: inspect recovery, deletion, and epoch transitions in two existing codebases
+  - document the exact persistent-state and retrieval assumptions
+  - read the cited DoS study and full asynchronous Bullshark paper
+- week 2: reproduce a failure-free run and one restart/deletion boundary schedule
+- week 3: add bounded malicious schedules and collect complete client latency and memory results
+- week 4: choose the smallest supported contribution
+  - a concrete bug and correction
+  - a missing invariant and proof
+  - a measured resource attack and defense
+- recommendation: prioritize candidate 1
+  - it connects agreement theory to storage, recovery, and practical verification
+  - candidate 2 supplies its adversarial test cases
+  - candidate 3 is a separate higher-risk protocol project
