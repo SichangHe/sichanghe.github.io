@@ -1,0 +1,56 @@
+# File-based interactive Rust
+(authored by agents unless marked 🧑)
+
+- 🧑 goal: "much better interactive use by editing and loading a file or files instead of doing it REPL style and optimized for agents"
+  - source: [human request](https://github.com/SichangHe/seamless_rust_setup/blob/main/HUMAN_REQUEST.md)
+- result: existing state can be inspected and mutated with Rust source files
+  - reproduction: `bash experiments/interactive/smoke.sh` from repository root
+  - measured 2026-10-06 on x86_64 Linux, rustc 1.97.1, warm dependencies
+    - host rebuild: Cargo reported 0.68 s
+    - inspect, mutate, inspect compilations: 136, 93, 136 ms
+    - elapsed snippet execution rounded to 0 ms; later inspection took 2 ms
+    - timings are individual observations under shared machine load
+  - observed output: `3 orders, revenue 6249`, then `now 4 orders, revenue 6250`
+  - smoke script verifies persistent mutation, wrong context refusal, compiler diagnostics, panic recovery, client timeout, and resume
+- implementation: [prototype](https://github.com/SichangHe/seamless_rust_setup/blob/main/experiments/interactive/pry/src/lib.rs)
+  - host deliberately pauses at `unsafe { pry::session(&mut state, dir) }`
+  - client atomically submits a source file; host compiles a fresh shared library and calls its exported function
+    - each evaluation reserves a new library directory, even when the request filename repeats
+    - this avoids the loader returning old code or overwriting a mapped library
+  - host publishes output before status, using atomic renames
+  - snippets use `pry::snippet!(|st: &mut app::State| { ... })`
+  - `bash experiments/interactive/bin/pry-eval SESSION FILE.rs` waits up to 30 s
+    - `PRY_TIMEOUT_SECONDS` changes client wait; timeout exits 124
+    - timeout does not cancel compilation or execution; request may still execute
+    - `--continue` resumes the host immediately
+  - dependencies are reused from `target/debug/deps`
+    - build host with `RUSTFLAGS='-C prefer-dynamic'`
+    - smoke script supplies shared-library search paths
+    - mixed old build flags caused observed `colliding StableCrateId values`
+    - clear this experiment's target directory after changing compiler or build flags
+- limits: trusted development experiment, with an unsafe Rust ABI boundary
+  - Rust Reference: "The Rust ABI offers no stability guarantees"
+    - [external blocks, ABI](https://doc.rust-lang.org/reference/items/external-blocks.html#abi)
+  - matching `type_name` only catches obvious mismatches
+    - it proves neither memory layout nor dependency/compiler compatibility
+    - exact compiler, dependency artifacts, type layout and compatible Rust ABI are caller obligations
+  - snippets must return without retaining the borrowed state
+  - catches unwinding panics; state changes before panic remain
+    - abort, process exit, memory corruption and an infinite loop can kill or block the host
+  - loaded libraries remain resident, so repeated evaluation consumes memory and disk
+  - stdout/stderr capture redirects process-wide descriptors
+    - concurrent output may be mixed; multiple sessions are unsupported
+    - descriptor-operation errors are currently unchecked
+  - host filesystem errors can panic; compiler subprocess has no host-side deadline
+  - dependency discovery chooses newest matching artifacts heuristically
+  - Linux/Unix-specific loader and descriptor calls; no sandbox or arbitrary process attachment
+- existing alternative: Evcxr for persistent standalone evaluation
+  - Evcxr describes itself as "An implementation of eval() for Rust"
+    - [Evcxr library README](https://github.com/evcxr/evcxr/blob/main/evcxr/README.md)
+  - its REPL README calls it "A Rust REPL (Read-Eval-Print loop)"
+    - [REPL README](https://github.com/evcxr/evcxr/blob/main/evcxr_repl/README.md)
+  - recommendation: evaluate Evcxr for standalone file evaluation; retain explicit host pause points for live borrowed state
+    - Evcxr was researched, not benchmarked in this run
+- research next: attach through explicit application control points and a versioned state boundary
+  - recommendation: move untrusted evaluation to a separate process with serialized state
+  - tradeoff: serialized state loses arbitrary direct access to live Rust references
