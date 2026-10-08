@@ -95,7 +95,8 @@ retries change the unit being checked
 
 crash testing below the service
 - [Pillai et al., All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-Consistent Applications, OSDI 2014](https://research.cs.wisc.edu/adsl/Publications/alice-osdi14.pdf)
-  - inspected abstract and introduction
+  - initial pass inspected abstract and introduction
+  - follow-up inspected sections 2–3 and 4.4–4.7 on 8 Oct 2026
   - quote: "these properties vary widely among six popular Linux file systems"
   - BOB measures storage ordering and atomicity through block traces
   - ALICE analyzes application update protocols against persistence behavior
@@ -105,7 +106,8 @@ crash testing below the service
   - scope qualification: the study sometimes checks guarantees beyond the application's documented promise
   - inference: both the actual storage contract and the required application contract must be stated
 - [Mohan et al., Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing, OSDI 2018](https://www.cs.utexas.edu/~vijay/papers/osdi18-crashmonkey.pdf)
-  - inspected abstract and introduction
+  - initial pass inspected abstract and introduction
+  - follow-up inspected sections 3–5 and related work on 8 Oct 2026
   - quote: "workloads of three or fewer file-system operations"
     - observation about the authors' historical bug corpus
   - bounded operation generation and crashes after persistence calls keep the search manageable
@@ -157,3 +159,31 @@ evidence limits
 - this note complements [runtime checking](runtime_checking_and_invariants.md) and [fault injection](fault_injection_and_chaos.md)
   - runtime checking can inspect internal state
   - this note concerns the guarantees visible through client operations
+
+closest-work follow-up: model comparison already has a foundation
+- ALICE separates application requirements from storage behavior
+  - authors' method: “selects different sets of the translated micro-ops”
+  - [Pillai et al., OSDI 2014, section 3.2](https://research.cs.wisc.edu/adsl/Publications/alice-osdi14.pdf)
+  - allowed sets obey a supplied abstract persistence model
+  - its default exploration tests partial operations and ordering dependencies
+    - a model-based storage adapter and a comparison of persistence assumptions are established ideas
+  - section 3.6 states that exploration is incomplete and workloads and checkers are user supplied
+  - agent assessment: a distributed study must add observable service consequences or a reusable simulator correspondence
+    - Rust implementation alone does not supply that contribution
+- CrashMonkey uses a different, narrower crash space
+  - exact limitation: “does not re-order IO requests”
+  - [Mohan et al., OSDI 2018, section 4.4](https://www.cs.utexas.edu/~vijay/papers/osdi18-crashmonkey.pdf)
+  - section 5 obtains an expected image by safe unmount at each persistence point
+  - compares explicitly persisted files and directories after recovery
+    - it does not require every unsynchronized byte to match that image
+  - assumption: the filesystem's core journaling or copy-on-write machinery works
+  - agent assessment: its automatic checker is useful precedent for observation design
+    - its workload and crash bounds cannot establish coverage of all service recovery behaviors
+- refined comparison for candidate 1
+  - ALICE: application update protocol under a supplied persistence model
+  - CrashMonkey: bounded filesystem workloads and persisted-state comparisons
+  - Turmoil: executable service environment with configurable simulated storage
+  - proposed study: show one consequential mismatch between production storage and an enabled simulator contract
+    - retain client acknowledgments and inter-replica messages alongside storage operations
+    - separate the model's representable states from the schedules a test campaign actually visits
+    - no such mismatch has been demonstrated in these notes
