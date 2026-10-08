@@ -14,6 +14,11 @@ recommended first project: does extracting knowledge erase advertising labels?
 - distinguish two failures
   - an extractor retains an ad's claim but drops its disclosure
   - an answer cites or repeats the commercial claim without identifying the sponsorship
+- distinguish disclosure from truth and payment
+  - a sponsorship label explains a commercial relationship
+    - it does not establish whether the claim is true
+  - explicit labels suffice for measuring disclosure retention
+    - claims about actual payment need independent payment verification
 - initial sample: 100 pages with 200 independently labeled commercial passages
   - include product reviews with affiliate links, sponsored articles, and native recommendations
   - include 100 matched ordinary passages
@@ -48,11 +53,12 @@ recommended first project: does extracting knowledge erase advertising labels?
   - evaluate information loss and incorrect labels against existing extraction
 - conditions for continuing
   - a pilot finds repeated failures across multiple tools and publishers
-  - manual ground truth can distinguish paid content from ordinary recommendations
+  - annotation can link explicit disclosures to the applicable claims
+    - independently establish payment if the outcome concerns actual paid content
   - the proposed attachment reduces lost labels without deleting useful evidence
 - conditions for abandoning or narrowing
   - almost all observed errors are one extractor bug
-  - payment cannot be established for most cases
+  - disclosures cannot be reliably linked to their claims
   - ordinary extraction improvements solve the problem equally well
 - estimated first milestone
   - one week for collection and labeling

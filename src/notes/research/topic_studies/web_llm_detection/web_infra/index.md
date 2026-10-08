@@ -42,7 +42,7 @@ remaining scope
 - the crawler draft's consultation was unavailable when written
     - the existing [text-detection consultation](../llm_text/research_proposals.md) does not cover these experiments
 - no experiment above has been run by this review
-- infrastructure and provenance consultation remains unmet on 8 Oct 2026
-    - the verified GPT-6.1 Sol and Extra High request reached ChatGPT
-    - no answer has been captured from the saved conversation
-    - submission alone does not supply consultation evidence
+- [recovered Extra High advice and assessment](../llm_text/chatgpt_consultation.md)
+    - recommends a paired client/estimate pilot
+    - the answer acted on the supplied requirements as a task
+        - its ranked opinions and controls were assessed independently

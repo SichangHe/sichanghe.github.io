@@ -148,6 +148,64 @@ recapture attacks already appear in the cryptographic literature
     - relevance to Sony, our inference
         - compare depth with ordinary visual clues on the same cases
         - success on easy visible clues should not conceal failures when only the screen content fills the image
+- [Scoop: Mitigation of Recapture Attacks on Provenance-Based Media Authentication](https://www.usenix.org/conference/usenixsecurity25/presentation/liu-yuxin), Liu et al., USENIX Security 2025
+    - [primary full text](https://www.usenix.org/system/files/usenixsecurity25-liu-yuxin.pdf), §§3, 6, 8–10 inspected
+    - compares physically measured depth with depth inferred from the colour image
+        - a screen can look like a deep scene while physically remaining flat
+        - genuine flat walls should agree in both descriptions
+    - §6: stores measured depth with the photo's provenance information
+        - a compatible viewer highlights regions where the two depth descriptions disagree
+        - assumes secure generation of capture provenance
+    - authors, §6: “an analysis tool to assist users to make their own decisions”
+    - §8: 78 attack scenarios and 44 benign scenarios
+        - 488 collected items across photo/video formats and two phones
+        - includes full and partial recaptures, different backgrounds and lighting
+        - televisions dominate attack coverage
+    - §9.1 reports 94.81% true-positive rate and 0.02% false-positive rate for iPhone 14 Pro
+        - Galaxy S20 Plus: 74.03% and 17.78%, respectively
+        - §9.1 does not state the aggregation unit or numerator/denominator counts
+        - do not interpret these percentages as counts out of 78 attack scenarios
+        - these are detection and false-warning rates, despite the abstract's looser accuracy wording
+        - hardware, calibration, and reflection conditions affect results
+    - §9.2: consumer analysis of high-resolution iOS-captured inputs averages about 69 seconds per photo with wide variation
+        - lower-resolution iOS inputs: about three seconds
+        - Android inputs: about four seconds
+        - §8.2: Ubuntu 24.04, one Xeon Gold 6438M CPU core, RTX 4090 GPU
+            - these are consumer-machine timings, not execution times on the capture phones
+        - capture and image-based depth estimation have different overheads
+    - authors, §3: “Attacks using curved or custom-shaped display mediums are out of our scope”
+        - sensor range limited to about eight metres in their experiments
+        - excludes misleading recaptures whose depicted subject itself has no meaningful depth
+        - a three-dimensional staged model can match both depth descriptions
+    - relevance to Sony, our inference
+        - very close prior work for detecting recapture within a provenance workflow
+        - generic depth-versus-image comparison is already an evaluated method
+        - Sony deployment validation still needs its own device, firmware, viewer, and capture conditions
+        - a useful extension would compare missed attacks and genuine flat subjects under the same protocol
+- [Chimera: Creating Digitally Signed Fake Photos by Fooling Image Recapture and Deepfake Detectors](https://www.usenix.org/conference/usenixsecurity25/presentation/park), Park et al., USENIX Security 2025
+    - [primary full text](https://www.usenix.org/system/files/usenixsecurity25-park.pdf), §§3–7 inspected
+    - attacks the scene before capture while assuming an honest camera and signing key
+        - attacker controls displayed pixels, focus, and camera/display placement
+        - no image changes after photographing
+        - target detectors treated as black boxes
+    - learns how a particular camera/display pair changes an image
+        - alters the displayed image to compensate for those changes
+        - slight defocus reduces screen-grid interference
+    - §5: mainly iPhone 13 Pro photographing a MacBook Pro display
+        - also tests an adjustable-focus Blackfly camera and LG monitor
+        - tests a screen absent from training and a separate face-image dataset
+        - several hundred calibration recaptures required for the camera/display pair
+    - §6.5, figure 8: simultaneous bypass of the selected recapture and deepfake detectors rises from below 1% to about 14% in its best tested setting
+        - lower detector accuracy elsewhere is not the same as bypassing both detectors
+        - §7.1 reports image-quality loss and generator artifacts
+    - authors, §3.3: “the attacker cannot forge the signatures nor conduct a replay attack”
+    - authors, §7.2: “With depth, a defender can then potentially identify the difference”
+        - a proposed defense, not an evaluated depth-detector result
+    - comparison, our inference
+        - demonstrates limits of ordinary image classifiers protecting an assumed signed capture
+        - does not establish a bypass of Scoop or Sony’s depth verification
+        - Scoop measures depth consistency; Chimera evaluates pixel-based recapture and deepfake classifiers
+        - neither paper establishes that a signed photo supports its caption
 - implication for Sony experiment
     - depth-based copy detection is not a new research concept
     - independently testing a deployed signed-camera workflow may still be useful

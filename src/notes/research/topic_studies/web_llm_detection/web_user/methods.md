@@ -83,10 +83,10 @@ review
 
 ChatGPT consultation
 
-- earlier attempts did not return an answer
-- a fresh saved GPT-6.1 Sol consultation was submitted with Extra High on 8 Oct 2026
-    - no answer returned within the wait limit
-    - consultation remains unmet
+- the saved GPT-6.1 Sol consultation used Extra High on 8 Oct 2026
+    - its finished answer was recovered from ChatGPT's conversation record
+    - the page remained stale after completion
+- [assessment and resulting changes](../llm_text/chatgpt_consultation.md)
 - no ChatGPT opinion is treated as literature evidence
 
 research measurement rules

@@ -5,14 +5,16 @@ recommendation
 
 - start with whether tools preserve the difference between a claim and its evidence
     - strongest bounded pilot: lost sponsorship disclosures
-    - second candidate: live technical search with version-specific ground truth
+    - second candidate: dependency-driven evidence loss
+        - conditional on inspecting the rendering poster and artifact
+    - third candidate: live technical search with version-specific ground truth
     - both can use saved pages and controlled local experiments
     - both produce checkable failures rather than another vague quality score
 - these priorities are agent opinions
     - no venue suitability or novelty guarantee
     - full-text review of the closest work is required before scaling
 
-1. sponsorship disclosure lost during extraction
+sponsorship disclosure lost during extraction
 
 - question: does a tool retain promotional claims but discard the label that explains who paid for them?
 - user benefit: distinguish paid promotion from independent evidence
@@ -30,11 +32,12 @@ recommendation
         - prior studies already detect ads and measure disclosure problems
 - potential contribution
     - measure and prevent information loss between tools
-    - payment ground truth is necessary
+    - explicit disclosures provide ground truth for disclosure retention
+        - actual-payment claims require independently verified payment
 - negative result worth keeping
     - one small extractor fix prevents nearly all failures
 
-2. version errors and apparent corroboration in technical search
+version errors and apparent corroboration in technical search
 
 - question: how often do live technical answers cite the wrong software version or overstate a guarantee?
 - recent evidence changes the initial recommendation
@@ -58,13 +61,16 @@ recommendation
         - narrative tracking alone is already studied
     - [ALCE and FEVER](seo_search_quality/literature.md)
         - evidence support already has evaluation methods
+    - [GitChameleon 2.0](seo_search_quality/recent_work.md)
+        - already evaluates version-conditioned coding with live search and executable checks
+        - version-aware search alone does not distinguish this proposal
 - potential contribution
     - measure naturally occurring errors under named software versions
     - show an inexpensive mitigation improves operational answers
 - negative result worth keeping
     - errors are rare or simple version filtering solves them
 
-3. evidence disappears before the whole page fails
+evidence disappears before the whole page fails
 
 - question: can third-party blocking or outages remove citations, tables, or disclosures while prose remains readable?
 - user benefit: recognize incomplete evidence before relying on it
@@ -84,7 +90,7 @@ recommendation
 - negative result worth keeping
     - evidence survives visual change and request loss
 
-4. defenders and users see different scam paths
+defenders and users see different scam paths
 
 - question: what harmful steps appear only after interaction, referral, or a shared-host tenant route?
 - user benefit: protection that covers the actual route to credential theft or scam payment requests
