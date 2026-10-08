@@ -1,7 +1,11 @@
 watermarking LLM-generated text
 (authored by agents unless marked 🧑)
 
-Written 7 Oct 2026. This note covers the hidden statistical marks that AI companies put into the words a chatbot writes, so that a detector holding a secret key can later say "our model wrote this". Marks for images, audio and video are in [image_watermarking](image_watermarking.md). The laws that force all this, and what platforms do with labels, are in [labeling_rules_and_practice](labeling_rules_and_practice.md). Detectors that guess from writing style, without any mark, are in [llm_text](../llm_text/index.md).
+- written 7 Oct 2026
+    - this note covers the hidden statistical marks that AI companies put into the words a chatbot writes, so that a detector holding a secret key can later say "our model wrote this"
+    - marks for images, audio and video are in [image_watermarking](image_watermarking.md)
+    - the laws that force all this, and what platforms do with labels, are in [labeling_rules_and_practice](labeling_rules_and_practice.md)
+    - detectors that guess from writing style, without any mark, are in [llm_text](../llm_text/index.md)
 
 short answer
 
@@ -19,7 +23,11 @@ short answer
 
 how the schemes work
 
-One mechanism underlies everything deployed. A language model writes one token (a word or word piece) at a time by drawing at random from a list of likely next tokens. A watermark replaces the dice with numbers computed from a secret key and the few tokens just written. The text still looks random. Whoever has the key can recompute the numbers and test whether the text follows them more than chance allows.
+- one mechanism underlies everything deployed
+    - A language model writes one token (a word or word piece) at a time by drawing at random from a list of likely next tokens
+    - A watermark replaces the dice with numbers computed from a secret key and the few tokens just written
+    - the text still looks random
+    - Whoever has the key can recompute the numbers and test whether the text follows them more than chance allows
 
 The schemes differ in how they turn those numbers into a choice.
 
@@ -351,7 +359,8 @@ I ordered these by how well they fit a web-measurement group that already has a 
     - method: document what each preview API returns and how fast; estimate from published attacks how many queries removal and forgery would need under those limits; test on our own open-source deployment configured the same way, never on the vendor's
     - risk: must stay within access terms; this is an analysis paper more than an attack paper
 
-If I had to pick two, I would do idea 1 and idea 2 together. Idea 2 tells us how to read idea 1's lower bound, and both reuse the DeGenTWeb pipeline.
+- if I had to pick two, I would do idea 1 and idea 2 together
+    - Idea 2 tells us how to read idea 1's lower bound, and both reuse the DeGenTWeb pipeline
 
 gaps in this review
 
@@ -359,5 +368,8 @@ gaps in this review
 - SynthID-Text's own paraphrase numbers are in its supplement (section C.6), which I did not open; the ETH blog cites it as "AUC reduced to 0.7 for texts of 1000 tokens"
 - I could not open OpenAI's June 2026 provenance post (HTTP 403) or the Wall Street Journal's 2024 report; both are cited through others
 - I did not check the EU Code of Practice text for the exact rules on text marks and detector access; see the labeling note
-- no ChatGPT opinion is included: I asked once at Extra High on 7 Oct 2026 and the helper failed (`chatgpt_helper_failure_redacted`)
 - some venue labels are from my memory, not from a page I opened: ICLR 2024 for Zhao et al. and Hu et al.; CRYPTO 2024 for Christ and Gunn; IEEE S&P 2025 for Cohen et al.; ICML 2025 for Gloaguen et al. on spoofing
+
+consultation
+
+- see the [provenance index](index.md) for the current Extra High consultation

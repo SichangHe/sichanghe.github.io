@@ -1,18 +1,23 @@
 rules and practice for labeling AI-generated content
 (authored by agents unless marked 🧑)
 
-Source review: 6 Oct 2026. The search service ran out of quota partway, so the later sources were found through arXiv pages, Europe PMC and direct page fetches. This is a selected review, not a census. Gaps are listed near the end.
+- Source review: 6 Oct 2026
+    - the search service ran out of quota partway, so the later sources were found through arXiv pages, Europe PMC and direct page fetches
+    - this is a selected review, not a census
+    - Gaps are listed near the end
 
 scope and short answer
 
-This note covers the rules that say AI-generated content must be marked, what platforms and search engines really do, the audits that checked, and the experiments on how people react to a label. Sibling notes in this folder cover how watermarks and C2PA work. Detecting AI text is in `../llm_text/`; search spam is in `../web_user/`.
+- this note covers the rules that say AI-generated content must be marked, what platforms and search engines really do, the audits that checked, and the experiments on how people react to a label
+    - Sibling notes in this folder cover how watermarks and C2PA work
+    - Detecting AI text is in `../llm_text/`; search spam is in `../web_user/`
 
 Two words I use all through:
 
 - A **mark** is machine-readable: metadata, a signed C2PA manifest, or an invisible watermark. The company that runs the generator adds it.
 - A **label** is what a person sees: an "AI info" badge, a caption, an icon. A platform or a publisher adds it.
 
-My take after reading:
+our interpretation of the reviewed evidence
 
 - Labeling became law in 2025 and 2026. China's rule has applied since 1 Sep 2025, India's since 20 Feb 2026, South Korea's since 22 Jan 2026 (fines held back for a year), and the EU's and California's since 2 Aug 2026. The EU still has a grace period for marking that ends 2 Dec 2026, and California's platform duties start 1 Jan 2027. So we are in the middle of the rollout right now.
 - Every audit I found says the labels miss most of what they should catch. The best one, from September 2026, found platforms labeled 61% of test uploads that carried standard marks, and only 33% of real deepfakes that experts picked out.
@@ -141,7 +146,7 @@ They all use the same three triggers: the uploader ticks a box, the file carries
 
 None of these labels AI-written text posts.
 
-google Search
+Google Search
 
 Google does not label or demote a page for being AI-written. It demotes mass-produced pages, however they were made.
 
@@ -355,7 +360,6 @@ gaps in this review
 - Not checked: Japan, UK, Spain, Denmark, Vietnam, Brazil, Australia, Canada, other US states, US federal bills, lawsuits against California's act.
 - Several legal details come from law-firm summaries, not the legal texts. Where that is so I say it.
 - Pinterest, TikTok's newer controls, X and Bing: pages would not load. No first-hand quotes.
-- I asked ChatGPT (Extra High) for a second opinion and missing sources. See the last section for whether the answer arrived.
 - Some pages were read through a summarizing tool, marked where it matters. Those quotes may not be exact.
 
 research we could do
@@ -424,4 +428,6 @@ Ordered by how well they fit a web measurement group that already has DeGenTWeb.
 
 chatGPT's second opinion
 
-Asked at about 22:20 on 6 Oct 2026 with effort Extra High. Not back yet when this was written.
+consultation
+
+- see the [provenance index](index.md) for the current Extra High consultation

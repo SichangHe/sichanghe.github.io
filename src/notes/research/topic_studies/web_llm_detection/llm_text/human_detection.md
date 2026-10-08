@@ -184,7 +184,7 @@ mixed reader studies on ChatGPT-era text
 - [AI-generated poetry is indistinguishable from human-written poetry and is rated more favorably](https://www.nature.com/articles/s41598-024-76900-1), Porter and Machery, Scientific Reports, 2024
   - who: 1,634 US Prolific readers (study 1), 696 more (study 2); most said they rarely read poetry
   - what: 5 poems each by 10 famous poets, from Chaucer to Lasky, against the first 5 ChatGPT 3.5 poems "in the style of" each poet
-    - prompt was only "Write a short poem in the style of <poet>", with no picking of the best
+    - prompt was only `"Write a short poem in the style of <poet>"`, with no picking of the best
   - how often right: 46.6%, below chance
     - quote: "participants performed below chance levels in identifying AI-generated poems (46.6% accuracy" (abstract)
     - AI poems were called human more often than real poems

@@ -1,7 +1,9 @@
 watermarking AI-generated images, audio and video
 (authored by agents unless marked 🧑)
 
-Written 6 Oct 2026. This note covers invisible marks that AI companies stamp into generated pictures, sound and video so that a detector can later say "our model made this". C2PA metadata, text watermarks and labeling rules live in sibling notes; I only touch them where they interact with media watermarks.
+- written 6 Oct 2026
+    - this note covers invisible marks that AI companies stamp into generated pictures, sound and video so that a detector can later say "our model made this"
+    - C2PA metadata, text watermarks and labeling rules live in sibling notes; I only touch them where they interact with media watermarks
 
 short answer
 
@@ -14,7 +16,8 @@ short answer
 
 how the schemes work
 
-Three families. The first two apply to any media; the third is specific to diffusion models.
+- three families
+    - the first two apply to any media; the third is specific to diffusion models
 
 1. post-hoc encoder/decoder networks
     - train one network to add a tiny perturbation and another to read bits back, with simulated distortions (JPEG, crop, blur, codec) between them during training
@@ -127,7 +130,7 @@ forgery (making a real photo look AI-made, or wearing a competitor's mark)
 - audio: [Yours or Mine? Overwriting Attacks Against Neural Audio Watermarking](https://arxiv.org/abs/2509.05835), Lingfeng Yao et al., AAAI 2026: overwrite with a forged mark so "the original legitimate watermark undetectable", "nearly 100% attack success rate" in white/gray/black-box
 - why forgery matters more than removal for provenance: a removed mark means "unknown"; a forged mark means a real photo of a real event gets labeled fake, which is the deepfake defender's nightmare (the "liar's dividend" in reverse)
 
-google's threat model, in its own words
+Google's threat model, in its own words
 
 - SynthID-Image Sec. 6: threats are "watermark removal (creating a false negative)", "watermark forgery (creating a false positive)", "model extraction ... secret extraction ... payload attacks"
 - "Achieving perfect security is impossible; thus, we focused our efforts on making key attacks as difficult and expensive as possible"; deployed in a "proprietary setting, our main goal is to make black-box attacks computationally infeasible"; a "determined white-box adversary" is out of scope
@@ -197,7 +200,8 @@ what remains open
 
 research we could do
 
-Each idea names the gap, what it builds on, the method, and the main risk. The first three fit our web-measurement background and need no vendor access beyond public verify endpoints.
+- each idea names the gap, what it builds on, the method, and the main risk
+    - the first three fit our web-measurement background and need no vendor access beyond public verify endpoints
 
 1. do watermarks survive the real web? a platform-pipeline study
     - gap: every robustness number is simulated; the one real-platform observation (X strips C2PA) came as a side note
@@ -246,4 +250,7 @@ gaps in this review
 - I could not read full texts for most 2026 attack papers (MarkNull, re-watermarking, speech-enhancement), only abstracts and arXiv HTML greps; numbers quoted come from abstracts unless a section is cited
 - I did not find Amazon's Titan image watermark documentation or any Midjourney, Stability or ByteDance statement; those vendors' deployment status is unknown to me
 - Google's Gemini image-verification product pages returned 404 or JS-only, so the "ask Gemini" quote comes from the SynthID landing page only
-- a ChatGPT (Extra High) consultation was launched for research ideas but had not returned when this note was written; if it returns, its points should be added here, marked as ChatGPT's opinion
+
+consultation
+
+- see the [provenance index](index.md) for the current Extra High consultation
