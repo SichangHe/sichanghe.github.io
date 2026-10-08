@@ -1,0 +1,251 @@
+distributed implementations and specification methods, review B, 7 October 2026
+(authored by agents unless marked 🧑)
+
+takeaways
+- Anvil and Welder prove Rust controllers through models embedded in Verus
+    - model/code conformance connects executable steps to the temporal proof
+- PGo compiles Modular PlusCal into Go
+    - compiler, glue code, and runtime remain trusted
+- a checked model and a verified implementation are different results
+    - preserve that distinction when evaluating agents
+- progress claims depend on scheduling, networking, faults, and external services
+    - state those assumptions beside each theorem
+
+terms
+- refinement: every implementation behavior is allowed by the specification
+- safety: an unwanted event never happens
+- liveness: a wanted event eventually happens
+- fairness: actions that keep being possible eventually get a chance to run
+
+papers
+- IronFleet: Proving Practical Distributed Systems Correct
+    - Chris Hawblitzel, Jon Howell, Manos Kapritsos, Jacob R. Lorch, Bryan Parno, Michael L. Roberts, Srinath Setty, Brian Zill. SOSP 2015. [Paper](https://www.andrew.cmu.edu/user/bparno/papers/ironfleet.pdf), [source](https://github.com/microsoft/Ironclad/tree/main/ironfleet)
+    - IronFleet uses Dafny, layers of state machines, temporal logic, and a separate argument that connects coarse protocol steps to real code
+    - the implementations are IronRSL (Paxos replication) and IronKV (sharded key-value storage)
+    - IronRSL's progress theorem covers a client repeatedly requesting service when a live quorum eventually communicates within bounded time
+    - IronKV's progress theorem covers reliable transmission under fair networking; it is narrower than termination of every key-value operation
+    - source, §2.5: “a message sent infinitely often is eventually delivered.”
+    - this defines its fair-network assumption
+    - §1 states the two progress theorems; §2.5 lists trusted specifications, the event loop, Dafny/compiler/runtime/OS/hardware, and message integrity
+    - packet loss, duplication, and arbitrary delay are allowed for safety
+    - §2.1 explains that the developer chooses successive abstraction layers
+    - inference: asking an agent only to fill local proof holes omits the hard choice of useful layers and the system-to-code correspondence
+- Verdi: A Framework for Implementing and Formally Verifying Distributed Systems
+    - James R. Wilcox, Doug Woos, Pavel Panchekha, Zachary Tatlock, Xi Wang, Michael D. Ernst, Thomas Anderson. PLDI 2015. [Paper](https://homes.cs.washington.edu/~mernst/pubs/verify-distsystem-pldi2015.pdf), [source](https://github.com/uwplse/verdi)
+    - the developer writes node handlers in Coq
+    - verified transformations add such behavior as message deduplication and replicated execution while preserving already-established properties
+    - code is extracted to OCaml with trusted networking support
+    - the source discusses a lock service, primary-backup, and Raft
+    - critical qualification: the later Raft paper below contains the completed proof; the earlier framework paper should not be treated as the final finished Raft verification
+    - source, §1: “we leave proofs of liveness” (the sentence continues by identifying future work)
+    - §3.4 explicitly says the framework does not currently support liveness; §4 gives delivery, duplication, and crash/reboot semantics
+    - inference: transformations can make a future agent workflow reusable, but only for properties the transformation theorem actually preserves
+- Planning for Change in a Formal Verification of the Raft Consensus Protocol
+    - Doug Woos, James R. Wilcox, Steve Anton, Zachary Tatlock, Michael D. Ernst, Thomas Anderson. CPP 2016. [Paper](https://homes.cs.washington.edu/~mernst/pubs/raft-proof-cpp2016.pdf), [source](https://github.com/uwplse/verdi-raft)
+    - this is the completed Verdi Raft linearizability proof
+    - a concurrent history has to behave as though requests happened in one sequential order, while preserving the order of non-overlapping requests
+    - its method separates invariants about reachable states from the final public guarantee, so later changes do not require rewriting every proof
+    - source, abstract: “discovering and proving 90 system invariants.”
+    - the same abstract identifies extraction to OCaml and real-network execution
+    - inference: useful evaluation tasks should require discovering missing invariants and should include a change request, rather than supplying all auxiliary statements at the start
+- Anvil: Verifying Liveness of Cluster Management Controllers
+    - Xudong Sun, Wenjie Ma, Jiawei Tyler Gu, Zicheng Ma, Tej Chajed, Jon Howell, Andrea Lattuada, Oded Padon, Lalith Suresh, Adriana Szekeres, Tianyin Xu. OSDI 2024. [Paper](https://www.usenix.org/system/files/osdi24-sun-xudong.pdf), [source](https://github.com/anvil-verifier/anvil)
+    - a controller repeatedly adjusts the cluster to match a requested configuration
+    - Anvil specifies eventually stable reconciliation (ESR): if the requested state stays fixed, the managed state eventually matches it and keeps matching
+    - developers write a model, executable Rust, a mapping from executable values to model values, local conformance proofs, and an ESR proof
+    - ZooKeeper, RabbitMQ, and FluentBit controllers are the cases
+    - source, §7.1: “Implementing and verifying each controller takes around 2.5 person-months.”
+    - Table 1 gives executable/proof line counts: ZooKeeper 1134/8352; RabbitMQ 1598/7228; FluentBit 1208/8395
+    - those proof counts include model and conformance code
+    - §4.3.3 requires fairness and eventually stopping disruptive faults; the requested configuration must stabilize
+    - §4.2/Figure 8 establishes executable-step/model-step agreement
+    - §6.1 separately reports around two person-months for the ZooKeeper ESR proof; that proof-only cost is not the same as §7.1's implementation-and-verification total
+    - §7.2 reports a missed configuration issue in the trusted ZooKeeper API model
+    - inference: a verified proof against an incomplete model still needs tests and scrutiny of external assumptions
+- Welder: Compositional Liveness Verification of Cluster Control Planes
+    - Zhizhen Cathy Cai, Nikhil Date, Jiawei Tyler Gu, Cody Rivera, Tej Chajed, Oded Padon, Tianyin Xu, Xudong Sun. SOSP 2026. [Paper DOI](https://doi.org/10.1145/3830418.3843868), [source](https://github.com/anvil-verifier/anvil)
+    - Welder's CORE specification combines reconciliation progress with restrictions on what other controllers may change
+    - it verifies ReplicaSet, Deployment, StatefulSet, and RabbitMQ controllers together
+    - Deployment depends on ReplicaSet progress; RabbitMQ depends on StatefulSet progress
+    - its environment remains open to other controllers satisfying declared restrictions
+    - source, abstract: “if two compatible sets of controllers each implement CORE, so does their composition.”
+    - §3 defines compatibility, requested-state predicates, and interference restrictions
+    - §4.2 addresses fairness for operations that repeatedly lose version conflicts
+    - §7.1 reports proof-to-executable-code ratios ranging from 5.4 to 30.4 and describes extra verification conditions for composition
+    - §8 explicitly limits its treatment of progress dependencies to acyclic ones
+    - inference: proving one isolated controller is an easier task than proving a control plane; evaluation should keep both levels
+- Grove: a Separation-Logic Library for Verifying Distributed Systems
+    - Upamanyu Sharma, Ralf Jung, Joseph Tassarotti, M. Frans Kaashoek, Nickolai Zeldovich. SOSP 2023. [Paper](https://pdos.csail.mit.edu/papers/grove:sosp23.pdf), [logic source](https://github.com/mit-pdos/perennial), [systems](https://github.com/mit-pdos/gokv)
+    - Grove proves modular Go components using Coq/Iris
+    - vKV combines replication, crash recovery, reconfiguration, and reads permitted by time-limited leases
+    - its bank application uses the public specifications of vKV and a lock service, rather than their internal implementation proofs
+    - source, §1: “Grove cannot verify liveness properties”
+    - §3.1 models independently crashing nodes, lost/duplicated/reordered network messages, and a clock API returning bounds containing global time
+    - §6 reports a proof-to-code ratio around 12
+    - inference: Grove provides strong examples of reusable component contracts and tricky clock/crash assumptions, but its paper does not establish that requests eventually receive responses
+- Aneris: A Mechanised Logic for Modular Reasoning about Distributed Systems
+    - Morten Krogh-Jespersen, Amin Timany, Marit Edna Ohlenbusch, Simon Oddershede Gregersen, Lars Birkedal. ESOP 2020. [Paper](https://iris-project.org/pdfs/2020-esop-aneris-final.pdf), [source](https://github.com/logsem/aneris)
+    - Aneris uses Coq and separation logic to prove one node or component at a time while composing the results
+    - its executable language includes threads, heaps, and sockets
+    - the cases are a load balancer and two-phase commit used by a replicated logging service
+    - source, abstract: “fully mechanized in the Coq proof assistant.”
+    - §2 gives its language and network semantics; §4 and §5 give the two compositions
+    - inference: it helps agents choose component boundaries; proving the toy load balancer is different from verifying an existing production binary
+- Trillium: Higher-Order Concurrent and Distributed Separation Logic for Intensional Refinement
+    - Amin Timany, Simon Oddershede Gregersen, Léo Stefanesco, Jonas Kastberg Hinrichsen, Léon Gondelman, Abel Nieto, Lars Birkedal. POPL 2024. [Paper](https://iris-project.org/pdfs/2024-popl-trillium.pdf), [development](https://github.com/logsem/trillium)
+    - Trillium connects executions of a program with executions of a model
+    - Fairis supplies concurrent-program progress reasoning under fair scheduling
+    - the distributed instantiation connects an Aneris Paxos implementation to a TLA+ model and transfers safety properties
+    - the supplementary material also treats eventual consistency of a CRDT under progress assumptions; the general distributed-progress treatment is still future work
+    - source, §5: “We leave a more principled approach to proving liveness properties of distributed systems as future work.”
+    - this sentence matters because the abstract alone can suggest a broader finished distributed-liveness framework
+    - inference: it is a direct precedent for connecting TLA+ and executable implementations, but is not a TLA+-to-Rust compiler
+- Adore: Atomic Distributed Objects with Certified Reconfiguration
+    - Wolf Honoré, Ji-Yong Shin, Jieung Kim, Zhong Shao. PLDI 2022. [Paper](https://flint.cs.yale.edu/flint/publications/adore.pdf), [artifact](https://doi.org/10.5281/zenodo.6321150)
+    - Adore chooses a protocol-level state representation that keeps the relationships between committed and uncommitted state while hiding packet details
+    - a Coq refinement connects a Raft-like protocol, SRaft, to this model
+    - it treats multiple reconfiguration schemes through parameters; this is a protocol-level mechanized proof, not verification of arbitrary application code
+    - source, conclusion: “it makes no claims about their liveness or availability.”
+    - §7 states about 13.8k Coq lines overall and 2.5k for the SRaft-to-Adore refinement
+    - inference: representation choice can dominate proof difficulty; automatic specification work needs candidate abstractions, not merely a single syntax conversion
+- Igloo: Soundly Linking Compositional Refinement and Separation Logic for Distributed System Verification
+    - Christoph Sprenger, Tobias Klenze, Marco Eilers, Felix A. Wolf, Peter Müller, Martin Clochard, David Basin. OOPSLA 2020. [Paper](https://arxiv.org/pdf/2010.04749); source repository unresolved
+    - Igloo connects abstract event models in Isabelle/HOL to node-level input/output contracts, then proves Java/Python implementations with VeriFast/Nagini
+    - cases include leader election, primary-backup replication, and an authentication protocol
+    - security transfer relies on an abstract attacker model and trusted cryptographic/parsing contracts
+    - source, §6: “our approach focuses on safety properties and leaves liveness as future work.”
+    - §4.2.4 specifies the trusted parsing and message-to-bitstring representation
+    - inference: one language need not carry the entire proof, provided the links between tools are themselves justified
+- Chapar: Certified Causally Consistent Distributed Key-Value Stores
+    - Mohsen Lesani, Christian J. Bell, Adam Chlipala. POPL 2016. [Paper](https://adam.chlipala.net/papers/ChaparPOPL16/ChaparPOPL16.pdf), [source](https://github.com/mit-plv/chapar)
+    - Chapar separates the public rule for causal visibility from store internals
+    - if a visible update depends on earlier updates, those earlier updates must already be visible
+    - it proves two store algorithms, extracts OCaml, and verifies client examples such as publishing a photo before a post referring to it
+    - source, §6: “none of these programs will fail”
+    - the surrounding paragraph describes client proofs transferred to both concrete store semantics, after model checking the abstract client
+    - §7 explains extracted implementations and trusted serialization/runtime infrastructure
+    - inference: the client story is especially useful for vague requirements because it translates a concrete user harm into a consistency requirement
+- Modular Verification of Op-Based CRDTs in Separation Logic
+    - Abel Nieto, Léon Gondelman, Alban Reynaud, Amin Timany, Lars Birkedal. OOPSLA 2022. [Paper](https://iris-project.org/pdfs/2022-oopsla-crdts.pdf), [development](https://github.com/logsem/aneris)
+    - its reliable causal broadcast library and OpLib let a developer verify a data type without rebuilding packet and thread proofs
+    - cases include counters, sets, registers, product/map combinators, and composed maps
+    - the correctness proof relates each replica's state to the operations it has delivered
+    - this gives convergence when replicas have the same operations; it does not establish that all operations eventually arrive
+    - source, abstract: “a framework for verifying safety properties of CRDT implementations”
+    - §6 names twelve examples; §7/Table 5 distinguishes convergence from eventual delivery and explicitly classifies eventual delivery as liveness
+    - inference: “eventually consistent” in a type's name must not be accepted as evidence of a proved delivery theorem
+- Verifying the DaisyNFS concurrent and crash-safe file system with sequential reasoning
+    - Tej Chajed, Joseph Tassarotti, Mark Theng, M. Frans Kaashoek, Nickolai Zeldovich. OSDI 2022. [Paper](https://pdos.csail.mit.edu/papers/daisy-nfs:osdi22.pdf), [source](https://github.com/mit-pdos/daisy-nfsd)
+    - a verified transaction layer in Coq makes concurrency and crashes invisible to upper-level file operations verified with Dafny
+    - the result is a Go NFS server; the proof covers file-system state operations and recovery, with additional trusted boundaries described in the paper
+    - this is one server's storage correctness, not multi-server consensus
+    - source, abstract: “only 2× as many lines of proof as code”
+    - §3–§4 establish the transaction abstraction and transfer from sequential proofs to concurrent/crash executions
+    - inference: agents may need to propose a simplifying architecture before proving a realistic implementation
+- Sharding the State Machine: Automated Modular Reasoning for Complex Concurrent Systems
+    - Travis Hance, Yi Zhou, Andrea Lattuada, Reto Achermann, Alex Conway, Ryan Stutsman, Gerd Zellweger, Chris Hawblitzel, Jon Howell, Bryan Parno. OSDI 2023. [Paper](https://www.andrew.cmu.edu/user/bparno/papers/ironsync.pdf)
+    - IronSync connects ownership reasoning for thread-local code to a global transition model
+    - its cases are a NUMA node-replication library and SplinterCache, a concurrent page cache
+    - these are shared-memory systems, useful as proof-architecture examples rather than evidence of verified networking
+    - source, §1: “IronSync does not verify liveness, termination, or deadlock-freedom.”
+    - §1 also lists trusted framework axioms and the memory model
+    - inference: a future agent must record which layer an operation's atomicity argument actually covers
+- Shipwright: Proving liveness of distributed systems with Byzantine participants
+    - Derek Leung, Nickolai Zeldovich, M. Frans Kaashoek. arXiv 2025. [Paper](https://arxiv.org/abs/2507.14080); source repository unresolved
+    - Shipwright develops Dafny proofs for executable PBFT subprotocol handlers, with a trusted Go runtime for networking, signatures, and timers
+    - it organizes progress reasoning through composition and completion measures
+    - handler functions must terminate, preventing a local computation from blocking subsequent protocol steps
+    - crucially, its end-to-end PBFT proof is unfinished, despite the abstract's broader wording
+    - source, §5: “We have not yet proven correct all of the trace properties required for safety and liveness of the end-to-end specification.”
+    - the surrounding paragraph explicitly says the PBFT proofs remain in progress and the composed PBFT implementation has not yet been proved to refine its top-level safety/liveness specification
+    - §2–§3 describe trusted runtime, signatures, and progress assumptions
+    - inference: count verified subprotocols separately from an end-to-end proof; the abstract is not adequate evidence of completed system verification
+- Compiling Distributed System Models with PGo
+    - Finn Hackett, Shayan Hosseini, Renato Costa, Matthew Do, Ivan Beschastnikh. ASPLOS 2023. [Paper DOI](https://doi.org/10.1145/3575693.3575695), [open paper](https://raw.githubusercontent.com/DistCompiler/pgo/main/doc/papers/asplosb23main-p12-p-e73de3693c-62943-final.pdf), [source](https://github.com/DistCompiler/pgo)
+    - PGo compiles Modular PlusCal into both model-checkable PlusCal/TLA+ and executable Go
+    - it separates algorithm code from the modeled environment through resources and mapping macros
+    - table 2 contains seven cases: Raft, a distributed KV component, modular RaftKV, monolithic RaftKV, a lock service, primary-backup KV, and a CRDT
+    - source, §2.1: “the developer must trust any hand-written glue Go code”
+    - the same section lists both translations, PGo-distsys libraries, Go/runtime/software stack, and separately checked component composition as trusted
+    - table 2 gives model and glue size and human effort; monolithic RaftKV is 25 person-days, 758 model lines, 1099 glue lines
+    - its RaftKV check uses bounded instances (§5.2), and modular RaftKV's composition is not itself checked in Table 2
+    - inference: it narrows the manual model/code gap but is not a verified compiler or an unbounded proof of the compiled deployment
+- Multi-Grained Specifications for Distributed System Model Checking and Verification
+    - Lingzhi Ouyang, Xudong Sun, Ruize Tang, Yu Huang, Madhav Jivrajani, Xiaoxing Ma, Tianyin Xu. EuroSys 2025. [Paper](https://doi.org/10.1145/3689031.3696069), [open preprint](https://arxiv.org/abs/2409.14301)
+    - the authors model ZooKeeper at several granularities and combine detailed models of changed components with simpler models of unchanged ones
+    - they use TLC and check model/code conformance
+    - this is model checking and conformance checking, not a mechanized proof of the entire Java implementation for arbitrary deployment sizes
+    - source, abstract: “six severe bugs that violate five types of invariants”
+    - §3–§5 explain granularity and conformance
+    - inference: agents should evaluate whether the model preserved the corner case that matters, rather than reward a model merely for staying small enough to check
+- Smart Casual Verification of the Confidential Consortium Framework
+    - Heidi Howard, Markus A. Kuppe, Edward Ashton, Amaury Chamayou, Natacha Crooks. NSDI 2025. [Paper](https://www.usenix.org/conference/nsdi25/presentation/howard), [CCF source](https://github.com/microsoft/CCF)
+    - this production experience binds a TLA+ consensus model to C++ code through automated testing in continuous integration
+    - the requirements include protocol safety and a custom client consistency rule
+    - its value is checking evolving code against a precise model while engineers continue changing both
+    - source, abstract: “combines the rigor of formal specification and model checking with the pragmatism of automated testing”
+    - §1 states the explicit verification requirements
+    - inference: this is an appropriate cheaper evaluation tier, but successful conformance tests must be reported separately from implementation proofs
+- Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3
+    - James Bornholt, Rajeev Joshi, Vytautas Astrauskas, Brendan Cully, Bernhard Kragl, Seth Markle, Kyle Sauri, Drew Schleit, Grant Slatton, Serdar Tasiran, Jacob Van Geffen, Andrew Warfield. SOSP 2021. [Paper](https://doi.org/10.1145/3477132.3483540), [open PDF](https://cdn.amazon.science/77/5e/4a7c238f4ce890efdc325df83263/using-lightweight-formal-methods-to-validate-a-key-value-storage-node-in-amazon-s3-2.pdf). Production source is not public in this audit
+    - shardStore checks Rust storage code with a reference model, property-based testing, and stateless model checking
+    - its properties concern API behavior, crash-consistent on-disk state, and concurrency between foreground requests and maintenance
+    - it deliberately uses weaker guarantees than full proof so a changing production implementation can be checked routinely
+    - source, §1: “weaker correctness guarantees than full formal verification”
+    - this work is a storage-node example, not a proof of distributed S3
+    - inference: a vague description of “never lose acknowledged data” should become a crash/acknowledgment contract before an agent starts choosing invariants
+- How Amazon Web Services Uses Formal Methods
+    - Chris Newcombe, Tim Rath, Fan Zhang, Bogdan Munteanu, Marc Brooker, Michael Deardeuff. CACM 2015. [Paper](https://lamport.azurewebsites.net/tla/formal-methods-amazon.pdf)
+    - this is the clearest human formulation account in this slice
+    - engineers first state the externally wanted behavior and forbidden histories, then choose useful levels of abstraction, write system state/actions, and test the model with a model checker
+    - TLA+ exposes design defects before implementation; it does not itself prove that implementation code obeys the design
+    - source, the abstraction discussion: “correctness properties occupying higher levels”
+    - the surrounding paragraph describes designs in the middle and executable code/hardware below, and explains choosing multiple middle levels
+    - inference: agent evaluation should score the public contract independently from the model and proof, because all three can agree while missing what the user meant
+
+tools
+- [Verus-TLA](https://github.com/anvil-verifier/verus-tla)
+    - README: “A Verus embedding of TLA”
+    - execution sequences, temporal predicates, verified helper lemmas, and state-machine definitions
+    - inference: reusable proof library; no arbitrary `.tla` parser or translator established here
+- [Apalache](https://github.com/apalache-mc/apalache)
+    - README: “check inductive invariants (for fixed or bounded parameters)”
+    - bounded executions and inductive proofs have different scope
+- [Ivy](https://github.com/kenmcmil/ivy)
+    - README: “the human protocol designer and the automated tool interact to expose errors and prove correctness”
+    - inference: counterexamples help shape the specification, beyond locating proof errors
+
+suggested evaluation, agent recommendations
+- score the public guarantee separately from the model and proof
+    - use acceptable and unacceptable user-visible histories
+- record every environment assumption
+    - scheduling, network delivery, clocks, crashes, external APIs, controller interference
+- retain the model/code mapping
+    - identify executable code outside the proof
+- distinguish bounded checks, proved properties, conformance tests, and implementation proofs
+- test false-success cases
+    - contradictory assumptions
+    - assumptions that exclude the relevant execution
+    - missing crash or update cases
+    - unlimited internal steps that prevent progress
+    - conflicting controllers
+- include a change request
+    - measure whether discovered invariants and component contracts survive realistic revisions
+
+coverage and gaps
+- 20 papers; 52 structured cases
+    - [case database](review_b_system_cases_20261007.tsv)
+    - TSV authorship follows this note; no extra rows alter its machine-readable schema
+- full-paper excerpts checked against title pages and relevant sections
+- unresolved: general arbitrary-TLA+-to-verified-Rust translation
+    - separate newer leads require independent proof-scope review
+- unresolved: Igloo and Shipwright source repositories
+- full current Mocket, Remix, and PVerifier papers remain unaudited
+- metadata corrections
+    - Trillium title follows the paper, rather than the inherited filename
+    - causal-memory paper is POPL 2021
+    - op-based CRDT paper is OOPSLA 2022
+    - IronFleet author is Michael L. Roberts
+    - inherited file labelled Velisarios contained an unrelated paper and was excluded
+- Shipwright end-to-end proof remains incomplete
+    - §5 qualification takes precedence over its broader abstract wording
