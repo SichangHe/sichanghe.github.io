@@ -146,7 +146,7 @@ what people do after a breach
     - "only 16% of our 303 participants visited an incident-related web page"
 - Ashley Madison, the one known case of a breach exposing fake deletion
     - FTC, [2016 settlement](https://ftc.gov/news-events/press-releases/2016/12/operators-ashleymadisoncom-settle-ftc-state-charges-resulting); snippet
-    - users paid $19 for "Full Delete"; the 2015 breach contained their data anyway
+    - users paid \$19 for "Full Delete"; the 2015 breach contained their data anyway
 - I found no study of deletion requests after a breach, in either direction
     - neither "do people ask for deletion after a breach"
     - nor "do breaches show that deletion was not done"

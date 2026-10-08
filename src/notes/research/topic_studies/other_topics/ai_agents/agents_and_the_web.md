@@ -141,9 +141,9 @@ what existing work shows
   - [Beyond Message Passing](https://arxiv.org/abs/2604.02369), Yuan et al., arXiv 2026, preprint: compares "18 representative protocols"; they give "limited protocol-level mechanisms for clarification, context alignment, and verification"
 - agent payments, measured on the blockchain
   - [How Agentic Is Agentic Commerce?](https://arxiv.org/abs/2607.12575), Ling, Zhou, Wu, Wang, arXiv 2026, preprint
-    - fact: "Over a 280-day window Base carries 136,708,672 settlements worth $44,121,383.81"
+    - fact: "Over a 280-day window Base carries 136,708,672 settlements worth \$44,121,383.81"
     - fact: "21.20% are fictitious and 63.78% internal settlement within a linked cluster"
-    - fact: what is provably independent starts at "the $187,861.35 that demonstrably reaches a nameable service"
+    - fact: what is provably independent starts at "the \$187,861.35 that demonstrably reaches a nameable service"
     - claim: "Settlement count measures manufacturability, not adoption"
   - [Can Trustless Agents Be Trusted?](https://arxiv.org/abs/2606.26028), Xiong, Li, Wei, Wang, Knottenbelt, Wang, arXiv 2026, preprint
     - fact: only "3%, 4%, and 15% across Ethereum, BSC, and Base" of registered agents have a valid file "with at least one live service endpoint"
@@ -276,7 +276,7 @@ research we can do
   - ask about 20 assistants, browser agents, and coding agents questions that need the site; log requests and see which secret shows up
   - repeat weekly for 2 months to catch product changes
 - convincing result: a table of product by door with use rates and confidence intervals, plus whether a door changes answer correctness; "no product reads llms.txt in search mode but 5 coding agents do" would be a clean finding
-- cost: about $300 for domains and hosting, $500 to $1,500 for subscriptions and API calls, 6 to 8 weeks for one person
+- cost: about \$300 for domains and hosting, \$500 to \$1,500 for subscriptions and API calls, 6 to 8 weeks for one person
 - closest work that could scoop it: the Wenger group (Seiden, Kim, Liu) already runs such sites; Lopez-Fonseca's setup extends easily; Hoffmann's group may add a use study
 - risk: fresh domains may never be fetched by search-backed assistants; give the URL in the prompt as a second condition
 
@@ -289,7 +289,7 @@ research we can do
   - visit twice as each, so normal page churn is not counted as a difference
   - compare status, main text, links, prices, and hidden text; flag text addressed to a model
 - convincing result: rates by site category and CDN with a churn baseline, hand-checked samples, and a set of real agent-only pages
-- cost: one crawl machine, 2 to 4 weeks for the top 10K; real agent runs cost about $0.05 to $0.50 per page, so keep that sample small
+- cost: one crawl machine, 2 to 4 weeks for the top 10K; real agent runs cost about \$0.05 to \$0.50 per page, so keep that sample small
 - closest work that could scoop it: Gundelach 2026 (block rates for automation), Liu 2025 (crawler blocking), the UC Davis group behind FP-Agent
 - risk: a spoofed user-agent from the wrong IP range may be treated as fake; report that as its own finding, and it argues for Web Bot Auth
 
@@ -302,7 +302,7 @@ research we can do
   - each week send a fixed set of 2K queries to 3 or 4 AI search products, 5 runs each, following Sielinski 2026
   - compare citation share around each robots.txt change with sites that did not change
 - convincing result: a drop or rise that starts after the change, is absent before it, and holds across products
-- cost: $1K to $3K per month in API and search result fees, and at least 4 months to see enough changes
+- cost: \$1K to \$3K per month in API and search result fees, and at least 4 months to see enough changes
 - closest work that could scoop it: Grossman's group has the query set; Zhao and Berman have the traffic panel
 - risk: few sites change policy in a short window; a long window costs money
 

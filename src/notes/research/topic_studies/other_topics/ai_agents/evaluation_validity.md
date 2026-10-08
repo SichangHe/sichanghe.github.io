@@ -175,7 +175,7 @@ can the harness be cheated
 - [Holistic Agent Leaderboard: The Missing Infrastructure for AI Agent Evaluation](https://arxiv.org/abs/2510.11977)
   - arXiv 2025; the project site says accepted at ICLR 2026, seen in a search result only; abstract only
   - did: collected 21,730 runs using nine models on nine benchmarks
-    - source fragment: "21,730 agent rollouts", "total cost of about $40,000"
+    - source fragment: "21,730 agent rollouts", "total cost of about \$40,000"
   - author report: some trajectories retrieved benchmark answers from HuggingFace
     - source fragment: "searching for the benchmark on HuggingFace"
   - fact: all logs are public, "2.5B tokens of language model calls"
@@ -412,7 +412,7 @@ idea 1: calibrate graders against machine-checked ground truth
   - a curve of false-accept rate against test strength, with the model ranking flipping at realistic test strength
   - or a clean null: tests are fine when coverage passes a stated threshold; that is also publishable
 - cost
-  - about 2 to 3 months for one person; I guess under $3k of model calls
+  - about 2 to 3 months for one person; I guess under \$3k of model calls
   - main labor is choosing functions whose specification is complete
 - what could scoop it
   - UTBoost and PatchDiff measure the same thing with weaker references
@@ -440,7 +440,7 @@ idea 2: audit the network traffic of benchmark runs
   - a per-benchmark leak rate and the score drop when leaks are blocked
   - a list of answer-bearing hosts that benchmark authors can block
 - cost
-  - about 2 months; I guess $2k to $5k of model calls plus proxy engineering
+  - about 2 months; I guess \$2k to \$5k of model calls plus proxy engineering
 - what could scoop it
   - Search-Time Data Contamination (Scale AI) is the closest and could extend to agent benchmarks
   - HAL already has logs; a log-only version of this study needs no new runs

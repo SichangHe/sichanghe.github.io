@@ -185,7 +185,7 @@ identity and fake histories
     - open: whether anyone exploits this in the wild
 - [Checkmarx, fake Dependabot commits, Jul 2023](https://checkmarx.com/blog/surprise-when-dependabot-contributes-malicious-code/): "hundreds of GitHub repositories" got commits forged as Dependabot using stolen tokens
 - bot detection (benign automation, not fraud): BoDeGHa (Golzadeh et al., JSS 2021, 5,000 accounts, F1 0.98 on comment text), BIMAN (Dey et al., MSR 2020)
-- marketplace prices: StarScout reports "$0.10 to $2.00 per star"; Check Point saw "$10" per 100 stars
+- marketplace prices: StarScout reports "\$0.10 to \$2.00 per star"; Check Point saw "\$10" per 100 stars
 
 data sources for measuring abuse
 

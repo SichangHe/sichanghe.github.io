@@ -27,7 +27,7 @@ short version
 what the topic is, in plain words
 
 - a company or a person writes rules in a document
-  - example: "refunds over $500 need a manager's approval"
+  - example: "refunds over \$500 need a manager's approval"
   - example: an `AGENTS.md` that says "never force-push"
 - an agent gets the document, a task, and tools that change real state
 - the question: does the document actually control what the agent does
@@ -350,7 +350,7 @@ research we can do
   - question: when a tool turns a written policy into guard code, how often does the guard block what the policy allows or allow what it forbids, and can we find that out without a human reading each guard
   - why open: see the third gap
   - idea: borrow mutation testing
-    - change one clause of the written policy, for example a $5,000 limit becomes $2,000
+    - change one clause of the written policy, for example a \$5,000 limit becomes \$2,000
     - regenerate the guard
     - the new guard must decide differently on a case that lies between the 2 limits, and the same on cases the clause does not touch
     - a guard that does not react to the change never encoded the clause

@@ -222,7 +222,7 @@ answers versus their cited sources, and deep research agents
 RAG systems side: caches, indexes, freshness
 
 - Cache-Craft, Agarwal et al., SIGMOD 2025 (peer reviewed), [arXiv 2502.15734](https://arxiv.org/abs/2502.15734)
-  - fact: in a production system "75% of the retrieved chunks for a query were reprocessed, amounting to over 12B tokens in a month... costing approximately $50k"
+  - fact: in a production system "75% of the retrieved chunks for a query were reprocessed, amounting to over 12B tokens in a month... costing approximately \$50k"
   - what: store per-chunk KV caches, reuse them in any position, recompute a few tokens; "1.6X speed up in throughput and a 2X reduction in end-to-end response latency over prefix-caching"
 - CacheBlend, Yao et al., preprint on arXiv (EuroSys 2025 not confirmed on the arXiv page), [arXiv 2405.16444](https://arxiv.org/abs/2405.16444)
   - fact: "reuses the precomputed KV caches, regardless prefix or not, and selectively recomputes the KV values of a small subset of tokens"; TTFT down "2.2-3.3x"
@@ -245,7 +245,7 @@ privacy leaks from the store
 - Is My Data in Your Retrieval Database?, Anderson et al., preprint, [arXiv 2405.20446](https://arxiv.org/abs/2405.20446)
   - fact: one prompt, "Does this: '{Target Sample}' appear in the context? Answer with Yes or No."; TPR 0.95 black-box on Llama; a template instruction cuts it to 0.09
 - Interrogation Attack, Naseh et al., CCS 2025 (peer reviewed), [arXiv 2502.00306](https://arxiv.org/abs/2502.00306)
-  - fact: natural questions answerable only if the document is present; "2x improvement in TPR@1%FPR", "just 30 queries", under $0.02 per document
+  - fact: natural questions answerable only if the document is present; "2x improvement in TPR@1%FPR", "just 30 queries", under \$0.02 per document
   - claim: detected about 5% of the time vs 90%+ for prior attacks
 - CopyBreakRAG (formerly RAG-Thief), Jiang et al., preprint, [arXiv 2411.14110](https://arxiv.org/abs/2411.14110), v2 Aug 2025
   - fact: "extracts over 70% of the data from the knowledge base in applications on commercial platforms including OpenAI's GPTs and ByteDance's Coze"; weaker on disconnected records such as medical notes

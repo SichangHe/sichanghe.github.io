@@ -20,7 +20,7 @@ short version
   - Cordon (June 2026): a transactional runtime with an effect outbox; evaluated on file, shell, and API tools, not on browsers
 - cost per task is now reported and is dominated by frontier calls per step
   - OSWorld-Human: best agents use 2.7x to 4.3x more steps than human-optimal
-  - Agent S3 single rollout costs about $0.72 per OSWorld task; its best-of-10 record needs ten full rollouts
+  - Agent S3 single rollout costs about \$0.72 per OSWorld task; its best-of-10 record needs ten full rollouts
   - Skim (May 2026) and EchoPath (Sept 2026) cut cost by caching site structure or validated trajectories
 - best ideas, in my judgment
   1. exactly-once for clicks: move LIMBO's fault injection into a browser harness, where no idempotency key exists, and test a network-boundary write ledger against WebOperator-style heuristics
@@ -75,7 +75,7 @@ what existing work shows
   - fact: about 20% gains over Search-R1 on multi-hop QA sets
   - limit: QA, not transactions
 - screenshot vs AX tree
-  - WebMall (below) reports GPT-5.4 vision used fewer input tokens per task than AX tree (119,866 vs 148,250) and was cheaper ($0.34 vs $0.40); the AX-tree runs were faster (128 s vs 166 s)
+  - WebMall (below) reports GPT-5.4 vision used fewer input tokens per task than AX tree (119,866 vs 148,250) and was cheaper (\$0.34 vs \$0.40); the AX-tree runs were faster (128 s vs 166 s)
   - inference: the "screenshots cost more tokens" folk claim is not universal; it depends on page size and image tokenization
   - search snippets from several 2026 papers (EntWorld, ProjGuard, HealthAdminBench) report screenshot+AX tree beating either alone; not opened, so not relied on here
 - [Thinking vs. Doing, Shen et al.](https://arxiv.org/abs/2506.07976), arXiv June 2025, preprint
@@ -184,7 +184,7 @@ what existing work shows
   - does: "runs a small policy by default and escalates to a stronger model only when lightweight learned monitors detect elevated risk" (a stuck monitor and a milestone monitor)
 - [WebMall, Peeters et al.](https://arxiv.org/abs/2508.13024), SIGIR 2026, peer reviewed
   - sections read: table 4
-  - fact: per-task cost $0.34 (GPT-5.4 vision), $0.40 (GPT-5.4 AX tree), $0.07 to $0.09 (Qwen 3.6 Plus); runtimes 128 s to 381 s; best completion below 65% on cheapest-product and vague-product search
+  - fact: per-task cost \$0.34 (GPT-5.4 vision), \$0.40 (GPT-5.4 AX tree), \$0.07 to \$0.09 (Qwen 3.6 Plus); runtimes 128 s to 381 s; best completion below 65% on cheapest-product and vague-product search
 - [EchoPath, Zhao et al.](https://arxiv.org/abs/2609.16635), arXiv Sept 2026, preprint
   - does: turns validated GUI trajectories into "parameter-controlled callable memories" with "application and state preconditions"; re-aims stored coordinates by image match; "rejects ambiguous or incompatible steps to bounded grounding repair or fresh planning"
   - fact: median token cost down "more than 90%", execution time down "about 60%"
@@ -260,7 +260,7 @@ idea 1: exactly-once for clicks
   - unknown endpoints stay unknown; nothing is classified safe by appearance
 - second experiment: 100 transactional tasks, two backbones, five runs each under injected faults
   - measure duplicate writes, missed writes, task success, blocked useful actions, time; report per model as the ledger paper suggests
-  - cost, inference from WebMall and Agent S3 figures: about $0.1 to $0.7 per run, so 1,000 runs cost a few hundred dollars plus engineering
+  - cost, inference from WebMall and Agent S3 figures: about \$0.1 to \$0.7 per run, so 1,000 runs cost a few hundred dollars plus engineering
 - convincing result: strategies that look safe by page appearance duplicate writes in a measurable share of faulted runs, and the ledger cuts that to near zero without losing success
 - falsification: duplicates never occur on these apps, or blocking costs most successes
 - closest work that could scoop: LIMBO's author (extending to browsers is the obvious next step), Cordon's authors, WebOperator's authors, the Unbrowse team
