@@ -1,0 +1,911 @@
+LLM serving: place computation, move cached state, finish useful work
+(authored by agents unless marked 🧑)
+
+start here
+
+- recommendation: study whether today's scheduling choices survive realistic tool delays, changing tenant traffic, and worker failures
+  - these are candidate questions, not established gaps across the entire literature
+- inference: another scheduler that only beats an old vLLM release on independently sampled prompts is a weak starting point
+  - Orca, Sarathi-Serve, Llumnix, DistServe, Mooncake, Libra, JITServe, and LMetric already cover much of that space
+- recommendation: start with a workload study and a cheap replay experiment
+  - move to a mechanism only after reproducing a failure that existing systems do not already handle
+- scope: centralized serving and its connection to agent execution
+  - [agent side effects and recovery](agent_systems.md)
+  - [cloud elasticity](cloud_serverless_scheduling.md)
+  - [decentralized serving and networks](networking_edge_p2p.md)
+  - [storage for the KV cache and model files](../storage_databases/llm_and_storage.md)
+
+what the second pass on 7 Oct 2026 changed
+
+- this pass added about 100 sources under "more source cards" and revised the candidate studies
+  - most new cards rest on the abstract only; each section says so
+- finding 1: speed is crowded, correctness is not
+  - I count more than 60 papers here that make serving faster or cheaper
+  - I found only a handful that ask whether the engine returns the right tokens to the right user
+    - one fuzzer (GRIEF), two bug studies, two determinism papers, one vendor postmortem
+  - I think this is the best opening for someone who does formal verification, see study 5
+- finding 2: recovery after a worker dies is no longer open
+  - DéjàVu, FailSafe, KevlarFlow, GhostServe, LUMEN and Concordia all save the KV cache somewhere else and resume
+  - none of their abstracts says what the client sees after a resume
+    - that narrower question is what study 3 now asks
+- finding 3: authors disagree on whether to split prefill and decode
+  - DistServe, Splitwise and Mooncake split them
+  - LoongServe, semi-PD, EcoServe, Libra and Arrow each report that a fixed split loses under some load
+  - I found no independent comparison on one shared workload, see study 7
+- finding 4: agent workloads now have public traces and several cache policies
+  - TraceLab, the Copilot trace study and CacheWise measure coding agents
+  - Continuum, KVFlow, CacheWise, Leyline and AgentKV already change cache policy around tool calls
+  - studies 1 and 4 are weaker than the first pass thought
+- finding 5: what hosted providers really serve is measurable from outside
+  - published audits found shared prompt caches at 7 providers and changed models at 11 of 31 endpoints
+  - that fits web measurement skills, see study 6
+- my ranking of the candidate studies for us: 5, 6, 3, 7, then 1, 2, 4
+  - opinion, based on fit with verification and measurement skills and on how crowded each topic is
+
+terms
+
+- prefill: process the input text to produce the first output token
+- decode: generate later output tokens one at a time
+- KV cache: saved intermediate model state that avoids repeating work on previously processed tokens
+- goodput: useful work completed within the chosen latency target
+  - each paper chooses its own unit and target
+  - requests per second, timely tokens, and completed programs are different measurements
+- SLO: service-level objective, such as a maximum time to the first token
+- disaggregation: put stages or state on different machines or GPUs
+- tail latency: latency near the slow end of a measured distribution
+- TTFT: time to first token
+- prefix cache: keep the KV cache of a prompt so a later prompt that starts with the same text skips that work
+- cold start: the delay to load a model onto a GPU before it can answer
+- adapter (LoRA): a small add-on that specializes a shared base model for one task
+- tensor parallelism: split each layer's math across GPUs
+- pipeline parallelism: put different layers on different GPUs
+- batch-invariant: a request gets the same numbers no matter which other requests share its batch
+- timing side channel: learning a secret from how long a reply takes
+- cascade: try a cheap model first, send the request to a bigger one only if needed
+
+how the mechanisms relate
+
+- fill empty batch slots without waiting for every request to finish
+  - Orca
+- limit how long input processing stalls existing output generation
+  - Sarathi-Serve
+- move active requests between workers
+  - Llumnix
+- put input processing and output generation on different GPUs
+  - DistServe
+- place reusable model state across a memory and storage pool
+  - Mooncake and SYMPHONY
+- split individual requests between stages more flexibly
+  - Libra
+- choose requests using deadlines and uncertain remaining lengths
+  - JITServe
+- route requests using cache reuse and current load
+  - LMetric
+- schedule dependent calls as one program
+  - Agentix
+- choose models, hardware, and execution configuration for a workflow
+  - Murakkab
+- overlap computation, memory movement, and communication inside a GPU
+  - NanoFlow
+- generate workloads whose arrival and length patterns resemble production
+  - ServeGen
+- added in the second pass
+  - manage KV cache memory inside one engine
+    - vLLM, SGLang
+  - order requests by a guess of how long they will run
+    - FastServe, S3, learning to rank, Andes, VTC, QLM, SLOs-Serve, Niyama, Apt-Serve, Cascade
+  - route requests to the replica that already holds their prefix
+    - Preble, AIBrix, Lodestar, SkyWalker, GORGO
+  - keep the cache alive while an agent's tool runs
+    - InferCept, Continuum, KVFlow, CacheWise, Leyline
+  - start or scale a model fast
+    - BlitzScale, λScale, HydraServe, DeepServe, HeteroScale, SageServe
+  - share GPUs between many models or adapters
+    - AlpaServe, MuxServe, Prism, Aegaeon, Weaver, dLoRA, Toppings, Chameleon, ConServe, FlexLLM
+  - pick which model answers
+    - FrugalGPT, Hybrid LLM, RouteLLM, Cascadia, IC-Cache, RouterWise, HW-Router
+  - survive a dead GPU or worker
+    - DéjàVu, FailSafe, KevlarFlow, GhostServe, LUMEN, Concordia, SkyServe
+  - check that the engine is correct, private and honest
+    - GRIEF, two bug studies, LLM-42, the prompt-cache attacks and defenses, model substitution audits
+
+source cards
+
+- Orca, Yu et al., OSDI 2022
+  - [paper and abstract](https://www.usenix.org/conference/osdi22/presentation/yu)
+  - exact abstract words: "schedules execution at the granularity of iteration (instead of request)"
+  - mechanism: make a new scheduling decision after each token-generation iteration
+    - newly arrived work can join and finished work can leave
+  - author result: GPT-3 175B throughput comparison against NVIDIA FasterTransformer at matched latency
+  - limitation for our study: that comparison predates today's continuous-batching engines
+  - reading depth: primary conference abstract
+
+- Sarathi-Serve, Agrawal et al., OSDI 2024
+  - [paper](https://www.usenix.org/system/files/osdi24-agrawal.pdf)
+  - exact abstract words: "splits a prefill request into near equal sized chunks"
+  - mechanism: combine input chunks and ongoing output generation into batches
+    - avoid long input-processing stalls
+  - author result: 2.6× serving capacity for Mistral-7B on one A100 relative to the evaluated vLLM
+    - other model and parallelism settings give different gains
+  - limitation: chunk size trades time to the first output against delays to existing outputs
+    - a throughput gain under one latency target does not establish a gain under every target
+  - reading depth: abstract and design/evaluation passages in the full PDF
+
+- DistServe, Zhong et al., OSDI 2024
+  - [paper](https://www.usenix.org/system/files/osdi24-zhong-yinmin.pdf)
+  - exact §4.3 words: "does not implement advanced runtime policies like preemption"
+  - exact continuation: "and fault tolerance"
+  - exact §6 setup words: "we generate request arrival times using Poisson distribution"
+  - mechanism: separately size and place prefill and decode workers
+    - choose placement using expected traffic and available bandwidth
+  - author result: up to 7.4× request rate or 12.6× tighter latency targets in the evaluated settings
+    - over 90% of requests meet the chosen latency constraints
+  - important scope
+    - evaluation uses OPT models and sampled ShareGPT, HumanEval, and LongBench inputs
+    - LongBench inputs are capped because the evaluated OPT positional embeddings support 2,048 tokens
+    - §4.3 explicitly discusses fault propagation through dependencies between worker pools
+  - research implication: a fault-aware extension needs a current baseline
+    - DistServe's stated future work establishes a limitation of that paper, not a continuing absence in 2026
+  - reading depth: design, placement, runtime, evaluation setup, and discussion passages
+
+- Llumnix, Sun et al., OSDI 2024
+  - [paper](https://www.usenix.org/system/files/osdi24-sun-biao.pdf)
+  - exact §5 words: "the requests running on it will be aborted"
+  - exact same section words: "temporarily falls back to a scheduler-bypassing mode"
+  - mechanism: migrate active requests and their KV cache between model instances
+    - overlap most state copying with generation
+    - use a final handshake to transfer execution responsibility
+  - author result: substantially lower tail latency and up to 36% cost savings in its evaluated workloads
+  - existing reliability mechanism
+    - global scheduler failure has a bypass path
+    - failed workers abort affected requests and restart through Ray
+    - interrupted migration can retain the request when its source is healthy
+  - research implication: distinguish continuing availability from preserving an individual in-flight request
+    - merely adding failure detection would duplicate existing work
+  - reading depth: migration handshake, implementation/failure handling, and evaluation passages
+
+- ServerlessLLM, Fu et al., OSDI 2024
+  - [paper and abstract](https://www.usenix.org/conference/osdi24/presentation/fu)
+  - exact abstract words: "startup-time-optimized model scheduling"
+  - mechanism: exploit local model checkpoints, load them through the storage hierarchy, and migrate running inference
+  - author result: 10–200× latency reduction across the evaluated comparisons with serverless baselines
+  - limitation: model startup, request execution, and complete agent task latency are different objectives
+  - research implication: compare against checkpoint-locality scheduling before claiming a new elasticity mechanism
+  - reading depth: primary conference abstract
+
+- Mooncake, Qin et al., FAST 2025
+  - [paper](https://www.usenix.org/system/files/fast25-qin.pdf)
+  - exact abstract words: "separates prefill and decoding clusters"
+  - exact §3.2.3 words: "find alternative paths upon failure"
+  - mechanism: reuse KV cache across a disaggregated pool using CPU memory, SSDs, network interfaces, and GPUs
+    - routing weighs cache reuse and resource load
+    - transfer engine retries temporary connection failures and uses alternative interfaces
+  - author result: 59%–498% increase in effective request capacity on evaluated real traces against its baselines
+    - authors also report deployment across thousands of nodes
+  - limitation: transfer recovery is not automatically request-stream recovery
+    - a client can have received part of an answer before a worker fails
+  - research implication: useful new work must account for existing cache placement and transfer resilience
+  - reading depth: cache management, transfer failure handling, scheduling, and evaluation passages
+
+- NanoFlow, Zhu et al., OSDI 2025
+  - [paper](https://www.usenix.org/system/files/osdi25-zhu-kan.pdf)
+  - exact abstract words: "end-to-end LLM serving is compute bound for most common workloads and LLMs"
+  - author mechanism: split input into smaller batches and overlap computation, memory movement, and networking
+  - author result: 1.91× throughput over the evaluated serving systems
+    - reports 50%–72% of modeled optimal throughput across evaluated models
+  - limitation: the bottleneck statement has a workload and model scope
+    - it does not contradict memory-bound decode kernels in smaller or different batches
+  - research implication: measure the bottleneck before assuming network, cache, or decode memory is dominant
+  - reading depth: primary abstract
+    - full PDF retrieved for follow-up
+
+- ServeGen, Xiang et al., NSDI 2026
+  - [paper](https://www.usenix.org/system/files/nsdi26-xiang-servegen.pdf)
+  - exact §7 words: "We leave characterizing LLM serving with plugin calls as an important area for future work"
+  - exact same section words: "characterizing prefix caching requires access to the content of requests"
+  - author dataset: four months, 12 models, 3.54 billion requests
+    - individual models have shorter observation periods
+    - includes language, multimodal, and reasoning models
+  - mechanism: compose workloads from clients with different request rates and length patterns
+    - retain changes and correlations that independent timestamp/length sampling loses
+  - author findings
+    - client mixtures explain much of the changing aggregate traffic
+    - reasoning models have distinct output-length and conversation-arrival patterns
+    - multimodal stages have different and changing resource demands
+  - useful limitation: study excludes tool/plugin execution and content-dependent prefix-cache characterization
+    - gives a concrete starting point for extending workload measurement
+  - research implication: extend the joint model of tools, reusable prefixes, and dependent calls
+    - compare with agent trace studies before claiming a new workload characterization
+  - reading depth: introduction, data/method, findings, generator design, evaluation, and discussion passages
+
+- JITServe, Zhang et al., NSDI 2026
+  - [paper](https://www.usenix.org/system/files/nsdi26-zhang-wei.pdf)
+  - exact §7 words: "assigns zero value to requests missing their SLO deadlines"
+  - exact same section words: "Persistent shifts may require retraining predictors or incorporating explicit fallback policies"
+  - mechanism: progressively refine uncertain output lengths and call dependencies
+    - allocate enough generation capacity to meet different latency/deadline targets
+    - choose batches using expected timely work and compatible input lengths
+  - author result: 1.4×–6.3× service goodput relative to evaluated designs
+  - guarantee scope
+    - §4.2 states a competitive bound for the abstract scheduling algorithm
+    - that theorem is not a guarantee that every production request meets its deadline
+    - GPU cost models, estimates, failures, and fairness modifications need separate analysis
+  - limitation: a late answer receives zero value in the main objective
+    - real interactive work may still benefit from near-miss completion
+  - research implication: uncertain dependent-call scheduling already has substantial related work
+    - a new proposal needs a different information source or objective, plus strong baselines
+  - reading depth: request analysis, scheduler theorem statement, evaluation setup, and limitations
+
+- SYMPHONY, Agarwal et al., NSDI 2026
+  - [paper](https://www.usenix.org/system/files/nsdi26-agarwal.pdf)
+  - exact abstract words: "advisory requests—prefetching hints derived from user interactions or workload structure"
+  - mechanism: move cached state before it becomes urgent
+    - manage GPU memory jointly with the serving engine
+    - assign priorities when hints are unreliable
+  - author result: 2.4× lower end-to-end latency than evaluated vLLM and four times as many requests with little added latency
+  - research implication: tool-progress hints must beat existing advisory prefetching
+    - comparing only with unconditional eviction is insufficient
+  - reading depth: primary abstract
+    - full PDF retrieved for follow-up
+
+- Libra, Ruan et al., NSDI 2026
+  - [paper](https://www.usenix.org/system/files/nsdi26-ruan-libra.pdf)
+  - exact abstract words: "splits each request at any token boundary into multiple cooperating segments"
+  - mechanism: choose split points globally and form latency-aware batches locally
+    - transfer state in chunks between workers
+  - author result: higher goodput and 1.15×–3.07× serving capacity in evaluated A100/H100 comparisons
+  - research implication: the choice between permanently colocated and permanently separated stages is already too narrow
+    - include flexible splitting when studying skew and dynamic workloads
+  - reading depth: primary abstract
+    - full PDF retrieved for follow-up
+
+- LMetric, Zhang et al., OSDI 2026
+  - [paper](https://www.usenix.org/system/files/osdi26-zhang-dingyan.pdf)
+  - exact §7 words: "targets scheduling for a single model under homogeneous GPUs"
+  - exact §5 words: "such hotspots are rare in practice—at least not present in any of our evaluated traces"
+  - mechanism: route by multiplying uncached input-token count by current batch size
+    - avoid workload-specific weights used in alternative combinations
+  - author result: lower time to first token than evaluated vLLM-v1 and an in-production scheduler
+    - evaluated workloads include chatbots and coding agents
+  - limitation and existing mitigation
+    - §5 derives conditions where concentrated cache ownership causes imbalance
+    - includes an adversarial hotspot case and a detector/fallback
+    - disaggregated worker-capacity management is outside the evaluated scope
+  - research implication: hotspots alone are not a new discovery
+    - test whether tool-induced synchronized returns or worker loss make the existing fallback insufficient
+  - reading depth: characterization, multiplication design, hotspot analysis, evaluation, and discussion passages
+
+- Agentix, Luo et al., NSDI 2026
+  - [paper](https://www.usenix.org/system/files/nsdi26-luo.pdf)
+  - exact abstract words: "treats programs as first-class citizens to minimize their end-to-end latencies"
+  - mechanism: attach program context to individual model calls
+    - use previous completed calls to prioritize single-threaded and distributed programs
+  - author result: 4–15× program throughput at the same latency against evaluated vLLM
+  - identity check: the earlier draft calls the 2025 preprint Autellix
+    - this accepted paper has the Agentix title and matching authors/mechanism/results
+    - count it as the same research line, not independent confirming evidence
+  - research implication: dependent-call scheduling is an existing baseline
+  - reading depth: primary conference abstract
+    - full PDF retrieved for follow-up
+
+- Murakkab, Chaudhry et al., OSDI 2026
+  - [paper](https://www.usenix.org/system/files/osdi26-chaudhry.pdf)
+  - exact abstract words: "decouples workflow specification from execution configuration"
+  - mechanism: expose workflow structure to a profile-guided optimizer and adaptive runtime
+    - choose models and hardware subject to user-defined targets
+  - author result: up to 2.8× less GPU use, 3.7× less energy, and 4.3× less cost in its comparisons
+  - research implication: model/tool/GPU optimization across workflow stages is already being studied
+    - a candidate extension needs to identify what dynamic behavior the exposed workflow cannot capture
+  - reading depth: primary conference abstract
+    - full PDF retrieved for follow-up
+
+more source cards, added 7 Oct 2026
+
+- how to read these
+  - quotes are exact words from the abstract on the linked page unless a card names a section
+  - reading depth is the abstract unless a card says "full text"
+  - numbers are the authors' own, on their own hardware and workloads
+  - "for us" lines are my inference
+  - a venue is from my memory when the linked page does not show it
+
+engines and memory inside one machine
+
+- vLLM, Kwon et al., SOSP 2023, [arXiv 2309.06180](https://arxiv.org/abs/2309.06180)
+  - "PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems"
+  - idea: give each request's KV cache small fixed blocks on demand, and let requests share blocks
+  - authors: "improves the throughput of popular LLMs by 2-4$\times$ with the same level of latency"
+  - for us: the block table and its sharing are the state a correctness spec must talk about, see study 5
+- SGLang, Zheng et al., [arXiv 2312.07104](https://arxiv.org/abs/2312.07104)
+  - "novel optimizations like RadixAttention for KV cache reuse"
+  - idea: keep cached prefixes in a tree so any request that starts the same way reuses them
+  - for us: this tree is shared by all users of one engine, which is where the leaks and mix-ups below come from
+- NanoFlow is in the first list; three OSDI 2026 papers push the same inside-the-GPU line
+  - [DirectKV](https://www.usenix.org/conference/osdi26/presentation/luo), Luo and Shen
+    - "the first zero-copy KV cache offloading system for modern heterogeneous CPU–GPU platforms"
+  - [ECHO](https://www.usenix.org/conference/osdi26/presentation/liu-guangda), Liu et al.
+    - KV cache offload for models with sparse attention; "up to 2.1× higher generation throughput than state-of-the-art systems such as SGLang and vLLM under long-context workloads"
+  - [Revisiting Pipeline Parallelism for LLM Serving](https://www.usenix.org/conference/osdi26/presentation/hwang), Hwang and Ahn
+    - "pipeline parallelism with our mechanisms outperforms tensor parallelism" for two Qwen models on four A100s
+- Strata, Xie et al., OSDI 2026, [arXiv 2508.18572](https://arxiv.org/abs/2508.18572)
+  - "existing schedulers fail to account for cache-loading delays, leaving systems loading-bound rather than compute-bound"
+  - authors: "up to 5x lower Time-To-First-Token (TTFT) compared to vLLM + LMCache"
+  - for us: this disagrees in emphasis with NanoFlow's "compute bound"; long cached contexts move the bottleneck to loading
+- LoongServe, Wu et al., SOSP 2024, [arXiv 2404.09526](https://arxiv.org/abs/2404.09526)
+  - "elastic sequence parallelism (ESP), to elastically adapt to the variance between different requests and phases"
+  - authors: throughput "up to 3.85$\times$ compared to the chunked prefill and 5.81$\times$ compared to the prefill-decoding disaggregation"
+  - for us: an early paper that reports a fixed split losing
+- Helix, Mei et al., ASPLOS 2025, [arXiv 2406.01566](https://arxiv.org/abs/2406.01566)
+  - "formulate inference computation of LLMs over heterogeneous GPUs and network connections as a max-flow problem"
+- Mélange, Griggs et al., [arXiv 2404.14527](https://arxiv.org/abs/2404.14527)
+  - "the most cost-efficient allocation for a given service is typically a mix of heterogeneous GPU types"
+- Vidur, Agrawal et al., MLSys 2024, [arXiv 2405.05465](https://arxiv.org/abs/2405.05465)
+  - a simulator of serving performance; "estimates inference latency with less than 9% error across the range"
+  - for us: the cheap way to run a first replay experiment
+    - caution from "Calibrate, Then Route" below: constants taken from a simulator cost that paper "4.5 goodput points"
+
+ordering requests when their length is unknown
+
+- FastServe, Wu et al., NSDI 2026, [paper](https://www.usenix.org/conference/nsdi26/presentation/wu-bingyang), [arXiv 2305.05920](https://arxiv.org/abs/2305.05920)
+  - "enable preemption at the granularity of each output token"
+  - idea: start every job at high priority and demote it the longer it runs
+  - the 2023 preprint claims "up to 31.4x" throughput over vLLM; the NSDI 2026 abstract says "up to 6.1×"
+    - I read this as the baseline getting better over three years, and a reason not to trust old speedups
+- S3, Jin et al., NeurIPS 2023, [arXiv 2306.06000](https://arxiv.org/abs/2306.06000)
+  - "predicts the output sequence length, schedules generation queries based on the prediction"
+- Efficient LLM Scheduling by Learning to Rank, Fu et al., NeurIPS 2024, [arXiv 2408.15792](https://arxiv.org/abs/2408.15792)
+  - "although predicting the exact generation length of each request is infeasible, it is possible to predict the relative ranks of output lengths in a batch"
+- Andes, Liu et al., [arXiv 2404.16283](https://arxiv.org/abs/2404.16283)
+  - "users receive the first token promptly and subsequent tokens at a smooth, digestible pace"
+  - idea: a user cannot read faster than a fixed speed, so tokens delivered faster than that are wasted effort
+- VTC, Sheng et al., OSDI 2024, [arXiv 2401.00588](https://arxiv.org/abs/2401.00588)
+  - "the definition of LLM serving fairness based on a cost function that accounts for the number of input and output tokens processed"
+  - "We prove a 2x tight upper bound on the service difference between two backlogged clients"
+  - for us: one of few serving papers with a proved property; the proof is about the algorithm on paper, not the code
+- QLM, Patke et al., SoCC 2024, [arXiv 2407.00047](https://arxiv.org/abs/2407.00047)
+  - one queue for batch and interactive requests, ordered by estimated waiting time
+- SLOs-Serve, Chen et al., [arXiv 2504.08784](https://arxiv.org/abs/2504.08784)
+  - "customize the allocation of tokens to meet these SLO requirements"
+- Niyama, Goel et al., [arXiv 2503.22562](https://arxiv.org/abs/2503.22562)
+  - "selective request relegation that enables graceful service degradation during overload conditions"
+- Apt-Serve, Gao et al., SIGMOD 2025, [arXiv 2504.07494](https://arxiv.org/abs/2504.07494)
+  - keeps a smaller "hidden cache" in place of some KV cache so more requests fit in a batch
+- Cascade (the scheduler, not a model cascade), Adnan et al., [arXiv 2608.06557](https://arxiv.org/abs/2608.06557), Aug 2026
+  - "the difference between a request's service level objective and its predicted remaining service time---as its per-request latency budget"
+  - idea: one number per request decides both its queue position and whether its cache is reloaded or recomputed
+- for us: this group is full
+  - JITServe, already carded, is the strongest baseline
+  - every paper depends on a length guess; none of the abstracts reports what happens when the guess model goes stale
+
+splitting prefill and decode, and the papers that push back
+
+- Splitwise, Patel et al., ISCA 2024, [arXiv 2311.18677](https://arxiv.org/abs/2311.18677)
+  - "we propose splitting the two phases of a LLM inference request on to separate machines"
+  - authors: "1.4x higher throughput at 20% lower cost than current designs"
+- TetriInfer, Hu et al., [arXiv 2401.11181](https://arxiv.org/abs/2401.11181)
+  - "disaggregates prefill and decode instances so each can run independently"
+- semi-PD, Hong et al., [arXiv 2504.19867](https://arxiv.org/abs/2504.19867)
+  - "the advantage of the disaggregated system lies in the disaggregated computation"
+  - names four storage costs of a full split, among them "KV cache transfer overhead between the two phases"
+  - idea: split the GPU's compute between the phases but keep one copy of weights and cache
+- Arrow, Wu et al., [arXiv 2505.11916](https://arxiv.org/abs/2505.11916)
+  - "significant fluctuations in request input/output lengths lead to imbalanced computational loads between prefill and decode nodes under traditional static node allocation"
+- EcoServe, Du et al., OSDI 2026, [paper](https://www.usenix.org/conference/osdi26/presentation/du)
+  - a full split "depends heavily on high-performance interconnects that such clusters lack"
+  - idea: each instance alternates between the phases over time, and instances take turns so one is always free for prefill
+  - authors: goodput gains of "1.96×, 1.99×, 2.51×, and 2.40×" over "vLLM, Sarathi, DistServe, and MoonCake" on 32 L20 GPUs over Ethernet
+- SmartGen, Luo et al., [arXiv 2607.28150](https://arxiv.org/abs/2607.28150), Jul 2026
+  - "transferring enormous key-value (KV) caches between disaggregated nodes can easily saturate the limited inter-node network bandwidth"
+  - idea: send only the cache entries decode will need first
+- HeteroScale, Li et al., ByteDance, [arXiv 2508.19559](https://arxiv.org/abs/2508.19559)
+  - "critical imbalances between prefill and decode stages"
+  - "By leveraging a single, robust metric to jointly scale prefill and decode pools"
+  - authors: "Deployed in a massive production environment on tens of thousands of GPUs"
+- Calibrate, Then Route, Tumkur et al., [arXiv 2609.16206](https://arxiv.org/abs/2609.16206), Sep 2026
+  - a small honest measurement on eight A40 GPUs
+  - "the calibrated router achieves the highest mean goodput at 0.864, compared with 0.835 to 0.847 for round robin, least loaded, and a length heuristic"
+  - "Benefits grow with decode pool size and traffic heterogeneity but disappear in pools with three instances, where queue counts are often enough"
+  - for us: on a split cluster, clever routing bought about 2 goodput points over counting queues; that weakens study 2
+- for us: split or not is a real open disagreement, and the answer seems to depend on network speed, load mix and scale
+  - DistServe, Splitwise, Mooncake and HeteroScale report wins from splitting
+  - LoongServe, semi-PD, Arrow, EcoServe and Libra report losses from a fixed split
+  - each paper uses its own hardware and traces, so nobody can tell which condition flips the answer
+
+prefix caches, and routing to the machine that holds them
+
+- Prompt Cache, Gim et al., MLSys 2024, [arXiv 2311.04934](https://arxiv.org/abs/2311.04934)
+  - "precomputing and storing the attention states of these frequently occurring text segments on the inference server"
+- CacheGen, CacheBlend and LMCache, Liu, Yao et al., University of Chicago
+  - [CacheGen, SIGCOMM 2024](https://arxiv.org/abs/2310.07240): compress the KV cache to send it over a network
+  - [CacheBlend, EuroSys 2025](https://arxiv.org/abs/2405.16444): "reuses the precomputed KV caches, regardless prefix or not, and selectively recomputes the KV values of a small subset of tokens"
+    - this is approximate reuse: output can differ from a full recompute
+  - [LMCache](https://arxiv.org/abs/2510.09665): the open-source cache layer for vLLM and SGLang
+    - "context truncation, which is a widely applied technique in industry, can greatly reduce prefix cache hit ratio by half"
+  - the storage note has [more on where the cache bytes live](../storage_databases/llm_and_storage.md)
+- DroidSpeak, Liu et al., NSDI 2026, [arXiv 2411.02820](https://arxiv.org/abs/2411.02820)
+  - "KV cache reuse across distributed nodes running inference of different LLMs, so long as the LLMs have the same architecture"
+  - "selectively recomputes a few layers of the KV cache produced by another LLM and reuses the remaining layers, with negligible quality loss"
+- CacheSlide, Liu et al., FAST 2026, [paper](https://www.usenix.org/conference/fast26/presentation/liu-yang)
+  - reuses cached segments of agent prompts whose position shifted, and corrects them "using learned weights"
+- Bidaw, Hu et al., FAST 2026, [paper](https://www.usenix.org/conference/fast26/presentation/hu-shipeng)
+  - "leveraging LLM-generated responses to predict user access patterns during KV eviction"
+- KVCache Cache in the Wild, Wang et al., ATC 2025, [arXiv 2506.02634](https://arxiv.org/abs/2506.02634)
+  - "the first systematic characterization of the KV\$ workload patterns from one of the leading LLM service providers"
+  - "reuses between single-turn requests are equally important as multi-turn requests"
+  - "for a specific request category, the pattern tends to be predictable"
+  - "the overall cache size required for an ideal cache hit ratio is moderate"
+  - for us: a production measurement of cache reuse already exists; ServeGen's remark that this needs request content is partly answered
+- Preble, Srivatsa et al., ICLR 2025, [arXiv 2407.00023](https://arxiv.org/abs/2407.00023)
+  - "the first distributed LLM serving platform that targets and optimizes for prompt sharing"
+  - "co-optimizes KV state reuse and computation load-balancing"
+- AIBrix, [arXiv 2504.03648](https://arxiv.org/abs/2504.03648)
+  - the open-source cluster layer around vLLM: "LLM-specific autoscalers, and prefix-aware, load-aware routing" plus "a distributed KV cache"
+- Lodestar, Lim et al., [arXiv 2606.00946](https://arxiv.org/abs/2606.00946), May 2026
+  - "trains an online reward predictor that it uses to route inference requests"
+  - authors: "learns these efficient routing strategies within about 5 minutes"
+- SkyWalker, Xia et al., [arXiv 2505.24095](https://arxiv.org/abs/2505.24095)
+  - "aggregates regional diurnal patterns through cross-region traffic handling"
+  - idea: send a busy region's overflow to a region that is asleep, but keep each conversation where its cache is
+  - authors: "reducing total serving cost by 25%"
+- GORGO, Toniolo et al., [arXiv 2602.11688](https://arxiv.org/abs/2602.11688), Feb 2026
+  - "holistically factors network latency, prefill cost, and queueing delay using tunable parameters"
+  - also useful as data: "open-source chat datasets such as LMSYS-Chat1M and WildChat-4.8M lack long-context, high prefix-reuse data, we release a synthetic dataset, ART-Chat-2.5M"
+- for us: LMetric, Preble, AIBrix, Lodestar, SkyWalker and GORGO all score a replica by cache match and load
+  - they differ in the formula; LMetric's claim is that plain multiplication is enough
+
+serving agents: caches across tool calls
+
+- InferCept, Abhyankar et al., ICML 2024, [arXiv 2402.01869](https://arxiv.org/abs/2402.01869)
+  - today's engines "treat each external interaction as the end of LLM generation and form a new request when the interaction finishes, causing unnecessary recomputation of already computed contexts, which accounts for 37-40% of total model forwarding time"
+  - the earliest paper I found on what to do with the cache while a tool runs
+- Parrot, Lin et al., OSDI 2024, [arXiv 2405.19888](https://arxiv.org/abs/2405.19888)
+  - apps "have to use the over-simplified request-level API provided by today's public LLM services, losing essential application-level information"
+  - idea: let the app tell the service how its requests feed each other
+- Teola, Tan et al., [arXiv 2407.00326](https://arxiv.org/abs/2407.00326), and Alto, Raghavan et al., [arXiv 2403.04311](https://arxiv.org/abs/2403.04311)
+  - both run a multi-step app as a dataflow graph so steps overlap; Teola reports "up to 2.09x speedup"
+- KVFlow, Pan et al., [arXiv 2507.07400](https://arxiv.org/abs/2507.07400)
+  - LRU "often discards KV caches shortly before their reuse"
+  - idea: evict by how many workflow steps remain until an agent runs again
+- Continuum, Li et al., [arXiv 2511.02230](https://arxiv.org/abs/2511.02230), carded in [agent systems](agent_systems.md)
+  - "selectively pins the KV cache in GPU memory with a time-to-live value determined by the reload cost and potential queueing delay induced by eviction"
+- CacheWise, Tiwari et al., [arXiv 2606.16824](https://arxiv.org/abs/2606.16824), Jun 2026
+  - "collecting a dataset of real-world coding assistant traces"
+  - "reuse-aware eviction guided by lightweight predictions from tool call metadata"
+  - authors: "improves total agent session completion time by up to 3.5x"
+  - for us: this already uses tool information to decide eviction, which is most of study 4
+- Leyline, Ma et al., [arXiv 2606.01065](https://arxiv.org/abs/2606.01065), May 2026
+  - "Agentic LLMs break this assumption. Their conversations evolve through policy-driven editing: failed tool calls are retried, stale outputs dropped, trajectories pivoted"
+  - idea: let the agent tell the engine to cut or replace a span in the middle of a cached context without recomputing what follows
+  - for us: editing a cache in place is a new way to get wrong outputs; nobody has checked it against a full recompute at scale
+- AgentKV, Liu et al., [arXiv 2609.14872](https://arxiv.org/abs/2609.14872), and MemDecay, Matam et al., [arXiv 2607.10582](https://arxiv.org/abs/2607.10582)
+  - both drop parts of the cache inside one long agent context and accept some quality loss
+  - model-side work more than systems work; listed so we know it exists
+- TraceLab and the GitHub Copilot trace study are carded in [agent systems](agent_systems.md)
+  - with CacheWise that makes three 2026 measurements of coding-agent traffic
+
+starting and scaling models
+
+- ServerlessLLM is in the first list
+- BlitzScale, Zhang et al., OSDI 2025, [paper](https://www.usenix.org/conference/osdi25/presentation/zhang-dingyan), [arXiv 2412.17246](https://arxiv.org/abs/2412.17246)
+  - "loading parameters through the compute network between GPUs"
+  - "offload the layer computation from the overloaded serving instances to the scaled ones without waiting for the parameters to be fully loaded"
+  - authors: "up to 94 % lower tail latency reductions compared to state-of-the-art autoscaling system (ServerlessLLM)"
+- λScale, Yu et al., [arXiv 2502.09922](https://arxiv.org/abs/2502.09922)
+  - "enabling distributed inference execution during model transmission -- referred to as \"execute-while-load\""
+- HydraServe, Lou et al., NSDI 2026, [arXiv 2502.15524](https://arxiv.org/abs/2502.15524)
+  - "proactively distributes models across servers to quickly fetch them, and overlaps cold-start stages within workers"
+  - authors: "reduces the cold start latency by 1.7$\times$-- 4.7$\times$"
+- DeepServe, Hu et al., Huawei, ATC 2025, [arXiv 2501.14417](https://arxiv.org/abs/2501.14417)
+  - "pre-warmed pods, DRAM pre-loading, and NPU-fork, which allow DEEPSERVE to scale up to 64 instances in seconds"
+  - "has been in production for over a year"
+- [Accelerating Model Loading in LLM Inference by Programmable Page Cache](https://www.usenix.org/conference/fast26/presentation/liu-yubo), Liu et al., Huawei, FAST 2026
+  - loads models faster by changing the kernel's file cache policy; "reduces the model loading latency by up to 79%"
+- SageServe, Jaiswal et al., Microsoft, [arXiv 2502.14617](https://arxiv.org/abs/2502.14617)
+  - "we characterize the LLM serving workloads at Microsoft Office 365"
+  - "with over 10 million requests per day"
+  - "combines short-term request routing to data centers with long-term scaling of GPU VMs"
+  - authors: "reduce GPU-hour wastage due to inefficient auto-scaling by 80%"
+  - the arXiv comment says traces and simulator are released
+- SkyServe, Mao et al., EuroSys 2025, [arXiv 2411.01438](https://arxiv.org/abs/2411.01438)
+  - "leverages spot replicas across different failure domains (e.g., regions and clouds)"
+  - authors: "reduces cost by 43% on average"
+- DynamoLLM, Stojkovic et al., HPCA 2025, [arXiv 2408.00741](https://arxiv.org/abs/2408.00741); TAPAS, [arXiv 2501.02600](https://arxiv.org/abs/2501.02600); POLCA, [arXiv 2308.12908](https://arxiv.org/abs/2308.12908)
+  - the Microsoft line on energy, heat and power caps for inference clusters
+  - DynamoLLM: "conserves 53% energy and 38% operational carbon emissions"
+  - listed for completeness; I did not go deeper
+
+many models, many adapters, mixed work on shared GPUs
+
+- AlpaServe, Li et al., OSDI 2023, [arXiv 2302.11665](https://arxiv.org/abs/2302.11665)
+  - "model parallelism can be additionally used for the statistical multiplexing of multiple devices when serving multiple models"
+- MuxServe, Duan et al., ICML 2024, [arXiv 2404.02015](https://arxiv.org/abs/2404.02015)
+  - "colocate LLMs considering their popularity to multiplex memory resources"
+- Prism, Yu et al., OSDI 2026, [arXiv 2505.04021](https://arxiv.org/abs/2505.04021)
+  - "a dynamic bursty-group pattern in which sets of models become active together and shift over time"
+  - idea: let a model's memory grow and shrink so idle models give memory to busy ones
+  - "deployed in production environments across 10K+ GPUs"
+- Aegaeon, Alibaba Cloud and Peking University, SOSP 2025
+  - I read only [Alibaba Cloud's own summary](https://www.alibabacloud.com/blog/alibaba-cloud-boosts-gpu-utilization-with-ai-infrastructure-breakthrough-at-sosp-2025_602623), not the paper
+  - "Aegaeon pioneers token-level scheduling, enabling dynamic model switching decisions after each generated token"
+- Weaver, Gao et al., ATC 2025, [paper](https://www.usenix.org/conference/atc25/presentation/gao)
+  - "a small number of hot models receive the majority of the requests, while most other models remain cold"
+- adapters: [dLoRA, OSDI 2024](https://www.usenix.org/conference/osdi24/presentation/wu-bingyang), [Toppings, ATC 2025](https://www.usenix.org/conference/atc25/presentation/li-suyi-toppings), [Chameleon, MICRO 2025](https://arxiv.org/abs/2411.17741)
+  - dLoRA: "dynamically merge and unmerge adapters with the base model"
+  - Toppings: "uses CPUs to compute the lightweight adaption for prefilling as the requested LoRA adapter is being loaded onto GPUs"
+  - Chameleon: "caches popular adapters in GPU memory"
+- ConServe, Qiao et al., [arXiv 2410.01228](https://arxiv.org/abs/2410.01228)
+  - "co-serve latency-critical online requests alongside latency-tolerant offline tasks"
+- FlexLLM, Oliaro et al., NSDI 2026, [arXiv 2402.18789](https://arxiv.org/abs/2402.18789)
+  - "co-serve LLM inference and PEFT-based finetuning on shared GPUs by fusing computation at the token level"
+- BatchGen, Xu et al., OSDI 2026, [paper](https://www.usenix.org/conference/osdi26/presentation/xu-tairan)
+  - "existing inference engines still rely on execution models designed for interactive serving"
+  - idea: treat each sequence of a huge offline job as a small task the runtime can pause and move
+- for us: every system here puts more tenants' state on one GPU, which makes isolation mistakes cost more
+
+which model answers: routers and cascades
+
+- FrugalGPT, Chen et al., [arXiv 2305.05176](https://arxiv.org/abs/2305.05176)
+  - "can match the performance of the best individual LLM (e.g. GPT-4) with up to 98% cost reduction"
+- Hybrid LLM, Ding et al., ICLR 2024, [arXiv 2404.14618](https://arxiv.org/abs/2404.14618)
+  - "a router that assigns queries to the small or large model based on the predicted query difficulty"
+- RouteLLM, Ong et al., [arXiv 2406.18665](https://arxiv.org/abs/2406.18665)
+  - trains routers on human preference data; "reduces costs-by over 2 times in certain cases-without compromising the quality of responses"
+- these three pick by answer quality and price only; the next ones add machine load
+- Cascadia, Jiang et al., [arXiv 2506.04203](https://arxiv.org/abs/2506.04203)
+  - "the co-optimization of system deployment and routing strategy"
+- IC-Cache, Yu et al., SOSP 2025, [arXiv 2501.12689](https://arxiv.org/abs/2501.12689)
+  - "over 70% of user requests to LLMs have semantically similar counterparts"
+  - idea: show a small model past answers from a big model as examples, then send it the easy requests
+- RouterWise, Kasnavieh et al., [arXiv 2604.10907](https://arxiv.org/abs/2604.10907), Apr 2026
+  - "prior routing methods typically assume that each model has a fixed latency"
+  - "achievable output-quality score can vary by up to 87% across retained setups"
+- HW-Router, Kabir et al., [arXiv 2608.14575](https://arxiv.org/abs/2608.14575)
+  - "integrates real-time hardware signals into model selection"
+- Cluster, Route, Escalate, Moslem et al., [arXiv 2606.27457](https://arxiv.org/abs/2606.27457)
+  - "when an output from Stage 1 is judged low-quality, the query is escalated to a stronger model"
+- for us: a router quietly changes which model a user gets
+  - that is the same act the substitution audits below try to detect
+
+when a GPU or worker dies
+
+- how often: Story of Two GPUs, Cui et al., [arXiv 2503.11901](https://arxiv.org/abs/2503.11901)
+  - "2.5 years of operational data (11.7 million GPU hours) on GPU errors" from a 1,056-GPU academic cluster
+  - "GPU errors on both A100 and H100 GPUs frequently result in job failures due to the lack of robust recovery mechanisms at the application level"
+  - "significant overprovisioning of 5% is necessary to handle GPU failures"
+- DéjàVu, Strati et al., ICML 2024, [arXiv 2403.01876](https://arxiv.org/abs/2403.01876), full text skimmed
+  - "Upon a failure, the LLM serving system crashes and stalls all in-flight requests" (introduction)
+  - "replicates KV cache state to avoid losing state and employs fast recovery mechanism to minimize lost work on failures" (introduction)
+  - the first pass missed this 2024 paper; it already did what study 3 hypothesized
+- FailSafe, Xu et al., [arXiv 2511.14116](https://arxiv.org/abs/2511.14116)
+  - "a single GPU failure can halt execution, trigger costly KVCache recomputation, and introduce long-term compute and memory imbalance"
+  - keeps serving on the GPUs left in a tensor-parallel group; "two orders of magnitude lower recovery latency compared to standard fault handling approaches"
+- KevlarFlow, Qian et al., [arXiv 2601.22438](https://arxiv.org/abs/2601.22438), Jan 2026, full text skimmed
+  - "Current recovery mechanisms are prohibitively slow, often requiring up to 10 minutes to reinitialize resources and reload massive model weights"
+  - "background KV cache replication to maintain high throughput during partial failures"
+  - authors: "reduces mean-time-to-recovery (MTTR) by 20x"
+- GhostServe, Jayakody et al., MLSys 2026, [arXiv 2605.00831](https://arxiv.org/abs/2605.00831)
+  - "applying erasure coding to generate and store the parity shards in host memory"
+  - "allowing the inference process to resume seamlessly without costly full recomputation or state replication"
+- LUMEN, Cao et al., [arXiv 2606.17787](https://arxiv.org/abs/2606.17787), Jun 2026, full text skimmed
+  - "treats recovery as a load-aware coordination problem across three decision points: checkpoint placement before failures, interrupted-request distribution at failure time, and serving capacity restoration during model reload"
+  - introduction: "LLM serving jobs encounter failures every few hours on average"
+  - stated limit: "currently maintains a single KV checkpoint per request, falling back to full recomputation if the checkpoint holder itself fails; we defer multi-checkpoint replication to future work"
+- Concordia, Gan et al., [arXiv 2606.23521](https://arxiv.org/abs/2606.23521), Jun 2026
+  - "Losing this state after a GPU or communicator failure can discard minutes to hours of work"
+  - idea: a small always-running program on the GPU logs changed cache blocks to host memory
+- SAVE, Zheng et al., ATC 2025, [paper](https://www.usenix.org/conference/atc25/presentation/zheng)
+  - memory bit flips that "silently corrupt results"; evaluated on vision and robotics models, not LLM serving
+- for us
+  - six systems now save the KV cache and resume, so the mechanism is taken
+  - what I could not find in the abstracts or in my skim of three full texts
+    - whether a resumed reply is the same text the user would have got without the failure
+    - what happens to tokens already streamed to the user
+  - KevlarFlow's own evaluation says "Some overhead values are negative due to non-determinism in the execution", so runs are not repeatable even for the authors
+
+is the engine correct
+
+- GRIEF: Continuous Discovery of Vulnerabilities in LLM Serving Systems with Fuzzing, Zhao et al., Maryland and NYU, [arXiv 2605.11202](https://arxiv.org/abs/2605.11202), May 2026, full text skimmed
+  - "treats timed multi-request traces as first-class inputs"
+  - "discovers 15 vulnerabilities, 10 confirmed by engine developers, including 2 CVEs, spanning KV-cache isolation failures, cross-request performance interference, and crash or liveness bugs"
+  - "concurrency, caching, and state reuse can induce silent cross-request contamination, noisy-neighbor denial of service, and delayed crashes without malformed inputs or explicit server errors"
+  - how it decides something is a bug: replay the trace alone and compare token probabilities
+    - §3.4: "it avoids reporting cases where nearly tied logits could legitimately decode differently"
+  - stated limits (appendix A.2)
+    - "focuses on vLLM and SGLang"; "distributed deployments" would need more work
+    - "Like other fuzzers, GRIEF does not prove the absence of bugs"
+  - for us: direct evidence that one user's request can change another user's answer in the two most used engines
+    - the paper tests one engine process, not a cluster with cache transfer, migration or recovery
+- A First Look at Bugs in LLM Inference Engines, Liu et al., TOSEM, [arXiv 2506.09713](https://arxiv.org/abs/2506.09713)
+  - "a comprehensive dataset of 929 real-world bugs" from 5 engines
+  - "six bug symptom types and a taxonomy of 28 root causes"
+- The Foundation Cracks, Jiang et al., [arXiv 2506.12320](https://arxiv.org/abs/2506.12320)
+  - "313 bug-fixing commits" from HuggingFace Transformers and vLLM
+  - "the majority of bugs escape detection due to inadequate test cases (41.73%), lack of test drivers (32.37%), and weak test oracles (25.90%)"
+  - for us: a quarter of escaped bugs lacked a way to tell right from wrong output, which is the thing a spec gives
+- why the same prompt gives different answers
+  - [Defeating Nondeterminism in LLM Inference](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/), Thinking Machines blog, Sep 2025
+    - "the primary reason nearly all LLM inference endpoints are nondeterministic is that the load (and thus batch-size) nondeterministically varies!"
+    - "if we’d like to avoid nondeterminism in our inference servers, we must achieve batch invariance in our kernels"
+  - Yuan et al., [arXiv 2506.09501](https://arxiv.org/abs/2506.09501)
+    - "changing system configuration, such as evaluation batch size, GPU count, and GPU version, can introduce significant differences in the generated responses"
+    - a reasoning model "can exhibit up to 9% variation in accuracy and 9,000 tokens difference in response length"
+  - LLM-42, Gond et al., Microsoft Research and UW, [arXiv 2601.17768](https://arxiv.org/abs/2601.17768), Jan 2026, full text skimmed
+    - "decodes tokens using a non-deterministic fast path and enforces determinism via a lightweight verify-rollback loop"
+    - "incurs overhead only in proportion to the traffic that requires determinism"
+    - introduction: "SGLang incurs high overhead of up to 56% in deterministic mode"
+    - "verified" here means re-run and compared, not proved
+  - for us: without batch invariance, "is this output right" has no exact answer, so tests fall back to fuzzy comparisons like GRIEF's
+    - a deterministic mode now exists in SGLang and in LLM-42, which makes exact comparison possible for the first time
+- [A postmortem of three recent issues](https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues), Anthropic, Sep 2025
+  - a vendor account of serving bugs that lowered answer quality for weeks
+  - "some Sonnet 4 requests were misrouted to servers configured for the upcoming 1M token context window"
+  - "At the worst impacted hour on August 31, 16% of Sonnet 4 requests were affected"
+  - "some users were affected more severely, as our routing is \"sticky\""
+  - a compiler bug in "the approximate top-k operation—a performance optimization that quickly finds the highest probability tokens"
+  - for us: a production routing bug and a numeric bug, neither a crash, both found late; the fuzzers and bug studies above do not cover the cluster layer where the first one lived
+- StriaTrace, Wu et al., Alibaba, OSDI 2026, [paper](https://www.usenix.org/conference/osdi26/presentation/wu-haonan)
+  - "detailed tracing only during abnormalities"
+  - "has successfully diagnosed hundreds of abnormalities spanning 19 distinct root causes"
+  - about slow requests, not wrong ones
+- [failure and outage studies](../finding_bugs/failure_and_outage_studies.md) in the bug-finding folder has an incident study with an inference-engine category
+- formal verification: I searched for a proved or model-checked serving engine, scheduler or prefix cache and found none
+  - one search on 7 Oct 2026, so absence is weak evidence
+  - VTC's fairness bound and JITServe's competitive bound are paper proofs about algorithms
+
+is the shared cache private
+
+- attacks
+  - The Early Bird Catches the Leak, Song et al., TIFS, [arXiv 2409.20002](https://arxiv.org/abs/2409.20002)
+    - "new timing side channels in LLM systems, arising from shared caches and GPU memory allocations"
+    - "a token-by-token search algorithm to efficiently recover shared prompt prefixes"
+  - [I Know What You Asked](https://www.ndss-symposium.org/ndss-paper/i-know-what-you-asked-prompt-leakage-via-kv-cache-sharing-in-multi-tenant-llm-serving/), Wu et al., NDSS 2025
+    - title and venue confirmed; I read search summaries only, so no quote
+  - InputSnatch, Zheng et al., [arXiv 2411.18191](https://arxiv.org/abs/2411.18191)
+    - "caching can result in observable variations in response times"
+  - SpliceLeak, Sun et al., [arXiv 2606.21842](https://arxiv.org/abs/2606.21842), Jun 2026
+    - "the first end-to-end side-channel attack targeting non-prefix KV cache fusion", tested on "vLLM integrated with LMCache"
+- measured on real providers: Auditing Prompt Caching in Language Model APIs, Gu et al., Stanford, ICML 2025, [arXiv 2502.07776](https://arxiv.org/abs/2502.07776)
+  - "We detect global cache sharing across users in seven API providers, including OpenAI"
+  - method: "statistical audits to detect prompt caching in real-world LLM API providers"
+- defenses
+  - SafeKV, Chu et al., [arXiv 2508.08438](https://arxiv.org/abs/2508.08438): share only cache blocks judged not sensitive
+  - PrefixWall, Pennas et al., [arXiv 2603.10726](https://arxiv.org/abs/2603.10726): "monitors cache reuse across users, flags suspicious sharing, and selectively isolates prefixes"
+  - KVGov, Addagada, [arXiv 2608.09225](https://arxiv.org/abs/2608.09225): a per-user secret mixed into the cache key, "making cache keys cryptographically disjoint across principals"
+    - single author; "the defense itself is evaluated in simulation"
+- for us: the simple fix is one cache per user, and every defense paper is about getting some sharing back
+  - none of these abstracts claims a proof that the defended engine leaks nothing through timing
+
+is the provider serving what it says
+
+- Model Equality Testing, Gao et al., Stanford, ICLR 2025, [arXiv 2410.20247](https://arxiv.org/abs/2410.20247)
+  - "11 out of 31 endpoints serve different distributions than reference weights released by Meta", commercial APIs in summer 2024
+- Are You Getting What You Pay For?, Cai et al., Berkeley, [arXiv 2504.04715](https://arxiv.org/abs/2504.04715)
+  - "statistical tests on text outputs are query-intensive and fail against subtle substitutions, while methods using log probabilities are defeated by inherent inference nondeterminism in production environments"
+- TOPLOC, Ong et al., [arXiv 2501.16007](https://arxiv.org/abs/2501.16007)
+  - the provider sends a short fingerprint of internal activations that a checker can re-compute; "258 bytes of storage per 32 new tokens"
+- for us: outside audits exist but are two years old and hit a wall at nondeterminism
+  - the determinism work above could move that wall
+
+workload data that anyone can download
+
+- BurstGPT, Wang et al., KDD 2025, [arXiv 2401.17644](https://arxiv.org/abs/2401.17644)
+  - "10.31 million traces from regional Azure OpenAI GPT services over 213 days"
+  - includes "System response failures"
+- released with papers above: Splitwise's Azure trace, SageServe's Office 365 traces, ServeGen's generator, GORGO's ART-Chat-2.5M, TraceLab's coding-agent sessions
+  - Prism, Chameleon and Weaver say they use production or real-world traces; I did not check which are public
+
+candidate studies
+
+- 1. joint workload model for dependent calls, tool pauses, and cache reuse
+  - hypothesis: preserving their correlation changes which existing serving policy wins
+  - closest work
+    - ServeGen's client mixtures
+    - Agentix's program scheduling
+    - SYMPHONY's advisory prefetching
+    - TraceLab and production Copilot trace studies in [agent systems](agent_systems.md)
+  - first experiment
+    - record model-call boundaries, tool start/end, prompt-prefix identifiers, and final task completion
+    - replay the same sessions with original timings, shuffled pauses, and independent arrival/length sampling
+    - freeze model, GPU count, batching configuration, and latency targets
+    - compare a current serving engine, an advisory cache policy, and program-aware scheduling
+  - measurements
+    - completed tasks per GPU-hour and tail task latency
+    - cache transfers, reprocessed tokens, and tenant fairness
+    - keep correctness scores separate from serving deadlines
+  - result that weakens the idea
+    - correlation preservation makes no material difference across workloads
+    - an existing generator plus a simple extension already predicts the observed rankings
+  - novelty status after the second pass: weaker
+    - three 2026 studies already measure coding-agent traffic: TraceLab, the Copilot trace study, CacheWise
+    - KVCache Cache in the Wild already measures cache reuse at a provider
+    - what I still did not find: one generator that keeps tool pauses, prefix reuse and call order together, and a test of whether that changes which policy wins
+    - the cheapest version is a replay study on TraceLab plus CacheWise traces, not new data collection
+
+- 2. robust routing when cached prefixes and load estimates become stale together
+  - hypothesis: worker loss or synchronized tool returns can exceed the hotspot assumptions in existing routing
+  - closest work
+    - LMetric's hotspot detector and fallback
+    - Llumnix's live migration and scheduler bypass
+    - Mooncake's cache-aware placement
+    - Libra's flexible partitioning
+  - first experiment
+    - inject delayed load reports, a lost cache-owning worker, and simultaneous returns from tools
+    - vary shared-prefix concentration and state-transfer bandwidth
+    - compare existing fallbacks before designing another policy
+  - possible mechanism after a reproduced failure
+    - discount old cache/load reports using their age
+    - cap traffic committed to one cache owner
+    - reserve capacity for migration or cold recomputation
+  - measurements
+    - time to recover steady useful throughput
+    - peak queue length, worst-tenant latency, and extra transfers
+  - result that weakens the idea
+    - LMetric fallback plus standard failover handles the whole stress range cheaply
+  - novelty status: unresolved
+    - stale-information load balancing has a long history beyond LLM serving
+  - second pass: more routers to beat, and a warning
+    - Preble, AIBrix, Lodestar, SkyWalker and GORGO all route by cache match and load
+    - Lodestar retrains online, which is itself an answer to stale estimates
+    - Calibrate, Then Route measured about 2 goodput points between a tuned router and queue counting on 8 GPUs
+    - I would only pursue this if the first injection experiment shows a collapse, not a few percent
+
+- 3. request recovery with an explicit client-visible stream contract
+  - hypothesis: protecting a small amount of request metadata yields a useful recovery tradeoff without replicating every KV tensor
+  - closest work
+    - Llumnix already aborts failed in-flight requests and restarts workers
+    - Mooncake already handles transfer failures
+    - DistServe explicitly leaves advanced fault tolerance outside its implementation
+  - first experiment
+    - kill workers before first token, after a client-visible token, and during state transfer
+    - compare full retry, prefix recomputation, and any existing serving recovery mechanism
+    - include a fixed random seed and record sampling configuration where supported
+  - contract to specify before implementation
+    - whether already delivered tokens can be repeated or replaced
+    - whether recovery continues the same token sequence or starts a new attempt
+    - how clients detect a new attempt and cancel old work
+  - measurements
+    - recovery time, wasted GPU work, duplicate output, and incorrect request attribution
+    - evaluate latency under failures as well as normal throughput
+  - result that weakens the idea
+    - application retry is cheap enough and acceptable to users
+    - existing request-resumption machinery already supplies the desired contract
+  - limitation: preserving numerical and sampling state across hardware changes may be expensive
+    - exactly the same output is stronger than a usable resumed answer
+  - novelty status after the second pass: the mechanism is taken, the contract looks open
+    - DéjàVu, FailSafe, KevlarFlow, GhostServe, LUMEN and Concordia all keep a copy of the KV cache and resume from it
+    - so the hypothesis above about "a small amount of request metadata" must now beat those six, not full retry
+    - none of them states, in what I read, whether the resumed text equals the text without a failure
+    - my reasoning for why it usually would not: the resumed request lands in a different batch, and batch changes numbers (Thinking Machines, LLM-42)
+    - revised question: after recovery or migration, does the user get the same tokens, and if not, how often does the answer change?
+    - revised first experiment
+      - run SGLang in deterministic mode, or LLM-42, so that a no-failure run is an exact reference
+      - kill a worker mid-reply under DéjàVu-style and LUMEN-style recovery, and under Llumnix migration
+      - count replies whose remaining tokens differ from the reference, and replies whose final answer differs
+    - result that weakens it: differences are as rare as ordinary run-to-run noise, or users cannot tell
+    - this merges naturally into study 5
+
+- 4. tool progress as a fallible scheduling input
+  - hypothesis: a running tool can provide better estimates than a serving engine's model of past tool durations
+  - closest work
+    - Ask the Tool, Don't Guess in [agent systems](agent_systems.md)
+    - SYMPHONY's hints
+    - JITServe's progressive estimation
+    - Murakkab's adaptive workflow runtime
+  - first experiment
+    - report tool progress, its age, and confidence through one controlled interface
+    - compare truthful, delayed, missing, and wrong progress signals
+    - compare against learned-duration prediction and fixed cache-retention timeouts
+  - measurements
+    - post-tool response latency and completed task throughput
+    - state retained needlessly and useful state evicted early
+  - result that weakens the idea
+    - simple duration prediction matches progress hints
+    - tool implementations cannot provide useful signals at reasonable cost
+  - novelty status: mechanism already proposed in related work
+    - robustness to wrong hints and end-to-end co-scheduling need a more precise difference
+  - second pass: I would drop this as a standalone study
+    - InferCept, Continuum, KVFlow and CacheWise already decide cache retention around tool calls
+    - CacheWise already uses "lightweight predictions from tool call metadata"
+    - the one piece left is hints that are wrong or late, which fits better as one experiment inside study 1
+
+- 5. a written rule for "each user gets their own answer", then test or prove engines against it
+  - the rule in plain words: the tokens a request gets back depend only on that request's input, the model and the sampling seed
+    - not on which other requests shared its batch, its cache, its GPU, or a recovery
+  - why I think this is open
+    - GRIEF found "silent cross-request contamination" in vLLM and SGLang by fuzzing one engine process
+    - The Foundation Cracks blames "weak test oracles" for a quarter of escaped bugs
+    - I found no proved or model-checked engine, scheduler or prefix cache
+    - until 2025 the rule could not be checked exactly, because batching changed the numbers; deterministic modes remove that excuse
+  - closest work
+    - GRIEF, the two bug studies, LLM-42, the Thinking Machines post
+    - the prompt-cache attack papers, which break a weaker rule (timing, not content)
+    - the storage note's question "what does a shared KV cache hit promise?" in [LLMs and storage](../storage_databases/llm_and_storage.md)
+  - first experiment, about two weeks
+    - reference: one request at a time, deterministic mode, no prefix cache
+    - system under test: same engine with batching, prefix cache, preemption, cache offload, and then a cluster layer (LMCache, a prefill/decode split, migration)
+    - feed GRIEF-style timed traces and require exact token equality with the reference
+    - count mismatches per feature turned on
+  - second step if the first finds bugs or finds none
+    - write the prefix-cache tree and block table as a small state machine and state the rule as an invariant
+    - model-check it, or write that component in Rust and prove it with Verus
+    - the component is small: a tree keyed by token blocks, reference counts, eviction
+    - approximate reuse (CacheBlend, DroidSpeak, CacheSlide, Leyline) breaks exact equality on purpose; the rule for those needs a bound, which I do not know how to state yet
+  - measurements
+    - mismatching replies per million, by feature
+    - bugs confirmed by maintainers
+    - cost of the deterministic reference
+  - result that weakens the idea
+    - exact equality holds everywhere GRIEF did not already look
+    - deterministic mode is too slow or too incomplete to serve as a reference
+    - maintainers treat mismatches as acceptable noise
+  - novelty status: I think the cluster-level and proof parts are new; one search, so check again before committing
+    - GRIEF's group will likely extend to distributed deployments, their appendix names it
+
+- 6. audit hosted LLM APIs from outside, again and over time
+  - question: in late 2026, which providers share prompt caches across customers, swap or quantize models, or route the same model name to different backends?
+  - why it fits us: this is web measurement with an LLM endpoint as the site
+  - closest work
+    - Gu et al. found cache sharing at 7 providers in early 2025
+    - Gao et al. found 11 of 31 Llama endpoints differed from the released weights in summer 2024
+    - Cai et al. showed where output-only tests fail
+    - Anthropic's postmortem shows a provider misrouting 16% of one model's requests at the worst hour
+      - it says "detection and resolution took longer than we would have wanted"
+  - first experiment
+    - rerun Gu et al.'s timing audit and Gao et al.'s equality test on today's providers and aggregators
+    - add repeat probes over weeks to catch changes, and probes from several regions to catch routing differences
+    - record whether providers fixed what the 2025 audits reported
+  - measurements
+    - providers with cross-customer cache hits
+    - endpoints whose output distribution differs from reference weights
+    - change over time and by region
+  - result that weakens the idea
+    - providers fixed sharing after 2025 and nothing new shows up
+    - nondeterminism hides everything smaller than a model swap, as Cai et al. warn
+  - care needed: probing only our own accounts and our own prompts; no attempt to read other customers' prompts
+  - novelty status: the methods exist, the longitudinal and multi-region view is what I did not find; unverified beyond one search
+
+- 7. one fair test of "should prefill and decode be split"
+  - question: on the same hardware and the same traces, when does splitting win?
+  - why: ten papers give opposite answers on their own setups, listed under "splitting prefill and decode"
+  - first experiment
+    - one cluster, two network speeds, three traces (chat from ServeGen, coding agents from TraceLab, long documents)
+    - run vLLM or SGLang unsplit with chunked prefill, a fixed split, and the open-source adaptive ones (EcoServe released code)
+    - sweep load and the input-to-output length ratio
+  - measurements
+    - goodput at one stated latency target, GPU-hours per million tokens, and the crossover points
+  - result that weakens the idea
+    - Libra's or EcoServe's evaluation already covers the same grid fairly
+    - the answer is just "split when the network is fast", which the papers nearly say
+  - novelty status: a benchmark paper, lower risk and lower ceiling
+    - needs more GPUs than the other studies
+
+reading limits and search record
+
+- first pass, 6 Oct 2026: reviewed 14 named research lines
+  - eight recent full PDFs were retrieved alongside four earlier full PDFs
+  - source cards state the passages actually read
+  - retrieval alone is not a full-paper review
+- searched primary USENIX OSDI 2025/2026, NSDI 2025/2026, and FAST 2026 programs
+  - conference pages and linked PDFs were accessible through direct HTTPS
+  - both configured web search services failed during this session
+- second pass, 7 Oct 2026: about 100 more sources
+  - found by web search, by scanning the OSDI 2025/2026, NSDI 2025/2026, ATC 2025 and FAST 2026 programs for serving titles, and from memory checked against the arXiv page
+  - read the abstract of each on arXiv or the USENIX page and copied quotes from there
+  - skimmed full text of six: LUMEN, KevlarFlow, GRIEF, LLM-42, DéjàVu, Calibrate, Then Route
+  - read two web posts directly: Thinking Machines on nondeterminism, Anthropic's postmortem
+  - Aegaeon and "I Know What You Asked" rest on secondary pages only
+  - the arXiv search API was rate-limited, so I could not sweep arXiv by keyword; recent preprints are covered unevenly
+- not covered in either pass
+  - SOSP 2025, EuroSys 2026, ASPLOS 2026, ATC 2026, SIGCOMM 2026 and MLSys 2026 programs were not scanned
+  - serving of image, video and speech models; mixture-of-experts serving; speculative decoding
+  - on-device and edge inference
+  - confidential inference in trusted hardware
+  - industry stacks beyond their papers: NVIDIA Dynamo, llm-d, KServe, Ray Serve
+  - pricing and economics of inference
+  - energy and power got three links and no analysis
+- breadth is substantial but not exhaustive
+  - training resilience and MoE communication deserve separate reviews
+  - accepted-program coverage does not include every recent preprint or industry implementation
+- author performance numbers use different hardware, workloads, engines, and targets
+  - they are not a ranking across papers
+- recommendations and hypotheses above are agent proposals
+  - no claim of worldwide novelty or demonstrated benefit

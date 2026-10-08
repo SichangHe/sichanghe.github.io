@@ -1,0 +1,243 @@
+networking, peer-to-peer, and edge systems
+(authored by agents unless marked 🧑)
+
+research direction
+- agent recommendation: start with failures of dependencies in hybrid peer-to-peer systems
+  - concrete question: can content remain reachable when the fastest discovery service disappears?
+  - other promising directions: network scheduling under unpredictable computation, and performance proofs checked against real host delays
+- common question: when does moving work closer to data help after accounting for failures and coordination?
+  - near the data can mean an edge computer, a receiver, a network switch, or an intermediate cloud region
+  - hypothesis: designs often save work in one place while creating a dependency elsewhere
+  - this is a research framing, not an established result
+- scope: peer discovery, transport, overlays, edge inference, interactive streaming, satellite networks, and network performance reasoning
+  - storage semantics and consensus receive only enough attention to connect these areas
+- evidence status: 17 primary sources inspected on 7 Oct 2026 UTC
+  - downloaded the 14 recent research papers and inspected their abstracts, designs, evaluations, and selected limitations
+  - also inspected Chord, Dynamo, and the QUIC specification
+  - coverage includes 2023–2026 papers
+  - not a complete review of 2026 publications
+  - reported measurements belong to the papers' environments
+  - no proposed experiment has been run
+  - originality of the proposals remains unconfirmed
+
+what existing work establishes
+- locating a peer is different from retrieving available content
+  - Ion Stoica et al., [Chord, SIGCOMM 2001](https://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf), abstract
+    - quote: “given a key, it maps the key onto a node”
+    - authors' scope: a lookup operation with routing state and communication that grow logarithmically with peer count
+    - implication: its lookup abstraction does not establish whether the node still has the desired content
+  - Giuseppe DeCandia et al., [Dynamo, SOSP 2007](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf), abstract
+    - quote: “Dynamo sacrifices consistency under certain failure scenarios”
+    - authors' contribution: replication and reconciliation for availability despite component failures
+    - relevance here: peer placement and network reachability alone do not determine the meaning of a successful read
+    - boundary: Dynamo is an operated storage service, not evidence about independent public peers
+- public peer-to-peer systems use central services for practical performance
+  - Yiluo Wei et al., [The Eternal Tussle, NSDI 2024](https://www.usenix.org/conference/nsdi24/presentation/wei), abstract and §6
+    - quote: “As the core maintainers of IPFS, we have therefore begun to explore more hybrid approaches”
+    - authors' contribution: experience with content indexers, strategically placed routing peers, and public HTTP gateways
+    - study distinguishes distributed implementation from decentralized operation
+    - §6.2 tests routing without the special routing peers
+      - authors report no failed retrieval in that experiment
+      - this does not establish robustness against simultaneous operator, gateway, and indexer failures
+    - §6.4 identifies incentives for additional operators as unresolved
+    - agent inference: measuring independent operator dependencies is more useful than merely counting replicas or peers
+- indirect cloud routes can reduce both transfer time and monetary cost
+  - Paras Jain et al., [Skyplane, NSDI 2023](https://www.usenix.org/conference/nsdi23/presentation/jain), abstract and design
+    - quote: “subject to user-provided constraints on price or performance”
+    - authors' contribution: choose intermediate cloud machines and resource allocation for object transfers
+    - authors report speedups of up to 4.6× within one cloud and 5.0× across clouds
+    - bounds of evidence: evaluated prices, regions, objects, and network measurements
+    - agent inference: a good initial route can become poor during a long transfer
+  - Sarah Wooders et al., [Cloudcast, NSDI 2024](https://www.usenix.org/conference/nsdi24/presentation/wooders), abstract and design
+    - quote: “identify cost-minimizing multicast replication trees under user-given runtime budgets”
+    - authors' contribution: extend transfer planning to one source and multiple destinations
+    - authors report 61.5% lower cost and 2.3× faster replication against their baselines
+    - agent inference: the natural next measurement is the cost of replanning during partial failures
+    - cost claims require new measurements before applying them to current cloud prices
+- receiver scheduling must account for shared links
+  - Konstantinos Prasopoulos et al., [SIRD, NSDI 2025](https://www.usenix.org/conference/nsdi25/presentation/prasopoulos), abstract and §4
+    - quote: “single-owner links should be scheduled, while shared links should be managed with reactive control algorithms”
+    - authors' contribution: combine receiver permission to transmit with congestion information from senders and switches
+    - §4 assumes known message length or streams divided into messages
+    - §4 also assumes congestion marking configured on every switch
+    - agent inference: variable length output and network paths without that marking need separate evaluation
+- predictable communication can be separated in time
+  - Sudarsanan Rajasekaran, Manya Ghobadi, and Aditya Akella, [CASSINI, NSDI 2024](https://www.usenix.org/conference/nsdi24/presentation/rajasekaran), abstract and §6
+    - quote: “GPUs are dedicated resources”
+    - authors' contribution: place training jobs and shift their iterations so they communicate at different times
+    - evaluation: 13 models on 24 servers
+    - reported gains: up to 1.6× average and 2.5× tail job completion time improvements
+    - §6 assumes training traffic does not share its network with legacy workloads
+    - agent inference: inference traffic and shared GPUs remove useful predictability
+- overload control belongs across the whole request path
+  - Jiali Xing et al., [Rajomon, NSDI 2025](https://www.usenix.org/conference/nsdi25/presentation/xing), abstract
+    - quote: “Tokens and prices propagate through the entire call graph”
+    - authors' contribution: services charge request budgets and reject requests that cannot afford the downstream work
+    - evaluation includes applications from academia and industry on up to 140 cores
+    - agent inference: dynamic agent calls pose a harder budget problem when their future work is unknown
+    - tokens here are request admission budgets, not pieces of generated text
+- caching repeated network decisions can remove container overhead
+  - Shengkai Lin et al., [ONCache, NSDI 2025](https://www.usenix.org/conference/nsdi25/presentation/lin-shengkai), abstract and §5
+    - quote: “this extra overhead generates repetitive results among packets”
+    - authors' contribution: cache repeated overlay processing decisions using Linux eBPF
+    - eBPF lets checked programs run at selected operating system hooks
+    - paper evaluates network benchmarks and distributed applications
+    - agent inference: cache invalidation during frequent placement or policy changes deserves correctness and performance tests together
+- placing models at the edge creates a memory problem
+  - Arthi Padmanabhan et al., [Gemel, NSDI 2023](https://www.usenix.org/conference/nsdi23/presentation/padmanabhan), abstract and §6
+    - quote: “judiciously sharing their layers (including weights)”
+    - authors' contribution: reduce memory demand by retraining related vision models to share parts
+    - evaluation measures accuracy, memory savings, and dropped video frames
+    - §6.3 extends the study to over 850 workloads
+    - agent inference: deploying many models together can couple their updates and failures
+    - evidence concerns vision models, not arbitrary LLMs
+- recovering lost packets should consider the application's remaining time
+  - Zili Meng et al., [Hairpin, NSDI 2024](https://www.usenix.org/conference/nsdi24/presentation/meng), abstract, §3, and appendix E
+    - quote: “differentiating retransmissions on redundancy settings”
+    - authors' contribution: change recovery redundancy across transmission attempts to meet video deadlines
+    - redundancy means sending extra information that can reconstruct lost data
+    - evaluation includes real deployment and controlled experiments
+    - appendix E discusses deployment changes on both client and server
+    - agent inference: delivery before a deadline is only useful if edge computation can also finish before it
+- QUIC supports changes in network path
+  - Jana Iyengar and Martin Thomson, editors, [RFC 9000, 2021](https://www.rfc-editor.org/rfc/rfc9000.html), abstract and §§8–9
+    - quote: “low-latency connection establishment, and network path migration”
+    - specification defines path validation and migration rules
+    - agent inference: moving the network connection does not automatically move an application's state or preserve its deadline
+- satellite experiments depend on uncertain physical and operator information
+  - Zeqi Lai et al., [StarryNet, NSDI 2023](https://www.usenix.org/conference/nsdi23/presentation/lai-zeqi), abstract and §9
+    - quote: “its fidelity tightly depends on the availability and accuracy of the public information”
+    - authors' contribution: combine satellite motion models with real protocol execution in an emulated network
+    - §9 identifies orbit inaccuracies, unavailable link parameters, and limited physical layer modeling
+    - agent inference: a routing win that disappears under modest parameter uncertainty is weak evidence for deployment
+- formal reasoning can search traffic patterns that ordinary tests miss
+  - Mina Tahmasbi Arashloo, Ryan Beckett, and Rachit Agarwal, [Formal Methods for Network Performance Analysis, NSDI 2023](https://www.usenix.org/conference/nsdi23/presentation/tahmasbi), abstract and method
+    - quote: “automatically generate concise interpretable workloads”
+    - authors' contribution: encode queues and packet processing in logic and answer performance questions by finding workloads
+    - agent inference: generated counterexamples can become repeatable experiments on real systems
+    - limits: results concern the encoded network and bounded search, not every production environment
+  - Anup Agarwal et al., [Towards provably performant congestion control, NSDI 2024](https://www.usenix.org/conference/nsdi24/presentation/agarwal-anup), §8
+    - quote: “First, we focus on single-flow scenarios”
+    - authors' contribution: derive what sending algorithms must learn about a path and synthesize algorithms with performance guarantees
+    - §8 explicitly identifies fairness among multiple flows and computational search limits
+    - agent inference: extending the model to competing flows is necessary before claiming a shared-service guarantee
+
+- decentralized LLM serving now has directly relevant systems evidence
+  - [PlanetServe, NSDI 2026](https://www.usenix.org/conference/nsdi26/presentation/fang), abstract and §7
+    - quote: “verification of serving quality”
+    - authors' contribution: contributor-operated serving with overlay organization, private communication, forwarding, and quality checks
+    - authors report over 50% latency reduction against their design without forwarding
+    - §7 discusses stronger model integrity verification through hardware attestation
+    - agent inference: checking output quality and proving which model ran are separate tasks
+  - Xiaozhe Yao et al., [OpenTela, OSDI 2026](https://www.usenix.org/conference/osdi26/presentation/yao), abstract and security discussion
+    - quote: “all in user-space without root privileges or cluster reconfiguration”
+    - authors' contribution: discovery, routing, and scheduling across heterogeneous institutional compute clusters
+    - abstract reports 22 months of deployment, 13 million requests, and 142 models
+    - security discussion explicitly says a provider with root access can replace a signed serving binary or capture prompts
+    - agent inference: institutional trust lists and untrusted public contribution imply different guarantees
+    - scope: operational deployment evidence strengthens feasibility, not resistance to arbitrary malicious providers
+
+research proposals
+- 1: measure whether hybrid peer-to-peer acceleration preserves independent fallback
+  - hypothesis: several nominally independent retrieval paths can depend on the same operator or discovery state
+  - motivating evidence: The Eternal Tussle studies accelerator robustness and identifies operator incentives as unresolved
+  - experiment
+    - controlled IPFS deployment with ordinary routing, special routing peers, indexers, and gateways
+    - publish fresh and old content with known providers
+    - remove one component, one operator, and correlated groups of operators
+    - separately delay metadata propagation and make cached entries stale
+    - compare ordinary routing, accelerator-only retrieval, and explicit fallback with a time budget
+  - measurements
+    - successful retrieval before an application deadline
+    - time to first byte and total bytes spent discovering providers
+    - recovery time after an operator returns
+    - number of independent operators required for each successful path
+  - falsifier: ordinary fallback already preserves deadline success across realistic correlated failures at negligible cost
+  - smallest useful result: reproducible dependency and failure benchmark
+  - novelty check: search IPFS routing measurement, gateway dependency, and fallback studies beyond this 2024 paper
+  - avoid unrequested crawling or load on public peers
+- 2: coordinate compute deadlines and network recovery at the edge
+  - hypothesis: deciding retransmission redundancy from network delay alone wastes bandwidth when the edge computer cannot process the recovered frame in time
+  - motivating evidence: Hairpin optimizes packet recovery; Gemel studies compute and memory limits
+  - experiment
+    - join an edge inference pipeline to deadline-aware transport
+    - vary model loading, shared compute, burst loss, and network delay
+    - compare independent compute and transport control against a shared estimate of remaining processing time
+    - compare against dropping frames early without changing transport
+  - measurements: completed useful frames, accuracy, bandwidth, queueing delay, and deadline failures
+  - falsifier: simple early dropping matches the coordinated controller across workloads
+  - boundary: vision evidence cannot establish benefits for generated text
+  - smallest useful result: identify the operating region where compute dominates loss recovery
+- 3: find when communication scheduling stops paying for itself
+  - hypothesis: CASSINI-style phase separation loses benefits when inference, shared GPUs, or variable computation shifts communication unpredictably
+  - motivating evidence: CASSINI's dedicated GPUs and isolated training traffic assumptions
+  - experiment
+    - reproduce a small periodic training workload first
+    - add irregular inference traffic and controlled variation in iteration duration
+    - compare placement alone, fixed shifts, adaptive shifts, and a congestion-controlled transport
+    - include controller time and deliberately inserted idle time in total completion cost
+  - measurements: useful work per second, job completion tails, inference deadline success, fairness, and controller overhead
+  - falsifier: fixed shifts remain effective until workloads cease sharing useful idle periods
+  - possible result: a measurable condition for switching between placement, phase scheduling, and transport control
+  - novelty check: compare recent network-aware training and inference schedulers before designing another one
+- 4: test performance proofs against host delay and competing flows
+  - hypothesis: packet timing models omit host delays that can invalidate useful performance bounds
+  - motivating evidence: network performance synthesis can produce workloads; CCmatic explicitly leaves multiple-flow guarantees open
+  - experiment
+    - generate an interpretable adverse packet schedule from the formal model
+    - replay it with controlled CPU contention, delayed acknowledgments, and two competing flows
+    - record sender, kernel, NIC, and receiver timestamps
+    - distinguish implementation bugs from behavior absent in the mathematical model
+    - add the smallest missing model component and repeat
+  - measurements: observed bound violations, model size, solver time, and replay stability
+  - falsifier: observed delays fit the original allowed uncertainty and all guarantees hold
+  - valuable outcome: a small, calibrated model with reproducible counterexamples
+    - finding no violation still tests the adequacy of the existing model
+  - overlap: coordinate any implementation work with the formal verification and bug-finding studies
+- 5: make overlay planning robust to uncertain links and failed waypoints
+  - hypothesis: the cheapest predicted route or tree is fragile when one intermediate region slows or disappears
+  - motivating evidence: Skyplane and Cloudcast optimize measured cost and performance; StarryNet identifies uncertain model inputs
+  - experiment
+    - use recorded cloud measurements or an emulator first
+    - vary route throughput, interruption timing, and transfer size
+    - compare initial planning, periodic replanning, reserved backup routes, and direct transfer
+    - count duplicate bytes and additional intermediate machines in total cost
+  - measurements: completion before deadline, total transfer cost, restart bytes, and sensitivity to wrong estimates
+  - falsifier: replanning costs exceed its benefits under measured failure and variability rates
+  - boundary: satellite uncertainty and cloud failures have different causes
+    - reuse the uncertainty-testing method, not the physical model
+  - novelty check: review failure-aware multicast and stochastic transfer planning
+
+- 6: measure how serving discovery recovers when contributor capacity disappears
+  - hypothesis: gossip-based discovery can route requests to stale capacity during correlated allocation expiry
+  - motivating evidence: OpenTela operates transient HPC allocations; PlanetServe uses contributor nodes
+  - experiment
+    - use released OpenTela traces if accessible
+    - replay request bursts while expiring one allocation and then several allocations together
+    - compare ordinary gossip, shorter failure detection, and expiring capacity advertisements
+    - separate stale routing from insufficient surviving capacity
+  - measurements: failed requests, detection time, wasted retries, control traffic, and successful response tails
+  - falsifier: existing discovery already bounds wasted retries without excessive control traffic
+  - novelty check: inspect both systems' failure evaluations and prior lease-based service discovery
+  - trust boundary: experiment with availability first
+    - prompt privacy and proving model execution need separate threat models
+
+suggested order
+- agent recommendation: prototype proposal 1 first
+  - combines networking measurement, distributed availability, and a concrete production architecture
+  - can produce a useful negative result without inventing a new protocol
+- proposal 4 is the strongest connection to practical formal verification
+  - progress depends on obtaining runnable models and a faithful replay setup
+- proposals 2 and 3 connect directly to serving LLMs and agents
+  - first establish the simpler vision or training case
+  - then test whether their assumptions transfer to agent workloads
+- defer expensive cloud and satellite experiments until controlled tests reveal a clear effect
+
+remaining literature work
+- inspect 2026 NSDI, SIGCOMM, EuroSys, and edge systems proceedings
+- trace related work on IPFS fallback, correlated operator failures, and content discovery attacks
+- compare failure-aware overlays against proposal 5
+- investigate variable message length and streaming extensions around SIRD
+- inspect current QUIC multipath standards and implementations before transport design
+- consult a context-free research reviewer before selecting a proposal
+  - these notes are source-grounded hypotheses, not proof that any topic is new or publishable

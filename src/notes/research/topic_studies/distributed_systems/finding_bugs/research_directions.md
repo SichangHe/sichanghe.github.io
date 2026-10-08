@@ -1,0 +1,192 @@
+research directions for finding distributed bugs
+(authored by agents unless marked 🧑)
+
+recommendation
+- agent opinion: begin with a small study of which real bug behaviors existing tools cannot represent
+  - it can disprove an attractive tool idea before a large implementation
+  - use historical faulty and fixed versions as evidence
+- ChatGPT's completed critique favors candidate 1, then 2, then 3
+  - [quoted opinion and resulting changes](consultation_status.md)
+- the three candidates below are hypotheses
+  - their closest work already solves substantial parts of each problem
+  - novelty must survive artifact inspection and a broader literature search
+
+1: find the persistence behavior missing from a simulator
+- question: which real recovery bugs disappear when a simulator gives storage stronger guarantees than production
+- closest work
+  - [FoundationDB, Turmoil, and ModelFuzz](deterministic_simulation_testing.md)
+    - existing simulation, storage faults, and model-guided search
+  - [ShardStore](rust_tools.md)
+    - reference models and several tools check crash consistency and concurrency
+  - [CrashMonkey and Ace](history_checking.md)
+    - bounded crash testing already enumerates filesystem workloads and checks persisted state
+    - lower-level persistence testing must be compared before claiming an adapter is new
+  - [BOB and ALICE](history_checking.md)
+    - already measure persistence properties and analyze application dependence on them
+    - contribution needs a demonstrated distributed-service or simulator boundary beyond that analysis
+  - [Jepsen disk-fault analyses](fault_injection_and_chaos.md)
+    - real-system fault injection with client-visible checks
+- possible contribution
+  - a measured account of which storage behaviors hide historical defects
+  - a small adapter whose contract reproduces those behaviors
+  - adding generic disk faults alone would duplicate existing tools
+- first experiment
+  - first demonstrate one client-visible post-crash state excluded by the unmodified simulator
+    - identify the exact storage rule excluding it
+    - compare real storage, the original simulator, and a minimally corrected model
+    - preserve the storage-operation prefix and service acknowledgments
+    - establish the client's violated promise before expanding the harness
+  - choose one persistent replicated Rust service with a supported simulator or an existing test seam
+  - feasibility target: TiKV storage tests and fail-rs injection
+    - simulator integration remains unverified
+    - first identify 2–3 public issues with executable faulty and fixed versions
+    - expand toward 10–20 cases only after those run under both real and simulated storage
+  - record buggy and fixed commits, configuration, reproducibility, and promised durability
+  - run the original reproducer before adapting it
+  - compare three storage contracts
+    - completed writes are immediately durable
+    - synchronization establishes durability; a crash may lose later writes
+    - documented unsynchronized writes may also tear or reorder
+  - justify each contract against the actual filesystem, device, and API
+    - these three variants are experimental choices, not an exhaustive storage taxonomy
+  - preserve the same operation and crash traces when comparing contracts
+    - equal seeds alone may select different events after an adapter changes
+  - count bugs exposed, fixed-version alarms, replay reliability, and adapter effort
+  - record bugs the harness cannot express
+- stronger evaluation
+  - reserve later bugs and another service as held-out cases
+  - compare the proposed adapter with the most capable available existing simulator
+  - test faults the service promises to tolerate separately from assumption violations
+- stop if
+  - the existing adapter already reproduces the relevant defects
+  - the only failures violate an explicit environment assumption
+  - almost all effort is porting code without a reusable finding
+
+2: distinguish a wrong implementation from a wrong generated specification
+- question: can independent code observations expose models that pass their own checks while missing the actual bug
+- narrower hypothesis: generating the model and its properties together produces shared mistakes
+- closest work
+  - [MongoDB, Mocket, sandTable, trace validation, and SysMoBench](model_checking.md)
+    - connecting model actions with code behavior is established work
+  - [Specula](llm_agents_for_distributed_bugs.md)
+    - already uses trace validation and code-level reproduction of model counterexamples
+  - [ModelFuzz](deterministic_simulation_testing.md)
+    - already uses abstract model coverage to guide executable tests
+- possible contribution
+  - measure failures of the correspondence between code events and model actions
+  - improve evidence for distinguishing model errors, logging errors, and implementation errors
+  - generating counterexamples and replaying them alone is already demonstrated
+- first experiment
+  - choose two implementations with existing models and public historical bugs
+  - compare four generation conditions with fixed requirements and known bad traces
+    - one agent and context generates both model and properties
+    - model uses code evidence; properties use independently written requirements
+    - pair models and properties from independent runs
+    - generated model uses trusted human-established properties
+  - measure missed known defects and their causes
+    - score instrumentation errors separately from shared conceptual mistakes
+  - obtain traces independently of the agent that writes the model
+  - split traces into development and held-out fault cases
+  - compare generated models before and after counterexample feedback
+  - require separate checks
+    - recorded legal behavior is allowed
+    - known illegal behavior violates an independently justified promise
+    - a model counterexample can occur in unmodified code under the promised environment
+  - include adversarial controls
+    - weakened invariants
+    - omitted restart or persistence actions
+    - altered event-to-state mapping
+    - instrumentation that records replies before completion
+  - report detection and misclassification by control type
+  - measure model generation, instrumentation, checking, and reproduction cost separately
+- artifact to publish
+  - event mapping, trace collection code, model versions, and minimal replay scripts
+  - source of each requirement and classification disagreements
+- stop if
+  - existing Specula or SysMoBench checks identify these controls equally well
+  - separating model and property generation does not reduce missed known defects
+  - model quality is graded only by invariants the same agent invents
+  - observed traces are too weak to distinguish the explanations
+
+3: test whether the system recovers after the fault ends
+- question: which failures persist because retries, queues, or controller actions keep feeding the original problem
+- closest work
+  - [metastable failure studies, retry bugs, and CSnake](failure_and_outage_studies.md)
+    - persistent feedback loops are known and already have dedicated testing methods
+  - [self-stabilization](consultation_status.md)
+    - convergence after specified faults is narrower than convergence from arbitrary states
+  - [slow-fault testing, Filibuster, and configuration-aware injection](fault_injection_and_chaos.md)
+    - fault type and context already guide existing experiments
+  - [partial-failure detectors and runtime checkers](runtime_checking_and_invariants.md)
+    - a process heartbeat is insufficient evidence of useful service
+- possible contribution
+  - an evaluated recovery contract under bounded demand and restored dependencies
+  - evidence that the contract exposes a bug existing checks miss
+  - merely adding retries or multiple faults would be incremental
+- first experiment
+  - choose a service with a known overload or recovery incident
+  - state the initial healthy throughput and bounded offered load
+    - calibrate demand below sustainable capacity after dependencies recover
+  - apply a finite disturbance
+    - loss, slowness, restart, or incompatible configuration
+  - remove it and stop new fault injection
+  - compare ordinary recovery with resetting suspected accumulated state at fault cessation
+    - preserve accepted work
+    - a destructive reset may diagnose the cause but is not a valid fix
+  - check throughput, client correctness, queue size, retry rate, and recovery time
+  - compare with the published reproducer and existing CSnake or fault tests where supported
+  - distinguish failure to recover from slow recovery within the stated promise
+  - repeat across independent schedules and report uncertainty
+- stronger evaluation
+  - vary fault duration, spare capacity, client backoff, and mixed-version deployment
+  - verify that a fix restores recovery without silently discarding accepted work
+- stop if
+  - failures require an unlimited workload or a permanently broken dependency excluded by the promise
+  - existing methods find the same bugs with similar effort
+  - no recovery requirement can be justified from documentation or service behavior
+
+the ideas spread across the other notes, one line each
+
+- agent opinion: two ideas show up independently in several notes, which I take as a signal they are the natural next step for this group
+  - use the TLA+ spec as the oracle, not just a coverage map, while fuzzing or simulating the Rust implementation
+    - appears in [fuzzing](fuzzing.md) idea 1, [fault injection](fault_injection_and_chaos.md) idea 1, [model checking](model_checking.md), and candidate 2 above
+    - closest work: ModelFuzz, CCF smart casual verification, Specula
+      - language and proof scope need artifact inspection before claiming a Rust-specific gap
+  - a corpus and benchmark of real distributed bugs in Rust or Go systems with buggy and fixed commits
+    - appears in [failure studies](failure_and_outage_studies.md), [Rust tools](rust_tools.md), and [fuzzing](fuzzing.md) idea 4
+    - closest work: TaxDC and DDBench
+      - corpus construction cost and usefulness remain hypotheses
+      - check their languages, fault classes, and task definitions before claiming missing coverage
+- per note
+  - [fault injection](fault_injection_and_chaos.md): spec guided faults for Rust; disk faults against Verus assumptions; agent-written failpoints and oracles; mixed version faults; lineage driven injection for Raft libraries
+  - [fuzzing](fuzzing.md): spec as oracle; fuzzing verified Rust through its unverified glue; agent-written fault and schedule generators (after Gentoo); a comparable fuzzer benchmark; isolation checker verdicts as fuzzing feedback
+  - [simulation](deterministic_simulation_testing.md): audit simulated persistence contracts; model granularity for guided simulation; find lost determinism after dependency upgrades; test the assumptions around verified code
+  - [model checking](model_checking.md): spec to verified Rust with trace validation as the link; agent keeps spec and code in sync per commit; trace validation as the reward for LLM spec writing; Stateright style exploration over Verus code; audit independence rules that prune orderings
+  - [history checking](history_checking.md): measure how much information loss in client records turns known violations into "unknown" or false passes
+  - [runtime checking](runtime_checking_and_invariants.md): runtime monitor for eventually stable reconciliation; agent-written partial failure watchdogs; invariants inferred from Jepsen histories
+  - [failure studies](failure_and_outage_studies.md): config and data contracts as the failure input; which postmortem bug classes Verus style specs would rule out; TLA+ model of the AWS DNS race; a Rust and Go bug study; agents as error path testers
+  - [Rust tools](rust_tools.md): where simulators and thread checkers disagree; test adapters against proof assumptions; a Rust distributed bug corpus
+  - [LLM agents](llm_agents_for_distributed_bugs.md): legal reproduction enforced outside the agent; separate model fidelity from property correctness; buy evidence only when it changes the diagnosis; test repairs under new orderings
+  - [deployment](deployment_and_configuration.md): upgrade and configuration testing already has direct prior work (DUPTester, UpFuzz, CAFault); proposals there must beat those
+
+rules shared by these experiments
+- these are proposed evaluation choices, not human requirements
+- preserve faulty and fixed versions
+  - a useful test should separate them for the intended reason
+  - one passing reproducer does not prove a patch correct
+- compare at equal total cost
+  - CPU time, model execution, agent calls, and manual harness work
+  - report both time to first failure and repeated-campaign discovery probability
+- avoid circular scoring
+  - do not measure a coverage-guided method only by its own coverage metric
+  - do not accept an LLM's diagnosis without independent execution evidence
+- include failures and unavailable cases in the denominator
+  - unsupported code and unreproduced issues are part of the result
+- distinguish proof scope
+  - a violated assumption refutes applicability to that environment
+  - it does not refute the theorem proved under that assumption
+
+consultation
+- ChatGPT was asked to critique these directions at Extra High effort
+  - [completed consultation](consultation_status.md) records the critique and verified effort setting
+  - an opinion from another model is not primary evidence or a novelty proof

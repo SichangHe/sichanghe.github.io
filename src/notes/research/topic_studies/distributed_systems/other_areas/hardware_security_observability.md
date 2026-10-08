@@ -1,0 +1,690 @@
+new datacenter hardware, security, clocks, and observability: what breaks and what we could study
+(authored by agents unless marked 🧑)
+
+start here
+
+- scope: distributed systems shaped by new hardware, and their security
+  - shared and remote memory: CXL, RDMA
+  - programmable network cards
+  - GPU clusters and their failures
+  - confidential computing across machines
+  - clocks, tracing, and diagnosis
+- my take after reading: the hardware papers mostly chase speed, and the failure story lags behind
+  - CXL lets hosts share memory, but its specification "does not consider processor failures" (DIKTAMO authors)
+  - RDMA lets a client write another machine's memory, so a client that dies halfway leaves a mess nobody owns
+  - GPUs return wrong numbers without any error, and vendor tests "miss over 60% of defective devices" (ByteDance, OSDI 2026)
+  - a confidential VM protects running memory, but its disk can be swapped for an old copy at restart
+- recommendation: pick projects where a correctness or measurement method transfers, since we do not own a hyperscale fleet
+  - most fleet studies below come from Meta, ByteDance, Alibaba, Microsoft, or Google and cannot be reproduced outside
+  - what we can do: checkers, fault injectors, proofs, and measurements of public endpoints
+- every "research we could do" item is an agent hypothesis
+  - each lists the closest work I found
+  - none is established as new across the whole literature
+- reading depth: abstracts and primary landing pages unless a card says otherwise
+  - quotes are exact words from the linked page
+  - a quote ending in "…" was cut by me
+- related slices
+  - [LLM serving](llm_serving.md) covers scheduling and cached state
+  - [networking, peers, and edge](networking_edge_p2p.md) covers transport and congestion
+  - [failure and outage studies](../finding_bugs/failure_and_outage_studies.md)
+  - [Byzantine consensus](../consensus_replication/byzantine_consensus.md)
+
+terms
+
+- CXL: Compute Express Link, a cable and protocol that lets a CPU use memory outside its own board with ordinary loads and stores
+  - CXL pod: a few servers wired to the same CXL memory devices
+  - coherent: every host sees each other's writes as the CPU caches normally guarantee; today's devices give this only for a small region
+- RDMA: remote direct memory access, a network card feature that reads or writes another machine's memory without running that machine's CPU
+  - one-sided: the remote CPU is not involved at all
+  - RoCE: RDMA carried over Ethernet
+- disaggregated memory: memory lives on separate machines or devices from the CPUs that use it
+- SmartNIC, DPU, IPU: a network card with its own CPU cores or programmable logic
+  - on-path: every packet passes through the programmable part
+  - off-path: the card's CPU sits beside the packet path and is used on demand
+- SDC: silent data corruption, hardware computes a wrong result and reports no error
+- TEE: trusted execution environment, hardware that hides a program's memory from the machine's owner
+  - confidential VM: a whole virtual machine inside a TEE, e.g. AMD SEV-SNP or Intel TDX
+  - attestation: a signed statement from the hardware saying which software is running
+  - rollback attack: the host restarts the program with an older copy of its saved state
+- clock uncertainty bound: the clock service's promise "true time is within ±ε of what I report"
+- trace: the record of one request as it passes through many services
+  - span: one step of a trace
+  - head sampling: decide whether to record a request when it enters
+  - tail sampling: record everything, decide what to keep afterwards
+- RCA: root cause analysis, finding which component caused an incident
+
+how the pieces relate
+
+- memory outside the server
+  - pool it to save money: Pond, Octopus, Oasis
+  - share it between hosts as a fast channel: Tigon, MEGALON, Duhu, cMPI, TraCT
+  - say what happens when one side dies: CXL0, DIKTAMO, Xu et al., rTX, SWARM
+  - prove programs on it correct: LOCO, Abdulla et al.
+- network cards that compute
+  - measure what they are good at: Wei et al., dpBento
+  - move work onto them: Wave, PD3, μView, FORGE
+  - open the transport for change: SCR, BALBOA, UCCL-Tran
+  - put trust in them: TNIC, Recipe
+- GPU clusters
+  - how often they fail: Kokolis et al., Cui et al., Hu et al., Kang et al.
+  - find the bad machine: Minder, Holmes, Aegis, FLARE, SCOUT
+  - catch wrong numbers: SDCHunter, AEGIS (OSDI 2026), Ma et al., TrainCheck
+  - recover faster: Leto, PHOENIX, FlashRecovery
+- confidential computing
+  - physical and software attacks on the hardware: TEE.fail, Battering RAM, WireTap, Heckler
+  - stale state at restart: Rollbaccine, Keshavarzi et al., Chimera, Rebound, CRISP
+  - proving who you talk to: attested DNS, attestation in TLS, cross-TEE attestation
+  - cost on GPUs: Yin and Wang
+- time and diagnosis
+  - keep clocks close: Sundial, Graham, Firefly, SyncWise
+  - use close clocks: Tiga, K2
+  - record requests cheaply: Hindsight, Mint, Trace Sampling 2.0, StriaTrace
+  - repair broken request records: Backstitch
+  - let LLM agents diagnose: AIOpsLab, PRAXIS, Kim et al.
+
+source cards: memory outside the server (CXL)
+
+- Pond, Li et al., ASPLOS 2023
+  - [arXiv abstract](https://arxiv.org/abs/2203.00241)
+  - exact words: "pooling across 8-16 sockets is enough to achieve most of the benefits"
+  - author result: "reduces DRAM costs by 7% with performance within 1-5% of same-NUMA-node VM allocations"
+  - why it matters: this is the economic case that made cloud providers build small CXL pools
+- Octopus, Zhong et al., NSDI 2026
+  - [arXiv abstract](https://arxiv.org/abs/2501.09020)
+  - idea: wire each server to a few small pooling devices and skip the switch
+  - author result: "Octopus RPCs are 3.2x faster than in-rack RDMA and 2.4x faster than CXL switches"
+  - author result from simulation: "net server cost savings of 3-5.4% whereas CXL switches result in a net cost increase"
+  - scope: "a three-server CXL pod prototype", larger pods are simulated
+- Oasis, Zhong et al., SOSP 2025, arXiv title "My CXL Pool Obviates Your PCIe Switch"
+  - [arXiv abstract](https://arxiv.org/abs/2503.23611)
+  - exact words: "PCIe device pooling can be effectively implemented in software using CXL memory pools"
+  - exact words: "CXL memory pools improve memory utilization and already have positive return on investment"
+  - inference: once a pod shares memory, it also shares network cards and disks, so one host's failure touches devices other hosts use
+- Tigon, Huang et al., OSDI 2025
+  - [USENIX page](https://www.usenix.org/conference/osdi25/presentation/huang-yibo)
+  - exact words: "the first distributed in-memory database that synchronizes cross-host concurrent data accesses using atomic operations on CXL memory"
+  - limits the authors name: "CXL's higher latency and lower bandwidth relative to local DRAM, and its limited hardware support for cross-host cache coherence"
+  - author result: "up to 18.5× higher throughput compared with an RDMA-based distributed database"
+- MEGALON, Hu et al., OSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/hu-jiyu)
+  - exact words: "the hardware is expected to provide cache coherence only for a small region of CXL memory and it is difficult for hosts to share data in the non-coherent region"
+  - idea: replicate big, rarely updated bookkeeping; keep only small, hot bookkeeping in the coherent region
+- Duhu, Men et al., OSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/men)
+  - exact words: "current SDM clusters provide weak coherence guarantees"
+  - idea: an object store on shared memory so Ray needs no changes
+  - author result: "improve job completion time (JCT) by up to 3.39× on a shuffle workload"
+- MemChannel, Guo et al., NSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/guo-zerui)
+  - the authors measured a real CXL switch and "identify three issues: intra-host contention, in-fabric congestion, and unmanaged host-remote DIMM interaction"
+  - inference: a CXL fabric now needs congestion control, like a network
+- DRack, Zhang et al., USENIX ATC 2025
+  - [USENIX page](https://www.usenix.org/conference/atc25/presentation/zhang-xu)
+  - exact words: "DRack disaggregates all NICs within a rack from their hosts, forming a shared NIC pool"
+- cMPI, Wang et al., 2025 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2510.05476)
+  - exact words: "transforming cross-node communication into memory transactions and data copies within CXL memory"
+- TraCT, Yoon et al., 2025 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2512.18194)
+  - claim: in LLM serving that splits input processing from output generation, "KV transfer dominates both time-to-first-token (TTFT) and peak throughput"
+  - idea: pass the cached model state through CXL shared memory instead of RDMA
+- NEMO, Li et al., OSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/li-shihang)
+  - a memory usage counter engine inside the memory controller, prototyped "on an FPGA-based CXL-attached memory expander"
+- failure models for CXL shared memory
+  - Xu et al., 2024 preprint, "CXL Shared Memory Programming: Barely Distributed and Almost Persistent"
+    - [arXiv abstract](https://arxiv.org/abs/2405.19626)
+    - exact words: "processes can fail before data does, or data might fail before a process does"
+    - exact words: "The lack of a failure model for CXL-based shared memory makes it challenging to understand and mitigate these failures."
+  - CXL0, Assa et al., ASPLOS 2026
+    - [arXiv abstract](https://arxiv.org/abs/2407.16300)
+    - exact words: "CXL currently lacks an adequate programming model, making it impossible to reason about the correctness and behavior of systems on top"
+    - the authors call CXL0 "the first programming model for concurrent programs over CXL"
+    - they give "a general transformation that enhances any linearizable concurrent algorithm with durability in a distributed partial-crash setting"
+      - linearizable: every operation appears to happen at one instant
+      - partial crash: some hosts die while the shared memory and other hosts live on
+  - DIKTAMO, Psistakis et al., MICRO 2026
+    - [arXiv abstract](https://arxiv.org/abs/2602.08271)
+    - exact words: "a node failure leads to the loss of the dirty data in its caches, corrupting application state"
+    - exact words: "Sadly, the CXL specification does not consider processor failures."
+  - PMRobust, Guo et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2509.19459)
+    - exact words: "No existing tools can ensure the absence of missing flush bugs."
+    - idea: a compiler inserts the flush instructions
+  - Hadi et al., 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2606.07159)
+    - claim: making data durable across a CXL fabric is slow because "persist operations must traverse the entire CXL fabric"
+- deployment status
+  - unverified secondary claim: a vendor blog says Microsoft launched CXL cloud instances in November 2025
+    - [Introl blog](https://introl.com/blog/cxl-memory-expansion-pooling-disaggregated-memory-ai-data-center-2025)
+    - I did not find Microsoft's own announcement
+
+source cards: RDMA and memory on other machines
+
+- Empowering Azure Storage with RDMA, Bai et al., NSDI 2023
+  - [USENIX page](https://www.usenix.org/conference/nsdi23/presentation/bai)
+  - exact words: "Today, around 70% of traffic in Azure is RDMA and intra-region RDMA is supported in all Azure public regions."
+  - named challenge: "the problem of interoperability between different types of RDMA network interface cards"
+- Mitigating Scalability Walls of RDMA-based Container Networks, Liu et al., NSDI 2025
+  - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/liu-wei)
+  - exact words: "most performance issues are related to RDMA NICs (RNICs), whose design and implementation defects might constitute the "scalability wall""
+  - exact words: "we are challenged by the limited visibility into the internals of today's RNICs"
+  - inference: operators debug the card as a black box, by experiment
+- White-Boxing RDMA, Zhao et al., NSDI 2025
+  - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/zhao-chenxingyu)
+  - exact words: "RDMA's hardware-offloading nature poses significant rigidity when landing these innovations"
+  - idea: software decides per packet, hardware still moves the data
+- RoCE BALBOA, Heer et al., OSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/heer)
+  - exact words: "an open-source, 100 Gbps RDMA offload engine designed for research on networking and fully compatible with commercial RNICs"
+  - use for us: an RDMA stack whose insides can be read and changed
+- UCCL-Tran, Zhou et al., OSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/zhou-yang)
+  - exact words: "single-path RDMA traffic is prone to flow collisions that severely degrade collective communication performance"
+  - author result: "up to 4.5× higher performance compared to existing RDMA NICs"
+- MRC, Araujo et al., 2026 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2605.04333)
+  - exact words: "a new RDMA-based transport protocol, MRC, sprays across many paths and actively load-balances between them"
+  - target scale: "training clusters well over 100K GPUs"
+- Ethereal, Addanki et al., 2024 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2407.00550)
+  - asks "How close can singlepath transport come to" packet spraying, against the common belief that spraying is necessary
+- Celeris, 2025 preprint, "Reimagining RDMA Through the Lens of ML"
+  - [arXiv abstract](https://arxiv.org/abs/2510.16606)
+  - exact words: "removes retransmissions and in-order delivery from the RDMA NIC"
+  - reason given: training tolerates some lost data
+  - status: "Early results"
+- Varuna, Wang et al., 2026 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2603.28001)
+  - exact words: "upon failure, uniformly retransmit all in-flight RDMA request over the backup path"
+  - exact words: "Retransmitting post-failure requests is not only redundant (consuming bandwidth), but also incorrect for non-idempotent operations, where duplicate execution can violate application semantics."
+  - idea: attach a small completion log to every operation, so after a link failure the sender learns which requests ran
+  - inference: this is the same question as the shortlist's "did my remote update happen?", one layer down
+- systems on RDMA memory nodes
+  - FUSEE, Shen et al., FAST 2023
+    - [arXiv abstract](https://arxiv.org/abs/2301.09839)
+    - clients manage the index themselves, and the system "handles complex failures under the DM architecture"
+  - rTX, Wei et al., 2023 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2308.02501)
+    - exact words: "Current indexes focus on performance improvements and largely ignore tolerating client failures."
+  - SWARM, Murat et al., SOSP 2024
+    - [arXiv abstract](https://arxiv.org/abs/2409.16258)
+    - claims "single-roundtrip reads and writes in the common case", "strong consistency (linearizability)", and "strong liveness (wait-freedom)"
+  - uBFT, Aguilera et al., ASPLOS 2023
+    - [arXiv abstract](https://arxiv.org/abs/2210.17174)
+    - exact words: "pure crashes appear to be a mere illusion with real-life systems reportedly failing in many unexpected ways"
+    - idea: use remote memory as a small trusted part to tolerate arbitrary faults with fewer replicas
+  - Lotus, Hu et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2512.16136)
+    - exact words: "the RDMA network interface cards at MNs become a primary performance bottleneck"
+  - HDTX, Lu et al., USENIX ATC 2025
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/lu)
+    - a faster commit protocol; compared against FaRM and FORD
+  - FARLock, Hu et al., OSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/hu-yuehao)
+    - exact words: "they fail to grant locks in the expected first-come first-serve manner"
+  - OneSidedMW, Wang et al., NSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/wang-zixuan)
+    - names "security vulnerabilities" among the problems of current remote memory management
+    - idea: the card itself grants and revokes access to small memory ranges
+  - FORGE, Yang et al., OSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/yang-zhijun)
+    - a cache on remote memory that syncs groups of objects, not single ones
+- proofs about RDMA programs
+  - LOCO, Ambal et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2510.10531)
+    - exact words: "baseline RDMA comprises a highly permissive weak memory model that is difficult to use in practice and has only recently been formalised"
+    - a verified library of objects that span machines
+  - Abdulla et al., CAV 2026
+    - [arXiv abstract](https://arxiv.org/abs/2605.10631)
+    - exact words: "We show that reachability is undecidable in general, even for a restricted fragment of the model."
+    - plain meaning: no tool can always decide whether an RDMA program can reach a bad state
+- security of RDMA
+  - Kornfeld Simpson et al., HotCloud 2020
+    - [USENIX page](https://www.usenix.org/conference/hotcloud20/presentation/kornfeld-simpson)
+    - named problems: "changes in RPC reliability guarantees and unauditable data-accesses"
+- far memory used as swap
+  - PD3, Sankhe et al., NSDI 2026: see the network card section
+  - Redy, Zhang et al., VLDB 2022
+    - [arXiv abstract](https://arxiv.org/abs/2112.12946)
+    - a cache service on leftover memory and spot VMs that "handles the dynamics of remote memory regions"
+
+source cards: network cards that compute
+
+- Characterizing Off-path SmartNIC, Wei et al., OSDI 2023
+  - [arXiv abstract](https://arxiv.org/abs/2212.07868)
+  - exact words: "the first holistic study of a representative off-path SmartNIC, specifically the Bluefield-2, from a communication-path perspective"
+- dpBento, Hu et al., 2025 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2504.05536)
+  - exact words: "a comprehensive view of the implications of DPUs for data processing is missing"
+- Wave, Humphries et al., ASPLOS 2025
+  - [arXiv abstract](https://arxiv.org/abs/2408.17351)
+  - moves operating system decisions, such as scheduling, to the card's ARM cores
+  - reason given: "virtually all server resources are available to paying customers"
+- OSMOSIS, Khalilov et al., 2023 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2309.03628)
+  - exact words: "existing on-path SmartNICs have resource multiplexing limitations"
+- PD3, Sankhe et al., NSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/sankhe)
+  - the card reads the request first and fetches remote memory before the server needs it
+- μView, Cornacchia et al., NSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/cornacchia)
+  - title claim: "Observability Is Eating Your Cores"
+  - idea: summarize service metrics on the card, close to the service
+- ZOC, Guan et al., NSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/guan-naixuan)
+  - a cloud provider replaces the special card with a service VM on ordinary servers
+  - reasons given: "operational inconsistency across heterogeneous fleets, limited resource elasticity, and performance bottlenecks caused by slow-path processing"
+  - inference: even a large cloud finds special cards costly to operate
+- SCENIC, Ramhorst et al., 2026 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2604.15128)
+  - exact words: "Commercial SmartNICs provide high bandwidth and easy software integration, but offer limited support for customization and data processing offload."
+- TNIC, Giantsidi et al., 2025 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2502.05338)
+  - exact words: "a minimal, formally verified, silicon root-of-trust at the network interface level"
+  - two properties it gives: "transferable authentication and non-equivocation"
+    - non-equivocation: a machine cannot tell two peers different things
+- Recipe, Giantsidi et al., 2025 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2502.09251)
+  - exact words: "Traditional Crash Fault Tolerant (CFT) protocols, which assume a fail-stop model, are inadequate for untrusted cloud environments"
+  - idea: turn crash-tolerant protocols into ones that survive lying machines, using trusted hardware
+
+source cards: GPU clusters as distributed systems
+
+- how often things fail
+  - Kokolis et al., Meta, HPCA 2025, "Revisiting Reliability in Large-Scale Machine Learning Research Clusters"
+    - [arXiv abstract](https://arxiv.org/abs/2410.21680)
+    - exact words: "while large jobs are most vulnerable to failures, smaller jobs make up the majority of jobs in the clusters"
+  - Cui et al., 2025 preprint, "Story of Two GPUs"
+    - [arXiv abstract](https://arxiv.org/abs/2503.11901)
+    - data: "2.5 years of operational data (11.7 million GPU hours)" on 1,056 GPUs
+    - exact words: "H100 GPU memory resilience is worse than A100 GPU memory, with 3.2x lower per-GPU MTBE for memory errors"
+      - MTBE: mean time between errors
+  - Hu et al., NSDI 2024, "Characterization of Large Language Model Development in the Datacenter"
+    - [arXiv abstract](https://arxiv.org/abs/2403.07648)
+    - six months of traces; names "frequent hardware failures, intricate parallelization strategies, and imbalanced resource utilization"
+  - Kang et al., Lablup technical report, 2026
+    - [arXiv abstract](https://arxiv.org/abs/2605.09370)
+    - exact words: "hardware failures are routine operating conditions rather than rare exceptions, yet public operational evidence from production training clusters remains limited"
+    - found "a 60-node-scale storage I/O bottleneck absent in 2-4-node tests"
+    - scope: 63 nodes, 504 GPUs, 55 days of metrics
+  - Ma et al., KDD 2026, "Don't Predict, Prioritize"
+    - [arXiv abstract](https://arxiv.org/abs/2607.15115)
+    - claim: predicting the exact time of a GPU failure "is inherently difficult"
+  - Sun et al., ByteDance, 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2609.34473)
+    - three obstacles: "workload-confounded telemetry, heterogeneous fault precursors, and the gap between window-level predictions and actionable alerts"
+- find the bad machine
+  - Minder, Deng et al., NSDI 2025
+    - [arXiv abstract](https://arxiv.org/abs/2411.01791)
+    - exact words: "a training task can encounter two faults per day on average, possibly leading to a halt for hours"
+    - author result: reacts "within 3.6 seconds on average, with a precision of 0.904 and F1-score of 0.893"
+  - Holmes, Yao et al., NSDI 2025
+    - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/yao)
+    - exact words: "some irregular iterations taking even more than twice the time of a normal iteration"
+    - exact words: "which is even more severe than the impact of failures"
+    - plain meaning: slow steps cost more training time than crashes do
+  - Aegis, Dong et al., NSDI 2025
+    - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/dong)
+    - the second version "chose to customize the collective communication library for sophisticated failure localization in runtime without modifying customer code"
+  - FLARE, Cui et al., NSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/cui)
+    - exact words: "existing diagnostic tools are narrowly tailored to specific issues"
+    - deployed "across 6,000 GPUs"
+  - SCOUT, Wang, 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2608.11034)
+    - exact words: "identify outliers through strict-majority consensus among equivalent replicas"
+    - plain meaning: GPUs doing the same job should agree, so the odd one out is the suspect
+  - VCCL, Zhang et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2510.00991)
+    - names "expensive restart costs under link failures" and "insufficient observability of transient collective communication anomalies" in NVIDIA's communication library
+  - PrismLLM, Xi et al., 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2605.15617)
+    - exact words: "engineers often need to reproduce production behaviors to diagnose failures or evaluate optimizations"
+    - idea: emulate a large training run on a few GPUs
+- wrong numbers without an error
+  - Dixit et al., Meta, 2021, "Silent Data Corruptions at Scale"
+    - [arXiv abstract](https://arxiv.org/abs/2102.11245)
+    - exact words: "This has resulted in hundreds of CPUs detected for these errors, showing that SDCs are a systemic issue across generations."
+  - SDCs in the Wild, Zheng et al., ByteDance, OSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/zheng)
+    - exact words: "our experience shows these methods miss over 60% of defective devices"
+    - exact words: "SDCs are highly data-dependent and unit-specific, meaning devices that pass general stress tests often fail under specific training input data"
+    - exact words: "standard ECC and thermal protections fail to capture these logic-level bit flips"
+    - method: replay the exact training step and input that failed
+    - scope: 23 defective GPUs
+  - AEGIS, Lei et al., OSDI 2026, "Safeguarding LLM Training at Scale"
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/lei)
+    - author result: over 35 million GPU hours it "identified 18 real-world SDC incidents and 13 faulty GPUs while incurring only 0.86% performance overhead"
+    - not the same system as the NSDI 2025 Aegis above
+  - Ma et al., 2025 preprint, "Understanding Silent Data Corruption in LLM Training"
+    - [arXiv abstract](https://arxiv.org/abs/2502.12340)
+    - method: "comparing model training between healthy production nodes and unhealthy nodes exhibiting SDCs"
+  - Tung et al., DSN 2026 industry track
+    - [arXiv abstract](https://arxiv.org/abs/2605.04213)
+    - from simulated hardware faults: "NaN/+INF/-INF account for only 1.01% of SDC outcomes"
+    - plain meaning: checking for NaN catches almost none of them
+  - LLM-PRISM, Tyagi et al., 2026
+    - [arXiv abstract](https://arxiv.org/abs/2604.10390)
+    - exact words: "while LLMs resist low-frequency faults, impact is highly non-uniform"
+  - TrainSDC, Xia et al., 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2608.30769)
+    - exact words: "faults on the Q/K path producing persistent training deviations"
+  - TrainCheck, Jiang et al., OSDI 2025
+    - [USENIX page](https://www.usenix.org/conference/osdi25/presentation/jiang)
+    - software-caused silent errors, not hardware: it "automatically infers invariants tailored for DL training"
+    - author result: "detects 18 errors within a single training iteration" out of 20 reproduced
+  - SAVE, Zheng et al., USENIX ATC 2025
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/zheng)
+    - protects model inference from GPU memory bit flips; aimed at "safety-critical edge applications"
+- recover faster
+  - Leto, Kim et al., 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2610.00687)
+    - exact words: "Existing recovery systems nevertheless reload checkpoints, recompute lost progress, and rebuild process state, idling GPUs that could otherwise continue training."
+  - PHOENIX, Xie et al., 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2607.01646)
+    - swaps a failed node for a spare while training continues
+  - FlashRecovery, Zhang et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2509.03047)
+- slow hardware in general
+  - Sieve, Dong et al., USENIX ATC 2025
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/dong)
+    - studied "48 real-world fail-slow hardware failures"
+    - finding: slow hardware breaks "synchronized and timeout mechanisms" in the software above it
+  - FiDe, Rovelli et al., USENIX ATC 2025
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/rovelli)
+    - claims to "report the crash of a remote process in a datacenter within less than 30 μs"
+- tracing for LLM serving
+  - StriaTrace, Wu et al., OSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/wu-haonan)
+    - exact words: "existing tracing tools incur prohibitive overhead"
+    - three rules from production: "(1) tracing key synchronization points, (2) tracing critical paths, and (3) detailed tracing only during abnormalities"
+    - author result: "diagnosed hundreds of abnormalities spanning 19 distinct root causes"
+
+source cards: confidential computing across machines
+
+- stale state at restart
+  - Rollbaccine, Chu et al., SIGMOD 2026
+    - [arXiv abstract](https://arxiv.org/abs/2505.04014)
+    - exact words: "TEEs do not protect applications against disk rollback attacks, where persistent storage can be reverted to an earlier state after a crash"
+    - idea: a disk layer that replicates writes so any unmodified application is protected
+  - Keshavarzi, Chockler, Gotsman, 2025, "TEE is not a Healer"
+    - [arXiv abstract](https://arxiv.org/abs/2505.18648)
+    - exact words: "the protection offered by a TEE only applies during program execution"
+  - Chimera, Liu et al., 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2606.09101)
+    - exact words: "during recovery, a compromised host can roll back a crashed enclave to a stale persistent state"
+    - trade-off named: defenses "either impose substantial overhead on critical consensus paths" or "incur prolonged recovery delays"
+  - Rebound, 2025 preprint, "It's a Feature, Not a Bug"
+    - [arXiv abstract](https://arxiv.org/abs/2511.13641)
+    - exact words: "they categorically treat all rollback as malicious and thus preclude legitimate rollbacks used for operational recovery from corruption or misconfiguration"
+    - plain meaning: operators also roll back on purpose, so the defense must tell the two apart
+  - CRISP, 2024
+    - [arXiv abstract](https://arxiv.org/abs/2408.06822)
+    - exact words: "During restarts, attackers can revert the state of confidential services to a previous version"
+    - context: Kubernetes restarts services often, so the window opens often
+- consensus with trusted hardware
+  - Wen et al., EuroSys 2027, "Breaking Fault Lines"
+    - [arXiv abstract](https://arxiv.org/abs/2609.09742)
+    - setting: only some replicas have a TEE
+    - exact words: "TEEs improve fault tolerance only once they exceed two-thirds of the deployment"
+  - Smart Casual Verification of the Confidential Consortium Framework, Howard et al., NSDI 2025
+    - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/howard)
+    - method: "binding the formal specification in TLA+ to the C++ implementation"
+    - author result: "find six subtle bugs in the design and implementation before they could impact production"
+- proving who you talk to
+  - attested DNS, Delignat-Lavaud et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2503.14611)
+    - problem: attestation "requires custom clients and protocols to distribute, update, and verify their attestation evidence"
+    - idea: bind the attested software to a domain name so ordinary clients benefit
+  - Weinhold et al., USENIX ATC 2025, "Separate but Together"
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/weinhold)
+    - exact words: "setting up a secure channel to such a TEE requires a security guarantee that the channel actually terminates inside the TEE"
+    - on earlier ways to put attestation into TLS: "Unfortunately, they all have shortcomings."
+  - Andrade et al., 2026 preprint, "Know Thy Neighbor"
+    - [arXiv abstract](https://arxiv.org/abs/2607.00695)
+    - two services on different TEE types must each check the other
+- attacks on the hardware promise
+  - TEE.fail, 2025
+    - [project page](https://tee.fail/)
+    - exact words: "extract cryptographic keys from Intel TDX and AMD SEV-SNP with Ciphertext Hiding, including in some cases secret attestation keys from fully updated machines in trusted status"
+    - exact words: "extracted attestation keys can be used to compromise Nvidia's GPU Confidential Computing, allowing attackers to run AI workloads without any TEE protections"
+    - method: a device on the memory wires built "using only off the shelf electronic equipment"
+    - plain meaning: someone with hands on the server can forge "I am a genuine protected machine"
+    - reading depth: the project page's summary, not the paper
+  - WireTap, 2025
+    - [project page](https://wiretap.fail/)
+    - exact words: "we are able to extract an SGX secret attestation key from a machine in fully trusted status"
+    - the authors then attack "SGX-backed blockchain deployments"
+  - Battering RAM, 2025
+    - [project page](https://batteringram.eu/)
+    - De Meulemeester et al., IEEE S&P 2026
+    - exact words: "a simple, $50 interposer that sits quietly in the memory path, behaving transparently during startup and passing all trust checks"
+    - exact words: "silently redirects protected addresses to attacker-controlled locations, allowing corruption or replay of encrypted memory"
+    - the same page announces a follow-up: "DDRop (CCS '26): dropping DDR5 writes breaks TDX and SEV-SNP!"
+  - Heckler and WeSee, Schlüter et al., 2024
+    - [Heckler abstract](https://arxiv.org/abs/2404.03387)
+    - [WeSee abstract](https://arxiv.org/abs/2404.03526)
+    - a malicious host injects interrupts into a confidential VM
+  - Shen and Qin, 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2605.12990)
+    - on one AMD server generation: "this protection is insufficient on EPYC Milan by presenting a software-only exploit"
+    - what leaks: the root seed from which attestation signing keys are derived
+  - Google and Intel, 2026 white paper on TDX live migration
+    - [arXiv abstract](https://arxiv.org/abs/2602.11434)
+    - reviewed "support for Live Migration and Trusted Domain (TD) Partitioning"
+    - inference: moving a confidential VM between machines is new attack surface that vendors themselves audit
+- confidential serverless, databases, and GPUs
+  - Wallet, Sabanic et al., NSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/sabanic)
+    - author result: "4.3× smaller TCB" than a confidential VM per function
+      - TCB: trusted computing base, the code you must trust
+  - ZENO, Huang et al., OSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/huang-wenxuan)
+    - removes encryption work from the query path; "integrated into GaussDB"
+  - Yin and Wang, 2026 preprint, "The Serialized Bridge"
+    - [arXiv abstract](https://arxiv.org/abs/2606.23969)
+    - exact words: "LLM serving under Intel TDX plus GPU-CC still loses 13-27% of throughput, and KV-cache restore latency can more than double"
+    - cause named: "the confidential VM-GPU bridge, not GPU compute"
+  - Chrapek et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2509.18886)
+    - runs Llama2 inference fully inside CPU and GPU TEEs and reports cost
+- supply chain
+  - Meiklejohn et al., Google, 2025
+    - [arXiv abstract](https://arxiv.org/abs/2505.22778)
+    - exact words: "the current ecosystem for open ML models contains significant supply-chain risks, some of which have been exploited already in real attacks"
+  - SBOMproof, Bufalino et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2510.05798)
+    - checks whether software ingredient lists for container images are accurate
+  - Przymus and Durieux, 2025, on the XZ Utils backdoor
+    - [arXiv abstract](https://arxiv.org/abs/2504.17473)
+
+source cards: clocks
+
+- Sundial, Li et al., Google, OSDI 2020
+  - [USENIX page](https://www.usenix.org/conference/osdi20/presentation/li-yuliang)
+  - exact words: "achieves ~100ns time-uncertainty bound under various types of failures"
+  - exact words: "in large-scale datacenters, temperature-related, link, device, and domain failures are common"
+- Graham, Najafi and Wei, NSDI 2022
+  - [USENIX page](https://www.usenix.org/conference/nsdi22/presentation/najafi)
+  - idea: learn how the local clock drifts from sensors every server has
+  - author result: "reducing the maximum assumed drift in most situations from 200ppm to 100ppb"
+- Firefly, Google, SIGCOMM 2025
+  - [Google Cloud blog](https://cloud.google.com/blog/products/networking/understanding-the-firefly-clock-synchronization-protocol)
+  - exact words from the blog: "regulatory requirements mandate sub-100µs external synchronization to Coordinated Universal Time, or UTC, and fairness demands sub-10ns internal clock synchronization"
+  - exact words: "doing so on cloud-hosted infrastructure has traditionally been impossible"
+  - a search summary of the paper, not checked word for word: under 10 ns between devices in a 248-machine network
+- SyncWise, Lei et al., NSDI 2026
+  - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/lei-syncwise)
+  - clocks for networks whose optical links are rewired every few microseconds
+  - exact words: "the first protocol to attain sub-10 ns maximum sync error", in simulation
+- bittide, Bastiaan et al., 2025 preprint
+  - [arXiv abstract](https://arxiv.org/abs/2503.05033)
+  - exact words: "the first hardware implementation of bittide, a decentralized clock synchronization mechanism for achieving logical synchrony"
+  - scope: 8 FPGA boards
+- systems that rely on close clocks
+  - Tiga, Geng et al., SOSP 2025
+    - [arXiv abstract](https://arxiv.org/abs/2509.05759)
+    - exact words: "uses synchronized clocks to proactively order transactions by assigning each a future timestamp at submission"
+  - K2, Song et al., VLDB 2025
+    - [arXiv abstract](https://arxiv.org/abs/2504.01460)
+    - exact words: "TrueTime clocks (TTCs) that offer accurate and reliable time within limited uncertainty bounds have been increasingly implemented in many clouds"
+  - Nezha, Geng et al., VLDB 2023
+    - [arXiv abstract](https://arxiv.org/abs/2206.03285)
+    - consensus that orders requests by synchronized clocks
+- clocks and traces
+  - TempoTrace, Elbakoury and Sharma, 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2609.23301)
+    - exact words: "Distributed tracing in large-scale AI infrastructure fails silently when clock accuracy is insufficient"
+    - caution: a 43-page preprint with strong numeric claims; I have not checked them
+
+source cards: tracing and diagnosis
+
+- record requests cheaply
+  - Hindsight, Zhang et al., NSDI 2023
+    - [USENIX page](https://www.usenix.org/conference/nsdi23/presentation/zhang-lei)
+    - exact words: "Hindsight lazily retrieves trace data only after symptoms of a problem are detected"
+    - the authors' picture: "a car dash-cam that, upon detecting a sudden jolt in momentum, persists the last hour of footage"
+  - Mint, Huang et al., ASPLOS 2025
+    - [arXiv abstract](https://arxiv.org/abs/2411.04605)
+    - idea: store the common shape of traces once, keep the differing values
+    - author result: "trace storage (reduced to an average of 2.7%) and network overhead (reduced to an average of 4.2%)"
+  - Trace Sampling 2.0, Wu et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2509.13852)
+    - samples single steps while "maintaining trace structure consistency"
+  - DiTing, Ren et al., OSDI 2026
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/ren)
+    - exact words: "telemetry data are often stored and processed in siloed systems"
+    - one store for logs, metrics, and traces on spare cloud capacity
+- broken request records
+  - Backstitch, 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2609.27538)
+    - exact words: "At handoffs outside instrumented paths, e.g., custom queues and callbacks, the payload continues but the context does not"
+    - exact words: "673 of 1,133 services carried at least one"
+    - an LLM agent finds and repairs these breaks at "a major video platform"
+- compare and reuse traces
+  - Contrast, 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2607.19102)
+    - exact words: "Diagnosis using distributed traces is fundamentally a comparative task"
+  - Palette, Anand et al., 2025 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2506.06448)
+    - exact words: "researchers and practitioners alike often do not have access to representative systems"
+    - builds runnable test systems from public company traces
+- LLM agents that diagnose
+  - AIOpsLab, Chen et al., 2025
+    - [arXiv abstract](https://arxiv.org/abs/2501.06706)
+    - a test bed that "deploys microservice cloud environments, injects faults, generates workloads, and exports telemetry data"
+  - Kim et al., 2026 preprint, "Why Do AI Agents Systematically Fail at Cloud Root Cause Analysis?"
+    - [arXiv abstract](https://arxiv.org/abs/2602.09937)
+    - exact words: "existing systems exhibit low detection accuracy even with capable models"
+    - method: "1,675 agent runs" classified "into 12 pitfall types"
+  - PRAXIS, Cui et al., DSN 2026
+    - [arXiv abstract](https://arxiv.org/abs/2512.22113)
+    - the agent walks a service graph and a code dependency graph
+    - author result: "improves RCA accuracy by up to 6.3x while reducing token consumption by 5.3x"
+  - UModel, Pei et al., 2026 preprint
+    - [arXiv abstract](https://arxiv.org/abs/2606.04799)
+    - exact words: "fragmented data silos, incompatible schemas, and insufficient semantic metadata"
+  - Riddell et al., FORGE 2026, "Stalled, Biased, and Confused"
+    - [arXiv abstract](https://arxiv.org/abs/2601.22208)
+    - studies how LLM reasoning fails when "symptoms appear far from their true causes"
+
+research we could do
+
+- 1. test what a confidential service does when its disk goes back in time
+  - question: which open-source services, moved unchanged into a confidential VM, misbehave when restarted on an old disk copy?
+  - why I think it fits: this is fault injection, which we know, pointed at a fault the cloud operator controls
+  - existing work
+    - Rollbaccine, CRISP, Chimera, and Keshavarzi et al. build defenses
+    - Rebound shows operators also need honest rollback
+    - CCF's authors model-check their own protocol
+    - I found no tool that injects rollback into arbitrary services the way Jepsen injects partitions; I have not searched security venues fully
+  - first week
+    - run etcd, a key manager, and one database in confidential VMs
+    - restart one replica on a disk snapshot from minutes earlier
+    - record what an outside client can observe: lost acknowledged writes, reused nonces, reissued tokens, two leaders
+  - independent check: a client-side log of acknowledged operations, compared with later reads
+  - rejection condition: the tested rollback patterns produce no client-visible violation under the stated replication and recovery assumptions
+    - a finite test cannot show that replication hides every rollback
+    - separate a stale replica rejoining from coordinated rollback and replay of an old complete deployment
+
+- 2. measure whether deployed "confidential" services can actually be checked by a client
+  - question: of public services that advertise TEE protection, how many give a client attestation evidence, and what does that evidence prove?
+  - why I think it fits: it is web measurement applied to a security promise
+  - existing work
+    - attested DNS and Weinhold et al. say today's verification needs custom clients
+    - TEE.fail, WireTap, and Shen and Qin show attestation keys can leak from machines in good standing
+    - Yin and Wang, Chrapek et al. measure cost, not verifiability
+  - first week
+    - list confidential inference, key management, and messaging services with public endpoints
+    - fetch their attestation evidence and record: hardware type, firmware version, whether the measured software is published and reproducible, how fresh the evidence is
+    - check whether any verifier rejects hardware generations with known key extraction
+  - independent check: a second person rebuilds one service's published image and compares the measurement
+  - risk: the population may be a few dozen services; then it is a case study, not a measurement
+
+- 3. a failure contract for memory shared over CXL, checked in Rust
+  - question: can a small Rust library give "one host died with unwritten cache lines" a checked recovery rule?
+  - existing work
+    - CXL0 defines a formal model and a transformation for durable linearizable code
+    - DIKTAMO changes the hardware
+    - LOCO verifies objects over RDMA, not CXL
+    - Tigon, MEGALON, and Duhu write their own sharing protocols by hand
+    - the storage slice covers verified crash consistency for persistent memory
+      - [verification boundaries](../storage_databases/verification_boundaries.md)
+  - first week
+    - write CXL0's rules as a tiny executable model
+    - model-check a shared log and a lock under "host loses cache" faults
+    - try the same faults on Tigon's open-source code with shared memory emulation
+  - what would make it a contribution: a bug in a published system, or a verified primitive those systems could adopt
+  - stop if CXL0's transformation already covers the partly coherent setting MEGALON and Duhu target
+
+- 4. keep request identity across async Rust boundaries
+  - question: how often do Rust services lose the request's trace context at spawns, channels, and queues?
+  - why I think it fits: Backstitch reports the break in 673 of 1,133 services at one company, in languages it does not name
+  - existing work
+    - Backstitch repairs breaks with an agent on a private fleet
+    - Hindsight and Mint assume context arrives intact
+    - the Rust slice studies cancellation across boundaries
+      - [Rust distributed systems](rust_distributed_systems.md)
+  - first week
+    - pick twenty open-source Rust services that use the tracing or OpenTelemetry crates
+    - tag requests at entry and count where the tag is missing downstream
+    - classify breaks: detached task, channel hop, thread pool, external queue
+  - possible outcome: a lint or a type-level rule, plus the first public count
+  - stop if breaks are rare in Rust because the common libraries already carry context
+
+- 5. a public test bed for wrong-number detectors in multi-GPU jobs
+  - question: do the published detection ideas still work outside the fleet they were tuned on?
+  - existing work
+    - SDCHunter and AEGIS report fleet results nobody else can rerun
+    - SCOUT compares replicas; TrainSDC, LLM-PRISM, and Tung et al. inject simulated faults
+    - Tung et al. report that NaN checks see about 1% of corruptions
+    - PrismLLM emulates large runs on few GPUs
+  - first week
+    - inject bit patterns from Tung et al.'s published statistics into a small multi-GPU run
+    - compare three cheap checks: NaN check, replica agreement, checksum on matrix multiply
+    - report detection rate and overhead
+  - gap I am less sure of: serving, where no gradient averages the error away and one wrong token reaches a user
+    - SAVE targets edge devices; I found no fleet study for LLM serving
+  - risk: without real defective GPUs the injected faults may not look like real ones; ByteDance says real ones depend on the exact input
+
+- 6. check the clock's promise from the outside
+  - question: when a cloud clock service says "within ±ε", how often is that false, and do systems built on it notice?
+  - existing work
+    - Sundial and Graham design for failures; Firefly and SyncWise push accuracy
+    - Tiga, K2, and Nezha assume the bound holds
+    - TempoTrace claims trace ordering breaks under loose clocks, unverified
+  - first week
+    - first identify what each bound promises: relative agreement, UTC accuracy, or both
+    - compare reported intervals across VM pairs while measuring network delay
+      - inconsistent intervals can refute joint promises under explicit delay assumptions
+      - agreement alone cannot establish UTC accuracy because both clocks can share the same error
+    - use an independent time reference with a stated error bound before claiming absolute accuracy
+    - inject a bound violation into one clock-ordered open-source system and check its behavior
+      - this controlled experiment does not measure the frequency of real cloud violations
+  - weak point: I have not yet searched for existing cloud clock measurements, so this may be done
+
+- weaker ideas, listed so nobody repeats the thinking
+  - another LLM diagnosis agent: crowded; AIOpsLab, PRAXIS, UModel, and Kim et al. already cover building and criticizing them
+  - another trace sampler: Hindsight, Mint, and Trace Sampling 2.0 cover the main design choices
+  - anything needing a hyperscale GPU fleet or custom CXL hardware
