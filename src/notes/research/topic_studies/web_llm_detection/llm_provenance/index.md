@@ -46,7 +46,7 @@ remaining scope
     - it does not independently review every provenance proposal
 - the [camera review](camera_authentication.md) compares four edit-proof systems
     - independent evaluation of deployed depth-based copy detection remains future work
-- infrastructure and provenance consultation remains unmet on 8 Oct 2026
-    - the verified GPT-6.1 Sol and Extra High request reached ChatGPT
-    - no answer has been captured from the saved conversation
-    - submission alone does not supply consultation evidence
+- [recovered Extra High advice and assessment](../llm_text/chatgpt_consultation.md)
+    - recommends signed-photo publication paths
+    - the answer acted on the supplied requirements as a task
+        - its ranked opinions and controls were assessed independently

@@ -164,8 +164,48 @@ polymorphic sybil poisoning: false corroboration is already isolated
     - its novelty is unconfirmed
     - direct comparison with semantic deduplication and independent evidence must be demonstrated
 
+GitChameleon 2.0: version-specific code with live search is already evaluated
+- Misra and colleagues, [GitChameleon 2.0](https://aclanthology.org/2026.acl-long.2170/), ACL 2026
+  - primary conference PDF read in this pass
+  - relevant details appear in appendix A.6.5
+    - the consultation's §3.1.5 pointer refers to a different paper layout
+- method
+  - 328 Python problems across 26 libraries
+    - version releases from 2014–2023
+    - §2.3
+  - requested version appears in the prompt and is installed in the validation environment
+    - §3.1
+  - hidden executable tests determine success
+    - visible tests provide debugging feedback
+  - appendix A.6.5 names “DuckDuckGo Search”, “Perplexity”, and “Gemini with Grounding”
+    - tools retrieve information for a multi-step coding agent
+  - the same appendix tests including or omitting “a code execution sandbox tool”
+    - dependencies match each example
+- authors' reported results, Table 2
+  - Claude Sonnet 3.5 with DuckDuckGo: 41.7% success without sandbox versus 55.3% with sandbox
+  - GPT-4o with grounded Gemini: 25.4% versus 50.0%
+  - improvement is not universal across the table
+    - Gemini 1.5 Pro with Perplexity: 46.5% versus 44.4%
+  - these results are not reproduced here
+- bounded overlap with the proposed technical-search pilot
+  - named software versions, live search tools, executable checks, and execution feedback are existing evaluation ingredients
+  - changing Python to Rust alone would not establish methodological novelty
+  - the inspected paper evaluates generated code correctness
+    - it does not report the proposed citation-support and shared-evidence-origin annotations
+    - this scope distinction is not proof of novelty elsewhere
+  - the benchmark is curated around historical library changes
+    - its failure rates do not estimate frequency among natural user search requests
+- remaining limits
+  - code and dataset availability are linked from the paper and [project repository](https://github.com/mrcabbage972/GitChameleonBenchmark)
+    - artifacts were not installed or reproduced
+  - exact search-query traces, tool versions, and citation retention were not audited here
+  - runtime tests cover their assertions
+    - passing does not establish an unrestricted operational guarantee
+  - nearest retrieval and version-aware software-answer benchmarks still need comparison before proposing a new dataset
+
 revised next experiment
 - question: how often do live technical answers cite the wrong software version or an overstated guarantee?
+  - extend and compare with GitChameleon 2.0 before claiming a new evaluation design
 - proposal: 50 questions across Rust releases and two database systems
   - each question names a version and an operational claim
   - verify answers against versioned primary documents
