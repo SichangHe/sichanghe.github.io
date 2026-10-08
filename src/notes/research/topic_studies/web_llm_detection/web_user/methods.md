@@ -18,7 +18,9 @@ human context read first
 - [research goals](../../../index.md)
 - [removal services](../../../removal_services.md)
 - DeGenTWeb ad extraction, site classification, non-article filtering, and Google Trends notes
-    - those files contained titles only when inspected
+    - the initial linked files contained titles only
+    - final group review found substantive project classification and filtering notes
+        - [existing pipeline and overlap](../llm_text/on_web_pages.md)
 - task focus, quoted from the human's research index
     - “how to find knowledge among spam on the web”
 
@@ -30,11 +32,8 @@ source discovery
 - record exact source locations for quotations
 - follow relevant citations and related studies
 - search access limits
-    - built-in search failed with HTTP 404
-    - alternate search connector failed
-    - direct Google HTTP requests returned a challenge page
-    - OpenAlex shared free budget was exhausted
-    - ACM often returned a JavaScript challenge
+    - broad search services and some publisher full texts were unavailable
+    - direct primary pages, venue programs, and collection PDFs supported the review
 - consequence
     - exact-term arXiv searches later succeeded
     - recent addenda review closer work on copied evidence, citations, ads in answers, and fine-grained blocking
@@ -84,16 +83,10 @@ review
 
 ChatGPT consultation
 
-- attempted with the requested Extra High reasoning setting
-- first invocation failed before submission
-    - helper diagnostic: `terminal_prepare_failed`, `TimeoutError`
-- retry verified the requested Extra High setting
-    - consultation submitted but returned no answer
-    - helper diagnostic: `account_ui_retry_required`
-    - no ChatGPT consultation result available
-- two fresh attempts after manager advice failed before submission
-    - helper diagnostic: `account_ui_login_required`
-- manager help requested after first failure
+- earlier attempts did not return an answer
+- a fresh saved GPT-6.1 Sol consultation was submitted with Extra High on 8 Oct 2026
+    - no answer returned within the wait limit
+    - consultation remains unmet
 - no ChatGPT opinion is treated as literature evidence
 
 research measurement rules
