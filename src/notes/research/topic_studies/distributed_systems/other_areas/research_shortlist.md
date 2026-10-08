@@ -3,6 +3,10 @@ research shortlist: test the failure before inventing a mechanism
 
 three starting points
 
+- [completed Extra High assessment](consultation_assessment.md) narrows these candidates
+  - defer new cancellation mechanisms until established ownership and reclamation policies show a consequential gap
+  - prioritize artifact checks before implementing new infrastructure
+
 - 1. cancellation and retry across a Rust service boundary
   - question: after a caller times out, how can it learn whether its remote update happened?
   - existing work
@@ -20,8 +24,9 @@ three starting points
     - retry while another request modifies shared state
     - compare ordinary retries, explicit task ownership, and recorded operation outcomes
   - independent check
-    - an independent effect log records each submitted operation identity
-    - every identity has at most one applied effect, including uncertain operations
+    - define the effect log’s durability and how observation changes execution
+    - retain the mapping from logical user operation to process incarnation and request attempt
+    - every logical operation has at most one applied effect, including uncertain operations
     - acknowledged operations have one recorded effect
     - uncertain outcomes remain explicit until resolved
     - record abandoned tasks separately from duplicate external effects
@@ -71,7 +76,8 @@ three starting points
   - independent check
     - successful retrieval before deadline
     - bytes and time spent finding a provider
-    - operator groups required by each successful path
+    - dependency groups used by each successful path
+    - controlled removals establish which groups are necessary
   - stop or narrow the project if ordinary fallback already preserves useful availability cheaply
   - [networking evidence and experiment details](networking_edge_p2p.md)
 
@@ -116,8 +122,10 @@ review record
   - helper status: `account_ui_retry_required`
   - a resume attempt also failed
   - a new submission also ended with `account_ui_retry_required`
-  - consultation remains incomplete despite verified Extra High selection
-  - no ChatGPT opinion is used as research evidence
+  - these are earlier failures, not the current consultation status
+- saved Extra High consultation subsequently completed
+  - [recovered opinion and primary-source assessment](consultation_assessment.md)
+  - opinion is distinguished from checked source evidence
 - independent review checked local links and sampled 2026 primary sources
   - fixes include stale tool-latency claims and an operation-ID effect log for uncertain updates
 - follow-up review found the corrected checks sound

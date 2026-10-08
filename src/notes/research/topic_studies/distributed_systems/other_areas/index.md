@@ -30,6 +30,8 @@ reading routes
 - [research shortlist and review limits](research_shortlist.md)
   - concrete starting experiments and the evidence needed before selecting a project
 
+- [completed Extra High critique and source checks](consultation_assessment.md)
+
 shared reading rules
 
 - author claims, measured results, and agent hypotheses are separate

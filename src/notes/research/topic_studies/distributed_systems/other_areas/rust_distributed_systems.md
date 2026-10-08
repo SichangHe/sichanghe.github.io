@@ -189,6 +189,10 @@ RIFL follow-up: caller lifetime is part of the contract
 - cancellation has a concrete resource cost even when duplication is prevented
   - section 4.2 limits outstanding non-reclaimable calls to 512 in that implementation
   - one stalled oldest call can delay reclamation and admission of newer calls
+  - section 4.2 already considers independent reclamation of newer records
+    - paper words: “granular approach”
+    - authors defer it until evidence justifies complexity and latency costs
+    - finer acknowledgment alone is therefore an anticipated remedy, not a new idea
   - agent hypothesis: compare cancellation policies by unresolved identities, retained records, admission delay, and applied effects
 - revised research decision
   - begin with compatibility tests against established result-recording and lease rules
