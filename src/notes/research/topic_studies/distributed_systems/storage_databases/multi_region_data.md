@@ -309,3 +309,24 @@ limits of this sweep
   - ACM returned HTTP 403 for Macaron; the CMU author-hosted PDF worked
 - this closes the four named unread-paper holes, not the entire regional citation sweep
 - no experiment, independent novelty confirmation, or ChatGPT Extra High consultation was completed here
+
+LEGOStore mechanism check
+- [Zare et al., versioned primary text](https://arxiv.org/html/2111.12009v2), sections 3.2–3.3
+  - evidence: “assuming perfect knowledge of workload and system properties”
+    - context: the placement optimizer's inputs
+  - evidence: “reconfigurations are applied sequentially by the reconfiguration controller”
+    - context: the migration protocol
+  - the objective already includes read/write network, storage, and VM costs
+    - network metadata is included
+    - stored metadata is excluded as negligible
+  - migration copies a tagged value to the new configuration
+    - some concurrent operations pause or restart
+  - inference: a new migration-cost study must compare with this explicit protocol and cost objective
+    - imperfect predictions and controller behavior are concrete dimensions to inspect
+    - they are not established novel gaps
+  - read depth: optimizer inputs/objective and migration mechanism
+    - appendix proof and recovery implementation not audited
+- SPANStore and SkyPIE primary bodies remain unread in this follow-up
+  - the attempted SPANStore author URL returned HTTP 404
+  - title search did not resolve a SkyPIE primary copy
+  - bibliographic discovery alone supplies no mechanism evidence

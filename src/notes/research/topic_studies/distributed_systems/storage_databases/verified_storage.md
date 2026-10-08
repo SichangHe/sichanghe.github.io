@@ -15,7 +15,7 @@ scope and neighbours
   - [deterministic simulation testing](../finding_bugs/deterministic_simulation_testing.md): FoundationDB, MadSim, Turmoil, S2, ModelFuzz
   - [model checking](../finding_bugs/model_checking.md): TLA+ and P at AWS, MongoDB conformance checking, Mocket, trace validation
   - [Rust bug-finding tools](../finding_bugs/rust_tools.md): Loom, Shuttle, Kani, ShardStore abstract
-  - review B systems, pending publication at `src/notes/research/distributed_verification_review_b/review_b_systems_20261007.md`: IronFleet, Verdi, Grove, Aneris, DaisyNFS, ShardStore with trusted-base notes
+  - [review B systems](../../../distributed_verification_review_b/review_b_systems_20261007.md): IronFleet, Verdi, Grove, Aneris, DaisyNFS, ShardStore with trusted-base notes
   - [transactions and regions](transactions_regions.md): MongoDB's VLDB 2025 storage-contract spec
 - what this note adds
   - verified transaction systems: vMVCC and Tulip, which no sibling covers
