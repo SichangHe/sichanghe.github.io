@@ -14,7 +14,7 @@ the plain picture
   - no hand-made features needed, the network finds the tells itself
   - Pangram, GPTZero, Turnitin and (as far as vendors say) Originality and Copyleaks work this way
   - architecture, data and thresholds are almost always secret
-- the hard part is the data, not the model
+- training data is a major part of the method
   - Pangram: mirror each human text with an AI text on the same topic and length, then keep adding the human texts the model gets wrong
   - GPTZero: huge pool, user dispute button, many fake "humanizer" rewrites added to training
 - every vendor says false positives matter most, then reports a tiny false positive rate
@@ -30,7 +30,7 @@ main takeaways
   - different test sets, different thresholds, different definitions of "AI"
   - Pangram 4 counts "mixed" as an error on both sides
   - Originality's new model asks "how much AI" instead of "AI or not"
-- the one independent head-to-head I trust most is Jabarian and Imas
+- Jabarian and Imas provide a detailed independent head-to-head
   - Pangram had about zero errors on normal-length text
   - Originality and GPTZero were fine on long text, worse on short text and on humanizers
   - the open-source RoBERTa flagged most human text as AI
@@ -102,7 +102,9 @@ the two training tricks
 what comes out
 - a fraction of AI-written text, plus a label of human, ai-assisted or ai-generated
   - Pangram 4 report, section 5.1: Human if f_human is at least 0.90, AI if f_AI is at least 0.80, otherwise Mixed
-- highlights down to the token and clause
+- internal predictions are per token; displayed highlights cover sentence groups
+  - [Pangram 4 model card](https://www.pangram.com/research/model-card/pangram-4), postprocessing: “Product output is constrained to sentence-level resolution”
+  - adjacent labels are merged to a minimum of around two sentences
 - a document-level flag for "humanized"
 - AI-assisted label is for text where the human and the AI are tangled, for example "a human who writes a paragraph and then goes back and forth with an AI to edit it" (report, section 3.2)
 - EditLens is the earlier paper behind the edit-level idea
@@ -124,7 +126,11 @@ vendor claims on accuracy (all Pangram's own tests)
 - non-native English
   - Pangram 4 report, table 9: 1 false positive in 24,586 learner texts, 0 of 89 in the Liang TOEFL set
 - other languages
-  - 14 false positives among 996,273 examples in 104 languages, false negative rate 1.24 percent over 18 languages
+  - reports 14 false positives among 996,273 examples in 104 languages
+  - its multilingual missed-detection aggregate needs clarification
+  - the current model card lists 23,578 misses among 190,149 texts alongside 1.24 percent
+  - my arithmetic gives 12.4 percent from those counts
+  - use the language-specific results until the vendor reconciles this discrepancy
 - length
   - their figure 4 shows error rates by length bucket from 50 to 499 words, short is worse
 - AI-polished text

@@ -9,7 +9,7 @@ the plain picture and main takeaways
 - takeaway 1: the big commercial ones run on the vendor's servers
     - every store listing I opened declares "website content" as collected data
     - none of the vendor pages says exactly what leaves the browser
-    - nobody has watched the network traffic of a detector extension (see the last section)
+    - this review found no academic network audit specific to these detector extensions
 - takeaway 2: models that run inside the browser exist but are weak or untested
     - Deckard, the local one I found with a number: about 2% false positives, author says "way, way worse than Pangram"
     - the Gemma-270M and Naive Bayes ones publish no real accuracy test
@@ -300,6 +300,22 @@ papers that build an extension, in-browser tool, or study one
     - fake-news, not AI-text, detection; uses retrieval plus an LLM and gives evidence-based explanations
     - "a complementary user study with 250 participants confirms the system's usability and perceived effectiveness"
     - a usability study, not a test of whether readers get more accurate
+- rumour detection on Twitter
+    - [Rumour Detection in the Wild: A Browser Extension for Twitter](https://aclanthology.org/2023.nlposs-1.15/), Jovanovic and Ross, NLP-OSS 2023
+    - an academic extension with a server model and related-news suggestions
+        - checks rumours, rather than who composed the words
+    - authors, section 7: “We asked 19 participants to perform five rumour detection tasks”
+    - 78.95% found the extension useful
+        - small university recruitment sample
+        - reported usefulness does not establish improved judgment on ordinary browsing
+    - section 5 compares training on Twitter15, Twitter16, and a mixture
+        - accuracy drops when training and evaluation come from different datasets
+        - mixed training partly recovers performance
+    - section 6 measures response time on 50 tweets
+        - useful precedent for measuring extension delay separately from classifier accuracy
+    - authors, limitations: “the current system’s reliance on the Twitter API, and its changing access requirements”
+        - deployment depends on obtaining conversation replies
+        - inference: a detector study should test missing page context and service failures too
 - DejAIvu
     - [DejAIvu: Identifying and Explaining AI Art on the Web in Real-Time with Saliency Maps](https://arxiv.org/abs/2502.08821), Dzuong, IJCAI 2025 demo track
     - Chrome extension for AI-generated images; "ONNX-optimized deep learning model" runs inside the extension, no server
@@ -441,26 +457,26 @@ security and privacy: what extensions send away
     - the listed declarations (website content, personal communications) are what the store form says, not what the code does
     - Pangram's own page says it stores scanned feed text by default
 
-what nobody seems to have studied yet
+research questions not resolved by the papers reviewed
 
 - what text leaves the browser
-    - nobody has recorded the network traffic of GPTZero, Pangram, Copyleaks, Originality, Hive, Winston or Sapling
+    - this review found no published traffic measurement for these seven detector extensions
     - open question: does auto-scan send every post in a feed, including private ones on LinkedIn, X or Gmail?
     - Arcanum's taint tracker could run on exactly these
 - what text gets picked
-    - no study of how a page-level scan chooses text (menus, ads, comments, quotes) and how the score changes with it
+    - the reviewed papers do not measure how page extraction changes detector scores
     - minimum lengths differ: Mozilla's detector 32 words, Winston 500 characters, Sapling free 2,000 characters per check
 - label effects with real detector mistakes
     - every label experiment I opened used a label placed by the experimenters on content whose truth the experimenters knew
-    - none shows readers a detector's real, wrong labels on real pages
+    - the reviewed studies do not evaluate live AI-text detector errors during browsing
     - open: does a confident wrong "AI" label on a human page, or a missed AI page, change what people decide
 - the implied truth effect for text detectors
     - Pennycook and Pawelczyk show spillover to unlabeled items
-    - nobody tested it where the labeler misses much AI text, which is the usual case
+    - the reviewed papers do not test spillover from missed AI-text labels
 - the effect on the author whose page gets flagged
-    - all label studies measure readers, none measure the writer accused
+    - the label studies reviewed here focus on readers rather than accused writers
 - in-browser detection quality
-    - nobody has put the Gemma-270M, Deckard and hand-rule detectors on a shared benchmark such as the human's usual sets, next to the server detectors
+    - this review found no shared evaluation of these local tools against server detectors
     - also open: can a Binoculars-style two-model scorer run in a browser at all
 - a census of the extension ecosystem
     - counts of AI-detector extensions, permissions, update dates, ownership; look-alikes such as the ZeroGPT.cc one; abandoned ones such as Hive's (last update 2025-01) and the shut-down Mozilla one
@@ -468,4 +484,4 @@ what nobody seems to have studied yet
     - SkipSlop, AI Slop Blocker sync, and the HUGE list exist, but no accuracy check, no abuse study, no study of whether the labels help readers
     - an idea for the human, as inference: the HUGE list's 1000+ hand-picked sites could be scored with DeGenTWeb's site-level method to measure its precision
 - speed of labels
-    - Community Notes studies suggest late labels do little; nobody asked how fast a crowd or a detector label arrives relative to when the page is read
+    - Community Notes studies suggest late labels do little; the reviewed AI-text studies do not measure whether labels arrive before readers act

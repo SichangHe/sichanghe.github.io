@@ -1,5 +1,4 @@
-# Measuring How Much of the Web Is AI-Generated
-
+measuring How Much of the Web Is AI-Generated
 (authored by agents unless marked 🧑)
 
 Literature review of every study I could find that estimates how much
@@ -18,7 +17,7 @@ Sibling notes: [image_watermarking](image_watermarking.md),
 themselves are covered under [llm_text](../llm_text/), search and SEO under
 [web_user](../web_user/), crawling under [web_infra](../web_infra/).
 
-## What DeGenTWeb measures (from the draft)
+what DeGenTWeb measures (from the draft)
 
 Read from /ssd1/sichangheagent/DeGenTWeb_writeup2/sections/*.tex and the
 macro values in degentweb_imc2026.tex.
@@ -41,14 +40,14 @@ macro values in degentweb_imc2026.tex.
     (Wikipedia) and NewsGuard; the sections below cover the much larger body
     of prevalence studies the draft does not yet cite
 
-## Open web and web crawls
+open web and web crawls
 
 These are the studies closest to DeGenTWeb. They all sample Common Crawl or
 the Internet Archive and run a detector per page. None of them works at the
 site level, and none of them publishes a measured false positive rate on web
 pages at the scale DeGenTWeb does (pre-ChatGPT subdomains).
 
-### Pew Research Center, "How Much of the Internet Is Written With AI?" (2026)
+pew Research Center, "How Much of the Internet Is Written With AI?" (2026)
 
 [Main report](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/)
 and [methodology](https://www.pewresearch.org/data-labs/2026/08/20/methodology-ai-content/),
@@ -78,7 +77,7 @@ Pew Research Center Data Labs, August 2026.
     dated pages and DeGenTWeb's 28.6% of sites first seen in 2025H1 are in the
     same ballpark despite different units, which is worth saying in the paper
 
-### Dolezal, Alam, Graham, Bohacek, "The Impact of AI-Generated Text on the Internet" (2026)
+dolezal, Alam, Graham, Bohacek, "The Impact of AI-Generated Text on the Internet" (2026)
 
 [arXiv 2604.26965](https://arxiv.org/abs/2604.26965), Jonas Dolezal, Sawood
 Alam, Mark Graham, Maty Bohacek (Internet Archive and Stanford), arXiv, 2026.
@@ -107,7 +106,7 @@ Alam, Mark Graham, Maty Bohacek (Internet Archive and Stanford), arXiv, 2026.
     share. The draft should cite it and point out that DeGenTWeb's
     LLM-dominant label is stricter than "AI-assisted"
 
-### Russell et al., "How Much Is an AI Token Worth?" (2026)
+russell et al., "How Much Is an AI Token Worth?" (2026)
 
 [arXiv 2609.40295](https://arxiv.org/abs/2609.40295), Jenna Russell, Ben
 Glickenhaus, Katherine Thai, John Wieting, Mohit Iyyer, Max Spero, Bradley
@@ -127,7 +126,7 @@ Emi (UMass Amherst and Pangram), arXiv, 2026.
     DeGenTWeb mentions only via Shumailov 2024; also a third unit (tokens) to
     compare with pages (Pew) and sites (DeGenTWeb)
 
-### Graphite, "More Articles Are Now Created by AI Than Humans" (2025) and the Q1 2026 update
+graphite, "More Articles Are Now Created by AI Than Humans" (2025) and the Q1 2026 update
 
 [Graphite report](https://graphite.io/five-percent/more-articles-are-now-created-by-ai-than-humans),
 Graphite (an SEO agency), October 2025; the follow-up was covered by
@@ -156,7 +155,7 @@ could not open directly.
     rate, which matches what DeGenTWeb does with pre-ChatGPT subdomains (0.29%)
     but at a far worse level, so DeGenTWeb's number is much more defensible
 
-### Ahrefs, "74% of New Webpages Include AI Content" (2025)
+ahrefs, "74% of New Webpages Include AI Content" (2025)
 
 [Ahrefs blog](https://ahrefs.com/blog/what-percentage-of-new-content-is-ai-generated),
 Ahrefs, May 2025.
@@ -175,7 +174,7 @@ Ahrefs, May 2025.
     the gap between 74% and 2.5% within the same study shows why the
     LLM-dominant definition matters
 
-### Thompson et al., "A Shocking Amount of the Web is Machine Translated" (2024)
+thompson et al., "A Shocking Amount of the Web is Machine Translated" (2024)
 
 [arXiv 2401.05749](https://arxiv.org/abs/2401.05749), Brian Thompson, Mehak
 Preet Dhaliwal, Peter Frisch, Tobias Domhan, Marcello Federico, Findings of
@@ -197,9 +196,9 @@ ACL, 2024.
     Binoculars scoring misses the non-English web, where generated content
     may be more common
 
-## Search results
+search results
 
-### Originality.ai, "Amount of AI Content in Google Search Results" (ongoing, 2019 to 2025)
+originality.ai, "Amount of AI Content in Google Search Results" (ongoing, 2019 to 2025)
 
 [Originality.ai study](https://originality.ai/ai-content-in-google-search-results),
 Originality.ai (a detector vendor), updated through September 2025.
@@ -217,7 +216,7 @@ Originality.ai (a detector vendor), updated through September 2025.
     numbers agree surprisingly well. DeGenTWeb adds a transparent method, a
     false positive bound, and the search vs open web gap (16.4% vs 6.0%)
 
-### Graphite, "How Does AI-Generated Content Perform in Search and Answer Engines?" (2025)
+graphite, "How Does AI-Generated Content Perform in Search and Answer Engines?" (2025)
 
 [Graphite report](https://graphite.io/five-percent/ai-content-in-search-and-llms),
 Graphite, 2025. Not read in full; the companion to the article study above.
@@ -228,7 +227,7 @@ Originality.ai trend. Worth a direct look before the paper claims either way;
 Graphite's search sample is drawn from their SEO clients' queries, not random
 how-to questions.
 
-### DeGenTWeb's own Webis-PSERP-24 analysis (hidden section of the draft)
+deGenTWeb's own Webis-PSERP-24 analysis (hidden section of the draft)
 
 The draft has a hidden subsection on
 [Webis-PSERP-24](https://webis.de/data/webis-pserp-24.html), top-20 results
@@ -238,9 +237,9 @@ sites rising over time. No other study I found measures LLM content in a
 multi-engine, multi-year SERP archive, so that section is more novel than the
 draft treats it.
 
-## News sites
+news sites
 
-### Hanley and Durumeric, "Machine-Made Media" (2024)
+hanley and Durumeric, "Machine-Made Media" (2024)
 
 [arXiv 2305.09820](https://arxiv.org/abs/2305.09820), Hans W. A. Hanley,
 Zakir Durumeric, ICWSM, 2024. PDF now in the paper collection.
@@ -276,7 +275,7 @@ Zakir Durumeric, ICWSM, 2024. PDF now in the paper collection.
     DeGenTWeb's 6% site share through 2025 are not in conflict given the
     time gap
 
-### Russell et al., "AI use in American newspapers is widespread, uneven, and rarely disclosed" (2026)
+russell et al., "AI use in American newspapers is widespread, uneven, and rarely disclosed" (2026)
 
 [arXiv 2510.18774](https://arxiv.org/abs/2510.18774), Jenna Russell, Marzena
 Karpinska, Destiny Akinode, Katherine Thai, Bradley Emi, Max Spero, Mohit
@@ -299,7 +298,7 @@ Iyyer, ACL, 2026. Already in the paper collection.
     which whole sites are LLM-run, this asks how much AI slips into
     human-run outlets
 
-### Ansari, Zhang, Tripto, Lee, "Echoes of Automation" (2025)
+ansari, Zhang, Tripto, Lee, "Echoes of Automation" (2025)
 
 [arXiv 2508.06445](https://arxiv.org/abs/2508.06445), Abolfazl Ansari, Delvin
 Ce Zhang, Nafis Irtiza Tripto, Dongwon Lee, SBP-BRiMS, 2025. PDF added.
@@ -316,7 +315,7 @@ Ce Zhang, Nafis Irtiza Tripto, Dongwon Lee, SBP-BRiMS, 2025. PDF added.
 - relation to DeGenTWeb: uses Binoculars too, so its per-sentence findings
     hint at what DeGenTWeb's page scores respond to in mixed articles
 
-### NewsGuard AI Tracking Center (ongoing)
+newsGuard AI Tracking Center (ongoing)
 
 [NewsGuard AI Tracking Center](https://www.newsguardtech.com/special-reports/ai-tracking-center/),
 NewsGuard, 2023 to 2026. The draft already cites this.
@@ -329,9 +328,9 @@ NewsGuard, 2023 to 2026. The draft already cites this.
 - relation to DeGenTWeb: the draft's intro uses it for motivation, which is
     right; it cannot be used as a prevalence estimate
 
-## Wikipedia
+wikipedia
 
-### Brooks, Eggert, Peskoff, "The Rise of AI-Generated Content in Wikipedia" (2024)
+brooks, Eggert, Peskoff, "The Rise of AI-Generated Content in Wikipedia" (2024)
 
 [arXiv 2410.08044](https://arxiv.org/abs/2410.08044), Creston Brooks, Samuel
 Eggert, Denis Peskoff, WikiNLP workshop at EMNLP, 2024. Already in the paper
@@ -354,9 +353,9 @@ already criticize it ("unscientific bc assume paper i.i.d.").
     prevalence study turned up in my searches, only a 2025 Wikimedia Research
     Fund proposal, so the field is open for a repeat with a 2026 sample
 
-## Social media and forums
+social media and forums
 
-### Sun et al., "Are We in the AI-Generated Text World Already?" (2025)
+sun et al., "Are We in the AI-Generated Text World Already?" (2025)
 
 [arXiv 2412.18148](https://arxiv.org/abs/2412.18148), Zhen Sun, Zongmin
 Zhang, Xinyue Shen, Ziyi Zhang, Yule Liu, Xinlei He, Michael Backes, Yang
@@ -378,7 +377,7 @@ Zhang, ACL, 2025. PDF added.
     DeGenTWeb search vs open web gap: where there is money or reach, there is
     more LLM text
 
-### La Cava, Aiello, Tagarelli, "Machines in the Crowd" (2025)
+la Cava, Aiello, Tagarelli, "Machines in the Crowd" (2025)
 
 [arXiv 2510.07226](https://arxiv.org/abs/2510.07226), Lucio La Cava, Luca
 Maria Aiello, Andrea Tagarelli, arXiv, 2025. PDF added.
@@ -397,7 +396,7 @@ Maria Aiello, Andrea Tagarelli, arXiv, 2025. PDF added.
     human's gen_ai.md lists "set-level detection applications: Reddit users")
     done loosely; DeGenTWeb's decile-SVM could be applied per user
 
-### Chen, Ye, Ferrara, Luceri, "Prevalence, Sharing Patterns, and Spreaders of Multimodal AI-Generated Content on X" (2025)
+chen, Ye, Ferrara, Luceri, "Prevalence, Sharing Patterns, and Spreaders of Multimodal AI-Generated Content on X" (2025)
 
 [arXiv 2502.11248](https://arxiv.org/abs/2502.11248), Zhiyi Chen, Jinyi Ye,
 Emilio Ferrara, Luca Luceri, arXiv, 2025. Already in the paper collection and
@@ -418,7 +417,7 @@ in the human's gen_ai.md notes.
     DeGenTWeb mass-produced cluster finding (a few operators make much of
     the content)
 
-### Pangram, "AI in Your Feed" (2026)
+pangram, "AI in Your Feed" (2026)
 
 [Pangram blog](https://www.pangram.com/blog/ai-in-your-feed), Pangram Labs,
 2026; covered by [The
@@ -436,7 +435,7 @@ Decoder](https://the-decoder.com/linkedin-is-the-undisputed-king-of-long-form-ai
 - relation to DeGenTWeb: another vendor headline the intro can group with
     Graphite and Ahrefs
 
-### Originality.ai, "Social Media AI Tracker" (monthly, 2026)
+originality.ai, "Social Media AI Tracker" (monthly, 2026)
 
 [Originality.ai August 2026 tracker](https://originality.ai/blog/social-media-tracker-august),
 Originality.ai, 2026.
@@ -454,7 +453,7 @@ Originality.ai, 2026.
 - relation to DeGenTWeb: the best single illustration of "claims vary
     widely" for the intro: four Reddit estimates spanning 2% to 31%
 
-### Matatov, Aubin Le Quéré, Amir, Naaman, "AI-Generated Media in Art Subreddits" (2024)
+matatov, Aubin Le Quéré, Amir, Naaman, "AI-Generated Media in Art Subreddits" (2024)
 
 [arXiv 2410.07302](https://arxiv.org/abs/2410.07302), Hana Matatov, Marianne
 Aubin Le Quéré, Ofra Amir, Mor Naaman, arXiv, 2024.
@@ -465,7 +464,7 @@ Aubin Le Quéré, Ofra Amir, Mor Naaman, arXiv, 2024.
     image-based posts"
 - trust: self-labels are a floor; relevant mostly as a norm study
 
-### Kapwing, "YouTube AI slop" report (2026)
+kapwing, "YouTube AI slop" report (2026)
 
 [Kapwing report via NeoMam](https://neomam.com/projects/youtube-ai-slop-report/),
 Kapwing, 2026 (press coverage in LBC, SlashGear and others).
@@ -478,12 +477,12 @@ Kapwing, 2026 (press coverage in LBC, SlashGear and others).
 - relation to DeGenTWeb: video is outside DeGenTWeb's scope, but the "mass
     produced for ad revenue" story is the same
 
-## Product reviews
+product reviews
 
 No academic study with a defensible in-the-wild prevalence number exists for
 reviews. All numbers below come from detector vendors.
 
-### Pangram, "Three percent of front-page Amazon reviews are now AI-generated" (2026)
+pangram, "Three percent of front-page Amazon reviews are now AI-generated" (2026)
 
 [Pangram blog](https://www.pangram.com/blog/ai-amazon-reviews), Pangram Labs,
 May 2026.
@@ -496,7 +495,7 @@ May 2026.
 - trust: front-page reviews only; "high confidence" threshold means a floor;
     no FPR measured on pre-ChatGPT reviews
 
-### Originality.ai, Google reviews and TripAdvisor studies (2025)
+originality.ai, Google reviews and TripAdvisor studies (2025)
 
 [Google reviews](https://originality.ai/blog/ai-google-reviews-study) and
 [TripAdvisor](https://originality.ai/blog/ai-tripadvisor-reviews-study),
@@ -510,27 +509,27 @@ Originality.ai, 2025.
     LLM existed, and the studies never subtract them; short reviews are the
     worst case for any detector; vendor-run
 
-### Loke and GC, "Detecting AI-Generated Reviews for Corporate Reputation Management" (2025)
+loke and GC, "Detecting AI-Generated Reviews for Corporate Reputation Management" (2025)
 
 [SciTePress](https://www.scitepress.org/PublishedPapers/2025/135720), R. Loke,
 M. GC, 2025. Builds the ARED dataset of Amazon reviews and estimates
 "almost 10%" AI reviews in a product sample, validated only by comparing with
 Fakespot and ReviewMeta, which detect fake reviews, not AI ones. Low trust.
 
-### Schäfer, Mofreh, Steinebach, "Ghostwriters of the Marketplace" (2026)
+schäfer, Mofreh, Steinebach, "Ghostwriters of the Marketplace" (2026)
 
 [ICWSM 2026](https://ojs.aaai.org/index.php/ICWSM/article/view/42791), Karla
 Schäfer, Mohammed Mofreh, Martin Steinebach, ICWSM, 2026. A 78k-review
 corpus of machine-generated Google reviews from six LLMs for training
 detectors; no prevalence estimate. Listed so nobody mistakes it for one.
 
-## Academic papers and peer reviews
+academic papers and peer reviews
 
 This is the best-studied domain, and the one where the methods differ most
 from DeGenTWeb: the strongest results use corpus-level word statistics, not
 per-document detectors.
 
-### Liang et al., "Monitoring AI-Modified Content at Scale" (2024)
+liang et al., "Monitoring AI-Modified Content at Scale" (2024)
 
 [arXiv 2403.07183](https://arxiv.org/abs/2403.07183), Weixin Liang, Zachary
 Izzo, Yaohui Zhang, Haley Lepp, Hancheng Cao, Xuandong Zhao, Lingjiao Chen,
@@ -551,7 +550,7 @@ Haotian Ye, Sheng Liu, Zhi Huang, Daniel A. McFarland, James Y. Zou, ICML,
     fraction answers "how much" without ever answering "which", while
     DeGenTWeb needs "which site" for its characterization findings
 
-### Liang et al., "Mapping the Increasing Use of LLMs in Scientific Papers" (2024) and the Nature Human Behaviour version (2025)
+liang et al., "Mapping the Increasing Use of LLMs in Scientific Papers" (2024) and the Nature Human Behaviour version (2025)
 
 [arXiv 2404.01268](https://arxiv.org/abs/2404.01268), Weixin Liang et al.,
 arXiv, 2024; published as "Quantifying large language model usage in
@@ -567,7 +566,7 @@ Already in the draft and the collection.
 - trust: same method and caveats as above; the drift from 17.5% to 22%
     between versions is partly more months of data
 
-### Kobak, González-Márquez, Horvát, Lause, "Delving into LLM-assisted writing in biomedical publications through excess vocabulary" (2025)
+kobak, González-Márquez, Horvát, Lause, "Delving into LLM-assisted writing in biomedical publications through excess vocabulary" (2025)
 
 [arXiv 2406.07016](https://arxiv.org/abs/2406.07016), Dmitry Kobak, Rita
 González-Márquez, Emőke-Ágnes Horvát, Jan Lause, Science Advances, 2025. PDF
@@ -587,7 +586,7 @@ added.
     detector-free cross-check: do words like "delve" spike on
     DeGenTWeb-flagged sites but not on unflagged ones?
 
-### Gray, "ChatGPT 'contamination'" (2024) and Geng and Trotta (2024)
+gray, "ChatGPT 'contamination'" (2024) and Geng and Trotta (2024)
 
 [arXiv 2403.16887](https://arxiv.org/abs/2403.16887), Andrew Gray, arXiv,
 2024 (PDF added): keyword counts in Dimensions, "At least 60,000 papers
@@ -599,7 +598,7 @@ about 35% of computer science abstracts revised by ChatGPT, against a
 studies; the 1% vs 35% gap comes from whether one counts a few rare marker
 words (Gray) or fits a whole frequency shift (Geng).
 
-### Wolfrath et al., "Rising Prevalence of Detected AI-Generated Text in Medical Literature" (2026)
+wolfrath et al., "Rising Prevalence of Detected AI-Generated Text in Medical Literature" (2026)
 
 [arXiv 2603.19316](https://arxiv.org/abs/2603.19316), Nathan Wolfrath, Simrin
 Patel, Madelyn Flitcroft, Anjishnu Banerjee, Melek Somai, Bradley H. Crotty,
@@ -613,7 +612,7 @@ Anai N Kothari, arXiv, 2026. PDF added.
 - trust: the 0.0% in January 2022 is a useful implicit FPR check for this
     corpus; single commercial detector; one journal
 
-### Latona et al., "The AI Review Lottery" (2024)
+latona et al., "The AI Review Lottery" (2024)
 
 [arXiv 2405.02150](https://arxiv.org/abs/2405.02150), Giuseppe Russo Latona,
 Manoel Horta Ribeiro, Tim R. Davidson, Veniamin Veselovsky, Robert West,
@@ -626,7 +625,7 @@ arXiv, 2024. In the draft and the collection.
 - trust: single proprietary detector; the effect sizes are small and could
     come from reviewer selection
 
-### ICLR 2026: Pangram's 21% and follow-ups (2025 to 2026)
+ICLR 2026: Pangram's 21% and follow-ups (2025 to 2026)
 
 Pangram's blog post on ICLR 2026 reviews could not be opened (404 on the URL
 I tried); the number is quoted in
@@ -656,9 +655,9 @@ reported a disallowed use.
     the draft's limitations point that "Hybrid human-LLM collaboration
     content may be common, blurring boundary"
 
-## Other text in the wild
+other text in the wild
 
-### Liang et al., "The Widespread Adoption of Large Language Model-Assisted Writing Across Society" (2025)
+liang et al., "The Widespread Adoption of Large Language Model-Assisted Writing Across Society" (2025)
 
 [arXiv 2502.09747](https://arxiv.org/abs/2502.09747), Weixin Liang, Yaohui
 Zhang, Mihai Codreanu, Jiayu Wang, Hancheng Cao, James Zou, arXiv, 2025. PDF
@@ -682,17 +681,17 @@ added.
     speaks to; the draft can use it to argue that observed plateaus in other
     studies may be detector decay
 
-### Hao et al., "Do Spammers Dream of Electric Sheep?" (2025)
+hao et al., "Do Spammers Dream of Electric Sheep?" (2025)
 
 In the draft and the human's notes: about 240k Barracuda-flagged spam and
 BEC emails, three detectors with very different results, a clear rise. Not
 re-read here.
 
-### Puccetti et al., "AI 'News' Content Farms Are Easy to Make and Hard to Detect" (2024)
+puccetti et al., "AI 'News' Content Farms Are Easy to Make and Hard to Detect" (2024)
 
 In the draft (Italian news content farms). Not re-read here.
 
-### Copyleaks, "Explosive Growth of AI Content Across the Web" (2024)
+copyleaks, "Explosive Growth of AI Content Across the Web" (2024)
 
 [Copyleaks press release](https://copyleaks.com/about-us/media/copyleaks-analysis-reveals-explosive-growth-of-ai-content-across-the-web),
 Copyleaks, 2024. Claims an "8,362%" rise from November 2022 to March 2024,
@@ -701,7 +700,7 @@ The 1.57% is interesting only because it is so far below Ahrefs' 74% and
 Graphite's 39% for the same period: it shows vendor numbers are
 incomparable even with each other.
 
-## Images online
+images online
 
 I found no study that estimates what share of images on the open web are
 AI-generated. The literature on image detection is about benchmarks, not
@@ -735,7 +734,7 @@ recompression (see the "Navigating the Challenges of AI-Generated Image
 Detection in the Wild" line of work,
 [arXiv 2507.10236](https://arxiv.org/html/2507.10236v2)).
 
-## Cross-cutting lessons on trusting the numbers
+cross-cutting lessons on trusting the numbers
 
 What I take away after reading all of the above, and what I think the
 DeGenTWeb intro should say instead of "claims vary widely":
@@ -782,54 +781,84 @@ DeGenTWeb intro should say instead of "claims vary widely":
 - nobody has a prevalence number for images on the open web, and nobody has
     a non-English web number beyond Thompson's machine translation work
 
-## Research we could do
+research we could do
 
-Ideas ordered by how directly they build on DeGenTWeb and the studies above.
+- recommendations below build on DeGenTWeb and the reviewed studies
+    - novelty remains unconfirmed
+    - choose a bounded pilot before scaling
 
-1. Reconcile the units on one sample. Run DeGenTWeb's site pipeline, Pew's
-   open Pangram model, Binoculars per page and Kobak-style excess vocabulary
-   on the same Common Crawl 2025 to 2026 sample, and report page share, token
-   share, site share and word-statistic share side by side with each method's
-   pre-ChatGPT false positive rate. Builds on Pew 2026, Dolezal 2026, Russell
-   2026, Kobak 2025, Graphite 2026. The payoff is a table that explains the
-   2.5% to 74% spread and makes DeGenTWeb the reference point.
-2. Detector decay as the explanation for plateaus. Take the DeGenTWeb Bedrock
-   synthetic sites (five frontier models) and rescore them with every
-   detector used in the prevalence literature (Pangram open model, GPTZero
-   if affordable, Fast-DetectGPT, Originality if affordable). If all of
-   them lose accuracy on 2025 to 2026 models, the plateaus in Liang 2025,
-   Graphite 2026 and Pew 2026 are suspect. Builds on the draft's limitations
-   section and Liang 2025.
-3. Detector-free cross-check with excess vocabulary on the web. Apply
-   Kobak's excess-word method to Common Crawl prose pages by half-year, and
-   check whether the excess words concentrate on DeGenTWeb-flagged sites.
-   Two methods with different failure modes agreeing would be the strongest
-   evidence either one has. Builds on Kobak 2025 and DeGenTWeb.
-4. Site-level aggregation for other units. The decile-SVM idea transfers to
-   Reddit users (La Cava, Sun), newspaper outlets (Russell 2026), reviewers
-   on Amazon (Pangram 2026) and peer reviewers across venues (Shen and Wang).
-   Pick one with a ground truth: ICML 2026 self-reports (Kim et al.) exist
-   for reviewers, and the human's gen_ai.md already lists "set-level
-   detection applications: Reddit users, OpenReview".
-5. A multi-year, multi-engine SERP study on its own. The hidden Webis
-   subsection is the only measurement of LLM-dominant sites across engines
-   and years; combined with Originality.ai's Google series and Graphite's
-   claim that AI articles do not rank, it could become a paper about whether
-   search engines filter LLM-dominant sites, with Google core updates as
-   natural experiments (Bevendorff 2024 did this for SEO spam). Builds on
-   Webis-PSERP-24, Originality.ai, Graphite, Bevendorff 2024.
-6. Non-English LLM-dominant web. Thompson 2024 says machine content already
-   dominates low-resource languages via translation. Repeat DeGenTWeb on
-   non-English Common Crawl with a multilingual observer/performer pair, and
-   compare with the machine-translation share. Builds on Thompson 2024 and
-   Brooks 2024's note that Binoculars misses non-English.
-7. Images on the open web. No prevalence number exists. A first study could
-   sample images from Common Crawl or from the DeGenTWeb site set, use C2PA
-   or IPTC "digital source type" labels and generator watermarks (SynthID
-   where checkable) as a precision-first signal, and report a floor the way
-   Brooks and Hanley do. Builds on Chen 2025, DiResta 2024 and the
-   [image watermarking](image_watermarking.md) notes.
-8. Longitudinal site switching. DeGenTWeb's 90 "switched" sites is a finding
-   no other study has. Pair it with Hanley's "small sites drive the rise"
-   and Russell 2026's "small local papers use AI more" to study who switches,
-   when, and whether traffic (Tranco rank, ads) changes after the switch.
+1: compare methods and units on one sample
+
+- run DeGenTWeb, open Pangram, page-level Binoculars, and excess-word estimates on one Common Crawl sample
+- report page, site, and text-volume estimates separately
+    - word-frequency mixture estimates have their own interpretation
+- calibrate on documented human and generated writing
+    - pre-ChatGPT pages are historical controls rather than proven human authorship
+- compare with Pew, Dolezal, Russell, Kobak, and Graphite
+- isolates method and denominator differences
+    - cannot alone explain the published 2.5% to 74% spread
+    - populations, dates, and authorship definitions also differ
+- stop if the differences follow directly from the chosen denominator
+
+2: test whether detector decay could contribute to apparent plateaus
+
+- rescore DeGenTWeb's known-generated frontier-model sites with frozen accessible detectors
+    - compare open Pangram, Fast-DetectGPT, and affordable commercial tools
+- build on the draft's limitations and Liang 2025
+- declining recall would weaken an adoption-plateau interpretation
+    - it would not prove that adoption continued growing
+- stop if the effect disappears with a stronger frozen baseline
+
+3: cross-check with excess vocabulary
+
+- apply Kobak's method to Common Crawl prose by half-year
+- test whether excess words concentrate on DeGenTWeb-flagged sites
+- agreement is supporting evidence rather than independent ground truth
+    - both methods can respond to shared topic or style shifts
+- compare historical periods and documented writing before interpreting generation
+
+4: test aggregation for another unit
+
+- possible units include Reddit users, outlets, Amazon reviewers, and peer reviewers
+    - reviewed leads include La Cava, Sun, Russell, Pangram, Shen, and Wang
+- choose a unit with checkable authoring histories
+    - Kim et al.'s ICML self-reports are a lead
+    - self-reports need their own reliability assessment
+- the human's notes already propose set-level applications
+    - this is an extension rather than a new aggregation idea
+
+5: track search exposure across engines and years
+
+- combine Webis-PSERP-24, Originality.ai, Graphite, and Bevendorff's SEO-spam methods
+- measure which generated-dominant sites appear and at what ranks
+- distinguish ranking changes from detector drift and changing site samples
+- search-engine updates are candidate interventions
+    - concurrent changes limit causal interpretation
+
+6: evaluate multilingual website detection
+
+- compare non-English Common Crawl prose with Thompson's machine-translation results
+- test a multilingual scoring pair on documented human and generated sites
+- translation and original generation are different writing processes
+    - calibrate them separately
+- builds on Thompson and Brooks
+    - do not infer transfer from English detection alone
+
+7: measure detectable provenance in web images
+
+- sample images from a defined crawl or DeGenTWeb site set
+- report C2PA, IPTC source labels, and accessible generator watermarks separately
+    - missing marks do not establish human authorship
+    - mark presence needs validation before becoming an origin label
+- builds on Chen, DiResta, Brooks, Hanley, and [image watermarking](image_watermarking.md)
+- measures detectable evidence rather than total generated-image prevalence
+- no comprehensive open-web estimate was identified in this review
+
+8: study longitudinal site switching
+
+- begin with DeGenTWeb's reported switched-site set
+- compare Hanley and Russell's findings about small publishers
+- inspect when sites change and whether traffic or ads change afterward
+    - a detector transition is not itself an observed authoring transition
+    - rank and traffic changes alone do not establish effects caused by generation
+- audit known histories before expanding a crawl

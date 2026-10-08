@@ -1,10 +1,9 @@
-# Watermarking AI-generated images, audio and video
-
+watermarking AI-generated images, audio and video
 (authored by agents unless marked 🧑)
 
 Written 6 Oct 2026. This note covers invisible marks that AI companies stamp into generated pictures, sound and video so that a detector can later say "our model made this". C2PA metadata, text watermarks and labeling rules live in sibling notes; I only touch them where they interact with media watermarks.
 
-## Short answer
+short answer
 
 - the technology works for ordinary handling: Google says SynthID-Image has marked "over ten billion images and video frames", and the best post-hoc schemes keep ~99% detection at 0.1% false positives under crops, resizes, JPEG, filters
 - it does not work against anyone who tries: every public scheme is removed by running the image through a diffusion model, by stamping a second watermark on top, or by a few hundred detector queries; semantic watermarks can also be copied onto real photos
@@ -13,7 +12,7 @@ Written 6 Oct 2026. This note covers invisible marks that AI companies stamp int
 - but detectors stay closed (Gemini chat, Google's portal for journalists, OpenAI's verify page), so no outsider has measured how many watermarked images exist on the web or how many survive social platforms; I found exactly zero in-the-wild studies of invisible watermarks, and one that shows X strips C2PA on upload
 - this measurement gap is the opening for us (ideas at the end)
 
-## How the schemes work
+how the schemes work
 
 Three families. The first two apply to any media; the third is specific to diffusion models.
 
@@ -57,7 +56,7 @@ Audio and video use the same post-hoc idea with modality tricks.
     - trains with "video codecs" in the loop; "temporal watermark propagation" so only some frames are embedded; open
 - in-generation video marks: [VideoShield](https://arxiv.org/abs/2501.14195), Runyi Hu et al., ICLR 2025 ("maps watermark bits to template bits, which are then used to generate watermarked noise"; also "tamper localization"); [VideoMark](https://arxiv.org/abs/2504.16359), Xuming Hu et al., arXiv 2025 (PRC codes per frame plus edit-distance matching "against temporal attacks, such as frame deletion")
 
-## How well they survive ordinary handling
+how well they survive ordinary handling
 
 For compression, resizing, cropping and filters, the modern post-hoc schemes are close to perfect, and the deployed ones were tuned for exactly these.
 
@@ -81,9 +80,9 @@ Screenshots and re-upload to platforms are the weak spot of the evidence, not of
     - "none of the surveyed schemes can withstand all tested distortions"
     - "Key Finding 1: All watermark schemes are vulnerable to pitch shift attacks"; "Key Finding 6: Most watermarks are vulnerable to physical re-recording"; "Key Finding 7: All watermarks are vulnerable to far-distance re-recording"; "Key Finding 10: ... VC models ... bringing the recovery rate down to approximately 50%, comparable to a random guess"
 
-## Attacks
+attacks
 
-### Removal
+removal
 
 The pattern since 2023: anything that re-synthesizes the content from a compressed description (a diffusion model, a VAE, a speech enhancer, a voice converter) wipes marks that live in pixels or samples. Semantic marks resist that but fall to latent-space attacks.
 
@@ -117,7 +116,7 @@ The pattern since 2023: anything that re-synthesizes the content from a compress
 - video: [VideoMarkBench](https://arxiv.org/abs/2505.21620), Zhengyuan Jiang, Moyang Guo, Kecen Li, Yuepeng Hu, Yupu Wang, Zhicong Huang, Cheng Hong, Neil Zhenqiang Gong, arXiv 2025
     - "existing video watermarking methods are broken against both watermark removal and forgery attacks in the white-box setting"; in black-box, "vulnerable to adversarial removal perturbations ... with a sufficient number of queries to the detection API and certain common removal perturbations in the no-box setting"
 
-### Forgery (making a real photo look AI-made, or wearing a competitor's mark)
+forgery (making a real photo look AI-made, or wearing a competitor's mark)
 
 - Saberi et al. (above): "with black-box access to the watermarking method, a watermarked noise image can be generated and added to real images, causing them to be incorrectly classified as watermarked"
 - [Black-Box Forgery Attacks on Semantic Watermarks for Diffusion Models](https://arxiv.org/abs/2412.03283), Andreas Müller, Denis Lukovnikov, Jonas Thietke, Asja Fischer, Erwin Quiring, CVPR 2025 oral
@@ -128,7 +127,7 @@ The pattern since 2023: anything that re-synthesizes the content from a compress
 - audio: [Yours or Mine? Overwriting Attacks Against Neural Audio Watermarking](https://arxiv.org/abs/2509.05835), Lingfeng Yao et al., AAAI 2026: overwrite with a forged mark so "the original legitimate watermark undetectable", "nearly 100% attack success rate" in white/gray/black-box
 - why forgery matters more than removal for provenance: a removed mark means "unknown"; a forged mark means a real photo of a real event gets labeled fake, which is the deepfake defender's nightmare (the "liar's dividend" in reverse)
 
-### Google's threat model, in its own words
+google's threat model, in its own words
 
 - SynthID-Image Sec. 6: threats are "watermark removal (creating a false negative)", "watermark forgery (creating a false positive)", "model extraction ... secret extraction ... payload attacks"
 - "Achieving perfect security is impossible; thus, we focused our efforts on making key attacks as difficult and expensive as possible"; deployed in a "proprietary setting, our main goal is to make black-box attacks computationally infeasible"; a "determined white-box adversary" is out of scope
@@ -136,7 +135,7 @@ The pattern since 2023: anything that re-synthesizes the content from a compress
 - "Eventually there will be multiple versions in production ... vulnerability might be 'inherited' between versions" (Sec. 7)
 - Sec. 10: "SynthID-Image alone will not solve many of the problems we set out to alleviate, including misinformation, impersonation or copyright tracking ... watermarking in itself does not solve the provenance problem"; wants "public detectability using cryptographic signatures" and better "security, particularly considering white-box threat models" for open models
 
-## What is deployed
+what is deployed
 
 - Google: [SynthID](https://deepmind.google/science/synthid/), Google DeepMind
     - "The watermarks are embedded across Google's generative AI consumer products"; images and video "designed to stand up to modifications like cropping, adding filters, changing frame rates, or lossy compression"; audio from Lyria and NotebookLM "can't be altered by common modifications like adding noise, MP3 compression, or changing the speed of the track"
@@ -159,7 +158,7 @@ The pattern since 2023: anything that re-synthesizes the content from a compress
     - China, [Measures for Labeling AI-Generated Synthetic Content](https://www.chinalawtranslate.com/en/ai-labeling/), translation by China Law Translate, in force 1 Sep 2025: Article 5 requires "implicit labels" in "file metadata", and "Service providers are encouraged to add implicit labels to generated synthetic content in forms such as digital watermarks"; Article 6 makes platforms check metadata and label content, which is the only law I saw that puts duties on the platform side
     - [Watermarks Without Verification: AI Text Watermarking After the EU AI Act](https://arxiv.org/abs/2609.09604), Alexander Nemecek, Vipin Chaudhary, Erman Ayday, arXiv Sep 2026, argues the real failure is that "no public tool can test the deployed systems"; the same holds for images
 
-## Has anyone measured watermarked media in the wild?
+has anyone measured watermarked media in the wild?
 
 Short answer: no, for invisible watermarks. The only in-the-wild numbers are about C2PA metadata and about passive detectors.
 
@@ -174,7 +173,7 @@ Short answer: no, for invisible watermarks. The only in-the-wild numbers are abo
     - [Synthetic Politics](https://arxiv.org/abs/2502.11248), Zhiyi Chen, Jinyi Ye, Beverlyn Tsai, Emilio Ferrara, Luca Luceri, ACM Hypertext 2025: in 2024 US election tweets "approximately 12% of shared images are detected as AI-generated"
 - in my opinion, a platform study like the X one, repeated across platforms with watermarked originals we generate ourselves, is the cheapest high-value paper in this area; see ideas below
 
-## Watermark vs C2PA, and whether a watermark is evidence
+watermark vs C2PA, and whether a watermark is evidence
 
 - [Authenticated Contradictions from Desynchronized Provenance and Watermarking](https://arxiv.org/abs/2603.02378), Alexander Nemecek, Hengzhi He, Guang Cheng, Erman Ayday, CVPR 2026 Workshop APAI
     - "a digital asset carries a cryptographically valid C2PA manifest asserting human authorship while its pixels simultaneously carry a watermark identifying it as AI-generated, with both signals passing their respective verification checks in isolation"; needs "no cryptographic compromise, only the semantic omission of a single assertion field permitted by the current C2PA specification"
@@ -184,7 +183,7 @@ Short answer: no, for invisible watermarks. The only in-the-wild numbers are abo
 - [Are Watermarks Bugs for Deepfake Detectors?](https://arxiv.org/abs/2404.17867), Xiaoshuai Wu, Xin Liao, Bo Ou, Yuling Liu, Zheng Qin, IJCAI 2024: watermark perturbations "are prone to overlap with the forgery signals used for detection", so marking an image can change what a passive detector says
 - Google's paper agrees that watermarks need company: "we expect watermarking to be deployed alongside a metadata-based standard like C2PA" and fingerprinting, because "similarity search is more prone to false positives rather than false negatives" while watermarks fail the other way
 
-## What remains open
+what remains open
 
 - adversarial robustness: no scheme survives a motivated attacker; the deployed answer is secrecy plus fingerprint databases, which only the company can query
 - forgery: semantic marks are copyable; post-hoc marks are forgeable with detector access; defenses are weeks old
@@ -196,7 +195,7 @@ Short answer: no, for invisible watermarks. The only in-the-wild numbers are abo
 - measurement: nobody knows what fraction of AI images on the web carry a working mark, or how fast marks decay as content gets reshared; and nobody outside the vendors can find out
 - fairness: AudioMarkBench found "robustness gaps among biological sex groups ... and language groups"; untested for images across content types beyond Google's "grayscale photographs, sketches" note
 
-## Research we could do
+research we could do
 
 Each idea names the gap, what it builds on, the method, and the main risk. The first three fit our web-measurement background and need no vendor access beyond public verify endpoints.
 
@@ -242,7 +241,7 @@ Each idea names the gap, what it builds on, the method, and the main risk. The f
     - method: build a test set of real collage, meme and screen-recording layouts from platform samples; measure detection as a function of marked-area fraction and scale; propose aggregation rules
     - risk: again needs detectors; open models first
 
-## Gaps in this review
+gaps in this review
 
 - I could not read full texts for most 2026 attack papers (MarkNull, re-watermarking, speech-enhancement), only abstracts and arXiv HTML greps; numbers quoted come from abstracts unless a section is cited
 - I did not find Amazon's Titan image watermark documentation or any Midjourney, Stability or ByteDance statement; those vendors' deployment status is unknown to me

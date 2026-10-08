@@ -1,12 +1,13 @@
-# C2PA and cryptographic content provenance
-
+C2PA and cryptographic content provenance
 (authored by agents unless marked 🧑)
 
-Written 7 Oct 2026. This note covers C2PA Content Credentials and its
-relatives: how the standard changed, who decides which signers to trust,
-what the security people found, who ships it, how much of it survives on the
-web, what users make of the labels, and the alternatives. It builds on the
-human's own notes and does not repeat them:
+- reviewed 7 Oct 2026
+- covers C2PA Content Credentials and related systems
+    - standard changes and signer trust
+    - security findings and deployment
+    - evidence surviving publication
+    - readers' interpretation of labels
+- builds on the human's existing notes
 
 - `../../../c2pa/papers.md`: papers up to 2024 by theme (intro, extensions,
     zero-knowledge edits, JPEG Trust, blockchain, fake-image detection)
@@ -19,13 +20,13 @@ human's own notes and does not repeat them:
     spec's own security document, the Canon key leak, PKI and quantum worries,
     which platforms strip, ideas
 
-Sibling notes: [image_watermarking](image_watermarking.md) for invisible
-watermarks and the one Integrity Clash paper, and
-[labeling_rules_and_practice](labeling_rules_and_practice.md) for laws, what
-platforms show, and the audits of platform labels (Indicator, Rijsbosch et
-al., AI Forensics). I point to them rather than repeat.
+- sibling reviews cover related evidence
+    - [image watermarking](image_watermarking.md)
+        - invisible watermarks and Integrity Clash
+    - [labeling rules and practice](labeling_rules_and_practice.md)
+        - laws, platform displays, and audits
 
-## Short answer
+short answer
 
 - C2PA is now shipped by default on a mass-market phone (Pixel 10, Sep
     2025), by OpenAI and Google generators, by Cloudflare's image CDN, and is
@@ -64,7 +65,7 @@ al., AI Forensics). I point to them rather than repeat.
     registries that re-solve the same two problems (stripping, corporate
     trust lists) without evaluation.
 
-## How C2PA works, in one paragraph, and what changed per version
+how C2PA works, in one paragraph, and what changed per version
 
 The human's `photo_crypto_auth.md` already has the nesting (manifest, claim,
 assertions), signing, and hard binding. What matters for 2025 and 2026 is the
@@ -113,7 +114,7 @@ C2PA can now in principle sign a web page, though I found no deployment of
 that and the labeling sibling note quotes a 2025 proposal that said "It does
 not support HTML text content" (true for 2.2).
 
-## Trust model: who decides which signers count
+trust model: who decides which signers count
 
 Three lists exist, and the official tool still uses the old one. From the
 CAI docs on [trust lists](https://opensource.contentauthenticity.org/docs/conformance/trust-lists/)
@@ -169,9 +170,9 @@ the pattern is "a C2PA certificate is needed to sign the overall manifest and
 a CAWG certificate to embed a verified creator identity within it". I did not
 find any measurement of CAWG use in the wild.
 
-## Security analyses and attacks
+security analyses and attacks
 
-### The 2026 UMBC/Hacker Factor/NSA study
+the 2026 UMBC/Hacker Factor/NSA study
 
 [Verifying Provenance of Digital Media: Why the C2PA Specifications Fall
 Short](https://arxiv.org/abs/2604.24890), Enis Golaszewski, Neal Krawetz,
@@ -247,7 +248,7 @@ What I take from it: items 2, 3 and 5 are the ones a web measurement would
 see directly. If we crawl C2PA images and run several validators, we should
 expect disagreement and silent expiry, and we can quantify both.
 
-### The Nikon Z6 III incident, Sep 2025
+the Nikon Z6 III incident, Sep 2025
 
 The one real-world compromise so far. Per
 [heise](https://www.heise.de/en/news/Nikon-struggles-with-security-problems-in-photo-authentication-10667707.html)
@@ -269,7 +270,7 @@ This is not a cryptographic break. It is the "trick the claim generator"
 threat the human already listed from the spec's security document, done with
 a stock camera feature. It also shows the revocation gap is not theoretical.
 
-### The Pixel 10 Pro signed an AI image too, Aug 2026
+the Pixel 10 Pro signed an AI image too, Aug 2026
 
 [C2PA and Pixel Glitter Milk](https://hackerfactor.com/blog/index.php?/archives/1102-C2PA-and-Pixel-Glitter-Milk.html),
 Neal Krawetz, Hacker Factor blog, 25 Aug 2026. David Buchanan (retr0id)
@@ -302,7 +303,7 @@ optional", and "you can upload the exact same picture to different C2PA
 validators and get conflicting results"; he promises worked examples in a
 next post, which was not up when I looked.
 
-### Krawetz's earlier forgeries
+krawetz's earlier forgeries
 
 The human's notes link the VIDA/SEAL post. The earlier one,
 [C2PA's Butterfly Effect](https://www.hackerfactor.com/blog/index.php?/archives/1010-C2PAs-Butterfly-Effect.html),
@@ -319,7 +320,7 @@ IPTC Photo Metadata Conference 2024) frames provenance, watermark and
 fingerprint "from the attacker's perspective" and cites the Hackaday
 write-up of the forgery.
 
-### Integrity Clash
+integrity Clash
 
 [Authenticated Contradictions from Desynchronized Provenance and
 Watermarking](https://arxiv.org/abs/2603.02378), Alexander Nemecek, Hengzhi
@@ -329,7 +330,7 @@ while its pixels simultaneously carry a watermark identifying it as
 AI-generated". The watermark sibling note covers it; the PDF is in the paper
 collection.
 
-### Privacy
+privacy
 
 Two 2025 and 2026 sources go beyond the human's "choose what metadata to
 include" note:
@@ -371,7 +372,7 @@ photo is exactly the PKI scaling question the human raised in
 `photo_crypto_auth.md`; Google answers it with hardware attestation and a
 Google-run CA, which is not an option open to a small vendor.
 
-### Microsoft's own status report
+microsoft's own status report
 
 [Media Integrity and Authentication: Status, Directions, and
 Futures](https://arxiv.org/abs/2602.18681), Jessica Young, Sam Vaughan,
@@ -392,7 +393,7 @@ arXiv (Microsoft), Feb 2026. Useful because it is insiders admitting limits:
 - "reversal" attacks: "making authentic content appear synthetic, and
     synthetic content appear authentic"
 
-## Adoption as of Oct 2026
+adoption as of Oct 2026
 
 Primary sources where I could get them; vendor explainer sites otherwise,
 marked as such.
@@ -477,7 +478,7 @@ Readers and platforms:
 - Newsrooms: the IPTC list above; BBC, CBC, AFP, DW, France TV, NTB, RTÉ,
     WDR.
 
-## Measurements: how much C2PA is out there and who strips it
+measurements: how much C2PA is out there and who strips it
 
 This is thin, and that is the finding. I searched for any crawl-based count
 of C2PA manifests on the web or on news sites and found none; the labeling
@@ -508,7 +509,7 @@ open web with a manifest; the share of those that still validate (given
 expiry and validator disagreement); and a per-platform keep/strip/rewrite
 matrix with dates.
 
-## How users understand the labels
+how users understand the labels
 
 Three peer-reviewed experiments, plus BBC's internal numbers. The sibling
 labeling note has the broader "labels lower belief" literature; here only
@@ -551,7 +552,7 @@ decode. Combined with Krawetz's point that a valid signature is not truth,
 that is the "liar's dividend in reverse": a signed lie gets a trust bump. No
 study yet tested a forged-but-valid manifest on users.
 
-## Alternatives and complements
+alternatives and complements
 
 - Soft bindings and durable credentials: the Adobe design the human noted
     (TrustMark plus fingerprint) is now in the spec (2.2 Soft Binding API)
@@ -613,7 +614,7 @@ study yet tested a forged-but-valid manifest on users.
     photos that no C2PA validator reads, which splits the ecosystem at
     exactly the moment Google and Meta converge.
 
-## What I make of it
+what I make of it
 
 - The standard is maturing fast on paper (five versions in 28 months) but
     the trust plumbing is behind: the official verifier still uses a frozen
@@ -630,7 +631,7 @@ study yet tested a forged-but-valid manifest on users.
     rate, per-platform handling. The human's own tooling (c2patool fork,
     trust list runs in `camera_apps.md`) is most of what is needed.
 
-## Gaps in this review
+gaps in this review
 
 - I could not open the ePrint full report (Cloudflare), the OpenAI May 2026
     post, or PetaPixel's Nikon piece; the OpenAI facts come from search
@@ -646,12 +647,12 @@ study yet tested a forged-but-valid manifest on users.
 - I did not search Chinese-language sources on vivo's and Xiaomi's C2PA
     rollouts, though their 15 conformance records suggest phones shipped.
 
-## Research we could do
+research we could do
 
 Each idea names what it builds on. Ordered by how close it is to the human's
 past work.
 
-### 1. A C2PA census of the web
+1. A C2PA census of the web
 
 - question: what fraction of images on the open web, on news sites, and on
     each social platform carry a manifest, and what fraction of those
@@ -669,7 +670,7 @@ past work.
     signed files exist in volume for the first time; Chrome and Instagram
     reading will change behavior soon, so a baseline has a short window
 
-### 2. The keep/strip/rewrite matrix
+2. The keep/strip/rewrite matrix
 
 - question: for each platform, CDN, CMS and messaging app, what happens to a
     manifest on upload, on re-share, on download, on screenshot, and does the
@@ -683,7 +684,7 @@ past work.
     sibling's idea 3 ("Where do marks die between the generator and the web
     page?") which this generalizes to cameras and CDNs
 
-### 3. Validator agreement and credential decay in the wild
+3. Validator agreement and credential decay in the wild
 
 - question: on real signed files collected by idea 1, how often do CAI
     Verify, Adobe Inspect, c2patool, ProofMode Verify, Google's reader and
@@ -694,7 +695,7 @@ past work.
 - builds on: Golaszewski et al.'s five goals and their single-image
     examples (Arizona pilot, Nikon); this turns their examples into rates
 
-### 4. Users facing a valid lie
+4. Users facing a valid lie
 
 - question: does a cryptographically valid but false manifest (Nikon-style
     signed AI image, or a Krawetz-style fake edit history) raise trust more
@@ -705,7 +706,7 @@ past work.
     content), Forstner et al. 2025 (44% misread), Trattner et al. 2026
     (detail raises trust); none tested forgery
 
-### 5. Signed pages for DeGenTWeb
+5. Signed pages for DeGenTWeb
 
 - question: can C2PA 2.4's HTML and Markdown embedding, or an HTTP
     response signature, give DeGenTWeb a ground-truth channel for "this page
@@ -717,7 +718,7 @@ past work.
 - builds on: the 2.4 spec, IPTC's publisher list, the labeling sibling's
     `ai-disclosure` proposal, Web Bot Auth as the request-side precedent
 
-### 6. Privacy leakage of deployed signers
+6. Privacy leakage of deployed signers
 
 - question: across the census corpus, how identifying is a manifest?
     Which signers reuse keys across users (Capture Cam did), which include
@@ -727,7 +728,7 @@ past work.
 - builds on: McCollum 2026 ("fingerprinted back to unique users"), World
     Privacy Forum 2025, the human's certificate dumps in `camera_apps.md`
 
-### 7. Open hardware-backed signing for any Android phone
+7. Open hardware-backed signing for any Android phone
 
 - question: with Qualcomm's Snapdragon 8 Elite Gen 5 at level 2 and Android
     key attestation accepted by the program, can an open-source camera app
@@ -741,7 +742,7 @@ past work.
     what "the owner is the attacker" means for the claim, or add the
     attestation of boot state that Google evidently did not require
 
-### 8. What does a signature prove once the owner is the attacker?
+8. What does a signature prove once the owner is the attacker?
 
 - question: Nikon (multiple exposure), Pixel (root), and Krawetz's 2023
     self-signed forgeries are three ways the signer is honest but the input
