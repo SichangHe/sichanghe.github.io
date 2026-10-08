@@ -158,6 +158,7 @@
                     - [🤖 verified storage: stores and databases that are proven or formally checked](notes/research/topic_studies/distributed_systems/storage_databases/verified_storage.md)
             - [🤖 practical formal verification and Rust](notes/research/topic_studies/formal_verification_rust/index.md)
                 - [🤖 research choices across the Rust study](notes/research/topic_studies/formal_verification_rust/best_bets.md)
+                - [🤖 four-folder consultation assessment](notes/research/topic_studies/formal_verification_rust/consultation_assessment.md)
                 - [🤖 llm for verification](notes/research/topic_studies/formal_verification_rust/llm_for_verification/index.md)
                     - [🤖 LLMs for proofs about C code and operating systems](notes/research/topic_studies/formal_verification_rust/llm_for_verification/c_and_systems_proofs.md)
                     - [🤖 verified code generation, proof agents, and improvement loops](notes/research/topic_studies/formal_verification_rust/llm_for_verification/code_and_agents.md)
