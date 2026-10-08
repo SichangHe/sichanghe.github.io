@@ -129,9 +129,12 @@ interrupts and embedded code
 - no proof of an interrupt-to-main-loop lock-free queue (heapless-style) found
 
 async/await
-- verifiers: nothing found (quotes above)
+- general functional-verification support was not found in this targeted search
+  - Rumpsteak's type-based asynchronous protocol checks are described above
 - bug and test side: [async bugs note](../rust_language/async_concurrency_bugs.md) covers cancellation, Gray et al. OOPSLA 2026, Tip 2026
-- inference: async is easier to prove than threads in one respect, a single-threaded executor has no weak memory; the hard part is the state machine the compiler generates from `async fn`, which no verifier front end models yet
+- inference: a single-threaded executor avoids inter-thread weak-memory reasoning
+  - compiler-generated future states, pinning, and cancellation still require a supported execution model
+  - this review did not establish such support in the surveyed verifiers
 
 bounded checkers instead of proofs
 - Loom and Shuttle: [existing note](../rust_language/async_concurrency_bugs.md#schedule-testing-methods)
@@ -159,7 +162,9 @@ bounded checkers instead of proofs
 
 what is missing
 - relaxed-memory proofs in a tool you can run
-  - evidence: Verus and IronSync are SeqCst-only; relaxed proofs exist only in a logic ([Jacobs and Fasse](https://arxiv.org/abs/2505.00449)) and in the type-system proof (RBrlx)
+  - evidence: reviewed Verus and IronSync support is SeqCst-only
+  - reviewed relaxed-memory results include [Jacobs and Fasse](https://arxiv.org/abs/2505.00449) and RustBelt Relaxed
+    - this selected evidence does not establish absence of other tools
   - evidence: std-library challenges 7 (atomics) and 27 (Arc) unsolved
 - general functional verification of async/await in the reviewed program verifiers
   - evidence: two reviewed tools list async as unsupported or future work
@@ -207,8 +212,9 @@ idea 2: proofs versus bounded checkers on the same code, with mutated orderings
 idea 3: minimal executor and waker proof
 - question: can we prove that a small executor and its wakers never lose a wakeup, and that dropping a future at an await point leaves the executor consistent?
 - builds on [async bugs note](../rust_language/async_concurrency_bugs.md), [Gray et al.](https://arxiv.org/abs/2608.20677) (cancellation semantics), Verus state machines
-- what is new: first proof-level model of poll, wake and cancel for Rust futures, by hand-writing the `Future` state machine in Verus instead of using `async fn`
-- why it may matter: most async Rust bugs sit in this contract, not in memory safety
+- proposed contribution: a small checked model of poll, wake, and cancel, using a hand-written `Future` state machine in Verus
+  - novelty requires a broader search for existing executor models and proofs
+- why it may matter: the model could address lost wakeups and cancellation inconsistencies that memory safety alone does not exclude
 - first experiment: single-thread executor with one task and one waker, then two wakers across threads with SeqCst atomics (Verus can do that today); check the proof against a Loom test of the same code
 - convincing result: a proof, plus a seeded lost-wakeup bug that the proof rejects and a plain test misses
 - cost: medium, a few months; real `async fn` support would need front-end work (hard part)

@@ -32,7 +32,6 @@ primary-source follow-up
 - [Evaluating LLM-Generated ACSL Annotations](https://arxiv.org/abs/2602.13851), FTfJP 2026 listing
   - ACSL is a specification language for C; Frama-C checks its assertions
   - paper retains 355 valid C programs from 506 source files
-    - the original search snippet above gave only the source-file count
   - methods differ in purpose
     - runtime-error annotations and rule templates mainly express safety
     - LLMs may also generate functional contracts
@@ -65,20 +64,24 @@ primary-source follow-up
   - peer-reviewed systems paper
   - method: fine-tuned proof-step proposals, symbolic repair, and ranked search over Isabelle proof states
   - authors report “up to 77.6% of the theorems” on the FVEL seL4 benchmark
+    - 2,167 proved across the still-valid validation, test, and test-hard sets
+    - this percentage does not describe the full 29,125-theorem corpus
   - limits: repeated prover calls are costly, and longer proofs remain harder
     - this is a theorem-completion result, not verification of previously unverified kernel code
 - [Agentic Verification of Software Systems](https://arxiv.org/abs/2511.17330), AutoRocq, FSE 2026
   - peer-reviewed software-engineering paper
   - method: Rocq feedback and context queries guide an agent's proof construction
   - evaluation includes 641 proof obligations derived from 131 sequential C programs
-    - paper also reports 12 Linux utility lemmas
+    - paper proves 12 of 60 selected Linux-kernel lemmas, or 18 with CoqHammer
   - important limit: contracts, inferred invariants, Frama-C translation, and completion of the whole program's obligations remain separate from proving a selected lemma
+    - initial Eva/property-test screening cannot prove inferred loop invariants correct
   - inference: an accepted lemma is useful evidence only after mapping it back to the source property
 - [Trustworthy Software Project Generation](https://arxiv.org/abs/2605.26017), Fang and Xiong, 2026 preprint
   - method: prove a pure Rocq core and extract it into C++ alongside unverified effects
   - authors report an RV32I interpreter covering 47 instructions in 30 minutes
     - 265 generated tests passed; 12 hours of fuzzing found no crashes or hangs
   - source limit: “the small host C++ layer handling side effects is unverified”
+  - extraction limit: authors assume that Crane's Rocq-to-C++ translation preserves behavior
   - inference: generated requirements, implementation, and tests can share an omission
     - independent ISA conformance tests would add evidence beyond self-consistency
 - [Towards Neural Synthesis for SMT-Assisted Proof-Oriented Programming](https://arxiv.org/abs/2405.01787), Chakraborty et al., ICSE 2025
@@ -123,3 +126,15 @@ what was searched
   - arXiv 2511.01104 is HarnessLLM testing, and 2512.03420 studies fuzz harnesses
     - neither substantiates the initial draft’s attribution to a CBMC proof agent
   - unidentified Intel TDX thesis and BMC-Agent leads are not used as evidence
+
+source archive
+- newly collected primary texts and download provenance
+  - [Towards Real-World Industrial-Scale Verification- LLM-Driven Theorem Proving on seL4](https://github.com/SichangHe/paper_collection/blob/main/Towards%20Real-World%20Industrial-Scale%20Verification-%20LLM-Driven%20Theorem%20Proving%20on%20seL4%2C%20Jianyu%20Zhang%2C%20Fuyuan%20Zhang%2C%20Jiayi%20Lu%2C%20et%20al.%2C%20arXiv%2C%202026/source-provenance-20261008.md)
+  - [PROMISE- Proof Automation as Structural Imitation of Human Reasoning](https://github.com/SichangHe/paper_collection/blob/main/PROMISE-%20Proof%20Automation%20as%20Structural%20Imitation%20of%20Human%20Reasoning%2C%20Youngjoo%20Ahn%2C%20Sangyeop%20Yeo%2C%20Gijung%20Im%2C%20et%20al.%2C%20arXiv%2C%202026/source-provenance-20261008.md)
+  - [Evaluating LLM-Generated ACSL Annotations for Formal Verification](https://github.com/SichangHe/paper_collection/blob/main/Evaluating%20LLM-Generated%20ACSL%20Annotations%20for%20Formal%20Verification%2C%20Arshad%20Beg%2C%20Diarmuid%20ODonoghue%2C%20Rosemary%20Monahan%2C%20FTfJP%2C%202026/source-provenance-20261008.md)
+  - [AutoACSL- Synthesizing ACSL Specifications by Integrating LLMs with CPG-Based Static Analysis](https://github.com/SichangHe/paper_collection/blob/main/AutoACSL-%20Synthesizing%20ACSL%20Specifications%20by%20Integrating%20LLMs%20with%20CPG-Based%20Static%20Analysis%2C%20Han%20Zhou%2C%20Yu%20Luo%2C%20Dianxiang%20Xu%2C%20arXiv%2C%202026/source-provenance-20261008.md)
+  - [Agent-Driven Verification of Memory Safety for liblzma Decoder Components with VST](https://github.com/SichangHe/paper_collection/blob/main/Agent-Driven%20Verification%20of%20Memory%20Safety%20for%20liblzma%20Decoder%20Components%20with%20VST%2C%20Prokhor%20Shlyakhtun%2C%20Alexander%20Gryzlov%2C%20Vladimir%20Kukharenko%2C%20et%20al.%2C%20arXiv%2C%202026/source-provenance-20261008.md)
+  - [Trustworthy Software Project Generation- a Case Study with an Interactive Theorem Prover](https://github.com/SichangHe/paper_collection/blob/main/Trustworthy%20Software%20Project%20Generation-%20a%20Case%20Study%20with%20an%20Interactive%20Theorem%20Prover%2C%20Jian%20Fang%2C%20Yingfei%20Xiong%2C%20arXiv%2C%202026/source-provenance-20261008.md)
+  - [Neuro-Symbolic Proof Generation for Scaling Systems Software Verification](https://github.com/SichangHe/paper_collection/blob/main/Neuro-Symbolic%20Proof%20Generation%20for%20Scaling%20Systems%20Software%20Verification%2C%20Baoding%20He%2C%20Zenan%20Li%2C%20Wei%20Sun%2C%20et%20al.%2C%20OSDI%2C%202026/source-provenance-20261008.md)
+- PDFs are retained locally in `/hdd1/sichanghe/paper_collection`
+  - repository publishes extracted text and source records

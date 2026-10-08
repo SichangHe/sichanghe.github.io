@@ -3,7 +3,7 @@ formal verification of blockchain software
 
 short version
 
-- fact: the most-used proof tools in this area check source or bytecode of one contract, not a validator
+- the reviewed proof tools primarily check contract source or bytecode rather than validator clients
   - Certora Prover (Solidity, Rust/Solana), Move Prover (Aptos, Sui), Kontrol (Foundry tests on the K semantics of the EVM)
   - I found no published proof about any part of Agave or Firedancer, the two Solana validator clients
 - selected projects use LLMs to write specifications or proofs
@@ -14,7 +14,7 @@ short version
   - the Move bytecode verifier bug was in code nobody had proved
   - Certora's Kamino report found bugs with proofs and a manual audit together
   - the Kamino proofs used a smaller number type and unrolled loops once
-- fact: Solana has a formal model of its VM, but not of the real VM code
+- the reviewed Solana VM semantics and tests do not prove equivalence to the production VM code
   - an Isabelle model of sBPF (OOPSLA 2025) and a Lean port of it inside Solanalib
   - the safety theorem is about the model, tested against a reference VM
 - inference: the largest open piece is the bridge from these models to Agave and Firedancer code
@@ -243,21 +243,21 @@ zk and zkvm code under ethereum
 
 what is missing
 
-- no proof about Agave or Firedancer code
+- this review did not find proof about Agave or Firedancer code
   - evidence: searches for Kani, Verus, Lean, or Isabelle together with Agave, Firedancer, or sBPF found only Solanalib and the OOPSLA Isabelle model (both models of sBPF) and the Certora and OtterSec contract tools
   - the human's [Agave sizing](../../../agave_verification_scope.md) is the only sizing I found
-- no proof linking Solanalib's sBPF model to the real VM code
+- this review did not find proof linking Solanalib's sBPF model to the real VM code
   - differential testing is the only link in the README
-- no formal proof of the Move bytecode verifier in what I read
+- this review did not find formal proof of the Move bytecode verifier in what I read
   - evidence: the Zellic bug sat in the CFG builder it depends on
-- no measurement of how strong LLM-written specs are on Solana or Move
+- this review did not find measurement of how strong LLM-written specs are on Solana or Move
   - MSG measures "verifiable" and match to experts, PropertyGPT measures recall against human properties
   - Monperrus' 28 exploits are the closest ready benchmark, but only for Ethereum and only for tools that make invariants
-- no public cost data for Solana proofs
+- this review did not find public cost data for Solana proofs
   - EquiVM has token and hour tables for Ethereum, the Solana side has Certora engagement dates only
-- no study of drift
-  - how often a proved Solana program or Move module is upgraded without re-proof is not measured in anything I opened
-- no comparison of proofs and differential fuzzing for client code
+- this review did not find study of drift
+  - the inspected sources do not measure how often proved Solana or Move code is upgraded without re-proof
+- this review did not find comparison of proofs and differential fuzzing for client code
   - the Firedancer conformance suite exists but its bug yield was not opened
 
 research we can do

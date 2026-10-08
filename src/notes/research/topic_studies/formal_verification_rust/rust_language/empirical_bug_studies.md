@@ -10,6 +10,8 @@ takeaway
   - compare detection methods on the same historical versions
 
 what the studies actually measured
+- [compiler-bug study](compile_time_toolchain.md): separately reviews 301 rustc issues from 2022–2024
+  - compiler failures are a different population from application and library defects
 - [Qin, Chen, Yu, Song, Zhang, PLDI 2020](https://cseweb.ucsd.edu/~yiying/RustStudy-PLDI20.pdf)
   - title: Understanding Memory and Thread Safety Practices and Issues in Real-World Rust Programs
   - inspected 850 unsafe uses and 170 bugs
