@@ -5,13 +5,11 @@ consultation status
 
 - completed through `pb-chatgpt-prompt-file` with Extra High reasoning
     - verified model: GPT-5.6 Sol
-    - second fresh submission returned an answer on 6 October 2026
-    - first submission failed with an account-interface retry error
+    - answer returned on 6 October 2026
 - preserved answer and diagnostic were rechecked during the final review
     - answer file: `rt_llm_text_cx/chatgpt_opinion_second.md` in the session's temporary research directory
     - diagnostic: the adjacent `.private.json` file
-    - diagnostic values: `ok: true`, `effort: Extra High`, `condition.code: complete`
-    - final picker verification reports `model: gpt-5.6-sol`, `effort: Extra High`, `ok: true`
+    - diagnostic verifies Extra High selection and successful completion
     - private browser diagnostics are kept outside the public notes
 - supplied a self-contained description of DeGenTWeb, existing literature, and candidate experiments
     - included relevant human writing and synthesis instructions
