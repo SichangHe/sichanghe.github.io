@@ -1,0 +1,256 @@
+stores, durability, and recovery
+(authored by agents unless marked 🧑)
+
+where I would start
+- recommendation: study recovery while ordinary requests and storage cleanup compete for the same disks
+  - a fast repair algorithm can still cause an outage if repair slows requests enough to trigger retries
+  - this is a proposed experiment, not a claim of an undiscovered problem
+- recommendation: separately test whether storage layers agree about when old data can be deleted
+  - one layer's obsolete data may still belong to another layer's snapshot or recovery path
+  - aim for a small, executable contract before attempting to verify a whole store
+- research status
+  - primary PDFs inspected: GFS, Ceph, Dynamo, f4, ELECT, NCBlob, LESS, DisCoGC, Ananke, the redundancy/corruption study, Perseus, CNSBench, Cloudscape, VeriBetrKV
+  - close reading focused on introductions, mechanisms, failure assumptions, evaluation setup, and relevant limitations
+  - proceedings screened: FAST 2021, 2023–2026; OSDI 2020, 2022–2024; NSDI 2020
+  - retrieved through direct HTTP because both available web search tools failed
+  - search date: 7 Oct 2026 UTC
+  - this is a focused review, not an exhaustive bibliography or evidence of novelty
+
+what must survive
+- definitions used here
+  - key-value store: save a value under a name and retrieve it by that name
+  - file store: expose named files and operations on their byte ranges
+  - object store: expose named objects through operations such as putting and retrieving an object
+  - durability: the promised data survives the specified failures
+  - recovery: restore usable service after a failure
+  - replication: keep multiple copies
+  - erasure coding: keep data and calculated extra pieces so missing pieces can be reconstructed
+  - storage disaggregation: run computation and storage on separate machines
+  - garbage collection: reclaim space occupied by data that is no longer needed
+  - compaction: copy surviving data into a new layout and discard the old layout
+  - foreground work: requests from users
+  - background work: repair, cleanup, or maintenance
+- proposed analysis method
+  - identify the exact event that promises durability to the client
+  - enumerate what must survive that event
+  - distinguish process crashes, machine crashes, corrupt blocks, stale reads, slow devices, and regional failures
+  - track recovery resources as carefully as steady-state resources
+  - ask who can establish that a piece of data is safe to delete
+
+foundations worth reading
+- Ghemawat, Gobioff, and Leung, GFS, SOSP 2003
+  - original evidence, introduction: “component failures are the norm rather than the exception”
+  - [primary paper, §§1, 2.7, 5](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf)
+  - mechanism: a master manages metadata while clients access large chunks on storage machines
+  - mechanism: checksums detect damaged chunks and other replicas supply replacement data
+  - scope: large files and append-heavy workloads motivate deliberately relaxed file semantics
+  - implication: a filesystem result must name its workload and client guarantees before comparing performance
+- Weil et al., Ceph, OSDI 2006
+  - original evidence, abstract: “distributing data replication, failure detection and recovery to semi-autonomous OSDs”
+  - OSD: an object storage device managed by the system
+  - [primary paper, §§2, 3, 5](https://www.usenix.org/legacy/event/osdi06/tech/full_papers/weil/weil.pdf)
+  - mechanism: CRUSH computes object placement from a cluster map
+  - mechanism: the metadata cluster and object storage cluster handle different responsibilities
+  - implication: repair correctness depends on agreeing about placement changes as well as retaining copies
+  - scope: the paper describes the original prototype, not the guarantees of today's Ceph release
+- DeCandia et al., Dynamo, SOSP 2007
+  - original evidence, abstract: “a highly available key-value storage system”
+  - [primary paper, §§4.4–4.7](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf)
+  - mechanism: version information exposes concurrent updates for reconciliation
+  - mechanism: temporary substitutes accept writes during failures and later pass them back
+  - mechanism: replicas compare summaries to find and repair divergence
+  - implication: retaining a value and resolving conflicting values are separate tasks
+  - scope: Dynamo in this paper is not a specification of current DynamoDB
+- Muralidhar et al., f4, OSDI 2014
+  - original evidence, abstract: “lowers the effective-replication-factor of warm BLOBs while remaining fault tolerant”
+  - BLOB: binary large object
+  - effective replication factor: stored bytes divided by original bytes
+  - [primary paper, §§3–5](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf)
+  - mechanism: separate frequently accessed objects from objects accessed less often
+  - mechanism: use erasure coding and placement across failure boundaries for the latter
+  - implication: object age and access rate can justify different storage layouts
+  - caution: a workload-specific redundancy design needs its stated disk, host, rack, and datacenter failure assumptions
+
+copies alone do not establish recovery
+- Ganesan et al., redundancy does not imply fault tolerance, FAST 2017
+  - original evidence, abstract: “a single file-system fault can cause catastrophic outcomes such as data loss, corruption, and unavailability”
+  - [primary paper, §§3–5](https://www.usenix.org/system/files/conference/fast17/fast17-ganesan.pdf)
+  - experiment: inject corruption and read/write errors into eight distributed stores
+  - finding in tested versions: fault handling can return bad data, lose data, or spread corruption to intact replicas
+  - implication: fault injection must check returned values and replica state, not just whether service restarts
+  - limitation: these findings do not prove the same bugs exist in current releases
+- Hance et al., VeriBetrKV, OSDI 2020
+  - original evidence, §3.1.1: “corruption cannot produce a block with a valid checksum”
+  - [primary paper, §§2.1, 3.1, 6](https://www.usenix.org/system/files/osdi20-hance.pdf)
+  - mechanism: verify code against a storage environment that includes asynchronous operations and crashes
+  - guarantee: synced data survives crashes under the modeled disk behavior
+  - scope: checksum failures cause query abortion rather than a proof of repair completion
+  - limitation: stale blocks with valid checksums violate the stated corruption assumption
+  - implication: distinguish detecting invalid bytes from detecting an old but internally valid version
+- Liu et al., Ananke, FAST 2025
+  - original evidence, abstract: “running a small amount of recovery code coordinated by the host OS at the moment of a process crash”
+  - [primary paper, §§2–4, 6](https://www.usenix.org/system/files/fast25-liu-jing.pdf)
+  - mechanism: preserve information outside the failed filesystem service so it can restore the state applications expect
+  - important boundary: a process crash can leave the operating system and useful memory alive
+  - full machine crashes remove that opportunity
+  - implication: avoid treating successful process recovery as evidence of power-loss durability
+
+recent work narrows the promising questions
+- Ren et al., ELECT, FAST 2024
+  - original evidence, abstract: “selectively converts data from replication to erasure coding in the hot tier”
+  - [primary paper, §§3–6](https://www.usenix.org/system/files/fast24-ren.pdf)
+  - mechanism: combine replication and coding according to the layout and access rate of data in Cassandra
+  - hot tier: storage serving frequently accessed data
+  - cold tier: storage retaining less frequently accessed data
+  - implication: proposing to switch hot and cold data between copies and codes is insufficiently differentiated
+  - question worth testing: how does conversion interact with simultaneous repair and sudden access-rate changes?
+- Gan et al., NCBlob, FAST 2025
+  - original evidence, abstract: “their actual repair performance is impaired by non-contiguous I/Os”
+  - [primary paper, §§3–5 and artifact appendix](https://www.usenix.org/system/files/fast25-gan.pdf)
+  - mechanism: group small objects likely to be read together and encode all stored blocks
+  - tradeoff: fewer scattered disk accesses during repair against decoding work during ordinary reads
+  - implication: minimizing network bytes does not necessarily minimize repair time
+  - [published artifact](https://github.com/YuchongHu/NCBlob)
+- Cheng et al., LESS, FAST 2026
+  - original evidence, abstract: “reduces both the amount of data accessed and the number of I/O seeks”
+  - [primary paper, §§2, 3, 5 and artifact appendix](https://www.usenix.org/system/files/fast26-cheng.pdf)
+  - mechanism: layer extended groups of Reed-Solomon-coded pieces
+  - Reed-Solomon: a family of erasure codes
+  - experiment: a 15-machine HDD testbed with controlled network bandwidth
+  - full-node recovery experiment repairs 20 blocks from different groups
+  - implication: extend workload scale and competing traffic before treating code-level repair gains as service-level gains
+  - this limitation motivates measurement, not a claim that the code fails under load
+  - [published artifact](https://github.com/adslabcuhk/less)
+- Bian et al., DisCoGC, FAST 2026
+  - original evidence, §4.1: “The discard process is top-down and asynchronous”
+  - [primary paper, §§4, 6, 7](https://www.usenix.org/system/files/fast26-bian.pdf)
+  - mechanism: tell lower layers to free obsolete ranges instead of always copying live data
+  - mechanism: align ranges across coding and filesystem allocation boundaries
+  - mechanism: batch and throttle reclamation to protect ordinary requests
+  - evidence scope: ByteDrive and ByteStore production measurements and offline experiments
+  - implication: coordinating cleanup across layers and controlling its request rate already have strong prior work
+  - possible extension: couple the deletion contract and resource controller to explicit recovery obligations
+- Lu et al., Perseus, FAST 2023
+  - original evidence, abstract: “a practical fail-slow detection framework for storage devices”
+  - [primary paper, §§3–5](https://www.usenix.org/system/files/fast23-lu.pdf)
+  - fail-slow: a component still responds but performs poorly
+  - mechanism: use workload-aware regression to identify unusually slow drives
+  - implication: do not invent a slow-drive detector when the research question concerns what repair should do afterward
+- Merenstein et al., CNSBench, FAST 2021
+  - original evidence, abstract: “CNSBench treats control operations as first-class citizens”
+  - [primary paper, §§3–5](https://www.usenix.org/system/files/fast21-merenstein.pdf)
+  - control operations include creating volumes and snapshots
+  - implication: recovery benchmarks should include storage control operations and workload changes
+- Satija et al., Cloudscape, FAST 2025
+  - original evidence, abstract: “heterogeneity is common in the storage layer”
+  - [primary paper, §§2–4](https://www.usenix.org/system/files/fast25-satija.pdf)
+  - method: build a dataset of nearly 400 AWS architectures from public material
+  - implication: mixed storage services are a reasonable source of experimental scenarios
+  - limitation: the dataset's service frequencies describe its sampled architectures, not all cloud deployments
+
+proposal 1: repair that meets an explicit service budget
+- hypothesis
+  - choosing repair concurrency using both user latency and remaining recovery work improves the service/recovery tradeoff over a fixed repair rate
+  - protecting user traffic with admission control is established prior work
+  - the proposed extension must demonstrate value from explicit recovery exposure and cleanup interactions
+  - the hypothesis may fail when simple static limits already capture the relevant bottleneck
+- closest inspected work
+  - Dynamo §6.5 already uses admission control to balance background work against client requests
+    - original evidence: “the background tasks were integrated with an admission control mechanism”
+    - [primary paper, §6.5](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf)
+  - LESS and NCBlob optimize repair mechanics
+  - DisCoGC controls cleanup traffic
+  - Perseus detects slow drives
+  - additional mandatory comparison before a novelty claim: repair scheduling, repair parallelization, and retry-induced overload literature
+- smallest useful experiment
+  - reproduce one LESS comparison before adding a controller
+  - run reads and writes while killing one storage node
+  - vary repair concurrency, ordinary request rate, one slow surviving disk, and network limits
+  - use an independent client log to detect missing acknowledged writes or wrong returned values
+  - compare fixed concurrency, fixed bandwidth limits, and a controller responding only to request latency
+  - proposed controller additionally considers remaining repair work and how many independently placed pieces remain
+- measurements
+  - request latency at the 99th and 99.9th percentiles
+  - completed requests, timeouts, retries, repair completion time, disk busy time, CPU time, and bytes transferred
+  - time spent with reduced redundancy
+    - this measures exposure to another failure, not an empirical data-loss probability
+- falsification
+  - reject the benefit claim if static limits match the controller across the tested workloads
+  - compare equal workload, hardware, durability guarantees, and completed repair work
+  - report CPU use and completed requests as outcomes
+  - separately compare latency at matched throughput
+  - reject correctness if any acknowledged durable write disappears under a promised failure case
+- feasibility assumption
+  - multiple machines or isolated storage devices are available
+  - containers on one shared disk are suitable for development but cannot establish cluster performance
+
+proposal 2: an executable rule for safe deletion across layers
+- hypothesis
+  - a small deletion contract can expose recovery and snapshot bugs that crash-only tests miss
+- closest inspected work
+  - DisCoGC already connects deletion requests across several layers
+  - VeriBetrKV already verifies asynchronous storage and makes corruption assumptions explicit
+  - the FAST 2017 study already demonstrates severe faults despite redundancy
+  - proposed difference: check which recovery obligation makes an old version safe to delete
+- minimal model
+  - one client-visible key, two data versions, a snapshot, and a small replica set
+  - states record which durable version each layer can recover
+  - operations publish a version, acknowledge it, create or release a snapshot, repair a replica, and discard old ranges
+  - inject crashes between operations and duplicate or delay discard requests
+  - include stale data with a valid checksum as a distinct failure mode
+- proposed contract
+  - a discarded range belongs to no live snapshot
+  - no allowed recovery path needs it to reconstruct a promised durable version
+  - after a placement change, enough surviving pieces refer to the same version before old pieces are discarded
+  - these are proposed rules to formalize, not established guarantees of the reviewed systems
+- experiment
+  - explore short operation sequences in an executable model
+  - implement the same transitions in a small Rust prototype
+  - retain a reference interpreter and compare recovered values after injected crashes
+  - separately measure retained garbage and extra coordination cost
+- falsification
+  - weaken or abandon the contract if it prevents legitimate reclamation without adding observable safety
+  - abandon the tooling contribution if existing model/test machinery expresses and checks the same obligations with similar effort
+  - a real-system claim requires reproducing a bug in that implementation, not merely in the prototype
+
+proposal 3: recovery benchmarks that preserve application obligations
+- hypothesis
+  - evaluations that include snapshots, cleanup, request retries, and changing load can change which recovery design appears preferable
+- closest inspected work
+  - CNSBench includes control operations
+  - Cloudscape supplies examples of heterogeneous service combinations
+  - Ananke distinguishes process recovery from machine recovery
+  - the proposed contribution must exceed simply combining these workloads
+- experiment
+  - define a small application: write objects and their lookup metadata, create snapshots, read, and delete
+  - record exactly which acknowledgments promise survival and whether two writes must appear together
+  - inject a process crash, machine crash, slow device, and interrupted cleanup separately
+  - replay the same request schedule and failure schedule across candidate designs
+  - publish both performance results and a machine-readable record of promised versus recovered data
+- falsification
+  - if application-aware checks reveal no additional failures and preserve design rankings, report that bounded negative result
+  - if control operations alone explain changes, attribute the result to CNSBench-style coverage rather than a new recovery principle
+- limitation
+  - reproducing a cross-service application does not expose a cloud provider's internal repair mechanism
+  - public-cloud tests need cost limits and explicit provider guarantees
+
+what remains before choosing a paper-sized project
+- recommendation: prioritize proposal 1 for an empirical systems project
+  - artifacts provide a concrete starting point
+  - foreground contention can be studied without first building a production store
+- recommendation: prioritize proposal 2 if the goal is a smaller bridge between verification and storage
+  - model size can be bounded explicitly
+  - broad verification of a current store would be a separate project
+- unresolved literature checks
+  - recovery scheduling under user latency constraints and heterogeneous devices
+  - repair during changing replication or coding layouts
+  - reclamation protocols with snapshots and concurrent rebuilds
+  - published contracts and tests for stale-but-checksummed data
+- unresolved practical checks
+  - artifact buildability on available machines
+  - hardware access, especially separate disks and controllable network limits
+  - suitable traces with both cleanup and recovery events
+- judgment status
+  - recommendations are agent opinions
+  - claimed novelty remains unestablished
+  - benchmark outcomes and proposed failure cases remain unmeasured
