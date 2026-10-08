@@ -41,7 +41,7 @@ words used below
 what the human already has
 
 - talk note "Towards Microsecond-Scale vm Core Provisioning Agility on Serverless Platforms", Yibo Yan, NSL meeting
-    - in [the reading notes](../../../reading_notes/index.md)
+    - in [the reading notes](../../../../reading_notes/index.md)
     - now on arXiv as HyperFlux, see below
     - correction: HyperFlux names its guest operating system FluxOS
     - the overall system and its guest component have different names
