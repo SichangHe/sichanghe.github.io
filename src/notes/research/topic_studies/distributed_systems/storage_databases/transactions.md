@@ -14,7 +14,7 @@ what this file is
   - transactions across services, serverless functions, and several databases
   - tools that check or prove transaction systems correct
 - reading date: 7 Oct 2026 UTC
-- ChatGPT Extra High: no opinion was obtained
+- ChatGPT Extra High, original worker: no opinion was obtained
   - the shared browser was not signed in to ChatGPT; the coordinator told me to stop trying
   - run it later with pb-chatgpt-prompt-file and paste the answer under a 🤖-free heading of its own
 

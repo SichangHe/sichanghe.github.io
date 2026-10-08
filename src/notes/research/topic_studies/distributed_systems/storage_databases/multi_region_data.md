@@ -15,7 +15,7 @@ what this file is
   - every quoted phrase was string-matched by me against the page or PDF I downloaded that day, unless marked "leftover, not rechecked"
   - "leftover" means an earlier agent that was cut off recorded it and I did not re-open the source
   - "my reading" and "my inference" mark what is mine
-- ChatGPT Extra High: no opinion was obtained; the shared browser was not signed in and I ran out of budget before writing the prompt file
+- ChatGPT Extra High, original worker: no opinion was obtained; the shared browser was not signed in and I ran out of budget before writing the prompt file
 
 takeaway, my opinion
 - production systems have converged on one shape for strong multi-region data
