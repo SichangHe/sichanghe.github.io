@@ -30,6 +30,11 @@ recommendation
   - a measured account of which storage behaviors hide historical defects
   - a small adapter whose contract reproduces those behaviors
   - adding generic disk faults alone would duplicate existing tools
+  - follow-up artifact inspection narrows the candidate
+    - Turmoil already models torn writes and separate file and directory persistence
+    - ALICE already compares application correctness across supplied persistence models
+    - [pinned simulator behavior](deterministic_simulation_testing.md) and [closest-work comparison](history_checking.md)
+    - demonstrate a consequential model mismatch before proposing an adapter
 - first experiment
   - first demonstrate one client-visible post-crash state excluded by the unmodified simulator
     - identify the exact storage rule excluding it
@@ -38,6 +43,10 @@ recommendation
     - establish the client's violated promise before expanding the harness
   - choose one persistent replicated Rust service with a supported simulator or an existing test seam
   - feasibility target: TiKV storage tests and fail-rs injection
+    - inspected TiKV failpoint and transport code on 8 Oct 2026
+      - concrete tests pause or skip leader persistence and restart a node
+      - these are existing test seams, not evidence of Turmoil integration
+      - [artifact assessment](rust_tools.md)
     - simulator integration remains unverified
     - first identify 2–3 public issues with executable faulty and fixed versions
     - expand toward 10–20 cases only after those run under both real and simulated storage

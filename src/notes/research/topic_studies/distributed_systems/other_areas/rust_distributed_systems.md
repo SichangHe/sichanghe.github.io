@@ -167,9 +167,39 @@ production computation evidence
   - [source: Differential Dataflow maintainers, background](https://github.com/TimelyDataflow/differential-dataflow#background)
   - use its examples before modifying a full database
 
+
+RIFL follow-up: caller lifetime is part of the contract
+- inspected paper sections 2–6 and 8–10 on 8 Oct 2026
+  - evaluation inspected selectively; no measurements reproduced
+- completion metadata must be atomic with the effect
+  - exact words, section 3: “must be created atomically”
+  - [Collin Lee et al., SOSP 2015, sections 3–4](https://web.stanford.edu/~ouster/cgi-bin/papers/rifl.pdf)
+  - inference: recording a request identity before or after an independent remote write is insufficient
+- a reliable RPC client is an explicit assumption
+  - exact words, section 9: “if its client is reliable”
+  - [same authors, section 9](https://web.stanford.edu/~ouster/cgi-bin/papers/rifl.pdf)
+  - section 2 expects automatic retries rather than aborting with an unknown outcome after a server crash
+  - section 9 explicitly discusses a front-end crashing before replying to a browser
+    - its suggested layered use already addresses multi-service composition
+    - composition across layers alone is therefore not a new research contribution
+- lease expiry preserves detectable uncertainty rather than guaranteeing completion
+  - section 3 rejects retries after the client's lease expires and records have been reclaimed
+  - interpretation: replacing the expired identity with a fresh one can repeat an earlier effect
+    - the application needs resolution evidence before treating a retry as a new operation
+- cancellation has a concrete resource cost even when duplication is prevented
+  - section 4.2 limits outstanding non-reclaimable calls to 512 in that implementation
+  - one stalled oldest call can delay reclamation and admission of newer calls
+  - agent hypothesis: compare cancellation policies by unresolved identities, retained records, admission delay, and applied effects
+- revised research decision
+  - begin with compatibility tests against established result-recording and lease rules
+  - only propose a new Rust contract if existing ownership and retry mechanisms cannot express a necessary behavior
+  - nested cancellation and abandoned calls remain an assessment question
+    - this reading does not establish a missing mechanism or global novelty
+
 nearest work that narrows the claims
 - RIFL already records remote outcomes across crashes and data movement
-  - paper introduction: “RIFL records the results of completed remote procedure calls (RPCs) durably”
+  - paper section 9: “only guarantees exactly-once semantics”
+    - context: its client must remain reliable; client crash can leave completion unknown
   - [source: Collin Lee et al., implementing linearizability at large scale and low latency, SOSP 2015, page 1](https://web.stanford.edu/~ouster/cgi-bin/papers/rifl.pdf)
   - paper context: retries return the recorded result without executing the operation again
   - its metadata moves with objects and leases support metadata removal

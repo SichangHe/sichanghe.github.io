@@ -19,7 +19,8 @@ remaining research, in priority order
 
 - cancellation across Rust service boundaries
   - read the closest retry and recovery work in full before selecting a new mechanism
-    - RIFL, Beldi, Flux, LogAct, and Varuna are already identified in companion studies
+    - RIFL contract/design and client-failure sections were inspected in this follow-up
+    - Beldi, Flux, LogAct, and Varuna need the same close comparison
   - distinguish local task termination, remote completion, duplicate suppression, and external side effects
   - first experiment remains the operation-identity effect log in the [shortlist](research_shortlist.md)
     - test uncertain outcomes as well as acknowledged operations
@@ -50,7 +51,9 @@ publication and consultation
 - web search failed during this follow-up
   - tool response: “Cannot POST /alpha/search”
   - no new source discovery is claimed
-- a new ChatGPT Extra High consultation attempt failed during this follow-up
-  - helper result: “picker_effort_not_verified”
-  - no answer was obtained or used
-  - the required setting could not be verified, so consultation remains incomplete
+- first consultation attempt failed with “picker_effort_not_verified”
+- a saved GPT-6.1 Sol consultation at Extra High was then started through the support-confirmed route
+  - initial submission timed out
+  - resuming the owned conversation reported “submitted”
+  - answer capture remains pending
+  - no opinion from this pending consultation is used as evidence

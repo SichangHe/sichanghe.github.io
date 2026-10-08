@@ -156,3 +156,31 @@ evidence and reading queue
     - controlled scheduling of executable storage code
 - DEMi PDF abstract and introduction were read through a direct conference-PDF URL
 - proposals need broader novelty search and artifact inspection before commitment
+
+Turmoil persistence follow-up: inspect the configured model first
+- source inspected on 8 Oct 2026
+  - pinned revision: `4f269b38317d63b35c0dc6819eafcbc344b92553`
+  - read configuration, crash, torn-write, file-sync, and directory-sync code
+  - no service was ported and no runtime experiment was run
+- default writes are atomic in the simulator
+  - configuration documentation: “writes are atomic, no torn writes”
+  - [Turmoil maintainers, FsConfig defaults](https://github.com/tokio-rs/turmoil/blob/4f269b38317d63b35c0dc6819eafcbc344b92553/crates/turmoil-fs/src/lib.rs#L353)
+  - enabling block_size already permits partial writes on crash
+    - adding a generic torn-write switch would duplicate existing functionality
+- file data and directory entries have separate durability rules
+  - documentation: “Makes directory entries durable”
+  - [same source, FsState sync rules](https://github.com/tokio-rs/turmoil/blob/4f269b38317d63b35c0dc6819eafcbc344b92553/crates/turmoil-fs/src/lib.rs#L870)
+  - crash removes entries whose parent-directory persistence was not established
+  - inference: a proposed missing-directory-sync detector must compare against these rules
+- the inspected torn-write implementation preserves a prefix of each pending write
+  - source operation: `data[..surviving_bytes].to_vec()`
+  - [same source, apply_torn_writes](https://github.com/tokio-rs/turmoil/blob/4f269b38317d63b35c0dc6819eafcbc344b92553/crates/turmoil-fs/src/lib.rs#L1136)
+  - surviving length uses configured block size and data length
+  - agent assessment: this mechanism alone does not enumerate arbitrary subsets of a write's blocks
+    - whether another path generates the relevant state needs separate inspection
+    - whether the real target permits that state needs filesystem and device evidence
+- refined candidate 1
+  - compare a service's actual storage contract with the enabled simulator configuration
+  - separate a disabled supported behavior from a genuinely unrepresentable behavior
+  - inspect non-prefix persistence and unaligned writes as candidates, not established defects
+  - reject a new adapter proposal if existing configuration already reproduces the target bug

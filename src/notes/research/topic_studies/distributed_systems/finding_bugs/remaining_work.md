@@ -14,8 +14,13 @@ next evidence needed
 
 - persistence simulation, current first choice
   - reproduce one faulty and fixed service pair before building an adapter
-  - verify simulator integration rather than assume TiKV supports the required seam
-  - read BOB, ALICE, CrashMonkey, ShardStore, and the chosen simulator contract against the same storage behavior
+  - pinned TiKV tests confirm persistence failpoints, restart checks, and message filters
+    - [artifact evidence](rust_tools.md)
+    - this does not establish Turmoil integration or a missing production behavior
+  - follow-up inspected ALICE model/exploration, CrashMonkey methodology, and pinned Turmoil storage code
+    - [comparison](history_checking.md) identifies their distinct crash spaces
+    - [simulator inspection](deterministic_simulation_testing.md) rules out generic torn writes as a new mechanism
+  - inspect ShardStore and the chosen real storage contract against the same behavior
   - record the exact post-crash state missing from the simulator
     - a storage fault already represented by an existing adapter does not establish a contribution
 - generated specifications

@@ -186,3 +186,32 @@ evidence scope
   - unverified here does not mean disproved
 - proof systems and automated proof synthesis belong to the separate verification study
   - focus here is executable bug finding and the boundary with proofs
+
+TiKV feasibility follow-up
+- inspected test seams on 8 Oct 2026
+  - pinned revision: `c61d92c26a4d96a575386f5e32179550556e2c29`
+  - read two persistence tests, storage-corruption tests, and the transport filter interface
+  - no test was compiled or executed
+- concrete persistence/restart case exists
+  - test comment: “Skip persisting to simulate raft log persist lag but not block node restart”
+  - [TiKV authors, test_async_io_apply_without_leader_persist](https://github.com/tikv/tikv/blob/c61d92c26a4d96a575386f5e32179550556e2c29/tests/failpoints/cases/test_async_io.rs#L54)
+  - test enables a persistence failpoint, observes applied values, restarts node 1, and checks later writes
+  - assessment: a useful existing regression test to inspect before proposing a new delayed-persistence test
+    - it does not establish a historical faulty/fixed pair or a simulator mismatch
+- concrete storage-corruption case exists
+  - helper operation: `file.sync_all().unwrap()`
+  - [TiKV authors, disturb_sst_file](https://github.com/tikv/tikv/blob/c61d92c26a4d96a575386f5e32179550556e2c29/tests/failpoints/cases/test_sst_recovery.rs#L150)
+  - helper overwrites a database table file and synchronizes the corruption
+  - recovery tests check affected replicas and unaffected data separately
+  - assessment: corruption and recovery already have tests
+    - corruption is a different fault from a lost unsynchronized write
+- transport simulation does not establish whole-system deterministic simulation
+  - interface method: `fn before(&self, msgs: &mut Vec<RaftMessage>) -> Result<()>`
+  - [TiKV authors, Filter](https://github.com/tikv/tikv/blob/c61d92c26a4d96a575386f5e32179550556e2c29/components/test_raftstore/src/transport_simulate.rs#L37)
+  - code imports real threads and RocksEngine
+  - assessment: controlling messages is a test seam, not evidence that time, storage, and all scheduling are replaced
+- candidate decision
+  - TiKV is a concrete starting point for storage contract inspection
+  - defer a port to Turmoil until engine integration and an omitted storage behavior are established
+  - existing tests reduce implementation uncertainty
+    - they do not resolve novelty or demonstrate a production bug
