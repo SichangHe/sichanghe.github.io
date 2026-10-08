@@ -1,0 +1,550 @@
+key-value stores and storage engines
+(authored by agents unless marked 🧑)
+
+where I would start
+
+- takeaway: the best opening for us is proving and testing the new Rust engines, not making an engine faster
+  - speed work fills the conferences and needs hardware we do not have
+  - the Rust engines are young, widely used, and checked only by tests their own authors wrote
+  - this ranking is my opinion; the evidence for each part is in the sections below
+- first project I would try: prove the core of a log-structured merge tree that lives on an object store
+  - SlateDB's own issue asking for "a formal proof" of its manifest design has been open since June 2024
+  - an object store with conditional writes is a much simpler "disk" to reason about than a block device
+  - see [research we could do](#research-we-could-do), idea 1
+- second: extend the PoWER proof method from persistent memory to an ordinary file-backed engine
+  - the one Verus-verified key-value store has fixed size and a hardware target Intel cancelled
+  - idea 2
+- third: an outside crash and durability test of the Rust engines
+  - I found no published bug study of them
+  - idea 3
+- status
+  - 7 Oct 2026 UTC
+  - nothing here was measured or proved by us
+  - "I found no ..." means not found in this search, not that it does not exist
+  - no ChatGPT opinion was obtained yet; see [second opinion](#second-opinion)
+
+words used here
+
+- key-value store: save a value under a key, get it back by that key
+- storage engine: the library inside a database that puts keys and values on disk and finds them again
+- log-structured merge tree (LSM tree): the engine design used by RocksDB
+  - new writes go to a log and an in-memory table (memtable)
+  - full memtables become sorted files on disk (SST files)
+  - compaction: a background job that merges sorted files and drops overwritten data
+  - write amplification: bytes written to the device per byte the user wrote
+  - write stall: the engine pauses user writes because compaction is behind
+  - manifest: the small file that lists which sorted files make up the current database
+- B-tree: sorted pages updated in place; the engine design used by SQLite and LMDB
+  - copy-on-write B-tree: never overwrite a page, write a new copy and switch the root pointer
+- learned index: replace part of an index with a small model that guesses where a key is
+- cache eviction: choosing what to throw out when a cache is full
+- object store: a service like Amazon S3 that stores whole named blobs
+  - conditional write: "write only if the object is absent" or "only if it is unchanged since I read it"
+  - compare-and-swap (CAS): the general name for that kind of write
+- fencing: making sure an old writer that everyone thinks is dead cannot still change data
+- hardware terms
+  - persistent memory: memory that keeps data without power; Intel Optane was the product
+  - RDMA: a network card reads and writes another machine's memory without that machine's CPU
+  - disaggregated memory: memory in a separate pool of machines, reached over RDMA or CXL
+  - CXL: a cable standard that lets several servers plug into the same memory device
+  - cache coherence: hardware guarantee that all CPUs see each other's memory writes
+  - SmartNIC or DPU: a network card with its own small CPUs that can run part of the store
+- checking terms
+  - reference model: a tiny, obviously correct version of a component, used to check the real one
+  - property-based testing: generate random operation sequences, check a stated rule after each
+  - deterministic simulation testing (DST): run the real code with fake clock, disk, and network driven by one random seed, so any failure replays exactly
+  - crash consistency: after power loss, the store recovers to a state it promised
+
+what the sibling notes already hold
+
+- I do not repeat these; read them for the named topics
+- [stores, durability, and recovery](stores_recovery.md)
+  - GFS, Ceph, Dynamo, f4, ELECT, repair, garbage collection across layers, VeriBetrKV
+- [storage correctness across client, server, and disk](verification_boundaries.md)
+  - RIFL, IronFleet, Perennial, GoJournal, DaisyNFS, Grove, PoWER as a method
+- [tables built on object stores](object_backed_tables.md)
+  - Delta Lake, Iceberg, S3 consistency, regional replication
+- [LLMs and storage systems](llm_and_storage.md)
+  - LLM tuning of RocksDB (ELMo-Tune-V2), LLM-written databases (SpecDB), the attention cache that LLM papers confusingly call "KV cache"
+- [transactions and data across regions](transactions_regions.md)
+
+how active each area is
+
+- method: I counted paper titles containing a keyword in the saved programme pages of FAST, OSDI, NSDI, and ATC
+  - 268 titles in 2024, 277 in 2025, 334 in 2026
+  - the ATC 2026 page I had looks incomplete, so 2026 undercounts
+  - title matching misses papers that do not name the topic; treat these as rough
+- counts for 2024, 2025, 2026
+  - CXL: 2, 2, 8
+  - SmartNIC or DPU: 3, 6, 6
+  - RDMA or disaggregated memory: 5, 6, 3
+  - LSM or key-value in the title: 4, 6, 3
+  - persistent memory: 2, 1, 0
+  - LLM attention cache: 1, 2, 4
+- my reading
+  - CXL is where the hardware groups moved
+  - persistent memory is ending as a title word
+  - the single-machine LSM work has mostly moved to database venues (SIGMOD, VLDB, ICDE); I did not count those
+
+LSM trees: still the default, still being tuned
+
+- takeaway: the papers keep attacking the same four costs: compaction, stalls, write amplification, tail latency
+  - the 2025 survey lists them itself
+    - "write amplification caused by data rewriting during compactions, read amplification from multi-level queries, trade-off between read and write performance"
+    - Lv et al., "Rethinking LSM-tree based Key-Value Stores: A Survey", [arXiv 2507.09642](https://arxiv.org/abs/2507.09642)
+    - it reviews "representative works in the past five years"; a good entry point
+- shape of the tree
+  - Vertiorizon, SIGMOD 2025
+    - "how to grow an LSM-tree to attain more desirable performance?"
+    - result claimed: "about six times less additional space cost compared to the horizontal scheme"
+    - [arXiv 2504.17178](https://arxiv.org/abs/2504.17178)
+- write stalls
+  - DiaLSM, accepted to ICDE 2027
+    - "a monolithic LSM with a single pipeline cannot eliminate write stalls"
+    - fix: "splits the write--flush--compaction path into multiple independent shards"
+    - [arXiv 2609.14370](https://arxiv.org/abs/2609.14370)
+  - DecouKV, ATC 2025
+    - "sorting operations cause critical issues of operation coupling"
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/zhang-qingyang)
+- compaction cost in the operating system
+  - RESYSTANCE, ICDE 2026
+    - "leverages eBPF and io_uring to free compaction from system calls"
+    - claimed: "shortened compaction time by 50%"
+    - [arXiv 2603.05162](https://arxiv.org/abs/2603.05162)
+- compaction against user reads, in a cluster
+  - HATS, FAST 2026, on Cassandra
+    - "foreground read tasks are often interfered with by background compaction tasks, yet compaction tasks are critical for achieving high read performance"
+    - [USENIX page](https://www.usenix.org/conference/fast26/presentation/ren)
+  - this is the same foreground-versus-background tension [stores and recovery](stores_recovery.md) proposes to study for repair
+- fast and slow disks together
+  - HotRAP, ATC 2025
+    - "read-hot data may be stuck in the slow disks"
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/qiu)
+- large values
+  - AegonKV, FAST 2025, moves value cleanup onto a drive with a built-in processor
+    - "SmartSSD-based GC offloading mechanism"
+    - [USENIX page](https://www.usenix.org/conference/fast25/presentation/duan)
+  - Tidehunter, 2026 preprint, from the Sui blockchain team, written in Rust
+    - "eliminates value compaction by treating the Write-Ahead Log (WAL) as permanent storage rather than a temporary recovery buffer"
+    - "LSM-trees ... suffer from high write amplification from 10x to 30x under random workloads"
+    - [arXiv 2602.01873](https://arxiv.org/abs/2602.01873)
+    - not peer reviewed as far as I can tell; numbers are the authors'
+- general log-structured cleanup, below the key-value level
+  - MiDAS, FAST 2024: "high garbage collection (GC) cost is widely regarded as the primary obstacle"
+    - [USENIX page](https://www.usenix.org/conference/fast24/presentation/oh)
+  - DOGI, FAST 2026: "there still exists a wide gap between practice and optimality"
+    - [USENIX page](https://www.usenix.org/conference/fast26/presentation/kim-jeeyun)
+- security angle, rare in this area
+  - "LSM Trees in Adversarial Environments", 2025 preprint
+    - attacker picks keys that defeat the Bloom filters: "up to $800\%$ increase in the read latency of lookups"
+    - [arXiv 2502.08832](https://arxiv.org/abs/2502.08832)
+- my view
+  - this is crowded and incremental
+  - each paper needs a careful RocksDB baseline on real drives, and reviewers know every trick
+  - I would not enter here
+
+B-trees and other indexes
+
+- takeaway: the interesting B-tree work is one paper, and it is in Rust
+- Bf-Tree, VLDB 2024, Microsoft Research
+  - "The key insight of this paper is to separate cache pages from disk pages"
+  - "We implement a fully featured and modern Bf-Tree in Rust with 13k lines of code"
+  - claims: "2.5× faster than RocksDB (LSM-Tree) for scan operations, 6× faster than a B-Tree for write operations"
+  - [paper](https://badrish.net/papers/bftree-vldb2024.pdf), [code](https://github.com/microsoft/bf-tree)
+  - fact from the repository: tested with unit tests, Shuttle (random thread schedules), and fuzzing
+    - "Bf-Tree employs fuzzing to generate random operation sequences"
+  - I think this is a good verification target: small, modern, open, concurrent
+- learned indexes: two recent papers pour cold water
+  - benchmark of 8 learned indexes inside LSM trees, 2025
+    - "marginal lookup enhancement when allocating a large memory budget to learned indexes"
+    - [arXiv 2506.08671](https://arxiv.org/abs/2506.08671)
+  - MountDB, 2026
+    - "adoption in production systems remains limited, partly because learned indexes that support concurrency and persistence as effectively as, e.g., the B+-Tree, do not yet exist"
+    - [arXiv 2605.23815](https://arxiv.org/abs/2605.23815)
+  - they survive mainly on odd hardware
+    - PIMLex, FAST 2025, on memory chips that compute: [USENIX page](https://www.usenix.org/conference/fast25/presentation/cui)
+    - DPA-Store, OSDI 2026, on a SmartNIC: "a lock-free learned index tree within the DPA memory", [USENIX page](https://www.usenix.org/conference/osdi26/presentation/schimmelpfennig)
+- index for a cloud disk service
+  - RASK, FAST 2026
+    - "we should directly index block ranges (i.e., range-as-a-key) to save memory"
+    - "reduces memory footprint by up to 98.9%"
+    - [USENIX page](https://www.usenix.org/conference/fast26/presentation/zhao)
+- joins on top of an LSM engine
+  - "Are Joins over LSM-Trees Ready?", VLDB 2025: [arXiv 2501.16759](https://arxiv.org/abs/2501.16759)
+- cheap slow memory for the index
+  - SIGMOD 2025 analysis: "SSD-based KV stores can use microsecond-latency memory as a cost-effective alternative to the host DRAM"
+  - [arXiv 2510.12280](https://arxiv.org/abs/2510.12280)
+
+caches
+
+- takeaway: simple won; the 2026 fight is over how to add learning without losing simple
+- the simple algorithms
+  - S3-FIFO, SOSP 2023
+    - "a simple, scalable FIFObased algorithm with three static queues" (the paper's PDF text drops the hyphen in "FIFO-based")
+    - why it works: "most objects in skewed workloads will only be accessed once in a short window, so it is critical to evict them early"
+    - "Evaluated on 6594 cache traces from 14 datasets"
+    - [paper](https://junchengyang.com/publication/sosp23-s3fifo.pdf)
+  - SIEVE, NSDI 2024
+    - "simpler than LRU"
+    - "implemented SIEVE in five production cache libraries, requiring fewer than 20 lines of code changes on average"
+    - "cache hits require no locking"
+    - [USENIX page](https://www.usenix.org/conference/nsdi24/presentation/zhang-yazhuo)
+- adding learning back
+  - 3L-Cache, FAST 2025: learned policy with "only 6.4× the average overhead of LRU for small cache sizes"
+    - [USENIX page](https://www.usenix.org/conference/fast25/presentation/zhou-wenbin)
+  - S4-FIFO, OSDI 2026: learn only the few settings of S3-FIFO
+    - "existing smart caches suffer from objective mismatches and instability"
+    - "improves the mean efficiency by 26% compared to S3-FIFO and by 8% compared to 3L-Cache"
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/xia)
+  - Merlin, OSDI 2026
+    - adaptive algorithms "fail this promise, even underperforming static policies"
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/li-liujia)
+- caches on flash
+  - Baleen, FAST 2024, Meta traces: decide what is worth a flash write
+    - "reduces Peak Disk-head Time ... by 12% over state-of-the-art policies"
+    - [USENIX page](https://www.usenix.org/conference/fast24/presentation/wong)
+  - FairyWREN, OSDI 2024: use the new drive interfaces that let software place data
+    - "flash, which accounts for 40% of embodied carbon in servers"
+    - "a 12.5× write reduction over state-of-the-art LBAD caches"
+    - [USENIX page](https://www.usenix.org/conference/osdi24/presentation/mcallister)
+  - WARP, FAST 2026: the placement feature only helps when lifetimes are guessed right
+    - it "fails under misclassification, RUH interference, or adversarial invalidations"
+    - [USENIX page](https://www.usenix.org/conference/fast26/presentation/song)
+  - EuroSys 2025 has "Towards Efficient Flash Caches with Emerging NVMe Flexible Data Placement SSDs"; title only, [accepted list](https://2025.eurosys.org/accepted-papers.html)
+- caches that must not lie
+  - Skybridge, OSDI 2025, Meta: put a time limit on how old a cached value can be
+    - "2-second bounded staleness for 99.99998% of writes"
+    - [USENIX page](https://www.usenix.org/conference/osdi25/presentation/lyerly)
+  - WriteGuards, OSDI 2026: caches that always return the latest value without asking storage
+    - bug class named: "a subtle race we call the delayed-writes anomaly arising during changes in ownership of key ranges"
+    - fix: "Each write carries a small fencing value tied to the current owner, and the storage system checks this value to reject delayed writes"
+    - built on TiDB
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/mao-ziming-writeguards)
+    - I note this is the same fencing idea SlateDB uses for writers; see idea 1
+- my view
+  - eviction needs big production traces to publish; the public trace sets exist (the papers above use thousands)
+  - the consistency side (Skybridge, WriteGuards) is closer to our skills than the hit-ratio side
+
+engines on top of object storage
+
+- takeaway: this is the new common design, mostly built in industry and in Rust, with little academic checking
+- why it became possible
+  - fact: S3 added conditional writes in 2024
+    - August 2024: write only if absent
+    - November 2024: "Amazon S3 can now perform conditional writes that evaluate if an object is unmodified before updating it"
+    - [AWS announcement](https://aws.amazon.com/about-aws/whats-new/2024/11/amazon-s3-functionality-conditional-writes)
+  - inference: before that, a store on S3 needed a second database just to agree on who writes next
+    - SlateDB's design document, written before the change, says so: "Most object stores provide CAS ... But S3 does not, and we want to support S3"
+    - [SlateDB RFC 0001](https://github.com/slatedb/slatedb/blob/main/rfcs/0001-manifest.md)
+- SlateDB, Rust, about 3,500 GitHub stars on 7 Oct 2026
+  - "Unlike traditional LSM-tree storage engines, SlateDB writes data to object storage"
+  - cost: "object storage has a higher latency and higher API cost than local disk"
+  - a write is not safe until asked: "Call `handle.await_durable().await` to wait for one write to become durable"
+  - [README](https://github.com/slatedb/slatedb)
+  - old writers: "we propose using CAS to ensure each SST is written exactly one time. We introduce the concept of writer epochs to determine when the current writer is a zombie and halt the process" ([RFC 0001](https://github.com/slatedb/slatedb/blob/main/rfcs/0001-manifest.md))
+  - how it is checked today
+    - simulation: "`slatedb-dst` is SlateDB's deterministic simulation testing crate" ([its README](https://github.com/slatedb/slatedb/tree/main/slatedb-dst))
+    - small models in the FizzBee model checker ([specs folder](https://github.com/slatedb/slatedb/tree/main/specs/fizzbee))
+    - no proof: issue "Write a formal proof for manifest design", opened 19 Jun 2024, still open, zero comments
+      - "The manifest design in #43 is pretty complicated. It would be nice to have a formal proof"
+      - [issue 71](https://github.com/slatedb/slatedb/issues/71)
+    - open issues also ask for model-checker specs of "writer fencing protocol" (issue 266) and "checkpointing/clone protocols" (issue 327)
+  - garbage collection is a live design worry: RFC titles include "0026-garbage-collector-boundary" and "0029-gc-safe-sst-ulid-timestamps" (titles only; I did not read them)
+- Tonbo, Rust
+  - "The manifest is committed using compare-and-swap on S3, so any function can safely participate in commits"
+  - [README](https://github.com/tonbo-io/tonbo)
+- RocksDB on a remote file system, Meta
+  - reported second-hand by the CaaS-LSM paper: "Meta has built a new version of RocksDB to adapt to the disaggregated Tectonic File System (called Disaggre-RocksDB)"
+  - the primary paper is "Disaggregating RocksDB: A Production Experience", SIGMOD 2023; I could not open it (publisher blocked the fetch)
+- compaction as its own service
+  - CaaS-LSM, SIGMOD 2024: [paper](https://www.cs.purdue.edu/homes/csjgwang/pubs/SIGMOD24_CaaSLSM.pdf)
+  - SlateDB has an RFC named "0025-distributed-compaction" (title only)
+- a cache in front of a cloud key-value service
+  - HopperKV, FAST 2026: "modifies Redis to cache data from DynamoDB", [USENIX page](https://www.usenix.org/conference/fast26/presentation/ye)
+- one transaction across memory, flash, and disk copies
+  - DiStash, 2026, built on FoundationDB, eBay workload: [arXiv 2606.27979](https://arxiv.org/abs/2606.27979)
+- Amazon's own checking of an object store's index, SOSP 2026
+  - "Validating a Production Cloud Object Store with Lightweight Formal Methods"
+  - "combined executable reference models with property-based testing and stateless model checking"
+  - "We extended Shuttle, our open-source stateless checker, to support a production async Rust runtime and failure injection"
+  - "Our main finding is that this approach is sustainable at engineering scale"
+  - engineers took over: "increasing its share of validation commits from 41% to 84%"
+  - source: abstract as reproduced on [a blog listing SOSP 2026 papers](https://pchaigno.github.io/academic/2026/08/03/sosp-2026-papers.html); I did not read the paper
+  - this is testing against a model, not a proof
+
+stores built for new hardware
+
+- takeaway: lots of papers, nearly all need the device in hand; the part we could touch is the correctness argument
+- persistent memory after Optane
+  - "the first shipments of 3D XPoint-based Intel Optane Memory in 2019 were quickly followed by its cancellation in 2022"
+  - the authors' defense of the field: "the bulk of persistent-memory research has not in fact addressed memory persistence, but rather in-memory crash consistency"
+  - and it comes back with CXL: "CXL memory pooling allows multiple hosts to share a single memory, all in different failure domains, raising crash-consistency issues even with volatile memory"
+  - Desnoyers et al., "Persistent Memory Research in the Post-Optane Era", DIMES workshop 2023, [paper](https://par.nsf.gov/servlets/purl/10473514)
+  - the verified store CapybaraKV still targets persistent memory; see the correctness section
+- remote memory over RDMA
+  - the pattern: clients do the work, memory machines stay dumb
+    - RCuckoo, ATC 2025: "clients cooperatively access a passive memory server using exclusively one-sided RDMA operations", [USENIX page](https://www.usenix.org/conference/atc25/presentation/grant)
+    - DMTree, FAST 2026: earlier designs "either suffer from the network bandwidth bottleneck or are fragile due to high RDMA IOPS demands", [USENIX page](https://www.usenix.org/conference/fast26/presentation/wei)
+    - FORGE, OSDI 2026, a cache: "costly cross-node synchronization", [USENIX page](https://www.usenix.org/conference/osdi26/presentation/yang-zhijun)
+  - replicated stores
+    - LoLKV, NSDI 2024: "forgoes the classical log-based design", [USENIX page](https://www.usenix.org/conference/nsdi24/presentation/alquraan)
+  - transactions
+    - Motor, OSDI 2024: [USENIX page](https://www.usenix.org/conference/osdi24/presentation/zhang-ming)
+  - locks, a sub-area of its own
+    - ShiftLock, FAST 2025; FARLock, OSDI 2026 ("Asymmetric RDMA Locking Made Fair"); titles only
+  - SOSP 2024 titles: "Aceso: Achieving Efficient Fault Tolerance in Memory-Disaggregated Key-Value Stores", "CHIME: A Cache-Efficient and High-Performance Hybrid Index on Disaggregated Memory" ([accepted list](https://sigops.org/s/conferences/sosp/2024/accepted.html)); abstracts not read
+- shared memory over CXL
+  - the hard fact every paper starts from: servers sharing CXL memory do not automatically see each other's writes
+    - Tigon, OSDI 2025: "limited hardware support for cross-host cache coherence", [USENIX page](https://www.usenix.org/conference/osdi25/presentation/huang-yibo)
+    - MEGALON, OSDI 2026: "the hardware is expected to provide cache coherence only for a small region of CXL memory", [USENIX page](https://www.usenix.org/conference/osdi26/presentation/hu-jiyu)
+  - so the software has to do the hardware's job, each paper with its own rule
+    - Borges, SOSP 2026: "assigns every shared metadata word a single writer"
+    - XTRA, SOSP 2026: "directly repurposing transactional conflict detection to guarantee cache freshness lazily upon read"
+    - "Disk-Based LSMs: An Unexpectedly Good Index for Partly Coherent CXL Memory", SOSP 2026
+      - "data structures have a large updatable surface area—the part of the data structure that can be modified in-place"
+      - "We propose a new design that, perhaps surprisingly, is based on log-structured merge trees"
+    - the three SOSP 2026 quotes are from abstracts on [the blog listing](https://pchaigno.github.io/academic/2026/08/03/sosp-2026-papers.html)
+  - emulators exist, so not every project needs the device
+    - Cylon, FAST 2026: "a fast and extensible full-system emulator for CXL-SSDs built on FEMU", [USENIX page](https://www.usenix.org/conference/fast26/presentation/yoon)
+- SmartNICs and DPUs
+  - Scalio, OSDI 2025: the hard part is "ensuring consistency between the DRAM states in the DPU and the SSD states", [USENIX page](https://www.usenix.org/conference/osdi25/presentation/sun)
+  - DPA-Store, OSDI 2026: range queries served on the card, [USENIX page](https://www.usenix.org/conference/osdi26/presentation/schimmelpfennig)
+  - HiDPU, FAST 2025: [USENIX page](https://www.usenix.org/conference/fast25/presentation/zhu)
+- programmable switches
+  - OrbitCache, NSDI 2025: "we make hot items revisit the switch data plane continuously by exploiting packet recirculation", [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/kim)
+  - NetMigrate, FAST 2024: move Redis shards with the switch redirecting clients, [USENIX page](https://www.usenix.org/conference/fast24/presentation/zhu)
+- replication tuned to SSD engines
+  - IONIA, FAST 2024: "one round trip (RTT) writes" and reads "at any replica", [USENIX page](https://www.usenix.org/conference/fast24/presentation/xu)
+- threads inside an in-memory store
+  - SOSP 2025 title: "Rearchitecting the Thread Model of In-Memory Key-Value Stores with μTPS" ([accepted list](https://sigops.org/s/conferences/sosp/2025/accepted.html)); abstract not read
+- my view
+  - I see one thing here for us: each CXL paper invents its own rule for "when is it safe to read memory another server may have changed"
+  - none of the abstracts I read mentions a proof or a model check of that rule
+  - that is an inference from abstracts only; the papers may contain more
+
+storage engines written in Rust
+
+- takeaway: there are many, they are used, and their correctness story is "we test a lot"
+- facts below are from each project's README and GitHub page on 7 Oct 2026; stars are a rough popularity sign only
+- embedded engines
+  - sled, about 9,100 stars
+    - "if reliability is your primary constraint, use SQLite. sled is beta."
+    - "sled automatically fsyncs every 500ms by default"
+    - [README](https://github.com/spacejam/sled)
+  - redb, about 4,800 stars
+    - "Data is stored in a collection of copy-on-write B+trees"
+    - "Crash-safe by default"; "The file format is stable"
+    - [README](https://github.com/cberner/redb)
+  - fjall, about 2,400 stars
+    - "LSM-tree-based storage similar to `RocksDB`"; "100% safe & stable Rust"
+    - default durability: "any operation will flush to OS buffers, but **not** to disk"
+    - on errors: "It's best to let the application crash and restart"
+    - [README](https://github.com/fjall-rs/fjall)
+  - SurrealKV, about 560 stars
+    - "Deterministic Simulation Tested (DST): Verified against an in-memory linearizable model oracle across 25,000,000 operations with zero divergences"
+    - [README](https://github.com/surrealdb/surrealkv)
+    - "verified" here means tested against a model, not proved
+  - Bf-Tree, Tidehunter, SlateDB, Tonbo: see earlier sections
+- caches
+  - Foyer, about 1,800 stars
+    - "Hybrid in-memory and disk cache in Rust"
+    - "draws inspiration from Facebook/CacheLib"
+    - SlateDB is listed as a user
+    - [README](https://github.com/foyer-rs/foyer)
+- larger systems
+  - TiKV, about 16,900 stars: "Distributed transactional key-value database" ([repository](https://github.com/tikv/tikv)); its storage engine underneath is RocksDB, which is C++ (from my memory, not checked today)
+  - Neon, about 23,200 stars: "We separated storage and compute" ([repository](https://github.com/neondatabase/neon))
+  - Turso, about 24,700 stars: a rewrite of SQLite in Rust
+    - "Turso is extensively tested by a collection of tools including a native Deterministic Simulation Testing suite and Antithesis"
+    - "we have not yet reached 1.0"
+    - [README](https://github.com/tursodatabase/turso)
+    - a paper came out of its testing: DIRT, DBTest 2026
+      - "finds 23 unique, confirmed bugs"
+      - "integrates a testing framework directly into the DBMS"
+      - [arXiv 2604.16373](https://arxiv.org/abs/2604.16373)
+- what I did not find
+  - any peer-reviewed study of crash, durability, or concurrency bugs across the Rust embedded engines
+  - any proof about one of them
+  - search was a handful of web queries; a miss is quite possible
+- inference
+  - safe Rust prevents many memory errors; unsafe code and dependencies need separate checks
+  - memory safety alone does not establish durability
+  - fjall's default (not flushed to disk) and sled's 500 ms window are documented choices, but an application author can easily miss them
+
+checking that an engine is correct
+
+- takeaway: industry settled on models plus random testing; proofs exist for one small store; the gap between them is where I would work
+- models plus random testing ("lightweight formal methods")
+  - ShardStore, SOSP 2021, Amazon S3, Rust
+    - "We do not aim to achieve full formal verification, but instead emphasize automation, usability, and the ability to continually ensure correctness as both software and its specification evolve over time"
+    - "develops executable reference models as specifications to be checked against the implementation"
+    - "has prevented 16 issues from reaching production, including subtle crash consistency and concurrency problems"
+    - [paper](https://www.cs.utexas.edu/~bornholt/papers/shardstore-sosp21.pdf)
+  - the SOSP 2026 follow-up for S3 Express: see the object storage section
+  - Shuttle, the open tool both use: "a library for testing concurrent Rust code" ([repository](https://github.com/awslabs/shuttle))
+- deterministic simulation testing
+  - used by SlateDB, SurrealKV, Turso (quotes above)
+  - I found project pages and talks, not a research paper that measures what it misses
+- crash testing tools
+  - Pathfinder, OOPSLA 2025
+    - "The crash-state space grows exponentially as the number of operations in the program increases"
+    - idea: "the consistency of crash states is often correlated, even if those crash states are not identical"
+    - "finds 18 (7 new) bugs across 8 production-ready systems"
+    - [arXiv 2503.01390](https://arxiv.org/abs/2503.01390)
+  - "Fawkes: Finding Data Durability Bugs in DBMSs via Recovered Data State Verification", SOSP 2025; title only ([accepted list](https://sigops.org/s/conferences/sosp/2025/accepted.html))
+  - Open CAS study, ATC 2025: a popular block cache "cannot always maintain crash consistency in the persistent caching layer", [USENIX page](https://www.usenix.org/conference/atc25/presentation/duan-shaohua)
+  - survey, 2026 preprint
+    - failures "remain difficult to expose systematically"
+    - the cause is "not primarily ... insufficient testing tooling, but ... intrinsic properties of storage-system execution, including nondeterministic interleavings, long-horizon state evolution, and correctness semantics that span multiple layers"
+    - on AI: it "may complement fuzzing through state-aware and semantic guidance"
+    - "Testing Storage-System Correctness: Challenges, Fuzzing Limitations, and AI-Augmented Opportunities", [arXiv 2602.02614](https://arxiv.org/abs/2602.02614)
+- proofs
+  - CapybaraKV, OSDI 2025, Verus; the method is covered in [verification boundaries](verification_boundaries.md), so only the limits here
+    - "Both systems verify in under a minute" ([USENIX page](https://www.usenix.org/conference/osdi25/presentation/leblanc))
+    - fixed size: "requires users to statically allocate storage space and specify at initialization the maximum number and size of keys, items, and list elements. It does not currently support dynamic resizing"
+    - index in memory: "uses a volatile index that keeps all keys in memory ... and must be rebuilt each time the system is started"
+    - concurrency: "it cannot reason about writes executing concurrently with other reads or writes to the same storage region"
+    - limits quoted from [the paper](https://www.usenix.org/system/files/osdi25-leblanc.pdf), sections 3.4 and 5.1
+    - code: [microsoft/verified-storage](https://github.com/microsoft/verified-storage), last pushed 29 Sep 2026
+  - SquirrelFS, OSDI 2024: no separate proof, the Rust type checker enforces write order
+    - "successful compilation indicates crash consistency"
+    - [USENIX page](https://www.usenix.org/conference/osdi24/presentation/leblanc)
+    - a file system, not a key-value store, but the cheapest method on this list
+  - Tulip, SOSP 2026: a proved distributed transaction system
+    - "a machine-checked proof of correctness showing that its implementation meets a simple specification identical to a local strictly serializable transaction system"
+    - abstract via [the blog listing](https://pchaigno.github.io/academic/2026/08/03/sosp-2026-papers.html); belongs to [transactions and regions](transactions_regions.md)
+  - VeriBetrKV: in [stores and recovery](stores_recovery.md)
+- what I did not find
+  - a proved LSM tree with compaction, or a proved engine on object storage
+  - a proved copy-on-write B-tree engine in Rust
+  - again a limited search
+
+LLMs and storage engines
+
+- [LLMs and storage systems](llm_and_storage.md) covers this; three additions from my part
+- small models tuning compaction live
+  - "a clear positive correlation between model capability and tuning effectiveness"
+  - so the small fast models that fit the time budget tune worse
+  - [arXiv 2602.12669](https://arxiv.org/abs/2602.12669)
+- a cache policy that can explain itself
+  - S4-FIFO: "a language model can provide a rationale for why a particular configuration was chosen" ([USENIX page](https://www.usenix.org/conference/osdi26/presentation/xia))
+- storage projects are already in the Verus agent benchmarks
+  - this comes from a web search summary of VeruSAGE ([arXiv 2512.18436](https://arxiv.org/abs/2512.18436)), which says its benchmark projects include storage systems
+  - the paper is in the human's paper collection; I did not open it for this note
+  - inference: an agent that can finish CapybaraKV-style proofs lowers the cost of ideas 1 and 2
+
+research we could do
+
+- ranked by my judgment of fit: Verus, Rust, LLM agents, no production fleet, no rare hardware
+- 1: prove the core of an LSM tree on an object store
+  - question: can we prove, in Verus, that a small Rust LSM on an object store with conditional writes never loses a write it reported durable, and never lets an old writer damage the database?
+  - why I think it is open
+    - SlateDB wants it and has not done it (issue 71, open since June 2024)
+    - their checks are simulation and small models, which do not cover the real code path by path
+    - CapybaraKV is fixed-size and on persistent memory
+    - Amazon's S3 Express work is testing against models, by their own description
+  - why it may be easier than it sounds
+    - an object write is all or nothing, so there are no half-written blocks to reason about
+    - sorted files never change after writing
+    - the whole protocol hangs on two conditional writes: "create if absent" and "replace if unchanged"
+    - this is my reasoning, not a claim from a paper
+  - first three months
+    - write the object store rules as a Verus spec: put, get, list, delete, the two conditional writes, and crash of the client at any point
+    - prove a tiny engine: write-ahead objects, one flush, a manifest swap, writer takeover with fencing
+    - leave out compaction and garbage collection at first
+    - run the same operation sequences against SlateDB through its simulation crate and compare answers
+  - then
+    - add garbage collection: prove a deleted file is in no live manifest and no reader's snapshot
+    - this meets [stores and recovery](stores_recovery.md) proposal 2 (safe deletion across layers); do them together
+  - what would kill it
+    - someone already proved the SlateDB protocol against code; a web search summary says a TLA+ port of the SlateDB specs exists (Jack Vanlightly), which I did not open; a model-level spec would not kill this, a code-level proof would
+    - the trusted object store spec turns out to hide the real bugs (for example list operations that lag); check provider documentation first, see [tables on object stores](object_backed_tables.md)
+    - proof effort for the read path (merging iterators) swamps the interesting part; keep reads simple
+  - why it could matter beyond one engine
+    - WriteGuards uses the same fencing pattern for caches; Tonbo uses the same manifest swap
+    - a reusable proved "fenced manifest" library is a plausible artifact
+- 2: PoWER off persistent memory
+  - question: does the PoWER method carry over to an engine on ordinary files, with growth and a real on-disk index?
+  - closest work: CapybaraKV, with the three limits quoted above
+  - candidate target: a copy-on-write B-tree in the style of redb
+    - copy-on-write means the commit is one root pointer switch, which suits a "every crash state is legal" precondition
+    - this pairing is my suggestion
+  - first three months: a verified page allocator plus copy-on-write commit over a file API with explicit sync, in Verus, sized to grow
+  - what would kill it
+    - the file and sync model is the hard, unverifiable part; [verification boundaries](verification_boundaries.md) discusses exactly this
+    - the PoWER authors may already be doing it; their repository was pushed last week; ask them before starting
+- 3: an outside crash and durability study of Rust storage engines
+  - question: what bugs remain in Rust engines with separately assessed unsafe code and dependencies, and do their documented durability defaults match what users assume?
+  - closest work: Pathfinder (C and C++ systems, plus memory-mapped ones), Fawkes (database systems), DIRT (Turso only, logic bugs)
+  - method
+    - apply an existing crash-state tool to sled, redb, fjall, SurrealKV, Bf-Tree, Tidehunter
+    - apply a fault-injecting object store to SlateDB and Tonbo
+    - separately, read how downstream projects call them: do they ever ask for a real sync?
+  - first three months: harness for two engines, any confirmed bug, a count of downstream projects relying on the default
+  - what would kill it
+    - the tools do not run on Rust binaries without heavy porting
+    - no bugs: still a result, but a weak paper
+  - fit: needs one machine; mostly engineering; good student project
+  - the downstream-usage half is a measurement study, which matches the human's measurement interest
+- 4: can an agent write the reference model and the simulation harness?
+  - question: given an engine's code, can an LLM agent produce a reference model and random tests that catch that engine's real past bugs?
+  - why now
+    - Amazon reports the method is "sustainable at engineering scale" with human engineers
+    - the storage testing survey names AI guidance as an opportunity, with no result
+  - benchmark idea: take bug-fix commits from SlateDB, fjall, redb, Turso; check out the commit before each fix; see if the agent's tests fail there and pass after
+  - what would kill it
+    - too few bug fixes with clear triggers
+    - overlap with the testing ideas in [LLMs and storage systems](llm_and_storage.md); read its "LLMs testing storage" part first
+  - risk I see: the agent's model copies the engine's bug; measure that directly
+- 5: prove a concurrent cache
+  - question: can the lock-free hit path of SIEVE or S3-FIFO be proved correct in Verus, and can an agent do most of the proof?
+  - why: the algorithms are tiny ("fewer than 20 lines of code changes"), widely deployed, and their selling point is concurrency without locks
+  - what counts as correct needs care: never return a wrong value, never exceed capacity, never lose an entry that was not evicted
+  - honest size: a workshop paper or a benchmark entry, unless it finds a bug in a real library such as Foyer
+- 6: write down and check the "who may read what" rules for shared CXL memory
+  - question: is there one small model of partly coherent shared memory under which Tigon, MEGALON, Borges, and XTRA's rules can each be stated and checked?
+  - no hardware needed for the model; an evaluation would need a device or an emulator
+  - what would kill it: the papers already contain such proofs (I read abstracts only); the systems are not open
+  - lowest fit of the six: far from Rust and the community is hardware-first
+
+what I would skip
+
+- another compaction or write-stall design for RocksDB
+  - dozens exist; see the survey
+- RDMA, DPU, and switch stores
+  - each needs the device, and the 2024 to 2026 programmes are full of them
+- learned indexes
+  - the two 2025 to 2026 evaluations above report small gains and little adoption
+- LLM tuning of RocksDB settings
+  - already several papers; see [LLMs and storage systems](llm_and_storage.md)
+- new persistent memory stores
+  - the hardware was cancelled
+- cache hit-ratio algorithms
+  - S3-FIFO, SIEVE, S4-FIFO, and Merlin come from groups with thousands of production traces and years of head start
+
+second opinion
+
+- no ChatGPT opinion was obtained yet
+  - one Extra High attempt on 7 Oct failed before the prompt was submitted
+  - the coordinator then stopped all attempts until the human signs in to ChatGPT
+- the prompt I would send is saved outside the notes; its path is in my report to the coordinator
+- the ranking above is therefore one agent's opinion, unreviewed
+
+what I read and what I missed
+
+- read depth
+  - about 75 sources
+  - full abstracts, word for word: about 50 USENIX papers (FAST, OSDI, NSDI, ATC 2024 to 2026), 15 arXiv papers, 6 SOSP 2026 abstracts through a blog listing
+  - first pages of PDFs: Bf-Tree, S3-FIFO, CaaS-LSM, post-Optane, ShardStore
+  - deeper: PoWER sections 3.4 and 5.1
+  - project pages: 13 README files, SlateDB RFC 0001, one issue, one AWS announcement
+  - I read no paper end to end; claims about results are the authors' abstract claims
+- not covered
+  - SIGMOD, VLDB, ICDE, CIDR beyond the few papers named; the title database I tried was rate limited
+  - EuroSys 2026 and ASPLOS; EuroSys 2025 and SOSP 2024 to 2025 by title only
+  - 2022 and 2023 conference programmes, except S3-FIFO and the post-Optane paper
+  - production systems papers (DynamoDB, MemoryDB, FoundationDB, Cassandra, TiKV internals)
+  - zoned SSD stores, vector and time-series engines, blockchain state stores beyond Tidehunter
+  - Jepsen reports on key-value stores
+  - whether any listed artifact builds
+- possible error in a sibling file: none found; I read [stores and recovery](stores_recovery.md) in full and only the outlines of the others
