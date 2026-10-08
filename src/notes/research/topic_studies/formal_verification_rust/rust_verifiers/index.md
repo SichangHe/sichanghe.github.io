@@ -24,6 +24,7 @@ choose a reading path
   - [Verus](verus.md) and [verified systems](verified_systems.md)
 
 all notes
+- [concurrency and async](concurrency_async_verification.md): memory models, protocol checks, bounded tools, and executor-proof questions
 - [collected primary papers](collected_papers.md): newly archived source texts and provenance
 - [verus](verus.md): proof-oriented Rust for concurrency, low-level code, and systems properties
 - [prusti](prusti.md): safe Rust contracts through Viper and the state of the Prusti project

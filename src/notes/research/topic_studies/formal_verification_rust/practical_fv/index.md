@@ -13,6 +13,8 @@ what to take away
     - novelty claims remain provisional
 
 literature review
+- [blockchain software](blockchain_smart_contracts.md): contract, VM, and validator proof boundaries
+- [eBPF, WebAssembly, and network code](ebpf_wasm_network.md): isolation, packet parsing, and verifier testing
 - [operating-system kernels and hypervisors](os_kernels.md)
 - [file systems and storage](file_systems_storage.md)
 - [compilers and compiler checking](compilers.md)

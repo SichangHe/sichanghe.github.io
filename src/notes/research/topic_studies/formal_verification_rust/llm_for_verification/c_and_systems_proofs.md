@@ -1,41 +1,20 @@
-LLMs for proofs about C code and operating systems (PARTIAL, unfinished)
+LLMs for proofs about C code and operating systems
 (authored by agents unless marked 🧑)
 
 status
-- the agent hit its usage limit after the first search round
-- publication follow-up checked six primary abstracts and their full-text methods and limitations on October 8, 2026
+- an initial incomplete search was followed by primary-source review on October 8, 2026
+  - nine papers' methods and limitations checked in full text
+  - two F* papers checked through primary abstracts and the existing collection
 - results have not been reproduced
-- original search leads below remain incomplete
-  - remaining work: cover other listed papers and compare training data, theorem splits, cost, and contract strength consistently
+- scope: proof generation and specification generation for selected C and proof-assistant developments
+  - no exhaustive survey of every proof assistant or industrial deployment
+  - cross-paper success rates are not directly comparable
 
 short version
 - seL4 appears in several studies found in this first search
   - their authors report promising results for small trained models
 - inference: C annotation (ACSL) work is split between "generate contracts" and "make Frama-C prove them"
 - candidate idea, untested: compare small fine-tuned models against large hosted agents on the same C or seL4 proof set at equal cost
-
-what was seen
-- AutoReal, [Towards Real-World Industrial-Scale Verification: LLM-Driven Theorem Proving on seL4](https://arxiv.org/abs/2602.08384), arXiv Feb 2026, preprint (abstract page read)
-  - claim: a 7B model, trained on reasoning chains plus context from the existing project
-  - claim: 51.67% of 660 seL4 "Important Theories" theorems, against 27.06% for earlier work
-  - claim: 53.88% on 451 theorems from three security-related Archive of Formal Proofs projects
-  - claim: small size allows local deployment
-- PROMISE, [Proof Automation as Structural Imitation of Human Reasoning](https://arxiv.org/abs/2604.05399), arXiv Apr 2026, preprint (abstract page read)
-  - claim: proof generation as stateful search over proof-state transitions, mining structural patterns from proofs
-  - claim: "up to +26 point improvements (186% relative gain)" over Selene and Rango on the seL4 benchmark
-- seen only as search snippets, not opened
-  - [Evaluating LLM-Generated ACSL Annotations for Formal Verification](https://arxiv.org/abs/2602.13851): 506 C programs, DeepSeek-V3.2, GPT-5.2, OLMo 3.1 32B; snippet says rule-based generation was more reliable than the LLMs
-  - [AutoACSL](https://arxiv.org/abs/2606.20969): feedback loop with Frama-C/WP; snippet says 96% full proof with Gemini-3
-  - OSDI 2026 paper by He Baoding et al. ([PDF](https://www.usenix.org/system/files/osdi26-he-baoding.pdf)): snippet says 77.6% of seL4 theorems; title and method unknown
-  - [Agent-Driven Verification of Memory Safety for liblzma Decoder Components with VST](https://arxiv.org/pdf/2608.29716)
-  - [Harnessing Code Agents for Automatic Software Verification](https://arxiv.org/pdf/2607.06341)
-  - [Agentic Verification of Software Systems](https://arxiv.org/abs/2511.17330) (FSE 2026 listing), covers AutoRocq
-  - [Trustworthy Software Project Generation: a Case Study with an Interactive Theorem Prover](https://arxiv.org/pdf/2605.26017): Rocq RISC-V interpreter
-  - [Building A Proof-Oriented Programmer That Is 64% Better Than GPT-4o Under Data Scarcity](https://arxiv.org/pdf/2502.11901) (PoPilot, F*)
-  - [Towards Neural Synthesis for SMT-Assisted Proof-Oriented Programming](https://arxiv.org/abs/2405.01787) (F* dataset, fine-tuned small models vs GPT-4)
-  - CBMC harness work: BMC-Agent, AutoUP (arXiv 2511.01104 / 2512.03420 unclear which), a Intel TDX harness thesis from the sosy-lab
-- already in the paper collection, not yet re-read: Selene, FVEL, Rango, Planning to Hammer, VeriFast LLM specification study, Foundational VeriFast
-- already covered elsewhere: Proofs Promptly (local note; not yet published), [LemmaNet and AutoVerus audit](../../../autoverus_citations_20260801.md), [proof synthesis](proof_synthesis.md)
 
 primary-source follow-up
 - [AutoReal](https://arxiv.org/abs/2602.08384), 2026 preprint
@@ -82,6 +61,37 @@ primary-source follow-up
   - source warning: agents can pass a checker while “silently dropping or weakening the target lemma”
   - limit: existing-lemma proofs do not establish end-to-end verification of new implementations
     - reported model time differs from total service cost
+- [Neuro-Symbolic Proof Generation for Scaling Systems Software Verification](https://www.usenix.org/conference/osdi26/presentation/he-baoding), He et al., OSDI 2026
+  - peer-reviewed systems paper
+  - method: fine-tuned proof-step proposals, symbolic repair, and ranked search over Isabelle proof states
+  - authors report “up to 77.6% of the theorems” on the FVEL seL4 benchmark
+  - limits: repeated prover calls are costly, and longer proofs remain harder
+    - this is a theorem-completion result, not verification of previously unverified kernel code
+- [Agentic Verification of Software Systems](https://arxiv.org/abs/2511.17330), AutoRocq, FSE 2026
+  - peer-reviewed software-engineering paper
+  - method: Rocq feedback and context queries guide an agent's proof construction
+  - evaluation includes 641 proof obligations derived from 131 sequential C programs
+    - paper also reports 12 Linux utility lemmas
+  - important limit: contracts, inferred invariants, Frama-C translation, and completion of the whole program's obligations remain separate from proving a selected lemma
+  - inference: an accepted lemma is useful evidence only after mapping it back to the source property
+- [Trustworthy Software Project Generation](https://arxiv.org/abs/2605.26017), Fang and Xiong, 2026 preprint
+  - method: prove a pure Rocq core and extract it into C++ alongside unverified effects
+  - authors report an RV32I interpreter covering 47 instructions in 30 minutes
+    - 265 generated tests passed; 12 hours of fuzzing found no crashes or hangs
+  - source limit: “the small host C++ layer handling side effects is unverified”
+  - inference: generated requirements, implementation, and tests can share an omission
+    - independent ISA conformance tests would add evidence beyond self-consistency
+- [Towards Neural Synthesis for SMT-Assisted Proof-Oriented Programming](https://arxiv.org/abs/2405.01787), Chakraborty et al., ICSE 2025
+  - primary abstract checked; full text archived in the collection
+  - authors provide an extended F* corpus with 54,000 definitions and a candidate checker
+  - claim: smaller fine-tuned models compare favorably with larger general models at lower compute cost
+  - limit: this is typed program/proof completion, distinct from unrestricted C verification
+- [PoPilot](https://arxiv.org/abs/2502.11901), Zhang et al., ACL Findings 2025
+  - primary abstract checked; full text archived in the collection
+  - method: synthetic F* generation and repair examples for a fine-tuned 14B model
+  - authors report a 64% relative improvement over GPT-4o on their project-level task
+  - limit: relative improvement is not a 64-percentage-point gain
+    - model, data, task population, and repair budget must be matched in a new comparison
 
 research we could do
 - fixed-requirement C specification experiment
@@ -108,4 +118,8 @@ research we could do
 
 what was searched
 - five queries: Frama-C ACSL agents, seL4 Isabelle LLM, CBMC harness generation, Rocq agents on large projects, F*/Low* fine-tuning
-- not searched: CN, VeriFast beyond the local PDF, Pulse agents, self-play, synthetic proof data, industrial reports
+- outside this targeted review: CN, Pulse agents, self-play, and a systematic survey of industrial deployments
+- discarded unverified leads
+  - arXiv 2511.01104 is HarnessLLM testing, and 2512.03420 studies fuzz harnesses
+    - neither substantiates the initial draft’s attribution to a CBMC proof agent
+  - unidentified Intel TDX thesis and BMC-Agent leads are not used as evidence

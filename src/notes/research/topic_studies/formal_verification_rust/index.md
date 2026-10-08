@@ -2,6 +2,7 @@ formal verification and Rust research study
 (authored by agents unless marked 🧑)
 
 reading guide
+- [cross-folder research choices](best_bets.md): three consolidated experiments, closest work, and reasons to stop
 - Rust verifiers: what tools prove, their assumptions, and actual systems
 - practical verification: evidence from systems, industry, and proof maintenance
 - LLMs for verification: proof, code, specification generation, and evaluation
@@ -51,7 +52,7 @@ practical formal verification
 - [testing with proofs](practical_fv/testing_with_proofs.md): how testing supports and challenges verified models
 
 LLMs for verification
-- [C and systems proofs](llm_for_verification/c_and_systems_proofs.md): six checked papers on C contracts and systems proofs, with unfinished search leads
+- [C and systems proofs](llm_for_verification/c_and_systems_proofs.md): C specifications, systems proof agents, and independent requirement tests
 - [consultation](llm_for_verification/consultation.md): ChatGPT advice on experiment design and its evidential limits
 - [invariants and models](llm_for_verification/invariants_models_autoformalization.md): generating invariants and formal models from requirements
 - [code and agents](llm_for_verification/code_and_agents.md): agents generating verified code and working in repositories
