@@ -84,7 +84,7 @@ systems evidence
     - [official publication list](https://verus-lang.github.io/verus/publications-and-projects/)
     - this translation phase is narrower than the complete Verus pipeline
 - the human's existing collection covers newer engine/GPU proof boundaries
-  - [October 6 frontier collection](../../../verus_frontier_20261006.md)
+  - October 6 frontier collection (local note; not yet published)
   - avoid repeating its Vosti/RESOLVE contract-checking proposal as a new idea
 
 research we could do

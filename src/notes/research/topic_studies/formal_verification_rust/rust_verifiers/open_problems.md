@@ -31,7 +31,7 @@ concurrent code and actual hardware
 
 specifications that describe the intended behavior
 - documented problem
-  - the [October collection](../../../verus_frontier_20261006.md) distinguishes translated theorem success from source-code correspondence
+  - the October collection (local note; not yet published) distinguishes translated theorem success from source-code correspondence
   - [existing specification notes](../../../autoverus_citations_20260801.md) discuss non-vacuity and documentation-derived requirements
 - a vacuous proof is one whose assumptions admit no relevant execution
 - agent inference

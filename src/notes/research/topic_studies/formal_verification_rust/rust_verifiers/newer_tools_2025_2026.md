@@ -161,7 +161,7 @@ Rust-Prover and VeriContest: high proof coverage with a translation caveat
   - proof coverage applies to the translated statements
   - execution tests support correspondence for tested inputs
     - they do not prove translation correctness for all inputs
-  - the [existing October collection](../../../verus_frontier_20261006.md) records these distinctions
+  - the existing October collection (local note; not yet published) records these distinctions
 - research proposal: translation-preservation challenge set
   - builds on the paper's execution comparisons and Lean proofs
   - deliberately vary overflow, indexing, division, panic, and representation choices

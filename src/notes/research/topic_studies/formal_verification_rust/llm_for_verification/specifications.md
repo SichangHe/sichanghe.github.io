@@ -32,7 +32,7 @@ build on the existing notes
   - already covers implementation-blind generation, documentation provenance, vacuity checks, and passing-but-bad contracts
 - [CryptoProver and LeetProof specification clarification](../../../cryptoprover_leetproof_spec_clarification_20260808.md)
   - already examines intent evidence and formal contracts
-- [Vero](../../../vero_20260821.md) and [Proofs Promptly](../../../proofs_promptly_20260821.md)
+- Vero (local note; not yet published) and Proofs Promptly (local note; not yet published)
   - already distinguish checked proofs from specification review
 - the added question here is how to measure and improve specification quality independently of proof completion
 

@@ -10,9 +10,9 @@ what this adds
   - [LeetProof](../../../leetproof_20260804.md)
   - [StarVerus](../../../starverus_20260809.md)
   - [VeriSkill](../../../veriskill_20260803.md)
-  - [Vero](../../../vero_20260821.md)
-  - [Proofs Promptly](../../../proofs_promptly_20260821.md)
-  - [October Verus frontier](../../../verus_frontier_20261006.md)
+  - Vero (local note; not yet published)
+  - Proofs Promptly (local note; not yet published)
+  - October Verus frontier (local note; not yet published)
 - publication status
   - LeanDojo: arXiv comments report NeurIPS 2023 acceptance
   - CoqPilot: arXiv comments report ASE 2024 Tool Demonstrations publication
@@ -141,7 +141,7 @@ Dafny: generate annotations while keeping the target fixed
 
 F* / Pulse: substantial programs with expert guidance
 - [Proofs Promptly, Ioannidis et al., ICFP 2026](https://doi.org/10.1145/3828709)
-  - use the existing [full-paper and artifact audit](../../../proofs_promptly_20260821.md)
+  - use the existing full-paper and artifact audit (local note; not yet published)
   - authors' stated human roles include “reading and evaluating the auto-generated specification”
   - authors also report “occasionally supplying a key invariant or proof idea”
   - inference: the interesting next experiment measures expert intervention rather than claiming its absence

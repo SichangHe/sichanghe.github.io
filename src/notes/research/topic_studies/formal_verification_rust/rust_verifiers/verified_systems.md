@@ -138,7 +138,7 @@ Kani industrial components
   - [CortenMM's transaction proof and remaining trusted components](newer_tools_2025_2026.md) are covered from its full paper in the newer-tools review
   - Atmosphere's full paper was not recovered in this pass
   - do not infer whole-kernel or whole-stack verification from these titles
-- [Vosti and other September–October 2026 results](../../../verus_frontier_20261006.md)
+- Vosti and other September–October 2026 results (local note; not yet published)
   - existing notes quote primary evidence for the LLM engine/GPU contract boundary
   - [newer verifier tools](newer_tools_2025_2026.md) cover other recent proof approaches
 

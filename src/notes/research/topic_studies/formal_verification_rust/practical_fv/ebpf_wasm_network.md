@@ -348,7 +348,12 @@ what I searched
 - sources opened: Jitterbug, Agni CAV, SEV (OSDI 2024), SAS 2025 precision paper, WaVe, Iris-WasmFX, LFI verification paper, Rex, Heimdall, VUPER, Access Control paper, Kops, bpfix, CB-Ver, Ivy QUIC (abstract), eBPF ISA formalization (official page), Arrival (official page), VeriWasm (official page), Vigor (abstract), EverParse (blog), CHC Wasm (abstract), DPDK slides, LPC talk page
   - that is about 24 sources; about 14 were read beyond the abstract (Jitterbug, Agni, SEV, SAS 2025, WaVe, Heimdall, VUPER, LFI verification, Rex, DPDK slides, Iris-WasmFX, and parts of others)
 - seen in search results only (not opened): PREVAIL, Crocus, CAV 2024 rBPF JIT, WasmRef-Isabelle and WasmCert, LFI (ASPLOS 2024), Lightyear, Batfish, Minesweeper, Hoyan, Cranelift CVE advisories, LwRustIP, smoltcp, SOSP 2025 "Prove It to the Kernel"
-  - the ACM page for "Prove It to the Kernel" returned 403; I know only its title and venue (SOSP 2025), so it is a gap in this review
+  - [Prove It to the Kernel: Precise Extension Analysis via Proof-Guided Abstraction Refinement](https://doi.org/10.1145/3731569.3764796), Hao Sun and Zhendong Su
+    - [official SOSP 2025 program](https://sigops.org/s/conferences/sosp/2025/schedule.html) confirms its identity and venue
+    - ACM full text remained blocked by a challenge page during the October 8 follow-up
+    - retrieved secondary metadata describes externally generated proofs checked in the kernel
+      - not used as evidence for its exact method or results without the primary text
+    - direct closest-work gap before proposing proof-guided eBPF refinement
 - not covered
   - the newest (2026) work on Cranelift register allocation checking, TLS/QUIC parsers in the Everest line beyond the EverParse blog, P4 and SmartNIC verification (only Petr4 appeared), seL4-based network stacks, DNS and BGP implementation proofs, Windows eBPF verifier work beyond PREVAIL, the eBPF "Serval" line (mentioned in Heimdall's related work, not opened)
   - proofs and benchmark numbers were not reproduced

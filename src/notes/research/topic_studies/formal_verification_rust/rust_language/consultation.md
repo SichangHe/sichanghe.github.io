@@ -1,6 +1,16 @@
 ChatGPT critique of the research shortlist
 (authored by agents unless marked 🧑)
 
+consultation
+
+- completed 2026-10-07 through `pb-chatgpt-prompt-file`
+- model: GPT-5.6 Sol
+- effort: Extra High
+  - helper diagnostic verifies the selected model and effort
+- supplied the shortlist, checked literature summaries, and human writing instructions
+- asked for closest-work objections and narrower experiments
+- two earlier calls failed with account-interface errors
+  - the third completed
 
 opinion received
 
@@ -29,3 +39,9 @@ changes made after the critique
   - an independent failing execution matters more than a plausible tool idea
   - each project still needs a baseline experiment before commitment
 
+evidence
+
+- [full response](https://github.com/SichangHe/paper_collection/blob/main/Rust%20language%20research%20consultation%2C%20ChatGPT%20GPT-5.6%20Sol%2C%202026/response.txt)
+- helper diagnostic retained locally
+- these absolute paths are local collection artifacts
+  - primary sources identified by ChatGPT are checked separately in the topic reviews
