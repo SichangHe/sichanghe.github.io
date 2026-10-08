@@ -146,7 +146,7 @@ what existing work shows: manager and workers on long coding tasks
   - what it did: a manager that never runs code, and for each part “a new Coder agent is instantiated with a clean context containing only its specification”
   - limit: the abstract gives no number; I read only the abstract
 - [Building a C compiler with a team of parallel Claudes](https://www.anthropic.com/engineering/building-c-compiler), Anthropic engineering post, February 2026, not peer reviewed
-  - what it did: 16 agents, no manager, about 2,000 sessions, “just under $20,000”, a 100,000-line compiler
+  - what it did: 16 agents, no manager, about 2,000 sessions, “just under \$20,000”, a 100,000-line compiler
   - fact: an agent “takes a "lock" on a task by writing a text file to current_tasks/”
   - fact: “Merge conflicts are frequent, but Claude is smart enough to figure that out.”
   - fact, when the work became one large task: “Every agent would hit the same bug, fix that bug, and then overwrite each other's changes.”
@@ -235,7 +235,7 @@ what existing work shows: fixed workflows against free agents
 
 - [Agentless](https://arxiv.org/abs/2407.01489), Xia et al., arXiv 2024; venue not checked
   - what it did: three fixed phases (find the place, write the patch, validate) “without letting the LLM decide future actions or operate with complex tools”
-  - fact, abstract: “the highest performance (32.00%, 96 correct fixes) and low cost ($0.70) compared with all existing open-source software agents” on SWE-bench Lite at that time
+  - fact, abstract: “the highest performance (32.00%, 96 correct fixes) and low cost (\$0.70) compared with all existing open-source software agents” on SWE-bench Lite at that time
   - limit: 2024 models; I recall free agents leading that benchmark since, but did not check
 - [In-Context Prompting Obsoletes Agent Orchestration for Procedural Tasks](https://arxiv.org/abs/2604.27891), Dennis et al., arXiv preprint, 2026
   - what it did: put the whole procedure in the system prompt, against a LangGraph orchestrator that feeds one step at a time, same model

@@ -9,7 +9,7 @@ read this first
         - Nikon Z6 III shipped C2PA (Aug 2025), a hobbyist signed an AI image with it, Nikon revoked every certificate and suspended the service
         - a university team did the first formal analysis and says "it should not yet be relied upon for high-stakes uses"
     2. the "photo of a photo" question you marked ❗ now has a real literature, and it is an arms race
-        - attack (Chimera, USENIX Sec 2025) → depth defense (Scoop, USENIX Sec 2025) → $210 optical attack (WOOT 2026) → dual-pixel defense (lab only)
+        - attack (Chimera, USENIX Sec 2025) → depth defense (Scoop, USENIX Sec 2025) → \$210 optical attack (WOOT 2026) → dual-pixel defense (lab only)
     3. almost nothing on the web carries C2PA: 27 of 6,580 news images in Oct 2026, none from a camera; platforms strip it
     4. proving edits in zero knowledge went from a server with 120 GB RAM to a laptop in 6.6 min; still trusts the camera
 - my top three research ideas, details under "research ideas" below
@@ -133,7 +133,7 @@ literature cards: attacks on deployed C2PA
     - "if you root a device via an exploit, the attestation mechanism has no reliable way to 'notice'. The bootloader is still locked, the AVB keys are unmodified"
     - "an attacker does not need the raw key material! As root, they can ask StrongBox to use these keys to sign whatever data they like."
     - "At time of writing, one-click root exploits exist in-the-wild for fully-patched Google Pixel devices (via CVE-2026-43499)."
-    - Google's VRP: "Won't fix (infeasible)", "$7500 bounty"
+    - Google's VRP: "Won't fix (infeasible)", "\$7500 bounty"
     - fix in his words: "The entire image processing pipeline, including all the fancy AI stuff, would need to run inside a secure enclave with strong hardware memory protection."
     - shows: a signature from Pixel Camera means "a registered app on a genuine Pixel asked the chip to sign this", not "the sensor saw this"; a forged AI photo passed Verify and a forged video got YouTube's "captured with a camera" box
     - limits: one researcher; hardware details withheld; iPhone not tested
@@ -193,7 +193,7 @@ literature cards: photo of a photo (recapture)
 - Ishizue, Rampazzi, Sugawara, "Breaking Infrared Recapture Detection: Optical-Synthesis Attacks and Depth-Aware In-Sensor Countermeasures", USENIX WOOT 2026
     - label: peer-reviewed workshop; artifacts at doi 10.5281/zenodo.19704181
     - "SynthIR ... evades detection by independently manipulating the views of the RGB camera and the IR depth sensor across different optical spectra through an inexpensive optical filter"
-    - "we successfully bypass Scoop with 100% ASR by creating 50 cardboard 2D objects for 50 images from the Celeb-DF v2 dataset" (iPhone 15 Pro, hot mirror about $210)
+    - "we successfully bypass Scoop with 100% ASR by creating 50 cardboard 2D objects for 50 images from the Celeb-DF v2 dataset" (iPhone 15 Pro, hot mirror about \$210)
     - printed images already hurt image-only detectors: "96-99% TPR ... degrades to 37-72% TPR with recapture of paper-printed images"
     - iPhone fuses LiDAR with the image inside the OS: "the feature cannot be disabled, and raw LiDAR measurement is inaccessible"
     - defense: dual-pixel sensors (Pixel phones, Canon DSLRs) give two views from one lens and one spectrum; "100% TPR ... 100% TNR" on 100 public DP captures plus 2,880 synthesized

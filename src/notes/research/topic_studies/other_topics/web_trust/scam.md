@@ -36,15 +36,15 @@ human's question
 how big, and why the totals are shaky
 
 - FBI, [IC3 2025 Internet Crime Report](https://www.ic3.gov/AnnualReport/Reports/2025_IC3Report.pdf)
-    - "1,008,597 complaints; $20.877 billion in losses; 26% increase in losses from 2024"
-    - earlier years in the same chart: $16.6B in 2024, $12.5B in 2023, $10.3B in 2022
+    - "1,008,597 complaints; \$20.877 billion in losses; 26% increase in losses from 2024"
+    - earlier years in the same chart: \$16.6B in 2024, \$12.5B in 2023, \$10.3B in 2022
     - counts only what victims chose to report to the FBI
 - other totals (second-hand)
-    - US FTC: $15.9B reported lost to fraud in 2025
+    - US FTC: \$15.9B reported lost to fraud in 2025
     - UK Finance: £576.4m lost in 2025 to scams where the victim approved the payment
-    - Australia's anti-scam centre: A$2.18B reported in 2025, down from A$3.1B in 2022, but up 7.8% on 2024
-    - GASA survey of 46,000 adults in 42 markets: about $442B lost worldwide
-    - UNODC 2026: $88B to $114B lost in East and Southeast Asia, Australia and New Zealand in 2025
+    - Australia's anti-scam centre: A\$2.18B reported in 2025, down from A\$3.1B in 2022, but up 7.8% on 2024
+    - GASA survey of 46,000 adults in 42 markets: about \$442B lost worldwide
+    - UNODC 2026: \$88B to \$114B lost in East and Southeast Asia, Australia and New Zealand in 2025
 - survey totals can be wrong by a lot
     - Florêncio and Herley, [Sex, Lies and Cyber-crime Surveys](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/SexLiesandCybercrimeSurveys.pdf), WEIS 2011
         - "How can two answers (in a survey of 5000) make a 3x difference in the final result?"
@@ -90,7 +90,7 @@ the scam business has few exits
         - Griffin and Mei, [How Do Crypto Flows Finance Slavery?](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4742235), 2024
             - Tether, or USDT, is a crypto coin pegged to the dollar, and its issuer can freeze it
         - "Funds exit the crypto network in large quantities, mostly in Tether, through less transparent but large exchanges—Binance, Huobi, and OKX."
-            - "at least $75.3 billion into suspicious exchange deposit accounts"
+            - "at least \$75.3 billion into suspicious exchange deposit accounts"
             - limit: money moved, which is more than money lost; one author owns a tracing firm
     - crypto giveaway scams: Liu et al., [Give and Take](https://arxiv.org/abs/2405.09757), IMC 2024
         - the scam: "send me 1 coin and get 2 back", under a celebrity's name
@@ -98,7 +98,7 @@ the scam business has few exits
         - "at least 58% of victims relied on centralized exchanges"
             - so the exchange could warn or stop the payment
     - wallet-stealing sites: Chen et al., [Dissecting Payload-based Transaction Phishing on Ethereum](https://arxiv.org/abs/2409.02386), NDSS 2025
-        - 130,637 scam transactions in 300 days, "losses exceeding $341.9 million"
+        - 130,637 scam transactions in 300 days, "losses exceeding \$341.9 million"
         - "the top five phishing organizations are responsible for 40.7% of all losses"
         - these sites trick you into signing a transaction that hands over your coins
             - the ready-made kits are called drainers
@@ -123,7 +123,7 @@ what was measured, by kind of scam
             - Google Safe Browsing, the list behind Chrome's red warning page: 15.6%
         - limit: needs a human at some steps; no data release found
 - text messages in general
-    - Lu et al., [Read This Paper to Get $50 Million](https://arxiv.org/abs/2605.16656), arXiv 2026
+    - Lu et al., [Read This Paper to Get \$50 Million](https://arxiv.org/abs/2605.16656), arXiv 2026
         - 175,430 scam texts that people posted on Reddit, June 2020 to December 2025
         - posts about scams that ask you to reply grow 99.98% a year, posts about scams with a link 57.29%
             - more posts can also mean more people posting
@@ -198,7 +198,7 @@ what works, with evidence
     - freezing stablecoins
         - Wu et al., [Ordering Power is Sanctioning Power](https://arxiv.org/abs/2603.27739), arXiv 2026
             - "At least 7.3% of sanctioned USDT addresses and 18.7% of sanctioned USDC addresses had already been drained to zero before the freeze took effect."
-        - Tether's joint unit froze about $300M by October 2025, against $14B+ of scam inflows in 2025 per Chainalysis (both second-hand)
+        - Tether's joint unit froze about \$300M by October 2025, against \$14B+ of scam inflows in 2025 per Chainalysis (both second-hand)
     - reporting ads to platforms
         - BEUC, [Sponsored by Scammers](https://www.beuc.eu/sites/default/files/publications/BEUC-X-2026-045_Two-pager_Sponsored_by_Scammers.pdf), May 2026
             - consumer groups in 13 countries reported 893 scam ads to Meta, TikTok and Google
@@ -223,7 +223,7 @@ AI on both sides
             - makes sense: the early chat is just friendly talk
     - Czybik et al., [A Large-Scale Study of Personalized Phishing using Large Language Models](https://www.usenix.org/conference/usenixsecurity26/presentation/czybik), USENIX Security 2026
         - 7,700 people; clicks: LLM personal email 10.0%, generic 3.7 to 4.1%, hand-written personal 24.2%
-        - "the cost of personalization is minimal, with approximately $0.03 per email"
+        - "the cost of personalization is minimal, with approximately \$0.03 per email"
     - Heiding et al., [Evaluating Large Language Models' Ability to Automate Spear Phishing](https://arxiv.org/abs/2412.11109), 2026: 54% clicks for AI emails with 101 people (second-hand)
         - 54% vs 10% is far apart
             - the 2 studies differ in people, emails and size, so it may not be a real conflict

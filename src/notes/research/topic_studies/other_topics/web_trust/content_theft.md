@@ -290,8 +290,8 @@ piracy
 - US: training looks legal so far; how you got the copies matters
     - Bartz v. Anthropic, N.D. Cal.
         - June 2025 ruling, snippet: training on books is fair use, "transformative—spectacularly so"; keeping a library of pirated books is not
-        - settlement, [Authors Guild](https://authorsguild.org/news/court-grants-final-approval-anthropic-copyright-settlement/), fetched: "the landmark $1.5 billion class action settlement", final approval "On July 20, 2026"
-        - about $3,000 per book, "four times the statutory minimum for ordinary infringement"
+        - settlement, [Authors Guild](https://authorsguild.org/news/court-grants-final-approval-anthropic-copyright-settlement/), fetched: "the landmark \$1.5 billion class action settlement", final approval "On July 20, 2026"
+        - about \$3,000 per book, "four times the statutory minimum for ordinary infringement"
         - covers only "Anthropic's past acquisition and copying of their works—the 'inputs' side—through August 25, 2025"; claims about what the model outputs stay open
     - Kadrey v. Meta, June 2025, snippet: fair use for training; the claim about sharing pirated books by torrent continues
     - Thomson Reuters v. ROSS, 3rd Circuit, 29 Sept 2026, [Ballard Spahr summary](https://www.ballardspahr.com/insights/alerts-and-articles/2026/10/third-circuit-addresses-fair-use-in-ai-training-but-leaves-generative-ai-questions-unresolved), fetched: not fair use, but for a search tool that competed directly; "ROSS's AI platform cannot generate original expression"
@@ -307,7 +307,7 @@ piracy
 
 ## 5: in the market
 
-- deals exist for the big, snippet, press reports: News Corp–OpenAI "more than $250 million" over five years; Reddit–Google about $60 million a year
+- deals exist for the big, snippet, press reports: News Corp–OpenAI "more than \$250 million" over five years; Reddit–Google about \$60 million a year
 - small sites get tools that are not open to them yet
     - Cloudflare [pay per crawl](https://developers.cloudflare.com/ai-crawl-control/features/pay-per-crawl/what-is-pay-per-crawl/), fetched: the site answers a crawler with "402 Payment Required" and a price; "Pay per crawl is currently in closed beta"
     - no public numbers on money paid

@@ -98,7 +98,7 @@ what existing work shows
   - [Vending-Bench](https://arxiv.org/abs/2502.15840), Backlund and Petersson, Feb 2025, preprint; [Vending-Bench 2 page](https://andonlabs.com/evals/vending-bench-2)
     - fact: runs exceed 20M tokens; "all models have runs that derail, either through misinterpreting delivery schedules, forgetting orders, or descending into tangential 'meltdown' loops"
     - fact: "no clear correlation between failures and the point at which the model's context window becomes full"
-    - fact, v2 page: score is end-of-year balance averaged across runs; GPT-6 Astra $15,514.70 ± $1,074; Gemini 4 Argon $13,718.16 ± $3,100; authors estimate a competent strategy at about $63,000
+    - fact, v2 page: score is end-of-year balance averaged across runs; GPT-6 Astra \$15,514.70 ± \$1,074; Gemini 4 Argon \$13,718.16 ± \$3,100; authors estimate a competent strategy at about \$63,000
     - limit: 5 runs per model; a private simulation; no measured human baseline
 - compounding and drift over many steps
   - [The Illusion of Diminishing Returns: Measuring Long Horizon Execution in LLMs](https://arxiv.org/abs/2509.09677), Sinha et al., ICLR 2026, peer reviewed
@@ -222,7 +222,7 @@ research we can do
     - one frozen model; three harness conditions; same total dollars; 20 seeds each
     - fit pass^k vs human time per condition; bootstrap the 80% and 95% horizons
   - convincing result: a condition whose 95% horizon lower bound is longer at equal cost; or a clean negative that restarts only move cost around
-  - cost: about 40 x 3 x 20 = 2,400 runs; at $2–10 per run that is $5k–25k; a 5-task pilot first
+  - cost: about 40 x 3 x 20 = 2,400 runs; at \$2–10 per run that is \$5k–25k; a 5-task pilot first
   - scoop risk: METR (budget-aware horizons), the reliability framework authors, Anthropic's harness team
 - B. isolate self-conditioning in real agent work
   - question: after a mistake, does removing the mistake from context raise completion, independent of retries

@@ -192,7 +192,7 @@ what existing work shows
     - quote, abstract: "developers forecast that allowing AI will reduce completion time by 24%"
     - limit: early 2025 tools; experts on code they know well; one task at a time
   - [We are Changing our Developer Productivity Experiment Design](https://metr.org/blog/2026-02-24-uplift-update/), Becker et al., METR, 24 Feb 2026, blog post, not peer reviewed
-    - fact: 57 developers, over 800 tasks, started Aug 2025, pay cut from $150 to $50 an hour
+    - fact: 57 developers, over 800 tasks, started Aug 2025, pay cut from \$150 to \$50 an hour
     - main number: returning developers 18% faster with AI, interval from 38% faster to 9% slower; new developers 4% faster
     - quote: "we have observed a significant increase in developers choosing not to participate in the study because they do not wish to work without AI, which likely biases downwards our estimate"
     - quote: "our measurements of time-spent on each task are unreliable for the fraction of developers who use multiple AI agents concurrently"
@@ -286,7 +286,7 @@ what existing work shows
     - limit: only failures the user noticed and objected to
   - [Glite ARF: Verifier-Driven Research with Parallel LLM Coding Agents](https://arxiv.org/abs/2606.27416), Philippov et al., 2026, preprint
     - fact: one human picks hypotheses; up to twelve agents in parallel run tasks; plain Python scripts refuse commits that break the process rules
-    - main number: 273 tasks, about $450 of model spend, first place in one track of a shared task; the scripts add about 1% of wall time
+    - main number: 273 tasks, about \$450 of model spend, first place in one track of a shared task; the scripts add about 1% of wall time
     - quote, abstract: "the rules of the research process live in code that fails loudly when violated, not in prose that agents are merely asked to follow"
     - fact, abstract: the records let them catch four leaking feature sets, "correcting an implausible 0.609 RMSE to 0.802"
     - limit, text: the scripts "do not catch semantic errors — a wrong analysis, a wrong baseline"; one team, its own projects
@@ -407,7 +407,7 @@ C. can agents reproduce the performance claims of systems papers
   - reproduce rate by tier, and the rate of false "reproduced" on broken copies
   - a comparison of agent alone, human alone on a sample, and human who only answers the agent's questions, with human minutes counted
   - a list of what blocks agents that is specific to systems: kernel settings, cluster setup, long runs, noise
-- cost: 2 to 3 months; testbed time; perhaps $2,000 to $5,000 of model spend at RECLAIM-like budgets, my rough guess
+- cost: 2 to 3 months; testbed time; perhaps \$2,000 to \$5,000 of model spend at RECLAIM-like budgets, my rough guess
 - who could scoop it: DeployBench's authors already hold 19 systems artifacts and a hidden check pipeline; the Berkeley systems group is active here; artifact evaluation chairs may try it themselves
 
 smaller ideas I would not lead with

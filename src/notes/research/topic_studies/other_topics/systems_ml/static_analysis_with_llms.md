@@ -93,7 +93,7 @@ way 1: the LLM filters analyzer warnings
     - OWASP Benchmark v1.2, 2,740 Java cases, baseline false-positive rate 98.3%; best setup “reduces the remaining FPR to 6.3%”
     - the same best setup “incorrectly labeled 314 true vulnerabilities as FPs, resulting in a TP retention of 77.7% and a miss rate of 22.25%”
     - 50 real Vul4J alerts: up to 93.3% of false positives identified
-    - cost from $0.0028 per run (Aider, DeepSeek) to $0.1867 per task (OpenHands, Claude)
+    - cost from \$0.0028 per run (Aider, DeepSeek) to \$0.1867 per task (OpenHands, Claude)
     - my take: this is the clearest published number for the cost of letting an LLM have final say; 22% of real bugs gone
 - Klieber, Svoboda, Flynn, and Martins, [LASAA](https://arxiv.org/html/2607.09979v1), July 2026 preprint (first version)
     - repeated judgments, compared reasoning, optional LLM-written test driver that must trigger the defect and respect preconditions
@@ -147,7 +147,7 @@ way 3: the LLM writes the analyzer
     - validity rule: “A checker is considered valid if Nbuggy > Npatched and Npatched < Tvalid, where Tvalid is a threshold value (50 by default)”
     - 61 patches in 10 categories; 39 valid checkers; false-positive rate “32.2%” after triage
     - 92 new bugs, 77 confirmed, 57 fixed, 30 CVEs, average latency 4.3 years; kernels v6.9 to v6.15 with allyesconfig
-    - cost: “approximate cost of $0.24 per commit using O3-mini”; 15.9 hours total synthesis
+    - cost: “approximate cost of \$0.24 per commit using O3-mini”; 15.9 hours total synthesis
     - limits: “highly complex bug patterns, particularly those involving state-machine reasoning, such as use-after-free, and concurrency issues”
 - Wu et al., [BugStone](https://proceedings.mlr.press/v306/wu26bk.html), ICML 2026 (first version)
     - LLVM analysis plus LLM-written error patterns from “a single patched instance”
@@ -158,14 +158,14 @@ way 3: the LLM writes the analyzer
     - a query succeeds only if it compiles, flags the vulnerable version through the patched code, and is silent on the fixed version
     - CWE-Bench-Java, 176 CVEs in 111 projects, CodeQL 2.22.2: 100% compile, 53.4% success; best agentic baseline Gemini CLI 19% and 0%
     - F1 0.7 versus 0.048 for IRIS and 0.073 for CodeQL's own suite; on 130 shared CVEs recall 80% versus 35.4% and 20%
-    - $2.90 and 3,712 seconds per CVE
+    - \$2.90 and 3,712 seconds per CVE
     - post-cutoff drop: 46.2% success on 2025 CVEs versus 57.7% on older ones
     - needs the patch commit hash from CVE metadata
     - my take: the IRIS comparison is partly unfair, since IRIS gets no patch; the fair reading is that a known fix is worth a lot of recall
 - Irsan et al., [a study on automatic query generation](https://arxiv.org/html/2609.10412), September 2026 preprint (read)
     - CodeQL queries from NVD entries for 112 Java CVEs in 10 top-25 CWEs
     - “263% increase in the detection rate over the CodeQL baseline, rising from 19 to 50 detected vulnerabilities”; “82% improvement of average F1-Score”
-    - best model generated 96 queries for “$12.99” total
+    - best model generated 96 queries for “\$12.99” total
     - limits: high false positives need manual filtering; weak on interprocedural bugs; dead code triggers alerts
 - Xia et al., [SymGPT](https://dl.acm.org/doi/10.1145/3798217), OOPSLA 2026 (first version)
     - GPT translates Ethereum token standards into a rule language; symbolic execution checks contracts
@@ -192,7 +192,7 @@ way 4: the LLM is the analyzer, with tools and a checker
     - custom taint detection “precision of 66.27%, a recall of 78.57%”; 13 real memory leaks fixed by developers
 - Guo, Wang, Xu, Su, and Zhang, [RepoAudit](https://arxiv.org/html/2501.18160v3), ICML 2025 (first version)
     - demand-driven exploration without a build; 78.43% precision on benchmark; 185 new bugs, 174 confirmed or fixed
-    - validators include LLM judgments; Li et al. measured it at $172.77 average per project
+    - validators include LLM judgments; Li et al. measured it at \$172.77 average per project
 - Ceka et al., [can LLM prompting serve as a proxy for static analysis](https://arxiv.org/abs/2412.12039), December 2024 preprint (abstract)
     - security-aware prompts on partial code beat CodeQL and CodeGuru on their setup; F1 up to 71.7% higher
     - my take: partial code is exactly where analyzers cannot run, so this is not a like-for-like comparison
@@ -226,23 +226,23 @@ way 4: the LLM is the analyzer, with tools and a checker
     - function level only; no repair
 - Agarwal, [Refute-or-Promote](https://arxiv.org/html/2604.19049), April 2026 preprint (read)
     - adversarial reviewers with fresh context try to kill each candidate; a mandatory runtime test gate; a cross-model critic
-    - “killed ∼79% of ∼171 candidates before advancing to disclosure”; 4 CVEs; about $62 per CVE
+    - “killed ∼79% of ∼171 candidates before advancing to disclosure”; 4 CVEs; about \$62 per CVE
     - the key failure: “ten dedicated agents … unanimously confirmed a CMS Bleichenbacher padding oracle … that did not exist”; only the runtime test caught it
     - “No vulnerability was discovered autonomously; the contribution is external structure that filters LLM agents' persistent false positives”
     - single author, no peer review; the Bleichenbacher anecdote is the useful part
 - Korda and Evron, [OpenAnt](https://arxiv.org/html/2606.19149), June 2026 preprint (read)
     - AST parsing, reachability filter that drops about 97% of functions, exposure classification, detection, adversarial self-check, then exploit execution in containers
-    - 8 repositories in 6 languages: 376 flagged, 190 confirmed by the adversarial step, 144 dynamically verified; $1,461.25 total, about $23,700 without the reachability filter
+    - 8 repositories in 6 languages: 376 flagged, 190 confirmed by the adversarial step, 144 dynamically verified; \$1,461.25 total, about \$23,700 without the reachability filter
     - “Race conditions and distributed system exploits may require coordinated interactions” beyond the container
     - my take: the cheap static reachability step is what makes the LLM affordable; that is a way-2 trick inside a way-4 system
 - Park and Yun, [agentic fuzzing](https://arxiv.org/html/2605.10074), May 2026 preprint (read, first 100k characters)
     - “Given a reference bug, the agent analyzes its root cause, hypothesizes new scenarios elsewhere in the codebase that may share that cause, and verifies each hypothesis by generating and running proof-of-concept code”
-    - AFuzz: 40 V8 bugs in about a month from about 750 of 3,146 seeds; $35,000 bounty; two CVEs; 19 bugs in SpiderMonkey and JavaScriptCore from V8 seeds
+    - AFuzz: 40 V8 bugs in about a month from about 750 of 3,146 seeds; \$35,000 bounty; two CVEs; 19 bugs in SpiderMonkey and JavaScriptCore from V8 seeds
     - open problems named: cost effectiveness, no reference bug, design uncertainty; design choices “heuristic and fragile across model generations”
     - my take: the seed-bug pattern is the same one Big Sleep, KNighter, and BugStone use; variant hunting is the most reliable job for an LLM here
 - Zhang et al., [SoK: DARPA's AI Cyber Challenge](https://arxiv.org/html/2602.07666v1), February 2026 preprint (read)
-    - final: about 143 hours, 53 projects, 63 injected vulnerabilities, 7 teams, $85K compute and $50K LLM credit each; 25 real zero-days found as a side effect
-    - [DARPA's own page](https://darpa.mil/news/2025/aixcc-results): 54M lines, 86% of synthetic bugs found, 68% patched, average $152 per task (secondary snippet)
+    - final: about 143 hours, 53 projects, 63 injected vulnerabilities, 7 teams, \$85K compute and \$50K LLM credit each; 25 real zero-days found as a side effect
+    - [DARPA's own page](https://darpa.mil/news/2025/aixcc-results): 54M lines, 86% of synthetic bugs found, 68% patched, average \$152 per task (secondary snippet)
     - “CRSs find 22 PoVs that PF cannot, thanks to LLM-driven code understanding”
     - “Stability and accuracy were deciding factors in CRS performance”; “a CRS that reliably applies foundational techniques in real-world conditions would rank among the top three”
     - patches: semantically wrong patches passed validation at 37.7% to 45.6%
@@ -266,7 +266,7 @@ how such tools are evaluated, and why the numbers mislead
         - best recall per CWE goes to Claude Code, e.g. 80.00% on CWE-401 and 89.80% on CWE-078
         - “lowest overall SFDR being 9.09% for C/C++ and 31.82% for Java”
         - false positives: 3,734 of 5,896 (63.33%) are “incorrect program-point classification”, 861 (14.60%) are “truncated interprocedural context”
-        - cost: Claude Code $1.77 and 2.4 minutes per warning; Codex $2.93 and 8.1 minutes; LLMDFA over $24 per warning; RepoAudit $172.77 per project; analyzers near zero
+        - cost: Claude Code \$1.77 and 2.4 minutes per warning; Codex \$2.93 and 8.1 minutes; LLMDFA over \$24 per warning; RepoAudit \$172.77 per project; analyzers near zero
         - one run per configuration; Codex-assisted labels; Java and C/C++ only
         - my take: general coding agents beat the specialized research tools on recall and cost; the research tools' extra machinery mostly buys structure, not accuracy
 - false-positive rate is rarely reported for agents
