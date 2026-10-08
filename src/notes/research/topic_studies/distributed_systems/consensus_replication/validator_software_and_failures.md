@@ -543,5 +543,6 @@ search summaries only (not fetched or blocked; claims unverified)
 - primary Aptos post-mortem text (site blocked by a bot check)
 - primary Besu 2024 and Reth 2025 post-mortems (sites blocked)
 - stake-weighted client shares I would trust (sources disagree)
-- ChatGPT Extra High consult: no tool for it in this session, so not done
+- initial ChatGPT consultation was unavailable in the writing session
+  - subsequently completed and assessed in [the review record](review_record.md)
 - Runtime Verification's current work on Ethereum clients beyond the 2021 K Beacon Chain model
