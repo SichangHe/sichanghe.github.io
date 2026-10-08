@@ -724,25 +724,24 @@ prevalence. What exists:
     provenance labels rather than detectors are the plausible path to counting
     images
 
-This is a real gap: nobody has done for images what Pew or DeGenTWeb did for
-text, probably because in-the-wild image detectors fail after resizing and
-recompression (see the "Navigating the Challenges of AI-Generated Image
-Detection in the Wild" line of work,
-[arXiv 2507.10236](https://arxiv.org/html/2507.10236v2)).
+- no comprehensive open-web image estimate was identified in this review
+    - detector performance after resizing and recompression is a relevant limitation
+    - [image-detection study](https://arxiv.org/html/2507.10236v2)
 
 cross-cutting lessons on trusting the numbers
 
-What I take away after reading all of the above, and what I think the
-DeGenTWeb intro should say instead of "claims vary widely":
+- these are agent interpretations of the reviewed measurements
 
-- the unit decides the number. On the same 2025 web: 2.5% of pages are pure
-    AI (Ahrefs), 6% of sites are LLM-dominant over 2020 to 2025 and 28.6% of
-    new sites in 2025H1 (DeGenTWeb), 35% of dated pages show AI signs (Pew),
-    35% of new URLs are AI or AI-assisted (Dolezal), 27.5% of filtered tokens
-    are AI (Russell), 50% of articles are mostly AI (Graphite), 74% of pages
-    contain some AI (Ahrefs). These are not contradictions, they are different
-    questions. A paper that states its unit and its threshold up front, as
-    DeGenTWeb does with "LLM-dominant", is answering one of them
+- these estimates answer different questions and use different samples and detectors
+    - Ahrefs: 2.5% pure-AI pages versus 74% containing some AI
+    - DeGenTWeb: 6% dominant sites in its historical sample
+        - 28.6% among sites first seen in 2025H1
+    - Pew: 35% of dated pages show AI signs
+    - Dolezal: 35% of new URLs are AI or assisted
+    - Russell: 27.5% of filtered tokens
+    - Graphite: 50% of sampled articles are mostly AI
+    - population, date, authorship definition, detector, and unit all vary
+    - these percentages cannot be compared as estimates of one quantity
 - historical positive rates reveal a useful negative-control problem
     - they equal false-positive rates only if the sampled text is known human
     - reviewed examples include Originality.ai's historical search and review flags
@@ -750,29 +749,26 @@ DeGenTWeb intro should say instead of "claims vary widely":
     - Graphite reports 2.2% in 2020
     - DeGenTWeb's 0.29% is a historical positive rate
         - it is not a general authorship-error bound
-- Pangram is now the detector behind most 2026 headlines (Pew, Dolezal,
-    Russell twice, Graphite's update, ICLR 2026, Amazon, social feeds). When
-    one proprietary model produces most of the numbers, agreement between
-    studies is not independent confirmation. DeGenTWeb's open zero-shot
-    scorer is a real differentiator here, and the draft should say so
-- "AI-assisted" buckets double the number. Dolezal's 35% is AI plus assisted;
-    Ahrefs' 74% is any AI span; Originality counts posts with 15% AI.
-    Sem-Detect vs EditLens on the same reviews (5% vs 24% fully AI) shows the
-    fully-AI share is a detector choice once mixed writing is common. The
-    MAGE testbed 8 check in the draft (98.9% of GPT-4 paraphrased human text
-    still scores human) is the right kind of evidence that LLM-dominant is a
-    stricter and more stable label
-- corpus-level word statistics (Liang, Kobak) give a fraction without individual labels, so they
-    cannot support site characterization, incentive analysis or search
-    ranking comparisons. DeGenTWeb needs per-site labels and so needs a
-    detector; the trade is worth stating
-- plateaus are ambiguous. Liang 2025 (society), Graphite (50%) and Pew all
-    show growth slowing in 2024 to 2026. DeGenTWeb's frontier-model
-    experiment (accuracy 0.58 on 2025 models, Pearson -0.88 with model
-    strength) is evidence that apparent slowing may reflect detectors
-    going blind rather than adoption stopping. That is a stronger framing
-    for the limitations section than "would current detection work on newer
-    LLMs"
+- several reviewed 2026 measurements rely on Pangram
+    - includes Pew, Dolezal, Russell, and Graphite
+    - shared detector errors can produce agreement between studies
+    - agreement is not independent confirmation
+    - DeGenTWeb uses an open scoring method
+- including AI assistance changes the estimated quantity
+    - Dolezal includes assisted text; Ahrefs includes any AI span
+    - Originality includes posts with 15% AI
+    - Sem-Detect and EditLens estimate 5% and 24% fully AI on the same reviews
+        - detector choice also matters
+    - one MAGE check reports 98.9% of GPT-4-paraphrased human text still scoring human
+        - supports that tested setting
+        - does not establish stability across workflows or generators
+- corpus-level estimates do not directly supply individual-site labels
+    - Liang and Kobak answer mixture questions
+    - site characterization and ranking studies need a separate labeling method
+- apparent adoption plateaus can reflect changing detector recall
+    - DeGenTWeb reports weaker performance on newer generators
+    - that makes detector drift a competing explanation
+    - it does not establish which explanation produced any particular plateau
 - this review found no comprehensive open-web image prevalence estimate
     - multilingual web measurement coverage is thin beyond Thompson's translation work
 
