@@ -3,10 +3,13 @@ four-folder consultation assessment
 
 status, October 8, 2026
 - one saved ChatGPT request used verified GPT-6.1 Sol and Extra High
-- the tooling owner recovered 9065 characters from the existing conversation
-- the page did not confirm completion
-  - its connection-interrupted banner remained visible
-  - this is an assessment of captured response text, not a verified final answer
+- the tooling owner confirmed completion from ChatGPT's own conversation record at 10:10 PDT
+  - final-channel assistant message: `status finished_successfully`, `end_turn true`
+  - the exact recorded answer has 8713 characters
+  - the stale page still showed a connection-interrupted banner
+- the final answer was compared with the earlier recovered response
+  - differences are citation rendering, a sandbox file link, and formatting
+  - no material advice changed
 - no second prompt was submitted
 - the response's claimed additional review file was not obtained or used
 
@@ -30,7 +33,8 @@ advice not treated as established fact
 - no experiments were implemented or run
 
 provenance
-- captured response: /tmp/cx-four-study-consultation-answer.partial.md on the agent host
+- confirmed final response: /tmp/cx-four-study-consultation-answer.md on the agent host
+- earlier captured response: /tmp/cx-four-study-consultation-answer.partial.md on the agent host
 - tooling-owner recovery record: /tmp/chatgpt_consult_recovery_1008.md on the agent host
 - saved conversation handle: `pbtab_FV1ANoHtOPbFHNOLNXWDBIrU`
 - these local paths record provenance; they are not public links

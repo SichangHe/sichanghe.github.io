@@ -129,12 +129,12 @@ consultation and review status
 - a new four-folder Extra High request failed before submission with `picker_effort_not_verified`
   - the tooling owner supplied an explicit saved-background route
   - one GPT-6.1 Sol / Extra High consultation was submitted through that route
-  - the tooling owner recovered a substantial [response and assessment](consultation_assessment.md)
-  - ChatGPT still displayed “Connection interrupted. Waiting for the complete answer”
-  - the page never confirmed completion; a verified final answer remains outstanding
+  - the tooling owner confirmed the final answer from ChatGPT's conversation record at 10:10 PDT
+  - the stale page did not display completion
+  - the exact answer was checked against the incorporated [advice and assessment](consultation_assessment.md)
 - a fresh Codex reviewer checked the whole tree against the original literature-and-proposal goal
   - reviewer conclusion: “No remaining material findings”
   - scope and novelty limitations remain explicit
   - the recovered advice has been assessed and incorporated
-  - final-answer confirmation remains an unmet requirement
+  - no consultation requirement remains outstanding
 - recommendations are agents' opinions, including after review

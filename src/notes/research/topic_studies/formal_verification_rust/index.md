@@ -88,4 +88,4 @@ Rust language and ecosystem
 - [unsafe soundness models](rust_language/unsafe_soundness_models.md): the semantics of unsafe Rust and aliasing models
 
 consultation assessment
-- [four-folder advice](consultation_assessment.md): adopted design changes and the missing final-answer confirmation
+- [four-folder advice](consultation_assessment.md): adopted design changes and verified final-answer provenance
