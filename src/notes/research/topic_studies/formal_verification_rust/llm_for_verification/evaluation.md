@@ -7,7 +7,7 @@ main point
   - evaluating whether the proof used acceptable assumptions needs another check
 - this note compares evaluation tasks and proposes studies
   - detailed LeetProof and CryptoProver trust analysis remains in [the existing specification note](../../../cryptoprover_leetproof_spec_clarification_20260808.md)
-  - recent Verus papers remain in [the October collection](../../../verus_frontier_20261006.md)
+  - recent Verus papers remain in the October collection (local note; not yet published)
 - scope: primary papers and released benchmark descriptions checked on October 7, 2026 UTC
   - paper results are author claims, not independently reproduced here
   - the normal web-search tool failed; direct arXiv pages and existing collected manuscripts supplied the sources
@@ -79,7 +79,7 @@ newer tasks broaden the evidence
   - Yang et al., introduction: “849 proof tasks extracted from eight open-source Verus-verified system projects”
     - [official benchmark](https://github.com/microsoft/verus-proof-synthesis/tree/main/benchmarks/VeruSAGE-Bench)
   - paper introduction: “stand-alone Rust file”
-    - [collected manuscript](</hdd1/sichanghe/paper_collection/VeruSAGE- A Study of Agent-Based Verification for Rust Systems, Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026/VeruSAGE- A Study of Agent-Based Verification for Rust Systems, Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu, arXiv, 2026.md>)
+    - [collected manuscript](https://github.com/SichangHe/paper_collection/blob/main/VeruSAGE-%20A%20Study%20of%20Agent-Based%20Verification%20for%20Rust%20Systems%2C%20Chenyuan%20Yang%2C%20Natalie%20Neamtu%2C%20Chris%20Hawblitzel%2C%20Jacob%20R.%20Lorch%2C%20Shan%20Lu%2C%20arXiv%2C%202026/VeruSAGE-%20A%20Study%20of%20Agent-Based%20Verification%20for%20Rust%20Systems%2C%20Chenyuan%20Yang%2C%20Natalie%20Neamtu%2C%20Chris%20Hawblitzel%2C%20Jacob%20R.%20Lorch%2C%20Shan%20Lu%2C%20arXiv%2C%202026.md)
   - inference: realistic proof obligations with extracted dependencies are stronger evidence than toy functions
     - still differ from finding missing contracts and coordinating changes in the original repository
   - the current [official README](https://github.com/microsoft/verus-proof-synthesis/blob/main/benchmarks/VeruSAGE-Bench/README.md) separately lists 460 no-lemma tasks
@@ -99,7 +99,7 @@ newer tasks broaden the evidence
     - record versions instead of silently treating counts as interchangeable
     - Lean acceptance establishes the translated statement
     - source-to-target preservation needs separate evidence
-    - see [the existing collection](../../../verus_frontier_20261006.md) for the narrower test and manual-review coverage
+    - see the existing collection (local note; not yet published) for the narrower test and manual-review coverage
 
 direct audits show additional evaluation failures
 - all three official abstracts and PDFs checked on October 7, 2026
@@ -148,7 +148,7 @@ direct audits show additional evaluation failures
 
 evaluation protocol already studied locally
 
-- use the existing [SaltBench audit](../../../saltbench_20260914.md)
+- use the existing SaltBench audit (local note; not yet published)
   - it examines pinned agent configurations, independent referees, and isolation failures
   - exact note judgment: “the registered result is about cost only”
   - recommendation: attach a correctness verdict to every priced run before interpreting a cost/quality tradeoff

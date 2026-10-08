@@ -170,4 +170,4 @@ sources and limits
 - volatile commit counts and star counts omitted
 - upstream notes preserved as background
   - [static analysis](../../../static_analysis.md)
-  - [October Verus collection](../../../verus_frontier_20261006.md)
+  - October Verus collection (local note; not yet published)

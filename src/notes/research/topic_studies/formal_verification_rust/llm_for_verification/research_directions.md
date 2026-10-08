@@ -16,7 +16,7 @@ what is already occupied
   - [AutoVerus](https://arxiv.org/abs/2409.13082), [DafnyPro](https://arxiv.org/abs/2601.05385), and [COPRA](https://arxiv.org/abs/2310.04353)
   - [proof review](proof_synthesis.md) gives source quotes and scope
 - repository context and coordinated proof work
-  - [Vero](../../../vero_20260821.md), [VeruSAGE](code_and_agents.md), and KVerus
+  - Vero (local note; not yet published), [VeruSAGE](code_and_agents.md), and KVerus
   - existing [literature directions](../../../literature_directions.md) already propose repository-native proof agents
 - specification strength measured through mutation
   - [Spec-Harness and SpecSyn](specifications.md)
@@ -174,7 +174,7 @@ additional idea: proof-friendly redesign under resource bounds
 what to do first
 
 - recommendation: run dataset feasibility before building an agent framework
-  - use the [SaltBench protocol lessons](../../../saltbench_20260914.md) to pin full agent configurations and isolate hidden grading
+  - use the SaltBench protocol lessons (local note; not yet published) to pin full agent configurations and isolate hidden grading
   - the [Agave sizing study](../../../agave_verification_scope.md) provides independently scoped target leads
     - those are candidate dataset sources, not an instruction to start verification in this study
   - can we find 10 independently interpretable changes in one verified Rust module?

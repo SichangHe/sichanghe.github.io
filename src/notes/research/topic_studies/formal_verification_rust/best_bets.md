@@ -119,6 +119,11 @@ alternatives and deferrals
 consultation and review status
 - older folder-specific ChatGPT advice is retained in the [LLM consultation](llm_for_verification/consultation.md) and [Rust-language consultation](rust_language/consultation.md)
 - a new four-folder Extra High request failed before submission with `picker_effort_not_verified`
-  - helper repair has been requested through the manager
-  - no answer from that request is represented here
-- these selections remain agent recommendations until independently reviewed against the complete study
+  - the tooling owner supplied an explicit saved-background route
+  - one GPT-6.1 Sol / Extra High consultation was submitted through that route
+  - its final answer is pending
+- a fresh Codex reviewer checked the whole tree against the original literature-and-proposal goal
+  - reviewer conclusion: “No remaining material findings”
+  - scope and novelty limitations remain explicit
+  - the pending consultation remains an unmet requirement
+- recommendations are agents' opinions, including after review

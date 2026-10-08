@@ -137,7 +137,7 @@ async/await
   - this review did not establish such support in the surveyed verifiers
 
 bounded checkers instead of proofs
-- Loom and Shuttle: [existing note](../rust_language/async_concurrency_bugs.md#schedule-testing-methods)
+- Loom and Shuttle: [existing note](../rust_language/async_concurrency_bugs.md)
   - how they are used for real: [Bornholt et al., SOSP 2021](https://www.cs.utexas.edu/%7Ebornholt/papers/shardstore-sosp21.pdf), peer reviewed
     - did: Amazon S3 ShardStore checked for linearizability against a reference model with Loom (small, sound) and Shuttle (large, random)
     - number: "prevented 16 issues from reaching production" (all checks together, not only concurrency)

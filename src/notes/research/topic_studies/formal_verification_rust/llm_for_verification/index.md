@@ -42,8 +42,8 @@ existing notes are the foundation
 - [AutoVerus citation study](../../../autoverus_citations_20260801.md)
 - [LeetProof](../../../leetproof_20260804.md) and [its evaluation](../../../leetproof_ase_evaluation_20260805.md)
 - [CryptoProver](../../../cryptoprover_20260807.md) and [specification trust](../../../cryptoprover_leetproof_spec_clarification_20260808.md)
-- [StarVerus](../../../starverus_20260809.md), [VeriSkill](../../../veriskill_20260803.md), [Vero](../../../vero_20260821.md), [Proofs Promptly](../../../proofs_promptly_20260821.md)
-- [October 6 frontier](../../../verus_frontier_20261006.md)
+- [StarVerus](../../../starverus_20260809.md), [VeriSkill](../../../veriskill_20260803.md), Vero (local note; not yet published), Proofs Promptly (local note; not yet published)
+- October 6 frontier (local note; not yet published)
 - [earlier literature directions](../../../literature_directions.md) and [research arguments](../../../new_work_arguments.md)
   - the proposals here narrow existing repository and assumption-management ideas
 

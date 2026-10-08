@@ -181,7 +181,7 @@ selection rule, agent recommendation
 relation to existing human notes
 - [static analysis](../../../static_analysis.md) already proposes assumption-carrying verification
 - [new-work arguments](../../../new_work_arguments.md) already proposes assumption records and proof-maintenance evaluation
-- [October collection](../../../verus_frontier_20261006.md) already proposes checking the Vosti engine/GPU boundary
+- October collection (local note; not yet published) already proposes checking the Vosti engine/GPU boundary
 - the new scope here is specific verifier interfaces and Rust proof artifacts
   - novelty against those earlier proposals remains limited
 - [open problems](open_problems.md) separates documented limitations from inferred opportunities

@@ -41,7 +41,7 @@ changes made after the critique
 
 evidence
 
-- [full response](/hdd1/sichanghe/paper_collection/Rust language research consultation, ChatGPT GPT-5.6 Sol, 2026/response.txt)
-- [helper diagnostic](/hdd1/sichanghe/paper_collection/Rust language research consultation, ChatGPT GPT-5.6 Sol, 2026/helper-diagnostic.json)
+- [full response](https://github.com/SichangHe/paper_collection/blob/main/Rust%20language%20research%20consultation%2C%20ChatGPT%20GPT-5.6%20Sol%2C%202026/response.txt)
+- helper diagnostic retained locally
 - these absolute paths are local collection artifacts
   - primary sources identified by ChatGPT are checked separately in the topic reviews

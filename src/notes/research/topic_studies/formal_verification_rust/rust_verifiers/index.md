@@ -45,7 +45,7 @@ all notes
 
 related existing notes
 - [static analysis](../../../static_analysis.md): prior tool map and assumption-carrying verification
-- [October Verus collection](../../../verus_frontier_20261006.md): recent primary papers and existing proposal
+- October Verus collection (local note; not yet published): recent primary papers and existing proposal
 - [new-work arguments](../../../new_work_arguments.md): earlier research arguments to build on
 - [Agave pilot scope](../../../agave_verification_scope.md): already-sized synchronous component targets
 - [complete four-part study](../index.md)

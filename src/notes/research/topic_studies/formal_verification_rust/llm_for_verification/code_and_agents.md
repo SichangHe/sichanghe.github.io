@@ -41,9 +41,9 @@ where the existing notes already answer the question
 - [CryptoProver](../../../cryptoprover_20260807.md): integrated production-crate proof work under human public API contracts and runner-owned integrity checks
 - [StarVerus](../../../starverus_20260809.md): Rust contract and proof generation with call-graph scheduling and an industrial case study
 - [VeriSkill](../../../veriskill_20260803.md): learned written guidance, validation reuse, and weak evidence for broad transfer
-- [Vero](../../../vero_20260821.md): whole-instance Lean evaluation and the tradeoff from implementation freedom
-- [Proofs Promptly](../../../proofs_promptly_20260821.md): substantial F*/Pulse work with expert specification review and occasional invariant help
-- [October frontier scan](../../../verus_frontier_20261006.md): SO-RSI discovery and deployment-boundary proposals
+- Vero (local note; not yet published): whole-instance Lean evaluation and the tradeoff from implementation freedom
+- Proofs Promptly (local note; not yet published): substantial F*/Pulse work with expert specification review and occasional invariant help
+- October frontier scan (local note; not yet published): SO-RSI discovery and deployment-boundary proposals
 - [broader literature directions](../../../literature_directions.md): AlphaVerus, VeruSyn, KVerus, and repository-level retrieval
 - [existing proposal](../../../new_work_arguments.md): assumption records tied to code changes
   - proposals below add matched reconstruction and transfer experiments
@@ -211,7 +211,7 @@ new implementations and proof-aware search
   - fact: [artifact](https://alphaverus.github.io/)
 
 - [P3: joint program-and-proof planning](https://arxiv.org/abs/2608.09277v1)
-  - use the existing [P3 evidence audit](../../../p3_joint_planning_20260813.md)
+  - use the existing P3 evidence audit (local note; not yet published)
   - source scope: supplied Lean specifications, generated implementations and proofs
   - the audit compares joint planning, implementation-only planning, and sequential planning
   - exact audit judgment: “joint planning is a credible workflow contribution”
@@ -241,7 +241,7 @@ new implementations and proof-aware search
     - the paper's expert-speedup estimate is not a controlled expert baseline
 
 - existing code-and-proof results need resource requirements
-  - fact: the [Vero note](../../../vero_20260821.md) documents agent simplifications that retain formal behavior while sacrificing efficiency
+  - fact: the Vero note (local note; not yet published) documents agent simplifications that retain formal behavior while sacrificing efficiency
   - fact: [LeetProof](../../../leetproof_20260804.md) already occupies staged code-and-proof synthesis
   - inference: another synthesis pipeline needs a narrower contribution
     - resource-preserving implementation redesign is one candidate
@@ -303,7 +303,7 @@ what exactly improves in self-improvement
     - neither proof of recursive intelligence growth nor evidence that generated specifications match intent
   - inference: explanation testing is more informative than an agent's plausible failure story
     - an extractor dropping a definition and a model failing to write it require different repairs
-  - [earlier discovery note](../../../verus_frontier_20261006.md)
+  - earlier discovery note (local note; not yet published)
 
 - [VeriSkill](../../../veriskill_20260803.md) improves persistent written guidance
   - inference: classify it separately from SAFE weights, AlphaVerus examples, and SO-RSI workflow code
