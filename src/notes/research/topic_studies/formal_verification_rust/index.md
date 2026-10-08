@@ -51,7 +51,7 @@ practical formal verification
 - [testing with proofs](practical_fv/testing_with_proofs.md): how testing supports and challenges verified models
 
 LLMs for verification
-- [C and systems proofs](llm_for_verification/c_and_systems_proofs.md): unfinished survey of C annotations and operating-system proof automation
+- [C and systems proofs](llm_for_verification/c_and_systems_proofs.md): six checked papers on C contracts and systems proofs, with unfinished search leads
 - [consultation](llm_for_verification/consultation.md): ChatGPT advice on experiment design and its evidential limits
 - [invariants and models](llm_for_verification/invariants_models_autoformalization.md): generating invariants and formal models from requirements
 - [code and agents](llm_for_verification/code_and_agents.md): agents generating verified code and working in repositories
