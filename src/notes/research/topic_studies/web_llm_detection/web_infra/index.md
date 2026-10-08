@@ -43,6 +43,6 @@ remaining scope
     - the existing [text-detection consultation](../llm_text/research_proposals.md) does not cover these experiments
 - no experiment above has been run by this review
 - infrastructure and provenance consultation remains unmet on 8 Oct 2026
-    - the verified GPT-6.1 Sol and Extra High route returned no answer
-    - support inspection found no active generation or assistant response
-    - submitted requests do not supply consultation evidence
+    - the verified GPT-6.1 Sol and Extra High request reached ChatGPT
+    - no answer has been captured from the saved conversation
+    - submission alone does not supply consultation evidence
