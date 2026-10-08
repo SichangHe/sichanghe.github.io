@@ -66,7 +66,7 @@ ChatGPT consultation
 - second request produced no assistant answer
   - terminal helper condition: “terminal_deadline_expired”
   - effort selection was again verified as “Extra High”
-- required consultation remains incomplete because the browser service returned no answer
+- required consultation was incomplete at the initial review because the browser service returned no answer
   - independent context-free technical review was completed separately
 - no ChatGPT opinion is attributed without a captured answer
 
@@ -94,7 +94,7 @@ continuation review on 2026-10-08 UTC
   - no model checks or proofs reproduced
 - retried ChatGPT with requested effort “Extra High”
   - helper returned “picker_effort_not_verified”
-  - no assistant answer captured; consultation remains incomplete
+  - no assistant answer captured in that attempt
 - the additional Byzantine draft was absent at continuation start
   - replaced below by a new bounded follow-up
 - publication authorization confirmed by the coordinating manager
@@ -104,7 +104,7 @@ continuation review on 2026-10-08 UTC
 - second consultation attempt kept the current model and again requested “Extra High”
   - same “picker_effort_not_verified” failure during preparation
   - both diagnostics show no submitted prompt
-  - available helper could not complete the requested consultation
+  - that temporary-chat helper route could not complete the requested consultation
 - deepened the DispersedLedger comparison from abstract-only to selected full-text sections
   - existing backlog and spam controls narrow the proposed storage-retention contribution
   - [follow-up and experiment boundary](data_availability_followup.md)
@@ -126,7 +126,7 @@ continuation review on 2026-10-08 UTC
   - book build reached HTML, then failed sitemap because `lua` was unavailable
   - global book navigation requested from its coordinating owner
 - saved ChatGPT route successfully submitted with explicit GPT-6.1 Sol and requested “Extra High”
-  - answer remains pending
+  - answer subsequently captured and assessed below
 - inspected Angelfish’s model assumptions and Appendix E
   - its TLC model explicitly omits Byzantine behavior
 - read the Pipes authors’ tutorial fully
@@ -138,4 +138,56 @@ continuation review on 2026-10-08 UTC
 - final independent goal review found the literature tree substantially addressed
   - clarified separate crash-only and Byzantine experiments
   - corrected stale reading status
-  - consultation and follow-up publication remain to finish
+  - consultation was pending at that review; its assessment appears below
+
+completed ChatGPT consultation on 2026-10-08 UTC
+- [captured saved conversation](https://chatgpt.com/c/6ac7bddd-e0f4-832d-87fb-ee29e616df8a)
+  - GPT-6.1 Sol with requested effort “Extra High”
+  - helper returned “status”: “complete” and recorded model and effort
+  - the earlier temporary/current-model picker failures do not describe this successful saved route
+- opinion, not experimental evidence
+  - ChatGPT recommends narrowing recovery to “one implementation and one persistent adapter”
+  - it says feasibility and novelty remain unestablished
+  - no ChatGPT model check, proof build, or experiment is treated as performed
+- primary-source checks of material criticism
+  - [Gulcan et al., ModelFuzz, v3, Raft model extension](https://arxiv.org/html/2410.02307v3)
+    - exact phrase: “processes trigger snapshots and restore them upon recovery”
+    - inspected the model-extension and event-mapping paragraphs
+    - it already maps crash, restart, and snapshot events
+    - inference: the contribution must concern additional observations or checks, not generating those scenario types
+    - the complete mapper and model remain prerequisites before claiming a difference
+  - [OpenRaft development guide, storage conformance and snapshot recovery](https://github.com/databendlabs/openraft/blob/main/openraft/src/docs/getting_started/getting-started.md)
+    - exact requirement: “a half-installed snapshot must not survive a crash”
+    - the guide supplies `Suite::test_all()` and a persistent RocksDB example
+    - inspected the storage and deployment-check sections
+    - inference: test an existing obligation before proposing a missing contract
+    - development-branch documentation is distinct from the released API below
+  - [OpenRaft 0.9.25 log-storage API, append](https://docs.rs/openraft/0.9.25/openraft/storage/trait.RaftLogStorage.html#tymethod.append)
+    - exact requirement: “When the callback is called, the entries must be persisted on disk”
+    - method return makes entries readable; the durability callback may occur before or after it
+    - inference: instrumentation must distinguish those events
+  - [OpenRaft 0.9.25 state-machine API, applied_state](https://docs.rs/openraft/0.9.25/openraft/storage/trait.RaftStateMachine.html#tymethod.applied_state)
+    - exact permission: “It is all right to return a membership with greater log id than the last-applied-log-id”
+    - startup scans retained logs for membership
+    - inference: immediate membership equality would report permitted states as defects
+  - DispersedLedger fixed-membership assumption is in §2.4
+    - verified against the downloaded primary PDF and corrected the follow-up pointers
+- accepted proposal changes
+  - begin with process crash under the chosen backend’s guarantees
+  - reconstruct membership from snapshot and retained log according to the implementation
+  - compare identical executions and independently confirm alarms
+  - separate request deduplication, power loss, and malicious replicas from the first crash-only claim
+  - a failing proof attempt needs a concrete counterexample before it can support a defect claim
+- community-model claims checked only statically
+  - [KetanParmar02 MC.cfg](https://github.com/KetanParmar02/alpenglow-verif/blob/4689ecb6a1c4f5d4ccffeaf0de5471d96d7599c5/MC.cfg) lists eight equal-weight nodes
+    - exact configuration: `ByzantineNodes = {}` and `OfflineNodes = {}`
+    - comments suggest overrides; this file alone does not establish the README’s fault coverage
+  - [Proofs.tla](https://github.com/KetanParmar02/alpenglow-verif/blob/4689ecb6a1c4f5d4ccffeaf0de5471d96d7599c5/Proofs.tla)
+    - exact definition: `NonEquivocating(c1, c2) == c1.sig # c2.sig`
+    - inference: different signatures alone do not rule out conflicting signed statements
+    - the full transition system was not audited or executed
+    - no protocol counterexample or implementation bug is claimed
+- remaining advisory leads
+  - deeper SandTable, ShardStore, Grove, XLL, and LeaseGuard contract comparisons remain next-project reading
+  - the consultation’s other source claims were not all independently rechecked
+  - recommendations do not establish novelty or measured value

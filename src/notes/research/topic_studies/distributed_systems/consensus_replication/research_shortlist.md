@@ -6,14 +6,18 @@ start with one recovery contract
   - a snapshot saves application state; a membership change replaces the machines allowed to vote
   - combine snapshot installation with a change of voters
   - combine the recovery proposal in [crash replication](crash_replication.md) with [checking recorded executions against a protocol model](verifying_and_testing_consensus_code.md)
-  - record saved voting decisions, snapshot contents, active voters, applied commands, and client request identifiers
+  - record saved voting decisions, snapshot contents, voting configurations, and applied commands
+  - leave request deduplication to a separate application contract
   - begin with one documented failure or corner case
   - add crashes between storage operations after reproducing the baseline
 - success criterion
   - a reproducible defect, a missing storage obligation, or evidence that the added checks improve defect detection at measured cost
 - rejection criterion
   - the proposed checks merely repeat existing assertions or cannot distinguish implementation failures from incorrect instrumentation
-- comparisons to inspect before claiming novelty
+- direct comparisons to inspect before claiming novelty
+  - ModelFuzz already models snapshots and restart
+  - OpenRaft already documents snapshot persistence and has a storage-conformance suite
+  - [checked primary-source details and consultation assessment](review_record.md)
   - CCF and Ellsberg for connecting models to implementation executions
   - Grove for recovery and membership proofs
   - Netrix, SandTable, and model-guided fuzzing for fault schedules and model checks
@@ -21,6 +25,24 @@ start with one recovery contract
 - start with one library
   - a comparison across libraries requires matching their storage assumptions and application responsibilities
   - calling every library through the same interface does not make their guarantees identical
+- proposed first scenario
+  - change voters from A, B, C to A, B, D through the normal membership API
+  - make retained voter B receive a snapshot while the change is in progress
+  - crash B around actual storage operations and restart through the real recovery path
+  - process crash initially preserves the backend’s stated storage guarantees
+    - power-loss or write-reordering tests require a separate storage model
+- check allowed recovered states
+  - snapshot data and metadata must describe a coherent history
+  - later retained log entries can legitimately supply newer membership
+  - replicas can temporarily know different configurations
+    - check which votes count toward each quorum, rather than immediate global equality
+  - a recovering follower may need to catch up before serving
+  - distinguish an append’s return from its durability notification
+- compare checks on identical executions
+  - existing assertions, a checker with fewer recorded events, and one with added storage events
+  - separate earlier diagnosis from detecting a failure the baseline never detects
+  - confirm alarms through a reproduced failure or independently checked expected behavior
+  - a failed proof attempt alone is not evidence of a program defect
 
 other experiments worth keeping
 - historical validator defect replay

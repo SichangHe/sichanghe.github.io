@@ -141,7 +141,7 @@ reading record
 - Yang, Park, Alizadeh, Kannan, and Tse, NSDI 2022
 - abstract: “without having to download their full content”
 - initial review inspected the abstract
-- follow-up inspected §§2.3, 3.1, 4.3–4.5, and 5
+- follow-up inspected §§2.4, 3.1, 4.3–4.5, and 5
   - [bounded storage and recovery assessment](data_availability_followup.md)
 - contribution: choose a block order before each node downloads every payload
   - let nodes with different bandwidths download at different rates

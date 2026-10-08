@@ -23,3 +23,5 @@ current continuation on 2026-10-08 UTC
 - the assigned notes were pushed to `main` from a separate clean checkout on 2026-10-08 UTC
   - global book navigation remains with its coordinating owner
 - paused Claude workers remain paused
+- requested ChatGPT consultation completed through the saved route
+  - [assessment and primary-source checks](review_record.md)

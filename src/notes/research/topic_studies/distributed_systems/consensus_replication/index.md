@@ -6,7 +6,8 @@ start here
   - test whether a crash during snapshot installation or voter changes restores the right data and voters
   - a snapshot saves application state; a membership change replaces the machines allowed to vote
   - smallest proposed experiment: one pinned implementation and crashes between storage operations
-  - check committed results, restored application state, active voters, and duplicate requests together
+  - check restored data, saved voting decisions, and permitted quorums
+  - check request deduplication separately if the application promises it
   - no proposed topic has established novelty
 - strongest comparison to read first
   - CCF and Ellsberg for connecting protocol models to running implementations
@@ -77,7 +78,10 @@ status
   - a new bounded follow-up now covers Angelfish and the Pipes author tutorial
   - selected full proofs and artifacts remain unread
 - notes pushed to the repository on 2026-10-08 UTC
-  - website navigation and deployment remain to be confirmed
+  - website navigation is coordinated separately
+  - live index returned HTTP 404 before navigation integration was confirmed
+- requested ChatGPT opinion captured and assessed on 2026-10-08 UTC
+  - [primary-source corrections and consultation limits](review_record.md)
 - recent primary sources include work published or updated in 2026
 - literature breadth does not establish completeness
 - paper performance results are author reports
