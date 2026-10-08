@@ -63,9 +63,28 @@ what existing work shows
     - “automatically picks the fastest one available”
   - inference: implementation selection creates another correctness boundary
     - the caller must select a supported algorithm, parameter set, and platform implementation
-  - source limit: the EverCrypt research PDF was unavailable through the attempted primary URLs
-    - this section describes project documentation, not an independently inspected EverCrypt paper
-    - no paper-specific benchmark or theorem claim added
+- [EverCrypt: A Fast, Verified, Cross-Platform Cryptographic Provider](https://www.andrew.cmu.edu/user/bparno/papers/evercrypt.pdf), IEEE S&P 2020
+  - source depth: author-hosted paper methods, threat model, trusted tools, and interoperation guarantees checked
+  - fact: proves algorithm selection and selection between implementations against shared specifications
+    - agility means changing algorithms through one interface
+    - multiplexing means selecting an implementation of the same algorithm
+  - fact: verifies calls between portable Low* code and Vale assembly using a model of memory layout and calling conventions
+    - section V-D verifies CPU-feature detection and the required instruction support
+    - section V-D describes handwritten platform macros
+    - these macros still need review
+  - fact: proves memory safety, agreement with mathematical specifications, and independence of instruction and memory-address traces from secrets
+    - section II-B excludes stronger leakage guarantees
+      - stronger physical and speculative-execution attacks are outside the stated leakage model
+      - examples include electromagnetic radiation and speculative execution
+  - fact: the executable guarantee depends on trusted specifications, F*, Z3, extraction to C, the selected C compiler, and assembly/linking behavior
+    - section V-B: “we rely on the C compiler, assembler and linker”
+    - the formal call model must match the compiled calls
+  - fact: primitive correctness is separate from a proof of cryptographic security
+    - introduction: “EverCrypt does not (yet) include cryptographic proofs of security”
+    - the paper separately proves a collision-resistance reduction for its Merkle-tree application
+    - unverified callers can violate API preconditions or expose keys through their own memory bugs
+  - inference: verified dispatch itself is established work
+    - a new deployment study must target changes outside those proved selection rules and explicitly list its trusted build and platform assumptions
 
 - [Verifying Constant-Time Implementations](https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_almeida.pdf), USENIX Security 2016, peer reviewed
   - fact: ct-verif checks optimized LLVM implementations using SMACK and Boogie
@@ -92,16 +111,25 @@ what existing work shows
   - inference: instruction timing assumptions depend on the target and selected leakage policy
     - functional source-to-assembly correctness alone is not evidence for every hardware side channel
 
-- [The Last Mile: High-Assurance and High-Speed Cryptographic Implementations](https://hal.univ-lorraine.fr/hal-02974993v1), IEEE S&P 2020, peer reviewed
-  - source limit: opened the primary HAL abstract and publication metadata; full PDF was not accessible through attempted URLs
-  - claim: combines Jasmin and EasyCrypt to produce correct, side-channel-protected vectorized ChaCha20-Poly1305 assembly
-    - authors' abstract: “assembly code that is provably functionally correct, protected against side-channels”
-  - claim: evaluated implementations outperform the fastest unverified code
-    - the accessible abstract supplies no precise speed ratio
-  - fact from abstract: optimizations are justified through equivalence proofs; the extended verified compiler supports vectors and a richer memory model
-  - inference: preserving source guarantees into assembly is established prior work, not an unfilled general research gap
-  - limit: this review did not inspect the full theorem's leakage relation or final assembler/linker assumptions
-    - do not extend the abstract's claim to every CPU or arbitrary speculative execution
+- [The Last Mile: High-Assurance and High-Speed Cryptographic Implementations](https://arxiv.org/pdf/1904.04606), associated with IEEE S&P 2020
+  - source depth: methods and guarantee boundaries checked in the authors' April 2019 preprint, arXiv v1
+    - the final proceedings text was not separately obtained
+  - fact: proves reference ChaCha20 and Poly1305 implementations correct, then proves optimized and vectorized versions equivalent in EasyCrypt
+  - fact: proves the Jasmin compiler preserves functional behavior into modeled x86 assembly
+    - section 3 requires programs to be well typed, safe, terminating, and accepted by the compiler
+    - memory access must satisfy the stated valid-memory calling contract
+  - fact: checks secret independence of source-level branch and memory-address traces through an instrumented EasyCrypt translation
+    - section 4.4 instruments branch decisions and memory addresses
+  - limit: this manuscript does not supply one fully connected proof that compilation preserves the timing guarantee
+    - section 2: “the connection between these two works has not been established yet”
+    - this refers to the Jasmin compiler and a separate proof that many optimization passes preserve constant-time behavior
+  - limit: the bridge between Coq's Jasmin semantics and the EasyCrypt model is not automatically certified in this manuscript
+    - section 4.2: “would still need to be argued informally”
+    - the source program's safety is a prerequisite
+  - limit: the checked compiler result ends at modeled assembly
+    - these inspected results do not establish correctness of an arbitrary assembler, linker, deployed CPU, or speculative-execution leakage
+  - inference: functional compilation and source-level timing proofs are strong prior work, but their distinct proof boundaries must remain visible
+    - current Jasmin documentation can describe later guarantees separately
 
 - [Implementing TLS with Verified Cryptographic Security](https://inria.hal.science/hal-00863373/document), IEEE S&P 2013, peer reviewed
   - fact: full paper opened; this is the original F#/F7 miTLS result for TLS 1.2
@@ -162,8 +190,10 @@ what is missing
   - constant-time validation and verified cryptographic compilers already address parts of this problem
   - ct-verif and Jasmin already cover optimized-code checking and verified assembly generation
   - the narrower candidate concerns historical changes in deployment assumptions, not inventing constant-time compilation
-- research gap candidate: combine performance-oriented implementation selection with machine-checked API assumptions and regression tests
-  - avoid claiming runtime dispatch itself is unverified without inspecting the relevant theorem
+- research gap candidate: detect deployment changes outside proved implementation-selection rules
+  - EverCrypt already verifies algorithm and implementation selection, CPU-feature detection, and C/assembly interoperation
+  - target handwritten configuration, build tools, linked binaries, and caller preconditions
+  - demonstrate failures beyond existing guarantees
 
 research we can do
 
@@ -205,10 +235,12 @@ ChatGPT's opinion
 what was searched
 
 - opened HACL* CCS 2017 PDF, Fiat Crypto IEEE S&P 2019 PDF, ct-verif USENIX Security 2016 PDF, miTLS IEEE S&P 2013 PDF
+- October 8 follow-up checked EverCrypt author-hosted methods and The Last Mile April 2019 manuscript
+  - final Last Mile proceedings text not separately checked
 - opened maintained HACL*/Vale/EverCrypt manual, Microsoft project page, Fiat Crypto repository, Jasmin documentation, The Last Mile primary abstract, and libcrux ML-KEM/ML-DSA documentation and verification status
 - inspected the existing CryptoProver audit and static-analysis notes before drafting
 - primary IACR fetches returned HTTP 403; alternate author-hosted PDFs succeeded for HACL* and Fiat Crypto
 - search endpoint failed with HTTP 404
-- not covered deeply: later miTLS/TLS 1.3, protocol-security composition beyond the 2013 result, Vale papers, detailed Jasmin compiler/leakage theorem, EasyCrypt, post-quantum proof artifacts beyond the checked libcrux documentation, 2024–2026 cryptographic verification papers
+- not covered deeply: later miTLS/TLS 1.3, protocol-security composition beyond the 2013 result, Vale papers, later Jasmin compiler/leakage developments and broader EasyCrypt applications, post-quantum proof artifacts beyond the checked libcrux documentation, 2024–2026 cryptographic verification papers
   - these omissions prevent calling the review exhaustive or claiming a research gap is established
 - overlap: [compiler review](compilers.md) covers semantic preservation; [specification and trusted base](spec_quality_trusted_base.md) covers general assumption tracking

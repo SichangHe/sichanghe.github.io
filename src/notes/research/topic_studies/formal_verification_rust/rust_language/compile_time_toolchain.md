@@ -85,13 +85,32 @@ compiler correctness research
     - inspect its full text before claiming edit histories expose a previously unstudied class
     - this abstract alone does not establish whether the study already evaluates incremental-compilation histories
 
-- Clozemaster: Gao, Yang, Sun, Wu, Zhou, and Xu, ICSE 2025
-  - [Clozemaster: Fuzzing Rust Compiler by Harnessing LLMs for Infilling Masked Real Programs](https://doi.org/10.1109/ICSE55347.2025.00175)
-  - title quotation: “Infilling Masked Real Programs”
-  - paper identity checked against [publisher-deposited metadata](https://api.crossref.org/works/10.1109/ICSE55347.2025.00175)
-  - relevance: uses existing source programs as context for generated test inputs
-  - limit: full text inaccessible in this pass
-    - cannot compare coverage, confirmed bugs, or LLM costs with RustSmith and Rustlantis yet
+- [Clozemaster: Fuzzing Rust Compiler by Harnessing LLMs for Infilling Masked Real Programs](https://arxiv.org/pdf/2605.00413), Gao, Yang, Sun, Wu, Zhou, and Xu, ICSE 2025
+  - source depth: methods and evaluation checked in the authors' May 2026 arXiv manuscript
+    - proceedings identity checked through [publisher metadata](https://api.crossref.org/works/10.1109/ICSE55347.2025.00175)
+    - the manuscript reports a 2023 testing campaign
+  - method: collect old bug-triggering programs and regression tests, hide code inside matching brackets, and ask a fine-tuned language model to fill the gap
+    - section III: “the positions of bracket structures”
+    - new bug-triggering inputs are added to the seed collection
+  - fact: detects compiler crashes and timeouts during compilation
+    - section III-D: “two testing oracles: ICE and Hang”
+    - a testing oracle is the rule used to decide whether an observed result signals a bug
+    - internal compiler error means the compiler crashes unexpectedly
+    - timeout threshold: 180 seconds
+    - these rules do not check whether successfully compiled programs behave correctly
+  - authors' historical result: 27 confirmed bugs across rustc and mrustc; 10 fixed at reporting time
+    - table II: 24 confirmed rustc bugs and 3 confirmed mrustc bugs
+    - not a present-day bug total
+  - baselines: RustSmith 1.30.0, Rustlantis 0.1.0, and a Rust adaptation of skeletal-program enumeration
+    - the adapted method fills variable positions in seed programs
+    - section IV-C compares bug discovery over 24 hours on rustc 1.73
+    - coverage comparison uses 10,000 generated inputs per method on the same release
+  - authors' result: coverage 64.34%, compared with 32.84% for RustSmith, 29.55% for Rustlantis, and 62.02% for skeletal-program enumeration
+    - table IV; one reported setup, not a universal ranking
+    - crash/timeout discovery cannot replace Rustlantis's comparisons of executed-program behavior
+  - inference: Clozemaster is a relevant source-input generator for an edit-sequence experiment
+    - its inspected method tests individual generated programs, not cached builds against clean rebuilds after an edit history
+    - novelty still requires checking other work on incremental-compiler testing
 
 research proposals
 
@@ -157,6 +176,6 @@ recommended starting point
 - opinion: begin with proposal 1 if developer latency is the priority
   - first establish which repeated work matters in actual edit histories
 - remaining reading gaps
-  - obtain RustSmith and Clozemaster full text before numerical comparisons
+  - obtain RustSmith full text before broader numerical comparisons
   - find prior edit-sequence compiler fuzzing and workload studies before novelty claims
   - distinguish peer-reviewed findings, official design documentation, and candidate hypotheses
