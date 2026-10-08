@@ -34,7 +34,7 @@ what was seen
   - [Towards Neural Synthesis for SMT-Assisted Proof-Oriented Programming](https://arxiv.org/abs/2405.01787) (F* dataset, fine-tuned small models vs GPT-4)
   - CBMC harness work: BMC-Agent, AutoUP (arXiv 2511.01104 / 2512.03420 unclear which), a Intel TDX harness thesis from the sosy-lab
 - already in the paper collection, not yet re-read: Selene, FVEL, Rango, Planning to Hammer, VeriFast LLM specification study, Foundational VeriFast
-- already covered elsewhere: [Proofs Promptly](../../../proofs_promptly_20260821.md), [LemmaNet and AutoVerus audit](../../../autoverus_citations_20260801.md), [proof synthesis](proof_synthesis.md)
+- already covered elsewhere: Proofs Promptly (local note; not yet published), [LemmaNet and AutoVerus audit](../../../autoverus_citations_20260801.md), [proof synthesis](proof_synthesis.md)
 
 what was searched
 - five queries: Frama-C ACSL agents, seL4 Isabelle LLM, CBMC harness generation, Rocq agents on large projects, F*/Low* fine-tuning

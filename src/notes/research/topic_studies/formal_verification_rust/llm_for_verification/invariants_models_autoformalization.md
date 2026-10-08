@@ -125,11 +125,11 @@ c. models for checkers, written from code
 - SysMoBench, Cheng et al., ICLR 2026, peer reviewed ([arXiv 2509.23130](https://arxiv.org/abs/2509.23130))
   - fact: asks an LLM or agent to write a TLA+ model of real code (etcd and Redis Raft, ZooKeeper election, Asterinas spinlock, mutex, ringbuffer); scored on syntax, TLC running, conformance to code traces, and invariants
   - quote: models are "notoriously expensive to write and maintain"
-  - fact (cited from the paper by the [distributed note](../../distributed_systems/finding_bugs/llm_agents_for_distributed_bugs.md)): invariant templates are given by the benchmark; an LLM adapts them
+  - fact (cited from the paper by the distributed note (local note; not yet published)): invariant templates are given by the benchmark; an LLM adapts them
   - external review, A. Jesse Jiryu Davis, 1 Apr 2026 blog: "for distributed systems like etcd Raft (thousands of lines of Go), performance craters" and "The humans have already done most of the intellectual work before the AI even starts"
   - same review says liveness is much harder than safety: 42% versus about 8% (a blogger's reading of the paper, I did not re-derive it)
   - limit: eleven artifacts, and sampled traces do not show the model is not too loose
-- Specula, Cheng et al., arXiv 2607.25333, 2026 preprint ([already noted](../../distributed_systems/finding_bugs/model_checking.md))
+- Specula, Cheng et al., arXiv 2607.25333, 2026 preprint (already noted (local note; not yet published))
   - fact: Claude Code with Opus-4.8 writes TLA+ models, invariants, and trace-validation instrumentation for 48 open source systems
   - claim: "Specula found 249 bugs"; 89 reported, 68 confirmed, 24 fixed; "reports no false positive as all the bugs are reproduced at the code level"
   - claim: "reward hacking" and hallucination are real, so loops are "self-evolving" with trace validation as the judge
