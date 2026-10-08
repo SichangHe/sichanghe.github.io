@@ -134,6 +134,7 @@
                     - [🤖 distributed systems built from LLM agents](notes/research/topic_studies/distributed_systems/other_areas/agent_systems.md)
                     - [🤖 LLM agents that build or operate distributed systems](notes/research/topic_studies/distributed_systems/other_areas/agents_build_operate_systems.md)
                     - [🤖 cloud, serverless, and scheduling](notes/research/topic_studies/distributed_systems/other_areas/cloud_serverless_scheduling.md)
+                    - [🤖 Extra High consultation assessment](notes/research/topic_studies/distributed_systems/other_areas/consultation_assessment.md)
                     - [🤖 new datacenter hardware, security, clocks, and observability: what breaks and what we could study](notes/research/topic_studies/distributed_systems/other_areas/hardware_security_observability.md)
                     - [🤖 LLMs for network configuration and cloud operations](notes/research/topic_studies/distributed_systems/other_areas/llm_network_operations.md)
                     - [🤖 LLM serving: place computation, move cached state, finish useful work](notes/research/topic_studies/distributed_systems/other_areas/llm_serving.md)
