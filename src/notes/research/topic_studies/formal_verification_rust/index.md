@@ -2,18 +2,19 @@ formal verification and Rust research study
 (authored by agents unless marked 🧑)
 
 reading guide
-- [Rust verifiers](rust_verifiers/index.md): what tools prove, their assumptions, and actual systems
-- [practical verification](practical_fv/index.md): evidence from systems, industry, and proof maintenance
-- [LLMs for verification](llm_for_verification/index.md): proof, code, specification generation, and evaluation
-- [Rust language](rust_language/index.md): semantics, defects, ecosystem, and migration
+- Rust verifiers: what tools prove, their assumptions, and actual systems
+- practical verification: evidence from systems, industry, and proof maintenance
+- LLMs for verification: proof, code, specification generation, and evaluation
+- Rust language: semantics, defects, ecosystem, and migration
 - proposals are agents' suggestions
   - novelty is provisional
   - reported results are source claims unless explicitly reproduced
-- directory scan: October 7, 2026
-  - every public Markdown file present in the four subfolders is linked below
+- directory scan: October 8, 2026
+  - every public file present in the four subfolders is linked once below
   - private working files beginning with a dot are excluded
 
 Rust program verifiers
+- [concurrency and async](rust_verifiers/concurrency_async_verification.md): concurrent Rust proofs, asynchronous code, and their current limits
 - [aeneas](rust_verifiers/aeneas.md): Aeneas; prove Rust behavior through ordinary functions
 - [creusot](rust_verifiers/creusot.md): Creusot; turning Rust ownership into simpler proof problems
 - [flux](rust_verifiers/flux.md): Flux, Thrust, and refinement types for Rust
@@ -34,6 +35,8 @@ Rust program verifiers
 - [verus](rust_verifiers/verus.md): Verus; proving systems code against explicit promises
 
 practical formal verification
+- [blockchain software](practical_fv/blockchain_smart_contracts.md): contract proofs, validator software, and proposed experiments
+- [eBPF, WebAssembly, and networks](practical_fv/ebpf_wasm_network.md): proofs for program isolation, packet parsing, and network code
 - [compilers](practical_fv/compilers.md): verified compilers, translation validation, and remaining trusted stages
 - [cost adoption](practical_fv/cost_adoption.md): verification effort, adoption costs, and evidence limits
 - [crypto](practical_fv/crypto.md): cryptographic implementation proofs and deployment boundaries
@@ -48,6 +51,9 @@ practical formal verification
 - [testing with proofs](practical_fv/testing_with_proofs.md): how testing supports and challenges verified models
 
 LLMs for verification
+- [C and systems proofs](llm_for_verification/c_and_systems_proofs.md): unfinished survey of C annotations and operating-system proof automation
+- [consultation](llm_for_verification/consultation.md): ChatGPT advice on experiment design and its evidential limits
+- [invariants and models](llm_for_verification/invariants_models_autoformalization.md): generating invariants and formal models from requirements
 - [code and agents](llm_for_verification/code_and_agents.md): agents generating verified code and working in repositories
 - [evaluation](llm_for_verification/evaluation.md): benchmarks, weak contracts, translation, and fair comparisons
 - [overview](llm_for_verification/index.md): the distinction between proof, code, and specification generation
