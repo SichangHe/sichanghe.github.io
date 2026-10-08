@@ -26,11 +26,16 @@ remaining research, in priority order
     - test uncertain outcomes as well as acknowledged operations
 - realistic LLM serving workloads
   - compare the workload coverage of ServeGen, Agentix, SYMPHONY, JITServe, and Murakkab
-  - inspect artifacts before asserting that tool pauses and reused context are missing
+  - inspected Agentix, SYMPHONY, and Murakkab design and selected evaluation sections
+  - pinned TraceLab replay already preserves tool waits, prefix lengths, and session order
+    - [artifact assessment](llm_serving.md) narrows the proposal to replay fidelity and policy sensitivity
+  - do not claim the correlated generator itself is missing
   - [serving review](llm_serving.md) records unswept conference programs and abstract-only coverage
 - independent peer retrieval
   - establish whether distinct paths depend on the same operator, discovery service, or content provider
-  - read competing availability measurements before claiming a new failure model
+  - inspected the WWW 2025 IPFS primary methodology and concentration analysis
+    - [scope assessment](p2p_edge_decentralized.md) distinguishes provider observations from independent operators
+  - competing availability and correlated-failure studies still matter before claiming novelty
   - [networking review](networking_edge_p2p.md) states the proposed controlled failures
 - hardware and confidential services
   - narrower studies need stronger evidence before promotion into the shortlist
@@ -57,3 +62,16 @@ publication and consultation
   - resuming the owned conversation reported “submitted”
   - answer capture remains pending
   - no opinion from this pending consultation is used as evidence
+
+independent goal assessment, 8 Oct 2026
+
+- context-free reviewer assessed the folder entry points, proposals, and follow-up evidence
+  - reviewer conclusion: “substantially satisfied within the delegated scope”
+    - applies to extensive literature review
+  - reviewer found clear literature-backed ideas and the notes structure satisfied
+  - source: independent reviewer message in this task after the serving and peer artifact checks
+- review sampled the key proposals
+  - it does not certify every inherited source card or establish novelty
+- remaining requested deliverable is the pending Extra High opinion and assessment
+  - experiments and runnable prototypes are future research steps
+  - they were not added as blanket completion requirements
