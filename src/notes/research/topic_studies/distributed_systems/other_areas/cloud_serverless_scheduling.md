@@ -1,0 +1,906 @@
+cloud, serverless, and scheduling
+(authored by agents unless marked 🧑)
+
+research takeaway
+- recommendation: start with an experiment on serverless workflow scheduling under correlated slowdowns
+  - a correlated slowdown delays several functions together
+  - the concrete question is whether startup, placement, and task launch decisions should share one model
+  - this review does not establish novelty
+- second recommendation: study correctness when functions are retried after uncertain external effects
+  - example: a payment succeeds but its acknowledgement is lost
+  - this connects practical verification with cloud execution
+- third recommendation: measure scheduler computation and queue delay separately from application execution
+  - an otherwise good placement can arrive too late to help
+
+scope and evidence
+- reviewed 25 primary papers from 2013–2026
+- retrieved all 25 full PDFs
+  - read abstracts and selected design, evaluation, assumptions, and discussion passages
+  - deeper inspection covered Caerus, Jolteon, AFaaS, Kamino, MITOSIS, and Flux
+  - this is not an exhaustive review of all cloud scheduling work
+- source quotations preserve original capitalization
+- numerical results below are author claims on their evaluated systems
+  - they are not independent replications
+  - maximum improvements are not expected improvements on a new workload
+- attempted search through two available web tools
+  - neither returned usable results
+  - primary conference pages and PDFs were fetched directly over HTTPS
+- newest inspected papers are from OSDI 2026
+  - additional 2026 coverage includes Spice, Quark, and Murakkab
+  - other 2026 work remains incompletely covered
+
+terms
+- serverless: the provider starts and manages execution resources for submitted functions
+- cold start: work needed before a newly started function can execute
+- workflow: functions connected by data or ordering dependencies
+- tail latency: latency among the slowest requests
+- checkpoint: saved program state that can be restored
+- idempotence: repeating an operation has no additional observable effect
+- RDMA: hardware lets one machine access memory on another without ordinary message processing by its CPU
+- Pareto-optimal: improving one objective requires worsening another within the modeled choices
+
+what existing work already covers
+- startup has several different bottlenecks
+  - distributing program images
+  - restoring memory and initialized code
+  - coordinating runtimes
+  - contention when many instances start together
+- workflow optimization has several different decisions
+  - when to launch each task
+  - where to run connected tasks
+  - how to transfer intermediate data
+  - how much memory and parallelism to allocate
+- scheduling itself consumes resources
+  - queueing and cache misses can delay placement decisions
+- retries require reasoning about concurrent effects
+  - handling each function in isolation can miss interference between functions
+
+cluster-management foundations and missing baselines
+- Borg, Verma et al., EuroSys 2015
+  - question: how to share a large cluster between long-running services and batch work
+  - mechanism: admission control, task packing, overcommitment, and process isolation
+  - evidence: “combining admission control, efficient task-packing, over-commitment, and machine sharing with process-level performance isolation”
+    - [paper abstract](https://research.google.com/pubs/archive/43438.pdf)
+  - §3 describes the master, worker agents, and placement decisions
+  - inference: useful utilization depends on admitting and isolating work as well as placing it
+  - implication for proposal C
+    - preserve placement constraints and isolation when comparing allocator speed
+    - include batch and latency-sensitive workloads
+  - limit: an operational account of Google's system does not provide a directly reproducible public implementation
+- Omega, Schwarzkopf et al., EuroSys 2013
+  - question: how to support multiple scheduling policies without one monolithic bottleneck
+  - mechanism: schedulers independently propose changes to shared cluster state
+    - detect conflicts when changes commit
+  - evidence: “parallelism, shared state, and lock-free optimistic concurrency control”
+    - [paper abstract](https://storage.googleapis.com/gweb-research2023-media/pubtools/3295.pdf)
+  - evaluation uses Google workloads to compare scheduler architectures and interference
+  - inference: parallel allocation can exchange CPU bottlenecks for conflicts and repeated work
+  - implication for proposal C
+    - measure conflicting placements and retry cost
+    - retain a shared-state scheduler as an architectural comparison
+  - limit: minimizing one allocator's queue delay does not establish good system-wide commit throughput
+- Sparrow, Ousterhout et al., SOSP 2013
+  - question: how to schedule many short parallel tasks with low delay
+  - mechanism: decentralized random sampling, batch probing, and delayed task assignment
+  - evidence: “a decentralized, randomized sampling approach provides near-optimal performance”
+    - [paper abstract](https://people.eecs.berkeley.edu/~matei/papers/2013/sosp_sparrow.pdf)
+  - evaluation deploys the scheduler on a 110-machine cluster
+  - inference: detailed global state is not the only route to low scheduling delay
+  - implication for proposal C
+    - compare against sampling-based placement
+    - measure whether richer estimates repay their collection and computation costs
+  - limit: short-task scheduling and constraint-heavy VM allocation have different state and locality needs
+- Dirigent, Cvetković et al., SOSP 2024
+  - question: why can orchestration dominate startup after sandbox initialization becomes fast
+  - mechanism: simplify managed objects, move persistent updates off the invocation path, and combine internal control-plane components
+  - evidence: “eliminates persistent state updates on the critical path of function invocations”
+    - [paper abstract](https://anakli.inf.ethz.ch/papers/dirigent_sosp24.pdf)
+  - key condition: exact sandbox placement is hidden from the caller
+    - the system can relax exact reconstruction of transient sandbox state
+  - §2 distinguishes platform recovery from recovery of an in-flight request
+  - §4 implements containerd and Firecracker backends
+  - implication for proposal C
+    - compare with eliminating unnecessary control-plane work before optimizing its queue
+  - implication for proposal B
+    - recovering the platform is separate from preventing duplicate application effects
+  - [author implementation](https://github.com/eth-easl/dirigent)
+- Cloudburst, Sreekanti et al., PVLDB 2020
+  - question: how to keep mutable state close to dynamically placed functions
+  - mechanism: Anna storage plus caches beside function executors
+    - carry state-version information across connected functions
+  - evidence: “mutable caches co-located with function executors for data locality”
+    - [paper abstract](https://www.vldb.org/pvldb/vol13/p2438-sreekanti.pdf)
+  - §5 defines repeatable-read and causal guarantees across a distributed function session
+  - inference: moving computation to cached data introduces state-consistency obligations
+  - implication for proposals A and B
+    - placement experiments must specify what state versions a workflow may observe
+    - retry correctness is not established merely by choosing a consistent cache
+  - limit: these session guarantees should not be silently treated as general transactions
+- Faasm, Shillaker and Pietzuch, USENIX ATC 2020
+  - question: can colocated functions share memory while preserving isolation
+  - mechanism: WebAssembly memory isolation with explicitly shared memory regions
+    - Linux controls CPU and network access
+    - initialized snapshots reduce startup work
+  - evidence: “allowing memory regions to be shared between functions in the same address space”
+    - [paper abstract](https://www.usenix.org/system/files/atc20-shillaker.pdf)
+  - §3 specifies the isolation abstraction and host interface
+  - inference: workflow data movement and startup costs depend on runtime design
+  - implication for proposal A
+    - a container-only experiment may miss a simpler shared-memory solution
+  - limit: WebAssembly porting and the host interface constrain applicable applications
+- ORION, Mahgoub et al., OSDI 2022
+  - question: how to meet workflow latency probabilities despite correlated execution times, uneven tasks, and cold starts
+  - mechanism: model dependencies, bundle parallel invocations, and prewarm downstream VMs
+  - evidence: “high variability and correlation in the execution time of individual functions”
+    - [paper abstract](https://www.usenix.org/system/files/osdi22-mahgoub.pdf)
+  - further evidence: “pre-warming VMs for subsequent functions in a DAG with the right look-ahead time”
+    - same abstract
+  - evaluation uses three workflows on AWS Lambda
+  - inference: correlation-aware cold-start workflow optimization already exists
+  - correction to proposal A
+    - correlation and prewarming alone cannot justify a new contribution
+    - reproduce ORION before claiming a gap in existing scheduling models
+    - candidate remaining question: changing correlations under shared contention with placement-dependent transfer costs
+    - this question remains a hypothesis until ORION's model and experiments are compared directly
+
+startup literature
+- FaaSNet, Wang et al., USENIX ATC 2021
+  - question: how to distribute container images during a large invocation burst
+  - mechanism: an adaptive tree distributes image data between execution machines
+    - fetch only needed image blocks
+  - authors report provisioning 2,500 containers on 1,000 VMs in 8.3 seconds
+  - evidence: “finishes provisioning 2,500 function containers on 1,000 virtual machines in 8.3 seconds”
+    - [paper abstract](https://www.usenix.org/system/files/atc21-wang-ao.pdf), §1 and evaluation
+  - interpretation: image distribution is a network problem under bursts
+  - limit: this result does not establish end-to-end startup performance after code initialization and control-plane delay
+- MITOSIS, Wei et al., OSDI 2023
+  - question: can a remote machine reuse initialized state without copying everything first
+  - mechanism: remote fork backed by demand fetching of memory through RDMA
+    - kernel changes preserve correct access to the parent's physical pages
+  - author claim: “fork over 10,000 new containers from one instance across multiple machines within a second”
+    - [paper abstract](https://www.usenix.org/system/files/osdi23-wei-rdma.pdf), §4–§7
+  - evaluation includes caching, local and remote CRIU, and FaaSNet configurations
+    - several baselines receive shared lean-container optimizations
+    - inspect §7 before interpreting comparisons
+  - limit: requires appropriate RDMA hardware and kernel integration
+  - research question: what happens when the parent or a remote memory source fails during startup
+    - unanswered by the quoted performance result
+- Sabre, Lazarev et al., OSDI 2024
+  - question: can compression make saved memory cheaper to restore without consuming too much CPU
+  - mechanism: hardware compression and decompression plus memory-page prefetching
+  - author claim: “speeding up memory restoration from snapshots by up to 55%”
+    - [paper abstract](https://www.usenix.org/system/files/osdi24-lazarev_1.pdf)
+  - integrates with Firecracker
+  - limit: depends on a supported accelerator
+    - compare accelerator queueing under many simultaneous restores
+    - memory restoration improvement is not automatically the same as request latency improvement
+- AFaaS, Chai et al., OSDI 2025
+  - question: why do optimized cold starts still become slow in production
+  - mechanism: reduce coordination overhead, pool runtime resources, and organize reusable initialized states in a tree
+  - author diagnosis: “a narrow focus on optimizing isolated components of the cold start process”
+    - [paper abstract](https://www.usenix.org/system/files/osdi25-chai-xiaohu.pdf), §2
+  - author production claim: “AFaaS has been deployed in production for over 18 months”
+    - same abstract
+  - important distinction: §6 separates component experiments from production observations
+  - evaluation studies sustained load and simultaneous starts
+  - §7 discusses security implications of pooling and sharing
+  - inference: merely improving restore time is already an insufficient research claim
+    - the full request path and contention must be measured
+  - [authors' published trace repository](https://github.com/antgroup/AFaaS)
+    - availability of the complete production implementation was not established in this review
+- ServerlessLLM, Fu et al., OSDI 2024
+  - question: how to start large models without repeatedly downloading their weights remotely
+  - mechanism: exploit local storage, optimize checkpoint loading, migrate active inference, and schedule around checkpoint location
+  - evidence: “schedules the model onto servers that minimize the time to start the inference”
+    - [paper abstract](https://www.usenix.org/system/files/osdi24-fu.pdf)
+  - inference: function scheduling and model scheduling share a locality-versus-queueing decision
+  - limit: model loading is only one part of serving latency
+    - generation length, active request load, and migration work must enter any extension
+
+workflow literature
+- Caerus / NIMBLE, Zhang et al., NSDI 2021
+  - question: when should downstream analytics tasks start
+  - starting early overlaps work but pays for idle waiting
+  - starting late avoids waiting but can increase completion time
+  - mechanism: model production and consumption of data within tasks
+    - choose launch times between those extremes
+  - author claim: “being Pareto-optimal between cost and JCT”
+    - [paper abstract](https://www.usenix.org/system/files/nsdi21-zhang_1.pdf)
+    - JCT means job completion time
+  - important scope: §4.2 assumes fixed sequential steps and at most one parent per step
+    - a task can contain multiple steps with different parents
+  - evaluation limitation: “We ensure function invocations are warm to avoid cold-start delays”
+    - same paper, §6, footnote 5
+  - cost metric is summed task runtime
+    - not a complete current cloud bill
+  - inference: cold starts and shared infrastructure delays are a concrete next measurement
+    - adding uncertainty alone is not enough to claim a new scheduler
+- SONIC, Mahgoub et al., USENIX ATC 2021
+  - question: which intermediate-data transfer method fits each workflow edge
+  - mechanism: choose remote storage, VM storage, or direct transfer
+    - placement also accounts for communication
+  - evidence: “no single data-passing method prevails under all scenarios”
+    - [paper abstract](https://www.usenix.org/system/files/atc21-mahgoub.pdf)
+  - evaluation uses three analytics applications on EC2
+  - inference: a launch-time scheduler should not assume data transfer cost is fixed independently of placement
+  - limit: requires mechanisms the runtime can actually support
+    - managed public functions may expose different placement and communication controls
+- Faastlane, Kotni et al., USENIX ATC 2021
+  - question: can connected functions avoid expensive cross-container communication
+  - mechanism: run functions as threads in one process when possible
+    - use memory protection keys for isolation
+    - use processes or additional containers for parallel execution when necessary
+  - author result: “reduces function interaction latency by up to 99.95% compared to OpenWhisk”
+    - [paper abstract](https://www.usenix.org/system/files/atc21-kotni.pdf)
+  - inference: colocating tasks changes both communication and isolation decisions
+  - limit: the quoted component reduction should not be mistaken for the same whole-workflow speedup
+- Jolteon, Zhang et al., NSDI 2024
+  - question: how to select workflow resources while honoring a probabilistic cost or latency bound
+  - mechanism: combine a structural performance model with learned variability
+    - solve the resource configuration problem through sampling and convex optimization
+  - evidence: “satisfy user-defined cost or latency bounds”
+    - [paper abstract](https://www.usenix.org/system/files/nsdi24-zhang-zili-jolteon.pdf), §3–§5
+  - evaluation includes an ML pipeline, video analytics, and TPC-DS Query 95 on AWS Lambda
+  - inference: variability-aware workflow configuration already exists
+    - a proposed uncertainty-aware scheduler needs a specific failure of this approach
+  - open question for experiments: how do bounds behave when several stages slow down together or workload distributions change
+    - this review does not establish that Jolteon assumes independent stage delays
+
+correctness literature
+- Beldi, Zhang et al., OSDI 2020
+  - question: how to compose stateful functions despite failures
+  - mechanism: logs, transactions, invocation tracking, and garbage collection
+  - evidence: “fault-tolerant and transactional stateful serverless functions”
+    - [paper abstract](https://www.usenix.org/system/files/osdi20-zhang_haoran.pdf)
+  - evaluation implements movie review, travel reservation, and social-media applications
+    - authors evaluate 1,000 AWS Lambdas
+  - inference: retries and transactional workflows already have substantial systems prior work
+  - research question: which unlogged external operations remain outside the guarantee
+- Flux, Ding et al., OSDI 2023
+  - question: which operations actually need logging to make retries unobservable
+  - mechanism: verify individual functions under modeled concurrent interference
+    - retain logs for operations needed by the proof
+  - author evidence: “Flux has successfully identified previously unknown issues in 12 applications”
+    - [paper abstract](https://www.usenix.org/system/files/osdi23-ding.pdf)
+  - current implementation scope: “Flux currently supports only Java applications”
+    - same paper, §1
+  - further limits in §1
+    - modeled state is in NoSQL databases
+    - some unbounded loops are unsupported
+  - §9 discusses applying the definition beyond serverless
+  - inference: extending the model to external tools or Rust requires explicit semantics
+    - translating syntax alone would not establish retry correctness
+
+scheduling literature
+- Shinjuku, Kaffes et al., NSDI 2019
+  - question: how to stop long requests from blocking short requests on a core
+  - mechanism: microsecond-scale preemption using virtualization hardware
+  - evidence: “preempt requests as often as every 5µsec”
+    - [paper abstract](https://www.usenix.org/system/files/nsdi19-kaffes.pdf)
+  - evaluates varied service-time distributions and mixed RocksDB requests
+  - inference: reducing serverless launch delay cannot remove queueing behind long execution
+  - limit: this is a specialized operating-system design
+    - its preemption costs cannot be assumed for an ordinary container runtime
+- Gavel, Narayanan et al., OSDI 2020
+  - question: how to allocate unequal accelerators fairly and efficiently
+  - mechanism: express policies through an effective-throughput model
+    - translate policies to heterogeneous hardware
+    - realize allocations through scheduling rounds
+  - evidence: “systematically generalizes a wide range of existing scheduling policies”
+    - [paper abstract](https://www.usenix.org/system/files/osdi20-narayanan_deepak.pdf)
+  - inference: accelerator-aware scheduling already includes policy abstraction
+  - limit: training throughput and interactive request deadlines are different objectives
+- CASSINI, Rajasekaran et al., NSDI 2024
+  - question: can training jobs avoid transmitting over the same link simultaneously
+  - mechanism: shift the timing of communication phases
+  - evidence: “the communication patterns of jobs sharing the same network link are interleaved”
+    - [paper abstract](https://www.usenix.org/system/files/nsdi24-rajasekaran.pdf)
+  - evaluates 13 ML models on a 24-server testbed
+  - inference: placement and network timing can interact with compute scheduling
+  - limit: irregular agent workflows may lack the repeating communication phases that make this approach useful
+- Kamino, Domingo et al., OSDI 2025
+  - question: which allocator should process a VM placement request
+  - mechanism: estimate completion delay using queue contents and cached placement computations
+  - evidence: “assign each new request to the agent with the lowest estimated latency”
+    - [paper abstract](https://www.usenix.org/system/files/osdi25-domingo.pdf)
+  - author result: “a 42% reduction in average request latencies”
+    - same abstract
+    - this number comes from a production-trace simulator
+  - production results are separate in §1 and §6
+    - do not label the simulator number a measured deployment improvement
+  - inference: scheduler CPU work and cache locality can become part of the application's startup path
+
+
+2026 follow-up that changes the research bar
+- Spice, Holmes et al., OSDI 2026
+  - question: why does restoring initialized processes still require expensive work
+  - mechanism: a snapshot file format and kernel primitive separate storage layout from virtual-memory layout
+    - restore process metadata in bulk
+  - author result: “within 0.6–18ms of warm-invocation latency”
+    - [paper abstract](https://www.usenix.org/system/files/osdi26-holmes.pdf)
+  - distinction: these numbers are extra latency above warm execution
+    - they are not total request latency
+  - inference: a new restore mechanism must compare with Spice as well as VM snapshot systems
+  - limit: requires kernel changes
+- Quark, Chai et al., OSDI 2026 operational-systems paper
+  - question: how much apparent CPU utilization is useful batch work
+  - mechanism: fine-grained allocation, rapid instance provisioning, and scheduling that accounts for unequal hardware and uneven tasks
+  - author observation: “batch workloads remain inefficient, with a useful computation ratio of only 67%”
+    - [paper abstract](https://www.usenix.org/system/files/osdi26-chai.pdf)
+  - scope: production analytics colocated with higher-priority online services at Ant Group
+  - inference: resource occupancy and useful work are different measurement targets
+  - implication for proposal A
+    - include colocated online traffic and idle waiting in evaluation
+    - measure useful CPU work rather than only allocation or billing time
+- Murakkab, Chaudhry et al., OSDI 2026
+  - question: how to optimize entire agent workflows across model and hardware choices
+  - mechanism: explicit workflow structure, profiling, optimization, and runtime reconfiguration
+  - evidence: “decouples workflow specification from execution configuration”
+    - [paper abstract](https://www.usenix.org/system/files/osdi26-chaudhry.pdf)
+  - inference: simply proposing joint workflow and hardware optimization is already covered
+  - implication for proposal A
+    - identify a concrete failure under uncertain delays or retried effects
+    - compare with Murakkab if extending the workload to agents
+  - broader model-serving review belongs in the companion agent-systems study
+
+second pass, 7 Oct 2026: what the sections below add
+- reading depth: abstracts only, taken from the linked conference or arXiv pages
+  - every quote below is from the abstract unless a section is named
+  - numbers are author claims on their own setups
+- the first pass covered startup, workflows, retries, and a few schedulers
+- this pass adds measurements and traces, isolation units, control plane correctness, GPU serverless, GPU cluster scheduling, CPU scheduling on one machine, overcommit and billing, microservices, multi-cloud, carbon, and schedulers written by learning or LLMs
+
+workload measurements and public traces
+- why read these first: a scheduler result only means something on a workload, and these are the workloads people can actually get
+- Serverless in the Wild, Shahrad et al., USENIX ATC 2020
+  - the Azure Functions trace that most cold-start papers replay
+  - “most functions are invoked very infrequently, but there is an 8-order-of-magnitude range of invocation frequencies”
+    - [USENIX page](https://www.usenix.org/conference/atc20/presentation/shahrad)
+  - my reading: keeping every function warm is wasteful, since most are rarely called
+- How Does It Function?, Joosen et al., SoCC 2023
+  - two Huawei traces, “over 7 months with over 1.4 trillion function invocations combined”
+  - “scheduling time, execution time and cold-start distributions vary across 2 to 4 orders of magnitude and have very long tails”
+    - [arXiv 2312.10127](https://arxiv.org/abs/2312.10127)
+- Serverless Cold Starts and Where to Find Them, Joosen et al., 2024
+  - “a month-long trace of 85 billion user requests and 11.9 million cold starts from Huawei's serverless cloud platform”
+  - splits a cold start into “pod allocation time, code and dependency deployment time, and scheduling delays”
+  - “cold starts in Region 1 take up to 7 seconds, dominated by dependency deployment time and scheduling. In Region 2, cold starts take up to 3 seconds and are dominated by pod allocation time”
+    - [arXiv 2410.06145](https://arxiv.org/abs/2410.06145)
+  - my reading: which part of a cold start is slow differs by region, so one fast restore mechanism does not fix all of them
+  - use for proposal A: these per-part delays are the realistic thing to inject
+- XFaaS, Sahraei et al., SOSP 2023
+  - Meta's private function platform, “trillions of function calls per day on more than 100,000 servers”
+  - “a daily average CPU utilization of 66%”
+  - “XFaaS defers the execution of delay-tolerant functions to off-pea[k]” hours (the abstract was cut here in my extraction)
+    - [author PDF](https://www.cs.cmu.edu/~dskarlat/publications/xfaas_sosp23.pdf)
+  - my reading: a private cloud can delay work and trust its callers, a public one cannot, so XFaaS numbers do not transfer to public platforms
+- Analysis of Large-Scale Multi-Tenant GPU Clusters, Jeon et al., USENIX ATC 2019
+  - the Microsoft Philly trace, two months of training jobs
+  - studies “the effect of gang scheduling and loca[lity]” on utilization
+    - gang scheduling: a job starts only when all its GPUs are free at once
+    - [USENIX page](https://www.usenix.org/conference/atc19/presentation/jeon)
+- MLaaS in the Wild, Weng et al., NSDI 2022
+  - “a two-month workload trace collected from a production MLaaS cluster with over 6,000 GPUs in Alibaba”
+  - problems named: “the low GPU utilization, the long queueing delays, the presence of hard-to-schedule tasks demanding high-end GPUs with picky scheduling requirements”
+    - [USENIX page](https://www.usenix.org/conference/nsdi22/presentation/weng)
+- Characterization of Large Language Model Development in the Datacenter, Hu et al., NSDI 2024
+  - “a six-month LLM development workload trace collected from our GPU datacenter Acme”
+  - looks at how LLM jobs differ from older deep learning jobs and at “the impact of various job failures”
+    - [USENIX page](https://www.usenix.org/conference/nsdi24/presentation/hu)
+- Heterogeneity at Hyperscale, Li et al., OSDI 2026 operational-systems paper
+  - “a six-month trace covering 155,410 GPUs of multiple vendors and generations and jobs from 81 departments”
+  - “high GPU demand does not yield high effective utilization: idle GPUs frequently become unallocatable because free capacity is stranded across nodes, lacks matching CPUs, or violates network-locality constraints, and because users reserve ample headroom for production safety”
+  - “fractional-GPU fragmentation, a focus of prior work, is now negligible, as GPU sharing is rarely used”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/li-suyi)
+  - this contradicts the starting point of the 2023 paper from the same company, listed under GPU cluster scheduling below
+  - I have not checked whether this trace is public
+- Lifting the veil on Meta's microservice architecture, Huye et al., USENIX ATC 2023
+  - “the topology is extremely heterogeneous, is in constant flux, and includes software entities that do not cleanly fit in the microservice architecture”
+    - [USENIX page](https://www.usenix.org/conference/atc23/presentation/huye)
+  - my reading: benchmarks with a fixed call graph leave out most of what makes real microservices hard
+- Mimesys, Kim et al., OSDI 2026
+  - turns resource usage traces into runnable load, because “production workloads are often inaccessible due to privacy and proprietary concerns”
+  - “transforms time-series resource usage traces into executable workloads that emulate resource contention patterns”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/kim-donghyun)
+  - use: a way to get realistic neighbors for any colocation experiment without the original programs
+
+isolation units: containers, small VMs, unikernels, WebAssembly
+- the question in this group is what box to run untrusted code in, and how fast that box can appear
+- Firecracker, Agache et al., NSDI 2020
+  - the small VM monitor under AWS Lambda
+  - the authors reject the old choice “between virtualization with strong security and high overhead, and container technologies with weaker security and minimal overhead”
+    - [USENIX page](https://www.usenix.org/conference/nsdi20/presentation/agache)
+- The True Cost of Containing: A gVisor Case Study, Young et al., HotCloud 2019
+  - gVisor puts a user-space kernel between the container and the host
+  - measures “gVisor startup performance, memory efficiency, and system-call overheads”
+    - [USENIX page](https://www.usenix.org/conference/hotcloud19/presentation/young)
+- SOCK, Oakes et al., USENIX ATC 2018
+  - finds Linux container setup itself is slow because of “scalability bottlenecks related to storage and network isolation”
+  - “importing many popular libraries adds about 100ms to startup”
+  - starts new instances by forking from a pre-imported parent, which they call Zygotes
+    - [USENIX page](https://www.usenix.org/conference/atc18/presentation/oakes)
+  - this is one of the "missing reads" the first pass listed
+- SAND, Akkus et al., USENIX ATC 2018
+  - runs the functions of one application in one sandbox: “application-level sandboxing, and 2) a hierarchical message bus”
+    - [USENIX page](https://www.usenix.org/conference/atc18/presentation/akkus)
+  - also a "missing read" from the first pass. Faastlane and Faasm above are later versions of the same idea
+- vHive and REAP, Ustiugov et al., ASPLOS 2021
+  - an open test platform on Firecracker and Containerd
+  - “the execution time of a function started from a snapshot is 95% higher, on average, than when the same function is memory-resident”
+  - cause: “frequent page faults as the function's state is brought from disk into guest memory one page at a time”
+    - [arXiv 2101.09355](https://arxiv.org/abs/2101.09355)
+  - use: vHive is the open platform I would build proposal A on
+- On-demand Container Loading in AWS Lambda, Brooker et al., USENIX ATC 2023
+  - Lambda's targets: “adding up to 15,000 new containers per second for a single customer”, “start-up times (as low as 50ms)”, images “as large as 10GiB”
+  - mechanism: “caching, deduplication, convergent encryption, erasure coding, and block-level demand loading”
+    - [USENIX page](https://www.usenix.org/conference/atc23/presentation/brooker)
+- Unikraft, Kuenzer et al., EuroSys 2021
+  - a unikernel is one application linked with only the OS parts it needs, booted as a VM
+  - “images for these apps are around 1MB, require less than 10MB of RAM to run, and boot in around 1ms on top of the VMM time (total boot time 3ms-40ms)”
+    - [arXiv 2104.12721](https://arxiv.org/abs/2104.12721)
+- REWIND, Song et al., USENIX ATC 2024
+  - reusing a warm container leaks data between requests
+  - “after each function request, the container is reset to an initial state, free from any sensitive data”
+    - [USENIX page](https://www.usenix.org/conference/atc24/presentation/song)
+- Dandelion, Kuchler et al., 2025
+  - claims even today's platforms “are not sufficiently elastic to avoid over-provisioning expensive resources”
+  - blames “booting a guest OS and configuring features like networking in sandboxes”
+  - fix: change the interface. Applications become “DAGs of pure compute functions and higher-level communication functions”
+    - [arXiv 2505.01603](https://arxiv.org/abs/2505.01603)
+  - my reading: if functions cannot make system calls, the box gets much cheaper. The cost moves to porting applications
+- Wasabi, Baqershahi et al., NSDI 2026
+  - puts WebAssembly programs of different customers inside one container, “a dense hierarchical architecture to securely co-locate Wasm-based applications from different customers within the same container sandbox”
+  - keeps the container serving model so non-WebAssembly work still runs
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/baqershahi)
+- TrEnv-X, Huang et al., ACM TOCS (extends TrEnv, SOSP 2024)
+  - “repurposable sandboxes, which can be shared across different functions”, and memory restored from remote memory pools
+  - extends to “microVM-based agent workloads” with “browser sharing”
+  - “When applied to LLM agents, it reduces the P99 latency by up to 58% and memory usage by 61% compared to state-of-the-art systems like E2B”
+    - [arXiv 2509.09525](https://arxiv.org/abs/2509.09525)
+  - the only paper I found that treats agent sandboxes as a serverless workload. A web search summary says it includes a workload characterization and cost analysis. I have not read that part
+- Wallet, Sabanic et al., NSDI 2026
+  - functions inside confidential VMs, each in “a minimal "trustlet"”
+  - “a 4.3× smaller TCB” than plain confidential VM deployment
+    - TCB: the code you must trust
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/sabanic)
+- Junction, Fried et al., NSDI 2024
+  - kernel bypass means the application talks to the network card directly, skipping the OS
+  - “the first kernel bypass system that can pack thousands of instances on a machine while providing compatibility with unmodified Linux applications”
+    - [USENIX page](https://www.usenix.org/conference/nsdi24/presentation/fried)
+  - same group later wrote Spice (above)
+- Pocket, Klimovic et al., OSDI 2018
+  - short-lived storage for data passed between functions
+  - “similar performance to ElastiCache Redis for serverless analytics applications while reducing cost by almost 60%”
+    - [USENIX page](https://www.usenix.org/conference/osdi18/presentation/klimovic)
+- Burst Computing, Barcelona-Pons et al., USENIX ATC 2025
+  - for jobs that want many workers at once: “a novel group invocation primitive to launch large groups of workers with guaranteed simultaneity”
+  - packs workers into fewer containers so they can message each other directly
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/barcelona-pons)
+- RTSFaaS, Zhao et al., USENIX ATC 2025
+  - transactions over shared state for function workflows, using leases over RDMA instead of an external database
+  - “a lease-based concurrency control protocol to dynamically assign and transfer leases among workers”
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/zhao-jianjun)
+  - bears on proposal B: a newer transactional baseline next to Beldi
+- what I take from this group
+  - startup of the box is close to solved for one box at a time: 1 ms unikernel boot, Spice within 0.6 to 18 ms of warm
+  - what is still slow is everything around the box: fetching dependencies, scheduling, network setup, and many boxes at once. The Huawei trace says so directly
+  - the newest moves change the interface (Dandelion, Wasabi) or the workload (agents in TrEnv-X)
+
+control planes: correct and fast enough
+- a controller is a loop that reads the current cluster state and acts to move it toward the wanted state. Kubernetes is built from many of these
+- Sieve, Sun et al., OSDI 2022
+  - tests controllers by “systematically and extensively perturbing the controller's view of the current cluster state in ways it is expected to tolerate”
+  - found problems leading to “data loss, security vulnerabilities, and resource leaks”
+    - [USENIX page](https://www.usenix.org/conference/osdi22/presentation/sun)
+- Acto, Gu et al., SOSP 2023
+  - tests operators end to end by driving them through sequences of wanted states
+  - “has helped find 56 serious new bugs (42 were confirmed and 30 have been fixed) in eleven Kubernetes operators”
+    - [author PDF](https://tianyin.github.io/pub/acto.pdf)
+- Anvil, Sun et al., OSDI 2024, best paper
+  - controllers written in Rust and proved with Verus
+  - the property: “eventually stable reconciliation, written as a concise temporal logic liveness property”
+    - liveness: something good eventually happens, as opposed to safety, nothing bad ever happens
+  - “most work so far focused on safety, whereas reconciliation is fundamentally not a safety property”
+  - verified “three Kubernetes controllers for managing ZooKeeper, RabbitMQ, and FluentBit”
+    - [USENIX page](https://www.usenix.org/conference/osdi24/presentation/sun-xudong)
+    - [code](https://github.com/xlab-uiuc/verifiable-controllers)
+  - the closest existing work to the human's Verus and Rust interests in this whole area
+  - I searched for 2025 and 2026 follow-ups and the one search I could run returned none. That is weak evidence, since my search quota ran out
+- Kivi, Liu et al., USENIX ATC 2024
+  - model checks Kubernetes controllers together with their configuration
+  - “models its controllers and events into processes whereby their interleavings are exhaustively checked via model checking”
+  - “two new issues in Kubernetes controller source code”
+    - [USENIX page](https://www.usenix.org/conference/atc24/presentation/liu-bingzhe)
+  - differs from Anvil: Kivi checks a model, Anvil proves the running code
+- Mutiny!, Barletta et al., 2024
+  - injects faults into the store that holds cluster state
+  - “even a single fault/error (e.g., a bit-flip) in the data stored can propagate, causing cluster-wide failures (3% of injections), service networking issues (4%), and service under/overprovisioning (24%)”
+    - [arXiv 2404.11169](https://arxiv.org/abs/2404.11169)
+- KubeDirect, Qi et al., NSDI 2026
+  - when many function instances start at once, “message passing becomes the primary bottleneck as controllers have to exchange extensive state through the API Server”
+  - controllers message each other directly and skip the API server
+  - cost, in the authors' words: “our approach introduces distributed and ephemeral state across controllers, making it challenging to enforce end-to-end semantics without centralized coordination”
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/qi)
+  - together with Dirigent above, this is the second system that makes the control plane fast by dropping the single stored copy of the truth
+  - this changes proposal C and opens proposal D
+- Protean, Hadary et al., OSDI 2020
+  - Azure's VM allocator. Kamino above builds on it
+  - “a multi-layer caching mechanism expedites the allocation process, achieving turnaround times of few milliseconds”
+  - “A slight compromise on allocation quality enables multiple AAs to run concurrently on the same inventory, resulting in increased throughput with negligible conflict rate”
+    - AA: allocation agent
+    - [USENIX page](https://www.usenix.org/conference/osdi20/presentation/hadary)
+  - bears on proposal C: Azure reports conflicts are negligible, so measuring conflict cost may show nothing
+- Twine, Tang et al., OSDI 2020
+  - Facebook's cluster manager: “a single control plane to manage one million machines across all data centers in a geographic region”
+  - lets applications take part in container lifecycle, “e.g., restarting a ZooKeeper deployment's followers first and its leader last during a rolling upgrade”
+    - [USENIX page](https://www.usenix.org/conference/osdi20/presentation/tang)
+- found but not read: Garen, “Reliable Cluster Management with Atomic State Reconciliation”, Kim et al., EuroSys 2026
+  - known only from a lab publication list in a search result. No claims about it here
+
+serverless for GPUs and large models
+- the box is no longer the slow part. Loading tens of gigabytes of model weights is
+- BlitzScale, Zhang et al., OSDI 2025
+  - loads weights from other GPUs over the network instead of from disk or host cache
+  - lets a half-loaded instance already help: “offload the layer computation from the overloaded serving instances to the scaled ones without waiting for the parameters to be fully loaded”
+  - “up to 94 % lower tail latency reductions compared to state-of-the-art autoscaling system (ServerlessLLM)”
+    - [USENIX page](https://www.usenix.org/conference/osdi25/presentation/zhang-dingyan)
+- λScale, Yu et al., 2025
+  - same two ideas, independently: “fast model multicast” over RDMA and “execute-while-load”
+    - [arXiv 2502.09922](https://arxiv.org/abs/2502.09922)
+- HydraServe, Lou et al., NSDI 2026
+  - for public clouds without special networks
+  - “proactively distributes models across servers to quickly fetch them, and overlaps cold-start stages within workers”
+  - “reduces the cold start latency by 1.7×–4.7×”
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/lou)
+- DeepServe, Hu et al., USENIX ATC 2025
+  - Huawei's production platform on its own Ascend chips
+  - “pre-warmed pods, DRAM pre-loading, and NPU-fork, which allow DEEPSERVE to scale up to 64 instances in seconds”
+  - “has been in production for over a year”
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/hu-junhao)
+- Torpor, Yu et al., USENIX ATC 2025
+  - keeps models in main memory and moves them onto a GPU when a request arrives: “late binding with model swapping”
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/yu)
+- Prism, Yu et al., OSDI 2026
+  - many models, most rarely used. Sees “a dynamic bursty-group pattern in which sets of models become active together and shift over time”
+  - shares GPU memory between models by “memory ballooning”: taking memory back from an idle model and handing it to a busy one
+  - “deployed in production environments across 10K+ GPUs”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/yu-shan)
+- ServerlessLoRA, Sui et al., 2025
+  - LoRA: a small add-on to a big shared base model
+  - “99% of weights are unnecessarily duplicated” across functions that share a base model
+    - [arXiv 2505.14468](https://arxiv.org/abs/2505.14468)
+- LLM-Mesh, Xu et al., 2025
+  - small and mid-size models with rare requests, packed several to a CPU or GPU
+    - [arXiv 2507.00507](https://arxiv.org/abs/2507.00507)
+- what I take from this group
+  - this corner is crowded. Six systems in two years attack the same weight-loading delay
+  - a new entry needs a workload none of them use. I would not start here
+  - [the LLM serving study](llm_serving.md) covers request scheduling once the model is loaded
+
+GPU cluster scheduling for training
+- Gandiva, Xiao et al., OSDI 2018
+  - training repeats the same small step, so the scheduler can pause between steps cheaply
+  - “exploits intra-job predictability to time-slice GPUs efficiently across multiple jobs”
+    - [USENIX page](https://www.usenix.org/conference/osdi18/presentation/xiao)
+- Tiresias, Gu et al., NSDI 2019
+  - nobody knows how long a training job will run, so prioritize by how much service a job has had so far
+  - “improves the average JCT by up to 5.5× over an Apache YARN-based resource manager used in production”
+    - [USENIX page](https://www.usenix.org/conference/nsdi19/presentation/gu)
+- AntMan, Xiao et al., OSDI 2020
+  - several jobs on one GPU, with the framework changed so jobs can shrink
+  - “improves the overall GPU memory utilization by 42% and the computation unit utilization by 34%”
+    - [USENIX page](https://www.usenix.org/conference/osdi20/presentation/xiao)
+- Pollux, Qiao et al., OSDI 2021
+  - the scheduler also picks batch size and GPU count for each job
+  - optimizes goodput, “a novel metric we introduce that combines system throughput with statistical efficiency”
+  - “reduces average job completion times by 37-50%”
+    - [USENIX page](https://www.usenix.org/conference/osdi21/presentation/qiao)
+- Sia, Jayaram Subramanya et al., SOSP 2023
+  - Pollux plus several GPU types
+  - on “44to 64-GPU clusters with a mix of three GPU types, Sia reduces average job completion time (JCT) by 30–93%”
+    - [author PDF](https://www.pdl.cmu.edu/PDL-FTP/BigLearning/sia_sosp23-final.pdf)
+  - note the scale: tens of GPUs, while the traces above have thousands to 155,410
+- Shockwave, Zheng et al., NSDI 2023
+  - fairness when a job's speed changes during training
+  - “improves makespan by 1.3× and fairness by 2×”
+    - [USENIX page](https://www.usenix.org/conference/nsdi23/presentation/zheng)
+- Beware of Fragmentation, Weng et al., USENIX ATC 2023
+  - “allocating partial GPUs can result in severe GPU fragmentation in large clusters, leaving hundreds of GPUs unable to be allocated”
+  - places tasks to keep fragmentation growth smallest
+    - [USENIX page](https://www.usenix.org/conference/atc23/presentation/weng)
+  - three years later the same company reports this kind of fragmentation “is now negligible, as GPU sharing is rarely used” (Li et al., above)
+- XSched, Shen et al., OSDI 2025
+  - GPUs and other accelerators mostly cannot interrupt a running task
+  - “a preemptible command queue abstraction (XQueue)”, adapted “to ten XPUs of different types, brands, and generations”
+    - [USENIX page](https://www.usenix.org/conference/osdi25/presentation/shen-weihang)
+- GPreempt, Fan et al., USENIX ATC 2025
+  - “a timeslice-based yield mechanism to enable context-switch preemption on GPUs”
+  - “within 40 μs low-latency preempt[ion]”
+    - [USENIX page](https://www.usenix.org/conference/atc25/presentation/fan)
+- RLBoost, Wu et al., NSDI 2026
+  - reinforcement learning on LLMs has two stages with different needs. Generating samples scales out on cheap, interruptible GPUs
+  - “a framework for cost-efficient RL training that harvests preemptible GPU resources”
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/wu-yongji)
+  - OSDI 2026 has three more papers on scheduling this kind of training (DynaRL, Weave, RollArt). I saw only their titles
+- what I take from this group
+  - the academic line (Gandiva to Sia) optimizes job completion time on small clusters with elastic jobs
+  - the 2026 Alibaba report says the capacity actually lost is stranded whole GPUs and reserved headroom
+  - those are different problems. I think the gap between them is the research opening, see proposal G
+
+CPU scheduling on one machine
+- Shenango, Ousterhout et al., NSDI 2019
+  - moves cores between applications “every 5 µs”, so idle cores of a latency-sensitive service do batch work
+    - [USENIX page](https://www.usenix.org/conference/nsdi19/presentation/ousterhout)
+- Caladan, Fried et al., OSDI 2020
+  - “resource partitioning is neither necessary nor sufficient”
+  - reacts to interference by moving cores fast instead of fencing off caches and memory bandwidth
+    - [USENIX page](https://www.usenix.org/conference/osdi20/presentation/fried)
+- The Benefits and Limitations of User Interrupts, Guo et al., NSDI 2025
+  - user interrupts: a newer Intel feature that lets one user program interrupt another without entering the kernel
+  - “user interrupts are not a panacea. For example, they provide limited benefits when other software layers constrain the kinds of scheduling policies that can” be used (cut here in my extraction)
+    - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/guo)
+- ALPS, Fu et al., USENIX ATC 2024
+  - Linux's default scheduler “neglects the short-term demands of CPU time from short-lived serverless functions”
+  - learns from past runs to favor short functions without starving long ones
+    - [USENIX page](https://www.usenix.org/conference/atc24/presentation/fu)
+- vBOIDs, Manakkal et al., OSDI 2026
+  - with many containers on a host, “fine-grained, per-thread scheduling decisions lead to thrashing and unpredictable performance”
+  - schedules groups of threads as one unit
+  - “improves the throughput of containerized microservices with thousands of threads by up to 3×”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/manakkal)
+- kSTEP, Cao et al., OSDI 2026
+  - a study of Linux CPU scheduler bugs, “covering both functional violations and misalignments between implementation and policy”
+  - “these bugs are hard to observe and even harder to trigger”
+  - runs scheduler events deterministically on isolated CPUs and fuzzes on top: “reproducing seven real-world scheduler bugs and uncovering four new ones”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/cao)
+    - [code](https://github.com/kstep-dev/kstep)
+  - the one paper here on scheduler correctness as opposed to scheduler speed. Feeds proposal E
+- What Are You (M)Waiting For, Wang et al., OSDI 2026 operational-systems paper
+  - mwait: the CPU instruction a guest uses to go idle. Letting the guest run it directly is fast, but hides idleness from the host
+  - “a vCPU never yields its pCPU, causing idle vCPU to monopolize cores”
+  - “even an idle vCPU executing mwait can raise colocated tail latency by up to 3×”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/wang-yun)
+  - my reading: an optimization tuned without overcommit broke under overcommit. A good example of why proposal E asks for stated properties
+
+overcommit, harvesting, autoscaling, and billing
+- overcommit: promising more CPU or memory than the machine has, betting that not everyone uses their share at once
+- Harvest VMs, Ambati et al., OSDI 2020
+  - a VM that “grows and shrinks according to the amount of unallocated resources at its underlying server”
+  - gives guarantees from predictions, “e.g., 65% of the Harvest VMs will survive more than a week”
+    - [USENIX page](https://www.usenix.org/conference/osdi20/presentation/ambati)
+- HarvestContainers, Hall et al., NSDI 2026
+  - the same idea for Kubernetes containers, with no application changes
+  - “dynamically determines the safe number of CPU cores to harvest”
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/hall)
+- Jiagu, Liu et al., USENIX ATC 2024
+  - overcommit needs a performance prediction per placement, and predicting is slow
+  - “pre-decision scheduling achieves accurate prediction while eliminating overheads by decoupling prediction and scheduling”
+  - “a 54.8% improvement in deployment density over commercial clouds (with Kubernetes)”
+    - [USENIX page](https://www.usenix.org/conference/atc24/presentation/liu-qingyuan)
+  - bears on proposal C: another paper about scheduler decision cost
+- Leopard, Cao et al., NSDI 2025
+  - “current billing practices do not align with true resource consumption”
+  - a billing model with “varying CPU and memory demands, spot cores, and preemptible memory”, wired into the scheduler and admission
+    - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/cao)
+  - partly closes the "billing gap" the first pass listed
+- DVLA, Zhang et al., OSDI 2026 operational-systems paper
+  - placing VMs by predicted lifetime goes wrong as the lifetime mix drifts
+  - a few long-lived VMs scattered across machines stop those machines from ever being emptied: “a persistent long-lived VM placement debt”
+  - this “cannot be repaid by online scheduling alone”, so they add offline moves
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/zhang-zhengtong)
+- Uber's Failover Architecture, Bansal et al., NSDI 2026
+  - old rule: every service has enough capacity in two regions, so half sits idle
+  - new rule: only critical services keep that. Others borrow the spare capacity and are shut off during a failover
+  - “reduces steady-state provisioning from 2× to 1.3×, raising utilization from 20% toward 30%”
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/bansal)
+  - my reading: 20% to 30% utilization at a company this size shows how much room ordinary services still leave
+
+microservices: resource control and overload
+- DeathStarBench, Gan et al., ASPLOS 2019
+  - the benchmark almost every paper below uses
+  - “an open-source benchmark suite built with microservices that is representative of large end-to-end services”
+    - [author PDF](https://www.csl.cornell.edu/~delimitrou/papers/2019.asplos.microservices.pdf)
+  - the Meta study above suggests real deployments look quite different
+- FIRM, Qiu et al., OSDI 2020
+  - learning finds which service causes a latency violation and which resource it lacks
+  - “reduces SLO violations by up to 16x while reducing the overall requested CPU limit by up to 62%”
+    - [USENIX page](https://www.usenix.org/conference/osdi20/presentation/qiu)
+- Autothrottle, Wang et al., NSDI 2024
+  - a learned controller sets a target per service, and a simple local rule meets it
+  - “CPU savings, up to 26.21% over the best-performi[ng]” baseline (cut here in my extraction)
+    - [USENIX page](https://www.usenix.org/conference/nsdi24/presentation/wang-zibo)
+- Rajomon, Xing et al., NSDI 2025
+  - overload control with prices: “Clients attach tokens to requests and services charge a price for each API, dropping requests with insufficient tokens”
+    - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/xing)
+- Galileo, Saxena et al., NSDI 2026
+  - learned controllers act without knowing how fragile their choice is
+  - adds “statistical bounds on tail latencies of specific request types under a range of environmental perturbations”, from a queueing model
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/saxena)
+- Slowpoke, Xie et al., NSDI 2026
+  - answers "what if this service were twice as fast" without building the speedup, by slowing the others
+  - “a root mean squared error of only 2.07%”
+    - [USENIX page](https://www.usenix.org/conference/nsdi26/presentation/xie)
+- Metastable Failures in Distributed Systems, Bronson et al., HotOS 2021
+  - a metastable failure: a trigger pushes the system into a bad state, and the system keeps itself there after the trigger is gone. Retry storms are the usual example
+  - “A systematic approach for building systems that are robust against unknown metastable failures remains an open problem”
+    - [paper](https://sigops.org/s/conferences/hotos/2021/papers/hotos21-s11-bronson.pdf)
+- Metastable Failures in the Wild, Huang et al., OSDI 2022
+  - “at least 4 out of 15 major outages in the last decade at Amazon Web Services were caused by metastable failures”
+    - [USENIX page](https://www.usenix.org/conference/osdi22/presentation/huang-lexiang)
+- CSnake, Qian et al., 2025
+  - finds self-sustaining cascades before deployment by linking single fault injections from different tests into one chain
+    - [arXiv 2509.26529](https://arxiv.org/abs/2509.26529)
+  - belongs mostly to [the bug-finding studies](../finding_bugs)
+- Aletheia, Ferreira et al., OSDI 2026
+  - data split across services loses the consistency checks a single database gave
+  - static analysis “on 7 open-source applications, detecting 46 previously unreported integrity violations”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/ferreira)
+
+several clouds, spot machines, and cost
+- From Cloud Computing to Sky Computing, Stoica and Shenker, HotOS 2021
+  - sky computing: using many clouds as if they were one service
+  - “The barriers are more economic than technical, and we propose reciprocal peering as a key enabling step”
+    - [paper](https://sigops.org/s/conferences/hotos/2021/papers/hotos21-s02-stoica.pdf)
+- The Sky Above The Clouds, Chasins et al., 2022
+  - a 35-page position paper from the same group on how the cloud market could mature
+    - [arXiv 2205.07147](https://arxiv.org/abs/2205.07147)
+- SkyPilot, Yang et al., NSDI 2023
+  - a broker that picks a cloud per job: “creating a fine-grained two-sided market via an intercloud broker”
+    - [USENIX page](https://www.usenix.org/conference/nsdi23/presentation/yang-zongheng)
+- Can't Be Late, Wu et al., NSDI 2024
+  - spot instance: a cheap machine the provider can take back at any time
+  - when to switch to full-price machines so a job still meets its deadline
+  - the policy “is parameter-free and requires no assumptions on spot availability”, tested on “three-month-long real spot availability traces on AWS”
+    - [USENIX page](https://www.usenix.org/conference/nsdi24/presentation/wu-zhanghao)
+- Starburst, Luo et al., USENIX ATC 2024
+  - own cluster plus cloud overflow. Decides how long a job waits for the cluster before paying for cloud
+  - “assigns longer waits for large jobs to increase their chances of running on the cluster, and shorter waits to small jobs”
+    - [USENIX page](https://www.usenix.org/conference/atc24/presentation/luo)
+
+carbon, energy, and power
+- Let's Wait Awhile, Wiesner et al., Middleware 2021
+  - grid electricity is cleaner at some hours. Delay work that can wait
+  - studies “Germany, Great Britain, France, and California over the year 2020”
+    - [arXiv 2110.13234](https://arxiv.org/abs/2110.13234)
+- On the Limitations of Carbon-Aware Temporal and Spatial Workload Shifting, Sukprasert et al., EuroSys 2024
+  - the skeptical paper. Carbon data “from 123 regions”
+  - “the practical upper bounds of these carbon reductions are currently limited and far from ideal”
+  - “simple scheduling policies often yield most of these reductions, with more sophisticated techniques yielding little additional benefit”
+    - [arXiv 2306.06502](https://arxiv.org/abs/2306.06502)
+- CarbonScaler, Hanafy et al., 2023
+  - run a batch job on more servers when power is clean and fewer when it is dirty
+  - “51% carbon savings over carbon-agnostic execution”
+    - [arXiv 2302.08681](https://arxiv.org/abs/2302.08681)
+- GREEN, Xu et al., NSDI 2025
+  - “up to 41.2% reduction in cluster-wide carbon footprint and 12% reduction in peak power consumption, while incurring 3.6%-5.9% time efficiency tradeoff”
+    - [USENIX page](https://www.usenix.org/conference/nsdi25/presentation/xu-kaiqiang)
+- SPADE, Lechowicz et al., OSDI 2026
+  - outside signals such as “energy cost, carbon intensity, power availability, and water usage” now decide how much compute is available
+  - for jobs made of dependent tasks, “delaying certain tasks in the DAG (e.g., bottleneck tasks) can stall entire pipelines”
+  - decides how many machines and which tasks together
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/lechowicz)
+  - bears on proposal A: same shape of problem (when to run each task of a dependent job) with supply changing instead of delay
+- Hardware Lifecycle-Aware Power Planning, Li et al., OSDI 2026 operational-systems paper
+  - Meta's rack power budgets, from “live production traffic data spanning millions of servers across multiple hardware generations”
+    - [USENIX page](https://www.usenix.org/conference/osdi26/presentation/li-ruihao)
+- what I take from this group
+  - the EuroSys 2024 result is a warning: most of the carbon saving comes from simple policies, and the ceiling is low
+  - 2026 work reframes it as power supply that varies, which providers care about for money reasons. I think that framing will last longer than the carbon one
+
+schedulers written by learning or by LLMs
+- Decima, Mao et al., SIGCOMM 2019
+  - reinforcement learning trains a neural network that schedules Spark jobs
+  - “improves the average job completion time over hand-tuned scheduling heuristics by at least 21%”
+    - [arXiv 1810.01963](https://arxiv.org/abs/1810.01963)
+  - the policy is a network nobody can read
+- Barbarians at the Gate, Cheng et al., 2025
+  - LLMs write the policy as code, a simulator scores it, repeat
+  - the argument: “system performance problems naturally admit reliable verifiers: solutions are typically implemented in real systems or simulators, and verification reduces to running these software artifacts against predefined workloads and measuring performance”
+  - case studies include “load balancing for multi-region cloud scheduling”
+    - [arXiv 2510.06189](https://arxiv.org/abs/2510.06189)
+  - note what "verifier" means here: a benchmark score. It says nothing about inputs outside the benchmark
+- PolicySmith, Dwivedula et al., HotNets 2025
+  - “applies LLMs to synthesize instance-optimal heuristics”
+    - instance-optimal: tuned for one deployment and its workload
+  - for congestion control, “can generate safe policies that integrate directly into the Linux kernel”
+    - [arXiv 2510.08803](https://arxiv.org/abs/2510.08803)
+- Glia, Hamadanian et al., 2025
+  - several LLM agents reason, run experiments, and analyze
+  - on a GPU cluster for LLM inference “it produces new algorithms for request routing, scheduling, and auto-scaling that perform at human-expert levels in significantly less time”
+    - [arXiv 2510.27176](https://arxiv.org/abs/2510.27176)
+- SchedCP, Zheng et al., 2025
+  - LLM agents write Linux scheduler policies as eBPF programs and load them through sched_ext
+    - eBPF: small programs the kernel checks and then runs inside itself
+  - has “an Execution Verifier that validates all AI-generated code and configure before deployment with static and dynamic analysis”
+  - “up to an 1.79x performance improvement”
+    - [arXiv 2509.01245](https://arxiv.org/abs/2509.01245)
+- what I take from this group
+  - within one year, writing a scheduling policy became cheap
+  - every one of these systems accepts a policy because it scored well on a workload, plus at most a check that it will not crash the kernel
+  - none of the five abstracts claims a policy is free of starvation or keeps cores busy when work is waiting. kSTEP shows hand-written schedulers already get those wrong
+  - so the scarce thing is now checking, which is what the human's verification work is about. See proposal E
+
+research proposals
+- A: workflow schedules that survive shared cold-start and network slowdowns
+  - hypothesis: joint placement and launch decisions beat separate resource configuration and launch-time decisions under correlated stalls
+  - closest work: ORION, Caerus, SONIC, Jolteon, AFaaS
+  - prior-work constraint: ORION already models correlation and prewarms downstream VMs
+  - first experiment
+    - reproduce eager, lazy, and NIMBLE-style scheduling in one controlled runtime
+    - compare ORION prewarming and bundling plus Jolteon-style configuration
+      - use the same available information and resource budget
+    - inject warm starts, isolated cold starts, burst cold starts, and shared network congestion
+    - vary workflow width, intermediate-data size, and contention
+  - measure
+    - median and p99 workflow latency
+    - deadline misses
+    - billed execution time, storage operations, and transfers
+    - prediction error and scheduler overhead
+  - candidate design
+    - share measured startup and data-transfer distributions across placement and launch decisions
+    - preserve explicit dependencies and bounded resource demand
+  - falsifier
+    - gains vanish after matching resource budgets and including scheduler overhead
+    - ORION or Jolteon handles the tested variability equally well
+  - novelty gate
+    - inspect later Caerus and Jolteon citations and cold-start-aware workflow work before building a new optimizer
+- B: retry-safe functions with uncertain external effects
+  - hypothesis: explicit operation contracts can verify useful retry guarantees with less logging than logging every step
+  - closest work: Beldi and Flux
+  - starting scope
+    - Rust functions calling a small modeled key-value API and one external-effect API
+    - explicit request identifiers and acknowledgement loss
+    - concurrent calls on shared objects
+  - first experiment
+    - implement payment and reservation examples
+    - interrupt after every externally visible operation
+    - retry while another function changes shared state
+    - compare blanket logging, selective logging, and contract-based deduplication
+  - measure
+    - duplicate effects and forbidden state outcomes
+    - proof effort, supported programs, runtime overhead
+  - falsifier
+    - contracts assume the desired property rather than establish it
+    - non-atomic external APIs make the claimed guarantee impossible
+    - supported examples are too restricted to improve on Flux
+  - novelty gate
+    - examine workflow-engine retry semantics and external transaction protocols
+    - share findings with the verification and bug-finding studies
+- C: scheduling around the cost of making scheduling decisions
+  - hypothesis: queue and cache-aware routing improves resource startup during bursts with fewer allocator replicas
+  - closest work: Kamino, Dirigent, Omega, Sparrow
+  - prior-work constraint: simpler orchestration may remove the bottleneck before improved routing is necessary
+  - candidate distinction
+    - several control-plane services share CPUs and caches
+    - placement requests have deadlines tied to application demand
+  - first experiment
+    - reproduce a Kamino-style latency estimator in a trace-driven simulator
+    - add controlled interference and changing placement rules
+    - compare random routing, shortest queue, cache affinity, sampling, and latency estimation
+    - distinguish routing cost from unnecessary persistent updates and state conflicts
+  - measure
+    - allocation p99, deadline misses, stale predictions, cache memory, and achieved placement quality
+  - falsifier
+    - a simple shortest-queue policy matches the proposed design
+    - application benefit disappears because image loading dominates
+  - practical limit
+    - realistic allocator traces and rules may be unavailable
+    - synthetic traces alone cannot support a production-scale claim
+
+recommended sequence
+- recommendation: run proposal A's measurement before designing a new scheduler
+  - low-cost outcome: a reproducible account of when existing assumptions fail
+  - stronger outcome: a specific interaction that existing baselines cannot handle
+- pursue B if the verification group can support the modeled operation semantics
+- pursue C only after establishing useful workloads and accessible traces
+- keep independent hardware contributions separate
+  - RDMA and compression acceleration may be valuable
+  - they introduce equipment and kernel dependencies before the central scheduling question is answered
+
+remaining literature checks
+- recent gap: later work citing Dirigent
+- runtime gap: SAND, SEUSS, and Catalyzer
+- workflow gap: later work citing ORION and Jolteon
+- billing gap: current provider behavior and complete cost accounting
+- these are explicit missing reads
+  - this document makes no supported technical claims about them

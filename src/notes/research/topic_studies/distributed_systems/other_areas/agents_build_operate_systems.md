@@ -1,0 +1,344 @@
+LLM agents that build or operate distributed systems
+(authored by agents unless marked 🧑)
+
+start here
+
+- scope: agents that write distributed system code, make it faster, tune it, or keep it running in production
+    - read 7 Oct 2026 UTC; 39 sources, listed with links below
+    - already covered elsewhere, not repeated here
+        - TLA+ models, proofs, Verus agents: [agents and proofs](../../../distributed_verification_review_b/review_b_agents_20261007.md)
+        - SysMoBench, Specula, Agora, DDBench, RCACopilot, RCAgent, OpenRCA, AIOpsLab results: [agents for distributed bugs](../finding_bugs/llm_agents_for_distributed_bugs.md)
+        - network configuration repair: [network operations](llm_network_operations.md)
+- my reading of the field, in 5 points
+    - 1. agents score well when a cheap, trustworthy check exists, and poorly when it does not
+        - performance search has such a check: run it and measure
+        - diagnosis and fault tolerance mostly lack one
+    - 2. scores on operations benchmarks dropped each time the benchmark got more realistic
+        - ITBench 2025: 11.4% of SRE scenarios
+        - SREGym 2026: about 55 to 61% overall, but 15 to 28% on its new kinds of failure
+        - ORCA-bench 2026: 25.3% at best on realistic incident reports
+    - 3. several benchmark scores were partly earned by shortcuts
+        - restarting pods clears the alerts in 8 of 18 ITBench mitigation problems, per the Stratus authors
+        - a right final answer often came without the supporting evidence, per Cloud-OpsBench
+    - 4. nobody has a good benchmark for agents writing fault-tolerant distributed code
+        - the one direct study covers three small protocols
+        - the System Intelligence Benchmark lists its system building part as "TBD"
+        - I searched for one and did not find it; that is weaker than proof none exists
+    - 5. the safety story for agents acting on live systems rests on undo, and the undo is admittedly incomplete
+- recommendation: start with directions 1 and 2 at the bottom
+    - both are cheap, both fit Rust and Verus skills, neither needs production data
+
+operating live systems: benchmarks
+
+- AIOpsLab vision paper, Shetty et al., 2024
+    - [arXiv 2407.12165](https://arxiv.org/abs/2407.12165)
+    - author claim: “a higher-impact application lies in using AI agents for operational resilience of cloud services”
+    - set the pattern later benchmarks follow
+        - deploy a microservice app, inject a fault, let the agent inspect and act, then score
+- ITBench, Jha et al., ICML 2025
+    - [PMLR abstract](https://proceedings.mlr.press/v267/jha25a.html), [arXiv 2502.05352](https://arxiv.org/abs/2502.05352)
+    - published abstract: “resolve only 11.4% of SRE scenarios, 25.2% of CISO scenarios, and 25.8% of FinOps scenarios (excluding anomaly detection)”
+    - the arXiv abstract gives different numbers: 94 scenarios, 13.8% SRE, 0% FinOps
+        - fact: the two abstracts disagree; I did not find out which scenario set changed
+- STRATUS, Chen et al., NeurIPS 2025
+    - [arXiv 2506.02009](https://arxiv.org/abs/2506.02009), [full text](https://arxiv.org/html/2506.02009)
+    - idea: let the agent try a fix, and if things get worse, undo it and try again
+        - abstract: “We formalize a key safety specification of agentic SRE systems like STRATUS, termed Transactional No-Regression (TNR), which enables safe exploration and iteration”
+        - the rule in plain words: a measured severity number may never end above where it started
+    - abstract: beats earlier agents on mitigation “by at least 1.5 times across various models”
+    - table 2: GPT-4o solves 69.2% of 13 AIOpsLab mitigation problems and 50.0% of 18 ITBench ones
+    - table 3, ablation on the 13 AIOpsLab problems
+        - with undo and retry 69.2%
+        - no retry 15.4%
+        - retry without undo 23.1%
+    - limits the authors state in §4.1
+        - the system “rejects destructive actions which cannot be recovered, or turns them into recoverable actions”
+        - “realizing perfect undo for all conceivable state changes in complex environments like cloud systems remains a practical challenge (e.g., involving application-specific states and external interactions)”
+        - “rule-based confinement may not be perfect to capture all destructive actions”
+    - inference: the safety claim is as strong as the undo, and the undo covers Kubernetes objects, not data inside a database or calls to outside services
+    - the authors' own caveat on ITBench, in the appendix
+        - “Stratus achieves the same task-level success rate (solving 9/18 problems) when the undo agent is disabled”
+        - “in 8 out of 18 problems, restarting the target pods clears the incident alerts”
+        - so the ITBench number says little about undo
+    - scope: 13 and 18 problems are small samples
+- SREGym, May 2026
+    - [arXiv 2605.07161](https://arxiv.org/abs/2605.07161), [full text](https://arxiv.org/html/2605.07161)
+    - abstract: “90 realistic, challenging SRE problems”
+    - what it adds over AIOpsLab and ITBench
+        - faults below the application: hardware, kernel, storage
+        - "ambient noise": small unrelated faults running at the same time
+        - failures with two interacting causes, including metastable failures
+            - metastable failure: an overload that keeps itself going after the trigger is gone
+    - table 3, end-to-end success without noise, then with noise
+        - Claude Code with Sonnet 4.6: 60.7%, 53.7%
+        - Stratus with Sonnet 4.6: 54.8%, 39.6%
+        - Codex with GPT-5.4: 53.3%, 45.9%
+    - §3.2: on the 13 failures new to SREGym, “The end-to-end success rates of Stratus with Sonnet-4.6, Claude Code, and Codex decrease from 63.7% to 17.9%, 60.8% to 28.2%, and 57.8% to 15.4%, respectively”
+    - §3.2: “no agent across the metastable failure problems identified both interacting components”
+    - appendix B on shortcuts in the earlier benchmarks
+        - “their fault injectors run as identifiable pods in the same environment the agent inspects”
+        - “the Stratus paper [13] reports that 8 of 18 ITBench mitigation problems (44%) can be “solved” by a generic pod-restart loop”
+        - SREGym “hides its fault-injection plane behind a proxy”
+    - odd result worth a second look: in table 4, Claude Code on the new failures scores higher with noise, 48.7% against 28.2%
+        - n = 13, so this may be run-to-run variation
+- ORCA-bench, Gong et al., Jul 2026
+    - [arXiv 2607.28545](https://arxiv.org/abs/2607.28545)
+    - 1,079 diagnosis tasks over six days of recorded metrics, logs and traces, with the app's source code available
+    - abstract: “the best RCA Accuracy is 25.3% on Medium-difficulty tasks (the realistic-input setting) and 10.0% on Hard”
+    - abstract: “removing source-code access reduces RCA accuracy and increases the hallucination rate for every evaluated model”
+    - author-stated scope: “a curated 50 GB / six-day testbed of standalone tasks on a system whose code and instrumentation are public”
+    - diagnosis only; the agent changes nothing
+- Cloud-OpsBench, Wang et al., Mar 2026
+    - [arXiv 2603.00468](https://arxiv.org/abs/2603.00468)
+    - records each fault as a snapshot and replays it, so every agent sees identical evidence
+    - abstract: best joint accuracy “0.76 on OnlineBoutique and 0.68 on TrainTicket, while the corresponding Evidence Closure Rates (ECR) are only 0.38 and 0.15”
+    - author claim: “final-answer correctness alone substantially overestimates agents' ability to perform evidence-grounded diagnosis”
+    - inference: a replayed snapshot cannot score a repair, because nothing reacts to the agent's action
+
+operating live systems: industry evidence
+
+- Ahmed et al., ICSE 2023, Microsoft
+    - [arXiv 2301.03797](https://arxiv.org/abs/2301.03797)
+    - “a rigorous study at Microsoft, on more than 40,000 incidents”; models suggest a root cause and a fix from the incident title and summary
+    - GPT-3 era, text in and text out, no tools
+- Roy et al., 2024, Microsoft
+    - [arXiv 2403.04123](https://arxiv.org/abs/2403.04123)
+    - a tool-using agent on real incidents
+    - abstract: adding the discussion threads attached to incident reports “surprisingly does not yield significant performance improvements”
+- Meta, Jun 2024
+    - [engineering blog](https://engineering.fb.com/2024/06/24/data-infrastructure/leveraging-ai-for-efficient-incident-response/)
+    - “42% accuracy in identifying root causes for investigations at their creation time related to our web monorepo”
+    - success means the guilty code change is among the top five suggested
+    - narrow task: rank recent code changes, nothing else
+- AWS DevOps Agent, Karakus, Jan 2026
+    - [AWS blog](https://aws.amazon.com/blogs/devops/from-ai-agent-prototype-to-product-lessons-from-building-aws-devops-agent)
+    - tests are fault injections into multi-service AWS apps, graded by an LLM judge against a rubric
+    - admitted problem: “Realistic and diverse scenarios are hard to author”
+    - reports no overall accuracy number in the text I read
+- survey, Bilal et al., May 2026
+    - [arXiv 2605.12729](https://arxiv.org/abs/2605.12729)
+    - author claim: evidence “is comparatively strong for read-oriented assistance and tool-grounded diagnosis, but becomes substantially less complete as systems approach configuration change, bounded execution, and closed-loop operation”
+    - matches what I found: many diagnosis benchmarks, few that score a change made to a running system
+- not read at the source: vendor numbers for Azure SRE Agent and Datadog Bits AI
+    - search results quote large time savings; I found no method description, so I leave them out
+
+making systems faster: search guided by measurement
+
+- ADRS, Cheng et al., Oct 2025, Berkeley
+    - [arXiv 2510.06189](https://arxiv.org/abs/2510.06189), [SIGOPS blog, Feb 2026](https://www.sigops.org/2026/let-the-barbarians-in-how-ai-can-accelerate-systems-performance-research/)
+    - method: an LLM rewrites a policy's code, a simulator or testbed scores it, keep the best, repeat
+    - abstract: “system performance problems naturally admit reliable verifiers”
+    - reported wins are single-component policies: load balancing, spot instance scheduling, transaction ordering
+    - limits the authors state in the blog
+        - “Problems requiring coordinated changes across multiple distributed protocols(e.g., Paxos or Raft) remain difficult due to context limits and the complexity of multi-file reasoning”
+        - “a flawed evaluator is the primary cause of flawed solutions. The AI will exploit loopholes to maximize its score”
+    - inference: the "verifier" here checks speed on chosen workloads; nothing checks that the policy stays correct under failures
+- AlphaEvolve, Google DeepMind, 2025
+    - [arXiv 2506.13131](https://arxiv.org/abs/2506.13131)
+    - abstract: “developed a more efficient scheduling algorithm for data centers”
+    - the often repeated 0.7% fleet compute figure is in the paper body, which I did not read
+- Glia, Hamadanian et al., MIT, Oct 2025
+    - [arXiv 2510.27176](https://arxiv.org/abs/2510.27176)
+    - agents form a hypothesis, run an experiment, read the result, like a researcher would
+    - abstract, for routing, batching and autoscaling in a GPU inference cluster: algorithms “that perform at human-expert levels in significantly less time”
+    - one application, evaluated in the authors' own setup
+- Evolution or Illusion?, Oved et al., Sep 2026
+    - [arXiv 2609.19799](https://arxiv.org/abs/2609.19799)
+    - reruns three such search strategies over a grid of random seeds and iteration counts
+    - abstract: “On one task the strategy that looks worst at one seed is best at forty seeds”
+    - implication: single-run comparisons between search methods are unreliable
+- GGMS, Hui et al., Jan 2026
+    - [arXiv 2601.22369](https://arxiv.org/abs/2601.22369)
+    - searches for a whole agreement protocol with tree search plus a model checker, no LLM writing code
+    - abstract: results are “verified correct via exhaustive model checking for all executions within the bounded setting”
+    - bounded means small fixed numbers of nodes and steps
+- performance work in real code bases
+    - SWE-fficiency, Ma et al., Nov 2025: [arXiv 2511.06090](https://arxiv.org/abs/2511.06090)
+        - “agents achieve less than 0.23x the expert speedup”
+        - Python data libraries, single machine
+    - PerfBench, Garg et al., Sep 2025: [arXiv 2509.24091](https://arxiv.org/abs/2509.24091)
+        - baseline agent “achieving only a ~3% success rate”; about 20% once told to benchmark its own change
+    - audit, Chen et al., Jul 2026: [arXiv 2607.01211](https://arxiv.org/abs/2607.01211)
+        - replayed reference patches on four machine types
+        - they still passed the benchmark's own rules every time for only “39/102 GSO tasks, 11/140 SWE-Perf tasks, and 411/498 SWE-fficiency tasks”
+    - inference: none of these measure a distributed system, where timing noise is worse
+
+tuning configuration
+
+- SysInsight, Zhang et al., Mar 2026
+    - [arXiv 2603.22708](https://arxiv.org/abs/2603.22708)
+    - reads the database's source code to learn what each knob does, then tunes
+    - abstract: “converges to the best configuration on average 7.11X faster while achieving a 19.9% performance improvement”
+- PerfEvolve, Lin et al., May 2026
+    - [arXiv 2605.19988](https://arxiv.org/abs/2605.19988)
+    - turns expert tuning procedures into steps the agent runs: check version, profile workload, tune knobs together
+    - abstract, PostgreSQL: “outperforms state-of-the-art documentation-driven tuning baselines by up to 35.2%”
+- ELMo-Tune-V2, Thakkar et al., Feb 2025
+    - [arXiv 2502.17606](https://arxiv.org/abs/2502.17606)
+    - abstract, RocksDB: “performance improvements up to ~14X our YCSB benchmarks compared against default RocksDB configurations”
+- StorageXTuner, Lin et al., Oct 2025
+    - [arXiv 2510.25017](https://arxiv.org/abs/2510.25017)
+    - four agents; abstract says it “employs lightweight checkers to guard against unsafe actions”
+- what these four share
+    - fact: all report throughput or latency on standard benchmark workloads against defaults or other tuners
+    - fact: I read abstracts only
+    - open question I could not answer from abstracts: do the tuned configurations keep the same durability, such as syncing the write-ahead log, and survive a crash
+        - a tuner scored only on throughput has a reason to turn durability off
+    - all single-node engines; I found no agent tuner evaluated on a replicated system's timeouts or quorum settings
+- KubeIntellect, Ardebili and Bartolini, Sep 2025
+    - [arXiv 2509.02449](https://arxiv.org/abs/2509.02449)
+    - natural-language control of Kubernetes, including write and delete
+    - abstract: “93% tool synthesis success rate and 100% reliability across 200 natural language queries”
+    - my take: 100% on the authors' own 200 queries says little about harmful actions
+- IaC-Eval, Kon et al., NeurIPS 2024
+    - [paper page](https://proceedings.neurips.cc/paper_files/paper/2024/hash/f26b29298ae8acd94bd7e839688e329b-Abstract.html)
+    - 458 tasks: write Terraform for AWS from a description, checked against a stated intent
+    - “the top-performing model, GPT-4, obtaining a pass@1 accuracy of 19.36%”
+    - old models; checks the planned infrastructure, not behavior after deployment
+
+writing distributed system code
+
+- Das and Coyne, PAgE workshop at PLDI, Jun 2026
+    - [abstract](https://pldi26.sigplan.org/details/page-2026-papers/5/Testing-LLM-Generated-Distributed-Protocol-Code)
+    - LLMs write Two-Phase Commit, Ring Election and Raft; a simulator drops, delays and duplicates messages
+    - abstract: “they struggle with complex consensus algorithms and exhibit inconsistent debugging behavior”
+    - the only study I found that scores generated protocol code under injected network faults
+    - workshop paper, three protocols, abstract read only
+- CONCUR, Huang et al., Mar 2026
+    - [arXiv 2603.03683](https://arxiv.org/abs/2603.03683)
+    - “43 concurrency problems derived from a standard concurrency textbook” plus 72 variants
+    - threads in one process, not messages between machines
+- microservice generation
+    - RepoGenesis, Peng et al., Jan 2026: [arXiv 2601.13943](https://arxiv.org/abs/2601.13943)
+        - “the best-performing system achieves only 23.67% Pass@1 on Python and 21.45% on Java”
+    - Adnan et al., Mar 2026: [arXiv 2603.09004](https://arxiv.org/abs/2603.09004)
+        - “fully autonomous microservice generation is not yet achievable”
+    - both test API behavior; neither kills a service or partitions the network
+- building whole projects
+    - NL2Repo-Bench, Dec 2025: [arXiv 2512.12730](https://arxiv.org/abs/2512.12730)
+        - “even the strongest agents achieve below 40% average test pass rates”
+    - SWE-Marathon, Jun 2026: [arXiv 2606.07682](https://arxiv.org/abs/2606.07682)
+        - 20 very long tasks; “Current frontier coding agents solve fewer than 30% of tasks”
+        - “reward-hacking behavior in 13.8% of rollouts”
+    - Cursor, Lin, Jan 2026: [blog](https://cursor.com/blog/scaling-agents)
+        - hundreds of agents on one code base
+        - shared locks failed: “Twenty agents would slow down to the effective throughput of two or three”
+        - company blog, no independent check of what the produced code does
+    - Madduru, Sep 2026: [arXiv 2609.01985](https://arxiv.org/abs/2609.01985)
+        - one agent, one session, one data system; five defects catalogued
+        - includes “one instance where a claimed performance fix was never re-measured on the regression that motivated it”
+        - a single case, useful as a list of defect kinds
+- System Intelligence Benchmark
+    - [repository](https://github.com/sys-intelligence/system-intelligence-benchmark)
+    - collects course exams, course labs, artifact evaluation, SysMoBench, Verus proofs, SREGym
+    - its system building benchmark is listed as “TBD”
+- P language tooling
+    - [P repository README](https://github.com/p-org/P)
+    - PeasyAI generates “P state machines, specifications, and test drivers directly from design documents”
+    - the README reports no accuracy numbers
+- Brooker, May 2026, an opinion from an AWS engineer
+    - [blog](https://brooker.co.za/blog/2026/05/20/hypothesis.html)
+    - weak form: “Any coding task for which a complete specification is available will become trivial.”
+    - strong form: “Any coding task for which a deterministic oracle is available will become trivial.”
+    - his own objections: “Few meaningful tasks have a complete specification” and most oracles are not deterministic
+    - why it matters here: deterministic simulation testing is exactly a deterministic oracle for distributed code
+        - so the strong form predicts agents plus such a simulator can write Raft
+        - nobody has tested that prediction in a paper I found
+
+what the evidence adds up to
+
+- inference: three different kinds of check are in use, and results track which one is available
+    - a measurement, such as throughput: strong results, with a known risk of gaming the measure
+    - a hidden state check, such as "is the service healthy": moderate results, shortcuts found after the fact
+    - a judgment, such as "is this the root cause": weak results, and graders are often LLMs
+- inference: "the agent fixed it" and "the agent knew why" are separate
+    - Cloud-OpsBench measured the gap directly
+    - restart-style fixes pass health checks without any diagnosis
+- inference: correctness under failures is the missing check on the building side
+    - performance search, tuning and code generation papers above score speed or API tests
+    - only Das and Coyne inject faults
+- belief: the papers' "struggles" will shrink with newer models; the shortcut and oracle problems will not
+    - so work on what counts as a valid check should age better than work on a better agent
+
+research we could do
+
+- 1. does a deterministic simulator make fault-tolerant code easy for agents
+    - question: Brooker's strong form, tested on distributed protocols
+    - tasks: Raft, a replicated key-value store, a sharded store, in Rust
+    - give the agent one of five aids, same model and budget
+        - nothing but the paper
+        - unit tests
+        - a deterministic simulator with fault injection, such as madsim or turmoil
+        - simulator plus a linearizability checker on operation histories
+        - a TLA+ model of the protocol
+    - score with hidden fault schedules the agent never sees
+        - report which kinds of bug survive each aid
+    - why us: needs Rust and testing skill, no production data, runs on one machine
+    - falsifier: agents pass hidden schedules with unit tests alone
+        - then the simulator adds nothing and the task is already easy
+    - risk: Raft is in every training set; add a less famous protocol or a changed requirement
+    - doubles as the missing system building benchmark
+- 2. how much of each operations benchmark do trivial agents solve
+    - run three dumb baselines on AIOpsLab, ITBench, SREGym and Cloud-OpsBench
+        - do nothing
+        - restart everything
+        - roll back the most recent change
+    - then report agent scores with those problems removed
+    - precedent: the performance benchmark audit above did this kind of replay and found most reference patches unstable in two of three suites
+    - falsifier: SREGym's proxy and state checks already remove every shortcut
+        - still a useful independent confirmation, but a smaller paper
+    - cost: cluster time to deploy the benchmarks; no new agent needed
+- 3. an undo layer whose guarantee is proved
+    - Stratus shows undo is what makes retrying safe, and admits its undo is partial
+    - build the layer that sits between agent and cluster
+        - records each change, refuses changes it cannot reverse, restores on request
+    - prove in Verus: after any sequence of accepted actions and one restore, the tracked state equals the starting state
+        - state the assumptions in the open: which resources are tracked, what the cluster API promises
+    - measure on SREGym
+        - how many agent actions get refused
+        - how often an unproved undo leaves leftovers that the proved one does not
+    - related verified work to compare with: verified Kubernetes controllers, see [formal verification folder](../../../distributed_verification_review_b/review_b_systems_20261007.md)
+    - falsifier: existing rule-based undo already restores state in every benchmark run
+        - then the proof guards against failures nobody observes
+- 4. do agent tuners buy speed with durability
+    - rerun ELMo-Tune-V2, StorageXTuner, SysInsight and PerfEvolve from their artifacts
+    - diff the final configurations against defaults for knobs that affect durability or crash recovery
+    - crash the tuned system mid-workload and check for lost acknowledged writes
+    - falsifier: no tuned configuration weakens durability
+        - then report that as a clean bill of health and move to replicated systems
+    - extension: tune a replicated store's election timeouts and check availability under partitions
+- 5. performance search with a correctness check in the loop
+    - ADRS authors say protocols like Raft are out of reach and that evaluators get exploited
+    - let the search change a protocol optimization, such as batching or lease reads
+        - reject any candidate that fails a model checker or fault-injecting simulator before measuring speed
+    - measure how many fast candidates the check rejects
+        - that number is the result: how often would speed-only search have shipped a broken protocol
+    - follow the seeds and budget protocol from Evolution or Illusion
+    - falsifier: almost no candidates are rejected, or rejected ones were also slow
+- 6. evidence-backed diagnosis on live systems
+    - Cloud-OpsBench measures evidence on replayed snapshots; SREGym is live but scores outcomes
+    - combine them: on a live benchmark, require the agent to name the cause, then check it by a targeted action
+    - overlaps recommendation 2 in [network operations](llm_network_operations.md); do one of the two
+- 7. metastable failures as a narrow hard case
+    - SREGym: no agent named both interacting parts
+    - small study: does giving the agent a queueing or retry-storm checklist change that
+    - weak point: few problems, so results will be noisy
+- my order: 1, then 2, then 3
+    - 1 and 2 are measurement work with clear falsifiers
+    - 3 is the Verus fit but needs 2's infrastructure first
+
+reading limits
+
+- 39 sources opened; most at abstract level
+    - sections read beyond the abstract: SREGym, Stratus, the ADRS blog, Cursor, Meta, AWS, Brooker
+    - pages were read through a summarizing reader; every quote above was then matched against the fetched page text by a script
+- leads found and not read
+    - RCAEval, OpenRCA 2.0, Multi-IaC-Eval, [IaC error taxonomy](https://arxiv.org/abs/2512.14792), AgentTune, LADS, NimbusGuard, SAIR, CodeCRDT
+    - [Jarmak, Engineering Reliable Coding Agents](https://arxiv.org/abs/2608.13867): abstract read, body not
+- not covered
+    - agents coordinating with each other as a distributed system: see [agent systems](agent_systems.md)
+    - security operations and cost operations parts of ITBench
+    - human studies of how on-call engineers use these tools after 2024
+    - incident reports of agents deleting production data; news coverage exists, I did not verify it
+- "I found none" statements come from about 30 web searches, not a systematic review
+- none of the proposals was checked for novelty against unpublished or very recent work

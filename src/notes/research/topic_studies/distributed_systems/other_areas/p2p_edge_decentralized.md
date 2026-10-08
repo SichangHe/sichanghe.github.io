@@ -1,0 +1,435 @@
+peer-to-peer, edge, and decentralized systems: who really runs them, and what breaks
+(authored by agents unless marked 🧑)
+
+start here
+- one finding repeats in every network I read about: the protocol lets anyone run a part, but a few operators run most of it
+  - IPFS: "almost 80% of the IPFS DHT servers are hosted in the cloud" (Balduf et al., IMC 2023)
+  - Bluesky: "There is currently one Bluesky AppView, operated by Bluesky PBC" (Balduf et al., IMC 2024)
+  - Ethereum: "46% of Ethereum blocks were made by censoring actors" (Wahrstätter et al., 2023)
+  - Mastodon: instances and hosting concentrate too (Raman et al., IMC 2019)
+  - Nostr is the exception on paper, and it pays with 34.6 copies of each post and relays that cannot pay their bills (Wei and Tyson, CoNEXT 2025)
+- my take: "is it decentralized?" is answered already; the open questions are narrower and more useful
+  - what exactly stops working when one named operator leaves
+  - who checks the work of a stranger's machine (a model answer, a moderation label, a stored file)
+  - whether the merge and permission code in local-first apps is correct
+- three research directions I would start with, in this order
+  - 1: prove a real local-first merge or permission library correct in Verus
+    - closest fit to the human's Verus and Rust work
+    - one 2026 workshop paper has started and says scaling up "remains future work"
+  - 2: measure LLM-written posts and spam on Bluesky, Nostr, and Mastodon
+    - these networks publish every post and, on Bluesky, every moderation label
+    - fits the standing questions on misinformation and spam in [research notes](../../../index.md)
+  - 3: an "operator removal" audit across IPFS, Bluesky, Nostr, and Ethereum
+    - extends proposal 1 of [networking, peer-to-peer, and edge systems](networking_edge_p2p.md) from one network to four
+- none of these is confirmed new; each has a novelty check listed under "research we could do"
+
+what this file is
+- a deeper study of peer-to-peer, decentralized web, local-first, and edge systems than [networking, peer-to-peer, and edge systems](networking_edge_p2p.md)
+  - that file covers Chord, Dynamo, The Eternal Tussle (IPFS), Gemel, Hairpin, StarryNet, PlanetServe, OpenTela; I link to it and do not repeat them
+- neighbours
+  - transports, congestion control, kernel networking: [networking](networking.md)
+  - merging replicas without consensus, from the database side: [keeping copies in sync](../consensus_replication/convergent_replication.md)
+  - validator software: [blockchain validators](../consensus_replication/blockchain_validators.md)
+  - censorship on the ordinary web: [censorship and security](../../other_topics/web_trust/censorship_security.md)
+  - provenance labels: [C2PA](../../web_llm_detection/llm_provenance/c2pa.md)
+  - phishing: [phishing study](../../web_llm_detection/web_user/phishing/index.md)
+
+how to read source cards
+- "quote" lines are verbatim from the linked source
+- "authors claim" is the paper's own claim; I did not check it
+- "my inference" and "my take" are mine
+- reading depth is stated under "reading limits" at the end; most cards rest on the abstract
+
+terms
+- DHT: distributed hash table, a lookup table spread over many peers; you ask "who has key K" and peers route you to the answer
+- gateway: an ordinary web server that fetches peer-to-peer content for browsers that cannot speak the peer-to-peer protocol
+- relay: a server that passes data between peers; the word means different things in IPFS, Bluesky, Nostr, and Ethereum, so each card says which
+- NAT: the home or mobile router that hides a device's address, so two such devices cannot reach each other directly without help
+- Sybil attack: one attacker pretends to be many peers
+- eclipse attack: an attacker surrounds a victim so every peer the victim talks to is the attacker
+- CRDT: conflict-free replicated data type; a data structure where two copies edited separately can always be merged to the same result
+- local-first: the copy on your own device is the main copy; servers only help with sync
+- Byzantine: a participant that may lie or break the rules on purpose
+- PDS: personal data server, where a Bluesky account's posts are stored
+- AppView: the Bluesky service that turns the stream of everyone's posts into timelines, counts, and search
+- labeler: a Bluesky service that attaches short tags such as "spam" to posts or accounts; clients choose which labelers to obey
+- TEE: trusted execution environment, hardware that can prove which program it ran
+
+who actually runs peer-to-peer storage networks
+- IPFS peers sit mostly in a few clouds
+  - Leonhard Balduf et al., [The Cloud Strikes Back, IMC 2023](https://arxiv.org/abs/2309.16203), abstract and §1
+    - quote: "Our measurements show significant centralization in the IPFS network and a high share of nodes hosted in the cloud"
+    - quote: "almost 80% of the IPFS DHT servers are hosted in the cloud with the top 3 cloud providers hosting 51.9% of the servers"
+    - method: 9 months of DHT crawls, traffic logs, and DNS data
+    - authors note this differs from the picture in the 2022 SIGCOMM IPFS paper by Trautwein et al.
+    - my inference: two careful crawls of the same network disagreed, so "how many peers, and where" depends on how you count; any new study should state its counting rule first
+  - Ruizhe Shi et al., [Centralization in the Decentralized Web, WWW 2025](https://par.nsf.gov/biblio/10573737), abstract (first lines) plus a search summary of findings
+    - quote: "IPFS exhibits a high degree of centralization and has integrated centralized components for improved performance"
+    - reported in the search summary, not checked by me: 3 years of traffic, 20+ billion messages, 5% of peers host over 80% of content, 2.71% of files replicated more than 5 times
+    - my inference: low replication means most files have one real home; "content survives because it is everywhere" is false for most content
+  - Trinh Viet Doan et al., [Towards Decentralised Cloud Storage with IPFS, 2022](https://arxiv.org/abs/2202.06315), abstract
+    - quote: "its inner workings, properties, and implications have only been marginally explored in research"
+    - use: a short design overview to read before the measurement papers
+- home devices can reach each other without a fixed relay about 70% of the time
+  - Dennis Trautwein et al., [Large-Scale Measurement of NAT Traversal for the Decentralized Web, IMC 2026](https://probelab.io/publications/large-scale-measurement-of-nat-traversal-for-the-decentralized-web-a-case-study-of-dcutr-in-ipfs/), abstract
+    - quote: "existing solutions often reintroducing the very centralization they seek to avoid"
+    - quote: "a conditional success rate of 70% +- 7.1% for the hole-punching stage, given that prerequisite relay reservation and public address discovery succeed"
+    - quote: "statistically indistinguishable success rates for both TCP and QUIC (~70%)"
+    - data: "over 4.4 million traversal attempts from 85,000+ distinct networks across 167 countries"; dataset released
+    - my inference: the other 30% still needs someone's server, which is one concrete reason cloud nodes dominate; the rate is conditional, so the true end-to-end rate is lower
+- the same holds across blockchains
+  - Lucianna Kiffer et al., [Multiple Sides of 36 Coins, SIGMETRICS 2026](https://arxiv.org/abs/2511.15388), abstract
+    - quote: "the first longitudinal, cross-network measurement study of 36 public blockchain networks"
+    - quote: "dramatic variation in network size from under 10 to more than 10,000 active nodes"
+    - method: 15 crawlers over 9 months, hourly probes, plus internet-wide port scans for networks they could not crawl
+    - my inference: the scan trick (probe the default port with one network-specific packet) is a cheap way to measure a network without writing its client
+    - I did not check which 36 networks; whether Solana is included matters for the human's [Agave notes](../../../agave_verification_scope.md)
+- one more hybrid dependency is already in [networking, peer-to-peer, and edge systems](networking_edge_p2p.md): The Eternal Tussle on IPFS indexers and gateways
+
+attacks and abuse on peer-to-peer storage
+- one cheap attacker can hide any chosen file
+  - Srivatsan Sridhar et al., [Content Censorship in the InterPlanetary File System, NDSS 2024](https://arxiv.org/abs/2307.12212), abstract
+    - quote: "prevents the retrieval of any chosen content in the IPFS network"
+    - quote: "The attack exploits a conceptual issue in a core component of IPFS, the Kademlia Distributed Hash Table (DHT)"
+    - authors claim: detection rate 99.6%, and mitigation of all detected attacks
+    - quote: "our countermeasures are scheduled for deployment in the future versions of IPFS"
+    - my inference: "scheduled" in 2023; whether today's Go and Rust clients ship the fix, and ship it correctly, is a checkable question
+- anyone can watch who asks for what
+  - Leonhard Balduf et al., [Monitoring Data Requests in Decentralized Data Storage Systems, 2021](https://arxiv.org/abs/2104.09202), abstract
+    - quote: "data requests are broadcast to connected peers"
+    - quote: "our methodology can be abused for attacks on users' privacy"
+    - my inference: the same openness that makes IPFS easy to measure makes its users easy to watch; a censorship-resistant store that reveals its readers protects publishers more than readers
+- takedown exists but is slow and easy to dodge
+  - Saidu Sokoto et al., [Guardians of the Galaxy: Content Moderation in the InterPlanetary File System, USENIX Security 2024](https://www.usenix.org/conference/usenixsecurity24/presentation/sokoto), abstract
+    - quote: "the lack of a centralized approach facilitates its spread"
+    - quote: "existing means to filter problematic content can be circumvented"
+    - data: 368,762 files that were subject to takedown notices
+    - authors claim: their changes give a "227% increase in the detection of phishing content"
+    - reported in a search summary, not checked by me: about 88% of flagged files were copyright complaints, about 6% phishing
+    - relevance: this is the content theft and scam question from the human's list, on a network with no owner
+  - "Netting Phish in the IPFS Ocean" (2026) reportedly tracks 10,489 phishing files over 11 months and finds 588 gateways, 573 of them outside public lists
+    - I saw only a search summary and have no link; treat as a lead
+- the message-spreading protocol under Ethereum and Filecoin has a machine-checked model, and the model found a real attack
+  - Dimitris Vyzovitis et al., [GossipSub, 2020](https://arxiv.org/abs/2007.02754), abstract
+    - quote: "nodes maintain a score profile for the peers they are connected to"
+    - authors claim: tested on "more than 5000 VM nodes deployed on AWS" and "stays immune to all considered attacks"
+  - Ankit Kumar et al., [Formal Model-Driven Analysis of Resilience of GossipSub, IEEE S&P 2024](https://arxiv.org/abs/2212.05197), abstract
+    - quote: "The specification for GossipSub is written in English and its resilience to attacks from misbehaving peers is supported empirically by emulation testing"
+    - quote: "We prove that the score function is always fair, but can be configured in ways that either penalize good behavior or ignore bad behavior"
+    - result: all properties hold for Filecoin's settings; for Ethereum's settings they "synthesize attacks"
+  - same authors, [Verification of GossipSub in ACL2s, 2023](https://arxiv.org/abs/2311.08859), abstract
+    - quote: "confirmed by the developers of GossipSub, FileCoin, and Eth2.0, and publicly disclosed in MITRE CVE-2022-47547"
+  - my take: this is the best example in this area of formal methods paying off; a 5000-node test said "immune", a model said "not with these settings", and the developers agreed with the model
+    - the model is of the protocol; no paper I found proves an implementation (Go or Rust libp2p) matches it
+
+decentralized social networks
+- three designs, in one line each
+  - Mastodon (ActivityPub): your account lives on one server; servers talk to each other; the server admin moderates
+  - Bluesky (AT Protocol): your posts live on a PDS; big shared services collect all posts and build timelines; moderation is a separate pluggable service
+  - Nostr: your identity is a key; you push signed posts to as many relays as you like; relays do not talk to each other
+- Mastodon: users and hosting concentrate, and moderation work lands on volunteers
+  - Aravindh Raman et al., [Challenges in the Decentralised Web: The Mastodon Case, IMC 2019](https://arxiv.org/abs/1909.05801), abstract
+    - quote: "a number of properties that are creating natural pressures towards recentralisation"
+    - reported in a search summary: 10% of instances host almost half the users
+  - Haris Bin Zia et al., [Flocking to Mastodon, 2023](https://arxiv.org/abs/2302.14294), abstract
+    - quote: "user-driven pressure towards centralization in a decentralized ecosystem"
+    - data: 136,009 users who moved from Twitter
+  - Ishaku Hassan Anaobi et al., [Will Admins Cope?, 2023](https://arxiv.org/abs/2302.05915), abstract
+    - quote: "administrators on larger instances struggle to find sufficient resources"
+  - Anaobi Ishaku Hassan et al., [Exploring Content Moderation in the Decentralised Web: The Pleroma Case, 2021](https://arxiv.org/abs/2110.13500), abstract
+    - quote: "these policies may negatively impact \"innocent\" users"
+    - meaning: an admin blocks a whole server, and every user on it is cut off
+  - Haris Bin Zia et al., [Toxicity in the Decentralized Web and the Potential for Model Sharing, 2022](https://arxiv.org/abs/2204.12709), abstract
+    - quote: "there is no central entity that can define toxicity, nor a large central pool of data that can be used to build universal classifiers"
+    - authors propose sharing classifiers between servers; they report macro-F1 of 0.89
+  - Beatriz Arregui-García et al., [On the Effects of Decentralized Moderation on Network Robustness and Information Diffusion in Mastodon, 2026](https://arxiv.org/abs/2606.27149), abstract
+    - quote: "effectively isolating norm-violating domains without centralized control"
+    - quote: "Echo-chamber effects emerge even in a globally balanced signed network"
+    - method: one year of server-to-server blocks, then a spreading model run on the follow graph
+  - Henrique S. Xavier, [An evidence-based and critical analysis of the Fediverse decentralization promises, 2024](https://arxiv.org/abs/2408.15383), abstract
+    - quote: "Fediverse will face significant challenges in fulfilling its decentralization promises"
+    - argument by comparison with e-mail and the web, both open protocols that concentrated anyway
+- Bluesky: every part can be replaced in principle; the important parts have one operator in practice
+  - Martin Kleppmann et al., [Bluesky and the AT Protocol, 2024](https://arxiv.org/abs/2402.03239), abstract
+    - quote: "to enable decentralization by having multiple interoperable providers for every part of the system; to make it easy for users to switch providers"
+    - quote: "we invite the research community to use Bluesky as a dataset and testing ground for new approaches in social media moderation"
+  - Leonhard Balduf et al., [Looking AT the Blue Skies of Bluesky, IMC 2024](https://arxiv.org/abs/2408.12449), §2 and §3
+    - quote: "for PLC did, the associated document is downloaded from the plc.directory service, which is operated by Bluesky PBC"
+    - quote: "This yields a total of 5,077,159 diddoc from the PLC server, with an additional six using the did:web method"
+      - meaning: of 5 million identities, 6 did not depend on the company's identity directory in March 2024
+    - quote: "There is currently one Bluesky AppView, operated by Bluesky PBC"
+    - reported in a search summary: third-party labelers issued most labels two months after labeling opened
+    - numbers are from early 2024, before the network grew about eightfold; they need a fresh look
+  - Christine Lemmer-Webber, [How decentralized is Bluesky really?, blog, Nov 2024](https://dustycloud.org/blog/how-decentralized-is-bluesky/)
+    - quote: "Bluesky and ATProto are not meaningfully decentralized, and are not federated either"
+    - quote: "the message delivery requirements become quadratic at the scale of full decentralization: to send a message to one user is to send a message to all"
+    - quote: "\"credible exit\" is a reasonable term to describe what Bluesky is aiming for"
+    - she co-wrote ActivityPub, so read it as an informed rival's critique; it is an argument, not a measurement
+    - my inference: "credible exit" is testable; move a real account off every company service and count what still works
+  - Dorian Quelle and Alexandre Bovet, [Bluesky: Network Topology, Polarization, and Algorithmic Curation, 2024](https://arxiv.org/abs/2405.17571), abstract
+    - quote: "while a large number of custom feeds have been created, users' uptake of them appears to be limited"
+  - Tony Zhou, Leijie Wang, Amy X. Zhang, [Middleware for Feed Recommendation in Practice, 2026](https://arxiv.org/abs/2609.12958), abstract
+    - quote: "creators sustain their feeds as unpaid hobbyists with little platform support"
+    - data: 26 interviews and 88,302 custom feeds
+  - Andrea Failla and Giulio Rossetti, ["I'm in the Bluesky Tonight", 2024](https://arxiv.org/abs/2404.18984), abstract
+    - quote: "The dataset contains the complete post history of over 4M users (81% of all registered accounts), totalling 235M posts"
+    - my inference: the same openness lets anyone copy everything; that is the content theft question in its purest form, and I found no measurement of who scrapes these networks
+  - Gianluca Nogara et al., [A longitudinal analysis of misinformation, polarization and toxicity on Bluesky after its public launch, 2025](https://arxiv.org/abs/2505.02317), abstract
+    - quote: "several accounts displayed suspicious behaviors, such as mass-following users and sharing content from low-credibility news sources"
+    - scope: two months around February 2024
+  - Carlo Bono et al., [Self-moderation in the decentralized era: decoding blocking behavior on Bluesky, 2025](https://arxiv.org/abs/2505.01174), abstract
+    - question asked: "Is the likelihood of a user being blocked inferable from their online behavior?"
+  - Pushpdeep Singh et al., [Characterizing Bluesky Content Moderation Service, ICWSM 2027 (preprint Sep 2026)](https://arxiv.org/abs/2609.11373), abstract
+    - quote: "decentralized platforms with transparent, public moderation logs presents an unprecedented opportunity for independent audits"
+    - quote: "high precision (0.837), but struggles with low recall (0.222), with our annotators identifying 4.5× more harmful content than the moderation system in a random sample"
+    - data: 10.6M labels from 2025
+    - my inference: the default moderator misses about four in five harmful posts by these annotators' standard; the log shows what was caught, never what was missed, so recall always needs fresh hand labels
+- Nostr: the most spread out, the most wasteful, and its relays are broke
+  - Yiluo Wei and Gareth Tyson, [An Empirical Analysis of the Nostr Social Network, CoNEXT 2025](https://arxiv.org/abs/2402.05709), abstract and §1
+    - quote: "Nostr achieves superior decentralization compared to traditional Fediverse applications"
+    - quote: "20% of the relays experience downtime for more than 40% of the measurement period"
+    - quote: "95% of the free-to-use relays cannot cover their operational cost from this alone"
+    - quote: "We find 616M post replications for 17.8M posts. This means, on average, a post is replicated across 34.6 relays"
+    - quote: "98.2% of these retrievals are redundant"
+    - data: 712 relays, July to December 2023
+  - Hayato Kimura et al., [Not in The Prophecies: Practical Attacks on Nostr, EuroS&P 2025](https://eprint.iacr.org/2025/1459), abstract
+    - quote: "practical attacks allowing forgeries on various objects, such as encrypted direct messages (DMs), by a malicious user or a malicious server"
+    - quote: "Our attacks are due to cryptographic flaws in the protocol specification and client implementation"
+    - my inference: Nostr's whole trust story is "the signature proves who wrote it"; this paper shows clients that did not check properly
+- Matrix (federated chat): the cryptography has been machine-checked, the room-merging rules less so
+  - Jacob Ginesin and Cristina Nita-Rotaru, [The Matrix Reloaded, 2024](https://arxiv.org/abs/2408.12743), abstract
+    - quote: "no symbolic analysis nor mechanized proofs of correctness exist"
+    - they model the two encryption protocols in Verifpal and prove secrecy and authentication properties
+  - the room state merge ("state resolution") was analysed by Jacob et al. at SACMAT 2020; I saw only a blog summary of it
+
+local-first software and data types that merge
+- the idea
+  - Martin Kleppmann, Adam Wiggins, Peter van Hardenberg, Mark McGranaghan, [Local-first software, Ink & Switch essay, 2019](https://www.inkandswitch.com/essay/local-first/)
+    - quote: "Servers still exist, but they hold secondary copies of your data in order to assist with access from multiple devices"
+    - seven ideals, including "The network is optional" and "You retain ultimate ownership and control"
+    - quote: "CRDTs have the potential to be a foundational technology for realizing local-first software"
+- performance used to be the objection; that one is mostly answered
+  - Joseph Gentle and Martin Kleppmann, [Collaborative Text Editing with Eg-walker, EuroSys 2025](https://arxiv.org/abs/2409.14252), abstract
+    - quote: "Compared to existing CRDTs, it consumes an order of magnitude less memory in the steady state, and loading a document from disk is orders of magnitude faster"
+    - quote: "By offering performance that is competitive with centralised algorithms, our result paves the way towards the widespread adoption of peer-to-peer collaboration software"
+    - the reference implementation is in Rust (the diamond-types library); I know this from memory, not from the abstract
+- correctness of merge code has a long record of wrong proofs
+  - Victor Gomes et al., [Verifying Strong Eventual Consistency in Distributed Systems, OOPSLA 2017](https://arxiv.org/abs/1707.01747), abstract
+    - quote: "many published algorithms have later been shown to be incorrect, even some that were accompanied by supposed mechanised proofs of correctness"
+    - fix: put the network in the model; prove three CRDTs correct in Isabelle under every message order
+  - Kevin De Porre et al., [VeriFx, 2022](https://arxiv.org/abs/2207.02502), abstract
+    - quote: "mechanized proofs verify a formalisation instead of a real-world implementation"
+    - their answer: a small language with automatic proofs that compiles to Scala or JavaScript; 35 CRDTs verified
+    - my inference: the gap they name is the one Verus closes for Rust, because the code proved is the code run
+  - Shadaj Laddad et al., [Keep CALM and CRDT On, 2022](https://arxiv.org/abs/2210.12605), abstract
+    - quote: "CRDT guarantees extend only to data updates; observations of CRDT state are unconstrained and unsafe"
+    - meaning: merges converge, but reading a value mid-way and acting on it can still be wrong
+- the open problem now is permission among people who do not trust each other
+  - Martin Kleppmann and Heidi Howard, [Byzantine Eventual Consistency, 2020](https://arxiv.org/abs/2012.00472), abstract
+    - quote: "a category of database applications that are, by design, immune to Sybil attacks because they can tolerate arbitrary numbers of Byzantine-faulty nodes"
+  - Martin Kleppmann, [PaPoC 2025 keynote abstract](https://martin.kleppmann.com/2025/03/31/papoc-keynote-byzantine.html)
+    - quote: "they have also long ignored the question: how do you know which peers are allowed to update the state?"
+    - quote: "This access control list is itself a CRDT, but it needs to be resilient against malicious manipulation"
+    - hard case in plain words: Alice removes Bob while, offline, Bob removes Alice; both edits arrive later; who is in the group?
+  - Florian Jacob, Johanna Stuber, Hannes Hartenstein, [Towards System-Oriented Formal Verification of Local-First Access Control, 2026](https://arxiv.org/abs/2604.23560), abstract
+    - quote: "As of today, Matrix and Keyhive pair an informal specification with an unverified reference implementation"
+    - quote: "using the Rust programming language for formal specification, verification, and implementation, enabled by the Verus framework"
+    - quote: "Whether this approach can be scaled up to the complexity of real-world local-first access control systems like Matrix or Keyhive remains future work"
+    - 8 pages, "simplified collaboration groups"
+    - my take: this is the single paper in my area that already uses the human's tool, and it states its own gap
+  - leads from search results that I did not open: "Proof-Carrying CRDTs Allow Succinct Non-Interactive Byzantine Update Validation" (PaPoC 2025), "To the Best of Knowledge and Belief: On Eventually Consistent Access Control" (CODASPY 2025), "Consistent Local-First Software" (FSE 2025 journal-first), and the Ink & Switch [Keyhive notebook](https://www.inkandswitch.com/keyhive/notebook/)
+
+LLMs on phones, edge boxes, and strangers' machines
+- on one phone: only small models, slow, and hot
+  - Stefanos Laskaridis et al., [MELTing point, MobiCom 2024](https://arxiv.org/abs/2403.12844), abstract
+    - quote: "LLM inference is largely memory-bound"
+    - quote: "Quantization drastically reduces memory requirements and renders execution viable, but at a non-negligible accuracy cost"
+    - quote: "the continuous execution of LLMs remains elusive"
+  - Jie Xiao et al., [Understanding Large Language Models in Your Pockets, 2024](https://arxiv.org/abs/2410.03613), abstract
+    - measures throughput, latency, battery, and launch time across phone chips from the major vendors
+  - Xiao Yan and Yi Ding, [Are We There Yet?, 2025](https://arxiv.org/abs/2504.00002), abstract
+    - quote: "Only small-size LLMs (<4B parameters) can run successfully on powerful mobile devices"
+    - quote: "The latency to run LLMs on mobile devices with meaningful output is significant (>30 seconds), while cloud services demonstrate better time efficiency (<10 seconds)"
+    - one application and few devices; a narrow study
+  - Charlie Ruan et al., [WebLLM, 2024](https://arxiv.org/abs/2412.15803), abstract
+    - quote: "WebLLM can retain up to 80% native performance on the same device"
+    - meaning: a web page can run a model on the visitor's GPU
+- split the work between a small local model and a big cloud model
+  - Avanika Narayan et al., [Minions, 2025](https://arxiv.org/abs/2502.15964), abstract
+    - quote: "MinionS reduces costs by 5.7x on average while recovering 97.9% of the performance of the remote model alone"
+    - the simple back-and-forth chat version: "30.4x reduction in remote costs, but recovers only 87%"
+  - Senyao Li et al., [Collaborative Inference and Learning between Edge SLMs and Cloud LLMs: A Survey, 2025](https://arxiv.org/abs/2507.16731), abstract
+    - sorts methods into "task assignment, task division, and mixture-based collaboration"; use it as the map of this sub-area
+- split one big model across several machines
+  - Mingjin Zhang et al., [EdgeShard, 2024](https://arxiv.org/abs/2405.14371), abstract
+    - quote: "partition the LLM model into shards and deploy on distributed devices"
+    - authors claim: "up to 50% latency reduction and 2x throughput improvement over baseline methods"
+  - Alexander Borzunov et al., [Petals, 2022](https://arxiv.org/abs/2209.01188) and [Distributed Inference and Fine-tuning of Large Language Models Over The Internet, NeurIPS 2023](https://arxiv.org/abs/2312.08361), abstracts
+    - quote: "running inference of BLOOM-176B on consumer GPUs with ≈ 1 step per second"
+    - quote: "how to perform inference and fine-tuning reliably if any device can disconnect abruptly"
+    - Petals assumes volunteers are honest; it handles leaving, not lying
+  - Chris Tong et al., [Parallax, 2025](https://arxiv.org/abs/2509.26182), abstract
+    - quote: "stitches layers from different replicas into end-to-end execution chains"
+    - evaluated "over real volunteer nodes"; baselines are other decentralized systems, not a datacenter
+  - PlanetServe and OpenTela are in [networking, peer-to-peer, and edge systems](networking_edge_p2p.md)
+- did the stranger run the model you paid for? this is the busiest sub-area, and nobody has a cheap, sure answer
+  - Irena Gao, Percy Liang, Carlos Guestrin, [Model Equality Testing, ICLR 2025](https://arxiv.org/abs/2410.20247), abstract
+    - quote: "11 out of 31 endpoints serve different distributions than reference weights released by Meta"
+    - method: compare samples from the API against samples from the published weights with a statistical test
+    - date: commercial APIs in summer 2024
+  - Will Cai et al., [Are You Getting What You Pay For?, 2025](https://arxiv.org/abs/2504.04715), abstract
+    - quote: "software-only methods are fundamentally unreliable: statistical tests on text outputs are query-intensive and fail against subtle substitutions, while methods using log probabilities are defeated by inherent inference nondeterminism"
+    - they recommend TEEs
+  - Cheng Zhang et al., [Hardware and Software Platform Inference, 2024](https://arxiv.org/abs/2411.05197), abstract
+    - quote: "identifying the underlying GPU architecture and software stack of a (black-box) machine learning model solely based on its input-output behavior"
+    - meaning: tiny numeric differences between GPU types leak through the outputs
+  - Yifan Sun et al., [SVIP, 2024](https://arxiv.org/abs/2410.22307), abstract
+    - provider returns hidden states; a small trained checker recognises the model from them
+    - authors claim: "false negative rates below 5% and false positive rates below 3%"
+  - Jack Min Ong et al., [TOPLOC, 2025](https://arxiv.org/abs/2501.16007), abstract
+    - provider sends a compact hash of internal activations; authors claim "258 bytes of storage per 32 new tokens" and "no false positives or negatives in our empirical evaluations"
+  - Ke Wang et al., [VeriLLM, 2025](https://arxiv.org/abs/2509.24257), abstract
+    - re-run part of the work: "validate results at approximately 1% of the underlying inference cost"
+  - Yanpei Guo et al., [IMMACULATE, 2026](https://arxiv.org/abs/2602.22700), abstract
+    - audit a small random share of requests with cryptographic proofs; claims "under 1% throughput overhead"; also targets "token overbilling"
+  - Haochen Sun et al., [zkLLM, CCS 2024](https://arxiv.org/abs/2404.16109), abstract
+    - full cryptographic proof of one inference; "the inaugural specialized zero-knowledge proof tailored for LLMs"
+  - KD Conway et al., [opML, 2024](https://arxiv.org/abs/2401.17555) and Yue Zhang et al., [Proof of Sampling, 2024](https://arxiv.org/abs/2405.00295), abstracts
+    - both replace proof with money: cheat, get caught by a random re-run, lose a deposit
+  - my take on the whole group
+    - the 2024 measurement (11 of 31) is the only real-world number; everything after is a mechanism tested by its own authors
+    - the mechanisms disagree on basics: Cai et al. say software checks cannot work, TOPLOC and SVIP report near-perfect software checks
+    - I found no independent study that attacks these checkers side by side, and no measurement newer than summer 2024
+
+does computing at the edge pay off
+- Mengwei Xu et al., [From Cloud to Edge: A First Look at Public Edge Platforms, IMC 2021](https://arxiv.org/abs/2109.03395), abstract
+  - quote: "a first-of-its-kind measurement study on a leading public edge platform that has been densely deployed in China"
+  - compares delay, throughput, and cost against cloud for real tenants
+  - one platform, one country, 2021
+- Sarah Chasins et al., [The Sky Above The Clouds, 2022](https://arxiv.org/abs/2205.07147), abstract
+  - a vision paper: clouds should become interchangeable the way phone networks did
+  - relevant as the "many operators, one interface" idea coming from the datacenter side
+- my take: this is my thinnest section; I did not find a recent, careful measurement of when edge placement beats a nearby cloud region for LLM workloads, and the phone studies above suggest the answer today is "rarely"
+  - edge deadlines and model sharing are covered by Hairpin and Gemel in [networking, peer-to-peer, and edge systems](networking_edge_p2p.md)
+
+censorship resistance
+- volunteer proxies work, and they still lean on one central piece
+  - Cecylia Bocovich et al., [Snowflake, USENIX Security 2024](https://www.usenix.org/conference/usenixsecurity24/presentation/bocovich), abstract
+    - quote: "numerous, ultra-light, temporary proxies (\"snowflakes\"), which accept traffic from censored clients using peer-to-peer WebRTC protocols and forward it to a centralized bridge"
+    - quote: "The large and changing pool of proxy addresses resists enumeration and blocking by a censor"
+    - quote: "a significant circumvention tool during high-profile network disruptions, including in Russia in 2021 and Iran in 2022"
+    - more on it in [censorship and security](../../other_topics/web_trust/censorship_security.md)
+- a blockchain can be censored at the point where blocks get built
+  - Anton Wahrstätter et al., [Blockchain Censorship, 2023](https://arxiv.org/abs/2305.18545), abstract
+    - quote: "46% of Ethereum blocks were made by censoring actors that intend to comply with OFAC sanctions"
+    - quote: "the inclusion of censored transactions was delayed by an average of 85%"
+  - Lioba Heimbach et al., [Ethereum's Proposer-Builder Separation: Promises and Realities, IMC 2023](https://arxiv.org/abs/2305.19037), abstract
+    - quote: "significant centralization amongst the builders and relays"
+    - quote: "it tends to stimulate censorship rather than reduce it"
+    - quote: "relays do not consistently uphold their commitments and may prove unreliable"
+    - "relay" here: a middleman between whoever builds a block and whoever signs it
+  - Aditya Saraf et al., [Price of Censorship, 2026](https://arxiv.org/abs/2607.16995), abstract
+    - quote: "the adversary need only match the user's bid"
+    - proposed fix: several block proposers at once, at the cost of duplicated transactions
+- across the section: censorship resistance equals the number of independent parties a censor must stop
+  - Snowflake: thousands of proxies, one bridge
+  - Nostr: 34.6 relays per post
+  - IPFS: one attacker near the right DHT key was enough before the fix
+  - Ethereum: a handful of builders and relays
+
+spam, fake accounts, and telling people from machines
+- Steven Adler et al., [Personhood credentials, 2024](https://arxiv.org/abs/2408.07892), abstract
+  - quote: "digital credentials that empower users to demonstrate that they are real people -- not AIs -- to online services, without disclosing any personal information"
+  - quote: "existing countermeasures to automated deception -- such as CAPTCHAs -- are inadequate against sophisticated AI"
+  - a proposal and risk analysis, with no deployed system measured
+- what the decentralized networks do today, from the cards above
+  - Mastodon: each admin blocks servers; innocent users get cut off (Pleroma study)
+  - Bluesky: labelers; the default one has recall 0.222 (Singh et al.)
+  - Nostr: nothing central; a relay can refuse you, another will take you
+- leads I did not read
+  - a Cornell Tech analysis reported that 44% of Bluesky's 100 most-followed accounts had a look-alike account (via an Engadget report in search results)
+  - Bluesky's 2025 transparency report: 9.97M user reports, 2.08M accounts taken down (search summary)
+  - "Bots into the Fediverse" (2026), on detecting automated accounts on Mastodon and Bluesky
+- my inference: on these networks a post carries a signature that proves which key wrote it, and nothing that says whether a person or a model wrote it; C2PA-style labels ([C2PA notes](../../web_llm_detection/llm_provenance/c2pa.md)) are not part of any of the three protocols as far as I read
+
+patterns across the area
+- the shortcut becomes the system
+  - every network adds a fast central helper (gateway, indexer, Relay, AppView, block builder, bridge); users then depend on it, and the slow path it was meant to back up gets little testing
+- open data cuts both ways
+  - the same public stream that lets researchers audit Bluesky's moderator lets anyone copy every post, and lets anyone watch IPFS requests
+- money decides who runs things
+  - Nostr relays cannot cover costs, Bluesky feed makers are unpaid, Mastodon admins are short of help, IPFS nodes sit where hosting is cheap
+- proofs have found real bugs here, but only on models
+  - GossipSub (ACL2s), Matrix crypto (Verifpal), CRDTs (Isabelle, VeriFx); in each case the shipped Go, Rust, or JavaScript code is unproved
+- checking a stranger's computation is unsolved in practice
+  - true for LLM answers and for moderation labels alike: precise when it speaks, but nobody knows what it skipped
+
+research we could do
+- 1: verify a real local-first library in Verus
+  - what: pick one shipped Rust component and prove it, starting with the smallest
+    - option a: convergence of a text CRDT core (Eg-walker's Rust implementation, or Loro, or Automerge's Rust core): any two replicas that have seen the same edits hold the same text
+    - option b: group membership for Keyhive-style access control: concurrent add and remove always resolve to the same member set on every honest replica, and a removed member's later writes are rejected
+  - why us: Verus and Rust are the human's tools; Jacob et al. 2026 show the approach works on a toy group and say scaling is open
+  - why it matters: Gomes et al. report published merge algorithms that were wrong even with proofs attached
+  - first step: read Jacob et al. in full and their artifact; write the convergence statement for one existing library and see how much of its code must change to be provable
+  - what would kill it: the libraries lean on unsafe code or data structures Verus cannot yet handle, so only a rewritten toy is provable
+  - novelty check: Jacob et al. follow-ups, VeriFx, the Isabelle CRDT framework, "Proof-Carrying CRDTs", Keyhive's own plans; also [keeping copies in sync](../consensus_replication/convergent_replication.md)
+  - smallest useful result: a verified core of one real library plus a list of bugs or spec gaps found on the way
+- 2: how much of open social media is written by LLMs, and does moderation catch it
+  - what: run LLM-text detectors and bot heuristics over the full Bluesky stream, a Nostr relay crawl, and a Mastodon sample; join with Bluesky's public label stream
+  - why now: Singh et al. measured the default moderator's recall at 0.222 for harm in general; I found no paper that measures machine-written posts on these networks
+  - why us: it combines the web measurement and [LLM text detection](../../web_llm_detection/llm_text/index.md) studies with a data source that needs no scraping tricks
+  - measurements: share of posts flagged as machine-written per network over time, share of those that carry a spam or bot label, time from post to label, account age and handle patterns
+  - hard part: detector error on short posts; any headline number needs a hand-labelled sample and error bars
+  - what would kill it: detectors are no better than chance on posts under 300 characters
+  - novelty check: "Bots into the Fediverse" (2026), Bluesky bot and coordination papers from 2025 and 2026, the Nogara et al. follow-ups
+  - side result: a count of who downloads the whole stream, which speaks to content theft
+- 3: operator removal audit across networks
+  - what: for IPFS, Bluesky, Nostr, and Ethereum, list each service a normal user action touches, name its operator, then remove operators one at a time in a controlled copy or by client configuration and record what still works
+  - concrete Bluesky version of "credible exit": an account on its own PDS with a did:web identity, read through a non-company relay and AppView; does posting, following, search, moderation still work, and what does it cost to run
+  - why now: Balduf et al. counted six did:web identities in March 2024; the network has grown and third-party relays and AppViews now exist, and I found no newer measurement
+  - output: one small table per network: action, operators needed, what fails without each
+  - what would kill it: someone has published this since 2024; check IMC and CoNEXT 2025 and 2026 first
+  - relation: proposal 1 in [networking, peer-to-peer, and edge systems](networking_edge_p2p.md) is the IPFS-only version with deadlines
+- 4: re-measure which model the cheap inference providers really serve
+  - what: repeat Model Equality Testing on today's open-weight model providers and on decentralized inference networks, monthly, and add the newer checkers (TOPLOC, SVIP, platform inference) as extra signals
+  - why: the only field number (11 of 31) is from summer 2024; later papers argue about methods without new field data
+  - second half: attack the checkers side by side with cheap tricks (light quantization, a smaller model with a tuned head, caching) and report which survive
+  - what would kill it: honest nondeterminism across GPUs makes the tests flag everyone, as Cai et al. warn
+  - novelty risk: high; this sub-area gets a new preprint most months
+  - fit to the standing questions: this is the scam question for LLM buyers
+- 5: does the shipped code match the proved model
+  - what: take a property that was proved or fixed on paper and test the Rust implementation against it
+    - GossipSub scoring properties from Kumar et al. against rust-libp2p, by differential testing against their ACL2s model, then by Verus proof of the scoring function
+    - the IPFS censorship fix from Sridhar et al.: is it in current clients, and does the attack still fail
+    - Nostr signature and encryption checks from Kimura et al. across the popular clients
+  - why us: it is the bug-finding and verification skill set applied where papers stopped at the model
+  - smallest useful result: one confirmed mismatch, reported upstream
+  - Solana angle: I found no peer-reviewed measurement of Solana's block-spreading and gossip layer in one search; given the [Agave notes](../../../agave_verification_scope.md), check 36 Coins and then consider measuring it
+- 6: scam pages on decentralized hosting reached through trusted domains
+  - what: extend the IPFS phishing work to the newer hosts: files served from Bluesky PDSes, Nostr media servers, and public gateways not on any list
+  - why: Sokoto et al. show gateway filters can be dodged; the 2026 phishing study reportedly found most gateways were unlisted
+  - join with the [phishing study](../../web_llm_detection/web_user/phishing/index.md) so methods are shared
+  - lower priority until I have read the 2026 paper
+- what I would not start
+  - another scheduler for splitting a model across volunteer GPUs: Petals, Parallax, EdgeShard, and PlanetServe cover it, and none shows it beating a datacenter on cost for real demand
+  - a new personhood scheme: it is a policy and deployment problem more than a systems one
+
+reading limits
+- 71 sources linked or named above
+  - 60 opened by me on 7 Oct 2026 UTC
+    - 53 at abstract level only
+    - 7 with passages from the full text: Balduf 2023, Balduf 2024, Wei and Tyson, Singh et al., Lemmer-Webber, the local-first essay, Kleppmann's keynote abstract
+  - 11 named as leads from search summaries and not opened; each is marked where it appears
+- numbers quoted from abstracts are the authors' own; I reran nothing
+- web search stopped working partway through (quota), so these topics got no dedicated search
+  - BitTorrent today; my one search found nothing newer than 2013
+  - Tor's own network, I2P, mesh messengers
+  - Great Firewall measurement papers from 2025 and 2026
+  - spam and AI-generated accounts on the fediverse and Bluesky beyond the three leads
+  - decentralized compute and wireless networks that pay operators in tokens
+  - Filecoin, Arweave, and storage proofs, which sit closer to the storage worker's slice
+  - edge computing after 2022, serverless at the edge, and the "edge-to-cloud continuum" literature
+  - federated learning
+  - Solana's network layer
+- no experiment proposed here has been run, and no proposal is confirmed new
