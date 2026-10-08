@@ -63,10 +63,15 @@ who actually runs peer-to-peer storage networks
     - method: 9 months of DHT crawls, traffic logs, and DNS data
     - authors note this differs from the picture in the 2022 SIGCOMM IPFS paper by Trautwein et al.
     - my inference: two careful crawls of the same network disagreed, so "how many peers, and where" depends on how you count; any new study should state its counting rule first
-  - Ruizhe Shi et al., [Centralization in the Decentralized Web, WWW 2025](https://par.nsf.gov/biblio/10573737), abstract (first lines) plus a search summary of findings
-    - quote: "IPFS exhibits a high degree of centralization and has integrated centralized components for improved performance"
-    - reported in the search summary, not checked by me: 3 years of traffic, 20+ billion messages, 5% of peers host over 80% of content, 2.71% of files replicated more than 5 times
-    - my inference: low replication means most files have one real home; "content survives because it is everywhere" is false for most content
+  - Ruizhe Shi et al., [Centralization in the Decentralized Web, WWW 2025](https://par.nsf.gov/biblio/10573737), follow-up inspected methodology and sections 4–5 from the primary PDF
+    - quote, section 4.1: “29.20% of CIDs are replicated more than once”
+    - primary sections 3–5: traces from March 2021 to August 2024
+      - modified Bitswap and DHT nodes observe traffic and build CID-provider mappings
+      - section 5 reports 5% of observed peers hosting 80.55% of observed content at the end of the study
+      - CID means content identifier
+    - inference: the observed content has limited reported redundancy
+      - traffic-visible providers are not a census of every stored copy
+      - these observations alone do not establish how many independent operators can serve a file
   - Trinh Viet Doan et al., [Towards Decentralised Cloud Storage with IPFS, 2022](https://arxiv.org/abs/2202.06315), abstract
     - quote: "its inner workings, properties, and implications have only been marginally explored in research"
     - use: a short design overview to read before the measurement papers
@@ -433,3 +438,24 @@ reading limits
   - federated learning
   - Solana's network layer
 - no experiment proposed here has been run, and no proposal is confirmed new
+
+operator-removal proposal: measurement scope matters
+- follow-up inspected the primary WWW 2025 IPFS study on 8 Oct 2026
+  - methodology, provider validation, replication results, and centralization assumptions
+  - [Ruizhe Shi et al., primary PDF, sections 3–5](https://par.nsf.gov/servlets/purl/10573737)
+  - no measurement was reproduced
+- observed providers are validated over time
+  - nonresponding peers are probed every four hours for a week before being removed from the mapping
+  - inference: absence from that mapping is an operational observation, not proof that no other copy exists
+- storage concentration depends on explicit assumptions
+  - section 5 assumes a default-size block per CID, continued provider activity, and grouping addresses belonging to one peer
+  - inference: content identifiers, peers, bytes, cloud hosts, and independent operators are distinct units
+    - do not infer operator independence from peer count or cloud location alone
+- narrowed experiment
+  - controlled content and known provider ownership permit exact failure groups
+  - record discovery success separately from verified content transfer before a deadline
+  - distinguish operator removal from loss of a cloud provider or discovery service
+  - use public-network crawls for context, with their observation and ownership limits stated
+- contribution remains unresolved
+  - concentration measurement is substantial prior work
+  - a useful extension needs evidence about correlated failure and usable fallback beyond those concentration results

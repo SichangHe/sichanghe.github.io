@@ -245,8 +245,7 @@ source cards
   - author result: 2.4× lower end-to-end latency than evaluated vLLM and four times as many requests with little added latency
   - research implication: tool-progress hints must beat existing advisory prefetching
     - comparing only with unconditional eviction is insufficient
-  - reading depth: primary abstract
-    - full PDF retrieved for follow-up
+  - reading depth: initial abstract; follow-up inspected design, trace construction, and agent evaluation
 
 - Libra, Ruan et al., NSDI 2026
   - [paper](https://www.usenix.org/system/files/nsdi26-ruan-libra.pdf)
@@ -285,8 +284,7 @@ source cards
     - this accepted paper has the Agentix title and matching authors/mechanism/results
     - count it as the same research line, not independent confirming evidence
   - research implication: dependent-call scheduling is an existing baseline
-  - reading depth: primary conference abstract
-    - full PDF retrieved for follow-up
+  - reading depth: initial abstract; follow-up inspected scheduling, implementation, and workload sections
 
 - Murakkab, Chaudhry et al., OSDI 2026
   - [paper](https://www.usenix.org/system/files/osdi26-chaudhry.pdf)
@@ -296,8 +294,7 @@ source cards
   - author result: up to 2.8× less GPU use, 3.7× less energy, and 4.3× less cost in its comparisons
   - research implication: model/tool/GPU optimization across workflow stages is already being studied
     - a candidate extension needs to identify what dynamic behavior the exposed workflow cannot capture
-  - reading depth: primary conference abstract
-    - full PDF retrieved for follow-up
+  - reading depth: initial abstract; follow-up inspected optimizer, runtime, evaluation setup, and profile generality
 
 more source cards, added 7 Oct 2026
 
@@ -909,3 +906,80 @@ reading limits and search record
   - they are not a ranking across papers
 - recommendations and hypotheses above are agent proposals
   - no claim of worldwide novelty or demonstrated benefit
+
+closest-work follow-up: tool-aware scheduling already exists
+
+- inspected cached conference PDFs on 8 Oct 2026
+  - Agentix sections 3–5 and evaluation workloads
+  - SYMPHONY sections 3.2–3.6, trace construction, and agent evaluation
+  - Murakkab sections 3.3–3.4 and evaluation setup and profiling generality
+  - new direct PDF requests returned HTTP 403
+    - conference landing pages were accessible
+    - earlier downloaded PDFs supplied the inspected text
+  - no artifact was executed or performance result reproduced
+- Agentix does not require a known execution graph
+  - authors' assumptions: “its execution DAG is initially unknown”
+  - [Luo et al., NSDI 2026, section 4.1](https://www.usenix.org/system/files/nsdi26-luo.pdf)
+  - its process table tracks completed model service, waiting time, call arrivals, and completions
+  - its evaluation includes BFCL multi-step tool use and LATS parallel search
+  - implication: dynamic dependencies and tool-using programs are established scheduling inputs
+    - a proposal based only on exposing program identity would repeat this work
+- SYMPHONY explicitly handles uncertainty in hints
+  - authors' limitation: “advisory requests arrive early enough”
+  - [Agarwal et al., NSDI 2026, section 3.6](https://www.usenix.org/system/files/nsdi26-agarwal.pdf)
+  - profiles representative agent workflows and hints at possible downstream agents
+  - supplies invalidation, memory-pressure eviction, and best-effort behavior for missing hints
+  - evaluates false or missing hints and MetaGPT workloads
+  - implication: imperfect hints and prefetching during dependent work are existing mechanisms
+    - the narrower question is whether real joint timing changes their measured value
+- Murakkab includes dynamic composition and changing resource demand
+  - evaluation method: “approximate workload arrivals using LLM serving traces”
+  - [Chaudhry et al., OSDI 2026, evaluation setup](https://www.usenix.org/system/files/osdi26-chaudhry.pdf)
+  - maps chat arrivals to video Q/A and coding arrivals to code generation
+  - optimizer uses workflow and model profiles
+    - a shorter-timescale auto-scaler handles demand changes
+    - held-out math inputs test some profile generality
+  - implication: a workflow scheduler cannot claim dynamism alone as its contribution
+    - remapped arrival traces leave a concrete measurement question about actual workflow correlations
+- refined workload proposal
+  - measure task arrivals, tool durations, dependent model calls, and reused prompt prefixes from the same executions
+  - preserve original correlations in one replay
+    - separately shuffle pauses, task arrivals, or prefix associations as controlled comparisons
+  - compare program-aware scheduling and advisory prefetching before adding a new scheduler
+  - report task completion and cache-transfer cost separately
+  - rejection condition: preserving those correlations does not materially change policy ranking or predicted capacity
+  - remaining uncertainty: available traces may already contain the needed joint information
+    - inspect TraceLab and CacheWise schemas and replay artifacts before collecting new data
+
+trace artifacts narrow the workload proposal further
+
+- TraceLab already releases a session-aware replay client
+  - maintainer description: “session-aware closed-loop workload runner”
+  - [TraceLab replay README, pinned revision](https://github.com/uw-syfi/TraceLab/blob/11b8b14c6005808ab272b3431487066832582414/replay/README.md)
+  - CSV preserves session identity, arrival, round order, prefix length, append length, output length, and post-round waits
+  - implementation waits for a model response, sleeps the recorded wait, then sends the next round
+    - [session runner source](https://github.com/uw-syfi/TraceLab/blob/11b8b14c6005808ab272b3431487066832582414/replay/src/session.rs#L74)
+  - prompts use synthetic content and exact output token carry-forward where supported
+  - inference: the shortlist's proposed correlated replay mechanism is already substantially implemented
+    - reuse and audit this artifact before proposing another workload generator
+- released trace metadata preserves much of the desired joint evidence
+  - README field: `timing_events`
+  - [TraceLab data-format and sanitization documentation](https://github.com/uw-syfi/TraceLab/blob/11b8b14c6005808ab272b3431487066832582414/README.md#-data-format)
+  - tool fields include emission, result time, wall latency, internal latency, and continuation identity
+  - sanitized data removes raw tool arguments and prompt contents
+    - token counts and command structure cannot establish arbitrary cross-session semantic prefix sharing
+    - recorded provider cache counts do not directly reveal a different engine's cache behavior
+- CacheWise also studies tool-dependent reuse
+  - primary dataset description: “timestamps for each message”
+  - [Tiwari et al., section 3, arXiv 2606.16824](https://arxiv.org/html/2606.16824)
+  - describes conversations, tool calls and results, token counts, and human interventions
+  - repository offers event extraction, workload analysis, and tool-duration prediction
+    - [CacheWise repository](https://github.com/cachewise-project/cachewise-coding-traces/tree/181c435a090d328d00bbbee4c8eeb27d32f3abd2)
+  - inspected README and paper characterization passages
+    - predictor and replay implementation were not audited
+- revised decision
+  - do not claim that joining tool timing, dependent calls, and prefix reuse is missing from existing datasets
+  - candidate 2 becomes a policy-sensitivity and replay-fidelity assessment using existing traces
+  - first compare original timing with controlled shuffles under Agentix, SYMPHONY, and CacheWise where artifacts support integration
+  - a useful contribution requires evidence that a specific replay simplification changes a meaningful conclusion
+    - no such evidence has been obtained yet

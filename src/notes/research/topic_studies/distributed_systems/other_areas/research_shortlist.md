@@ -39,16 +39,21 @@ three starting points
     - JITServe updates uncertain execution estimates
     - Murakkab optimizes exposed workflow structure
     - agent trace studies measure pauses and model-call behavior
-  - agent recommendation: extend measurement before proposing another scheduler
+  - follow-up artifact evidence
+    - TraceLab already preserves session order, arrival, prefix lengths, and tool waits in a closed-loop replay client
+    - CacheWise already collects dependent calls and tool metadata for reuse prediction
+    - [pinned artifact assessment](llm_serving.md)
+  - agent recommendation: assess replay fidelity and policy sensitivity using these existing artifacts
   - first week
-    - instrument one agent workload with model-call, tool, and prompt-prefix identities
+    - reuse TraceLab replay and audit which correlations its synthetic prompts and recorded waits preserve
     - replay original timing, shuffled pauses, and independently generated arrivals
     - use the same GPU resources, engine release, and task set
   - independent check
     - completed tasks and task latency
     - wasted model computation and state transfers
     - application correctness scored separately from response deadlines
-  - stop or narrow the project if existing generators and program-aware policies already predict the measurements
+  - stop if no specific replay simplification changes a meaningful policy conclusion
+    - existing correlated replay removes the original generator gap as stated
   - [serving evidence, source cards, and experiments](llm_serving.md)
   - [agent traces and tool-progress work](agent_systems.md)
 
