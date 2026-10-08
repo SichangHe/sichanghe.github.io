@@ -119,7 +119,9 @@ checkers: deciding whether a history fits a model
   - [RELINCHE, Golovin, Kokologiannakis, Vafeiadis, POPL 2025](https://popl25.sigplan.org/track/POPL-2025-popl-research-papers): linearizability under relaxed memory; title from search
   - inference: the general problem stays NP-hard; practical monitors restrict the data type, values, or process count, and each restriction is a chance for a wrong proof
 - what none of these do
-  - none ships a machine-checked proof that the checker is sound, as far as I found; Plume's anomaly patterns were proved on paper, AWDIT's optimality on paper
+  - the initial pass found paper proofs rather than mechanized executable-checker proofs
+    - the 8 Oct consultation follow-up below adds Rocq characterization theorems for Plume
+    - executable implementation verification remains a separate question
   - none is written for a verifier like Verus; Elle is Clojure, Plume and AWDIT are Java/Rust-ish per search but I did not confirm languages
   - this is the opening for candidate 1 below
 
@@ -194,7 +196,7 @@ research we could do
 - all candidates are proposals; novelty is argued, not established; each lists the group most likely to beat us
 - candidate 1: a Verus-verified isolation checker, run on public history collections
   - question: can we have a checker that is both machine-checked sound and fast enough for real histories?
-  - why existing work does not answer it: Isolde found a spec bug in a state-of-the-art checker, Abdulla et al. found wrong proofs in linearizability monitors, and no checker I found has a mechanized soundness proof
+  - why existing work does not answer it: Isolde found a spec bug in a state-of-the-art checker, Abdulla et al. found wrong proofs in linearizability monitors, and the new Rocq characterization proof must be compared with any proposed executable Verus checker
   - first step: implement Plume-style anomaly patterns for read committed, read atomic, and causal in Rust; prove in Verus that "reports a cycle" implies the Adya definition is violated (soundness); completeness can come later
     - start with the sibling note's list-append workload, where write identity is known, so the proof avoids Elle's inference problem
   - evaluate on the histories released with IsoVista and Jepsen's reports, compare time with AWDIT and Plume
@@ -240,7 +242,7 @@ what I could not cover
   - where the tool paraphrased instead of quoting, I say "fetch tool's paraphrase"
 - not reached: the Plume paper body (ACM page returned HTTP 403), Loro's blog (403), the Jepsen 2026 "Lessons" talk slides, the Hasselt robustness papers' bodies, RELINCHE, PolySI body, the SOSP and OSDI 2026 programs
 - not searched: PODC and DISC 2024 to 2026 theory on consistency models, OT-based collaborative editing, geo-replicated causal stores after 2022
-- ChatGPT Extra High: no opinion obtained
+- ChatGPT Extra High, original worker: no opinion obtained
   - one attempt on 7 Oct failed with transport_prepare_deadline, a second stayed stuck at pending_prepare because the browser was not signed in; the coordinator then said to stop
   - the self-contained prompt is saved for a later run: /tmp/claude-30033/-ssd1-sichanghe-github-io/85361e00-9330-4e62-a177-9736b46ce5e5/scratchpad/consistency/chatgpt_prompt_to_send.md
   - the candidates above were therefore not challenged by an outside reviewer
@@ -265,7 +267,8 @@ three claims that must stay separate
 - an executable checker implements an algorithm
   - connecting its actual implementation to the theorem is an additional obligation
 - inference: the retrieved papers establish the first and describe the third
-  - no machine-checked proof was identified in the inspected text
+  - no machine-checked proof was identified in those two inspected papers
+  - the later consultation follow-up below identifies a Rocq characterization proof
   - this search does not establish that no such checker exists
 
 VeriStrong handles uncertainty about which write supplied a read
@@ -313,3 +316,31 @@ changes needed in the existing research claim
   - first compare its exact operation model and uncertainty handling with VeriStrong
   - verify both the isolation definition and its translation into executable code
   - investigate novelty before calling this an unfilled gap
+
+consultation correction: weak-isolation theory has mechanized proofs
+- [Gu, Liu, and Wei, 6 Oct 2026 preprint](https://arxiv.org/html/2610.07665v1)
+  - evidence: “machine-checked proofs of the corresponding TAP-based characterization theorems”
+  - context: transactional anomalous patterns for four weak isolation levels
+  - the development formalizes history definitions and pattern equivalence in Rocq
+    - levels: cut isolation, read committed, read atomicity, transactional causal consistency
+    - the paper refines history assumptions and two read-atomic patterns
+  - [authors' mechanization](https://github.com/dracoooooo/Plume/tree/main/Mechanization)
+    - README describes one Rocq source file and four characterization theorems
+    - inspected README and source inventory
+      - not compiled or independently proof-audited here
+  - interpretation: mechanizing weak-isolation characterizations is existing work
+    - the inspected contribution is a characterization theorem
+    - it does not by itself prove the executable checker or its recording/parser pipeline
+  - revised first comparison
+    - map one executable decision rule to the corrected history definition and Rocq theorem
+    - inspect whether the existing development already yields a certified checker
+    - only then propose an additional executable-proof boundary
+  - read depth: introduction, history definitions, proof-equivalence discussion, related work, and conclusion
+- known write identities do not determine every version order
+  - two concurrent blind writes can leave their order undecided
+  - checking one arbitrarily chosen dependency graph can misclassify a history
+  - proposed first test: enumerate serial executions of small histories and replay all reads
+    - compare results with the proposed dependency construction
+    - proving graph traversal alone is insufficient
+  - this is a reasoning obligation raised by the consultation
+    - no checker was executed here

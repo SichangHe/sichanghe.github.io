@@ -31,7 +31,8 @@ start here
 deeper second-pass studies, 7 Oct 2026
 
 - each adds to the first-pass files below and ends with ranked research candidates
-    - no ChatGPT opinion obtained: ChatGPT was signed out
+    - these second-pass workers obtained no ChatGPT opinion at the time
+    - the coordinator completed a later Extra High consultation below
     - [combined shortlist and remaining work](research_shortlist.md) reconciles these studies with the earlier candidates
 - [distributed transactions](transactions.md)
     - ≈55 sources, 14 read in full
@@ -92,11 +93,11 @@ coverage and limitations
   - search failures prevented an exhaustive search through October 2026
 - the requested Opus low and Fable medium workers were unavailable in this session's agent interface
   - used the available inherited model for parallel literature workers and review
-- ChatGPT Extra High consultation was attempted through the requested command-line helper
+- earlier ChatGPT Extra High consultation attempts failed
   - initial attempt selected Extra High but failed before submission
   - retry successfully verified Extra High and submitted the prompt
   - the helper then returned account_ui_retry_required with no assistant answer
-  - no ChatGPT opinion is attributed to these notes
+  - the later successful consultation is recorded below
   - recommendations were instead checked by independent context-free reviewers
 - unresolved
   - full citation-chain search for each shortlisted direction
@@ -150,9 +151,9 @@ follow-up review, 8 Oct 2026
     - direct retrieval of known primary documents remained possible
   - temporary ChatGPT retry returned picker_effort_not_verified
   - the support-provided saved route then returned picker_deadline selecting gpt-6.1-sol
-    - no assistant answer was obtained
-    - a later saved-route retry submitted successfully
-    - the answer remains pending
+    - those failed attempts obtained no assistant answer
+    - a later saved-route retry completed
+      - see the successful consultation below
 - remaining scope
   - see [combined shortlist](research_shortlist.md) for incomplete literature and experiment prerequisites
   - no artifact experiment or new verification result was produced
@@ -165,4 +166,33 @@ follow-up validation
   - review record: `/tmp/cx_storage_followup_review.md`
 - the four named regional-paper holes are closed
   - this is evidence of progress rather than completion of all citation chains
-- full review and Extra High consultation remain incomplete
+- full citation-chain review remains incomplete
+  - Extra High consultation is now complete
+
+successful Extra High consultation, 8 Oct 2026
+- [ChatGPT, GPT-6.1 Sol, Extra High, saved conversation](https://chatgpt.com/c/6ac7beb1-8ac4-832e-b2f7-f046c874ccbd)
+  - opinion: “checker → replicated snapshots → proof/simulator mapping → combined store”
+  - context: ranks cheap falsification of four supplied candidates
+    - it did not see the notes directory or run experiments
+    - this ranking excludes the MongoDB reproduction candidate
+- primary-source checks changed the proposals
+  - machine-checked isolation characterization is already provided in Rocq
+    - see [consistency guarantees](consistency_guarantees.md)
+  - table-aware replication and validated destination commits already exist
+    - see [object-backed tables](object_backed_tables.md)
+  - durable serializable transactions and testing unverified storage bindings already exist
+    - see [verified storage](verified_storage.md)
+- accepted research discipline
+  - establish exact history and failure assumptions before writing proofs or finding bugs
+  - compare against the corrected existing mechanism before asserting a contribution
+- remaining scope
+  - citation-chain completeness, checker proof bodies, catalog recovery predecessors, and artifact feasibility
+  - the consultation and publication do not establish novelty or experimental results
+
+consultation review outcome
+
+- independent review checked six primary documents supporting the consultation corrections
+  - no material factual error was found
+  - review record: `/tmp/cx_storage_consult_review.md`
+- next useful work is to choose one precise contract and inspect its existing implementation
+  - a broad claim about new snapshot tracking or new weak-isolation theory is no longer supported

@@ -206,6 +206,30 @@ what I could not cover
 - not reached: the CACM 2025 AWS practices article (HTTP 403 from two paths), TigerBeetle's VOPR page (redirect only; I used the safety page), Tulip's evaluation and proof sections, the OmniLink and IDS bodies past the abstract, the SOSP 2026 and OSDI 2026 programs for other storage proofs
 - not found despite searching: a Verus port of VeriBetrKV, a verified LSM or B+ tree in Verus, a 2025 or 2026 Perennial storage system beyond Tulip, a public ShardStore follow-up
 - not searched: Dropbox and Azure storage formal-methods accounts, Cogent and BilbyFS, verified SSD firmware or FTLs, the DSQL paper's references on Kani
-- ChatGPT Extra High: no opinion obtained; the tool was not signed in, and the coordinator said not to run it
+- ChatGPT Extra High, original worker: no opinion obtained; the tool was not signed in, and the coordinator said not to run it
   - the self-contained prompt is saved at /tmp/claude-30033/-ssd1-sichanghe-github-io/85361e00-9330-4e62-a177-9736b46ce5e5/scratchpad/vs/chatgpt_prompt.md
   - the candidates above were not challenged by an outside reviewer
+
+consultation correction: durable transactions and trusted-code testing are existing work
+- [GoTxn, Mark Theng, MIT thesis, 2022](https://pdos.csail.mit.edu/papers/mtheng-meng.pdf), section 1.1
+  - evidence: “persist across crashes immediately after they are committed”
+  - context: transactions recorded in the write-ahead log
+  - the inspected design uses automatic two-phase locking for serializability
+  - interpretation: combining serializable transactions and crash durability is existing work
+    - a Rust proposal needs a contribution beyond combining these guarantees
+    - compare the API, proof assumptions, and supported deferred-durability behavior before claiming equivalence
+  - read depth: abstract and sections 1.1–1.2
+    - proof body and artifact not audited
+- [Mohan et al., CrashMonkey journal paper](https://www.microsoft.com/en-us/research/wp-content/uploads/2021/10/tos-crashmonkey.pdf), section 6.2
+  - evidence: “an optimization introduced in the C-Haskell binding in FSCQ, which is unverified code”
+  - context: a reported crash-consistency failure in a verified file system
+  - interpretation: testing the boundary around a verified storage system is existing work
+    - the proposed fault-model study needs a specific new executable comparison
+  - read depth: verified-file-system result and related-work comparison
+- revised composition test
+  - model visibility, persistence, acknowledgment, and recovery as separate events
+  - let one transaction read another transaction's visible but not durable write
+  - crash after the dependent transaction receives success
+  - require one allowed serial explanation for observations and recovered state
+  - this is an unexecuted proposed test
+    - it must be checked against the exact transaction contract

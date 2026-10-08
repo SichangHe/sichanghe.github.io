@@ -37,6 +37,9 @@ second: check one object-table recovery baseline
 - include Databricks incremental deep clone as a product comparison
   - its documentation explicitly describes disaster recovery
   - it is not assumed available in the local open-source baseline
+- the later primary-source check adds S3 Tables and lakeFS transactional mirroring
+  - retire generic copied-dependency tracking as a novelty claim
+  - continue only for a specific missing contract or measured improvement
 - stop if the existing mechanisms meet the target
   - a new record must improve cost or freshness at the same guarantee
   - a shallow clone is not the complete-copy baseline
@@ -52,12 +55,16 @@ third: prove one history-checking rule
   - compare outputs with an existing checker on its released histories
 - defer arbitrary operations, unknown write identities, and multiple isolation levels
   - they add separate specification and inference problems
+- compare with Gu, Liu, and Wei's 6 Oct Rocq characterization proof
+  - its theory proof and executable checker verification are distinct obligations
 - stop if the contribution is only rewriting an existing proven executable checker
   - the present search does not establish that none exists
 
 larger projects to defer until reconnaissance succeeds
 
 - crash-safe strictly serializable Rust store
+  - compare with GoTxn
+    - durable serializable transactions already exist
   - combines the durability and transaction branches
   - begin with one durable transaction and its recovery rule
   - do not treat vMVCC and PoWER as interchangeable specifications
@@ -91,12 +98,12 @@ remaining work
   - artifact builds, reproduced tests, performance, proof composition
   - these notes contain proposals rather than results
 - consultation
-  - earlier ChatGPT attempts produced no opinion
-  - the temporary retry failed with picker_effort_not_verified
-  - the support-provided saved route failed with picker_deadline
-    - no ChatGPT answer was obtained or attributed
-    - a later saved-route retry submitted successfully
-    - the answer remains pending
+  - GPT-6.1 Sol with Extra High completed on 8 Oct 2026
+  - [saved conversation](https://chatgpt.com/c/6ac7beb1-8ac4-832e-b2f7-f046c874ccbd)
+  - it supplied leads rather than independent validation
+    - primary checks confirmed Rocq isolation characterizations, S3 Tables, lakeFS mirroring, and GoTxn
+    - Ferrite's primary PDF returned HTTP 403
+      - its specific comparison remains an unverified lead
 
 reading rule
 

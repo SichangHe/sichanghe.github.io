@@ -182,3 +182,29 @@ read scope
 - Snowflake and Taurus were attempted as further comparisons
   - the retrieved pages did not provide readable primary paper text in this run
   - they remain missing literature, not evidence against this candidate
+
+consultation correction: consistent regional copies already exist
+- [AWS, S3 Tables replication](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-replication-tables.html)
+  - evidence: “in the same order as the source table”
+  - context: commits include snapshots, metadata, and data files
+  - [replication details](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-replication-how-replication-works.html)
+    - evidence: “they can be preserved in replicas”
+    - context: destination retention can outlast source retention
+    - replicas are read-only
+    - inspected limits include unsupported tags/branches and version upgrades
+  - interpretation: ordinary bucket replication is not the right product baseline for S3 Tables
+    - its table-level ordering and retention must be compared directly
+    - documentation is a vendor contract, not an independently reproduced result
+- [lakeFS, transactional mirroring](https://lakefs.io/blog/transactional-mirroring/)
+  - evidence: “The branch at the destination lakeFS will only ever show a consistent commit”
+  - context: validate that all commit objects have replicated before advancing the destination branch
+  - interpretation: the proposed recoverable-version publication record substantially overlaps this mechanism
+- revised stopping condition
+  - retire the broad proposal to track copied dependencies as a new mechanism
+  - continue only for a concrete difference in supported failure, retention, catalog, or writable-failover behavior
+    - first reproduce the existing mechanism under its promised assumptions
+  - include deletion between completeness checking and publication in the contract audit
+    - completing a copy is insufficient if its dependencies can then be reclaimed
+- read depth
+  - inspected both AWS pages and the lakeFS mirroring architecture and freshness discussion on 8 Oct 2026
+  - no product or regional-failure experiment was run
