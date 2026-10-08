@@ -234,3 +234,78 @@ what is not covered
 - no ChatGPT opinion; no second reviewer read this file
 - sources: about 40 pages or PDFs downloaded and string-checked by me; about 15 more appear only as marked leftovers
 - leftover notes for a later pass are in the scratch folder mr/ (sub1_production.md, sub2_clocks.md, sub4_residency.md, sub6_outages.md)
+
+regional placement and copy-cost follow-up
+
+closest prior work now read beyond abstracts
+- SkyStore, Liu et al., [PVLDB 2025 paper](https://www.vldb.org/pvldb/vol18/p2084-liu.pdf), pp 2085–2088, 2094–2095
+  - mechanism: write locally, copy on a remote read, choose eviction times from a byte-weighted histogram of gaps between reads
+  - exact quote, §3.2.2: "collected per region per workload"
+  - limit on the cost proof, §3.1: "For simplicity, we are ignoring the associated operation costs"
+    - the two-times-optimal bound concerns the simplified two-region storage-and-egress model
+    - it does not establish a bound for every multi-cloud deployment
+  - §3.2.3 explicitly proposes grouping objects with similar access patterns
+    - a proposal to learn groups for cheaper placement overlaps stated future work
+  - §6.7.3 measures metadata overhead and discusses weaker metadata consistency as future work
+    - my inference: copy-cost work must include metadata traffic and failure recovery, rather than counting only object bytes
+  - read depth: placement and eviction mechanism, proof assumptions, metadata-overhead evaluation
+    - not a full correctness or implementation audit
+- Macaron, Park et al., [SOSP 2024 author-hosted paper](https://www.pdl.cmu.edu/ftp/CloudComputing/sosp24-final499.pdf), §§4–6
+  - mechanism: a small DRAM cache above a cheap object-store cache
+    - sampled trace simulations estimate missed bytes, miss rate, and average latency
+    - the controller chooses object-store capacity by total dollar cost and DRAM capacity by latency
+  - exact quote, §5: "set to 15 minutes by default"
+    - this quote concerns the controller reconfiguration interval
+    - default Macaron changes capacity using LRU eviction
+    - section 5.1 describes Macaron-TTL as a variant that changes expiry times
+  - exact quote, §4.3: "assumes data is immutable"
+    - mutable applications must manage invalidation themselves
+  - §5.1 excludes write-through transfer costs from the capacity formula because they do not change with cache capacity
+    - my inference: that exclusion is reasonable for this decision, but unsuitable for comparing replication protocols with different write traffic
+  - read depth: architecture, consistency assumptions, capacity objective, sampling, object packing and cache priming
+    - not all evaluation plots or appendices
+- Skyplane, Jain et al., [2022 primary preprint](https://arxiv.org/pdf/2210.07259), §§3–5
+  - mechanism: choose relay regions, split traffic across paths, and choose VM counts from measured throughput and provider prices
+  - exact quote, §4: "an application-specified throughput constraint"
+    - cost minimization already supports a required transfer speed
+  - exact quote, §4.1: "egress bandwidth is charged for each hop"
+    - a fast detour can increase the bill
+  - the planner uses a mixed-integer linear program
+    - its optimum is relative to measured capacities and the supplied price model
+  - my inference: a proposal for cheaper bulk copies must compare with transfer-path optimization as well as object placement
+  - read depth: measured throughput grid, planner variables and constraints, routing and parallel connections
+    - preprint read; final publication differences not checked
+- Akkio, Annamalai et al., [OSDI 2018 paper](https://www.usenix.org/system/files/osdi18-annamalai.pdf), §§3–4.6
+  - mechanism: move a small group of related data among existing replica groups
+    - recent access counts choose location; resource use breaks ties
+    - a limit on movement frequency prevents repeated moves back and forth
+  - exact quote, §4.6.2: "once every 6 hours"
+    - the example already limits migration frequency
+  - exact quote, listing 2: "Writes are blocked during the migration"
+    - the ZippyDB path uses permissions and transactions
+    - the Cassandra path uses double writes, timestamps, and waits for location-cache expiry
+  - §3 supports constraints on replica location and consistency
+    - a placement proposal with allowed regions is not novel merely because it has geographic constraints
+  - read depth: placement policy, metadata lookup, replication configurations, both migration paths and their partial-write race
+    - no full recovery-code audit
+
+what these papers change in our proposals
+- my inference: minimizing copy cost, learning placement from past accesses, adjusting eviction times, and limiting repeated movement are established mechanisms
+  - none alone is a credible novelty claim
+- a narrower question worth checking: the total cost of changing placement while preserving a stated consistency guarantee
+  - include copies, double writes, metadata, cache expiry waits, retries, and blocked-write time
+  - compare Akkio's migration paths, SkyStore's replica management, Macaron's immutable-data cache, and Skyplane's transfer planner
+  - these systems make different assumptions
+    - any comparison must state the workload and guarantee before comparing the bill
+- my inference: residency restrictions could constrain the feasible copies and relay paths
+  - Akkio already constrains replica locations
+  - Skyplane introduces intermediate regions that an endpoint-only residency check could overlook
+  - this reading does not establish a new legal or technical gap
+- stop condition: do not develop this into an experiment until checking SPANStore, SkyPIE, LEGOStore, and newer joint placement-and-transfer work
+
+limits of this sweep
+- direct primary-source access worked on 8 Oct 2026
+  - OpenAlex resolved titles; publisher or author sites supplied all four PDFs
+  - ACM returned HTTP 403 for Macaron; the CMU author-hosted PDF worked
+- this closes the four named unread-paper holes, not the entire regional citation sweep
+- no experiment, independent novelty confirmation, or ChatGPT Extra High consultation was completed here

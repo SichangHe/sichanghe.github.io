@@ -23,10 +23,13 @@ scope and neighbours
   - research we could do, judged against this prior work
 
 my takeaway first
-- the checking problem is largely solved for the common models; the open work is trust in the checkers, proofs of implementations, and measuring real services
+- existing checkers cover several common models under distinct operation and recording assumptions
+  - trust in checker implementations and uncertainty handling still require separate checks
   - 2024 to 2026 checkers cover read committed up to serializability with near-optimal algorithms and handle uncertainty (see "checkers")
   - but three separate 2025 and 2026 papers found wrong proofs or wrong specifications inside existing checkers (see "where definitions disagree")
-  - nobody has yet, as far as I found, a checker whose soundness is machine-checked and that runs on real histories; that is a gap we can fill with Verus
+  - this review identified no machine-checked soundness proof for an executable isolation checker
+    - Viper and Plume proof bodies remain unread
+    - a Verus checker is a candidate, with novelty unestablished
 - the 2022 to 2026 Jepsen reports show that most anomalies appear in healthy clusters with default settings; fault injection is not the hard part (see "bug catalogue")
   - this makes cheap measurement of hosted databases plausible without a Jepsen-style cluster
 - proofs of isolation for executable implementations began in 2025 to 2026 (Rocq/Iris, Isabelle/HOL); none target a production Rust engine
@@ -241,3 +244,72 @@ what I could not cover
   - one attempt on 7 Oct failed with transport_prepare_deadline, a second stayed stuck at pending_prepare because the browser was not signed in; the coordinator then said to stop
   - the self-contained prompt is saved for a later run: /tmp/claude-30033/-ssd1-sichanghe-github-io/85361e00-9330-4e62-a177-9736b46ce5e5/scratchpad/consistency/chatgpt_prompt_to_send.md
   - the candidates above were therefore not challenged by an outside reviewer
+
+checker proof comparison follow-up
+
+scope and reading depth
+- checked 8 Oct 2026 through direct primary-source retrieval
+- read selected definitions, theorem statements, proof passages, implementation descriptions and limitations
+  - [VeriStrong full text](https://arxiv.org/html/2511.14067v1)
+  - [Isolde full text](https://arxiv.org/html/2604.00159v1)
+  - did not audit every proof or run either artifact
+- Viper and Plume bodies remain unread
+  - ACM PDF access returned HTTP 403
+  - author-copy guesses returned HTTP 404
+  - Plume's ETH repository returned HTTP 429
+  - this is a limited retrieval failure, not evidence that their proofs are absent
+
+three claims that must stay separate
+- a mathematical soundness argument connects an algorithm to a definition
+- machine-checked soundness requires a proof accepted by a proof assistant or verifier
+- an executable checker implements an algorithm
+  - connecting its actual implementation to the theorem is an additional obligation
+- inference: the retrieved papers establish the first and describe the third
+  - no machine-checked proof was identified in the inspected text
+  - this search does not establish that no such checker exists
+
+VeriStrong handles uncertainty about which write supplied a read
+- authors Cai, Liu, Wei, Chen and Pan describe duplicate values explicitly
+  - section 9: “our work lifts the strong UniqueValue assumption made by prior verifiers”
+  - implementation section: “approximately 5k lines of C++ code”
+- section 3 builds alternative dependency choices into hyper-polygraphs
+  - sections 3 and appendix B give equivalences between allowed histories and compatible acyclic graphs
+  - inference: duplicate values do not force one guessed read-from relation
+  - the checker searches for a dependency assignment consistent with the observations
+- important boundary
+  - multiple writes of the same value are covered
+  - missing operations, unresolved transaction outcomes and incomplete recording are different uncertainties
+  - do not claim they are covered without checking their history model
+- [public artifact linked by the paper](https://github.com/CzxingcHen/VeriStrong)
+  - artifact not executed or audited in this follow-up
+
+Isolde identifies Plume's read-atomic specification mistake
+- Barros, Cunha, Pereira and Kang, section 3.1.1
+  - “This problem has been confirmed to us by the authors of Plume”
+- their counterexample uses one object and two transactions in session order
+  - first transaction reads x=0 and writes x=1
+  - second transaction reads x=0
+  - their axiomatic read-atomic definition rejects this history
+  - Plume's alternative anomaly definition admits it
+  - its ordering anomalies require at least two objects
+- distinguish the demonstrated specification mismatch from implementation behavior
+  - this text does not establish that Plume's shipped checker accepts this history
+  - no artifact execution was performed here
+- section 4 and appendix A provide an algorithm and mathematical soundness argument
+  - search for counterexamples is bounded by chosen numbers of transactions, objects and values
+  - failing to find a counterexample within those bounds is not an unbounded equivalence proof
+- implementation section describes a Java library
+  - this is a specification-comparison and history-synthesis tool
+  - it is not the same task as checking one large production history
+
+changes needed in the existing research claim
+- replace “nobody has yet” with a scoped search result
+  - no machine-checked soundness proof for an executable isolation checker was identified in the inspected sources
+  - Viper and Plume proof bodies still need inspection
+- remove the claim that the checking problem is largely solved
+  - VeriStrong exposes a material prior limitation: duplicate write values
+  - paper arguments, implementation correctness and recording correctness remain separate
+- preserve the proposed Verus checker as a research question
+  - first compare its exact operation model and uncertainty handling with VeriStrong
+  - verify both the isolation definition and its translation into executable code
+  - investigate novelty before calling this an unfilled gap

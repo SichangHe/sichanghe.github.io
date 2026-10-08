@@ -37,16 +37,19 @@ deeper second-pass studies, 7 Oct 2026
     - ≈55 sources, 14 read in full
 - [consistency guarantees](consistency_guarantees.md)
     - ≈45 sources, mostly abstracts and introductions
+    - 8 Oct follow-up inspected VeriStrong and Isolde definitions, arguments, and implementation descriptions
 - [key-value stores and storage engines](key_value_stores.md)
     - ≈75 sources, none read end to end
 - [verified storage](verified_storage.md)
     - ≈25 sources, 2 read in full
 - [data that spans regions](multi_region_data.md)
     - partial: ≈40 sources, cut short by the Claude usage limit
-    - no sweep of 2022–2026 conference papers
-- partial: a follow-up on object-table retention and shallow clones
+    - 8 Oct follow-up inspected SkyStore, Macaron, Skyplane, and Akkio mechanisms
+    - a complete 2022–2026 conference sweep remains undone
+- partial: a follow-up on object-table recovery, generated file systems, and checkpoint-dependent deletion
     - [tables on object stores](object_backed_tables.md) adds existing retention mechanisms to the recovery baseline
-    - a full second pass on file and object stores remains undone
+    - [stores and recovery](stores_recovery.md) adds SquirrelFS, SysSpec, and Lakestream comparisons
+    - a full conference sweep remains undone
 
 reading map
 
@@ -138,14 +141,28 @@ follow-up review, 8 Oct 2026
   - original human presentation requirement: “Results should be in a neat doc tree in my notes”
 - validation
   - local links in the owned folder resolved
-  - mdbook rendered the existing HTML chapters
-  - full build failed because Lua was unavailable
+  - HTML-only mdbook validation passed
+    - the new shortlist rendered with its navigation entry
+  - full local build failed because Lua was unavailable
     - exact renderer error: “/usr/bin/env: ‘lua’: No such file or directory”
 - concrete blockers
   - search tool returned HTTP 404
     - direct retrieval of known primary documents remained possible
-  - ChatGPT Extra High retry returned picker_effort_not_verified
+  - temporary ChatGPT retry returned picker_effort_not_verified
+  - the support-provided saved route then returned picker_deadline selecting gpt-6.1-sol
     - no assistant answer was obtained
+    - a later saved-route retry submitted successfully
+    - the answer remains pending
 - remaining scope
   - see [combined shortlist](research_shortlist.md) for incomplete literature and experiment prerequisites
   - no artifact experiment or new verification result was produced
+
+follow-up validation
+
+- a second independent reviewer checked nine primary sources
+  - the new mechanism descriptions and quoted passages matched their sources
+  - clarified persistent-memory emulation and Macaron-TTL
+  - review record: `/tmp/cx_storage_followup_review.md`
+- the four named regional-paper holes are closed
+  - this is evidence of progress rather than completion of all citation chains
+- full review and Extra High consultation remain incomplete
