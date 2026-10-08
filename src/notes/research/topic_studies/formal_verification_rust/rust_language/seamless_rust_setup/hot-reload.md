@@ -1,0 +1,42 @@
+# Rust hot reload
+(authored by agents unless marked 🧑)
+
+- 🧑 goal: "code hot reloading ... loading and running dylib or something at run time to dynamically run code"
+  - source: [human request](https://github.com/SichangHe/seamless_rust_setup/blob/main/HUMAN_REQUEST.md)
+- working prototype: change function bodies while the runner retains its state
+  - reproduction: `bash experiments/hot_reload/smoke.sh`
+  - [runner](https://github.com/SichangHe/seamless_rust_setup/blob/main/experiments/hot_reload/hotlib/runner/src/main.rs) calls a reloadable `step(&mut State)` every 300 ms
+  - [shared state](https://github.com/SichangHe/seamless_rust_setup/blob/main/experiments/hot_reload/hotlib/types/src/lib.rs) stays in the runner
+  - smoke script builds, starts runner, changes `v1` to `v2`, rebuilds library, verifies increasing count, then restores source
+  - use `RUSTFLAGS='-C prefer-dynamic'` for this workspace
+  - measured 2026-10-06 on x86_64 Linux with rustc 1.97.1
+    - warm library rebuild: Cargo reported 0.11 s
+    - build start to observed new output: 845 ms
+    - observed transition: `v1: count=6` followed by `v2: count=7`
+    - single observation under shared machine load; watcher delay and 300 ms call interval contribute
+  - initial inherited prototype required fixes
+    - missing shared-state dependency prevented compilation
+    - default loader path pointed inside runner package instead of workspace target
+    - waiting for a change before calling `step` prevented initial execution
+- existing tool: hot-lib-reloader 0.7.0 in this experiment
+  - author describes it as "a development tool"
+    - [official README](https://github.com/rksm/hot-lib-reloader-rs#hot-lib-reloader)
+  - uses dylib function exports and file watching
+  - layout changes remain a manual contract
+    - author: "Types of structs and enums that are used in both the executable and library cannot be freely changed"
+    - [type-change limitations](https://github.com/rksm/hot-lib-reloader-rs#type-changes-require-some-care)
+  - Rust ABI itself has "no stability guarantees"
+    - [Rust Reference](https://doc.rust-lang.org/reference/items/external-blocks.html#abi)
+  - experiment only validates a function-body edit with unchanged signatures and state layout
+    - compiler upgrade, type changes and dependency changes require restart
+    - no arbitrary stack-frame replacement, state migration or async task inspection
+    - library statics, callbacks, threads, allocations and destructors can outlive loaded code; require separate lifecycle analysis
+- Dioxus now also experiments with Rust code updates
+  - official README: "Use our experimental `dx serve --hotpatch` to update Rust code in real time"
+    - [Dioxus README, instant hot-reloading](https://github.com/DioxusLabs/dioxus#instant-hot-reloading)
+  - verified source wording 2026-10-06; Dioxus was not installed or benchmarked
+  - recommendation: inspect its patch mechanism and platform constraints before inventing a general patcher
+- recommendation: choose a reload boundary around application logic and keep state ownership in stable host code
+  - changing state layout needs explicit conversion or restart
+  - versioned C ABI plus serialized or host-owned data reduces Rust ABI assumptions
+  - instant updates still depend on compiler work; watch-to-application latency includes compile, link, watcher and call interval
