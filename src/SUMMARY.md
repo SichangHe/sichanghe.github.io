@@ -13,6 +13,7 @@
         - [Command-Line Utilities](notes/automation_software/cli_util.md)
         - [Hammerspoon](notes/automation_software/hammerspoon.md)
     - [Browsers](notes/browsers/index.md)
+        - [YouTube](notes/browsers/youtube.md)
     - [Computer Science](notes/cs/index.md)
         - [Discrete Mathematics for
             Computer Science](notes/cs/discrete_math.md)
