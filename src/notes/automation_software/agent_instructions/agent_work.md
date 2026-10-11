@@ -126,6 +126,7 @@ reviewing, high-level decision-making and design.
 Provide a summary of the entire situation in the prompt file,
 plus any relevant quotes, then pipe all relevant `getagentsmd`
 output into the prompt file.
+GPT is bad at writing; for writing, use the `pb-gemini-consult` CLI.
 
 Be lazy; do only what's necessary to finish the task.
 NEVER EVER perform ANY task that the human did not explicitly ask for, or that
