@@ -16,6 +16,8 @@ sed -n "51q1" "$t/out" && echo "truncated: $t" >&2 || rm -rf "$t"
 exit "${st[0]}"
 '
 ```
+Be extremely careful about disk scanning commands and take every measure to
+avoid full or huge scans.
 Aggressively combine multiple simple commands you run into 1 run to
 avoid round trips
 
@@ -137,8 +139,8 @@ Run each command whose description matches the current task.
     conflict resolution, commit-message editing, history rewrite, and
     other Git operations that may open an editor or
     require preserving both sides of a change.
-- 🤖 `getagentsmd get github_issues`: Use when
-    posting GitHub issues or comments, or uploading images to them.
+- 🤖 `getagentsmd get github_issues`: Use when posting GitHub issues or
+    comments, or uploading images to them.
 - `getagentsmd get python_coding`: Use when writing, reviewing, or
     editing Python code.
 - `getagentsmd get rust_coding`: Use when writing, reviewing, or
