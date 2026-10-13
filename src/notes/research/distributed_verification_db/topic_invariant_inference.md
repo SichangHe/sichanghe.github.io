@@ -1,7 +1,7 @@
 # 🤖 database, tools that find invariants automatically
 (authored by agents unless marked 🧑)
 
-73 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+81 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - Autogram (2026)
     - title: Invariant Discovery for Networked Systems
@@ -43,6 +43,28 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2605.24619); [notes: IC3Syn: a direct 2026 LLM invariant search result](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: IC3Syn: agent-written proofs of unbounded distributed protocol safety](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: IC3Syn protocol inventory](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `ic3syn-2026`
+- InvariantEval (2026)
+    - title: Smart Contract Invariants Protect Against Cybercriminals
+    - what: Builds InvariantEval: 28 real Ethereum attacks, each paired with a one-line human-written check (an invariant) that would have blocked it. A replay tool (PonderReplay) re-runs the attack and 108,637 past transactions against the patched contract to confirm the check blocks the attack and keeps normal use working. Then tests three automatic invariant tools.
+    - number: 28 attacks, about 1.07 billion USD total loss; all 28 blocked by the human invariant (PoC and real attack transaction)
+    - number: 108,637 historical transactions replayed: 106,815 preserved (98.3%), 1,526 changed (1.4%), 296 inconclusive
+    - number: inconclusive causes: 173 original out-of-gas, 12 subcall out-of-gas, 111 state drift
+    - number: automatic tools recovered 2 of 28 ground-truth invariants (FLAMES only); InvCon 0, InvCon+ 0
+    - limits: Ground truth is hand-written by the authors after the attack, with the post-mortem in hand, and only for cases they could solve; the 28 are the ones that worked out of 359 Ethereum exploits. Benchmark and tool are available only on request. Matching an invariant to ground truth was done by checking whether it appears in tool output.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2608.13191); [notes: Smart Contract Invariants Protect Against Cybercriminals (2026)](claude_readings.md)
+    - record id: `invarianteval-2026`
+- LORIS (2026)
+    - title: Guiding LLM-based Loop Invariant Synthesis via Feedback on Local Reasoning Errors
+    - what: For single-loop C programs, an LLM guesses loop invariants and a verifier checks them. When the check fails, the LLM must write a step-by-step proof of the failed condition, another LLM call turns each step into a logic implication, and an SMT solver finds which step is false. That step is sent back as targeted feedback instead of just 'failed'.
+    - number: main suite 460 C programs: 445 solved, 93.1% success over 5 runs each with GPT-4.1
+    - number: non-linear suite 50 programs: 47 solved with the best model
+    - number: baselines with GPT-4.1 on the main suite: LaM4Inv 414 solved (84.6%), Clause2Inv 409 (84.9%)
+    - number: cost per successful run with GPT-4.1: about 55.9 s, 8,296 input / 2,738 output tokens, about 0.038 dollars
+    - limits: Single loop, numeric C programs only; no arrays, pointers, heap, nested or multiple loops. Fails when the LLM misreads the program's global structure, and when it weakens an invariant instead of strengthening it. Wrong LLM translations can mislead feedback but cannot make the final check accept a bad invariant, since Frama-C verifies the result.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2605.17914); [notes: LORIS, loop invariants from local-reasoning feedback (2026)](claude_readings.md)
+    - record id: `loris-2026`
 - NetNomos (2026)
     - title: Making Logic a First-Class Citizen in Generative ML for Networking
     - what: NetNomos learns logical rules that fit network traces, using a minimal-hitting-set encoding. It filters them with GPT-4.1 and retrieval. It then uses them to constrain a generative model.
@@ -125,6 +147,17 @@
     - how much was read: most of it read
     - [source](https://verse-lab.org/papers/force-iclp25.pdf); [notes: FORCE: Inductive First-Order Formula Synthesis by ASP: A Case Study in](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: FORCE: Inductive First-Order Formula Synthesis by ASP: A Case Study in](../distributed_verification_review_b/deep_18_invariant_agents.md)
     - record id: `force-2025`
+- HornStr (2025)
+    - title: HornStr: Invariant Synthesis for Regular Model Checking as Constrained Horn Clauses
+    - what: A solver that finds an inductive invariant (a set of states that contains the start, excludes bad states, and is closed under steps) for systems whose states are strings, by learning a finite automaton and asking string solvers to check each guess. It covers parameterized protocols (any number of processes) and string-rewrite puzzles.
+    - number: 18 benchmark protocols (Table 2); SAT-based learner solved all 18, mostly in under a second; MU puzzle 11.01 s with a 3-state automaton
+    - number: The active learner timed out on 6 of the 18 (Burns, Mux-Array, Eqdist, MU Puzzle, Water-Jug, Dining-Crypt)
+    - number: Z3-noodler solved all 848 non-incremental equivalence queries; cvc5, Z3, Z3-alpha solved 403 to 457
+    - number: Generated more than 30000 string constraints (abstract) or more than 10,000 (Sec 5); the paper gives both numbers
+    - limits: Safety only: liveness is listed as future work. Invariants must be regular languages; transitions are mostly length-preserving, and the paper runs on a laptop with 30 s and 60 s timeouts. The two counts of new constraints disagree.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2505.15959); [notes: ## HornStr (2025)](claude_readings.md)
+    - record id: `hornstr-2025`
 - Implicit rankings (2025)
     - title: Implicit Rankings for Verifying Liveness Properties in First-Order Logic
     - what: The method compares old and new states through formulas, instead of computing a number that must shrink (a ranking function). Constructors combine them pointwise, lexicographically, by multiset or permutation, and across a whole domain. Z3 checks the conditions that result. It verifies toy stabilization, a binary counter, token-ring non-starvation, Chang-Roberts leader election, SAT backtracking and abstract CDCL termination. It also verifies Dijkstra's k-, 4- and 3-state stabilization and Ghosh's 4-state stabilization.
@@ -147,6 +180,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2512.09758); [notes: LMGPA: prove supplied invariants rather than discover them](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
     - record id: `lmgpa-2025`
+- Neural model checking with invariants (2025)
+    - title: Let a Neural Network Be Your Invariant
+    - what: For hardware designs, one small neural network is trained to be both an inductive invariant (a set of states that contains all reachable states and is closed under steps; this proves safety) and a ranking function (a number that drops each time something bad could recur; this proves liveness). A solver then checks the network exactly, so a yes answer is a real proof. Training uses a constraint solver (MILP) rather than gradient descent.
+    - number: 634-task benchmark: 11 SystemVerilog designs; 206 safety, 219 liveness, 209 safety+liveness tasks
+    - number: solved: 190/206 safety (92%), 192/219 liveness (88%), 172/209 safety+liveness (82%)
+    - number: nuXmv solved 82% of liveness and 74% of safety+liveness tasks; rIC3 50% and 61%; ABC 36% and 46%; prior neural method NMC'24 79% of liveness
+    - number: pure liveness: faster than the best other tool on 66% of tasks, 10x faster on 46%
+    - limits: Only finite-state hardware-style systems (no arrays or strings of parametric length, no procedure calls or dynamic data); the benchmark is the authors' own, built from textbook-level designs, so results may not carry to other workloads; relies on sign-activation feed-forward networks.
+    - how much was read: most of it read
+    - [source](https://research.birmingham.ac.uk/en/publications/fe64a278-7ad4-495e-9751-663b05f077c6); [notes: Let a Neural Network Be Your Invariant (2025)](claude_readings.md)
+    - record id: `neural-model-checking-with-invariants-2025`
 - PSyn / ISyn (2025)
     - title: Guiding Likely Invariant Synthesis on Distributed Systems with Large Language Models
     - what: GPT-3.5 proposes predicates (PSyn) or whole candidate invariants (ISyn) for Promela models. It refines them using monitoring and Spin counterexamples. Likely invariants hold only for the states that were observed.
@@ -421,6 +465,16 @@
     - how much was read: parts read
     - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
     - record id: `psyn-2025`
+- Regular Model Checking Upside-Down: An Invariant-Based Approach (2025)
+    - what: For systems whose states are words and whose steps a transducer describes, it computes the intersection of all inductive invariants of bounded complexity (CNF formulas with at most b clauses), as an automaton, and checks whether it contains an unsafe state. It tests how small b can be on 22 classic parameterized protocols.
+    - number: intersection of all b-invariants is regular; emptiness check against unsafe states is in EXPSPACE for every b and PSPACE-complete for b=1
+    - number: b=1 proves 46 of 59 properties, using MONA
+    - number: dining philosophers with plain free/busy forks needs b=3
+    - number: Berkeley and Dragon cache protocols need b=2 for the remaining assertions
+    - limits: Length-preserving transducers and word configurations only; the experiments are said not to be a ready tool and b=2 could not be computed directly with MONA. Safety properties only.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2205.03060); [notes: Regular Model Checking Upside-Down (2025)](claude_readings.md)
+    - record id: `regular-model-checking-upside-2025`
 - Scimitar (2025)
     - title: Interpretable Safety Verification of Distributed Protocols by Inductive Proof Decomposition
     - what: Scimitar breaks a proof into a graph of lemmas and transitions. This exposes where guidance is needed. The target is Raft LogMatching, on a modified model of about 600 TLA+ lines.
@@ -699,15 +753,37 @@
     - how much was read: reading depth not recorded
     - [source](https://doi.org/10.1145/3385412.3386018); [notes: FOL-IC3 and mypyvy](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: FOL-IC3 pinned properties](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `fol-ic3-2020`
+- ACSLAgent (2026)
+    - title: ACSLAgent: Verifier-Constrained Neural-Symbolic Synthesis of Formal Program Specifications
+    - what: A tool that asks LLMs for C specifications (function contracts, loop invariants, loop variants for termination) and uses the Frama-C WP verifier to reject wrong ones, repairing from verifier feedback.
+    - number: README claims 91.05% verification success (pass@5) across SyGuS, SV-COMP and industrial components
+    - number: README claims termination proofs via synthesized ranking functions upgrade partial to total correctness
+    - limits: No paper could be found: the Zenodo record is an anonymous code archive whose README is the only prose. Numbers are README claims with no method, baselines or tables; the full results are said to be on a Hugging Face space that was not read.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.5281/zenodo.20776587); [notes: ACSLAgent (2026)](claude_readings.md)
+    - record id: `acslagent-2026`
 - Formally Specifying the Intended Behavior of the Program: LLM-Driven Neuro-Symbolic Program Specification Synthesis (2026)
     - what: Per the input file: uses an LLM plus symbolic methods to write formal specifications (contracts, loop invariants) from intended behavior. The only source found is a video lecture page on underline.io (uploaded 2026-06-03) with no description, transcript, or paper.
     - limits: Blocked: DOI redirects to a video page; the page text has no abstract, authors, or transcript, and no PDF or preprint was found.
     - how much was read: not read; title and metadata only
     - [source](https://doi.org/10.48448/hpwj-s947); [notes: ## Neuro-symbolic specification synthesis talk (2026)](claude_readings.md)
     - record id: `formally-specifying-the-intended-2026`
+- SG4PM (2026)
+    - title: Septemberember/SG4PM: Specification Generation for Program Maintenance via LLMs and Testing-Based Formal Verification
+    - what: Software record (Java tool) where an LLM writes a Functional Scenario Form, a list of input-output scenarios, for a Java program; the scenarios are checked for overlap and completeness and verified against the code by testing combined with Hoare-logic reasoning, so no loop invariants are needed.
+    - limits: This is a code release, not a paper: no experiments, numbers or limits are given in the README, and no paper could be found. Java programs only.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.5281/zenodo.19343002); [notes: SG4PM (2026)](claude_readings.md)
+    - record id: `sg4pm-2026`
 - Practical Verification of Distributed Systems: Streamlining Safety Proofs Using Invariant Taxonomies, and Verifying Latency Properties Using Symbolic Latency (2025)
     - what: PhD thesis on proving distributed protocols safe by sorting the needed invariants into types, and on extending verification to end-to-end latency. Full text could not be fetched; this record rests on a search-engine summary of the library page.
     - limits: Full text blocked: the Deep Blue library (deepblue.lib.umich.edu) returned a Cloudflare 'Just a moment' challenge to command-line fetches, and I did not try to get around it. Nothing here comes from reading the thesis.
     - how much was read: not read; title and metadata only
     - [source](https://doi.org/10.7302/25607); [notes: Practical Verification of Distributed Systems (2025)](claude_readings.md)
     - record id: `practical-verification-of-distributed-2025`
+- Counterexample Driven Quantifier Instantiations with Applications to Distributed Protocols (2023)
+    - what: An interactive method in Ivy that stops SMT solvers from diverging on quantifier-heavy proofs of distributed protocols, by abstracting functions as relations and refining with counterexamples.
+    - limits: Full text not read: the ACM PDF sits behind a bot check, and no open copy was found. Facts here come from the input abstract and a web-search summary.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3622864); [notes: Counterexample Driven Quantifier Instantiations (2023)](claude_readings.md)
+    - record id: `counterexample-driven-quantifier-instantiations-2023`

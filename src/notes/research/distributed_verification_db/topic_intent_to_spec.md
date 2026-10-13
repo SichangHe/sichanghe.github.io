@@ -1,7 +1,7 @@
 # 🤖 database, from what a human wants to a formal statement
 (authored by agents unless marked 🧑)
 
-128 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+137 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - AeroReq2LTL (2026)
     - title: Automated LTL Specification Generation from Industrial Aerospace Requirements
@@ -71,6 +71,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2602.00715); [notes: Beyond Basic Specifications? A Systematic Study of Logical Constructs ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
     - record id: `beyond-basic-specifications-a-2026`
+- Beyond Benchmarks / Vostd FVT (2026)
+    - title: Beyond Benchmarks: A Case Study of LLM-Generated Verus Specification Failures on Asterinas Vostd
+    - what: The authors ran three LLMs to write Verus specifications for six real verification targets in Asterinas, a Rust OS kernel, directly inside its repository, then hand-labelled every failed attempt by where it broke: the code did not fit the repository, broke Verus's own rules, modeled the wrong thing, or lacked proof structure. They also checked whether the verifier's error message pointed at the real cause.
+    - number: 6 targets, 156 function-level tasks, 50 Rust files, 7,149 lines
+    - number: 1,587 reviewed failure episodes: Stage I repository integration 442 (28%), Stage II Verus legality 502 (32%), Stage III semantic modeling 420 (26%), Stage IV proof construction 223 (14%)
+    - number: benchmark verify rates 66.0% to 82.6% (Table 3 subtotals); on the 6 targets AutoVerus 22.7-24.5%, VeruSAGE 34.4-41.7%, the authors' workflow 66.3-68.7%
+    - number: visible verifier diagnostic matched the true source stage in 1,152 of 1,587 episodes (72.6%)
+    - limits: One project (Vostd, Entity-Model proof style) and three LLMs; stage labels come from the authors' manual review with no second reviewer reported; the authors' own workflow was built for this study. Covers specification generation, not distributed protocols or liveness, and the paper itself says the three LLMs are not a leaderboard.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.5281/zenodo.19853280); [notes: Beyond Benchmarks, Verus specification failures on Asterinas Vostd (20](claude_readings.md)
+    - record id: `beyond-benchmarks-vostd-fvt-2026`
 - Can Code Specify a System Precisely Enough to Formally Verify It? (2026)
     - what: Audits a deployed restaurant point-of-sale payment workflow (register, payment terminal, Finix backend). The authors built TLA+ models with Claude agents under their supervision. They also compared LLMs generating specifications from the TypeScript source in three forms: library-based JavaScript, a bare JavaScript next-function, and TLA+.
     - number: pre-fix models have 43-103 states, check in under a second, counterexamples 6-9 steps
@@ -177,6 +188,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2607.13092); [notes: JS-SAM: a controlled case study separating specification shape from la](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: JS-SAM: a controlled case study separating specification shape from la](../distributed_verification_review_b/deep_17_model_agents.md)
     - record id: `js-sam-2026`
+- KaPilot (2026)
+    - title: KaPilot: LLM-Assisted Generation of Kani Specifications for Unsafe Rust Verification
+    - what: Five cooperating LLM agents write Kani contracts (preconditions, postconditions, loop invariants) for unsafe Rust functions, using the function's documentation instead of its code as the source of what must hold. Kani is a bounded model checker: it checks all inputs up to a size bound.
+    - number: GoldSet (54 functions from verify-rust-std, with human-written contracts): 88.9% of functions got a contract Kani accepts; 57.4% of contracts equal to or stronger than the human ones (GPT-5: 31 good, 17 bad, 6 failure)
+    - number: ULSet (70 functions from popular crates, no reference contracts): 71.4% got an accepted contract (GPT-5: 50 pass, 20 failure)
+    - number: Versus AutoSpec adapted to Kani, same GoldSet and GPT-5: 31 vs 17 good, 6 vs 14 failures
+    - number: Ablation on GPT-5: dropping SafetyReq cut good from 31 to 6; naive prompt with Kani feedback (10 rounds) gave 8 good, 26 failures
+    - limits: Only memory safety and panics, not functional correctness. Kani is bounded, loop invariants only for while loops, and some Rust properties (lifetimes) cannot be written in Kani. Judging whether an accepted contract is good was done by hand; no automatic check exists. Output quality depends on documentation quality (ULSet docs shorter, failure 28.57% to 31.43% vs 7.41% to 20.37%).
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1145/3832239); [notes: KaPilot (2026)](claude_readings.md)
+    - record id: `kapilot-2026`
 - Kiro (2026)
     - title: Kiro specs (Analyze Requirements; Correctness with Property-Based Tests)
     - what: Kiro works as a pipeline. An LLM refines requirements into EARS-style criteria and translates them to SMT-LIB. A solver checks consistency and completeness. For an ambiguity test ("semantic entropy"), it samples several formalizations and groups them by logical equivalence. Depending on how much they differ, it trusts one, discards them, or asks the user.
@@ -389,6 +411,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2605.07935); [notes: TraceFix: generated PlusCal coordination protocols, with important lim](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
     - record id: `tracefix-2026`
+- TrojanSpec-Bench (2026)
+    - title: TrojanSpec-Bench: An Adversarial Benchmark for LLM-Based Formal Specification Elicitation
+    - what: Treats the LLM that turns English requirements into a formal spec as a possible attacker. Builds 1,024 cases in Dafny, Lean 4 and Verus where a spec is subtly wrong yet still accepted by the verifier together with a bad implementation, then tests six detectors for such specs.
+    - number: 1,024 admitted cases of 1,798 generated (57.0%): Dafny 319, Lean 4 417, Verus 288
+    - number: four attack types admitted: implementation leak 377/450, vacuity 348/450, domain restriction 187/450, predicate swap 112/448
+    - number: detector asking an LLM four yes/no questions and flagging when at least 2 fail: F1 0.967, false-positive rate 0.068, recall 1.000
+    - number: single LLM-judge vote baseline: F1 0.871, false-positive rate 0.297
+    - limits: Same model family (Claude Sonnet 4.6) generates most trojans and judges them; the LLM detector was not tested against adaptive attackers; 'honest' labels come from the verifier, not from humans; attack mix reflects the generator, not real-world frequency.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.5281/zenodo.21888213); [notes: TrojanSpec-Bench (2026)](claude_readings.md)
+    - record id: `trojanspec-bench-2026`
 - Validating Formal Specifications with LLM-generated Test Cases (2026)
     - what: GPT-5 generates positive and negative Alloy instances from English requirements, before the requirement is formalized. Expert formulas label the instances. The authors test whether the instances expose wrong student specifications.
     - number: Table 3: Few prompt, 258 tests, 255 syntax-valid, 252 previous-consistent, 247 valid (96%), $3.56
@@ -553,6 +586,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2502.15441); [notes: On the Effectiveness of Large Language Models in Writing Alloy Formula](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `on-the-effectiveness-of-2025`
+- P2FGPT (2025)
+    - title: Constructing formal models of cryptographic protocols from Alice&Bob style specifications via LLM
+    - what: A prompt-based pipeline that reads a security protocol written as 'A -> B: message' steps and writes the declarations part (types and functions) of a ProVerif model. ProVerif is a security-protocol checker. A checker step runs ProVerif's parser, and a repair step re-prompts the LLM on syntax errors.
+    - number: dataset: 4 ProVerif demo protocols cut into 53 + 25 + 14 + 14 = 106 sub-protocols
+    - number: syntax-correct rate with GLM4.0: 65% (generator alone) to 82% (with repair step)
+    - number: repair step helped GLM4.0 only; it made no difference for Llama3-8b and little for Qwen2.5-7b
+    - number: content score (BLEU/F1) with GLM4.0: BLEU 0.34 to 0.39, F1 0.58 to 0.62 with repair; Qwen2.5-7b BLEU 0.61, F1 0.60
+    - limits: Generates only declarations, not the protocol steps or the security goals the user cares about; no check that the model says what the protocol says, only that it parses and looks like a reference text. Prompts were tuned by hand on GLM4.0 and transfer poorly to other models.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1038/s41598-025-93373-y); [notes: P2FGPT, Alice&Bob to ProVerif (2025)](claude_readings.md)
+    - record id: `p2fgpt-2025`
 - ParCleanse (2025)
     - title: Validating Network Protocol Parsers with Traceable RFC Document Interpretation
     - what: GPT-4o extracts packet layouts and constraints from RFCs, with links back to the source text. Z3 generates valid packets and packets that break exactly one rule, and real parsers in C, Go and Python run them. An LLM diagnoses whether each failure is a spec error or an implementation error.
@@ -1084,6 +1128,12 @@
     - how much was read: only abstract or first pages read
     - [source](https://arxiv.org/abs/2504.17226); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; [notes: FLAG](../distributed_verification_primary_extension_20261012.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
     - record id: `flag-2025`
+- Transforming Natural Language Requirements to Formalism Using LLMs (2025)
+    - what: GE Aerospace Research built an LLM tool that interactively turns plain-English requirements into logical formulas, with an English-language interface meant to let non-experts confirm the translation is right. It was tried on an industry landing-gear case.
+    - limits: Full text not obtained (Wiley paywall behind a bot check; Unpaywall lists no open copy), so numbers, formalism used, and evaluation method are unknown; only the abstract was read.
+    - how much was read: only abstract or first pages read
+    - [source](https://doi.org/10.1002/sys.70023); [notes: LLM translation of natural-language requirements to formalism (2025)](claude_readings.md)
+    - record id: `transforming-natural-language-requirements-2025`
 - Specifications: The Missing Link to Making the Development of LLM Systems an Engineering Discipline (2024)
     - what: This position paper argues that explicit specifications are the missing engineering layer for LLM systems.
     - limits: The pages the review notes inspected show no formal verification artifact or proof result.
@@ -1120,6 +1170,15 @@
     - how much was read: reading depth not recorded
     - [source](https://foundation.tlapl.us/challenge/index.html); [notes: TLAiBench and the Foundation challenge: useful harnesses, limited meas](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `tlai-challenge-2025`
+- ACSLAgent (2026)
+    - title: ACSLAgent: Verifier-Constrained Neural-Symbolic Synthesis of Formal Program Specifications
+    - what: A tool that asks LLMs for C specifications (function contracts, loop invariants, loop variants for termination) and uses the Frama-C WP verifier to reject wrong ones, repairing from verifier feedback.
+    - number: README claims 91.05% verification success (pass@5) across SyGuS, SV-COMP and industrial components
+    - number: README claims termination proofs via synthesized ranking functions upgrade partial to total correctness
+    - limits: No paper could be found: the Zenodo record is an anonymous code archive whose README is the only prose. Numbers are README claims with no method, baselines or tables; the full results are said to be on a Hugging Face space that was not read.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.5281/zenodo.20776587); [notes: ACSLAgent (2026)](claude_readings.md)
+    - record id: `acslagent-2026`
 - APG (2026)
     - title: Generating Protocol Code from RFC Specifications
     - what: It generates C/C++ protocol code from RFCs for ICMP, IGMP, NTP and TCP, and judges the code by testing.
@@ -1135,6 +1194,25 @@
     - how much was read: not read; title and metadata only
     - [source](https://doi.org/10.48448/hpwj-s947); [notes: ## Neuro-symbolic specification synthesis talk (2026)](claude_readings.md)
     - record id: `formally-specifying-the-intended-2026`
+- From Natural Language to Formal Specifications: A Metamodel-Driven LLM Pipeline (2026)
+    - what: Per the input list: an LLM turns free-form natural-language requirements into an intermediate model and then into formal specifications that tools can verify.
+    - limits: Full text not read: the ACM page blocked automated download (HTTP 403 from the site's bot protection, which I did not work around) and no open copy was found. Only the input description and Crossref metadata (authors, venue, 10 pages, Oct 2026) are known; nothing about results.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3837062.3838893); [notes: ## Metamodel-driven LLM pipeline (2026)](claude_readings.md)
+    - record id: `from-natural-language-to-2026`
+- SG4PM (2026)
+    - title: Septemberember/SG4PM: Specification Generation for Program Maintenance via LLMs and Testing-Based Formal Verification
+    - what: Software record (Java tool) where an LLM writes a Functional Scenario Form, a list of input-output scenarios, for a Java program; the scenarios are checked for overlap and completeness and verified against the code by testing combined with Hoare-logic reasoning, so no loop invariants are needed.
+    - limits: This is a code release, not a paper: no experiments, numbers or limits are given in the README, and no paper could be found. Java programs only.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.5281/zenodo.19343002); [notes: SG4PM (2026)](claude_readings.md)
+    - record id: `sg4pm-2026`
+- Investigating the Role of Formal Verification in Software Development: From Automatic Specification Generation to Usability of Verification Languages (2025)
+    - what: Per the input list and a search summary of its abstract: a 4-page doctoral plan studying how formal annotations affect code comprehension, how LLMs generate formal specs from code comments, and how usable two verification tools are.
+    - limits: Full text not read: the ACM PDF returned HTTP 403 to automated download (bot protection, not worked around) and no open copy was found. Which tools and what results are unknown.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3696630.3731465); [notes: ## Role of formal verification in software development, doctoral paper](claude_readings.md)
+    - record id: `investigating-the-role-of-2025`
 - HumanEvalComm (2024)
     - what: A benchmark with communication metrics that measure whether models ask clarifying questions.
     - limits: The review notes saw it only as a search snippet.

@@ -1,8 +1,19 @@
 # 🤖 database, how humans state guarantees and structure proofs
 (authored by agents unless marked 🧑)
 
-149 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+158 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
+- CPL / ZipperGen (2026)
+    - title: Causal Past Logic for Runtime Verification of Distributed LLM Agent Workflows
+    - what: Adds a small logic to ZipperGen, a framework where several LLM agents run a workflow written once globally. A decision (if or while) can test facts about events it has causally heard of from other agents, such as 'a test pass for this patch is visible and no later failure is'. Each agent checks the test at run time, and a Lean 4 proof shows the check equals the logic's meaning.
+    - number: code-review guard: 16 subformulas, about 0.05-0.07 ms per event, 1.2 KB of monitor data per message
+    - number: scaling: 128 atoms and 128 variables on 8 lifelines gives 1.976 ms local, 2.9 ms receive, 58.0 KB per message
+    - number: message data grows from 1.1 KB (2 lifelines) to 17.0 KB (32 lifelines)
+    - number: workflow generation: 2 tasks x 3 runs with Codex CLI at low reasoning effort, all 6 final workflows validated and correct
+    - limits: Preliminary evaluation on one laptop with synthetic scaling workloads and two toy LLM tasks; vector-clock counters are unbounded; the Lean proof excludes the executable finite-table version and size bounds. It checks run-time conditions on executions, not whole-system proofs, and says nothing about liveness.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2605.20923); [notes: Causal Past Logic (2026)](claude_readings.md)
+    - record id: `cpl-zippergen-2026`
 - Formal Verification Frameworks for Cloud-Native Microservices (2026)
     - what: Sketches a framework that models microservices as a graph of states and writes five properties in temporal logic (request gets a response, error leads to recovery, and so on), to be checked by a model checker. Reports detection rates against testing and monitoring.
     - number: deadlock detection accuracy 96.7% vs 81.2% for log-based testing (Table 1)
@@ -248,6 +259,16 @@
     - how much was read: most of it read
     - [source](https://github.com/anvil-verifier/anvil/tree/osdi24); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Anvil: Verifying Liveness of Cluster Management Controllers](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: P06. Anvil: Verifying Liveness of Cluster Management Controllers](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `anvil-2024`
+- CSP retrospective (2024)
+    - title: The Challenges and Triumphs of CSP Based Formal Verification
+    - what: Roscoe looks back on CSP, a notation for describing processes that run in parallel and talk to each other, and its model checker FDR. He covers a two-player-game encoding, a primary/secondary consensus handover protocol for blockchains with malicious nodes, a way to check deadlock freedom from the sum of component state spaces, and the Coco tool used by ASML.
+    - number: Coco Platform is in use at ASML for photolithography machine software (as stated by the author, no figures)
+    - number: the author's naive CSP blockchain model could not hold a realistic number of blocks, agents or keys (state explosion)
+    - number: token-invariant deadlock check on a 3-component example: state space of 6 component states, one nontrivial invariant (t4) proves deadlock freedom
+    - limits: Reflective paper written for CSP experts: no benchmarks or timings are given for the handover protocol or the local checking idea, and both are models checked in FDR, not code. The author lists proving the Bully algorithm and a distributed database protocol for all N as still-open challenges.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.29007/bbq9); [notes: The Challenges and Triumphs of CSP Based Formal Verification (2024)](claude_readings.md)
+    - record id: `csp-retrospective-2024`
 - Datadog Courier (2024)
     - title: How We Use Formal Modeling, Lightweight Simulations, and Chaos Testing to Design Reliable Distributed Systems (Datadog Courier)
     - what: Datadog modeled its Courier message queue in TLA+. It checked a liveness property named NoLostMsgs with TLC under weak fairness (an assumption that a continuously enabled step eventually runs). After a sequencer was added, TLC found a counterexample, and the design changed.
@@ -256,6 +277,14 @@
     - how much was read: most of it read
     - [source](https://www.datadoghq.com/blog/engineering/formal-modeling-and-simulation/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
     - record id: `datadog-courier-2024`
+- Distributed Locking as a Data Type (2024)
+    - what: A work-in-progress report that writes two mutual-exclusion protocols (token passing and majority voting) as replicated data types in Scala. A replicated data type is a value with a merge function so replicas converge without messages. It gives an informal induction proof for the token protocol.
+    - number: two protocols, token and voting; a Raft-inspired protocol is mentioned as implemented
+    - number: no experiments or proof-assistant proof
+    - limits: Safety needs only message integrity and progress needs at-least-once delivery. The token protocol has no progress if the owner fails permanently; the voting protocol assumes a fixed set of voters. Verification inside the LoRe language is future work.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2405.15578); [notes: Distributed Locking as a Data Type (2024)](claude_readings.md)
+    - record id: `distributed-locking-as-a-2024`
 - MoSt (2024)
     - title: Modeling and Verification of Natural Language Requirements based on States and Modes
     - what: Engineers write requirements in a controlled language that names states, modes and transitions. A tool generates NuSMV models and automatically checks that each state is reachable. It reports results at the requirement IDs.
@@ -267,6 +296,17 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1145/3640822); [notes: MoSt: humans structure requirements before automatic model checking](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: MoSt: humans structure requirements before automatic model checking](../distributed_verification_review_b/deep_20_model_agents_addendum.md)
     - record id: `most-2024`
+- Netrix (2023)
+    - title: A Domain Specific Language for Testing Consensus Implementations
+    - what: Netrix lets a programmer script a bad-network scenario (drop, delay, reorder, forge messages) and a small state machine that decides pass or fail, then tests a real consensus implementation under it while random scheduling fills in the rest. It was run on Tendermint, etcd Raft and BFT-Smart.
+    - number: 34 unit tests total: 15 Tendermint, 11 Raft, 8 BFT-Smart
+    - number: Shim added: 600 lines to Tendermint (150k), 120 to Raft (16k), 150 to BFT-Smart (16k)
+    - number: Tendermint: 5 of 15 tests fail, showing deviations from the protocol spec (text says 4); one is a liveness bug raising time to consensus from 30 s to 6 min
+    - number: Raft: 4 known bugs reproduced
+    - limits: Tests check only bounded liveness (success within a timeout) and hand-picked scenarios; no proof. Needs a shim over the system's message layer and a person who knows the protocol. Tendermint team fixed some deviations; counts in the text are inconsistent (4 deviations versus 5 failing tests).
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2303.05893); [notes: Netrix (2023)](claude_readings.md)
+    - record id: `netrix-2023`
 - Owl (2023)
     - title: Owl: Compositional Verification of Security Protocols via an Information-Flow Type System
     - what: A type system that tracks information flow. It automatically establishes computational secrecy and authenticity for a protocol written in the Owl language, and hands its refinement checks to Z3. It includes a Rust extractor that produces runnable prototypes.
@@ -295,6 +335,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2307.02342); [notes: Towards a Formal Verification of the Lightning Network with TLA+](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `towards-a-formal-verification-2023`
+- ZooKeeper TLA+ specs (2023)
+    - title: Leveraging TLA+ Specifications to Improve the Reliability of the ZooKeeper Coordination Service
+    - what: Writes three levels of TLA+ models of ZooKeeper (its Zab agreement protocol, a code-level system model, and a test model), checks them with the TLC model checker, and replays model traces on the real Java code to confirm the model matches and to reproduce two deep bugs.
+    - number: Protocol model: 17 configurations checked, up to 1.8 billion states; largest finished run 245,606,642 states in 3 h 41 min; no violation of the correctness conditions
+    - number: Two violations found in the first draft of the protocol model (a misused quorum; a leader's response to a recovering follower)
+    - number: ZK-2845 reproduced in 2 s (simulation, trace length 23) or 12 s (model checking, length 10); ZK-3911 in 1 min 29 s (length 25) or 42 s (length 14)
+    - number: System model: 6 configurations, all still running at the 24 h limit, no violation
+    - limits: Safety only: "we mainly focus on safety properties and do not consider liveness properties". Checks small configurations (at most 5 servers, few transactions) and trusts the small-scope hypothesis; leader election in Zab is replaced by an assumed oracle; model-to-code match is checked by replaying traces, not proved.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2302.02703); [notes: ## ZooKeeper TLA+ specifications (2023)](claude_readings.md)
+    - record id: `zookeeper-tla-specs-2023`
 - Hemiola (2022)
     - title: Hemiola: A DSL and Verification Tools to Guide Design and Proof of Hierarchical Cache-Coherence Protocols
     - what: A Coq-based language whose templates manage locking, so that invariant proofs consider one transaction at a time. It proves serializability and coherence of MSI/MESI cache models and compiles to Kami hardware.
@@ -313,6 +364,17 @@
     - how much was read: most of it read
     - [source](https://www.cis.upenn.edu/~stevez/papers/SZ21.pdf); [notes: Dijkstra Monads Forever: Termination-Sensitive Specifications for Inte](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Dijkstra Monads Forever: Termination-Sensitive Specifications for Inte](../distributed_verification_review_b/deep_13_related_formulation.md); [notes: Concrete problem records](../distributed_verification_review_b/deep_13_related_formulation.md)
     - record id: `dijkstra-monads-forever-termination-2021`
+- Metastable failures (2021)
+    - title: Metastable failures in distributed systems
+    - what: Names a failure pattern in which a trigger (for example a short network outage) pushes a system into a bad state that a feedback loop (for example client retries) keeps going after the trigger is gone. Gives four production examples and a vocabulary: stable, vulnerable, metastable, trigger, sustaining effect, hidden capacity.
+    - number: Retry example: 280 queries per second (QPS) plus a 10 s outage leads to 560 QPS of retries; recovery needs load under 150 QPS or retries under 20 QPS
+    - number: Look-aside cache example: advertised capacity 3,000 QPS, hidden capacity 300 QPS; losing a 90% hit-rate cache gives 10x query amplification
+    - number: Link imbalance example went unexplained for more than two years; fix was a single line in the connection-pool policy
+    - number: A geo-distributed system with added retries and failover had worst-case work amplification over 100x
+    - limits: A vision paper from operating experience: no formal definition of the property, no tool, no measured evaluation; the authors list how to find unknown metastable failures as open.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1145/3458336.3465286); [notes: ## Metastable failures (2021)](claude_readings.md)
+    - record id: `metastable-failures-2021`
 - What's Live (2021)
     - title: What's Live? Understanding Distributed Consensus
     - what: Extracts published liveness statements for consensus algorithms and formalizes them in TLA+. It compares what each one assumes and guarantees: 3 link assumptions, 7 server assumptions and 6 progress assertions. It also runs finite TLC experiments.
@@ -728,6 +790,17 @@
     - how much was read: parts read
     - [source](https://arxiv.org/abs/2003.10554); [notes: ## Elle isolation checker (2020)](claude_readings.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
     - record id: `elle-2020`
+- Pretend Synchrony / Goolong (2019)
+    - title: Pretend synchrony: synchronous verification of asynchronous distributed programs
+    - what: Verifies Go distributed programs by automatically rewriting them into an equivalent synchronous program (messages become assignments), then checking ordinary verification conditions with the Z3 solver. Four case studies: two-phase commit, Raft leader election, single-decree Paxos, Multi-Paxos key-value store.
+    - number: manual invariant annotations reduced by 6x versus Dafny
+    - number: check time 1.73 s total vs 1455.84 s in Dafny for the three protocols
+    - number: Paxos 504 lines of Go, 14 loop-invariant lines, 1.51 s; Dafny 72 invariant lines, 1141.35 s
+    - number: Multi-Paxos KV: 847 Go lines, 1.64 s check, 118.5 req/ms, within 1.5-3x of unverified EPaxos code
+    - limits: Safety only, no liveness. Needs structured loops, symmetric process ids, typed channels, pairwise communication and round non-interference; rules out Multi-Paxos stable-leader optimization, Stoppable Paxos and ring topologies such as Chord.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3290372); [notes: Pretend Synchrony (2019)](claude_readings.md)
+    - record id: `pretend-synchrony-goolong-2019`
 - QED at Large (2019)
     - title: QED at Large: A Survey of Engineering of Formally Verified Software
     - what: A survey of proof engineering (building and maintaining machine-checked proofs).
@@ -1138,6 +1211,12 @@
     - how much was read: reading depth not recorded
     - [source](https://lamport.azurewebsites.net/pubs/high-level.pdf); [notes: human specification practice](../distributed_verification_review_b/review_b_foundations_20261007.md)
     - record id: `high-level-specifications-lessons-2003`
+- From Natural Language to Formal Specifications: A Metamodel-Driven LLM Pipeline (2026)
+    - what: Per the input list: an LLM turns free-form natural-language requirements into an intermediate model and then into formal specifications that tools can verify.
+    - limits: Full text not read: the ACM page blocked automated download (HTTP 403 from the site's bot protection, which I did not work around) and no open copy was found. Only the input description and Crossref metadata (authors, venue, 10 pages, Oct 2026) are known; nothing about results.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3837062.3838893); [notes: ## Metamodel-driven LLM pipeline (2026)](claude_readings.md)
+    - record id: `from-natural-language-to-2026`
 - LeanMachines (2026)
     - title: LeanMachines: State-based Modeling with Refinement (a Lean4 Framework)
     - what: A Lean 4 library for modelling stateful systems as machines refined step by step, in the style of Event-B, where a refinement step cannot be built without discharging its proof obligations.
@@ -1158,6 +1237,12 @@
     - how much was read: not read; title and metadata only
     - [source](https://queue.acm.org/doi/10.1145/3712057); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: P02. Systems Correctness Practices at Amazon Web Services](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `aws-correctness-practices-2025`
+- Investigating the Role of Formal Verification in Software Development: From Automatic Specification Generation to Usability of Verification Languages (2025)
+    - what: Per the input list and a search summary of its abstract: a 4-page doctoral plan studying how formal annotations affect code comprehension, how LLMs generate formal specs from code comments, and how usable two verification tools are.
+    - limits: Full text not read: the ACM PDF returned HTTP 403 to automated download (bot protection, not worked around) and no open copy was found. Which tools and what results are unknown.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3696630.3731465); [notes: ## Role of formal verification in software development, doctoral paper](claude_readings.md)
+    - record id: `investigating-the-role-of-2025`
 - A Calculus for the Specification, Design, and Verification of Distributed Concurrent Systems (2024)
     - what: Listed as an unread search lead from OpenAlex. The notes give only its title, year and DOI.
     - limits: Not read. Claims are unverified.

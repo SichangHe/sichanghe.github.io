@@ -1,7 +1,7 @@
 # 🤖 database, proofs that something good eventually happens
 (authored by agents unless marked 🧑)
 
-126 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+134 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - Certifying rlive (2026)
     - title: Certifying rlive: A New Proof Strategy for Liveness Model Checking
@@ -131,6 +131,27 @@
     - how much was read: most of it read
     - [source](https://openreview.net/forum?id=ncFIZuIUyK); [notes: closest related work](../distributed_verification_review_b/review_b_tla_verus_20261007.md); [notes: reported results and populations](../distributed_verification_review_b/review_b_tla_verus_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
     - record id: `tla-verus-2026`
+- Transition Invariants Revisited: Termination Witnesses and Their Validation (2026)
+    - what: Extends the standard machine-readable proof format that program verifiers hand to each other so it can carry termination proofs. The proof is a transition invariant: a relation between any earlier and later state of a run that must decrease in a well-founded way. Three checkers re-validate such proofs independently of the tool that made them.
+    - number: Evaluated on all SV-Benchmarks programs expected to terminate, 900 s CPU and 15 GB per run
+    - number: Witnesses validated by at least one validator: CPAchecker 366 of 422 (87%), CPAchecker-TransVer 192 of 200 (96%), UAutomizer-TransVer 375 of 389 (96%), Goblint-TransVer 176 of 286 (62%)
+    - number: Validators solved about 40 programs that CPAchecker's own verification mode could not, using other tools' witnesses
+    - number: Validation often faster than verification (Wilcoxon p = 2.1e-10 and 1.1e-13 for the two CPAchecker validators on ranking-function witnesses)
+    - limits: Termination of sequential C programs only; the authors say "We do not consider other reasons for non-termination, such as deadlocks." One reduction route needs finite state spaces and TransVer has limited support for arrays and structs. Witnesses with many invariants (Goblint) often could not be validated within limits. Not about fairness or liveness of concurrent or distributed systems.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1007/978-3-032-32537-2_2); [notes: Transition invariants as termination witnesses (2026)](claude_readings.md)
+    - record id: `transition-invariants-revisited-termination-2026`
+- Verified MCP Gateway (2026)
+    - title: Formal Verification of Agentic MLOps Protocols: Model Checking and Liveness Guarantees in Distributed Model Context Protocol Workflows
+    - what: A gateway sits between an LLM agent and its tools (Model Context Protocol, MCP, a standard for LLM tool calls). Before each tool call it checks, against a hand-written state machine, that the call keeps three temporal-logic rules true: no deadlock, every GPU that is handed out is eventually returned, and no two agents write the same network folder at once.
+    - number: 500 multi-agent training workflow traces, chain depth up to 14 tool calls
+    - number: reachable states at depth 14: 196,608 unconstrained vs 672 with guards (99.66% fewer)
+    - number: deadlocks: 54.2% (vanilla MCP), 33.6% (ReAct retry), 18.4% (static DAG check), 0.0% (verified gateway)
+    - number: task completion 99.4% vs 38.4% for vanilla MCP; wasted GPU hours 0.2% vs 41.8%
+    - limits: The state machine, its 12 tools and the three properties are written by hand for one production system; the paper does not say how the 500 traces were produced. The 'liveness' property is enforced by checking one step ahead at run time, so it is a guard, not a proof about all executions; there is no theorem or proof-assistant artifact.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.5281/zenodo.22715686); [notes: Formal Verification of Agentic MLOps Protocols (2026)](claude_readings.md)
+    - record id: `verified-mcp-gateway-2026`
 - Verifying Graceful Degradation in a Distributed Malware-Detection System with SPIN (2026)
     - what: The authors model, in Promela, the endpoint side of a Bitdefender-style malware-detection system that falls back from a primary server to a legacy server to a weaker local scan, and check six properties written in temporal logic (five safety, one liveness) plus deadlock freedom with the SPIN model checker.
     - number: All six properties hold on the core 1 endpoint x 1 scan model: 6,168 states stored, depth 101, under 1 second (Table 2)
@@ -152,6 +173,17 @@
     - how much was read: most of it read
     - [source](https://github.com/anvil-verifier/anvil/tree/sosp26); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Welder: Compositional Liveness Verification of Cluster Control Planes](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: P07. Welder: Compositional Liveness Verification of Cluster Control Pl](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `welder-2026`
+- Wirehead Rocq proofs (2026)
+    - title: Toward Formal Verification of a Lock-Free Distributed Double Buffer Cache
+    - what: A master's thesis that proves, in the Rocq proof assistant, six properties of the swap algorithm in Wirehead, a MongoDB-based cache that lets many data generators feed one training job. The author models each MongoDB call as a plain function and the algorithm as a state machine where one process takes one atomic step at a time.
+    - number: 4 Rocq files, 3,470 lines (thesis text says 3,475 in one place), 144 proofs, 2 Admitted, 3 axioms (all on the user-supplied chunk function)
+    - number: Safety.v 1,339 lines; Liveness.v 1,342 lines; DB.v 513; Algorithm.v 276
+    - number: about 800 lines of Safety.v are auxiliary invariants needed only for liveness
+    - number: 5 of 6 properties fully checked; progress depends on 2 Admitted lemmas
+    - limits: Assumes one MongoDB instance, crash-stop failures only, atomic database calls, and weak fairness of the scheduler; the match between the Rocq model and the Python code is asserted, not proved. Crash transitions and the real timeout-based lock recovery are not modeled.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.57709/138); [notes: Toward Formal Verification of a Lock-Free Distributed Double Buffer Ca](claude_readings.md)
+    - record id: `wirehead-rocq-proofs-2026`
 - First-Order Automata (2025)
     - what: The paper defines an automaton that recognizes finite traces of a first-order temporal sentence over a background theory. It gives results on expressiveness and closure, and decision procedures that work under conditions.
     - number: no experiments, benchmarks or repository reported
@@ -198,6 +230,17 @@
     - how much was read: most of it read
     - [source](https://zenodo.org/records/14927742); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: Iris: Trillium, Lilo, Lawyer](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lilo-2025`
+- Neural model checking with invariants (2025)
+    - title: Let a Neural Network Be Your Invariant
+    - what: For hardware designs, one small neural network is trained to be both an inductive invariant (a set of states that contains all reachable states and is closed under steps; this proves safety) and a ranking function (a number that drops each time something bad could recur; this proves liveness). A solver then checks the network exactly, so a yes answer is a real proof. Training uses a constraint solver (MILP) rather than gradient descent.
+    - number: 634-task benchmark: 11 SystemVerilog designs; 206 safety, 219 liveness, 209 safety+liveness tasks
+    - number: solved: 190/206 safety (92%), 192/219 liveness (88%), 172/209 safety+liveness (82%)
+    - number: nuXmv solved 82% of liveness and 74% of safety+liveness tasks; rIC3 50% and 61%; ABC 36% and 46%; prior neural method NMC'24 79% of liveness
+    - number: pure liveness: faster than the best other tool on 66% of tasks, 10x faster on 46%
+    - limits: Only finite-state hardware-style systems (no arrays or strings of parametric length, no procedure calls or dynamic data); the benchmark is the authors' own, built from textbook-level designs, so results may not carry to other workloads; relies on sign-activation feed-forward networks.
+    - how much was read: most of it read
+    - [source](https://research.birmingham.ac.uk/en/publications/fe64a278-7ad4-495e-9751-663b05f077c6); [notes: Let a Neural Network Be Your Invariant (2025)](claude_readings.md)
+    - record id: `neural-model-checking-with-invariants-2025`
 - Nola (2025)
     - title: Nola: Later-Free Ghost State for Verifying Termination in Iris
     - what: A logic in Rocq and Iris, with later-free ghost state (proof-only state without step-indexing), for proving termination and functional correctness of core-Rust programs. The prototype is RustHalt. Examples include Ackermann variants and traversal of a mutable list.
@@ -280,6 +323,16 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1145/3658644.3690355); [notes: Bythos: composition with TLA proof rules in Coq](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `bythos-2024`
+- CSP retrospective (2024)
+    - title: The Challenges and Triumphs of CSP Based Formal Verification
+    - what: Roscoe looks back on CSP, a notation for describing processes that run in parallel and talk to each other, and its model checker FDR. He covers a two-player-game encoding, a primary/secondary consensus handover protocol for blockchains with malicious nodes, a way to check deadlock freedom from the sum of component state spaces, and the Coco tool used by ASML.
+    - number: Coco Platform is in use at ASML for photolithography machine software (as stated by the author, no figures)
+    - number: the author's naive CSP blockchain model could not hold a realistic number of blocks, agents or keys (state explosion)
+    - number: token-invariant deadlock check on a 3-component example: state space of 6 component states, one nontrivial invariant (t4) proves deadlock freedom
+    - limits: Reflective paper written for CSP experts: no benchmarks or timings are given for the handover protocol or the local checking idea, and both are models checked in FDR, not code. The author lists proving the Bully algorithm and a distributed database protocol for all N as still-open challenges.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.29007/bbq9); [notes: The Challenges and Triumphs of CSP Based Formal Verification (2024)](claude_readings.md)
+    - record id: `csp-retrospective-2024`
 - Datadog Courier (2024)
     - title: How We Use Formal Modeling, Lightweight Simulations, and Chaos Testing to Design Reliable Distributed Systems (Datadog Courier)
     - what: Datadog modeled its Courier message queue in TLA+. It checked a liveness property named NoLostMsgs with TLC under weak fairness (an assumption that a continuously enabled step eventually runs). After a sequencer was added, TLC found a counterexample, and the design changed.
@@ -622,6 +675,16 @@
     - how much was read: parts read
     - [source](https://fizzbee.io/design/tutorials/liveness/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; [notes: FizzBee](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `fizzbee-2024`
+- Ghost signals thesis (2024)
+    - title: Semi-Automated Modular Formal Verification of Critical Software: Liveness and Completeness Thresholds
+    - what: Two results. (1) A separation logic (a logic for reasoning about who owns which memory) that proves busy-wait loops end, using proof-only 'ghost signals' and promises to set them, with a tool in VeriFast. (2) A first notion of 'completeness thresholds' that turns bounded memory-safety checks of array loops into full proofs.
+    - number: bounded FIFO producer-consumer: 160 annotation lines for 37 lines of C (435%), verifies in 0.08 s
+    - number: CLH lock: 343 annotation lines for 49 lines of C (700%), verifies in 0.1 s
+    - number: soundness proofs and a detailed case study with unboundedly many producers and consumers are in the appendices
+    - limits: Termination only under fair scheduling; Chapter 3 logic has no higher-order features and the tool trusts the logic as axioms in a header; ghost-signal obligations cannot be handed to arbitrary threads (cohort locks unsupported). Completeness thresholds are hand-derived for one small array-loop class (checks done by hand-simplified verification conditions), with automation only outlined.
+    - how much was read: parts read
+    - [source](https://doi.org/10.48550/arxiv.2403.00934); [notes: Semi-Automated Modular Formal Verification of Critical Software (2024)](claude_readings.md)
+    - record id: `ghost-signals-thesis-2024`
 - LinearActris (2024)
     - title: Deadlock-Free Separation Logic: Linearity Yields Progress for Dependent Higher-Order Message Passing
     - what: A linear separation logic (a logic where resources are used exactly once), mechanized in Coq. For message-passing programs, deadlock freedom and leak freedom follow from the logic itself.
@@ -924,6 +987,12 @@
     - how much was read: only abstract or first pages read
     - [source](https://arxiv.org/abs/2512.18842); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
     - record id: `dafnympi-2025`
+- Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Through Formal Verification with TLA+ (2025)
+    - what: Models an Ethereum smart contract for exam records in TLA+ (a specification language for state machines), checks it with the TLC model checker for safety and liveness, and maps the TLA+ constructs to Solidity code. Hoare logic (pre- and postconditions) is applied to key functions.
+    - limits: Full text not obtained (IEEE paywall, no open copy found by Unpaywall or Semantic Scholar); only the abstract was read, so properties checked, state-space size and results are unknown.
+    - how much was read: only abstract or first pages read
+    - [source](https://doi.org/10.1109/conit65521.2025.11167034); [notes: TLA+ for a blockchain exam-management contract (2025)](claude_readings.md)
+    - record id: `fortifying-integrity-traceability-and-2025`
 - Liveness Checking of the HotStuff Protocol Family (2023)
     - what: The paper tests for liveness bugs in HotStuff variants. It does not prove anything. It uses a temperature and lasso-detection approach on the Twins test generator. It lists known liveness violations in PBFT, Casper FFG, early Tendermint and FaB.
     - limits: It tests. It does not prove.
@@ -1021,6 +1090,15 @@
     - how much was read: reading depth not recorded
     - [source](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf); [notes: Consensus: where the assumptions enter the proof](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `paxos-made-simple-2001`
+- ACSLAgent (2026)
+    - title: ACSLAgent: Verifier-Constrained Neural-Symbolic Synthesis of Formal Program Specifications
+    - what: A tool that asks LLMs for C specifications (function contracts, loop invariants, loop variants for termination) and uses the Frama-C WP verifier to reject wrong ones, repairing from verifier feedback.
+    - number: README claims 91.05% verification success (pass@5) across SyGuS, SV-COMP and industrial components
+    - number: README claims termination proofs via synthesized ranking functions upgrade partial to total correctness
+    - limits: No paper could be found: the Zenodo record is an anonymous code archive whose README is the only prose. Numbers are README claims with no method, baselines or tables; the full results are said to be on a Hugging Face space that was not read.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.5281/zenodo.20776587); [notes: ACSLAgent (2026)](claude_readings.md)
+    - record id: `acslagent-2026`
 - Liveness Proofs in Veil, Part I (2026)
     - what: A liveness encoding in Lean 4 for Veil. A one-step consensus toy is proved with the WF1 rule (a standard liveness proof rule) in about 30 lines.
     - number: About 30 lines

@@ -1,7 +1,7 @@
 # 🤖 database, distributed and concurrent systems that were proved
 (authored by agents unless marked 🧑)
 
-224 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+241 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - An Empirical Study of LLM-Generated Specifications for VeriFast (2026)
     - what: The study looks at VeriFast specs that an LLM wrote for C functions, including concurrent ones. The LLM got one of three inputs: natural language, a formal contract, or proof context. The authors labeled the changes the LLM made to code and labeled each contract as equivalent to, stronger than, or weaker than the original. They also repaired a sample of failures by hand.
@@ -23,6 +23,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2511.17330v3); [notes: Agentic Verification of Software Systems (AutoRocq)](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Agentic Verification of Software Systems (AutoRocq)](../distributed_verification_review_b/deep_14_program_agents.md)
     - record id: `autorocq-2026`
+- Beyond Benchmarks / Vostd FVT (2026)
+    - title: Beyond Benchmarks: A Case Study of LLM-Generated Verus Specification Failures on Asterinas Vostd
+    - what: The authors ran three LLMs to write Verus specifications for six real verification targets in Asterinas, a Rust OS kernel, directly inside its repository, then hand-labelled every failed attempt by where it broke: the code did not fit the repository, broke Verus's own rules, modeled the wrong thing, or lacked proof structure. They also checked whether the verifier's error message pointed at the real cause.
+    - number: 6 targets, 156 function-level tasks, 50 Rust files, 7,149 lines
+    - number: 1,587 reviewed failure episodes: Stage I repository integration 442 (28%), Stage II Verus legality 502 (32%), Stage III semantic modeling 420 (26%), Stage IV proof construction 223 (14%)
+    - number: benchmark verify rates 66.0% to 82.6% (Table 3 subtotals); on the 6 targets AutoVerus 22.7-24.5%, VeruSAGE 34.4-41.7%, the authors' workflow 66.3-68.7%
+    - number: visible verifier diagnostic matched the true source stage in 1,152 of 1,587 episodes (72.6%)
+    - limits: One project (Vostd, Entity-Model proof style) and three LLMs; stage labels come from the authors' manual review with no second reviewer reported; the authors' own workflow was built for this study. Covers specification generation, not distributed protocols or liveness, and the paper itself says the three LLMs are not a leaderboard.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.5281/zenodo.19853280); [notes: Beyond Benchmarks, Verus specification failures on Asterinas Vostd (20](claude_readings.md)
+    - record id: `beyond-benchmarks-vostd-fvt-2026`
 - Deductive Verification of Temporal Collisions in Distributed Message Brokers (2026)
     - what: The authors hand-write TLA+ templates for Kafka, RabbitMQ, NATS JetStream and Pulsar consumers. They use TLC to check for duplicate execution after a crash that happens before acknowledgment. Six Docker experiments cross-check the results on real consumers.
     - number: 112 configurations, 16 models, states 16-211,201
@@ -337,6 +348,17 @@
     - how much was read: most of it read
     - [source](https://verse-lab.org/papers/velvet-cav26.pdf); [notes: Loom/Velvet paper and technical boundary](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
     - record id: `velvet-2026`
+- Verified MCP Gateway (2026)
+    - title: Formal Verification of Agentic MLOps Protocols: Model Checking and Liveness Guarantees in Distributed Model Context Protocol Workflows
+    - what: A gateway sits between an LLM agent and its tools (Model Context Protocol, MCP, a standard for LLM tool calls). Before each tool call it checks, against a hand-written state machine, that the call keeps three temporal-logic rules true: no deadlock, every GPU that is handed out is eventually returned, and no two agents write the same network folder at once.
+    - number: 500 multi-agent training workflow traces, chain depth up to 14 tool calls
+    - number: reachable states at depth 14: 196,608 unconstrained vs 672 with guards (99.66% fewer)
+    - number: deadlocks: 54.2% (vanilla MCP), 33.6% (ReAct retry), 18.4% (static DAG check), 0.0% (verified gateway)
+    - number: task completion 99.4% vs 38.4% for vanilla MCP; wasted GPU hours 0.2% vs 41.8%
+    - limits: The state machine, its 12 tools and the three properties are written by hand for one production system; the paper does not say how the 500 traces were produced. The 'liveness' property is enforced by checking one step ahead at run time, so it is a guard, not a proof about all executions; there is no theorem or proof-assistant artifact.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.5281/zenodo.22715686); [notes: Formal Verification of Agentic MLOps Protocols (2026)](claude_readings.md)
+    - record id: `verified-mcp-gateway-2026`
 - Verifying Graceful Degradation in a Distributed Malware-Detection System with SPIN (2026)
     - what: The authors model, in Promela, the endpoint side of a Bitdefender-style malware-detection system that falls back from a primary server to a legacy server to a weaker local scan, and check six properties written in temporal logic (five safety, one liveness) plus deadlock freedom with the SPIN model checker.
     - number: All six properties hold on the core 1 endpoint x 1 scan model: 6,168 states stored, depth 101, under 1 second (Table 2)
@@ -369,6 +391,17 @@
     - how much was read: most of it read
     - [source](https://github.com/anvil-verifier/anvil/tree/sosp26); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Welder: Compositional Liveness Verification of Cluster Control Planes](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: P07. Welder: Compositional Liveness Verification of Cluster Control Pl](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `welder-2026`
+- Wirehead Rocq proofs (2026)
+    - title: Toward Formal Verification of a Lock-Free Distributed Double Buffer Cache
+    - what: A master's thesis that proves, in the Rocq proof assistant, six properties of the swap algorithm in Wirehead, a MongoDB-based cache that lets many data generators feed one training job. The author models each MongoDB call as a plain function and the algorithm as a state machine where one process takes one atomic step at a time.
+    - number: 4 Rocq files, 3,470 lines (thesis text says 3,475 in one place), 144 proofs, 2 Admitted, 3 axioms (all on the user-supplied chunk function)
+    - number: Safety.v 1,339 lines; Liveness.v 1,342 lines; DB.v 513; Algorithm.v 276
+    - number: about 800 lines of Safety.v are auxiliary invariants needed only for liveness
+    - number: 5 of 6 properties fully checked; progress depends on 2 Admitted lemmas
+    - limits: Assumes one MongoDB instance, crash-stop failures only, atomic database calls, and weak fairness of the scheduler; the match between the Rocq model and the Python code is asserted, not proved. Crash transitions and the real timeout-based lock recovery are not modeled.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.57709/138); [notes: Toward Formal Verification of a Lock-Free Distributed Double Buffer Ca](claude_readings.md)
+    - record id: `wirehead-rocq-proofs-2026`
 - A Theorem Prover Based Approach for SAT-Based Model Checking Certification (2025)
     - what: The tools nuXmv and PdTRAV find invariants (facts that stay true in every reachable state) showing a hardware circuit is safe. Python turns the result into PVS theories. Then PVS and Yices check safety on the original model, even after the solver simplified the model first. It comes before the Certifying rlive work.
     - number: 105 distinct problem instances
@@ -441,6 +474,17 @@
     - how much was read: most of it read
     - [source](https://danyangzhuo.com/papers/HotOS25-VerifyFS.pdf); [notes: FSCQ: file-system lemmas are harder than utility lemmas](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `fscq-llm-study-2025`
+- HornStr (2025)
+    - title: HornStr: Invariant Synthesis for Regular Model Checking as Constrained Horn Clauses
+    - what: A solver that finds an inductive invariant (a set of states that contains the start, excludes bad states, and is closed under steps) for systems whose states are strings, by learning a finite automaton and asking string solvers to check each guess. It covers parameterized protocols (any number of processes) and string-rewrite puzzles.
+    - number: 18 benchmark protocols (Table 2); SAT-based learner solved all 18, mostly in under a second; MU puzzle 11.01 s with a 3-state automaton
+    - number: The active learner timed out on 6 of the 18 (Burns, Mux-Array, Eqdist, MU Puzzle, Water-Jug, Dining-Crypt)
+    - number: Z3-noodler solved all 848 non-incremental equivalence queries; cvc5, Z3, Z3-alpha solved 403 to 457
+    - number: Generated more than 30000 string constraints (abstract) or more than 10,000 (Sec 5); the paper gives both numbers
+    - limits: Safety only: liveness is listed as future work. Invariants must be regular languages; transitions are mostly length-preserving, and the paper runs on a laptop with 30 s and 60 s timeouts. The two counts of new constraints disagree.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2505.15959); [notes: ## HornStr (2025)](claude_readings.md)
+    - record id: `hornstr-2025`
 - LiDO-DAG (2025)
     - title: LiDO-DAG: A Framework for Verifying Safety and Liveness of DAG-Based Consensus Protocols
     - what: It separates the DAGs that spread data from the ordering step. In Coq, it proves that partially synchronous Narwhal, Bullshark and Sailfish keep agreement, and that they eventually commit vertices built by synchronous processes. Verification revealed a latency improvement for Sailfish.
@@ -554,6 +598,16 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1145/3763128); [notes: TraceLinking Implementations with Their Verified Designs](../distributed_verification_review_b/deep_15_runtime_foundations.md); [notes: TraceLinking Implementations with Their Verified Designs](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
     - record id: `tracelink-2025`
+- Tunable Automation in Automated Program Verification (2025)
+    - what: Adds a `broadcast` mechanism to Verus so users choose which universally quantified facts the SMT solver may use, per module, function or proof block. It measures how extra facts about Seq/Map/Set/Multiset change proof hints needed and verification time on four Verus projects.
+    - number: 49 Dafny-prelude lemmas added as ambient facts (Seq 25, Map 2, Set 10, MultiSet 12)
+    - number: asserts after minimization: IronKV 268 to 245, Splinter 1158 to 1130, Anvil 343 to 336, CapybaraKV 449 to 415 (2% to 9% fewer)
+    - number: more than half the original asserts were not needed
+    - number: 98.2% of IronKV functions verify within 2x of original time; worst slowdowns 3x to 19x
+    - limits: Assert count is called a very rough proxy for automation; the minimizer is a linear scan, not optimal, and ignores lemma calls. all_triggers did not scale to the other projects (many verification failures).
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2512.03926); [notes: Tunable Automation (2025)](claude_readings.md)
+    - record id: `tunable-automation-in-automated-2025`
 - Veil (2025)
     - title: Veil: A Framework for Automated and Interactive Verification of Transition Systems
     - what: It embeds distributed transition systems in Lean. It sends first-order proof obligations to SMT solvers and leaves the rest as interactive Lean goals.
@@ -616,6 +670,24 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1145/3658644.3690355); [notes: Bythos: composition with TLA proof rules in Coq](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `bythos-2024`
+- CSP retrospective (2024)
+    - title: The Challenges and Triumphs of CSP Based Formal Verification
+    - what: Roscoe looks back on CSP, a notation for describing processes that run in parallel and talk to each other, and its model checker FDR. He covers a two-player-game encoding, a primary/secondary consensus handover protocol for blockchains with malicious nodes, a way to check deadlock freedom from the sum of component state spaces, and the Coco tool used by ASML.
+    - number: Coco Platform is in use at ASML for photolithography machine software (as stated by the author, no figures)
+    - number: the author's naive CSP blockchain model could not hold a realistic number of blocks, agents or keys (state explosion)
+    - number: token-invariant deadlock check on a 3-component example: state space of 6 component states, one nontrivial invariant (t4) proves deadlock freedom
+    - limits: Reflective paper written for CSP experts: no benchmarks or timings are given for the handover protocol or the local checking idea, and both are models checked in FDR, not code. The author lists proving the Bully algorithm and a distributed database protocol for all N as still-open challenges.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.29007/bbq9); [notes: The Challenges and Triumphs of CSP Based Formal Verification (2024)](claude_readings.md)
+    - record id: `csp-retrospective-2024`
+- Distributed Locking as a Data Type (2024)
+    - what: A work-in-progress report that writes two mutual-exclusion protocols (token passing and majority voting) as replicated data types in Scala. A replicated data type is a value with a merge function so replicas converge without messages. It gives an informal induction proof for the token protocol.
+    - number: two protocols, token and voting; a Raft-inspired protocol is mentioned as implemented
+    - number: no experiments or proof-assistant proof
+    - limits: Safety needs only message integrity and progress needs at-least-once delivery. The token protocol has no progress if the owner fails permanently; the voting protocol assumes a fixed set of voters. Verification inside the LoRe language is future work.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2405.15578); [notes: Distributed Locking as a Data Type (2024)](claude_readings.md)
+    - record id: `distributed-locking-as-a-2024`
 - IronSpec (2024)
     - title: IronSpec: Increasing the Reliability of Formal Specifications
     - what: Tests whether a Dafny specification matches what developers expect. It uses three methods: checks with unconstrained inputs and outputs, small proofs of cases that should or should not be allowed, and mutations of the specification.
@@ -734,6 +806,17 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1145/3586037); [notes: S31](../distributed_verification_review_b/deep_9_formulation_methods.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Verus: Verifying Rust Programs using Linear Ghost Types](../distributed_verification_review_b/deep_1_verified_implementations.md)
     - record id: `verus-oopsla-2023-2023`
+- ZooKeeper TLA+ specs (2023)
+    - title: Leveraging TLA+ Specifications to Improve the Reliability of the ZooKeeper Coordination Service
+    - what: Writes three levels of TLA+ models of ZooKeeper (its Zab agreement protocol, a code-level system model, and a test model), checks them with the TLC model checker, and replays model traces on the real Java code to confirm the model matches and to reproduce two deep bugs.
+    - number: Protocol model: 17 configurations checked, up to 1.8 billion states; largest finished run 245,606,642 states in 3 h 41 min; no violation of the correctness conditions
+    - number: Two violations found in the first draft of the protocol model (a misused quorum; a leader's response to a recovering follower)
+    - number: ZK-2845 reproduced in 2 s (simulation, trace length 23) or 12 s (model checking, length 10); ZK-3911 in 1 min 29 s (length 25) or 42 s (length 14)
+    - number: System model: 6 configurations, all still running at the 24 h limit, no violation
+    - limits: Safety only: "we mainly focus on safety properties and do not consider liveness properties". Checks small configurations (at most 5 servers, few transactions) and trusts the small-scope hypothesis; leader election in Zab is replaced by an assumed oracle; model-to-code match is checked by replaying traces, not proved.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2302.02703); [notes: ## ZooKeeper TLA+ specifications (2023)](claude_readings.md)
+    - record id: `zookeeper-tla-specs-2023`
 - Hemiola (2022)
     - title: Hemiola: A DSL and Verification Tools to Guide Design and Proof of Hierarchical Cache-Coherence Protocols
     - what: A Coq-based language whose templates manage locking, so that invariant proofs consider one transaction at a time. It proves serializability and coherence of MSI/MESI cache models and compiles to Kami hardware.
@@ -925,6 +1008,16 @@
     - how much was read: parts read
     - [source](https://civl-verifier.github.io/papers/esop2026.pdf); [notes: Civl and inductive sequentialization](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: S17](../distributed_verification_review_b/deep_9_formulation_methods.md)
     - record id: `civl-reduction-esop-2026-2026`
+- Corten (2026)
+    - title: Corten - Foundational Verification of Rust Programs
+    - what: A framework in the Rocq proof assistant for proving Rust programs correct with separation logic (a logic for reasoning about who owns which memory). It defines Rust's behavior on the compiler's typed high-level IR so proof goals look like Rust source, and adds tactics that follow the code's shape.
+    - number: Automated proofs are about 2x to 4x shorter than proofs done directly against the semantics, on a synthetic test suite
+    - number: Buddy allocator case study: about 300 lines of Rust, about 2800 lines of Rocq (about 250 spec, about 800 general Rust reasoning, about 1400 free-list lemmas)
+    - number: Specifications about 2x the size of the code; automated proofs 2x to 4x the Rust size
+    - limits: Soundness of the semantic axioms is proved only for the pure and heap-statement fragments so far; the rest is itemized in an appendix. Specs of Rust core functions used by the case study are not proved. Single-threaded in practice (concurrency inherited from Iris but not yet exercised), traits only partly handled, no labeled break/continue. Allocator spec covers memory safety, not allocation quality.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2609.04372); [notes: Corten (2026)](claude_readings.md)
+    - record id: `corten-2026`
 - Formal Verification of an Out-of-Order Multiprocessor against an In-Order Weak-Memory ISA (2026)
     - what: This is a 64k-line Rocq proof that a hardware processor implements its spec (a refinement proof). Agents did most of the proof work. Humans design the invariants. The agent proves them, and reports counterexamples when a goal cannot be proved.
     - number: Core refinement one week; system inclusion three weeks
@@ -1136,6 +1229,16 @@
     - how much was read: parts read
     - [source](https://cpv.au.dk/pdfs/2024-fairneris.pdf); [notes: papers and boundaries](../distributed_verification_review_b/review_b_liveness_20261007.md)
     - record id: `fairneris-2024-2`
+- Ghost signals thesis (2024)
+    - title: Semi-Automated Modular Formal Verification of Critical Software: Liveness and Completeness Thresholds
+    - what: Two results. (1) A separation logic (a logic for reasoning about who owns which memory) that proves busy-wait loops end, using proof-only 'ghost signals' and promises to set them, with a tool in VeriFast. (2) A first notion of 'completeness thresholds' that turns bounded memory-safety checks of array loops into full proofs.
+    - number: bounded FIFO producer-consumer: 160 annotation lines for 37 lines of C (435%), verifies in 0.08 s
+    - number: CLH lock: 343 annotation lines for 49 lines of C (700%), verifies in 0.1 s
+    - number: soundness proofs and a detailed case study with unboundedly many producers and consumers are in the appendices
+    - limits: Termination only under fair scheduling; Chapter 3 logic has no higher-order features and the tool trusts the logic as axioms in a header; ghost-signal obligations cannot be handed to arbitrary threads (cohort locks unsupported). Completeness thresholds are hand-derived for one small array-loop class (checks done by hand-simplified verification conditions), with automation only outlined.
+    - how much was read: parts read
+    - [source](https://doi.org/10.48550/arxiv.2403.00934); [notes: Semi-Automated Modular Formal Verification of Critical Software (2024)](claude_readings.md)
+    - record id: `ghost-signals-thesis-2024`
 - Kondo (2024)
     - title: Inductive Invariants That Spark Joy: Using Invariant Taxonomies to Streamline Distributed Protocol Proofs
     - what: Kondo derives inductive invariants for Dafny protocol proofs from the protocol's structure. This reduces the invariants the user must write.
@@ -1147,6 +1250,17 @@
     - how much was read: parts read
     - [source](https://www.usenix.org/conference/osdi24/presentation/zhang-tony); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
     - record id: `kondo-2024`
+- RefinedRust (2024)
+    - title: RefinedRust: A Type System for High-Assurance Verification of Rust Programs
+    - what: A tool that checks Rust code, including unsafe code that uses raw pointers, against hand-written specs and emits a proof that the Coq proof assistant checks, so the tool itself need not be trusted. Demonstrated on a simplified Vec (growable array).
+    - number: Vec and RawVec APIs: 120 lines of code, 76 lines of annotations, about 1200 lines of generated Coq
+    - number: verification takes about 6 minutes wall time (22 minutes CPU) on an Apple M1 Max
+    - number: for Vec::pop: about 3,000 automatic steps, 100 side conditions, all but five solved automatically, about 20 lines of manual Coq
+    - number: type system formalization: about 21k lines of specification and 14k lines of proof; about 80 lines of manual Coq for Vec's invariant
+    - limits: Only sequential code: no concurrency, traits, closures, recursive types or unsized types. Trusts the Rust model (Radium) and the Rust-to-Coq frontend. The Vec code is simplified from the standard library.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3656422); [notes: RefinedRust (2024)](claude_readings.md)
+    - record id: `refinedrust-2024`
 - SandTable (2024)
     - title: SandTable: Scalable Distributed System Model Checking with Specification-Level State Exploration
     - what: It model-checks a TLA+ spec quickly, then replays the bug traces in the code. A conformance checker replays model traces to find places where the spec and code differ.
@@ -1409,6 +1523,17 @@
     - how much was read: parts read
     - [source](https://arxiv.org/abs/1803.05069); [notes: HotStuff](../distributed_verification_review_b/review_b_consensus_20261007.md); [notes: Consensus: where the assumptions enter the proof](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `hotstuff-2019`
+- Pretend Synchrony / Goolong (2019)
+    - title: Pretend synchrony: synchronous verification of asynchronous distributed programs
+    - what: Verifies Go distributed programs by automatically rewriting them into an equivalent synchronous program (messages become assignments), then checking ordinary verification conditions with the Z3 solver. Four case studies: two-phase commit, Raft leader election, single-decree Paxos, Multi-Paxos key-value store.
+    - number: manual invariant annotations reduced by 6x versus Dafny
+    - number: check time 1.73 s total vs 1455.84 s in Dafny for the three protocols
+    - number: Paxos 504 lines of Go, 14 loop-invariant lines, 1.51 s; Dafny 72 invariant lines, 1141.35 s
+    - number: Multi-Paxos KV: 847 Go lines, 1.64 s check, 118.5 req/ms, within 1.5-3x of unverified EPaxos code
+    - limits: Safety only, no liveness. Needs structured loops, symmetric process ids, typed channels, pairwise communication and round non-interference; rules out Multi-Paxos stable-leader optimization, Stoppable Paxos and ring topologies such as Chord.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3290372); [notes: Pretend Synchrony (2019)](claude_readings.md)
+    - record id: `pretend-synchrony-goolong-2019`
 - Disel (2018)
     - title: Programming and Proving with Distributed Protocols
     - what: Proves distributed components and their clients in Coq against protocol descriptions, and composes their contracts. A protocol can be strengthened for one client without redoing the component proofs.
@@ -1628,6 +1753,14 @@
     - how much was read: only abstract or first pages read
     - [source](https://arxiv.org/abs/2604.03539); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`
     - record id: `cb-ver-2026`
+- Deterministic Execution and Margin Enforcement in Financial Transaction Systems: Empirical Evaluation with Formal Safety Verification (2026)
+    - what: Proposes an order-handling design for trading in which every balance change is appended to a ledger and margin is reserved explicitly, models the accounting core in TLA+, and compares it with two common designs under concurrent load.
+    - number: Median order latency 9.39 ms, p99 33.70 ms
+    - number: Optimistic locking accepted $609,300 of orders against $100,000 of capital (509.3% over-commitment); the append-only ledger had zero false acceptances
+    - limits: Only the abstract was available (the TechRxiv PDF page returned an HTML page, not the paper); state-space size, invariant text, model effort and proof size are unknown. The abstract says the property holds 'within the verified state space', so it is a bounded model check, not a proof.
+    - how much was read: only abstract or first pages read
+    - [source](https://doi.org/10.36227/techrxiv.176827209.92538217/v1); [notes: ## Deterministic margin enforcement with TLA+ (2026)](claude_readings.md)
+    - record id: `deterministic-execution-and-margin-2026`
 - Generalized DBLog (2026)
     - title: Generalized DBLog: A Verified Contract for Interleaving Copied Rows with a Change Log
     - what: This is a verified contract for interleaving table copies with a change log. It covers Netflix DBLog, Debezium and Flink CDC.
@@ -1695,6 +1828,12 @@
     - how much was read: only abstract or first pages read
     - [source](https://arxiv.org/abs/2512.18842); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
     - record id: `dafnympi-2025`
+- Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Through Formal Verification with TLA+ (2025)
+    - what: Models an Ethereum smart contract for exam records in TLA+ (a specification language for state machines), checks it with the TLC model checker for safety and liveness, and maps the TLA+ constructs to Solidity code. Hoare logic (pre- and postconditions) is applied to key functions.
+    - limits: Full text not obtained (IEEE paywall, no open copy found by Unpaywall or Semantic Scholar); only the abstract was read, so properties checked, state-space size and results are unknown.
+    - how much was read: only abstract or first pages read
+    - [source](https://doi.org/10.1109/conit65521.2025.11167034); [notes: TLA+ for a blockchain exam-management contract (2025)](claude_readings.md)
+    - record id: `fortifying-integrity-traceability-and-2025`
 - Gillian-Rust (2025)
     - title: A Hybrid Approach to Semi-automated Rust Verification
     - what: Gillian-Rust verifies safe Rust automatically and unsafe Rust semi-automatically, on the Gillian platform. It is linked with Creusot. It verifies real Rust standard library code with minor annotations.
@@ -1940,6 +2079,12 @@
     - how much was read: not read; title and metadata only
     - [source](https://pldi26.sigplan.org/details/page-2026-papers/5/Testing-LLM-Generated-Distributed-Protocol-Code); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
     - record id: `testing-llm-generated-distributed-2026`
+- Verifier-supervised fine-tuning for Rust/Verus: vericoding dataset (restricted) (2026)
+    - what: A Zenodo record for a training dataset of Rust/Verus verified-code tasks used to fine-tune a code model with the verifier as the supervision signal. Only the record's metadata could be read: the files are under embargo until 2026-12-31 and the record has no listed files.
+    - limits: Blocked: no full text exists and the data is embargoed ('access_right': 'embargoed', embargo_date 2026-12-31) with the author listed as 'Anonymous' (double-blind review). Everything here comes from the record's description and keywords; content, size, and results are unknown.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.5281/zenodo.21523433); [notes: Verifier-supervised fine-tuning for Rust/Verus dataset (2026)](claude_readings.md)
+    - record id: `verifier-supervised-fine-tuning-2026`
 - AWS correctness practices (2025)
     - title: Systems Correctness Practices at Amazon Web Services
     - what: The paper was not read. Search summaries say it covers P, model checking, fuzzing, property-based testing, fault injection and simulation, with formal specs used as test oracles (the source of expected answers).
@@ -1947,6 +2092,13 @@
     - how much was read: not read; title and metadata only
     - [source](https://queue.acm.org/doi/10.1145/3712057); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: P02. Systems Correctness Practices at Amazon Web Services](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `aws-correctness-practices-2025`
+- Blockchain verification monograph (2025)
+    - title: Security analysis and formal verification on blockchain and its applications
+    - what: Per its abstract, a monograph that sorts real blockchain correctness and security flaws, and surveys the models, specifications and techniques used to formally verify blockchains.
+    - limits: Full text not obtained: publisher PDF is behind a bot-check page (not worked around), no open copy found. Only the publisher abstract from Crossref was read, so nothing about its content beyond the abstract is recorded.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1561/3300000044); [notes: Security analysis and formal verification on blockchain and its applic](claude_readings.md)
+    - record id: `blockchain-verification-monograph-2025`
 - Practical Verification of Distributed Systems: Streamlining Safety Proofs Using Invariant Taxonomies, and Verifying Latency Properties Using Symbolic Latency (2025)
     - what: PhD thesis on proving distributed protocols safe by sorting the needed invariants into types, and on extending verification to end-to-end latency. Full text could not be fetched; this record rests on a search-engine summary of the library page.
     - limits: Full text blocked: the Deep Blue library (deepblue.lib.umich.edu) returned a Cloudflare 'Just a moment' challenge to command-line fetches, and I did not try to get around it. Nothing here comes from reading the thesis.
@@ -1966,6 +2118,12 @@
     - how much was read: not read; title and metadata only
     - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
     - record id: `towards-mechanised-consensus-in-2024`
+- Counterexample Driven Quantifier Instantiations with Applications to Distributed Protocols (2023)
+    - what: An interactive method in Ivy that stops SMT solvers from diverging on quantifier-heavy proofs of distributed protocols, by abstracting functions as relations and refining with counterexamples.
+    - limits: Full text not read: the ACM PDF sits behind a bot check, and no open copy was found. Facts here come from the input abstract and a web-search summary.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3622864); [notes: Counterexample Driven Quantifier Instantiations (2023)](claude_readings.md)
+    - record id: `counterexample-driven-quantifier-instantiations-2023`
 - Performal: Formal Verification of Latency Properties for Distributed Systems (2023)
     - what: This is a search lead from OpenAlex that nobody has read. The notes give only its title, year and DOI.
     - limits: The notes screened it as unreachable. The DOI PDF request returned paywall HTML, and no author copy was exposed. The notes mark it as a priority lead.

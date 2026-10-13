@@ -1,7 +1,7 @@
 # 🤖 database, background theory and logic
 (authored by agents unless marked 🧑)
 
-154 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+165 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - Certifying rlive (2026)
     - title: Certifying rlive: A New Proof Strategy for Liveness Model Checking
@@ -70,6 +70,16 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1007/978-3-032-22749-2_18); [notes: Verifying First-Order Temporal Properties of Infinite-State Systems vi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
     - record id: `timers-2026`
+- Transition Invariants Revisited: Termination Witnesses and Their Validation (2026)
+    - what: Extends the standard machine-readable proof format that program verifiers hand to each other so it can carry termination proofs. The proof is a transition invariant: a relation between any earlier and later state of a run that must decrease in a well-founded way. Three checkers re-validate such proofs independently of the tool that made them.
+    - number: Evaluated on all SV-Benchmarks programs expected to terminate, 900 s CPU and 15 GB per run
+    - number: Witnesses validated by at least one validator: CPAchecker 366 of 422 (87%), CPAchecker-TransVer 192 of 200 (96%), UAutomizer-TransVer 375 of 389 (96%), Goblint-TransVer 176 of 286 (62%)
+    - number: Validators solved about 40 programs that CPAchecker's own verification mode could not, using other tools' witnesses
+    - number: Validation often faster than verification (Wilcoxon p = 2.1e-10 and 1.1e-13 for the two CPAchecker validators on ranking-function witnesses)
+    - limits: Termination of sequential C programs only; the authors say "We do not consider other reasons for non-termination, such as deadlocks." One reduction route needs finite state spaces and TransVer has limited support for arrays and structs. Witnesses with many invariants (Goblint) often could not be validated within limits. Not about fairness or liveness of concurrent or distributed systems.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1007/978-3-032-32537-2_2); [notes: Transition invariants as termination witnesses (2026)](claude_readings.md)
+    - record id: `transition-invariants-revisited-termination-2026`
 - Velvet (2026)
     - title: Velvet: A Foundational Multi-Modal Verifier for Imperative Programs in Lean
     - what: Embeds imperative programs and contracts in Lean. Verification conditions are generated automatically. When automation fails, it leaves ordinary Lean goals, and humans or AI tactics finish them.
@@ -123,6 +133,17 @@
     - how much was read: most of it read
     - [source](https://zenodo.org/records/14927742); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: Iris: Trillium, Lilo, Lawyer](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lilo-2025`
+- Neural model checking with invariants (2025)
+    - title: Let a Neural Network Be Your Invariant
+    - what: For hardware designs, one small neural network is trained to be both an inductive invariant (a set of states that contains all reachable states and is closed under steps; this proves safety) and a ranking function (a number that drops each time something bad could recur; this proves liveness). A solver then checks the network exactly, so a yes answer is a real proof. Training uses a constraint solver (MILP) rather than gradient descent.
+    - number: 634-task benchmark: 11 SystemVerilog designs; 206 safety, 219 liveness, 209 safety+liveness tasks
+    - number: solved: 190/206 safety (92%), 192/219 liveness (88%), 172/209 safety+liveness (82%)
+    - number: nuXmv solved 82% of liveness and 74% of safety+liveness tasks; rIC3 50% and 61%; ABC 36% and 46%; prior neural method NMC'24 79% of liveness
+    - number: pure liveness: faster than the best other tool on 66% of tasks, 10x faster on 46%
+    - limits: Only finite-state hardware-style systems (no arrays or strings of parametric length, no procedure calls or dynamic data); the benchmark is the authors' own, built from textbook-level designs, so results may not carry to other workloads; relies on sign-activation feed-forward networks.
+    - how much was read: most of it read
+    - [source](https://research.birmingham.ac.uk/en/publications/fe64a278-7ad4-495e-9751-663b05f077c6); [notes: Let a Neural Network Be Your Invariant (2025)](claude_readings.md)
+    - record id: `neural-model-checking-with-invariants-2025`
 - Nola (2025)
     - title: Nola: Later-Free Ghost State for Verifying Termination in Iris
     - what: A logic in Rocq and Iris, with later-free ghost state (proof-only state without step-indexing), for proving termination and functional correctness of core-Rust programs. The prototype is RustHalt. Examples include Ackermann variants and traversal of a mutable list.
@@ -142,6 +163,27 @@
     - how much was read: most of it read
     - [source](https://research.ralfj.de/papers/2025-popl-itree-program-logic.pdf); [notes: Program Logics à la Carte](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Program Logics à la Carte](../distributed_verification_review_b/deep_13_related_formulation.md); [notes: Concrete problem records](../distributed_verification_review_b/deep_13_related_formulation.md)
     - record id: `program-logics-a-la-2025`
+- Prover Agent (2025)
+    - title: Prover agent: An agent-based framework for formal mathematical proofs
+    - what: A loop around three parts: a general reasoning LLM that writes an informal proof, a small prover model that turns it into Lean code, and Lean that checks it and returns errors. If the direct attempt fails, the reasoner proposes helper lemmas (special cases, facts from the assumptions), each is proved separately, and the proved lemmas are fed back for a final proof. No training; it is a prompt-and-control pipeline.
+    - number: MiniF2F-test: 88.1% pass rate with a sample budget of 260 per problem
+    - number: PutnamBench: 25 of 659 problems solved with budget 110 (best prior small-model entry in its table: 22 at 128 samples)
+    - number: Goedel-Prover-V2-8B alone: 85.2% at 256 samples on MiniF2F
+    - number: ablation: starting refinement from 1 or 10 first drafts is much worse than from the best of 50 drafts (fewest Lean errors)
+    - limits: Mathematics only; formal statements come from humans. 'Small model' claims compare only against models of similar size. The theory (Sec 4, App C) rests on assumptions such as independent subgoal success and that given lemmas do not hurt the model. Extension to software verification is stated as future work, not tested.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2506.19923); [notes: Prover Agent (2025)](claude_readings.md)
+    - record id: `prover-agent-2025`
+- Tunable Automation in Automated Program Verification (2025)
+    - what: Adds a `broadcast` mechanism to Verus so users choose which universally quantified facts the SMT solver may use, per module, function or proof block. It measures how extra facts about Seq/Map/Set/Multiset change proof hints needed and verification time on four Verus projects.
+    - number: 49 Dafny-prelude lemmas added as ambient facts (Seq 25, Map 2, Set 10, MultiSet 12)
+    - number: asserts after minimization: IronKV 268 to 245, Splinter 1158 to 1130, Anvil 343 to 336, CapybaraKV 449 to 415 (2% to 9% fewer)
+    - number: more than half the original asserts were not needed
+    - number: 98.2% of IronKV functions verify within 2x of original time; worst slowdowns 3x to 19x
+    - limits: Assert count is called a very rough proxy for automation; the minimizer is a linear scan, not optimal, and ignores lemma calls. all_triggers did not scale to the other projects (many verification failures).
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2512.03926); [notes: Tunable Automation (2025)](claude_readings.md)
+    - record id: `tunable-automation-in-automated-2025`
 - Veil (2025)
     - title: Veil: A Framework for Automated and Interactive Verification of Transition Systems
     - what: It embeds distributed transition systems in Lean. It sends first-order proof obligations to SMT solvers and leaves the rest as interactive Lean goals.
@@ -153,6 +195,16 @@
     - how much was read: most of it read
     - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
     - record id: `veil-2025`
+- CSP retrospective (2024)
+    - title: The Challenges and Triumphs of CSP Based Formal Verification
+    - what: Roscoe looks back on CSP, a notation for describing processes that run in parallel and talk to each other, and its model checker FDR. He covers a two-player-game encoding, a primary/secondary consensus handover protocol for blockchains with malicious nodes, a way to check deadlock freedom from the sum of component state spaces, and the Coco tool used by ASML.
+    - number: Coco Platform is in use at ASML for photolithography machine software (as stated by the author, no figures)
+    - number: the author's naive CSP blockchain model could not hold a realistic number of blocks, agents or keys (state explosion)
+    - number: token-invariant deadlock check on a 3-component example: state space of 6 component states, one nontrivial invariant (t4) proves deadlock freedom
+    - limits: Reflective paper written for CSP experts: no benchmarks or timings are given for the handover protocol or the local checking idea, and both are models checked in FDR, not code. The author lists proving the Bully algorithm and a distributed database protocol for all N as still-open challenges.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.29007/bbq9); [notes: The Challenges and Triumphs of CSP Based Formal Verification (2024)](claude_readings.md)
+    - record id: `csp-retrospective-2024`
 - Trillium (2024)
     - title: Trillium: Higher-Order Concurrent and Distributed Separation Logic for Intensional Refinement
     - what: Trillium proves that full program executions refine a simpler model. Fairis preserves progress under fair scheduling. It uses fuel to bound stuttering (steps that change nothing). The extended Aneris shows that implementations follow TLA+ models.
@@ -363,6 +415,16 @@
     - how much was read: parts read
     - [source](https://civl-verifier.github.io/papers/esop2026.pdf); [notes: Civl and inductive sequentialization](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: S17](../distributed_verification_review_b/deep_9_formulation_methods.md)
     - record id: `civl-reduction-esop-2026-2026`
+- Corten (2026)
+    - title: Corten - Foundational Verification of Rust Programs
+    - what: A framework in the Rocq proof assistant for proving Rust programs correct with separation logic (a logic for reasoning about who owns which memory). It defines Rust's behavior on the compiler's typed high-level IR so proof goals look like Rust source, and adds tactics that follow the code's shape.
+    - number: Automated proofs are about 2x to 4x shorter than proofs done directly against the semantics, on a synthetic test suite
+    - number: Buddy allocator case study: about 300 lines of Rust, about 2800 lines of Rocq (about 250 spec, about 800 general Rust reasoning, about 1400 free-list lemmas)
+    - number: Specifications about 2x the size of the code; automated proofs 2x to 4x the Rust size
+    - limits: Soundness of the semantic axioms is proved only for the pure and heap-statement fragments so far; the rest is itemized in an appendix. Specs of Rust core functions used by the case study are not proved. Single-threaded in practice (concurrency inherited from Iris but not yet exercised), traits only partly handled, no labeled break/continue. Allocator spec covers memory safety, not allocation quality.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2609.04372); [notes: Corten (2026)](claude_readings.md)
+    - record id: `corten-2026`
 - Isabelle tutorial (2026)
     - title: Programming and Proving in Isabelle/HOL
     - what: A tutorial on inductive definitions, recursive functions, automation and structured proofs in Isabelle/HOL.
@@ -465,6 +527,16 @@
     - how much was read: parts read
     - [source](https://arxiv.org/abs/2505.14929); [notes: ## Lean-auto (2025)](claude_readings.md)
     - record id: `lean-auto-2025`
+- Regular Model Checking Upside-Down: An Invariant-Based Approach (2025)
+    - what: For systems whose states are words and whose steps a transducer describes, it computes the intersection of all inductive invariants of bounded complexity (CNF formulas with at most b clauses), as an automaton, and checks whether it contains an unsafe state. It tests how small b can be on 22 classic parameterized protocols.
+    - number: intersection of all b-invariants is regular; emptiness check against unsafe states is in EXPSPACE for every b and PSPACE-complete for b=1
+    - number: b=1 proves 46 of 59 properties, using MONA
+    - number: dining philosophers with plain free/busy forks needs b=3
+    - number: Berkeley and Dragon cache protocols need b=2 for the remaining assertions
+    - limits: Length-preserving transducers and word configurations only; the experiments are said not to be a ready tool and b=2 could not be computed directly with MONA. Safety properties only.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2205.03060); [notes: Regular Model Checking Upside-Down (2025)](claude_readings.md)
+    - record id: `regular-model-checking-upside-2025`
 - Ticl (2025)
     - title: Structural Temporal Logic for Mechanized Program Verification
     - what: A temporal logic over program structure, in Rocq. Liveness proofs follow loops and sequencing the way Hoare logic does, using invariants and well-founded variants (quantities that cannot decrease forever).
@@ -481,6 +553,16 @@
     - how much was read: parts read
     - [source](https://github.com/logsem/clutch); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`
     - record id: `caliper-2024`
+- Ghost signals thesis (2024)
+    - title: Semi-Automated Modular Formal Verification of Critical Software: Liveness and Completeness Thresholds
+    - what: Two results. (1) A separation logic (a logic for reasoning about who owns which memory) that proves busy-wait loops end, using proof-only 'ghost signals' and promises to set them, with a tool in VeriFast. (2) A first notion of 'completeness thresholds' that turns bounded memory-safety checks of array loops into full proofs.
+    - number: bounded FIFO producer-consumer: 160 annotation lines for 37 lines of C (435%), verifies in 0.08 s
+    - number: CLH lock: 343 annotation lines for 49 lines of C (700%), verifies in 0.1 s
+    - number: soundness proofs and a detailed case study with unboundedly many producers and consumers are in the appendices
+    - limits: Termination only under fair scheduling; Chapter 3 logic has no higher-order features and the tool trusts the logic as axioms in a header; ghost-signal obligations cannot be handed to arbitrary threads (cohort locks unsupported). Completeness thresholds are hand-derived for one small array-loop class (checks done by hand-simplified verification conditions), with automation only outlined.
+    - how much was read: parts read
+    - [source](https://doi.org/10.48550/arxiv.2403.00934); [notes: Semi-Automated Modular Formal Verification of Critical Software (2024)](claude_readings.md)
+    - record id: `ghost-signals-thesis-2024`
 - LinearActris (2024)
     - title: Deadlock-Free Separation Logic: Linearity Yields Progress for Dependent Higher-Order Message Passing
     - what: A linear separation logic (a logic where resources are used exactly once), mechanized in Coq. For message-passing programs, deadlock freedom and leak freedom follow from the logic itself.
@@ -497,6 +579,17 @@
     - how much was read: parts read
     - [source](https://github.com/wilcoxjay/mypyvy); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: FOL-IC3 and mypyvy](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `mypyvy-2024`
+- RefinedRust (2024)
+    - title: RefinedRust: A Type System for High-Assurance Verification of Rust Programs
+    - what: A tool that checks Rust code, including unsafe code that uses raw pointers, against hand-written specs and emits a proof that the Coq proof assistant checks, so the tool itself need not be trusted. Demonstrated on a simplified Vec (growable array).
+    - number: Vec and RawVec APIs: 120 lines of code, 76 lines of annotations, about 1200 lines of generated Coq
+    - number: verification takes about 6 minutes wall time (22 minutes CPU) on an Apple M1 Max
+    - number: for Vec::pop: about 3,000 automatic steps, 100 side conditions, all but five solved automatically, about 20 lines of manual Coq
+    - number: type system formalization: about 21k lines of specification and 14k lines of proof; about 80 lines of manual Coq for Vec's invariant
+    - limits: Only sequential code: no concurrency, traits, closures, recursive types or unsized types. Trusts the Rust model (Radium) and the Rust-to-Coq frontend. The Vec code is simplified from the standard library.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3656422); [notes: RefinedRust (2024)](claude_readings.md)
+    - record id: `refinedrust-2024`
 - Trillium / Fairis (2024)
     - title: Trillium and Fairis
     - what: A program-logic framework in Coq and Iris. Fairis proves liveness of concurrent programs under fair scheduling, by refinement of a model. The Aneris instantiation proves that distributed implementations refine TLA+ models (two-phase commit, single-decree Paxos and a CRDT).
@@ -1112,6 +1205,13 @@
     - how much was read: not read; title and metadata only
     - [notes: ## LeanMachines (2026): metadata only](claude_readings.md)
     - record id: `leanmachines-2026`
+- Blockchain verification monograph (2025)
+    - title: Security analysis and formal verification on blockchain and its applications
+    - what: Per its abstract, a monograph that sorts real blockchain correctness and security flaws, and surveys the models, specifications and techniques used to formally verify blockchains.
+    - limits: Full text not obtained: publisher PDF is behind a bot-check page (not worked around), no open copy found. Only the publisher abstract from Crossref was read, so nothing about its content beyond the abstract is recorded.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1561/3300000044); [notes: Security analysis and formal verification on blockchain and its applic](claude_readings.md)
+    - record id: `blockchain-verification-monograph-2025`
 - Cazamariposas (2025)
     - title: Cazamariposas: Automated instability debugging in SMT-based program verification
     - what: The paper automates debugging of verification instability, where proofs pass or fail unpredictably. It targets SMT-based verifiers (verifiers that use a solver) such as Dafny and F*.
@@ -1137,6 +1237,12 @@
     - how much was read: not read; title and metadata only
     - [source](https://rdivyanshu.github.io/posts/2024/01/tla-logic-in-dafny.html); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
     - record id: `tla-logic-in-dafny-2024`
+- Counterexample Driven Quantifier Instantiations with Applications to Distributed Protocols (2023)
+    - what: An interactive method in Ivy that stops SMT solvers from diverging on quantifier-heavy proofs of distributed protocols, by abstracting functions as relations and refining with counterexamples.
+    - limits: Full text not read: the ACM PDF sits behind a bot check, and no open copy was found. Facts here come from the input abstract and a web-search summary.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3622864); [notes: Counterexample Driven Quantifier Instantiations (2023)](claude_readings.md)
+    - record id: `counterexample-driven-quantifier-instantiations-2023`
 - KEVM (2018)
     - title: KEVM: A Complete Formal Semantics of the Ethereum Virtual Machine
     - what: A formal semantics of the EVM in the K framework. The notes inspected only the repository README. It names concrete execution on LLVM and symbolic execution in Haskell.

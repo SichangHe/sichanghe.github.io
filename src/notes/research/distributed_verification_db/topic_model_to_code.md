@@ -1,7 +1,7 @@
 # 🤖 database, connecting an abstract model to running code
 (authored by agents unless marked 🧑)
 
-125 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+131 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - Can Code Specify a System Precisely Enough to Formally Verify It? (2026)
     - what: Audits a deployed restaurant point-of-sale payment workflow (register, payment terminal, Finix backend). The authors built TLA+ models with Claude agents under their supervision. They also compared LLMs generating specifications from the TypeScript source in three forms: library-based JavaScript, a bare JavaScript next-function, and TLA+.
@@ -44,6 +44,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2606.02019); [notes: Federated Formal Verification: Cross-Backend Citation, Cross-Axis Conv](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
     - record id: `federated-fv-2026`
+- HarnessLLM (2026)
+    - title: HarnessLLM: Rust Verification Harness Generation with Large Language Models
+    - what: An LLM workflow turns a Rust project's existing unit tests into harnesses (small driver programs with symbolic inputs) for the Kani bounded model checker. It finds the call patterns in tests, builds symbolic arguments for the project's own types by following constructors, and repairs compile errors without letting the LLM invent types.
+    - number: 9 Rust crates, 494 tests, 6651 lines of test code: 294 calling scenarios extracted, 94.66% preserved the original behavior
+    - number: 294 of 294 harnesses compile in Kani within 10 attempts; 97.3% within 3 attempts; about 1.4 generations per harness
+    - number: Average 145 s and $0.03 per harness (GPT-4.1)
+    - number: Kani Autoharness baseline produced harnesses for 41% of the same scenarios
+    - limits: Needs a codebase with good tests; sparse tests lower scenario coverage. 'Success' means the harness compiles in Kani, not that it checks anything beyond memory safety and panics. Bounded checking; the LLM picks the bounds (slice lengths, unwind). Only functions visible in source (macro-generated ones are missed).
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2607.22161v1); [notes: HarnessLLM (2026)](claude_readings.md)
+    - record id: `harnessllm-2026`
 - IDS (2026)
     - title: Inductive Deductive Synthesis: Enabling AI to Generate Formally Verified Systems
     - what: Given a specification written by an expert in Rocq/Coq, a coordinator of GPT-5.4 workers writes an implementation and a proof that Coq's kernel checks. It can throw away a data representation and start over. Code is extracted to OCaml.
@@ -321,6 +332,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2307.02342); [notes: Towards a Formal Verification of the Lightning Network with TLA+](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `towards-a-formal-verification-2023`
+- ZooKeeper TLA+ specs (2023)
+    - title: Leveraging TLA+ Specifications to Improve the Reliability of the ZooKeeper Coordination Service
+    - what: Writes three levels of TLA+ models of ZooKeeper (its Zab agreement protocol, a code-level system model, and a test model), checks them with the TLC model checker, and replays model traces on the real Java code to confirm the model matches and to reproduce two deep bugs.
+    - number: Protocol model: 17 configurations checked, up to 1.8 billion states; largest finished run 245,606,642 states in 3 h 41 min; no violation of the correctness conditions
+    - number: Two violations found in the first draft of the protocol model (a misused quorum; a leader's response to a recovering follower)
+    - number: ZK-2845 reproduced in 2 s (simulation, trace length 23) or 12 s (model checking, length 10); ZK-3911 in 1 min 29 s (length 25) or 42 s (length 14)
+    - number: System model: 6 configurations, all still running at the 24 h limit, no violation
+    - limits: Safety only: "we mainly focus on safety properties and do not consider liveness properties". Checks small configurations (at most 5 servers, few transactions) and trusts the small-scope hypothesis; leader election in Zab is replaced by an assumed oracle; model-to-code match is checked by replaying traces, not proved.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2302.02703); [notes: ## ZooKeeper TLA+ specifications (2023)](claude_readings.md)
+    - record id: `zookeeper-tla-specs-2023`
 - Hemiola (2022)
     - title: Hemiola: A DSL and Verification Tools to Guide Design and Proof of Hierarchical Cache-Coherence Protocols
     - what: A Coq-based language whose templates manage locking, so that invariant proofs consider one transaction at a time. It proves serializability and coherence of MSI/MESI cache models and compiles to Kami hardware.
@@ -435,6 +457,16 @@
     - how much was read: parts read
     - [source](https://www.datadoghq.com/blog/ai/harness-first-agents/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`
     - record id: `closing-the-verification-loop-2026`
+- Corten (2026)
+    - title: Corten - Foundational Verification of Rust Programs
+    - what: A framework in the Rocq proof assistant for proving Rust programs correct with separation logic (a logic for reasoning about who owns which memory). It defines Rust's behavior on the compiler's typed high-level IR so proof goals look like Rust source, and adds tactics that follow the code's shape.
+    - number: Automated proofs are about 2x to 4x shorter than proofs done directly against the semantics, on a synthetic test suite
+    - number: Buddy allocator case study: about 300 lines of Rust, about 2800 lines of Rocq (about 250 spec, about 800 general Rust reasoning, about 1400 free-list lemmas)
+    - number: Specifications about 2x the size of the code; automated proofs 2x to 4x the Rust size
+    - limits: Soundness of the semantic axioms is proved only for the pure and heap-statement fragments so far; the rest is itemized in an appendix. Specs of Rust core functions used by the case study are not proved. Single-threaded in practice (concurrency inherited from Iris but not yet exercised), traits only partly handled, no labeled break/continue. Allocator spec covers memory safety, not allocation quality.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2609.04372); [notes: Corten (2026)](claude_readings.md)
+    - record id: `corten-2026`
 - Lion (2026)
     - title: Lion: Modular Verification of Async Runtime Liveness
     - what: Lion is a Tokio-like async runtime written in Rust and verified in Verus. Its top theorem says that, under stated assumptions, a spawned task is eventually polled to completion. The liveness claim does not use temporal operators. Instead it is a bound on how long a task waits, under a filter on what the environment may do.
@@ -760,6 +792,17 @@
     - how much was read: parts read
     - [source](https://www.andrew.cmu.edu/user/bparno/papers/veribetrkv.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: Storage Systems are Distributed Systems (So Verify Them That Way!)](../distributed_verification_review_b/deep_1_verified_implementations.md)
     - record id: `veribetrkv-2020`
+- Pretend Synchrony / Goolong (2019)
+    - title: Pretend synchrony: synchronous verification of asynchronous distributed programs
+    - what: Verifies Go distributed programs by automatically rewriting them into an equivalent synchronous program (messages become assignments), then checking ordinary verification conditions with the Z3 solver. Four case studies: two-phase commit, Raft leader election, single-decree Paxos, Multi-Paxos key-value store.
+    - number: manual invariant annotations reduced by 6x versus Dafny
+    - number: check time 1.73 s total vs 1455.84 s in Dafny for the three protocols
+    - number: Paxos 504 lines of Go, 14 loop-invariant lines, 1.51 s; Dafny 72 invariant lines, 1141.35 s
+    - number: Multi-Paxos KV: 847 Go lines, 1.64 s check, 118.5 req/ms, within 1.5-3x of unverified EPaxos code
+    - limits: Safety only, no liveness. Needs structured loops, symmetric process ids, typed channels, pairwise communication and round non-interference; rules out Multi-Paxos stable-leader optimization, Stoppable Paxos and ring topologies such as Chord.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3290372); [notes: Pretend Synchrony (2019)](claude_readings.md)
+    - record id: `pretend-synchrony-goolong-2019`
 - tla-transmutation (2019)
     - what: tla-transmutation generates Elixir code and tests from TLA+ specifications. It uses the JSON that Apalache parses. It has separate generators for code, white-box tests and black-box tests.
     - limits: It is a prototype. The README reports no general proof that the compiler is correct.
@@ -941,6 +984,12 @@
     - how much was read: only abstract or first pages read
     - [source](https://arxiv.org/abs/2604.26495); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; [notes: specification-anchored auditing](../distributed_verification_primary_extension_20261012.md)
     - record id: `speca-2026`
+- Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Through Formal Verification with TLA+ (2025)
+    - what: Models an Ethereum smart contract for exam records in TLA+ (a specification language for state machines), checks it with the TLC model checker for safety and liveness, and maps the TLA+ constructs to Solidity code. Hoare logic (pre- and postconditions) is applied to key functions.
+    - limits: Full text not obtained (IEEE paywall, no open copy found by Unpaywall or Semantic Scholar); only the abstract was read, so properties checked, state-space size and results are unknown.
+    - how much was read: only abstract or first pages read
+    - [source](https://doi.org/10.1109/conit65521.2025.11167034); [notes: TLA+ for a blockchain exam-management contract (2025)](claude_readings.md)
+    - record id: `fortifying-integrity-traceability-and-2025`
 - hax / Bert13 (2025)
     - title: Formal Security and Functional Verification of Cryptographic Protocol Implementations in Rust
     - what: The developer annotates Rust code and picks a backend prover (F*, ProVerif or SSProve) through the hax pipeline. The authors evaluate it on Bert13, a Rust post-quantum TLS 1.3 implementation.
@@ -1037,6 +1086,12 @@
     - how much was read: reading depth not recorded
     - [source](https://civl-verifier.github.io/); [notes: Civl and inductive sequentialization](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `civl`
+- Verifier-supervised fine-tuning for Rust/Verus: vericoding dataset (restricted) (2026)
+    - what: A Zenodo record for a training dataset of Rust/Verus verified-code tasks used to fine-tune a code model with the verifier as the supervision signal. Only the record's metadata could be read: the files are under embargo until 2026-12-31 and the record has no listed files.
+    - limits: Blocked: no full text exists and the data is embargoed ('access_right': 'embargoed', embargo_date 2026-12-31) with the author listed as 'Anonymous' (double-blind review). Everything here comes from the record's description and keywords; content, size, and results are unknown.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.5281/zenodo.21523433); [notes: Verifier-supervised fine-tuning for Rust/Verus dataset (2026)](claude_readings.md)
+    - record id: `verifier-supervised-fine-tuning-2026`
 - AWS correctness practices (2025)
     - title: Systems Correctness Practices at Amazon Web Services
     - what: The paper was not read. Search summaries say it covers P, model checking, fuzzing, property-based testing, fault injection and simulation, with formal specs used as test oracles (the source of expected answers).
