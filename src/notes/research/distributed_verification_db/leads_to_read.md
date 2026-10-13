@@ -5,7 +5,7 @@ Claude agents read each lead's abstract and judged whether it serves the goal. N
 
 ## no abstract found
 
-204 leads.
+203 leads.
 
 - A Comparative Review of ZFC, NBG, and MK Axiom Systems: Theoretical Foundations and Formalization in Coq
 - A Formal Framework for Requirements Engineering in Large Language Model-Integrated Cyber-Physical Systems (2026)
@@ -62,8 +62,6 @@ Claude agents read each lead's abstract and judged whether it serves the goal. N
 - Biometric authentication using IoT devices powered by deep learning and encrypted verification
 - Blockchain-Enabled Medical Waste Management System for Enhanced Traceability, Safety and Environmental Protect (2025)
     - [source](https://doi.org/10.2139/ssrn.5281727)
-- Breaking the Composition Cliff: Mutation-Guided Specification Synthesis for Multi-Function Programs
-    - [source](https://neurips.cc/virtual/2026/172957)
 - Bridging the gap: a systematic framework for agentic AI root cause analysis in hybrid distributed systems
 - Certifying the Judge: Falsifiable Properties for LLM-Based Evaluation of Formal Code
 - CertJudge: Evaluating Lean Formal-Code With Falsifiable Properties
