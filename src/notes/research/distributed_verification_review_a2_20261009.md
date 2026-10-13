@@ -372,3 +372,13 @@ limits
   - Google Scholar “cited by” ran for seven papers, then hit a CAPTCHA
 - several numbers come from single-author 2026 preprints
 - ChatGPT consultation for this pass has not run
+
+## design consultation (opinion, not primary evidence)
+
+A successful GPT-5.6 Sol Extra-High consultation is preserved in `verus_distributed/lit_b` and `distributed_verification_review_b/review_b_chatgpt_extra_high_transcript_20261007.md`. It recommends an auditable chain: intent contract → frozen temporal model → temporal proof → Rust refinement proof → evidence bundle. Its warning is: “A proof at one link does not validate the others.” Suggested adversarial tasks include impossible progress, fairness swaps, fault-cessation and interference traps, unreachable triggers, inconsistent assumptions, weakened-property pairs, infinite-stuttering mutants, abstraction mutants, and finite-domain laundering. This is design advice, not primary-source evidence.
+
+## 12 October 2026 coverage extension
+
+(authored by agents unless marked 🧑)
+
+A further machine-assisted discovery pass queried Crossref for `formal verification distributed systems liveness specification agent`, restricted to works dated 2024–2026. It saved 100 records in `lit_a/crossref_2024_2026.json` and 84 title-filtered leads in `lit_a/crossref_relevant.json`. These are discovery records, not verified paper claims; identity and relevance still require primary-source checking. Semantic Scholar Graph API attempts for distributed formal verification, natural-language specifications, and LLM theorem proving all returned HTTP 429 and contributed no records. Existing Google Scholar/browser citation chasing and the primary-source cards remain the evidence base. This extension broadens coverage but does not establish an exhaustive census. No published end-to-end system was found in the reviewed corpus that maps a vague distributed-systems request to a strong specification, liveness proof, and proved running Rust implementation.
