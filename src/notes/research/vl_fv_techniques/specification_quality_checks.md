@@ -147,6 +147,14 @@ It filters for the first, then tests the second by trying the target assertion.
 That is one satisfiable run from an empty state that exercises every interface.
 The study says the paper's protocol theorem "does not prove that every declared state is satisfiable" (the paper's words, as quoted), so the witness is a separate obligation.
 
+[StateSync-GKR](../vl_paper_walkthrough/statesync_gkr_20261012.md) (Isabelle/HOL, audited).
+It requires a registered concrete witness for every locale assumption set, and an activation that fires every headline theorem's premises.
+The paper says "a clean build with zero sorry contained a compiler-model assumption set that was unsatisfiable" (the paper's words, as quoted in the study).
+Two vacuity defects were found: unsatisfiable specification-vector lengths, and an undischargable constant degree bound.
+The fixes were padding to power-of-two width and a width-dependent bound.
+It also tests assumption removal and checks that no theory file sits outside a ROOT.
+Verus form is the study's inference: concrete witness tests for each contract premise, and mutation tests that must be rejected.
+
 ### implications against a reference
 
 [Can LLMs Enable Verification in Mainstream Programming?](../vl_paper_walkthrough/can_llms_enable_verification_in_mainstre_20261012.md) (Dafny, Nagini, Verus).
@@ -179,6 +187,41 @@ It reports that intent transcription is "the bottleneck" (the study's summary, w
 It says a defective body would otherwise become its own contract.
 It also runs a model-scored precheck, and says that check is "a lightweight semantic-based specification checker rather than a sound verifier" (the paper's words, as quoted).
 
+### return-determinacy probe: SpecAgent
+
+[SpecAgent study](../vl_paper_walkthrough/specagent_20261012.md) (ACSL).
+Call the function twice on the same input and assert the results are equal: `m := f(x); n := f(x); assert m = n`.
+If the verifier proves it, the postcondition fixes the return value.
+The paper's words: "If the verifier proves m = n, the contract is strong enough to uniquely determine the return value for each input".
+The study says it reasons about returns, not heap effects or relational properties.
+For Verus it is the study's inference, and it does not suit nondeterministic or stateful functions.
+
+### agent-classified isomorphism failures: CLEVER with Claude Code
+
+[Agentic proving study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md) (Lean 4, CLEVER benchmark).
+The agent writes a specification, then proves it isomorphic to the benchmark's reference.
+When the proof fails, it must say why: ISSUE (a component is wrong, with a counterexample) or MISMATCH (both readings valid, not isomorphic).
+Authors then review the flags by hand.
+The study asks for "all and only" defensible readings and tests each against the reference.
+Verus has no definitional equality of contracts, so the study's inference is implication lemmas, refinement predicates and tests.
+
+### trace-window conformance: executable JavaScript specs
+
+Dubray's JS-SAM on SysMoBench. [study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)
+Instrument the real system and replay `(pre, action, post)` windows against a generated model.
+Set the model to `pre`, apply the action, compare only the keys present in the trace post-state.
+The paper's words: "Only replay against the real kernel's transitions caught it" (a release defect that passed every invariant).
+The study says this is a conformance oracle, not a proof.
+For Verus the study gives an inference only: a `spec fn observable(s)` projection and an `ensures observable(new) == post` per trace case.
+
+### test lemmas for autoformalized statements: AlphaProof Nexus
+
+[study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md), Lean.
+- the agent was told to prove test lemmas first (the paper, section 3, page 6):
+  "verifying the first few terms of each sequence against its formal definition before attempting the target conjectures"
+- a human then reviews whether each proved statement is correctly formalized and previously unproven
+- the Verus form (`assert` on initial elements, map entries, arithmetic cases before the general lemma) is the study's inference
+
 ## evidence, with denominators
 
 None of these numbers say the checks find specification errors in real Verus code.
@@ -195,10 +238,30 @@ None of these numbers say the checks find specification errors in real Verus cod
 - P^3 benchmark gate (108 libraries, 1,030 placeholders): 98.6% mutation rejection, 82.7% review score, 90.7% mean quality. The authors still warn that tests may miss intent.
 - KaPilot ablation, 54 functions: with the precheck removed, 12 good specifications; the full pipeline, 31. With verification feedback removed, 12.
   The vacuity check is part of the verification stage, so no number isolates it. Labels came from two experts (Cohen's kappa 0.81 to 0.95).
+- SpecAgent critique stage, 50 programs: recall up 8.02 points (DeepSeek) and 10.63 (GPT-5) over generation only ([study](../vl_paper_walkthrough/specagent_20261012.md))
+  - the study reports no run of the determinacy probe alone, so its own effect is not measured
 - AutoSpec had no mutation or vacuity score. Its 199 of 251 solved cases measure proving the target assertion.
 - Practitioner survey: 29 interviews, with counts only. Seven found formal expression difficult. Five struggled to choose strength.
 - AlgoVeri: Gemini on Verus, 25.97% compiler verified versus 24.68% after semantic filtering (77 tasks). The filter is an LLM judge.
   The paper does not report how many specifications the Lean audit rejected.
+- CLEVER, 161 entries, Claude Opus 4.6 ([study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md)): 65 OK, 81 ISSUE, 13 MISMATCH, 2 FAIL
+  - 98.8% had at least one arguably valid reading, but only 65 matched the reference
+  - 81 ISSUE are mostly reference defects, not agent errors; of 80 ground-truth issues, 48 are Lean-encoding hazards
+  - defect counts: conjunct-as-guard 15, precedence 12, invalid-domain quantification 7, wrong semantics 21
+  - the authors reviewed the classifications; the study says an independent blinded audit is its inference, not the paper's
+- KBSpec, FormalBench-Base: completeness is the fraction of non-equivalent mutants a specification rejects. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+  - C@Pass counts passing specifications only; C@All gives zero to programs with none. KBSpec's C@Pass is below SpecGen's on all three models while its C@All is 38.51%, 30.92%, 39.46%
+  - the 3 of 232 (1.3%) equivalent mutants is FormalBench's manual check, not KBSpec's own
+
+- Trace replay, SysMoBench spinlock ([study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)): all four models passed syntax, bounded exploration and shipped invariants.
+  Replay passed 6/28 to 25/28 windows (21.4% to 89.3%). Six windows are identity (state unchanged), so the base rate is 6/28.
+  On the 22 state-changing windows the range is 0 to 86.4%. Internal consistency is weak evidence of fidelity.
+
+AlphaProof Nexus ([study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)).
+- 44 of 492 autoformalized OEIS questions were proved and judged correctly formalized and new by manual review
+- the paper does not measure how much the test lemmas cut misformalization; tested cases cannot show a broad statement is right
+- StateSync-GKR: two vacuity defects found, in a model with six sessions and twenty theories. [study](../vl_paper_walkthrough/statesync_gkr_20261012.md)
+  - the study gives no rate of defects per assumption set, so this is two cases, not a detection rate
 
 ## where it fails
 
@@ -206,6 +269,9 @@ None of these numbers say the checks find specification errors in real Verus cod
 - Test and mutation checks can be gamed or can lie. SAFE chose a 80% correctness threshold, not 100%, because the generated tests may themselves be wrong.
 - Weak preconditions slip past output checks. Overly strong ones reject callers. You need both directions, and only the reference-implication or negative tests test them.
 - Implication against a reference trusts the reference.
+  The CLEVER paper shows how far: its reference specifications are often defective ([study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md)),
+  so isomorphism is a weak score for intent.
+  Asking for several candidate readings did not fix it: 290 candidates, 15 proved isomorphic, across 11 entries.
   The [mainstream study](../vl_paper_walkthrough/can_llms_enable_verification_in_mainstre_20261012.md) says the paper notes it can reject useful alternatives.
 - Verina reports an unknown status when neither proof nor tests settle a relation. Beyond Postconditions counts a sample as sound if CrossHair finds no violation within 60 seconds.
   That is a timeout convention, not a proof.
@@ -217,12 +283,17 @@ None of these numbers say the checks find specification errors in real Verus cod
   The Beyond Postconditions study says AutoSpec and SpecGen are "described as refining contracts to buggy implementations, which prevents bug detection" (the study's words).
   The Verina study agrees in part: ground-truth code gave little or negative SpecGen improvement (the study's words).
 
+- A finite trace corpus cannot speak for behavior outside the captured windows,
+  and the projection can hide implementation state. [study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)
+
 ## where the studies disagree
 
 - How much to demand of completeness. SAFE accepts incomplete specifications for training. Beyond Postconditions, P^3 and Verina treat incompleteness as a defect to measure and report.
   The goals differ, so this is not a contradiction.
 - What to mutate. Output-mutation (ProofRover, SAFE) is cheap and works on any test pair. Program-mutation (Beyond Postconditions, P^3, Verina) tests the verifier's ability to discriminate bugs.
   Beyond Postconditions says replaying known inputs overestimates completeness. No paper compares the two on the same specifications.
+- Whether a reference specification is a safe oracle. Most studies above use it as one.
+  The CLEVER study ([study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md)) found most reference specifications defective in some way.
 - Whether the model should see the implementation when drafting the contract. KaPilot excludes it on purpose. AutoSpec and the test-oracle paper give the code.
   KaPilot's cost is its own admission that source exclusion can make functional postconditions impossible when documentation is incomplete.
 - Where to place the human. ProofRover marks trusted tests as hard. Practitioners and [AlgoVeri](../vl_paper_walkthrough/algoveri_20261012.md) rely on expert review.

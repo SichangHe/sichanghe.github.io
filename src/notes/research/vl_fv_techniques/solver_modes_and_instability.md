@@ -273,11 +273,9 @@ Parallel search:
 
 ## where the studies disagree or look wrong
 
-- Lemur's study cites the k-induction incompleteness quote to Appendix A page 12 in one place and page 13 in another.
-  I quote it without a page.
 - The two instability numbers: the ProofWright study corrected 15% to 17% for verifier instability, of which 15% is non-affine indexing.
-- Lemur's study also notes a count mismatch (47 instances in a caption, 12 of 26 in prose, 25 in the table).
-  I use none of those counts.
+- The Lemur paper is inconsistent with itself: 25 of 47 solved in one place, "12 of the 26 solved instances" in another.
+  The 47 is the benchmark-set size, not a solved count. I use none of these counts.
 - The two meanings of "instability" above (spread across equivalent queries versus failure on hard patterns) differ.
   Do not add them up.
 

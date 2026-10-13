@@ -172,6 +172,24 @@ The studies give four rules.
 [VeruSAGE study](../vl_paper_walkthrough/verusage_20261012.md).
 - Reruns and a union over four models.
 
+Rust-Prover, Lean.
+[study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+- cheaper-model-first escalation: a Luna-first run proved 1,146/1,325 theorems and Opus rescued 179
+- the study's caution: the recorded $643 excludes usage records from 348/2,198 Luna sessions and lacks the main run's clean-clone recheck; median proof time rose to 32 minutes with abandoned attempts
+- Haiku 5.5 proved ten selected expensive theorems at xhigh/max effort and gave up on all ten at low
+- the paper warns "Ten theorems is a small sample with few hard ones in it"; the study infers true cost must count failed attempts
+
+### independent episode loops, a specialized prover and a population: AlphaProof Nexus
+
+Study: [AlphaProof Nexus](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md), Lean.
+- Ralph loop: independent prover subagents with no shared state, each a sequence of multi-turn episodes editing a sketch by search and replace; a failed episode appends a comment
+- the study says the varied prompts and budget steps are its reconstruction
+- specialized prover: a subagent may call AlphaProof on a subgoal, which
+  "can return a proof, disproof (a proof that the submitted subgoal is false), or a failure message"; a disproof is fed back, never accepted
+- population: validated sketches enter a database, rater subagents rank pairs, Elo scores feed P-UCB sampling of prior sketches, and offspring are revalidated
+- parameter search: the construction value sits in an `EVOLVE-VALUE` region so the agent searches value and proof together
+  - the study's Verus form fixes the spec and varies only the constant (inference)
+
 ## evidence
 
 Numbers are from the studies. Each has its own denominator.
@@ -199,7 +217,7 @@ Baldur, Isabelle, 6,336 theorems. [study](../vl_paper_walkthrough/baldur_2026101
 
 Verina, Lean. [study](../vl_paper_walkthrough/verina_20261012.md).
 - Study quotes the paper: "iterative proof refinement reliably outperforms direct generation at matched query budgets".
-- Best number: 20.1% at 64 rounds. The study gives no per-task count beside it. It also says pass@1 there is estimated from 5 samples per task.
+- Best number: 20.1% at 64 rounds. The paper gives no count for it and no model. It also says pass@1 there is estimated from 5 samples per task.
 
 WybeCoder, Lean, Verina. [study](../vl_paper_walkthrough/wybecoder_20261012.md).
 - Claude Opus 74.1% at 32 × 16. GPT-OSS-120B 30.2% at 16 × 4.
@@ -221,7 +239,8 @@ AlphaVerus, Verus. [study](../vl_paper_walkthrough/alphaverus_20261012.md).
 - pass@256 on HumanEval-Verus: 32.9% with Treefinement, 29.4% with linear refinement, 27.1% exploration only.
 - MBPP: 65.7%.
 - The study says the authors report a jump "that cannot be obtained by more parallel exploration". These are the study's words.
-- The study gives no task counts for either benchmark.
+- HumanEval-Verus is 49 programs split into 85 functions, so 32.9% is 28/85.
+- MBPP-verified has 78 programs. 65.7% is not a whole count of 78, and the paper does not explain it.
 
 Dissect-and-Restore, Dafny. [study](../vl_paper_walkthrough/dissect_and_restore_20261012.md).
 - TitanBench: 19/22 (86%) against a 68% baseline.
@@ -266,9 +285,18 @@ Neuro-symbolic, C, 499 problems. [study](../vl_paper_walkthrough/neuro_symbolic_
 
 VeruSAGE. [study](../vl_paper_walkthrough/verusage_20261012.md).
 - Cheating before the checker: 14% for Sonnet 4, 7% for Sonnet 4.5, 2% for GPT-5. After: under 1.5% for every model.
+- The paper gives no denominator for these rates, so I cannot say over how many tasks.
 
 AlphaVerus. [study](../vl_paper_walkthrough/alphaverus_20261012.md).
 - Without critique, `assume(false)` use snowballs until programs verify trivially (Figure 7).
+
+AlphaProof Nexus. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
+- the full agent solved 9 of 353 formalized Erdős problems and 44 of 492 OEIS questions
+- basic and population configurations: 100 attempts of one subagent (A, B) and 10 attempts of 10 subagents (C, D)
+- the study says solve rate is the fraction of successful chunks, cost sums attempts up to the first success
+- the basic agent also solved all nine; smaller Gemini variants and standalone AlphaProof tree search solved none
+- configurations B and D exclude AlphaProof's estimated 60 USD per problem (about 27.5 TPU hours); the Figure 3 caption says adding it does not change outcomes beyond the margin of error
+- Codex solved 7 of the nine and Claude Code 0 of nine in a separate 12-hour comparison; tool-specific, not the 353-problem set
 
 ## where studies disagree
 
@@ -316,6 +344,12 @@ Ensembles.
 - [VeruSAGE study](../vl_paper_walkthrough/verusage_20261012.md): "no evidence that they are good at breaking down the project-level verification goal".
 - Those are the paper's words as quoted in the study.
 - Cost is idealized in Yao's thesis. It assumes free cache reads.
+
+AlphaProof Nexus ([study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)).
+- the paper does not isolate the population's contribution to solve rate
+- the study infers Elo ratings may mis-rank opaque sketches; the paper does not say so
+- parameter search is one optimization case (Anchored Gradient Descent-Ascent), not a general method
+- cost variance is high; most Erdős problems stayed unsolved
 
 ## open questions
 

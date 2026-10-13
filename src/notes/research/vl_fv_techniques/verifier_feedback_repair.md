@@ -131,7 +131,27 @@ Other verifiers, same idea.
 - P^3 (Lean). Local repair may not change the plan. An unplanned algorithm or invariant sends it back to planning. ([study](../vl_paper_walkthrough/p_3_20261012.md))
 - Neuro-symbolic (ESBMC, C). The only feedback carried between rounds is three sets: proved, disproved, unknown. Failed conjunctions are split into atoms.
   ([study](../vl_paper_walkthrough/neuro_symbolic_software_verification_20261012.md))
+- SpecAgent (ACSL, Frama-C). Each failure is mapped to caller, callee and line, and the repair agent may edit an upstream weak contract,
+  not only the local one. Annotation edits only. ([study](../vl_paper_walkthrough/specagent_20261012.md))
+  - precision with repair added to planning and generation: 94.79% (DeepSeek) and 94.34% (GPT-5), against 89.78% and 88.66% for generation only
+  - the study notes WP incompleteness can make a valid candidate look failed
 - Knowledge-graph SVA (SystemVerilog). Separate loops for syntax errors, counterexamples, and coverage. ([study](../vl_paper_walkthrough/knowledge_graphs_formal_verification_20261012.md))
+- KBSpec (JML): up to three rounds; retrieve one item from the current specification plus its error. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+  - partial progress p = |E_t - E_(t+1)| / |E_t| over the error multiset, and a penalty for errors that come back; credit goes to the retrieved item
+  - the Verus form (diagnostic categories, three attempts, keep the original contract to detect weakening) is the study's inference
+- What's in a Proof? (F* and Verus, expert telemetry). Experts differ in how they use feedback, not only in whether they do.
+  [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md)
+  - verifier calls per minute: F* 3.39, Verus 9.11; average active errors 1.49 (F*) and 1.9 (Verus)
+  - some Verus participants let active errors reach 35-40; the paper does not say those sessions failed
+  - rapid-verifier sessions failed more: F* success 67% against 100% for spec-first planners; Verus 60% against 100%
+  - P7 (dense verify and spec churn) failed after 45 minutes; P8 (full skeleton, temporary assumptions, one subgoal at a time, deliberate pauses) succeeded
+  - advice: after a focused run, interpret the error, fix one cause, and do not rerun without a changed hypothesis
+  - a loop that refuses repeated verifier calls without a changed hypothesis is the study's inference for Verus
+
+Lean, compile-gated loop. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
+- each turn compiles the sketch and feeds pending goals or errors to the next turn; the output is accepted only when Lean reports no pending goals
+- failed sketches and unresolved goals are kept as structured diagnostics for a human; the study says these steps are its reconstruction and the claim is not a measured time saving
+- the Verus form (run `cargo verus` after each edit, keep failed states apart from accepted proofs) is the study's inference
 
 ## the evidence, with denominators
 
@@ -177,13 +197,19 @@ Other verifiers:
   Direct multimodel at five attempts: 57.3%. ([study](../vl_paper_walkthrough/automatic_generation_of_formal_specifica_20261012.md))
 - Eiffel, 539 bugs, up to ten attempts: Sonnet 4.6 fixed 513 (95.2%) with the full prompt and 486 (90.2%) with the minimal one. The full prompt adds 6.4 points on average.
   Among features eventually fixed, the first attempt accounts for 67.9% to 83.5%. ([study](../vl_paper_walkthrough/large_language_models_and_language_serve_20261012.md))
-- VERINA: one-shot o3 4.9%. Iterative refinement reaches up to 20.1% with 64 rounds. The paper's words:
+- VERINA: one-shot o3 4.9%. Iterative refinement reaches up to 20.1% with 64 rounds. The paper gives no model or count for 20.1%. The paper's words:
   "iterative proof refinement reliably outperforms direct generation at matched query budgets". ([study](../vl_paper_walkthrough/verina_20261012.md))
 - APOLLO, miniF2F-test (244 problems): o4-mini 7.0% at one sample, 46.7% with APOLLO. Syntax refiner alone gives 7.4%. Auto solver alone 7.0%. LLM re-invocation alone 8.2%.
   All three together 46.7%. ([study](../vl_paper_walkthrough/apollo_20261012.md))
-- DafnyPro, 782 programs, ten attempts: over 85% for both Claude models. Hint retrieval adds about 10 points. Pruning adds about 3. ([study](../vl_paper_walkthrough/dafnypro_20261012.md))
+- DafnyPro, 782 programs, ten attempts: over 85% for both Claude models. Hint retrieval adds about 10 percent and pruning about 3.
+  The paper says only "percentage gains", not points or relative. ([study](../vl_paper_walkthrough/dafnypro_20261012.md))
 - P^3 (Lean): full-restart rates fall from 28.6% to 11.7% (Codex) on Verina, 189 runs per backend. This measures plan-gated local repair against sequential repair.
   ([study](../vl_paper_walkthrough/p_3_20261012.md))
+- KBSpec, 699 Java programs, C@All: removing iterative repair lowers it by 21.82, 17.22 and 13.33 points (GPT-5.2, GPT-5-mini, Claude-Sonnet-5);
+  removing partial-repair credit by 1.53 to 3.40. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+- What's in a Proof?: 8 expert sessions per language, human not LLM. Rapid verifier use went with lower success in both languages.
+  [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md)
+  - the Verus planner cluster is one session, so its 100% is exploratory
 
 ## where the studies disagree
 
@@ -237,6 +263,14 @@ Keep the whole history or only the last attempt.
 - Verus diagnostics may be less pointed than Isabelle's first-step error (Baldur study, its inference).
 - Low scores remain. VerifyThisBench: 9.37% best, on strict end-to-end tasks. The study says that a repair loop cannot be assumed to make agent-written verified Rust reliable.
 - Reported benchmark numbers may be contaminated. Eiffel's study notes the benchmarks may have leaked into training data.
+- Credit for a disappeared error is not credit for a right contract. KBSpec's study says only a final pass establishes correctness, and Table 7 shows weakening in 33.0-51.2% of learned repair items.
+  - the error classes there (loop 16.6-24.0%, arithmetic 14.7-22.5%) come from keyword matching, which the paper does not validate. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+- Fast retries are not progress. Expert telemetry ties rapid verification with many persistent errors to failure, but not causally.
+  [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md)
+
+AlphaProof Nexus ([study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)).
+- a repeated loop can keep polishing a false or misformalized target without a separate statement validator
+- failed sketches often hid a target-sized `sorry` or a hallucinated literature lemma
 
 ## open questions
 

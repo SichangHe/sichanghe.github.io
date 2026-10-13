@@ -214,6 +214,58 @@ One related note: [Scaling verification of cryptographic software](../vl_paper_w
 (Lean) has a `decompose` command that folds a range of a big extracted function into a helper.
 It proves an equality theorem for the rewrite, so the edit is checked.
 
+Fewer Assumptions by Design ([study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)) gives Verus lessons on DLL proofs.
+It splits a bookkeeping `wf()` from a structural `full_wf()`: "decouples the helper primitives (e.g., allocate and link) from chain reasoning".
+It also splits large proof contexts into helper lemmas to avoid solver resource exhaustion, and adds explicit induction lemmas for reachability.
+These are author-reported lessons from an interactive session; the study's inference is that an allocator should not have to prove a full chain in a transient state.
+
+What's in a Proof? (F* and Verus, expert telemetry) [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+It records how experts decompose, not an automated method.
+Experts write the contract first, split the task into subgoals, and defer details with `assume(false)` or comments.
+They then prove one subgoal at a time and replace each hole by real invariants and asserts.
+Verus participant P8's summary, quoted in the study from the paper:
+"Start with the requires/ensures, then add assume(false), then add invariants and asserts. When stuck, search for the underlying cause of the failure by adding more precise assume and assert."
+P1 split Intersection into deduplication and intersection (F*, Section 6.1.1).
+F* experts picked `Seq` or `List` with proof complexity in mind (Section 6.1.2).
+P8 replaced a subrange invariant by a direct "for all" invariant that worked at once.
+The gate that keeps `assume(false)` out of the accepted branch is the study's suggestion, not the paper's.
+
+### helper lemmas found by an agent: AlphaProof Nexus
+
+Study: [AlphaProof Nexus](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md), Lean.
+- on Erdős #125, AlphaProof failed on a monolithic density lemma
+  - the subagent "decomposed that goal into three simpler lemmas" and then proved all six resulting goals (the paper, Figure 1 caption and page 3)
+- steps: read the open goal, state one intermediate step as a new lemma with a hole, call it from the original, compile after each insertion, remove every `sorry`
+- the Verus form (helper `proof fn`s, `assert ... by`, earlier facts as `requires`) is the study's inference
+
+StateSync-GKR ([study](../vl_paper_walkthrough/statesync_gkr_20261012.md), audited) splits a trust chain into theorems that are composed.
+Transition semantics, then compiler acceptance iff validity (A), then a GKR chain-event bound (B), then their composition (C).
+Composition takes the contrapositive of compiler soundness; invalidity stays an explicit hypothesis, and chain well-formedness is discharged at concrete instances.
+Batching is a separate theorem: `batch_prove = map prove`, equivalent to independent runs.
+Imported sumcheck soundness (AFP) is reused, and the assembly bound is proved by induction over layers.
+Verus form is the study's inference; the probability bound needs an external model.
+
+### inductive proof graph: Scimitar
+
+Study: [study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md).
+TLA+ with TLC, Apalache and TLAPS, for distributed protocol safety. Every Verus mapping is the study's inference.
+
+Replace one monolithic invariant with a graph.
+Lemma nodes are predicates.
+Each lemma gets one action node per protocol action.
+An edge from lemma K to node (L,A) means K is assumed when proving L after A.
+Start with the safety property alone.
+For a failed node, read its counterexample to induction (CTI), write a lemma that excludes it, and add an edge to the failed node.
+The paper's Procedure 1: “Choose some (L, A) ∈ VA such that (L, A) is not locally valid. Analyze CTI X at node (L, A), develop lemma Lnew eliminating X.”
+The human invents each lemma; the tool does not.
+Once every node is locally valid and every lemma holds initially, the conjunction is inductive (the study's Theorem 1).
+Discharged nodes can be set aside: “we no longer need to consider these lemmas in our reasoning.”
+A slice shows only variables that can matter: those in the action precondition, in the lemma, and read by the primed variables.
+Cycles show mutually dependent lemmas; the paper only observes them, and the study's steps for reading them are its inference.
+Pruning a support set is also the study's inference; the paper only adds edges.
+Verus form: one `spec fn` per lemma, one `proof fn` per action and lemma pair, support edges as `requires` or calls.
+The graph is a planning layer; Verus checks each function alone.
+
 ## evidence, with denominators
 
 All numbers are the authors' own, on their own setups.
@@ -272,11 +324,26 @@ Six weeks of one engineer's time, as the study reports it.
 Practitioners.
 12 of 29 and 8 of 29, as above.
 
+What's in a Proof?: eight experts, four small tasks, F* 7 of 8 sessions complete, Verus 6 of 8 [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+Telemetry and timelines show successful sessions spend effort on specifications early and return to them.
+P2's F* Intersection proof reused library lemmas and was three times shorter than P4's from-scratch proof.
+This is behavioural evidence, not a causal experiment; expertise and task choice confound it.
+
+Scimitar, from [study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md).
+Five TLA+ protocols, 4 to 12 variables, 5 to 14 actions, 8 to 39 lemmas.
+Median slice sizes over graph nodes: 2/6 (SimpleConsensus), 3/6 (TwoPhase), 3/4 (AbstractRaft), 4/6 (Bakery), 5/12 (AsyncRaft).
+These are slice sizes, not proof-time savings.
+AsyncRaft (39 lemmas) took about 3 human weeks, set against 1 to 2 human months reported for a smaller invariant; a qualitative comparison, no automated speedup.
+Not reported: CTI counts, time per iteration, solver speedup from smaller supports.
+
 ## where it fails
 
 The cut can be wrong.
 ProofSaX shards do not help when the missing fact spans several shards.
 Seven of ten multi-hole failures needed two helper-lemma calls, which it does not search for.
+
+Expert decomposition is not shown to cause success. [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md)
+The paper's own caution is that clusters are exploratory; the Verus planner cluster has one member.
 
 Helpers can be useless.
 Dissect-and-Restore quotes the paper: "Automatically synthesized helper lemmas may be irrelevant, overly strong, or based on overly restrictive assumptions" (Sec. 3, p. 3).
@@ -310,8 +377,21 @@ Practitioners call it manual.
 Crux needs the engineer to pick the boundaries.
 The ProofSaX trigger-pair search also assumes no proof needs three or more trigger calls after sharding.
 
+StateSync-GKR's composition is model-level.
+The study says implementation cache correctness is not absorbed.
+The per-variable degree-four corollary is weaker than the total-degree instance. [study](../vl_paper_walkthrough/statesync_gkr_20261012.md)
+
 No Verus tool does this end to end.
 Everything except Yao et al. is another language.
+
+AlphaProof Nexus ([study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)).
+- one successful example, not a decomposition algorithm
+- agents hid the original difficulty in one helper lemma with `sorry`, so a validator must inspect all nested lemmas
+- more helpers can raise solver load
+
+Scimitar still needs a human to invent each lemma, and has no node-selection heuristic, so a poor pick wastes effort.
+Slice soundness assumes deterministic guarded updates; Rust heaps, aliasing and trait calls would need a conservative over-approximation (study inference).
+Its bounded CTIs are evidence of a missing lemma, not proof; see [study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md).
 
 ## where the studies disagree
 
@@ -330,9 +410,10 @@ So the first is a search over existing facts, and the others are lemma synthesis
 Does the catalog's "stable case split" apply to Verus?
 Only the Lemur study covers it, and the study's own caveat is that Verus form is an inference.
 
-One count looks off in the Lemur study.
-Its caption says 47 instances while the prose later says "12 of the 26 solved instances", and the headline run solved 25.
-The study keeps this as an open inconsistency.
+The Lemur paper is inconsistent with itself.
+Its prose says "12 of the 26 solved instances", but the headline run solved 25.
+The 47 in the table caption is just the size of the benchmark set.
+The study flags the gap and the audit confirmed it is the paper's own.
 
 The ProofSaX study says the abstract's one-minute-to-two-hours range does not bound the six-hour single-node run.
 It reads these as different configurations.

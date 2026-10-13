@@ -149,6 +149,20 @@ Each step cites the study that supports it.
 - covers borrows and memory footprint only
 - value invariants and `decreases` are left to the user
 
+### Loopy (C, ACSL, Frama-C WP)
+[study](../vl_paper_walkthrough/finding_inductive_loop_invariants_using__20261012.md)
+
+- sample up to Ns completions, each a set of invariants; stop if the oracle accepts one set
+- else union all sets, then run Houdini on the union
+  - start with everything; drop clauses with syntax errors; drop the subset the oracle blames
+  - at most one oracle call per clause, so no subset enumeration
+  - if nothing is blamed and the set is still too weak, fail
+- if Houdini fails, ask the model to repair the union from the diagnostics, up to Nr times, running Houdini on each repair
+- the repair prompt asks for invariants that hold before the loop, in every iteration, and after it
+- prompt M2 (spells out entry, iteration and exit obligations, asks to split conjunctions) beats the bare prompt M1
+- Houdini returns a correct set whenever it returns one; the blame property is needed for optimality only (study's reading of the paper)
+- the Verus form is the study's inference; Verus may not blame exact clauses
+
 ### Verus-adjacent items
 - LLM4PR: invariant plus decreasing variant as refinement laws; the "flexible iteration" rule adds `assert V != V0` for floats.
   [study](../vl_paper_walkthrough/towards_large_language_model_aided_progr_20261012.md)
@@ -181,6 +195,13 @@ All denominators are benchmark tasks, not projects.
   - DafnyBench has 782 programs
 - Flux: zero loop-annotation lines on 8 benchmarks; Prusti used 88
   - 7.13 s against 246.65 s total
+- Loopy: 469 positive one-loop benchmarks, GPT-4, prompt M2, 15 completions
+  - direct 293; with Houdini 383; with repair (8 generations, 7 repairs) 398
+  - bare prompt M1 solves 237 directly
+  - Ultimate Automizer solves 430/469; Loopy solves 31 that it misses
+  - 44 of the failures need disjunctions; 10 were Frama-C failures
+  - the 86 negative benchmarks (assertion counterexamples) are outside the denominator
+  - three-second timeout per prover, so a true candidate can look like a failure
 - Move: no denominator; examples only
 - Place capability graphs: 155 of 195 Prusti tests that ran passed; 155 of 262 counting ignored ones. That is about memory safety, not invariants for values
 
@@ -197,6 +218,9 @@ All denominators are benchmark tasks, not projects.
 - search tricks can hurt
   - tree-of-thought search found 49 pairs that direct prompting missed, yet lost in total: 421 against 431 for GPT-OSS-120B (neuro-symbolic study)
   - the score weights were "chosen heuristically and were not subjected to ablation" (paper, quoted in the study)
+- Houdini's pruning is only as good as the blame it gets (Loopy study)
+  - the 383 retained sets were not shown minimal
+  - Loopy covers integer C without arrays, pointers or programs over 500 lines
 - UNKNOWN is not FALSE. A timeout must not reject a clause as wrong (Lemur study)
 - an unproved `assume` can hide a bug (Move study)
 - bounded and inductive proofs are different guarantees
@@ -213,7 +237,12 @@ All denominators are benchmark tasks, not projects.
   - VerIbmc says a symbolic floor helps weak models most, and nothing for the strongest one
   - Lemur and AutoVerus lean on the model more
 - on order: Move says invariants before WP; Lemur and VerIbmc put the cheap mechanical step first
-- the Lemur study notes a count mismatch: a table caption says 47 instances, the prose says "12 of the 26 solved instances", the headline run solved 25
+- Loopy and DafnyPro both prune non-inductive clauses but differ
+  - Loopy's Houdini drops blamed clauses for good and relies on repair to add them back
+  - DafnyPro restores the original if the postcondition stays unproved
+  - no study compares them
+- the Lemur paper is inconsistent with itself: its prose says "12 of the 26 solved instances", but the headline run solved 25
+  - the 47 in the table caption is the size of the benchmark set, not a conflict
 
 ## open questions
 

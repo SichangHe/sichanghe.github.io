@@ -161,6 +161,23 @@ Stronger postconditions fixed the callee, not the caller.
 The paper's words: "repair the code and its specification such that the verification of the repaired program against the repaired specification succeeds."
 It splits verification conditions into hard facts (passing parts and trusted annotations) and soft facts (failing parts), and asks the model for patches that keep the hard ones.
 
+### evolving knowledge base for JML
+
+[KBSpec study](../vl_paper_walkthrough/kbspec_20261012.md), OpenJML, Java.
+Retrieve documentation and past verified traces as advice while generating and repairing a specification.
+The verifier still decides; the study says "retrieved text is advice, not evidence."
+Details are on [context for the model](context_for_the_model.md).
+
+### planned, retrieved, repaired and critiqued: SpecAgent (ACSL, Frama-C)
+
+[SpecAgent study](../vl_paper_walkthrough/specagent_20261012.md).
+A Planning Agent lists targets, intended meaning, dependencies and order before any contract is written.
+Retrieval takes up to three structurally similar examples from 184 tutorial units, ranked by Jaccard similarity of a 32-bit fingerprint.
+Edits are limited to annotations, never code.
+The paper's words: "the agent is only allowed to add or modify ACSL annotations, without permission to modify any code implementation itself."
+A Critique Agent after proof success answers accept, improve (local) or replan (dependency).
+The Verus form is the study's inference, and the study says the C and Frama-C context does not transfer.
+
 ### other sources, briefly
 
 - [VeriFast study](../vl_paper_walkthrough/an_empirical_study_of_llm_generated_spec_20261012.md): how much formal input helps, natural language versus formal behavior; see evidence
@@ -169,6 +186,9 @@ It splits verification conditions into hard facts (passing parts and trusted ann
 - [Knowledge graphs study](../vl_paper_walkthrough/knowledge_graphs_formal_verification_20261012.md): SystemVerilog assertions; adds properties for behavior that formal coverage shows is unexercised
 - [Eiffel and language server study](../vl_paper_walkthrough/large_language_models_and_language_serve_20261012.md):
   the model adds `require` and `ensure` clauses; names and call arities are checked before insertion
+- [Agentic proving study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md): guided multi-interpretation synthesis (Lean 4, CLEVER)
+  - prompts add examples, formal tests and a policy for behaviour outside the valid domain; the last asks for up to four defensible specifications
+  - Verus use is the study's inference: ask for a few candidate contracts where prose is ambiguous, check each with Verus and tests, then have a person choose
 
 ## evidence
 
@@ -214,6 +234,9 @@ None are Verus numbers, and the settings differ, so I do not compare across line
   - 246 outputs (9.0%) changed the source; contracts weakened in 116 (4%) and strengthened in 146 (5%)
 - Knowledge graphs: the abstract says formal coverage 78.5% to 99.4% over seven hardware designs, but Table II's range is 82.98 to 99.41
   - there is no run without the graph, so the table does not show the graph's effect
+- KBSpec, 699 FormalBench-Base Java programs, OpenJML: pass rate 73.96% (GPT-5.2), 47.35% (GPT-5-mini), 62.66% (Claude-Sonnet-5), against SpecGen's 41.63%, 28.18%, 47.93%
+  - C@All (mutant completeness, zero if nothing passes) 38.51%, 30.92%, 39.46%; C@Pass is lower than SpecGen on all three backends
+  - on SpecGenBench (120 programs) KBSpec has higher pass rate and C@All on all three. [study](../vl_paper_walkthrough/kbspec_20261012.md)
 
 ## where studies disagree
 
@@ -230,6 +253,13 @@ None are Verus numbers, and the settings differ, so I do not compare across line
 
 ## where it fails
 
+- CLEVER, 161 entries ([study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md)): guidance cut generated-specification issues from 10 to 2 in one comparison
+  - the multi-specification run made 290 candidates (2.76 per problem); only 15 proved isomorphic to references, across 11 entries; 66 entries got ISSUE in at least one attempt
+  - the study's reading: prompting cannot repair ambiguous intent or a defective reference
+- SpecAgent, 811 targets, DeepSeek: 604 discharged (74.5%); Atomthreads only 109 of 239 ([study](../vl_paper_walkthrough/specagent_20261012.md))
+  - generation alone gave recall 80.93%; adding planning gave 83.99% for DeepSeek and lowered GPT-5 from 72.14% to 71.51%
+  - the authors say the ablations are not independent causal effects
+  - no retrieval-only ablation is reported
 - the verifier accepts a wrong contract
   - the VeriFast study counts contracts weakened or strengthened by the model: 116 and 146 of 2,727 outputs
   - ProofRover uses a trusted test to block `ensures true`
@@ -248,6 +278,9 @@ None are Verus numbers, and the settings differ, so I do not compare across line
   - VeriFast: loops 11.4% and concurrency 12.3% of outputs verify
 - proof success is relative to assumptions
   - the assurance-cases study: contracts, external specifications and human review linking to requirements stay trusted
+- a memory can teach weakening
+  - KBSpec's Table 7 lists weakening postconditions as a repair strategy in 33.0-51.2% of learned repair items
+  - its pass rate rises while C@Pass falls below SpecGen's; the study's inference is that item credit counts verifier success, not strength. [study](../vl_paper_walkthrough/kbspec_20261012.md)
 
 ## problems I saw in the studies
 

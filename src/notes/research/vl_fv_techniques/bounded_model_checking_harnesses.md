@@ -125,8 +125,26 @@ interviewees combine deductive proofs with tests, static analysis, model checkin
 The study's steps are its own inference from counts, not the paper's procedure.
 Its Verus form is also inference: Verus proofs plus unit and property tests and runtime checks, with coverage stated.
 
+Comparative symbolic execution, C against Rust translation
+([study](../vl_paper_walkthrough/finding_a_crab_in_the_c_20261012.md)):
+cozy runs both binaries on the same symbolic input in angr and pairs the feasible terminal paths.
+A pair is compatible when the joint path constraints are satisfiable.
+For compatible pairs it asks whether memory can differ, and returns concrete inputs that show a difference.
+It differs from a sequential equality harness (Kani, as in VERT).
+The study quotes the paper:
+"a copy of the execution tree of the second function is made for every leaf of the execution tree of the first function"
+and that it gives "a fairly coarse success/failure signal".
+Verus form: the study gives none; a Rust harness with two calls and equality assertions is its inference, and it loses the path-pair diagnostics.
+
 Not a variant: KaPilot ([study](../vl_paper_walkthrough/kapilot_20261012.md)) uses an LLM to write the Kani contracts around a harness.
 It is a spec-writing technique, so I only use its numbers below.
+
+TLC or Apalache for counterexamples, TLAPS for the final proof (Scimitar)
+([study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md)):
+the model checker finds counterexamples to induction on finite instances, then a proof checker validates the unbounded graph.
+The paper's words: TLC “cannot produce full proofs of inductive invariants for protocols of arbitrary size, but can generate CTIs for finite protocol instances”.
+The paper does not report false-negative rates of the bounded search.
+Verus form: the study's inference; a bounded harness must share the transition semantics or its counterexamples mislead.
 
 ## what a Verus user gains
 
@@ -134,7 +152,7 @@ The studies do not compare Kani or Crux with Verus on one codebase.
 Each point below is evidence from the Kani, Crux or std papers plus my inference for Verus.
 
 - Checks on code Verus does not handle.
-  The [hybrid Rust study](../vl_paper_walkthrough/hybrid_rust_verification_20261012.md) says: "Verus cannot verify traditional raw pointers".
+  The [hybrid Rust study](../vl_paper_walkthrough/hybrid_rust_verification_20261012.md) says, of the paper's related work: "Verus cannot verify traditional raw pointers".
   Kani targets unsafe code and the std campaign checked 4,645 unsafe functions with harnesses.
   Those are Kani's checked classes only, not a proof of functional behavior.
 - Bugs without a spec.
@@ -165,6 +183,12 @@ Kani CI, self-selected projects:
 34 harnesses in 21 minutes (Firecracker), 102 in 23 (s2n-quic), 153 in 42 (Hifitime), 16,748 in 69 (std).
 The paper: "the evaluated projects self-selected into Kani adoption, potentially over-representing favorable cases".
 
+cozy: three experiments, no counts of paths or queries
+([study](../vl_paper_walkthrough/finding_a_crab_in_the_c_20261012.md)).
+Insertion sort in C, Rust and C2Rust was verified equivalent, and C insertion sort against Rust bubble sort for sorted outputs, with small bounded array lengths.
+Box blur was verified only for small images and kernel sizes.
+The watch example needed input assumptions to avoid overflow states.
+
 Hifitime: 57 of 158 generated harnesses timed out at 60 seconds.
 Each caller re-unrolled the same callee.
 After contracts: 153 active proofs, and six new bugs.
@@ -194,6 +218,13 @@ Good means Kani passes and the contract is no stronger in its precondition and n
 Hybrid assurance: 13 participants reported combining methods.
 The study counts 29 usable interviews for most totals, so this is a minority-scale interview result.
 
+Model checking beside a Verus proof (SoundGate)
+- TLC checked the concurrent abstract model over finite run and key sets; the largest completed search had 74,805,201 states.
+  Loom checked bounded interleavings of the deployed Rust gate: three models, zero failures reported.
+- The finite TLC search is bounded. TLAPS proved the invariants for arbitrary run and key sets (68 obligations).
+- Study inference: a statistical bound under the harness distribution does not establish arbitrary deployment correctness.
+- [study](../vl_paper_walkthrough/stop_means_stop_20261011.md)
+
 ## where it fails
 
 - Bound too small or too big.
@@ -216,6 +247,14 @@ The study counts 29 usable interviews for most totals, so this is a minority-sca
 - Crux needs bounded, fixed-size data and rejects most raw layout casts.
 - Verified-looking is not verified: a contract can be weak.
   See [specification quality checks](specification_quality_checks.md).
+
+- Equivalence by symbolic execution is bounded by explored paths and by the compiler, ABI and layout modeling.
+  The study's inference: it is not an all-input theorem for unbounded loops.
+  Pairwise comparison can become quadratic in paths.
+  The paper names binary interpretation in angr as the main cost, not the solver
+  ([study](../vl_paper_walkthrough/finding_a_crab_in_the_c_20261012.md)).
+- Undefined behavior differs by language: the study says C overflow is undefined, Rust debug builds panic and release builds wrap.
+  Input assumptions removed these states, so they narrow the claim.
 
 ## where the studies disagree
 

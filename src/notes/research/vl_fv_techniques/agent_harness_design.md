@@ -165,12 +165,52 @@ The model only picks a law and writes a fragment.
 The framework checks the law's premise and retries a bounded number of times.
 On repeated failure it backtracks to the last node of the refinement tree.
 
+### state-machine orchestrator: SpecAgent
+
+[study](../vl_paper_walkthrough/specagent_20261012.md)
+Agents use ReAct tool calls, but a deterministic state machine controls role changes, budgets and stopping.
+Planning and critique get ten steps, generation and repair thirty, and total invocations are capped at ten.
+Agents share a workspace but no conversation state.
+Cost on DeepSeek per program: 1,684.49 seconds, 99.40 model calls, $0.6228.
+
 ### persistent annotation guide
 
 [study](../vl_paper_walkthrough/proofwright_20261012.md)
 ProofWright (VerCors) seeds a guide from ten hand-annotated kernels.
 After each successful proof the model records new principles, and a human reviews them.
 Error and fix pairs are stored as `ORIGINAL`, `ERROR`, `EXPLANATION`, `CODE`.
+
+### investigate recurring failures before editing the harness
+
+[study](../vl_paper_walkthrough/so_rsi_20261012.md)
+SO-RSI (Lean and Verus) lets an outer agent edit the workflow, not the model.
+A detector flags recurrence, reversal or expectation mismatch in past edits.
+Each flag becomes a hypothesis with a prediction and a check.
+Probes replay saved artifacts, or vary one mechanism, in isolated workspaces.
+Example from the paper (§2, per the study): compare raw model output with extracted code,
+to tell a missing definition from one the extractor discarded.
+Memory keeps linked hypotheses, tests and negative results.
+The study quotes the paper: "Matching compiler messages alone is insufficient to merge investigations."
+Mechanism success stays separate from task success.
+Verus steps here are the paper's Lean-structure workflow with Verus replacing Lean compilation, per the study.
+
+### scratch checks versus official checks
+
+[study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+Rust-Prover (Lean) gives each agent three hours and 40 official checks, with unrestricted scratch Lean checks between submissions.
+The study quotes the paper: "most of the revision happens there."
+The agent cannot change the statement or generated code (see [anti-cheating gates](anti_cheating_gates.md)).
+Study inference: first official acceptance is not one-shot generation; 944/1,325 passed the first official check, maximum seven.
+
+### planner and syntax agents
+
+What's in a Proof? (F*, AutoGen and GraphRAG) [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+A Proof Expert writes a specification-first roadmap: representations, helper functions, lemmas.
+A Syntax Expert turns it into valid F* and iterates on verifier feedback.
+It gets verified solutions on T4 and T1 in 8 and 7 verifier loops; the o4-mini baseline fails within 30 loops.
+The study reads this as a 3.75x reduction; it is two tasks and one model setup.
+The Verus form (planner drafts contracts and invariants, a syntax agent edits Rust, diagnostics go back to the planner) is the study's inference.
+The study also suggests logging each verifier call, edit and active diagnostic as process evidence outside the trust base; that is its inference too.
 
 ## evidence
 
@@ -186,6 +226,7 @@ Error and fix pairs are stored as `ORIGINAL`, `ERROR`, `EXPLANATION`, `CODE`.
   - Sonnet 4.5 hands-off 688/849 (81%), hands-on 569/849 (67%)
   - o4-mini hands-on 348/849 (41%); GPT-5 hands-on 467/849 (55%)
   - cheating without the checker: 14% for Sonnet 4, 7% for Sonnet 4.5, 2% for GPT-5; under 1.5% for every model with it
+  - the paper gives no denominator for these rates and does not say whether they cover all 849 tasks or the ablation runs (the paper's own gap, per the study)
   - the study concludes that a controller can constrain a strong model
 - P^3, one run per cell, [study](../vl_paper_walkthrough/p_3_20261012.md)
   - full restarts on Verina: 11.7%, 7.8%, 5.3%, 8.5% (four backends) against 28.6%, 24.7%, 18.5%, 24.9% for program-then-proof
@@ -202,6 +243,13 @@ Error and fix pairs are stored as `ORIGINAL`, `ERROR`, `EXPLANATION`, `CODE`.
   - ten examples without the evolving guide: 13 kernels (13% of the benchmark)
   - one model, one benchmark, hand-reviewed guide
 - Move plugin: no denominators, no comparison with a plain model
+- SO-RSI, three outer runs, [study](../vl_paper_walkthrough/so_rsi_20261012.md)
+  - Lean held-out: seed 29.4%, naive outer loop 49.4 +- 2.8%, SO-RSI 71.2 +- 1.9%
+  - Verus: seed 14.8%, naive 33.4 +- 5.2%, SO-RSI 59.2 +- 3.7%
+  - without executable probes: Lean 63.4%, Verus 33.0%; without investigation memory: 60.9%, 36.7%
+  - tested investigations: Lean 1,482/3,223, Verus 1,037/2,491
+  - the study notes the one-decimal means cannot be rebuilt from 48 and 46 held-out tasks, and no per-run counts are given
+  - the abstract says zero-progress loops are eliminated; Table 5 still shows 7.2 and 8.6 per 100 edits
 
 ## where the studies disagree
 
@@ -225,6 +273,9 @@ Error and fix pairs are stored as `ORIGINAL`, `ERROR`, `EXPLANATION`, `CODE`.
   - the guide is trusted infrastructure in ProofWright; a bad entry persists
 - an isolated body can pass in a scratch module and fail in the repository
   - VeruSAGE's extracted tasks trust `external_body` dependencies; its whole-project test of three IronKV tasks cost 1.6 times the time and 2.2 times the money
+- SO-RSI: "aggregate token cost is not reported" ([study](../vl_paper_walkthrough/so_rsi_20261012.md), the paper's words)
+  - matched wall time is not matched spending; the Verus check's coverage beyond verifier acceptance is not stated
+  - one outer model, two domains; the paper calls generalization open
 - Eiffel rollback and Verus: Rust ownership may forbid the subclass trick; I would use a scratch module
 
 ## open questions

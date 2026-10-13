@@ -177,6 +177,17 @@ Boundaries around verified code
   - The paper warns that "types whose safety invariants are not yet annotated with is safe() are tested over all bit-valid values".
   - [study](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md)
 
+Imported contracts between components
+
+- Vosti. The Verus engine proof imports Triton kernel contracts; a custom analyzer checks the kernels.
+  - Paper, §5.1, as quoted in the study: "imports kernel contracts as trusted assumptions in Verus."
+  - Also trusted: "Contract translation and the correspondence between tensor representations remain trusted."
+  - Trusted too, per §5.3: the translator, rules and solver encoding, interface mapping, Triton compiler and GPU execution.
+  - Attention needs input-dependent finiteness that is "unchecked at runtime".
+  - Runtime configuration checks bind the launched parameters but do not prove the compiler correct.
+  - The study recommends keeping component proofs, translation, runtime checks and tests as separate evidence categories.
+  - [study](../vl_paper_walkthrough/vosti_20261012.md)
+
 Testing the axioms of a semantics
 
 - Corten (Rocq and Iris). Weakest-precondition rules are axioms; only some are shown adequate against an interaction-tree model.
@@ -193,12 +204,48 @@ Records of who judged, with what
   - [study](../vl_paper_walkthrough/saltbench_20261012.md)
   - The screening half of this paper (rejecting `assume`, `external_body`) belongs to [anti-cheating gates](anti_cheating_gates.md).
 
+Residual trust reported next to the verifier count
+- Fewer Assumptions by Design (DLL skill, six author-reported runs).
+  - Report assumptions and external bodies with the verified-item count. The first experiment: 9 assumptions and 3 axiomatic lemmas; the final state: "45 verified, 0 errors, 11 assumes".
+  - Where the trust sits matters. The I4 run made the central `link` mutator `external_body`: "The proof is incomplete in the most mutation-critical parts."
+  - Unsupported representations get a documented axiom boundary: "executable functions are marked with external_body, code bodies should not be proved".
+    The result is a conditional specification, not verified implementation correctness.
+  - The study's inference: temporary `assume` stubs need an exit criterion, discharged or kept in the final evidence.
+  - [study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)
+
 Assumptions at unverified boundaries, as maintenance
 
 - Toward practical deductive verification (interviews, not a technique run).
   - Practitioners isolate unsafe and external APIs behind `external_body` specs and track assumptions in `requires`.
   - The Verus form is the study's labelled inference, not the interviewees'.
   - [study](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md)
+
+Model-to-deployment gap (SoundGate, an admission gate for agent actions)
+- Verus proves the sequential admission model, 11 items verified, zero errors reported. Standard-library collections and deployment transport stay trusted.
+- The deployed Rust is tied to the model only by differential testing: 12 million operations over 200,000 randomized traces, zero divergences.
+  The author calls this "not a mechanized refinement proof" (the paper's words, as quoted in the study).
+- The mediation condition is itself a trusted assumption: every side-effecting operation acts only after a release verdict.
+  Wrappers, linters and network or filesystem confinement each leave a hole; the approver and gate process stay trusted.
+- The study's inference for VL: report model proof, code proof, conformance tests and confinement separately.
+- [study](../vl_paper_walkthrough/stop_means_stop_20261011.md)
+
+Translation as trusted base
+
+- Rust-Prover (Lean). Proofs are about Lean code that Charon and Aeneas translate from Rust, and pure specification helpers take a separate `#[pure]` macro path.
+  - The study says both translation paths matter to assurance, so kernel checking does not cover the Rust-to-Lean step.
+  - Mitigations it reports: differential tests of translated code, spec review,
+    and an itemized list of 27 specializations (Appendix A) where the verified code differs from the original, such as ASCII strings as bytes and hash lookups as vector search.
+  - The study's inference: report each transformation individually; a hash-to-vector rewrite can keep values but change cost.
+  - [study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+
+Partial refinement ledger
+
+- StateSync-GKR (Isabelle/HOL for the model, Creusot/Why3 for Rust). Four contract levels R1 to R4 anchor compiler, sumcheck, protocol and hash-gadget clauses to Isabelle objects.
+  - Translated code, open obligations, black-box libraries and documentation contracts are labelled separately.
+  - Trusted: Rust, LLVM and the OS, pinned Plonky3 crates, abstract hash functions, one tool-artifact axiom, the premise tying running traces to model objects, and the challenge distribution.
+  - Fiat-Shamir and multi-round non-interactive security are outside the model.
+  - Verus form is the study's inference: a correspondence ledger naming each `assume`, external spec and uninterpreted hash.
+  - [study](../vl_paper_walkthrough/statesync_gkr_20261012.md)
 
 ## evidence
 
@@ -209,6 +256,8 @@ How much is trusted
 - Verus systems case studies: 6,119 executable lines, 31,231 proof lines, 4,692 lines in the trusted column, across five systems
   ([study](../vl_paper_walkthrough/verus_practical_20261012.md)).
   The study notes the categories are not interchangeable.
+  The audit log says the paper's Figure 9 rows sum to 31,691 proof lines against a printed 31,231,
+  so treat the totals as approximate.
   The allocator alone has 245 trusted OS and interface lines plus 37 user-facing specification lines, reported as 282.
 - Rust standard library, Kani campaign: 16,748 harnesses generated out of 33,955 functions; 11,970 of the 16,748 passed.
   Only 295 of those passes had function contracts, and 694 contracts were written by hand, so 989 functions had contract proofs
@@ -226,6 +275,17 @@ How much is trusted
 - SWE-Proof, appendix B.2 as the study reports it: 500 deep callee models in Nagini against 264 axioms over 137 instances; pure Lean over Mathlib needs 3 axioms in the whole corpus
   ([study](../vl_paper_walkthrough/swe_proof_20261012.md)).
 
+Vosti trust lists
+- Engine and model code: 14,043 implementation, 876 specification and 64,952 proof lines, checked in 52.9 seconds (author reports, Table 2).
+  The trusted bridges above sit outside these counts, and the study says checking time does not measure proof-generation labor
+  ([study](../vl_paper_walkthrough/vosti_20261012.md)).
+- 5,488 bitwise-matched test pairs across seven models are tests, not verification (the paper: "are not exhaustive verification").
+
+Residual trust in six runs of one skill
+- Table 5 of the paper, as the study reports it: I1 46 assumes and 0 axioms; I2 and I3 0 and 0; I4 18 and 1; the standard-list and SlotMap runs 0 assumes and 8 axioms each.
+  Zero assumptions did not mean an adequate specification: I2 "lacks a positional witness for ordering".
+  Six heterogeneous demonstrations, not repeated estimates ([study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)).
+
 A trusted model that found something
 - The Firecracker clock stub exposed a rounding bug of up to 0.01% bandwidth excess
   ([study](../vl_paper_walkthrough/kani_20261012.md)).
@@ -233,10 +293,18 @@ A trusted model that found something
   It is one case; the study gives no rate.
 
 Checks on the trusted pieces
+- Rust-Prover: of 1007 specs, 658 validated automatically; of the other 349 only samples and the 169 unfinished-suite cases were reviewed,
+  and the paper says "The reviews found no wrong or weakened spec." The study says this covers performed reviews,
+  not all translations ([study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)).
+- Rust-Prover code tests: 105 of 114 problems with runnable suites completed, 19,555 matching sampled cases;
+  nine failed by timeout or unsupported signature. The study infers this covers about a tenth of the problems.
 - Diodon's negative tests: injecting a plaintext secret broke the Core refinement proof, and logging session keys broke the taint check.
   The study says these are not a detection rate over a corpus.
 - SWE-Proof reports the axiom checks as two loops (fuzz the real callee; require the proof to close) but, per the study, does not prove any axiom true.
 - No study reports how often a stub or axiom turned out wrong in practice.
+- StateSync-GKR refinement inventory: 331 proof files, 2,421 discharged leaves, 179 open leaves. The study says these counts are not a coverage denominator.
+  - 37 historical contract distortions were rejected, but the journal is not a public external audit. [study](../vl_paper_walkthrough/statesync_gkr_20261012.md)
+- StateSync-GKR artifact: 194 Rust release tests passed, 0 failed, 2 intentionally ignored. The study says this is not a whole-program verification claim.
 
 ## where it fails
 
@@ -260,8 +328,19 @@ Checks on the trusted pieces
   ([study](../vl_paper_walkthrough/verifying_verus_20261012.md), the study's words).
 - Models of unsafe and concurrent code are thin.
   Kani does not model Stacked or Tree Borrows aliasing, and its frontends lack concurrency (std and lessons studies).
+- The memory model is trusted.
+  The Core ARC study lists the C20 and YC20 definitions, Iris soundness and the ARC code model as trusted.
+  Under C20 the authors also assume every atomic access is enabled, and leave the nonpositive-counter-read condition open
+  ([study](../vl_paper_walkthrough/an_approach_for_modularly_verifying_the__20261012.md), study's summary of the paper).
 - Executable code can be the weak link.
   SWE-Proof's study quotes the paper that the Python translation of the verified model is "the weakest link in the guarantee".
+- A proof of determinism can hide wrong semantics.
+  The Vosti paper (§7, as quoted in the study): "A consistently incorrect implementation can still be deterministic."
+  Full numerical correctness against a reference is out of its scope, so list that as an unproved claim
+  ([study](../vl_paper_walkthrough/vosti_20261012.md)).
+- A green build is not end-to-end assurance.
+  StateSync-GKR's GKR soundness covers only a circuit's output claim; if the compiler is wrong, "the verifier faithfully checks the wrong statement" (the paper's words, as quoted in the study).
+  Value correspondence, library semantics and challenge generation stay trusted. [study](../vl_paper_walkthrough/statesync_gkr_20261012.md)
 - The specification is the biggest assumption and nothing here covers it.
   See [specification quality checks](specification_quality_checks.md).
 

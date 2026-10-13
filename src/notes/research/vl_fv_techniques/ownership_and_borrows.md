@@ -254,6 +254,17 @@ Library authors annotate `Cell`, `RefCell`, `Arc`, locks with capabilities such 
 The tool derives framing and non-aliasing in clients.
 Annotations are trusted.
 
+### Formal model of the borrow checker
+
+[Oxide](../vl_paper_walkthrough/oxide_20261012.md).
+A source-level calculus of safe Rust, not a Verus workflow; the Verus forms in the study are inference.
+Moves are use-once: a moved place is marked dead and any later use is rejected.
+A borrow is `shrd` or `uniq`; a `uniq` use conflicts with any overlapping loan, a `shrd` use only with overlapping `uniq` loans.
+A region is a set of loans, not an allocation region; a reborrow records a chain such as `'z -> { uniq x, uniq *y }`.
+Region rewriting unions loan sets, so a ghost region set would grow, not shrink.
+The study's Verus suggestion: tracked tokens for `shrd` and `uniq` on raw pointers, and path-and-prefix lemmas for overlap.
+Both are the study's inference, for unsafe code the compiler no longer checks.
+
 ### Using the compiler's ownership facts
 
 [Place capability graphs](../vl_paper_walkthrough/place_capability_graphs_20261012.md).
@@ -266,9 +277,28 @@ The study calls it an inference that Verus could consume this.
 `push` goes from `RVec<T>[n]` to `RVec<T>[n+1]`.
 Soundness assumes Rust's borrow guarantees under Stacked Borrows.
 
+[Towards verifying unsafe Rust](../vl_paper_walkthrough/towards_verifying_unsafe_rust_programs_a_20261012.md).
+Work in progress: a separation logic for pointer-aliasing rules, over a toy language.
+Pointers carry a provenance: owning, mutable reference, shared reference.
+A `&mut` consumes the lender's full points-to and returns a borrower's full points-to plus a reference-ending resource.
+A `&T` splits the permission into read-only fractions, so no alias can write while it lives.
+Verus form is the study's inference: ghost tokens for owner, borrower and end.
+
 [Kani](../vl_paper_walkthrough/kani_20261012.md) infers writes through `&mut`.
 Raw pointers need an explicit `modifies`.
 Its frame rule assumes no aliasing, which the borrow checker supplies for safe code.
+
+### Resource accounting for relaxed atomics
+
+[Modular verification of Core ARC under C20 and YC20](../vl_paper_walkthrough/an_approach_for_modularly_verifying_the__20261012.md).
+Ownership of an `Arc` count and payload, but with relaxed atomics instead of sequential consistency.
+Each atomic location gets a specification of tied resources.
+A relaxed increment consumes one global unit and produces two; a release decrement consumes one.
+A decrement that reads one leaves no local resource, so the payload can be freed.
+An acquire fence implies the global resource is zero.
+The Iris invariant gives each `arc` permission a fraction of the payload and of a cancellation token.
+The Verus form (ghost counter, token records, fractional permissions) is the study's inference.
+It is a paper proof of Core ARC only; full ARC is left as a next step.
 
 ## evidence, with denominators
 
@@ -318,6 +348,13 @@ Flux against Prusti on 8 benchmarks:
 - 7.13 s against 246.65 s total
 - the authors attribute part of the gap to quantified SMT conditions
 ([study](../vl_paper_walkthrough/flux_20261012.md))
+
+Oxide, tested against rustc's borrowck and NLL tests:
+- 615 tests considered, 208 in scope (89 + 119), 407 excluded
+- all 208 either typecheck when rustc does or give a corresponding error
+- the authors translated methods into functions, added temporaries by hand, and split multi-error files
+- type safety is a pen-and-paper proof for Oxide, not for rustc
+([study](../vl_paper_walkthrough/oxide_20261012.md))
 
 Place capability graphs:
 - 118,483 of 121,271 functions in the top 500 crates produced graphs (97.7%)
@@ -373,13 +410,31 @@ Coverage gaps in each tool:
 - Corten: adequacy proved for literals, unary and binary operators, expression statements and let; borrow, tuple, if, match, loop and call are pending
 - resource specs: functions that reborrow and return a live mutable reference are unsupported
 
+Oxide's model leaves out unsafe code, two-phase borrows, concurrency, traits and most libraries.
+Its annotation burden is explicit regions; the implementation generates a fresh local region for unannotated borrows.
+So its 208/208 says nothing about raw-pointer provenance, which is where Verus users need ownership proofs.
+([study](../vl_paper_walkthrough/oxide_20261012.md))
+
 The borrow checker is trusted by Verus, Flux, Crux and Kani, not by Corten.
 So a bug in rustc's borrow checking is a hole in the first four.
 ([study](../vl_paper_walkthrough/crux_a_precise_verifier_for_rust_and_oth_20261012.md))
 
+Aliasing rules for raw pointers are not checked by the type system.
+The unsafe-Rust study says a functional Verus proof can still hide aliasing UB in an unsafe block.
+Its gaps: shared freezing is not recursive, so `&&mut T` can recover a mutable reference and write.
+Interior mutability and function calls are only in prose, structs and recursive freezing are future work.
+A fraction other than 1 in reference-end may conflict with the Rust Reference's `&mut` rule.
+[study](../vl_paper_walkthrough/towards_verifying_unsafe_rust_programs_a_20261012.md)
+
 Ownership errors look like proof errors to a model.
 The VeriFast study found missing heap chunks the most common failure.
 Whether the same holds for Verus tokens is not measured.
+
+Relaxed memory is not covered by Verus's ownership tokens.
+The Core ARC study proves safety of an interleaving semantics implies no undefined behavior under C20 (with assumptions) and YC20.
+It reports no benchmark, mechanization or timing; the soundness proof is on paper and "a preliminary result".
+Nothing there says Verus's atomic invariants already supply its final-decrement and acquire-fence lemmas (study's inference).
+([study](../vl_paper_walkthrough/an_approach_for_modularly_verifying_the__20261012.md))
 
 ## where the studies disagree
 
@@ -399,6 +454,12 @@ Are prophecies the standard answer for `&mut`?
 The VerusBelt study says combining RustHorn's encoding with automated proving "is not novel", because Creusot did it.
 The hybrid and borrowable-fractional papers use it too.
 Verus's own route for argument `&mut` is `old(x)` and the final `x`, and the studies do not compare the two.
+
+Is Verus unsound for unsafe aliasing?
+The unsafe-Rust paper says Verus, RefinedRust and Gillian-Rust "ignore these rules and are therefore unsound".
+The study calls this a hedged claim by the authors, not checked there.
+It does not say what VerusBelt's proof covers, and the studies do not compare them.
+[study](../vl_paper_walkthrough/towards_verifying_unsafe_rust_programs_a_20261012.md)
 
 Does ownership support make specifications shorter?
 Flux against Prusti says yes for lightweight properties; the Flux paper itself says Prusti can prove deeper properties such as sortedness.

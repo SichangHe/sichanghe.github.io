@@ -131,9 +131,20 @@ Its abstract line, as the study quotes it: "Outcomes are decided outside the age
 
 [AlgoVeri](../vl_paper_walkthrough/algoveri_20261012.md) also compares depth against width at equal budget: one chain of 15 repair rounds against many one-round samples.
 
+[SO-RSI](../vl_paper_walkthrough/so_rsi_20261012.md): when an agent edits its own workflow, pick edits on development tasks only.
+The study quotes the paper: "test outcomes never guide optimization."
+Compare against ordinary repair under equal time and dollars; the paper matches 24 hours, not spending.
+
 ## evidence, with denominators
 
 Task isolation changes the number a lot.
+- [Agentic proving study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md):
+  CLEVER (Lean 4, 161 entries), Claude Opus 4.6, one-hour limit per attempt. Four rates, four denominators.
+  - 81.3% = 65/80 specification isomorphism, on the benchmark's correct portion
+  - 87.5% = 70/80 implementation proofs from correct ground-truth specifications, among entries with no specification bug
+  - 95.7% = 154/161 with an OK attempt across simple and guided runs; 98.1% after removing four benchmark issues
+  - the study says these must not be collapsed into one number; reference defects (12 error types) mean the benchmark itself needs auditing
+  - cost about $2.0 to $2.5 per proving solve, one-hour runs near $10
 - [DafnyBench study](../vl_paper_walkthrough/dafnybench_20261012.md): best model Claude 3 Opus 67.8 ± 1.7% on 782 programs, ten attempts each.
   With no LLM the baseline is 26.9%, because some programs verify without hints.
   So the model's own contribution is smaller than 67.8.
@@ -177,6 +188,7 @@ Repair rounds and restarts.
   GPT-OSS-120B saturates near round 3.
   Under equal budget, deep repair often loses to width for GPT-OSS.
 - [VERINA study](../vl_paper_walkthrough/verina_20261012.md): proof pass up to 20.1% with 64 refinement rounds, against 4.9% pass@1 for o3.
+  The paper gives no count or model for the 20.1%, only the Figure 8 curves.
 - [P^3 study](../vl_paper_walkthrough/p_3_20261012.md): full-restart rates on Verina 11.7%, 7.8%, 5.3%, 8.5% for P^3 against 28.6%, 24.7%, 18.5%, 24.9% for sequential, out of 189 runs per backend.
 - [VeruSAGE study](../vl_paper_walkthrough/verusage_20261012.md): three independent o4-mini runs on 100 tasks gave 41%, 39%, 39%, and 56% accumulated over the three.
   Unioning all four models gave 82.3%, only 1.4 points above Sonnet 4.5 alone.
@@ -188,6 +200,19 @@ Outcome classes.
 - [AlgoVeri study](../vl_paper_walkthrough/algoveri_20261012.md) classifies the first blocking error per round as syntax, type, or verification. Verus keeps a "syntax barrier".
 - [SaltBench study](../vl_paper_walkthrough/saltbench_20261012.md): of 200 conditions, 181 were results of record, 16 inexpressible, 3 unreached at the cost cap.
   It records "A budget stop is recorded as a halt rather than silently counted as failure."
+
+Rust-Prover, Lean, as a worked report.
+- [study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+- 1325 theorems from 1,007 problems (946 main, 61 extended) at a pinned benchmark state, all proved;
+  three agents, about 35 hours, $1,792, median 3.4 minutes and $1.20 per theorem; author reports, not reproduced
+- the specifications are supplied, so the result is proof completion, not specification discovery;
+  the paper says "we do not yet know how much of this carries over to the crates we verify for customers"
+- a Verus rerun on 50 problems chosen by longest reference proofs: Opus 49/50;
+  the paper says the rates "are not comparable rates" because tools, examples and lookups differ, so it does not show Lean causes the gain
+
+- Identity windows inflate replay rates. In JS-SAM's spinlock set 6 of 28 windows leave state unchanged, so a do-nothing model scores 6/28.
+  Report both the unconditional and the state-changing rate. Its "326,592 states explored" is a step count, not reachable states.
+  [study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)
 
 ## where it fails
 
@@ -238,18 +263,22 @@ Scores do not transfer across languages. VERINA, P^3 and LeetProof are Lean. Onl
 
 - AlgoVeri on Lean: the AlgoVeri study has Lean at 9.09% compiler-verified (Gemini, 15 rounds).
   The [P^3 study](../vl_paper_walkthrough/p_3_20261012.md) has AlgoVeri solve rates of 31.2 to 48.1% across all methods, in Lean 4.28 with four other backends under $30 and 180 minutes.
-  The studies do not explain the gap.
-  I think the protocols differ (which specification is given, what the proof is checked against, the backends), but I have not confirmed that.
+  The gap is across different agents, tools and metrics, and neither paper explains it.
 - VERINA proof rates: 4.9% for o3 in the VERINA study, against P^3 rates of 59.3 to 77.2% on Verina.
-  P^3's "solve rate" appears to be a different task definition, since the P^3 study says only that rates span those values across methods.
-  Not reconciled.
+  The VERINA number is ProofGen alone, pass@1 over 5 samples per task, with general models.
+  The P^3 rates come from end-to-end Lean agents with Lean tools and other backends.
+  P^3 does not compare the two, so how much of the gap is the agent is unknown.
 - VerusBench:
   AutoVerus 91.3% (137/150, three tries) against VeruSyn's 83% for its fine-tuned model and 76% for Claude Sonnet 4.5 at Accuracy@K with five debug rounds.
   The metrics and budgets differ, so these numbers cannot be ordered.
+  The name VerusBench also covers different sizes: 139 tasks in the SAFE paper, 150 in the AutoVerus paper.
+  That the 11 CloverBench tasks explain the gap is the study's inference.
 - Sonnet 4.5 on VeruSAGE: 81% (688/849) hands-off in the VeruSAGE study, 54% in the VeruSyn study at Accuracy@600 with debugging, on a set that excludes 289 tasks.
-  Different agent, task subset, and sampling.
+  The 81% is all 849 tasks hands-off.
+  The 54% is a 560-task subset under another protocol.
 - Counts inside one paper: the [VerifyThisBench study](../vl_paper_walkthrough/verifythisbench_20261012.md) records "734 tasks" in Section 2.3 and 41 challenges and 154 tasks in Section 3.1.
   Always say which one is your denominator.
+  These are the paper's inconsistency, not the study's.
 
 ## what looked wrong in a study
 
@@ -258,9 +287,8 @@ What is left is the papers' own inconsistencies, as the studies now state them.
 
 - VerifyThisBench paper: Table 6 gives Verus XS tasks as 99, but its parts (31 implementation, 27 specification, 31 loop) sum to 89.
   Also 734 tasks in Section 2.3 against 154 tasks in Section 3.1.
-- DafnyBench study: its source counts give 113 + 23 + 72 = 208 hint-free programs, 26.6% of 782, against the reported 26.9% baseline.
-  This is my arithmetic.
-  The audit checked 26.9% against the paper and found it matches, so I do not know where the two-program gap comes from.
+- DafnyBench paper: its own counts give 113 + 23 + 72 = 208 hint-free programs, 26.6% of 782, against its reported 26.9% baseline.
+  The paper does not explain the difference (the audit calls it the paper's own).
 
 ## open questions
 

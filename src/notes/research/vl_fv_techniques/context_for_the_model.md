@@ -161,7 +161,18 @@ Each step names where it comes from.
 - neuro-symbolic invariants (C): four few-shot families (inductive, with and without explanation; Hoare; Horn). [study](../vl_paper_walkthrough/neuro_symbolic_software_verification_20261012.md)
 - refinement library (LLM4PR): persists successful refinement trees for tasks with the same pre/post pattern.
   - the design is described, and I found no measurement of reuse. [study](../vl_paper_walkthrough/towards_large_language_model_aided_progr_20261012.md)
+- SpecAgent (ACSL): up to three examples chosen by Jaccard similarity of a 32-bit structural fingerprint,
+  after filtering out units with a different loop structure or return type. [study](../vl_paper_walkthrough/specagent_20261012.md)
+  - the paper reports no retrieval-only ablation
 - trace-linked retrieval (hardware assertions): graph of requirements, code, diagnostics; I found no numbers for it. [study](../vl_paper_walkthrough/knowledge_graphs_formal_verification_20261012.md)
+- KBSpec (JML, OpenJML): 83 seed items (11 examples, 31 tutorials, 26 exercises, 15 repair guidelines), then grown from verifier-accepted traces. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+  - each item holds original content, an LLM summary and keywords; retrieval is by embedding the program, and on repair the current specification plus the error
+  - items are scored against a knowledge-free baseline: helpful if only the item's run passes, harmful if only the baseline passes; near-duplicates (cosine over 0.95) are dropped
+  - the memory is frozen for evaluation; the Verus form is the study's inference, as the paper has no Verus implementation
+- What's in a Proof? (F* and Verus, expert behaviour) [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+  - experts search documentation and adapt existing lemmas; a copilot would retrieve lemmas and examples for the current subgoal
+  - P2's F* Intersection proof reused library lemmas and was three times shorter than P4's from-scratch proof
+  - the F* agent demonstration used GraphRAG retrieval; no retrieval-only ablation is reported
 
 ## evidence
 
@@ -184,7 +195,7 @@ Retrieved examples
 - ProofWright, one model, KernelBench L1: no knowledge base and no guide gives 0 verified kernels
   - knowledge base alone gives 0
   - ten few-shot examples without the evolving guide give 13, which the study calls 13% of the benchmark
-- DafnyPro, DafnyBench 782 programs: hint retrieval adds +9.97% (Claude 3.5) and +10.86% (Claude 3.7), as the study writes it; the study does not say points or relative
+- DafnyPro, DafnyBench 782 programs: hint retrieval adds +9.97% (Claude 3.5) and +10.86% (Claude 3.7), the paper says "percentage gains" only; reading them as points is the study's inference
 - PropertyGPT, 90 held-out properties from 9 projects: recall 0.80, precision 0.64
   - on a different set, 37 vulnerability-detection cases, retrieved-code similarity averaged 0.68 for 26 detected and 0.67 for 11 missed
   - the paper has no run without retrieval
@@ -250,7 +261,6 @@ Disagreement
 
 Looked wrong or unclear
 - the Dafny helper study reports 98.2% as "repair@8" in text and under "r@10" in its table; the study flags this itself
-- DafnyPro "+9.97%": points or relative is not stated
 - the Lean thesis study warns that 95.0% (402/423) is GPT-5.4 at K=50 on the persistent agent, not a tree-search result; keep that denominator when quoting it
 - the file `verusage_20261012.md` holds the VeruSAGE study
 

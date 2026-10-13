@@ -1,5 +1,6 @@
 # Stop Means Stop and the limits of verified agent controls
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-13 against the paper; slips corrected in place; details in the last line.
 
 - paper
   - Sajjad Khan, *Stop Means Stop: Measuring and Repairing the Enforcement Gap in Agent-Framework Control Primitives*
@@ -67,7 +68,7 @@ conditions and limits
     - it does not establish exactly-once external execution
 - section 5.3 excludes reversal of already admitted actions
   - “it does not roll back an effect already released and in flight at an external service”
-  - ChatGPT identified a tension with the broader operator contract in section 2.2, page 3
+  - ChatGPT identified a tension with the broader operator contract in section 2.1, page 3
     - B4 says no further effects land after the caller observes cancellation
     - counterexample to that stronger reading
       - gate releases a payment
@@ -108,7 +109,7 @@ what was already done
   - it does not prove that an external gate is the only possible repair
 
 additional evidence limits
-- section 6.4 reports 20 retail episodes per arm
+- section 6.1 reports 20 retail episodes per arm
   - all 20 submitted legitimate writes in the gate arm executed
   - rewards differed on eight paired episodes
   - inference
@@ -157,3 +158,5 @@ study status
   - retained the independently reviewed initial synthesis
   - integrated the cancellation-contract tension, naturalistic denominator, task-reward boundary and version discrepancy
   - the paper discussion with the human remains open
+
+Audited 2026-10-13 against the paper: checked the numbers (215 of 1,200 runs, 71 batches, 431 tool turns, 11 Verus items, 74,805,201 TLC states, 68 TLAPS obligations, three Loom models, 1.2e7 operations over 2e5 traces, 14,580 transitions, 20 episodes, eight reward differences, CrewAI 1.15.11 against 1.15.1), the four properties of section 5.3, the section 5.5 and 5.1 conditions, the page references and the quotations; all right. Corrected two wrong references: the 20-episode tau-bench completion test is in section 6.1, not 6.4; the barrier contract clause B4 is in section 2.1, page 3, not 2.2. Not checked: the contents of the saved ChatGPT answer, and the study saved-PDF path, which is outside the paper. Statements marked inference are the note own and are marked.

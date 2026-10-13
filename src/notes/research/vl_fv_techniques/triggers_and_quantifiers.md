@@ -131,6 +131,15 @@ Rewriting the quantifier itself:
 has the agent replace unbounded quantifiers in weakest-precondition output by bounded forms and add triggers to the ones that remain.
 For overflow, the agent adds a monotonicity lemma and calls it with a trigger.
 
+Trigger anchors and recursive reachability:
+[Fewer Assumptions by Design](../vl_paper_walkthrough/fewer_assumptions_20261012.md)
+(Verus, DLL invariants; the lessons are the study's reading of §3.4, pp.110-113).
+Quantified invariants need usable trigger anchors.
+A syntactically valid but overly specific trigger may never instantiate at the needed proof site.
+The study calls this a proof-search failure, not evidence the proposition is false.
+For recursive reachability it keeps "both a fuel-bounded reachability predicate and an exact-count predicate".
+It gives no counts for the trigger lessons alone.
+
 Choosing a backend:
 [Kani](../vl_paper_walkthrough/kani_20261012.md)
 offers `kani::forall!` and `kani::exists!` over bounded ranges.
@@ -215,6 +224,9 @@ It did not handle templates or set comprehensions.
 
 Hidden definitions confuse weaker agents.
 The VeruSAGE study says Sonnet often fails in NRKernel by demanding hidden bodies, rather than calling lemmas that expose the properties.
+
+A trigger that is valid but too specific may never fire at the proof site where it is needed
+([study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)); the study treats this as a search failure, not a false property.
 
 Solvers can still fail on arithmetic inside the quantifier.
 The Kani example above is the case.

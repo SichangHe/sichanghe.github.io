@@ -19,8 +19,9 @@ How do we keep a proof working after the code moves?
 How do we keep the whole check fast?
 
 No study runs an agent on a Verus repository over months.
-[Formal Disco](../vl_paper_walkthrough/formal_disco_20260822.md) (not yet audited) says the same gap is open.
-It asks future work to measure whole-repository build and proof maintenance under change.
+The plan section of the [Formal Disco](../vl_paper_walkthrough/formal_disco_20260822.md) study names the same gap.
+That plan is the study's own, not the paper's.
+It proposes measuring whole-repository build and proof maintenance under change.
 So most of this page is human practice, plus my inference of what it means for Verus.
 
 Related notes, not repeated here:
@@ -238,6 +239,7 @@ Proof to code size, per study.
 The ratios are my arithmetic on the numbers the studies give, unless noted.
 
 [Verus systems](../vl_paper_walkthrough/verus_practical_20261012.md), five hand-built systems: 6,119 executable lines, 31,231 proof lines, about 5.1 to 1.
+The audit found the paper's own Figure 9 rows sum to 31,691 proof lines, against the printed total of 31,231.
 Page table: 400 executable, 5,329 proof, a 13.3 ratio as the study states.
 Allocator: 3,178 executable, 13,703 proof, about 4.3 to 1.
 The study says trusted-spec lines and proved code are not interchangeable categories.

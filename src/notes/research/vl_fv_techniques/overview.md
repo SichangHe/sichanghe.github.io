@@ -62,6 +62,9 @@ For the wider literature map, see the
   specifications, axioms, the verifier.
 - [Bounded model checking harnesses](bounded_model_checking_harnesses.md):
   what a model checker beside the deductive proof buys.
+- [Equivalence checking](equivalence_checking.md):
+  show a refactored function or a translation behaves like its original,
+  by proof, symbolic execution of both, or an equality harness.
 
 ## Scaling to a repository
 

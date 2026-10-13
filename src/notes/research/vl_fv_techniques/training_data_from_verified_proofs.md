@@ -117,6 +117,8 @@ The paper's own words, as quoted in the study:
 Without the critique, the study says `assume(false)` use snowballs until programs verify trivially (Figure 7).
 
 Result: Llama-3.1-70B reaches 32.9% on HumanEval-Verus and 65.7% on MBPP at pass@256 (Table 2).
+The study gives the denominators: 49 HumanEval-Verus programs (85 functions) and 78 MBPP-verified programs.
+65.7% is not a whole count of 78, which is the paper's own inconsistency.
 The collection also lifts few-shot results of other models (Table 3).
 
 ### reinforcement learning with the verifier as reward (ANCORA)
@@ -146,14 +148,29 @@ The paper's words on what enters the reward, quoted in the study:
 
 ### diversity-aware selection (Formal Disco)
 
-Study: [Formal Disco](../vl_paper_walkthrough/formal_disco_20260822.md), not yet audited.
-Its top line says it passed only the script gate, so treat its numbers as less checked.
+Study: [Formal Disco](../vl_paper_walkthrough/formal_disco_20260822.md).
+The study is audited; its plan sections are the study's own recommendations, and I use only its paper statements.
 
 Three Claude-seeded workers (initiator, fixer, extender) grow verified programs.
 Qwen 2.5-Coder 32B is fine-tuned each round on only the "top 1/3 successful examples", ranked by how rare their program features are.
 That is a second filter after the verifier: pass, then be novel.
 The study reports pass@1 on 149 filtered VerusBench programs of 8.7% (base), 43.0% (trained), and 40.9% for a SAFE-trained comparison.
 At pass@32 it reports 59.1% against SAFE's 51%.
+
+### proof-gated equivalence self-play (SEQ/SINQ)
+
+Study: [SEQ/SINQ study](../vl_paper_walkthrough/improving_llm_code_reasoning_via_semanti_20261012.md).
+Haskell with Liquid Haskell, not Verus; the Verus forms are the study's inference.
+Alice writes a variant Q of a program P.
+Positive pairs (SEQ) keep Q only if Liquid Haskell accepts Alice's proof that P and Q agree on all inputs.
+Negative pairs (SINQ) keep Q only if executing both on a supplied input gives different outputs.
+Bob is trained to say whether P and Q are equivalent.
+Alice is trained on accepted proof traces, and on pairs Bob finds hard.
+Difficulty is 10 times the share of ten Bob samples that fail.
+The study quotes the paper:
+"SEQ Game: Alice's proof is verified by Liquid Haskell, which acts as an external oracle."
+Bob is fine-tuned once, in the final round; Alice after every earlier round.
+Difference from the other variants: the verifier also labels negatives, by execution, and the selection is by model failure, not by feature rarity.
 
 ### other training uses
 
@@ -202,6 +219,15 @@ ANCORA, pass@1, Qwen2.5-Coder-3B:
 - HumanEval-Verified (85): 19.15% against 19.07%.
 - Cost about 200 GPU-hours.
 
+SEQ/SINQ (Haskell), [study](../vl_paper_walkthrough/improving_llm_code_reasoning_via_semanti_20261012.md):
+- Validated training pairs: 937 for the 50/50 regime (E0), 1,839 for counterexamples only (E1), 140 for the 96% SEQ regime (E2).
+- These are retained-pair counts; the paper gives no denominator of all Alice attempts.
+- E0 has fewer pairs than E1 but better semantic reasoning, per the study.
+- E2 and E3 have about 150 pairs each; the authors say these are too small and need larger studies.
+- Bob, base against trained, on round-7 challenge instances: 87.57% against 91.34% on train, 88.24% against 88.79% on test.
+- Haskell Pass@1 for Bob, averaged over 16 trials: 17.7 to 26.4 on HumanEval, 26.7 to 36.9 on MBPP.
+- Transfer is uneven: PySecDB F1 51.3% to 54.0%, CodeXGLUE F1 47.9% to 43.2%.
+
 ## where studies disagree or look wrong
 
 SAFE's own numbers conflict.
@@ -235,6 +261,14 @@ Formal Disco measures diversity directly and treats raw count as insufficient.
 Small programs.
 VeruSyn's system proofs average 947 lines against 32 for the algorithmic tasks.
 Gains on small tasks may not carry over.
+
+Proofs are the bottleneck of equivalence data.
+The SEQ/SINQ study reports few positive pairs survive, so counterexamples supply most data.
+An executed counterexample shows one difference; it cannot show equivalence.
+The training language lacks memory and bit-level behavior, so low-level tasks (DCE, STOKE, TVM) gained little.
+The study's own inference: Rust ownership, panics and resources would need to be in the equivalence relation.
+
+The SEQ/SINQ paper disagrees with itself on the share of easy examples kept: 20% and 50% in the same section, per the study.
 
 Translation can change behavior.
 The SAFE study says no semantic-equivalence check is reported.
