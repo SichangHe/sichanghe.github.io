@@ -3,55 +3,6 @@
 
 Claude agents read each lead's abstract and judged whether it serves the goal. Nobody has read the papers. Leads judged not relevant are only in `leads.jsonl`.
 
-## judged relevant from the abstract
-
-11 leads.
-
-- A short survey on formalising software requirements using large language models
-    - what: Survey of 35 papers on using LLMs to turn software requirements into formal specifications.
-    - serves: intent_to_spec
-    - [source](https://arxiv.org/abs/2506.11874)
-- AoA: Theorem Proving Agent over Abstract Syntax Tree of Redesigned Language (2026)
-    - what: An LLM agent that edits proofs as syntax trees rather than text to cut token cost in interactive theorem proving.
-    - serves: agents
-    - [source](https://doi.org/10.48550/arxiv.2607.16372)
-- Efficient Synthesis of Symbolic Distributed Protocols by Sketching
-    - what: Synthesizes missing parts of parameterized distributed protocols written in TLA+ from sketches, with the tool Scythe, including a Raft reconfiguration protocol.
-    - serves: verified_systems, invariant_inference, formulation
-    - [source](https://arxiv.org/abs/2405.07807)
-- Life, Death, and the Critical Transition: Finding Liveness Bugs in Systems Code (MaceMC)
-    - what: MaceMC, a model checker that finds liveness bugs (cases where something good never eventually happens) in implementations of Pastry, Chord and other distributed protocols.
-    - serves: liveness, verified_systems, cases
-    - [source](https://www.usenix.org/conference/nsdi-07/life-death-and-critical-transition-finding-liveness-bugs-systems-code)
-- LLM-Guided Formal Verification Coupled with Mutation Testing (2024)
-    - what: Uses an LLM to propose hardware design properties and invariants, then judges their quality with mutation testing.
-    - serves: invariant_inference, evaluation, agents
-    - [source](https://doi.org/10.23919/date58400.2024.10546729)
-- Multiparty session types for distributed and failure-prone systems
-    - what: A thesis that extends multiparty session types (types that describe who sends what to whom) to protocols running over lossy networks and fault-tolerant client-server systems, so that type-checked programs satisfy properties such as deadlock freedom and liveness.
-    - serves: formulation, foundations
-    - [source](https://doi.org/10.5525/gla.thesis.85779)
-- Surveying the Rust Verification Landscape
-    - what: A survey of tools that verify Rust programs, including code using the unsafe keyword.
-    - serves: foundations, verified_systems
-    - [source](https://arxiv.org/abs/2410.01981)
-- SysMoBench: Evaluating AI on Formally Specifying Complex Real-World Systems
-    - what: Benchmark of whether AI can write formal TLA+ models of real concurrent and distributed systems such as etcd Raft and ZooKeeper.
-    - serves: evaluation, intent_to_spec, agents, verified_systems
-    - [source](https://arxiv.org/abs/2509.23130)
-- $$\textsf{HornStr}$$: Invariant Synthesis for Regular Model Checking as Constrained Horn Clauses (2025)
-    - what: A solver that finds inductive invariants for infinite-state and parameterized systems by learning automata and solving string constraints.
-    - serves: invariant_inference, foundations
-    - [source](https://doi.org/10.1007/978-3-031-98668-0_10)
-- TLA+ Bench (2026)
-    - what: Benchmark and dataset of TLA+ specifications for testing whether LLMs can write them from natural language, graded by running the model checker.
-    - serves: evaluation, intent_to_spec, agents
-    - [source](https://arxiv.org/abs/2607.23425)
-- Verified LLM-Driven Synthesis for Concept Design
-    - what: Uses an LLM to generate application designs that satisfy checked safety invariants, steered by example scenarios toward the intended design.
-    - serves: intent_to_spec, agents
-    - [source](https://arxiv.org/abs/2607.15718)
-
 ## no abstract found
 
 204 leads.
