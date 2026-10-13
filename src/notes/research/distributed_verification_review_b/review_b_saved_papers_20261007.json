@@ -1,0 +1,70 @@
+[
+  {
+    "stem": "adore",
+    "url": "https://flint.cs.yale.edu/flint/publications/adore.pdf"
+  },
+  {
+    "stem": "chapar",
+    "url": "https://adam.chlipala.net/papers/ChaparPOPL16/ChaparPOPL16.pdf"
+  },
+  {
+    "stem": "igloo",
+    "url": "https://arxiv.org/pdf/2010.04749"
+  },
+  {
+    "stem": "daisynfs",
+    "url": "https://pdos.csail.mit.edu/papers/daisy-nfs:osdi22.pdf"
+  },
+  {
+    "stem": "ironsync",
+    "url": "https://www.andrew.cmu.edu/user/bparno/papers/ironsync.pdf"
+  },
+  {
+    "stem": "shipwright",
+    "url": "https://arxiv.org/abs/2507.14080"
+  },
+  {
+    "stem": "opcrdt",
+    "url": "https://iris-project.org/pdfs/2022-oopsla-crdts.pdf"
+  },
+  {
+    "stem": "pgo",
+    "url": "https://raw.githubusercontent.com/DistCompiler/pgo/main/doc/papers/asplosb23main-p12-p-e73de3693c-62943-final.pdf"
+  },
+  {
+    "title": "ClarifySTL- An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification, Yue Fang, Zhi Jin, Jie An, Jia Li, Hongshen Chen, Xiaohong Chen, Naijun Zhan, arXiv, 2026"
+  },
+  {
+    "title": "Verifiable Natural Language to Linear Temporal Logic Translation- A Benchmark Dataset and Evaluation Suite, William English, Chase Walker, Dominic Simon, Sumit Jha, Rickard Ewetz, arXiv, 2025"
+  },
+  {
+    "title": "Finding Invariants of Distributed Systems- It’s a Small (Enough) World After All, Travis Hance, Marijn Heule, Ruben Martins, Bryan Parno, NSDI, 2021"
+  },
+  {
+    "title": "Paxos Made EPR- Decidable Reasoning about Distributed Protocols, Oded Padon, Giuliano Losa, Mooly Sagiv, Sharon Shoham, OOPSLA, 2017"
+  },
+  {
+    "title": "Reducing Liveness to Safety in First-Order Logic, Oded Padon, Jochen Hoenicke, Giuliano Losa, Andreas Podelski, Mooly Sagiv, Sharon Shoham, POPL, 2018"
+  },
+  {
+    "title": "Hyperproperties, Michael R. Clarkson, Fred B. Schneider, Journal of Computer Security, 2010"
+  },
+  {
+    "title": "Auxiliary Variables in TLA+, Leslie Lamport, Stephan Merz, arXiv, 2017"
+  },
+  {
+    "title": "High-Level Specifications- Lessons from Industry, Brannon Batson, Leslie Lamport, FMCO proceedings, 2003"
+  },
+  {
+    "title": "TLA-Verus- Generating and Solving Temporal Proof Obligations with LLM Agents, Kseniia Strelbytska, Balázs Szilágyi, Anna Mészáros, Ferenc Huszár, NeurIPS VERICODEGEN Workshop, 2026"
+  },
+  {
+    "title": "Verifying Liveness Properties of Distributed Systems via Trace Refinement in Higher-Order Concurrent Separation Logic, Jonas Kastberg Hinrichsen, Léo Stefanesco, Lars Birkedal, Amin Timany, manuscript, 2024"
+  },
+  {
+    "title": "AutoMan- Facilitating Verified Distributed Systems Development Through Automatic Code Generation and Manual Optimizations, Zihao Zhang, Ti Zhou, Christa Jenkins, Omar Chowdhury, Shuai Mu, SOSP, 2025"
+  },
+  {
+    "title": "TLA-Prover- Verifiable TLA+ Specification Synthesis via Preference-Optimized Low-Rank Adaptation, Eric Spencer, Arslan Bisharat, Brian Ortiz, et al., arXiv, 2026"
+  }
+]

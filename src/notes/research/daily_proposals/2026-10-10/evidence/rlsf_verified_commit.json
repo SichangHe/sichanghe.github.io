@@ -1,0 +1,61 @@
+{
+  "sha": "a973020873d9f8fac88e073ec34b27e353e33575",
+  "node_id": "C_kwDOMr814doAKGE5NzMwMjA4NzNkOWY4ZmFjODhlMDczZWMzNGIyN2UzNTNlMzM1NzU",
+  "commit": {
+    "author": {
+      "name": "unsoundsystem",
+      "email": "unsoundsystem@protonmail.com",
+      "date": "2026-08-07T06:07:39Z"
+    },
+    "committer": {
+      "name": "unsoundsystem",
+      "email": "unsoundsystem@protonmail.com",
+      "date": "2026-08-07T06:07:39Z"
+    },
+    "message": "wip",
+    "tree": {
+      "sha": "a9d742a93146f5f96ec3d5763d723c47d22ac719",
+      "url": "https://api.github.com/repos/unsoundsystem/rlsf-verified/git/trees/a9d742a93146f5f96ec3d5763d723c47d22ac719"
+    },
+    "url": "https://api.github.com/repos/unsoundsystem/rlsf-verified/git/commits/a973020873d9f8fac88e073ec34b27e353e33575",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/unsoundsystem/rlsf-verified/commits/a973020873d9f8fac88e073ec34b27e353e33575",
+  "html_url": "https://github.com/unsoundsystem/rlsf-verified/commit/a973020873d9f8fac88e073ec34b27e353e33575",
+  "comments_url": "https://api.github.com/repos/unsoundsystem/rlsf-verified/commits/a973020873d9f8fac88e073ec34b27e353e33575/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "5aabe6eb5d57197ad9a06f422fd53d31a19b1a7c",
+      "url": "https://api.github.com/repos/unsoundsystem/rlsf-verified/commits/5aabe6eb5d57197ad9a06f422fd53d31a19b1a7c",
+      "html_url": "https://github.com/unsoundsystem/rlsf-verified/commit/5aabe6eb5d57197ad9a06f422fd53d31a19b1a7c"
+    }
+  ],
+  "stats": {
+    "total": 25,
+    "additions": 20,
+    "deletions": 5
+  },
+  "files": [
+    {
+      "sha": "ee6f02de22cf7ec8846017387a0265899a94aa21",
+      "filename": "src/bits.rs",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 5,
+      "changes": 25,
+      "blob_url": "https://github.com/unsoundsystem/rlsf-verified/blob/a973020873d9f8fac88e073ec34b27e353e33575/src%2Fbits.rs",
+      "raw_url": "https://github.com/unsoundsystem/rlsf-verified/raw/a973020873d9f8fac88e073ec34b27e353e33575/src%2Fbits.rs",
+      "contents_url": "https://api.github.com/repos/unsoundsystem/rlsf-verified/contents/src%2Fbits.rs?ref=a973020873d9f8fac88e073ec34b27e353e33575",
+      "patch": "@@ -124,15 +124,27 @@ pub proof fn u64_trailing_zeros_is_log2_when_pow2_given(x: u64, e: nat)\n \n     vstd::arithmetic::power2::lemma_pow2_pos(e);\n     if x == pow2(0) {\n-        assert(pow2(0) == 1) by (compute);\n-        assume(u64_trailing_zeros(1) == 0);\n-        assert(log(2, 1) == 0) by (compute);\n+        assert(pow2(0) == 1) by {\n+            vstd::arithmetic::power2::lemma_pow2(0);\n+            vstd::arithmetic::power::lemma_pow0(2);\n+        };\n+        assert(u64_trailing_zeros(1) == 0) by {\n+            reveal(u64_trailing_zeros);\n+            assert(1u64 & 1 != 0) by (bit_vector);\n+        };\n+        assert(log(2, 1) == 0) by {\n+            vstd::arithmetic::logarithm::lemma_log_pow(2, 0);\n+            vstd::arithmetic::power::lemma_pow0(2);\n+        };\n     } else {\n         assert(x / 2 == pow2((e - 1) as nat)) by {\n             assert(e > 0) by {\n                 assert(x != pow2(0));\n                 if e == 0 {\n-                    assert(pow2(0) == 1) by (compute);\n+                    assert(pow2(0) == 1) by {\n+                        vstd::arithmetic::power2::lemma_pow2(0);\n+                        vstd::arithmetic::power::lemma_pow0(2);\n+                    };\n                     assert(x as int == 1);\n                 }\n             };\n@@ -145,7 +157,10 @@ pub proof fn u64_trailing_zeros_is_log2_when_pow2_given(x: u64, e: nat)\n             assert(x > 0);\n             lemma_u64_last_bit_zero_iff_mul_of_two(x, e);\n         };\n-        assume(u64_trailing_zeros(x) == 1 + u64_trailing_zeros(x / 2));\n+        assert(u64_trailing_zeros(x) == 1 + u64_trailing_zeros(x / 2)) by {\n+            reveal(u64_trailing_zeros);\n+            axiom_u64_trailing_zeros(x / 2);\n+        };\n         assert(log(2, x as int) == 1 + log(2, x as int / 2)) by {\n             vstd::arithmetic::logarithm::lemma_log_s(2, x as int);\n         };"
+    }
+  ]
+}

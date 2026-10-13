@@ -555,6 +555,4 @@ code-to-generated-spec result meaningless.
     resets without evaluating their causal effect.
 - medium confidence:
   - the venue-fit explanation, because public ASE criteria and paper structure
-    support it but private reviews are unavailable;
-  - the exact practical value of a PCC pilot, because the installed model-visible
-    treatment path remains under manager verification.
+    support it but private reviews are unavailable.
