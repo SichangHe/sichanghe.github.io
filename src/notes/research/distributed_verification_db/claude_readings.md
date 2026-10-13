@@ -726,6 +726,163 @@ Evaluation: bugs found in real systems, confirmed by vendor fixes; speed against
 
 For the end goal (my inference): a model of an eval oracle for distributed-system specs, since it is sound and returns a witness a human can read. The four bugs are ready-made cases. It is testing, not proof, and covers safety only.
 
+## Numina-Lean-Agent (2026)
+
+Source: Liu et al., arXiv 2601.14027, https://arxiv.org/abs/2601.14027. Read: whole 8-page paper (main text, appendix).
+
+Problem. Agent systems for Lean proofs mostly use task-specific pipelines and trained provers, and are mostly closed. The authors want a general coding agent to do the job. In their words: "we propose the paradigm that directly uses a general coding agent as a formal math reasoner." (Abstract)
+
+What they did.
+- Claude Code (Opus 4.5) is the agent, with no training. Tools come through MCP (a protocol for plugging tools into agents): Lean-LSP-MCP (talks to the Lean checker), LeanDex (searches Mathlib, the Lean math library, by meaning), an Informal Prover (generator and verifier models in a loop, max 20 rounds, verifier must accept 3 times), a Discussion Partner (asks other LLMs for ideas) (Sec 2.2).
+- Putnam 2025 run: strictly sequential, internet search disabled: "Internet search access was disabled for all API calls for preventing the agent from retrieving solutions via online search." (Sec 3.1)
+- For hard lemma A5 the agent uses subagents to keep contexts short (Sec 3.2).
+- For long theorems it keeps a blueprint (definitions, lemma list, dependency graph) and revises it from Lean feedback (Sec 4.1).
+
+Results.
+- "Using Claude Opus 4.5 as the base model, Numina-Lean-Agent solves all problems in Putnam 2025 (12/12), matching the best closed-source system." (Abstract)
+- Time per problem (minutes, Table 3): A1 97, A2 30, A3 44, A4 169, A5 2040, A6 89, B1 55, B2 142, B3 30, B4 308, B5 88, B6 797. Lines of Lean (Table 4): 365, 401, 422, 605, 3263, 835, 328, 690, 292, 648, 929, 1820.
+- Budget: "By default, each problem is allocated an approximate budget of $50." A5 about $1000, B6 about $300 (Sec 3.1).
+- Informal proofs by refinement beat independent sampling on B4: "independent sampling failed to complete the formal proof of B4 within 10 rounds, whereas iterative refinement successfully completed the proof in only 5 rounds" (Sec 3.1).
+- "Over a period of less than two weeks of intermittent collaboration, the two human experts and the agent completed the formalization of more than 8,000 lines of Lean code." (Sec 4.2)
+- The agent sometimes noticed a false statement and edited it: "When it detects that a statement is incorrect, it can autonomously revise the statement accordingly." (Sec 4.2; examples in Appendix A.2)
+
+What humans supplied. The formal statements (taken from Seed-Prover 1.5), the A5 subagent design, and for Brascamp-Lieb a mathematician and a Lean expert who wrote hints and edited the blueprint (Sec 4.2). Human experts are still simplifying the final Lean code (Sec 4.2).
+
+Assumes or leaves out. Tasks are math, not programs or distributed systems. Single runs; no variance reported. Limits the authors state: "current agents still exhibit a clear gap between functional correctness and formal elegance" (Sec 4.3); and type-level gaps: "the agent failed completely" on a Real to NNReal conversion until the workflow was changed (Sec 4.3).
+
+How evaluated. Solved or not on 12 fixed problems, compared with Aristotle, Seed-Prover 1.5, Axiom on time and code length (comment and blank lines removed). Aristotle proofs are shorter; the authors say step-based provers have an inherent edge on length (Sec 3.1).
+
+Meaning for the end goal (inference). The loop 'agent proposes, checker answers, human edits the plan' is the closest match to 'human vaguely describes, agent works out details'. Two cautions: the statement to prove was always given, so no intent-to-spec step is tested; and the Lean checker gives a hard pass or fail that system-proof tools (Verus, TLA+) must also provide.
+
+## Seed-Prover 1.5 (2025)
+
+Source: ByteDance Seed AI4Math, arXiv 2512.17260, https://arxiv.org/abs/2512.17260. Read: all main text (pp 1-10), reference list skimmed, appendix prompts read only at the start.
+
+Problem. Proving in Lean (a language whose checker accepts only valid proofs) is far costlier for LLMs than proving in prose. The paper cites: AlphaProof "solved only 56% of the full Putnam benchmark" at "approximately 500 TPU-days per problem" (Sec 1).
+
+What they did.
+- Agentic prover: one model that calls three tools (Lean compile, Mathlib semantic search, Python). It submits one lemma at a time; a lemma that compiles is cached and reused as an axiom, which saves context (Sec 3.1). Limits: 64K tokens, 28 tool calls.
+- Training: supervised start, then RL with reward +1 for a Lean-verified proof and -1 otherwise (Sec 3.2).
+- Sketch model: turns a prose proof into a Lean skeleton whose lemmas are left as 'sorry'. Reward is +1 only if there are at least 3 lemmas, Lean accepts the skeleton, and an LLM judge scores the prose quality at least 0.7 (Sec 3.3). "Since Lean guaranties the high-level structural soundness, evaluation shifts to the quality of the lemmas" (Sec 3.3)
+- Test-time workflow: prose prover, then sketch, then prove or disprove each lemma (Pass@3x3); if stuck, decompose again; if disproved, redo the sketch (Sec 3.4).
+
+Results.
+- "It solves 88% of PutnamBench (undergraduate-level), 80% of Fate-H (graduate-level), and 33% of Fate-X (PhD-level) problems." (Abstract)
+- Putnam 2025, hours to solve (Table 4): A1 1, A2 0.5, A3 2, A4 4, A5 not solved, A6 4, B1 9, B2 6, B3 0.5, B4 2, B5 4, B6 3. IMO 2025 (Table 3): P1 16.5, P2 0.01 (by a separate geometry solver), P3 5, P4 8, P5 1, P6 not solved.
+- Agent only vs the earlier medium workflow (Table 1): 359/660 vs 331/660 on Putnam, 57 vs 35 of 100 on Fate-H, 10 vs 9 on Fate-X.
+- Search behaviour adapts: about 10 search calls per proof on Fate-H, 1 to 2 on Putnam (Sec 4.1).
+- Erdős problems: solved 124, 198, 303, 316, 330, 350, 370, 379, 418, 449, 493, 499, 645, 728, 958, but "these problems are mathematically relatively simple, or we proved a trivial or simplified version of them due to mis-formalization" (Sec 4.2, Erdős)
+
+What humans supplied. Formal statements of all benchmark problems, a hand-built in-house training set (including formalized textbooks), and the lemma-sketch reward rubric (prompts in Appendix B). Mis-formalized Erdős statements were removed by in-house expert labeling (Sec 4).
+
+Assumes or leaves out. "we discovered significant formalization issues within this dataset" (CombiBench, Sec 4); numbers there are 'for reference'. The authors say the system "currently cannot make significant mathematical contributions comparable to human experts" (Sec 5). Single-run results; no confidence intervals.
+
+How evaluated. Fraction of benchmark statements for which Lean accepts a proof, at stated compute budgets; held-out competitions (IMO and Putnam 2025) chosen because they have "no chances of data leakage" (Sec 4). Also avoids native_decide as unsafe (footnote, Sec 4.2).
+
+Meaning for the end goal (inference). Two usable ideas: (1) sketch-then-fill with a checker at every lemma, and (2) rewarding only what the checker accepts. The Erdős result shows a checker accepts a trivial proof of a wrong statement, so the human-facing step 'is this the statement I meant' needs its own check; evaluation should score statement fidelity, not only proof success.
+
+## Metastable failures (2021)
+
+Source: Bronson, Aghayev, Charapko, Zhu, HotOS 2021, https://doi.org/10.1145/3458336.3465286. Read: whole 7-page paper including discussion; references skimmed.
+
+Problem. Big outages that stay after their cause ends, blamed on the trigger though the real cause is a loop. "Metastable failures occur in open systems with an uncontrolled source of load where a trigger causes the system to enter a bad state that persists even when the trigger is removed." (Sec 1)
+
+What they did. Defined three states (Sec 1, Figure 1): stable, vulnerable (healthy but one trigger from failure; "many production systems choose to run in the vulnerable state all the time because it has much higher efficiency"), metastable. Root cause is the sustaining loop, not the trigger (Sec 3). Then four cases and a survey of fixes.
+
+Cases (Sec 2).
+- Request retries (2.1): database answers in under 100 ms below 300 QPS; client retries after 1 s. A 10 s switch outage at 280 QPS releases a surge; with high latency "client queries will continue at 560 QPS due to retries". Recovery "requires reducing the web application load to under 150 QPS or limiting retries to less than 20 QPS".
+- Look-aside cache (2.2): with 90% hits the app handles 3,000 QPS, but if the cache is lost "losing a cache with a 90% hit-rate causes a 10× query amplification" and the cache cannot refill because queries time out.
+- Slow error handling (2.3): failure paths take CPU, disk, network (stack traces, DNS lookup, logging), so errors make the shortage worse.
+- Link imbalance (2.4): a most-recently-used connection pool plus aggregated links sent all traffic to one congested link. "This metastable failure defied explanation for more than two years"; "the fix was a single line that changed the connection pool’s policy."
+
+Fixes in industry (Sec 3): retry budgets, LIFO scheduling, load shedding, circuit breakers, priorities, fast error paths, production stress tests (Kraken), autoscaling. All were added after a failure.
+
+Evaluation. None; the cases are 'simplified versions' of production incidents; "none of them were identified ahead of time" (Sec 2). Stress tests at small scale are said to give little confidence because feedback strength depends on scale (Sec 3).
+
+What humans supplied. Everything: the cases came from operators; finding the link imbalance needed engineers from several layers to share details, since "the problem could not be understood by the application layer using a simplified model of the network" (Sec 2.4).
+
+Assumes or leaves out. Open system with uncontrolled load. Failures that end when the trigger ends (DDoS, livelock) are excluded (Sec 1). Open questions (Sec 4): how to find characteristic metrics, estimate hidden capacity, model without a full replica. "Proving the absence of a particular metastable failure may be possible by modeling worst case behavior or an adversarial environment." (Sec 4) "A systematic approach for building systems that are robust against unknown metastable failures remains an open problem." (Abstract)
+Also: "They are an emergent behavior rather than a logic bug—one cannot write a unit or integration test to trigger them." (Sec 5)
+
+Meaning for the end goal (inference). If a human says 'the service must recover by itself after a burst', the agent needs a spec that includes load, retries, queues and timeouts. Standard protocol models leave these out, so this class is a likely blind spot. The four cases can seed a test set for specs about recovery.
+
+## ZooKeeper TLA+ specifications (2023)
+
+Source: Ouyang, Huang, Huang, Ma, SETTA 2023 (arXiv 2302.02703v2), https://arxiv.org/abs/2302.02703. Read: whole paper (15 pages plus references skimmed). Venue SETTA comes from a web search summary, not the PDF.
+
+Problem. ZooKeeper is a coordination service run on a consensus protocol (Zab). Testing misses deep bugs: "The complex failure recovery logic results in an astronomically large state space" (Sec 1), and bugs still escape testing. "Our primary objective is usability and automation, rather than full verification." (Abstract)
+
+What they did: three TLA+ models, each refining the previous.
+- Protocol model (Sec 3): from the Zab pseudocode. Human work: the pseudocode's quorum set Q is overloaded (it means different sets in different steps), so each use gets its own variable; the unhappy paths and failures were missing; leader election is an assumed oracle. "The real obstacle lies in handling the ambiguities and omissions in the informal design." (Sec 3.1)
+- Correctness: the six conditions in the Zab paper (integrity, total order, agreement, local primary order, global primary order, primary integrity) plus invariants the authors extracted by hand, helped by existing Paxos and Raft models (Sec 3.1).
+- System model (Sec 4): the 'super-doc', rewritten from the Java source; adds Fast Leader Election and three sync modes (DIFF, TRUNC, SNAP). Dropped details such as heartbeats and thread queues.
+- Conformance check (Sec 4.3): TLC traces are replayed on the instrumented real system by the MET framework; a mismatch means the model is wrong. Example mismatch found: the model assumed a client session already existed, but session creation is itself a transaction needing a quorum.
+- Test model (Sec 5): refines only the sync module down to the code (copying source into TLA+ by hand), keeps other modules abstract, so the checker reaches deep bugs fast.
+
+Results.
+- Table 1 (protocol model, Intel i5, 24 h limit): e.g. config (3 servers, 2 txns, 0 timeouts, 2 restarts) 245,606,642 states, 3:41:23; config (3,2,2,1) 1,721,643,089 states, over 24 h. Simulation configs ran over 24 h at about 0.8 to 1.2 billion states. "All specified correctness conditions are met without violation" in those runs (Sec 3.2).
+- Planted error: letting a quorum be "no less than half" gave violations (two leaders in one epoch) for 2 and 4 servers but not 3 or 5, as expected (Sec 3.2).
+- Table 3 (3 servers, 2 txns, 4 crashes, 4 partitions): ZK-2845 breaks ProcessConsistency in 00:00:02 (simulation, length 23) and 00:00:12 (model checking, length 10); ProposalConsistency 00:00:03 and 00:00:18. ZK-3911 breaks LeaderLogCompleteness (00:01:29, 00:00:42) and MonotonicRead (00:01:35, 00:13:13). Both bugs "result in the inconsistency of accepted logs or the loss of committed logs" (Sec 5.3).
+- The same bugs are hard on the system model: "The human knowledge behind the development of the test specification plays a crucial role in pruning the state space and accelerating the bug-triggering process." (Sec 5.3)
+- Outcome: "Our specifications have been merged into the official Apache ZooKeeper project." (Abstract)
+
+What humans supplied. Reading the protocol paper and code; choosing abstraction level; extracting invariants; trimming state space (limits on servers, transactions, timeouts, restarts); writing the test model; judging which replay mismatches matter (Sec 5.2).
+
+Assumes or leaves out. "in this work, we mainly focus on safety properties and do not consider liveness properties" (Sec 2.2). Exhaustive checking finished only on small configs, so 'verified' means no violation found in the checked bound; the authors infer "a high level of confidence" from the small-scope hypothesis (Sec 3.2). The 24 h runs of the system model did not finish.
+
+How evaluated. No comparison with other tools. Evidence is: no violations in bounded runs, a planted-bug test, two reproduced real bugs with times, acceptance by the Apache project.
+
+Meaning for the end goal (inference). Shows the effort that an agent would have to replace: ambiguity hunting, abstraction choice, invariant choice, and checking the model against code. The conformance replay is a cheap, checkable signal that a model matches code, and so a candidate evaluation step for agent-written specs. No liveness here, which the goal needs.
+
+## HornStr (2025)
+
+Source: Jiang, Lin, Markgraf, Rümmer, Stan, CAV 2025 (arXiv 2505.15959v2 technical report), https://arxiv.org/abs/2505.15959. Read: whole 11-page body; references skimmed. Venue from a web search summary, not the PDF.
+
+Problem. To prove a protocol safe for any number of processes, a human usually has to find an invariant. "RMC tools are typically cumbersome to use. The first problem is the need for the user to specify the model in a low-level language, usually in terms of transducers." (Sec 1)
+
+What they did. Write the protocol as Constrained Horn Clauses (CHCs): logic rules with an unknown set p of states; Init says start states are in p, Tr says p is closed under steps, Bad says no bad state is in p (Sec 2). A solution is an invariant. HornStr searches for p as a finite automaton by two methods: SAT-based enumeration of ever larger automata, or Angluin's L* active learning (Sec 3). Either way, a string solver (Z3, Z3-alpha, Z3-noodler, cvc5, OSTRICH) answers 'is this guess right' with a counterexample or a yes.
+Example (Sec 2.1): tokens on a ring; the safe-state invariant found is 'an odd distance between two tokens'.
+
+Results.
+- "We present HornStr, the first solver for invariant synthesis for Regular Model Checking (RMC) with the specification provided in the SMT-LIB 2.6 theory of strings." (Abstract)
+- Table 2 automaton size and seconds, SAT-based vs active learner: Token Pass 3 / 0.41 vs 3 / 0.10; Bakery 2 / 0.15 vs 3 / 0.37; Burns 2 / 2.09 vs timeout; Coffee-Can 2 / 0.52 vs 5 / 9.66; Herman-Ring 2 / 0.51 vs 2 / 0.33; Israeli-Jalfon 3 / 0.35 vs 4 / 0.46; MU Puzzle 3 / 11.01 vs timeout; Dining-Crypt 2 / 10.02 vs timeout. "Notably, SAT-based enumeration solved every protocol listed in Table 2" (Sec 4.2).
+- Solver comparison (Table 1, 30 s timeout): equivalence queries are the hard part; Z3-noodler solved 396 of 396 incremental and 848 of 848 non-incremental, in 15.5 s and 17.9 s.
+
+What humans supplied. The model of each protocol: RMC protocols from prior work were translated automatically; the MU puzzle and Eqdist were modelled by hand as CHC programs (Sec 4). No human invariant.
+
+Assumes or leaves out. Safety only. "Second, one could extend our CHC framework to other types of RMC verification including liveness [38,36] and bisimulation [27,37]." (Sec 5) Invariants must be regular; the paper says the strongest reachable set can be irregular, so the tool relies on a regular invariant existing (Sec 2.1). Property statements for each of the 18 benchmarks are not given in the paper's text. Inconsistent count: abstract says "more than 30000 new QF_S constraints"; Sec 5 says "more than 10,000 new QF_S constraints".
+
+How evaluated. Benchmarks solved and time on a laptop (i7-10510U, 16 GB, Windows 11); timeouts 30 s per query, 60 s per protocol. No comparison to other RMC or parameterized-verification tools in the paper.
+
+Meaning for the end goal (inference). An agent writing a spec and proof for a parameterized protocol could hand the invariant search to this kind of tool when the protocol fits strings, and the 18 named protocols (Bakery, Burns, Dijkstra, Dining philosophers, Herman, Israeli-Jalfon, German, Kanban) are well-known test cases. It does not touch liveness or real code.
+
+## Deterministic margin enforcement with TLA+ (2026)
+
+Source: Ali, TechRxiv preprint 2026, https://doi.org/10.36227/techrxiv.176827209.92538217/v1. Read: abstract only, from the Crossref record. The full-text URL returned an HTML page that I did not work around; no PDF saved, no cases written.
+
+What the abstract says.
+- Problem: "Many production systems rely on mutable balance representations and implicit execution ordering, which complicate verification and can lead to over-commitment under concurrent load."
+- Method: append-only ledger, explicit margin reservation, replay-based verification, CQRS (separate write and read sides), a transactional outbox.
+- "We formally specify the safety-critical accounting kernel using TLA+ and mechanically verify capital-safety and idempotency invariants under adversarial interleavings." (Abstract (Crossref record))
+- Numbers: "median order latency of 9.39 ms (p99: 33.70 ms)"; "optimistic locking: 509.3% over-commitment, accepting $609,300 in orders against $100,000 available capital"; the ledger "achieved zero false acceptances".
+- "Formal verification and adversarial testing provide converging evidence that the append-only kernel satisfies capital safety under all possible execution interleavings within the verified state space." (Abstract (Crossref record))
+
+Unknown without the full text: size of the model, which invariants exactly, state bound, how the code was tied to the model, effort. The abstract claims the production code 'faithfully realizes the verified design' from adversarial tests; that is a claim by the author, not checked here.
+
+Meaning for the end goal (inference). Possibly a small, human-readable safety example; low priority until the PDF is obtained from the author or an open repository.
+
+## Metamodel-driven LLM pipeline (2026)
+
+Source: Ismail and Tessier, MODELS Companion 2026, pp 589-598, https://doi.org/10.1145/3837062.3838893. Read: metadata only (Crossref). ACM returned HTTP 403 to automated download; no open copy found by web search. No PDF saved, no cases.
+
+Known only: the one-line description in the input list ("An LLM turns free-form natural-language requirements into an intermediate model and then into formal specifications that tools can verify."). Method, target logic, evaluation and numbers are unknown. Retry when an open copy exists.
+
+## Role of formal verification in software development, doctoral paper (2025)
+
+Source: Masoudi (University of Saskatchewan), FSE 2025 Companion, pp 1273-1276, https://doi.org/10.1145/3696630.3731465. Read: metadata only (Crossref, input list, a secondhand web-search summary of the abstract). ACM returned HTTP 403; no open copy found. No PDF saved, no cases.
+
+Known only: it is a doctoral-symposium paper; the input says "A dissertation studying how formal annotations affect code comprehension, how LLMs generate formal specs from comments, and how usable two verification tools are." No results are known.
+
 ## Type-Checked Compliance (2026)
 
 Source: Rashie and Rashi, arXiv 2604.01483, https://arxiv.org/abs/2604.01483. Read: whole text (9 pages, references skimmed).
@@ -859,3 +1016,617 @@ Assumes / leaves out. Small auto-generated C. Quote (Sec VII): "The framework ac
 Evaluation. Equivalence of LLM properties to human ones (category counts), verified/falsified counts per tool, counterexamples replayed as tests.
 
 For the end goal (my inference). Shows one agent step, requirement text to checkable property, with real agreement numbers. Key lesson: spec errors came from bad or incomplete requirements, so an agent should surface assumptions it adds and ask the human. Safety only, no liveness, and no distributed systems.
+
+## Formal Verification of Agentic MLOps Protocols (2026)
+
+Source: William Steve Rodriguez Villamizar, Zenodo preprint, https://doi.org/10.5281/zenodo.22715686. The PDF is titled "Formal Verification of Tool-Calling Protocols in Autonomous Scientific Workflows via Model Context Protocol". Read: all 4 pages.
+
+Problem. LLM agents call tools on a GPU cluster and can deadlock it or corrupt shared folders. MCP (Model Context Protocol, the standard format for LLM tool calls) checks only argument shapes. Quote (Sec I): "MCP schemas validate tool argument types and structural formats, but provide no mathematical guarantees regarding sequence validity, resource invariants, or temporal safety across multi-step execution graphs".
+
+What they did. A gateway intercepts each tool call and computes the next state of a hand-written state machine (12 tools). It rejects the call if the next state breaks one of three rules, and returns a plain-text explanation plus allowed next actions so the LLM can replan (Algorithm 1). The rules: no deadlock; every allocated GPU is eventually released; no two sessions write-lock the same network path. Quote (Sec II.C): "Our work provides the first reactive LTL model-checking gateway embedded within FastMCP."
+
+What came out (Tables I, II). At chain depth 14: 196,608 unconstrained states vs 672 guarded states. Over 500 workflow traces: vanilla MCP 38.4% task completion and 54.2% deadlock; ReAct retry 56.2% and 33.6%; static DAG check 67.8% and 18.4%; verified gateway 99.4% and 0.0%, wasted GPU time 0.2% (vs 41.8%), 11.4 ms average latency. Quote (Sec IV.B): "unconstrained tool calls trigger fatal CIFS lock collisions and queue deadlocks in 54.2% of dispatches, wasting 41.8% of GPU compute hours".
+
+Human supplied. The state machine, tool contracts (pre/postconditions) and all three rules.
+
+Assumes or leaves out. The paper does not say how the 500 traces were made. The "liveness" rule is checked one step ahead at run time, which blocks bad calls but proves nothing about all executions. At depth 2 the guarded model has more states (96) than the unguarded one (48); the paper says guards win beyond depth 4. No proof artifact; code is on GitHub.
+
+Evaluation. Comparison on task completion, deadlock rate, wasted GPU time and latency against three baselines.
+
+For the end goal (my inference). It shows a cheap way to enforce liveness-flavoured rules on agents, but the human still writes the model, and the evidence is one system with an unexplained trace set. Not evidence that agents can produce spec plus proof.
+
+## The Challenges and Triumphs of CSP Based Formal Verification (2024)
+
+Source: A.W. Roscoe and Pedro Antonino, COPA 2024, Kalpa Publications in Computing vol 20, pp 1-16, https://doi.org/10.29007/bbq9. Read: all 16 pages, references skimmed.
+
+Problem. Concurrent and decentralised systems are hard to understand. Roscoe argues CSP (a notation where a system is parallel processes that sync on events) and its checker FDR are good first models. Quote (Abstract): "I think CSP models are the ideal starting point when you want to get to grips with a challenging issue in practical concurrency."
+
+What it covers.
+- Two-player games (Sec 2): tic-tac-toe value computed by encoding min and max as CSP operators; FDR confirms the value is a draw. The author calls it "probably just a fascinating algebraic curiosity".
+- Decentralised consensus with Byzantine nodes (Sec 3): a direct blockchain model failed. Quote: "Unfortunately, it quickly became apparent that I would never be able to include a remotely realistic number of block values, agents, keys, etc, because of state explosion". What worked: model each group of agents as one sequential consensus machine and combine a primary (safe, may stall) with a secondary (guaranteed to decide) through a handover protocol. The key rule: "we instead ensure that if they both make one, the decision is the same." Modelled in CSP-M (the machine-readable CSP dialect) with begin/end events on shared signal variables. Quote: "I would have been far from confident in the correctness of this consensus approach without FDR".
+- Local model checking (Sec 4): check deadlock freedom for a network of components through SAT or SMT over the sum, not product, of component states; token invariants come from the kernel of a matrix. Worked 3-component example (6 states). Over-approximates, so it can fail to prove true properties.
+- Coco and ASML (Sec 5): the Coco Platform grew from CSP and FDR; "adopted by a number of customers, most notably on a large scale by ASML". Author's four obstacles to formal methods in industry include "Problems for engineers in creating formal specifications: a new way of thinking." Closing remark: "The problem of making the art of general specification easy for traditional engineers remains somewhat open."
+
+Numbers. Almost none. No timings for the handover model or local checking; those are in cited papers.
+
+Human supplied. All models, abstractions, and the choice of abstraction level.
+
+Assumes or leaves out. Models, not code. Proving Bully algorithm and a distributed database protocol for all N is listed as still open.
+
+For the end goal (my inference). Good evidence that human-chosen abstraction level decides whether checking is possible at all, and that writing specs is the engineers' own stated obstacle. A handover-style safe-plus-live pair is a reusable pattern. Nothing on agents.
+
+## TrojanSpec-Bench (2026)
+
+Source: Mohammad Zeeshan (Eotvos Lorand University), Zenodo preprint (https://doi.org/10.5281/zenodo.21888213 is the dataset; the paper is a linked record). The PDF is titled "TrojanSpec-Bench: Adversarial Autoformalization and the Faithfulness of LLM-Elicited Formal Specifications" and uses an ICML 2026 template; I did not confirm it was accepted. Read: all 9 pages.
+
+Problem. Papers on LLM-written specs assume the writer is honest but sloppy. Here the writer may be hostile: it can output a spec the verifier accepts that misses the user's intent. Quote (Sec 1): "The bug lives in the gap R \ S which no verifier can see." Motivation: hand-found libcrux bugs, 13 in total, 4 inside the verified spec or proof code.
+
+What they did. Four attacks: vacuity (postcondition secretly "true"), implementation leak (spec delegates to an unverified axiom), domain restriction (precondition drops the dangerous inputs), predicate swap (an operator or constant flipped). A case is kept only if the verifier accepts a bad implementation against the bad spec and rejects it against the honest spec. Generated with Claude Sonnet 4.6 (some Haiku 4.5 and Llama-3.3 70B) on seeds from DafnyBench, Lean Mathlib and the Verus library, anchored to 13 crypto primitives.
+
+What came out (Tables 1-4). 1,024 of 1,798 cases admitted (57.0%); the deepest attacks are hardest to generate (predicate swap 25.0% admitted). Six detectors: four cheap static ones (best, axiom audit, F1 0.492) and two LLM ones. The "atomic" LLM detector asks four yes/no questions (completeness, independence, logical fidelity, consistency) and flags when at least two fail: F1 0.967, false-positive rate 0.068, recall 1.000, versus 0.871, 0.297, 1.000 for one combined LLM judgement. One question alone (logical fidelity) gets F1 0.975. MutDafny (published mutation tester) scores F1 0.530 on the 319 Dafny cases; it catches 98.3% of vacuity but 0.8% of implementation leak and 0% of the other two. Quote (Sec 4): "Static mutation testing of specifications is structurally a vacuity detector." On 100 honest Mathlib lemmas the atomic detector flags 3, the combined judge 23.
+
+Human supplied. Attack taxonomy, prompts, thresholds, seed problems. No human labels yet: "No human gold labels yet: the “honest” label on benchmark specifications is verifier-provided, not human-validated." (Sec 5, Limitations 6.)
+
+Assumes or leaves out. Same model family generates and judges; the LLM detector was not attacked adaptively (the static axiom audit was: recall 1.000 to 0.316); class proportions are not real-world frequencies.
+
+Evaluation method worth copying: dual-property admission (accepted against bad spec, rejected against honest spec), 5-fold cross-validation, McNemar test.
+
+For the end goal (my inference). Directly about the weak link: does the formal statement match what the human meant? It argues the verifier cannot answer that, mutation testing only partly can, and several independent yes/no checks by an LLM do better. Results rest on LLM-written, LLM-judged data.
+
+## ACSLAgent (2026)
+
+Source: anonymous Zenodo software record, https://doi.org/10.5281/zenodo.20776587 (files at record 20776588). Read: the record page and the README inside ACSLAgent.zip only. No paper found after searching Zenodo, arXiv and Crossref. PDF not saved (only code is public).
+
+What the README says. "ACSLAGENT is a neuro-symbolic tool that automates formal specification writing for C programs by reframing it as constrained structured synthesis." LLMs propose ACSL annotations (function contracts, loop invariants, loop variants); Frama-C/WP acts as a "deterministic critic"; failures are repaired from verifier messages; a call graph orders work bottom-up; ranking functions upgrade partial to total correctness. Quote (README, Evaluation): "ACSLAGENT achieves a state-of-the-art verification success rate of 91.05% (pass@5) across diverse benchmarks including SyGuS, SV-COMP, and real-world industrial components."
+
+Limits. The claim has no method, baseline or table here; full results are said to be at a Hugging Face space I did not open. The README shows an X.509 parser demo. Treat as an unverified claim.
+
+For the end goal (my inference). The pattern (LLM proposes, verifier rejects, loop variants for termination) fits, but wait for the paper.
+
+## RefinedRust (2024)
+
+Source: Lennard Gaher, Michael Sammler, Ralf Jung, Robbert Krebbers, Derek Dreyer, PLDI 2024, https://doi.org/10.1145/3656422. PDF already in the collection (folder, as refinedrust.pdf). Read: Sections 1-3.1, 5.4, 6, 8 and the related-work table; I skipped the detailed type-system sections 3.2, 4 and 5.1-5.3.
+
+Problem. Rust verifiers either cannot handle unsafe code or produce results you must trust the tool for. Quote (Sec 1): "RefinedRust is the first approach to Rust verification that simultaneously (1) handles real (surface) Rust code, (2) provides support for proof automation, both for safe and unsafe Rust code, and (3) outputs machine-checkable proofs for all verified code."
+
+What they did. A refinement type system for Rust (types carrying math values) built on Iris, a logic for ownership, proved sound in Coq. Users annotate functions with requires/ensures and give each data type a representation invariant; a tool turns Rust into a Coq model and the proof is checked by Coq. "Borrow names" carry the final value of a mutable reference back to its owner.
+
+What came out (Sec 6). A simplified Vec and RawVec: 120 lines of code, 76 lines of annotation, about 1200 generated Coq lines, about 80 lines of hand-written Coq theory. Quote: "In total, the verification of the whole Vec API takes about 6 minutes wall time (and 22 minutes CPU time) on a recent Apple M1 Max processor." Vec::pop: about 3,000 automatic steps, 100 side conditions, all but five automatic, about 20 lines of manual Coq. The type system itself is about 21k lines of specification and 14k lines of proof.
+
+Human supplied. All specifications and invariants, a few manual proof lines, and the whole type-system proof.
+
+Assumes or leaves out. Quote (Sec 1): "RefinedRust does not support some more advanced features of Rust such as concurrency, recursive types, traits, closures, and unsized types." Trusted: the Rust semantics model and the frontend.
+
+For the end goal (my inference). Strong example of a small trusted base with human-written specs, but sequential, no liveness and no distributed code. Annotation load is about 0.6 line per line of code.
+
+## Smart Contract Invariants Protect Against Cybercriminals (2026)
+
+Source: Sofia Bobadilla, Humaira Afrin, Angela Novelli, Martin Monperrus (KTH), arXiv 2608.13191, https://arxiv.org/abs/2608.13191. PDF already in the collection. Read: all 12 pages, references skimmed.
+
+Problem. Do program invariants (checks that must hold at a program point) stop real smart-contract attacks, and can tools find them? Prior work used synthetic properties.
+
+What they did. From a corpus of 359 Ethereum exploits (DeFiHackLabs), two authors per case wrote a one-line invariant, time-boxed to 8 hours, giving InvariantEval: 28 cases. PonderReplay forks the chain just before the attack and re-runs (a) the exploit demo and the real attack transaction and (b) every earlier transaction reaching the changed function, comparing the original, a recompiled-unchanged, and the hardened contract on status, subcalls and storage. A change counts as caused by the invariant only when the unchanged recompile reproduces the chain.
+
+What came out. All 28 attacks blocked, about 1.07 billion USD of losses. Quote (Sec IV.A): "A single require invariant, correctly specifying the protocol’s intended security property, is sufficient to abort past real-world attacks totaling more than one billion dollars of theft." Of 108,637 replayed transactions, 106,815 (98.3%) were unchanged, 1,526 (1.4%) changed and 296 inconclusive (mostly out-of-gas differences and same-block state drift). Changed ones were exploit repeats, misuse, whitehat rescues, or over-tight invariants (Yearn: a keeper bot blocked; Inverse Finance: a +/-10% price band too tight). Families: price/oracle 8, ledger 6, access control 4, interaction safety 4, business logic 2, arithmetic 2, input 1, init 1. Tools: FLAMES, InvCon and InvCon+ recovered only 2 of 28 (both FLAMES). Quote: "There are 25 attacks for which we did not succeed in writing the securing invariant. This is because of our limited expertise of the target protocol and the time-bound budget."
+
+Human supplied. Every ground-truth invariant, written knowing the post-mortem.
+
+Assumes or leaves out. Selection: only the solvable cases are in the 28. The 28/28 result is, in the authors' words, "a consequence of our ground truth protocol". Tool matching was by looking for the ground-truth invariant in tool output. Data on request only.
+
+For the end goal (my inference). Gives a way to test a spec on both sides: it must stop the failure and must not break normal runs, plus a list of 28 concrete (failure, invariant) pairs for the case database. It also shows automatic invariant finders miss security-relevant properties.
+
+## Security analysis and formal verification on blockchain and its applications (2025)
+
+Source: Kang Li, Ronghui Gu, Jun Xu, Zhaofeng Chen, Siwei Wu, Yajin Zhou, Mu Zhang, Xiapu Luo, Yuzhe Tang, Yi Li, Xiaokuan Zhang, Yibo Wang; Foundations and Trends in Privacy and Security, 2025, https://doi.org/10.1561/3300000044. Read: publisher abstract (via Crossref) only. Full text blocked: the Emerald PDF link returned a "Just a moment..." bot-check page, which I did not work around; Semantic Scholar lists only the same DOI as open access. PDF not saved. No cases written.
+
+What the abstract says. It "summarizes and categorizes the correctness and security flaws encountered by real-world blockchains", "systematizes the development of formal verification ... covering the aspects of models, specifications, and techniques", and ends: "By identifying gaps such as missing tools for infrastructure-level components and the difficulty of writing formal specifications, this work aims to motivate the development of more automated, intelligent, and practical verification frameworks."
+
+For the end goal (my inference, from the abstract only). Probably a catalog of real blockchain flaws and a map of verification work. Worth fetching through a library or the authors' page.
+
+## Semi-Automated Modular Formal Verification of Critical Software (2024)
+
+Source: Tobias Reinhard, PhD dissertation, KU Leuven, February 2024, arXiv 2403.00934, https://arxiv.org/abs/2403.00934. 230 pages. Read: abstract, Ch 1-5 (all main text), A.5 case-study openings; I skipped the soundness proofs and formal definitions in Appendices A-D.
+
+Problem. Programs that wait in a loop for another thread's flag (busy waiting) end only if the other thread eventually sets it. Proving that thread by thread is hard. Separately, bounded model checking (BMC, exploring executions up to a size bound) misses bugs past the bound.
+
+Part 1: ghost signals (Ch 3). Pair each wait loop with a proof-only "signal". Creating a signal creates an obligation to set it. A thread may only wait on a signal whose level (a number in a well-founded order) is below the level of every obligation it holds, which rules out wait cycles. No thread may finish with an unmet obligation. Quote (Sec 5.1): "Since the latter two are safety properties, we indeed reduced liveness to safety." Key assumption (Sec 3.1): termination holds only under fair scheduling. Tool: VeriFast extended with call and wait permissions; the logic rules sit as axioms in a trusted header. Results: bounded FIFO, 160 annotation lines for 37 lines of C (435%), 0.08 s; CLH lock, 343 for 49 (700%), 0.1 s. Quote (Sec 3.5): "The bounded FIFO proof [149] contains 160 lines of proof annotations for 37 lines of code (an annotation overhead of 435%) and takes 0.08s to verify." Appendix A.5.2 adds a case with an unknown number N of producers and consumers, proved with N copies of each signal.
+
+Part 2: completeness thresholds (Ch 4). A threshold is a set of input sizes such that checking only those proves all sizes. For ascending array loops reading a[i+Z] over i from L to s-R, one size q >= L+R suffices. Derived by hand-simplifying the verification condition. Automation and trees are future work.
+
+Human supplied. Levels, signal-to-condition invariants, all annotations, the threshold derivation.
+
+Assumes or leaves out. Fair scheduling; no higher-order features; no cohort-lock hand-off; TaDA Live is a more flexible, more complex alternative. Completeness thresholds cover one small loop class.
+
+Evaluation. Two small programs verified in a tool; soundness proved on paper.
+
+Also useful (Ch 1-2): a plain summary of why testing, BMC and deductive proofs differ ("BMC proofs are unsound, because they only explore a subset of all inputs and only bounded executions"), and a map of liveness logics (obligations, call permissions, TaDA Live, LiLi, Trillium).
+
+For the end goal (my inference). The most concrete liveness material in this batch: a way to prove "waiting ends" with few concepts, and honest annotation-to-code ratios of 4x to 7x for tiny programs, which hints at how much proof text an agent would have to write. Nothing distributed, nothing about agents.
+
+## Toward Formal Verification of a Lock-Free Distributed Double Buffer Cache (2026)
+
+Source: Mike Doan, MS thesis, Georgia State University, https://doi.org/10.57709/138. Read: whole text (50 pages; Chapter 4 proof-assistant survey and references read quickly).
+
+Problem. Wirehead feeds synthetic brain scans to a training job through a MongoDB "double buffer": generators fill a write collection; when it is full, one generator swaps it into the read collection by renaming. It works in practice, but the author says "'hasn't failed so far' is a weak epistemic model for software reliability" (Sec 4.1). Worries: deadlock if the swap lock is never released, corrupt reads, and "zombie" generators that claim an index and die (Sec 3.6).
+
+What was done.
+- MongoDB calls are written as plain Rocq functions on lists, so no axioms about MongoDB are needed (Sec 5.2).
+- The algorithm is a state machine with a 7-step swap and a 14-rule step relation; any number of generators (Sec 5.3.1).
+- Six properties proved: 3 safety (swap mutual exclusion, read consistency, post-swap integrity), 3 liveness (swap completion, lock acquisition, progress).
+
+Result (Sec 6.1, Table 6.1). 3,470 lines, 144 proofs, 2 Admitted, 3 axioms. Quote: "Five are fully machine-checked; the progress theorem depends on two Admitted lemmas involving a pigeonhole counting argument" (Abstract). The pigeonhole step is hard because process ids are unbounded; the author suggests a finite process count would "likely resolve this" (Sec 6.3).
+
+Insight on effort. Liveness needed invariants safety did not: "These auxiliary proofs account for approximately 800 lines of Safety.v and represent the bulk of the formalization effort." (Sec 6.4). Safety and liveness interact: "The key enabler is swap mutual exclusion ... This safety-liveness interaction is the most interesting aspect of the proof structure." (Sec 6.2.4).
+
+What a human supplied. Everything: the model, the invariants, the proofs, the Nix setup. No LLM is mentioned.
+
+Assumptions and gaps. One MongoDB instance, crash-stop only, atomic calls, weak fairness (Sec 5.1, 7.2). Crashes are not in the step relation yet, so the deadlock worry (crash while holding the lock) is not actually covered. Model-to-code link: "we assert (but do not mechanize) that real MongoDB operations behave equivalently" (Sec 5.2). Small inconsistencies: Sec 5.3.3 names "lock release" where Chapter 6 proves "lock acquisition"; line total 3,475 (Sec 6.1 text) vs 3,470 (Table 6.1). The lock_acquired result is stated as a Lemma.
+
+Evaluation. None beyond the proof checking itself; the performance numbers (Sec 2.4) are about the system, not the proofs. No test or bug-finding comparison.
+
+For the end goal (my inference). A concrete small case with a liveness proof and a clear list of what had to be hand-built (state machine, fairness model, auxiliary invariants). Good seed for a benchmark: the six theorem statements (Listing 6.1) are short and readable. It also shows the weak spot an agent must handle: the proved model is not the Python code.
+
+## Causal Past Logic (2026)
+
+Source: Benedikt Bollig, arXiv 2605.20923v2, https://arxiv.org/abs/2605.20923. Read: whole text; reference list skimmed.
+
+Problem. In a workflow of several LLM agents, each agent decides using only what has reached it. A test result can be stale because a later failure is still in transit. A log sorted by send time would see the failure, but the agent cannot. The paper's example (Sec 2): the Committer must merge only if "in its causal past, the required tests have passed with no later visible failure ... Both results must concern the same merge candidate as the current proposal."
+
+What they did.
+- Extend ZipperGen (workflows written globally, split into per-agent programs) with Causal Past Logic: past-time operators plus "@A(phi)" meaning phi at the latest event of agent A that is causally visible (Sec 4).
+- Each agent keeps vector clocks and the latest truth values of subformulas, ships them with every message, and evaluates a guard when it reaches the decision (Algorithms 1-2).
+- Prove, in Lean 4, Theorem 1: "reseA(phi) = 1 iff M, e |= phi" (Sec 5), that is, the local answer equals the logic's meaning.
+
+Numbers (Sec 6, Table 1). Code-review guard: 0.047 ms local, 0.069 send, 0.072 receive, 1.2 KB per message. Worst scaling row: 2.9 ms receive and 58.0 KB with 128 atoms, 128 variables, 8 lifelines. Setup: CPython 3.12, Intel Core i9-9880H, macOS.
+
+LLM test (Sec 6). Codex CLI wrote two workflows from short prose, 3 runs each. All 6 final workflows validated and matched on the tested histories. One run first used the wrong name and put the since operator at the wrong place; validation and the agent's own tests caught both. Quote: "We gave no further explanation of CPL and no reference guard." Only 2 tasks, low effort; the paper says "Episode identity is not tested."
+
+What a human supplied. The logic, the monitor design, the Lean proof (AI coding agents helped: "AI coding agents (OpenAI Codex and Anthropic Claude) assisted with the Lean formalization, experiments, and manuscript editing"), and the example guards. The prose-to-guard step was done by the LLM only in the two toy tasks.
+
+Assumptions and gaps. Lean covers definitions and the correctness theorem; "Finite-table refinement, executable Boolean evaluation, and the size bounds are outside the mechanization." The monitor is checked against the logic, not against the Python code. Unbounded counters. No liveness. The "gpt-6-astra" model name in Sec 6 is as printed; I could not check it.
+
+Evaluation. Microbenchmarks of cost, plus the 6 generation runs. No evaluation on real agent failures and no comparison to sequential-log monitors beyond the argument of Fig. 2.
+
+For the end goal (my inference). Not a proof method for distributed systems. Relevant as a readable rule language for what agents may do, with a proved checker, and as a small data point that an agent can write such rules when given a short guide.
+
+## P2FGPT, Alice&Bob to ProVerif (2025)
+
+Source: Li, Han, Yuan, Li, Wang, Scientific Reports 15:11866, https://doi.org/10.1038/s41598-025-93373-y. Read: whole body; reference list skimmed.
+
+Problem. Security-protocol checkers need a model in their own language, written by hand. The authors say this is "time-consuming and labor-intensive" and must be redone when a protocol changes. They want an LLM to turn the short "A->B: msg" description into the checker's input.
+
+What they did.
+- Scope is narrowed to the Declaration section of a ProVerif model (types, functions, destructors). Protocol process and security goals are added as fixed text.
+- Generator: a prompt with role, task split (extract primitives, then translate), definitions, 4 demonstrations, step-by-step reasoning, and a fixed output format.
+- Checker: strip explanations, add fixed parts, run ProVerif; return code 0 counts as syntactically correct.
+- Modifier: re-prompt the LLM on syntax errors. Its prompt targets two error types seen: "//" comments and missing type definitions.
+- Prompts were tuned by a human on GLM4.0 outputs; "no manual intervention is needed" afterwards.
+
+Results. Dataset built by the authors from 4 ProVerif demo protocols, cut into prefixes: 53 + 25 + 14 + 14 = 106 sub-protocols, each with a hand-made reference model. Syntax pass rate with GLM4.0 rose "from 65% to 82%" with the Modifier; no real gain for Llama3-8b, little for Qwen2.5-7b. Table 3 (overall averages, Generator): GLM4.0 BLEU 0.34, F1 0.58; Llama3-8b BLEU 0.37, F1 0.45; Qwen2.5-7b BLEU 0.61, F1 0.60. The authors admit "the overall grammatical correctness rate has not yet reached a satisfactory level." Fig. 12 values for the other models are only in a figure; I did not read them off.
+
+Evaluation. Syntax: run ProVerif. Content: BLEU and ROUGE against the hand reference. The authors reject test-based scores because "formal tool verification only confirms syntactic correctness, not semantic accuracy." Their own content score is text overlap, so it also does not test meaning. Comments in LLM output moved BLEU a lot (Fig. 13).
+
+What a human supplied. Prompt design and tuning, the reference models, and the fixed process and security goals.
+
+Assumptions and gaps. Only declarations; no security result is produced; no check that the translation is faithful. Model is not a distributed-systems or liveness case. Small, single-group evaluation; prompts tied to GLM4.0. Minor errors in the paper: CSR formula says "Correct Semantic Outputs Number"; "BIEU" in Table 3.
+
+For the end goal (my inference). Weak evidence. It shows the pattern of tool-in-the-loop repair for a niche formal language and the evaluation trap: parse success and text similarity are the easy metrics and say little about whether the spec captures the human's intent.
+
+## Let a Neural Network Be Your Invariant (2025)
+
+Source: Giacobbe, Kroening, Pal, Tautschnig, NeurIPS 2025, https://research.birmingham.ac.uk/en/publications/fe64a278-7ad4-495e-9751-663b05f077c6 (PDF from proceedings.neurips.cc). Read: body and Appendix A benchmark description; reference list and checklist skimmed.
+
+Problem. Proving a system meets an LTL spec (safety plus liveness) needs two proof objects: "an appropriate inductive invariant" for safety and "a measure of progress witnessed by a ranking function" for liveness (Abstract). Earlier neural model checking (NMC'24) learned only ranking functions, so safety was out of reach.
+
+Key idea. Model the system composed with an automaton for the negated spec. One network V(r; theta_q) per automaton state q does two jobs: states with V <= kappa are the invariant; V never increases along a step and drops by 1 at "fair" states (Eqs. 6-8). If the exact checker finds no counterexample, the spec holds for every execution. "Learn, check, add the counterexample, repeat" (Fig. 2a). The network has sign activations, so training is a mixed-integer linear program rather than gradient descent (Sec 4).
+
+Results (Table 1, Sec 5), all on the authors' 634-task suite from 11 SystemVerilog designs, 5 h limit, 9083 h total compute.
+- Pure safety: 190/206 (92%); ABC and nuXmv solve all 206, rIC3 196. "we match the best symbolic tools: 80 % of instances complete for all approaches in under 1 s."
+- Pure liveness: 192/219 (88%) vs nuXmv 180, NMC'24 172, rIC3 110, ABC 78. Faster on 66% of tasks.
+- Safety + liveness: 172/209 (82%) vs nuXmv 154, rIC3 129, ABC 96. Faster on 61%; 43% at 100x, 27% at 10,000x.
+- Ablation: linear-only certificates finish 48% and stall; widening finishes 87%. Random initial samples do not help. Z3 as learner finishes 96% but Gurobi is 7x faster on solved tasks, with Gurobi failing on 13% (crashes, infeasible settings, numeric mismatches).
+Per-design weak spots: i2c Stretch (4/20 safety, 3/20 safety+liveness) and Load-Store liveness (0/16).
+
+What a human supplied. The LTL specs (11 designs x 3 types, written by the authors), the benchmark, hyperparameter set for the bound P. The proof objects themselves are found automatically.
+
+Assumptions and gaps. Finite-state hardware-style systems; "limited to hardware and reactive systems without arrays or strings of parametric length, procedure calls or dynamic data structures." Benchmark is their own and "textbook level". Speed claims compare against the per-task fastest tool; comparisons mix tool defaults for rIC3, ABC, nuXmv fed through a translation chain (EBMC, AIGER).
+
+Evaluation. Count of solved tasks and runtime against HWMCC-winning tools, on a new suite; the checker is exact so solved means proved.
+
+For the end goal (my inference). Relevant as foundations: it names what a complete liveness+safety proof consists of and shows both can be searched for together. It cannot handle unbounded-node distributed protocols as is. The 33 per-design/class rows are listed in cases_r7.jsonl.
+
+## Prover Agent (2025)
+
+Source: Baba, Liu, Kurita, Sannai, arXiv 2506.19923v5, https://arxiv.org/abs/2506.19923. Read: main text (Sec 1-6) completely; appendices read for setup, tables and the budget definitions; the long proofs in Appendix C and the example transcripts in Appendix F were skimmed, not checked.
+
+Problem. A model that writes a whole Lean proof in one go usually fails: "prompting o3-mini to directly generate a complete Lean proof for a competition-level problem succeeds in only 6.0% of cases in a single attempt" (Sec 1). The authors want to use a strong reasoning LLM's maths ability and Lean's exact checking together.
+
+What they did (Sec 3, Fig. 2).
+- Direct proving: informal LLM writes a natural-language proof; a Lean prover model formalizes it; Lean checks. Retry up to N_init times.
+- Refinement: take the draft with the fewest Lean errors and repair it using error locations and messages, up to N_refine rounds.
+- If still stuck: the LLM proposes several auxiliary lemmas, "not limited to subgoals ... but may also include special cases or potentially useful facts derived from the assumptions" (Sec 3.2). A formalizer states them (no proof), Lean checks the statements, each lemma is proved with the same loop.
+- Final synthesis: the proved lemmas go into the context for a last proof attempt.
+
+Results (Sec 5, Tables 1-2). Models: DeepSeek-R1-0528-Qwen3-8B informal, Goedel-Prover-V2-8B prover. Budget per problem 50+50 + 3x(10+10) + 50+50 = 260 samples. MiniF2F-test: 88.1%, versus 85.2% for the prover alone at 256 samples. PutnamBench: 25/659 at budget 110 versus 22/659 for the prover alone at 128 samples. Ablation (Fig. 3, Sec 5.5): refinement beats merely sampling more once sampling saturates (about 80 samples); lemmas add more after refinement saturates; refinement from poor first drafts stays poor.
+
+Checking care. The authors found checker-side holes: "There are several bugs that may result in invalid Lean proofs being incorrectly accepted" so they build with lake build and ban the apply? tactic; they re-ran the Goedel baseline for this reason (Sec 5.1).
+
+Theory (Sec 4). Under assumptions, helper lemmas cut the expected number of trials exponentially for hard problems and raise the chance of picking the right strategy. These are idealized models, not measurements.
+
+What a human supplied. The formal statement of every problem (benchmark), prompts, and the budgets. The agent supplies informal proof, helper lemmas, Lean code.
+
+Assumptions and gaps. Maths only. No statement-writing step. No cost in dollars; budgets are counted in samples and tokens. The paper says "Future work includes extending our framework to other domains, such as software verification."
+
+Evaluation. Pass rate on MiniF2F-test (244 problems) and count solved on PutnamBench, against published numbers for similar-size models at stated sample budgets.
+
+For the end goal (my inference). Helps with the "figure out the proof" half: the cheap, checkable feedback loop and the helper-lemma step map onto invariant and lemma discovery in a systems proof. Says nothing about whether the stated property is the right one.
+
+## LORIS, loop invariants from local-reasoning feedback (2026)
+
+Source: Li, Yan, Liu, Di, Zhang, TOPLAS 48(2), Article 8, 2026 (arXiv 2605.17914v1), https://arxiv.org/abs/2605.17914. Read: Sections 1-7 and 9 fully; related work skimmed. The PDF was already in the collection (same file, 823,101 bytes), so nothing new was saved.
+
+Problem. An inductive loop invariant must hold at loop entry, survive one iteration, and imply the assertion at exit (Sec 3). LLMs get close but miss details. Earlier LLM methods give a bare pass/fail or a counterexample; the authors say binary feedback "offers a weak signal, informing the LLM only that its proposal is incorrect, but not why" (Sec 5.2).
+
+What they did (Sec 4-5).
+- LLM proposes invariants; Frama-C checks the three conditions.
+- For one failed condition (order: establishment, preservation, post-condition) the LLM writes a numbered natural-language proof.
+- An LLM turns each step into a first-order implication; Z3 checks it. An invalid one names the wrong step. The feedback quotes that step.
+- They avoid full Coq/Isabelle proofs on purpose: translation may be unfaithful and tactic errors are hard to map back (Sec 1).
+
+Results (Sec 6). 460-program main suite plus 50 non-linear programs; 5 runs each; 600 s and 150,000 tokens per run; GPT-4.1, GPT-4.1-mini, GPT-4o-mini, GPT-o4-mini, Claude-3.7-Sonnet. With GPT-4.1: 445/460 solved, 93.1% success vs LaM4Inv 414 (84.6%) and Clause2Inv 409 (84.9%); non-linear 45/50 vs 25 and 42. With GPT-4o-mini Clause2Inv has a slightly higher success rate (82.6% vs 81.9%) though LORIS solves more distinct programs (431 vs 408). Costs more tokens than the baselines on generative models, about 0.038 dollars per successful GPT-4.1 run.
+
+Where feedback helps (Tables 3-5). Feedback-driven successes: 41.2% (GPT-4.1) to 65.9% (GPT-o4-mini). Feedback moved the invariant closer to the correct one in 72.9% of rounds on average; closeness is syntactic clause overlap (Jaccard), a weak proxy. Adding bounded model checking changes little (93.1% to 93.6%, Table 6).
+
+Failures (Sec 7.1). Two kinds: global misunderstanding, e.g. missing that a branch is unreachable, and refinement in the wrong direction. Quote: "Instead of strengthening the invariant to complete the inductive proof, the LLM sometimes attempts to weaken the invariant or delete the invariant entirely."
+
+Translation fidelity (Sec 7.2). Manual check of 108 steps from 10 runs: 90 (83.3%) faithful. Soundness is untouched because the final check is Frama-C.
+
+What a human supplied. The program, its assertion, prompts, and the benchmark; no invariant hints.
+
+Assumptions and gaps. Single-loop numeric C only: "The benchmark does not contain programs involving complex data structures such as arrays, pointers, or recursive data types." Baselines are two LLM methods; the authors admit newer ones may exist. Only OpenAI and Anthropic models.
+
+For the end goal (my inference). The useful idea is checker-targeted feedback from the model's own reasoning, which could transfer to inductive invariants of protocols, where the failing condition is "preservation" under one action. Not shown here.
+
+## Bulletproofing Zeebe concurrency bugs (2022)
+
+Source: Deepthi Akkoorath, Camunda blog, 22 Dec 2022, https://camunda.com/blog/2022/12/bulletproofing-zeebe-concurrency-bugs/. Read: the whole post (about 1,000 words plus two code listings); page navigation text ignored. Linked GitHub issues were not opened, so bug descriptions are only the one-line titles in the post.
+
+Problem. Data loss is one of the worst bugs. The author chased a "Cannot truncate committed index" bug that appeared only under a particular order of messages between nodes. The post's stance: "Raft is a well known protocol and widely used, which has also been theoretically proven to be correct. What is left is to verify if the implementation is correct."
+
+Method.
+- Generate a random list of operations: append a record, snapshot and compact, receive a message, run one task, advance the clock, drop a message, restart a replica; each paired with a replica.
+- A deterministic scheduler and controllable network make runs reproducible from a seed (jqwik).
+- Safety test: after every step check "at most one leader" and "all logs equal".
+- Liveness test: run the operations, then run extra steps with no drops or restarts, then check a leader exists and all entries are committed and replicated.
+- Only 10 tries per property per build, but run in CI on every PR and main commit.
+
+Properties as the post words them: election safety (at most one leader per term); log matching; "In case of no failures, eventually a leader is elected"; "In case of no failures, eventually all records are committed and replicated to all replicas." The post explains why liveness is narrowed: "in a distributed system failures can happen at any time and the system is guaranteed to make progress only in specific cases."
+
+Results. Safety tests "found immediately" #5360 (stepdown leaves inconsistent log in old leader) and #5356 (two leaders in the same term), both called critical. Liveness tests, added while reproducing a customer bug, reproduced it and found #8324, #10180, #10202, #10545. Deterministic replay helped root-causing. No counts of runs, time to find, or false alarms are given.
+
+What a human supplied. Properties (taken from the Raft paper for safety), operation set, scheduler and network harness, invariant checks in code.
+
+Assumptions and gaps. Sampling, not proof. The harness checks a fixed "failure-free tail" as a stand-in for fairness. Not a formal artifact; no spec language.
+
+Evaluation. Bugs found, anecdotally; no coverage or benchmark.
+
+For the end goal (my inference). A usable case card: a production Raft with two safety and two liveness properties in plain English, and real bugs on both sides. Shows the "no failures, then eventually X" pattern many teams use as a practical liveness statement. A proof agent would need to say precisely what fairness this pattern assumes.
+
+## Verifier-supervised fine-tuning for Rust/Verus dataset (2026)
+
+Source: anonymous authors, Zenodo concept record https://doi.org/10.5281/zenodo.21523433 (latest version 10.5281/zenodo.21523434, published 2026-07-24). Read: record metadata only, via the Zenodo API and record page. No paper or data file was available.
+
+What the record says (description field): "Restricted training dataset for verifier-supervised fine-tuning on Rust/Verus vericoding tasks. Access-restricted because a majority of rows derive from an upstream corpus with an unresolved redistribution license; request access for research use. Anonymized for double-blind review." Keywords: formal verification, Verus, LoRA, supervised fine-tuning, SMT, Rust. License field: cc-zero. Access: embargoed until 2026-12-31; the record lists no files.
+
+A related record, 10.5281/zenodo.21523432, describes "LoRA adapters and training datasets for supervised fine-tuning of a code language model on Rust/Verus formal-verification tasks. Includes six model checkpoints (a baseline and verifier-signal variants) and the repair and annotation training corpora." It is also embargoed and anonymous. I read only its metadata.
+
+What this means. No problem statement, method, numbers, or evaluation can be reported; I did not guess any. "A majority of rows derive from an upstream corpus" is the only provenance clue, and the upstream corpus is not named.
+
+For the end goal (my inference). Revisit after 2026-12-31 or when the double-blind paper appears; then check whether the data covers specs and proofs or only code with simple annotations, and which upstream corpus it comes from.
+
+## Beyond Benchmarks, Verus specification failures on Asterinas Vostd (2026)
+
+Source: Liu, Wen, Liu, Wang, Xu, Wan, Jiang, Ming, Huang, ASE 2026 (Industry), accepted-paper PDF taken from the Zenodo artifact https://doi.org/10.5281/zenodo.19853280 (version DOI 10.5281/zenodo.21375096, file artifacts/paper/ase26-industry-beyond.pdf, 1,214,691,537-byte archive, md5 matched Zenodo). Read: whole paper, plus the artifact README, abstract and RQ1/RQ3 CSV tables. The 156-task repair logs and scripts in the archive were not opened beyond file listing.
+
+Problem. Papers show LLMs writing Verus (Rust verifier) specs on self-contained tasks. Real projects need specs that compile in the repository, agree with callee contracts and follow the project's proof style. In Vostd that style is "Entity-Model": runtime objects are tied to abstract ghost models by bridge predicates such as relate(self, model).
+
+What they did.
+- Six targets from Vostd: memory-region init, page acquisition safety, raw-pointer conversion, VM reader/writer, page-table cursor navigation, cursor guards; 156 function-level tasks.
+- Workflow (Fig. 3): collect repository context, LLM drafts spec, Verus checks in place, then contract alignment and proof repair from verifier feedback.
+- Every failed state ("failure episode") is labelled twice: the stage the verifier message suggests, and the stage of the true defect found by manual review.
+
+Results.
+- Gap (Table 3): benchmarks verify 66.0% to 82.6%. On the six targets AutoVerus gets 22.7-24.5% and VeruSAGE 34.4-41.7%; the authors' repository-grounded workflow gets 66.3-68.7%. Per target it ranges from 100% to 40% (mem-region-init: 100.0/72.7/86.4%; pt-guards: 44.0/40.0/40.0%). Cross-model spread is wide on benchmarks but small on the targets.
+- Failures (Table 4-5): 1,587 episodes. The top signatures per stage: local syntax corruption (246 of 442), mode-boundary violations (151 of 502), parameter mismatch (138 of 420), assertion stacking (103 of 223). Qwen-Coder is late-stage heavy (Stage III-IV 54%); GPT-4o and DeepSeek 62% and 69% Stage I-II.
+- Semantic example (Fig. 6): spec writes c.is_separate(a) where the proof needs a.is_separate(c); legal, plausible, wrong; the solver does not invert it. The visible error is a proof failure.
+- Diagnostics (Table 6-7): visible stage matches true stage in 72.6% of episodes (Qwen 66.5%, GPT-4o 76.0%, DeepSeek 74.4%).
+- Repair: only 85 of 270 traces reach a pass (31.5%); regression to compile errors in 15.1% of episodes. GPT-4o has the best alignment but 26.5% convergence. Convergence swings by target, e.g. GPT-4o 59.1% on page acquisition safety but 0% on three targets.
+
+What a human supplied. The target selection, prompts, workflow design, and all stage labels (manual review, "fixed four-stage coding scheme"). The projects' existing specs and proof style came from the Vostd team.
+
+Assumptions and gaps. Single project, three models, one workflow tuned by the authors; labels are subjective and the paper reports no second reviewer. It is about property-shaped specs for sequential Rust code, not protocols or liveness. Note a data detail: the artifact CSV records the FVT total as 163 proof obligations while the task count is 156 function-level tasks; the paper explains these are different units.
+
+Evaluation lessons (the paper's own). "do not only report verifier pass rates; report where failures occur"; follow the failure stage before repairing; use LLMs "as specification drafters, with engineer-in-the-loop triage". Suggests tracking where a spec breaks, whether the diagnostic names the real cause, and whether repair progresses.
+
+For the end goal (my inference). Strong evidence that a pass/fail grade hides most of what matters, and that the hard failures for a spec-writing agent are semantic (wrong relation) rather than syntactic. A strong spec that merely verifies can still be the wrong spec; this study only measures acceptance by Verus, not whether the spec captures the human's intent.
+
+## KaPilot (2026)
+
+Source: Wang, Ling, Gao, Liu, Huang, "KaPilot: LLM-Assisted Generation of Kani Specifications for Unsafe Rust Verification", Ant Group / NUS, doi 10.1145/3832239. Read in full (local copy of the arXiv text).
+
+The problem. Unsafe Rust code can cause memory bugs, and a checker (Kani, which tries all inputs up to a size bound) needs a written contract per function saying what must hold on entry and exit. Writing these is manual. Existing LLM tools (AutoSpec, SpecGen) read the code and so copy its flaws. The authors list: "C1: Code-centric specification generation inherits implementation flaws." and "C3: Specification quality evaluation is hard to automate systematically." (Sec. 1).
+
+What they did. Five LLM agents. SafetyReq turns the function's doc comments (Safety and Panics sections, plus cross-referenced functions) into a short list of one-sentence requirements under six rules (scope, atomicity, variable reference, source traceability, exclusivity, completeness). SpecGenerate writes the contract from that list. SpecPrecheck has an LLM check coverage and score strength 1 to 10 before Kani runs. SpecVerify runs Kani and feeds back counterexamples. A final step mixes the weakest precondition and strongest postcondition across candidates and re-checks with Kani. Key design choice, in the authors' words: "Note that we exclude the source code of the target function, because we believe that the actual implementation would interfere with LLMs' understanding of safety properties." (Sec. 3.4).
+
+What came out. 54 standard-library functions with human contracts (GoldSet) and 70 crate functions without (ULSet). GoldSet: 88.9% accepted by Kani, 57.4% equal to or stronger than the human contract. ULSet: 71.4% accepted. Against AutoSpec ported to Kani with GPT-5, 31 vs 17 good contracts and 6 vs 14 failures (Tab. 6). Ablation with GPT-5: without SafetyReq good falls 31 to 6; naive prompting with Kani feedback gives 8 good (Tab. 7). Cost per function $0.02 to $0.41.
+
+What a human supplied. The benchmark contracts (written by the verify-rust-std project), the Kani primitives and few-shot examples, thresholds (score 6, 3 and 5 iterations). Grading was by hand: "As there is no fully automated approach to distinguish good from bad cases, we manually performed the categorisation for GOLDSET, for which ground truth is available." (Sec. 4.1). Two raters, over 30 hours, Cohen's kappa 0.81 to 0.95.
+
+How it was judged. Three labels. "A specification is labeled good only if: (1) verification passes, (2) the generated precondition is equivalent to or weaker than the ground truth, and (3) the postcondition is equivalent to or stronger than the ground truth." (Sec. 4.1). Passing Kani alone is not enough: "A successful Kani verification does not exclude vacuous specifications" (Sec. 3.6). Vacuity is tested by appending a postcondition of false; if Kani still succeeds, the contract was empty.
+
+What it leaves out. Only memory safety and panics. Bounded checking, not a proof for all sizes. "The performance of KaPilot is bounded by the expressiveness of Kani primitives." (Sec. 5); lifetimes cannot be expressed. Poor docs raise failures. Possible training-data leakage argued minimal by the authors.
+
+Inference for the end goal (mine, not the paper's): the vacuity trick and the 'weaker precondition, stronger postcondition than a reference' grading rule are reusable for judging agent-written specs. But safety of one function is far from distributed liveness, and the grading still needs a human reference.
+
+## HarnessLLM (2026)
+
+Source: Wang, Liu, Huang (Ant Group), "HarnessLLM: Rust Verification Harness Generation with Large Language Models", arXiv 2607.22161v1. Read the whole text (method, evaluation, discussion, related work).
+
+The problem. A bounded model checker (Kani: explores all inputs up to a size bound) needs a harness, a small program that calls the code under test with symbolic inputs. Writing harnesses is manual. Kani's built-in Autoharness only works when every argument type already has Kani's symbolic-value trait. Plain LLMs fail in three ways the authors list: they miss complete calling scenarios, cannot build symbolic values for nested user types, and "C3: LLMs may fabricate types and functions." (Sec. 1).
+
+What they did. Four phases. (1) Static analysis finds functions with unsafe blocks or possible panics. (2) The LLM cuts each test into one scenario per assert, turns the test's literal constants into parameters, and the pipeline replays the scenario with the original constants and compares function-call traces to check nothing changed. (3) A graph of type constructors drives step-by-step instructions so the LLM builds symbolic values from public constructors. (4) Kani compiles the harness; errors go back to the LLM with the scenario function and primitive helpers marked as do-not-touch, and a tree-sitter check rejects redefined types. Key idea in their words: "We observe that, unlike C/C++ projects, Rust codebases often include high-quality test suites covering diverse API usage." (Sec. 1).
+
+What came out. On 9 crates (494 tests): 294 scenarios, 94.66% preserved; 294 of 294 harnesses compiled within 10 attempts, 97.3% within 3; 145 s and $0.03 per harness with GPT-4.1; Autoharness 41% on the same scenarios (Fig. 12). Ablations: dropping the type-building instructions cut first-try success by 23.1 points; a plain error-fix prompt cut it by 18.7 points (Tab. 3). Running Kani on the harnesses found 6 memory-safety bugs in pdf-rs (5 fixed), e.g. an out-of-bounds read in utf16be_to_string_lossy when data has fewer than 2 bytes.
+
+What a human supplied. The test suites, Kani usage examples (the 'external knowledge' database), prompts, the iteration limit of 10. The harness also needs bounds (unwind limit) which the LLM guesses.
+
+Assumptions and gaps. The only property is no memory error and no panic; there is no user-stated spec. "Success" is that the harness compiles, which says nothing on whether it exercises the right behavior beyond being drawn from tests. Quote: "Within 10 generation attempts, HarnessLLM produced syntactically correct harnesses for all 9 Rust libraries." (Sec. 5.2). Weak tests hurt: "However, scenario coverage decreased under sparse tests." (Sec. 5.2) and "The coverage of calling scenarios in the generated harnesses depends on the comprehensiveness of the existing test cases." (Sec. 6). Bounded, not an unbounded proof.
+
+How judged. Precision of scenario extraction by trace comparison; rate of compiling harnesses and attempts; comparison against Autoharness; ablations; counts of real bugs found; four LLMs tried.
+
+Inference for the end goal (mine): existing tests are cheap evidence of intent that an agent can mine, and trace replay is a neat check that an agent's rewrite kept behavior. It does not address distributed protocols, strong specs, or liveness.
+
+## Netrix (2023)
+
+Source: Dragoi, Enea, Nagendra, Srivas, "A Domain Specific Language for Testing Consensus Implementations", arXiv 2303.05893 (extended abstract for a lightning talk). Read in full.
+
+The problem. Real consensus code (Raft, Tendermint, PBFT-style) is hard to test: message order and faults are non-deterministic, and random testing (Jepsen, PCTCP) rarely reaches the odd corner cases and cannot replay them. The authors want a test to say what weird thing should happen and still be reproducible.
+
+What they did. A central server sits in the message path of the real implementation (a shim of 120 to 600 lines). A unit test is a list of filters of the form If(condition).Then(action), for example drop all Prepare messages of view v, plus a state machine that watches events and ends in an accepting or failing state. Filters constrain some messages; PCTCP random scheduling handles the rest. Safety is a state machine that fails when two different values are decided; "bounded liveness" is checked on runs that end before a timeout. A theorem (Theorem 1) says a monitor can be written to pin any one complete run's history. They also define a 'filter distance' (messages between where a message would arrive and where the filter delivers it): short-distance reorderings PCTCP finds alone, long ones need a filter.
+
+What came out. 34 tests on 3 systems. Tendermint: 15 tests, 5 fail and show deviations from the paper protocol, one a liveness bug (lagging replica does not catch up on f+1 higher-round messages; time to consensus 30 s to 6 min). Raft: 4 known bugs reproduced, including a leader-election liveness bug that the Prevote and CheckQuorum options remove (the authors checked the bug appears with them off and not with them on; Tab. 3 lists variants Liveness 15/100, LivenessNoCQ 100/100, NoLiveness 100/100 without saying which setting each uses). BFT-Smart: no deviation. Plain PCTCP: "It fails to capture any of the new bugs/deviations in Tendermint or known bugs in Raft." (Sec. 5). Tests re-run unchanged on a fixed Tendermint no longer failed.
+
+What a human supplied. Everything semantic: the scenario, the property, the shim, protocol-specific conditions. Scenarios came from the spec, the Ivy proofs' invariants, and talks with the Tendermint team. Authors say: "We believe that the developers intuition is key to catching bugs." (Sec. 5) and compare it to proofs: "Intuitively, this is analogous to mechanized proofs requiring additional input from the user, e.g., inductive invariants." (Sec. 2). A test for an inductive invariant A -> B is built by filters forcing not-B and a monitor failing on A.
+
+Assumptions and gaps. Testing, not proof. Liveness only bounded by a timeout. The deviations found "do not lead to safety violations" (Sec. 5.2: "The failed unit tests demonstrate scenarios where the implementation does not behave as defined by the protocol specification. However, the deviations do not lead to safety violations."). Inconsistency inside the paper: abstract says 4 deviations, Tab. 3 stars 5 tests, and one place says fixed, another 'working on fixing'. Table 3 gives hit counts per 100 iterations, not pass/fail verdicts.
+
+How judged. Per test: number of iterations out of 100 that reached the scenario or bug; compared with PCTCP alone; coverage of protocol 'Upon' clauses (all covered for Tendermint and Raft); instrumentation size.
+
+Inference for the end goal (mine): useful as (1) a catalogue of liveness-flavored bugs in real consensus code, (2) a way to check that an agent's formal model matches the implementation by replaying scenarios, (3) a reminder that humans choose the 'interesting scenarios'; an agent could generate them from a spec.
+
+## AlphaProof Nexus on open math problems (2026)
+
+Source: Tsoukalas et al. (Google DeepMind), "Advancing Mathematics Research with AI-Driven Formal Proof Search", arXiv 2605.22763v2. Read the main text (Sec. 1 to 6) and the agent-design appendix, selection and comparison sections; skimmed the appendix proofs and prompts.
+
+The problem. LLM math proofs in plain language can hide errors. Lean checks every step mechanically. Nobody had tried Lean-writing agents at scale on open problems.
+
+What they did. Agents take a Lean file with the theorem and a sorry placeholder, with marked regions the agent may edit (EVOLVE-BLOCK, EVOLVE-VALUE). (A) basic: independent LLM loops that edit the sketch and re-run the Lean compiler on each turn. (B) adds AlphaProof, an RL-trained olympiad prover, as a tool for subgoals. (C) adds an evolutionary population of sketches ranked by Elo from LLM raters, since proofs are pass or fail with no gradient. (D) has both. A validator (SafeVerify) checks the final proof against the stated theorem and blocks axiom tricks.
+
+What came out. 9 of 353 formalized Erdős problems solved by (D), a few hundred USD each, two open 56 years; 44 of 492 OEIS conjectures; plus work in optimization (a new learning-rate schedule giving an exact O(1/t) rate), graph theory, algebraic geometry (2 of 4 open problems), additive combinatorics, quantum optics. Post-hoc: the basic agent also solved all 9. "Remarkably, the basic agent solved all 9 problems, though at a higher cost on the harder problems." (Sec. 1). Codex solved 7 of 9; "We could not get Claude Code to solve any of the problems." (Sec. 5).
+
+What a human supplied. The Lean statements (community-formalized; OEIS ones autoformalized by Gemini), expert checks that each solved Lean statement matched the real question, edit-region markers, domain lemmas for deployments.
+
+Failure modes worth noting. The agent often hid the hard part in one sorry in a helper lemma restating the goal, even when told not to; it also relied on sorry lemmas it called known results that were hallucinated. "These failure modes underscore the value of end-to-end formal verification." (Sec. 3). Wrong statements: the agent's proofs exposed misformalizations (Erdős #125 and #741(i): 'density' had to become lower or upper density). For OEIS: "As a guard against misformalization, the agent was required to prove “test lemmas” verifying the first few terms of each sequence against its formal definition before attempting the target conjectures." (Sec. 3).
+
+Assumptions and gaps. Mathematics only. Problems come from what volunteers had formalized: "We recognize that this process has a bias toward problems amenable to formalization in Lean." (App. B.2). Costs exclude the cost of screening all 353 problems. Single-run points for (C) and (D).
+
+How judged. Solved or not, validated by Lean plus expert statement check; solve rate against mean USD per solved problem for K = 1, 3, 6, 10 grouped attempts (Fig. 3); wall-clock time; cost spread is large.
+
+Inference for the end goal (mine): the closest analog to 'human states the guarantee, agent does the proof': the checker is the only trusted judge, so the risk moves to the statement. Useful ideas to copy: test lemmas against the definition, forbid or flag sorry-style escape hatches, compare agents by cost per solve. It says nothing about distributed protocols or liveness.
+
+## Corten (2026)
+
+Source: Farka, Abate, Linker, Ertel, "Corten - Foundational Verification of Rust Programs", arXiv 2609.04372. Read the abstract, introduction, memory-model summary, soundness (Sec. 5), automation, evaluation, case study, related work, conclusion and the tool comparison table. Skimmed the semantics rules, program-logic details and appendices; not every rule was checked.
+
+The problem. Existing Rust verifiers either find bugs (Miri, Kani), lean on SMT solvers (Verus, Prusti, Creusot), or work on the compiler's mid-level IR (RefinedRust, Aeneas), which loses the link between proof and source. The authors want proofs that stay close to the source code, with machine-checked foundations, so they can be composed with proofs about other layers such as hardware.
+
+What they did. Embed Rust's typed high-level IR (THIR) in Rocq, define its meaning as weakest-precondition rules (what must hold before so a postcondition holds after), on Iris separation logic. A program logic layer adds sealing, join points for if branches, and 'defunctionalized' continuation stacks (plain data instead of closures, so goals stay small). A syntax-directed tactic, wp_engage, applies one rule per code construct. Soundness is proved incrementally against an interaction-tree model. In the authors' words, full soundness is limited: "However, full soundness establishes only internal consistency– the axioms are satisfied by an operational model– and does not guarantee that the axioms capture the intended semantics of Rust as a programmer would expect; test-suite validation we discuss in Sec. 4 is therefore a necessary complement." (Sec. 5).
+
+What came out. Synthetic test suite: "Overall, the automated proofs are roughly two to four times shorter than their raw counterparts." (Sec. 7). Case study: a buddy allocator of about 300 lines of Rust, proved to keep its invariant and not corrupt other state, in about 2800 lines of Rocq, of which about 1400 re-establish free-list invariants. "Automation and the program logic were instrumental in keeping this size down;" (Sec. 8).
+
+What a human supplied. All specifications, the representation predicate relating the Rust value to an abstract state, the domain lemmas, and manual ownership splitting for unsafe code.
+
+Assumptions and gaps. The spec "does not claim functional correctness of the allocation strategy—e.g. best-fit selection or any fragmentation bound—only that whatever block is returned is disjoint from, and does not corrupt, the allocator’s remaining state;" (Sec. 8). The proof is relative to unproven specs of Rust core functions. rustc's parsing, name resolution and type checking are trusted; the borrow checker is not. Concurrency is not yet exercised.
+
+How judged. Lines of proof with and without automation (cloc counts), and one realistic case study. No proof-checking times for the case study, no user study, and no comparison with another tool on the same program appear in the text I read.
+
+Inference for the end goal (mine): a data point on human effort for a code-level, machine-checked proof (about 9 proof lines per Rust line here) and on where it goes (domain invariants). It supports the goal's 'strong proof' end but not distributed systems or liveness, and has no agent component.
+
+## Transition invariants as termination witnesses (2026)
+
+Source: Beyer, Jankola, Lingsch-Rosenfeld, "Transition Invariants Revisited: Termination Witnesses and Their Validation", CAV 2026, doi 10.1007/978-3-032-32537-2_2. Read the full paper from the authors' PDF; the proofs are in the Zenodo supplement, of which I read only the first lemmas.
+
+The problem. Verifiers say a program is correct or buggy and should attach a witness, a proof object another tool can check. The standard witness format could not express 'this program terminates'. Without it, termination claims (a liveness property: something good, here 'the run ends', eventually happens) cannot be cross-checked. Scope limit stated up front: "We do not consider other reasons for non-termination, such as deadlocks." (Sec. 1).
+
+What they did. Use transition invariants (Podelski and Rybalchenko, 2004): a relation T between a state and any later state in the same run, that must be well-founded (no infinite chain). A program terminates exactly when such a T exists (Theorem 1). They add two witness entry types to version 2.1 of the witness format, with \at(var, AnyPrev) meaning 'the variable's value in an arbitrary earlier state'. They show how to build T from lexicographic ranking functions (Lemma 3; nested loops need the outer loop's ranking function ORed in) and from safety invariants of a liveness-to-safety rewrite (the program saves a state at a loop head and asserts it never repeats; Theorem 3). Three validators: (1) rewrite to a reachability witness and use existing validators; (2) encode 'the set of reachable successors shrinks' as quantified SMT queries; (3) turn T into a tiny one-loop program and ask a termination verifier to prove that terminates.
+
+What came out. On all SV-Benchmarks programs expected to terminate, with 900 s and 15 GB per run: 87% (CPAchecker ranking-function witnesses), 96%, 96% and 62% of witnesses from four verifier setups were validated by at least one validator. "The validation is effective, as a large portion of the produced witnesses can be validated by at least one validator." (Sec. 6.1). Cross-tool help: validators solved about 40 programs that CPAchecker's own mode could not ("Tools can solve more tasks using the information contained in the witnesses.", Sec. 6.2). Validation is often faster than verification. Goblint's witnesses failed often because it wrote 4394 invariants, about 16 per program.
+
+What a human supplied. The format design and the proofs. No human supplied per-program inputs; witnesses come from verifiers.
+
+Assumptions and gaps. Sequential C programs; reachability route needs finite state; limited array and struct support in TransVer; no fairness, no concurrency or message passing. Community adoption is a fact claimed: used at SV-COMP 2026 with 11 verifiers and 4 validators.
+
+How judged. Share of witnesses validated, programs validators solve beyond their own verifier, CPU time paired comparison (Wilcoxon signed-rank), and counts and kinds of invariants in witnesses.
+
+Inference for the end goal (mine): this is how liveness proofs get independently checked in the software-verification world: a proof object plus a small separate checker. For agent-written liveness proofs in distributed systems one needs the same split (agent proposes, checker validates) but with fairness and message passing, which this paper does not treat. The save-a-state-and-assert-no-repeat trick is a concrete liveness-to-safety recipe.
+
+## TLA+ for a blockchain exam-management contract (2025)
+
+Source: Naik and Naik, "Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Through Formal Verification with TLA+", CONIT 2025, doi 10.1109/conit65521.2025.11167034. Full text NOT read: IEEE paywall; Unpaywall lists no open copy. Only the abstract (via Semantic Scholar) was read, so no cases are recorded.
+
+What the abstract says the authors did: write the system in TLA+ "to eliminate ambiguities inherent in natural language descriptions", model states and actions, state properties in temporal logic, and run TLC. Quotes: "The model checker TLC evaluates the state-based model for correctness, safety, and liveness." and "The mapping of TLA+ constructs to Solidity code demonstrates how formal specifications translate into executable smart contracts." and "Hoare Logic is applied for verifying the correctness of key functions by establishing pre-conditions and postconditions for ensuring desired outcomes." (all Abstract).
+
+Unknown from the abstract: which liveness properties, the model size, TLC run results, whether any bug was found, and whether the Solidity mapping was checked or only illustrated. No numbers are given in the abstract.
+
+Inference for the end goal (mine): a typical 'model in TLA+, then hand-translate to code' workflow; the gap between model and code is exactly what the goal needs closed, and the abstract gives no sign it was closed here. Low priority unless the full text turns up.
+
+## LLM translation of natural-language requirements to formalism (2025)
+
+Source: Meng, Lorch, Siu, Durling, Varanasi, Paul, Moitra (GE Aerospace Research), "Transforming Natural Language Requirements to Formalism Using LLMs", Systems Engineering, doi 10.1002/sys.70023 (online Dec 2025; issue March 2026). Full text NOT read: Wiley blocks automated access and Unpaywall reports it closed. Only the abstract (via Semantic Scholar and Crossref) was read; no cases recorded. The input list gives a different author order than Crossref; I used Crossref's.
+
+What the abstract says. Problem: "However, creating logical formalism requires a deep understanding of formal logics, making it inaccessible to individuals without specialized training." Method: an LLM approach that interactively translates requirements; "Our translation strategy employs a NL‐based interface that provides high assurance for translation correctness while still being approachable for nonexperts in formal methods." Evidence: "We demonstrate the effectiveness of our tool through an experimental evaluation of an industry use case—landing gear." (all Abstract).
+
+Unknown from the abstract: the target logic, how 'high assurance' is achieved, how many requirements, accuracy numbers, what the human must confirm, and which LLM.
+
+Inference for the end goal (mine): the question it targets, how a non-expert confirms that the formal statement means what they meant, is the weak link of 'human vaguely describes, agent figures out the rest'. Worth re-reading in full if access is gained.
+
+## Ax-Prover (2025)
+
+Source: Breen, Del Tredici, McCarran et al. (Axiomatic AI, ICFO, MIT), arXiv 2510.12787v3, https://arxiv.org/abs/2510.12787. Read: whole text (15 pages), appendices skimmed.
+
+Problem. Trained Lean provers (DeepSeek-Prover, Kimina) are tied to math-competition data and an old Mathlib; plain chat LLMs cannot talk to Lean. The authors want one prover that works across science domains and with human experts.
+
+What they did. Three LLM roles on Claude: an orchestrator (assigns the task, routes feedback, stops the loop), a prover (sketch in English, turn each step into a Lean `have ... sorry`, fill the holes, check after each step), and a verifier (compile, accept only if no error and no `sorry`). Lean tools (goal view, lemma search, diagnostics) come through the Model Context Protocol. No training.
+- Verifier rule: "a proof is considered verified if and only if no level-1 error exists" and no `sorry` (Sec 3.1.3).
+
+Results (pass@1, one agent run).
+- NuminaMath-LEAN, 300 sampled: 51% vs 28% (DeepSeek-Prover-V2-671B), 31% (Kimina, number taken from its RL training at about pass@68), 5% (Sonnet alone) (Table 2).
+- AbstractAlgebra: 64% vs 24%, 13%, 8%. QuantumTheorems: 96% vs 61%, 57%, 40%.
+- PutnamBench: 14%, 92 of 660; Hilbert 72% and Seed-Prover 51% are higher (Table 3).
+- Cost: "running DS-Prover and Kimina on 1000 datapoints cost approximately $300 and $2000, respectively, while Ax-Prover cost about $4000" (Sec 5.4).
+- Case studies: a cryptographer and the agent checked a matrix-branch-number test; "it revealed a gap in the informal argument: some minima were taken over sets that can be empty for certain parameters" (Sec 6.1). About 2000 Lean lines, two days, one laptop. A Lo-Chau entropy lemma was also proved (Sec 6.2).
+
+Human input. Theorem statements; in the case studies the expert gave definitions, decomposition and strategy: "the human expert provides domain insight, problem decomposition, and proof strategy" (Sec 6).
+
+Assumptions and gaps. Math and physics only; no software, no distributed protocols, no liveness. Budget is capped ("we capped Ax-Prover API calls at 200 and set a 25-minute timeout", Sec 5.1). The baselines run one shot, so "pass@1" hides unequal compute. Kimina's NuminaMath number is not from the same run. Some formal statements came from an autoformalizer and were wrong; the agent flagged them (Sec 5.2, App C).
+
+Evaluation. Fixed formal statements; success means an external Lean compile with no `sorry`. Tool-call statistics and tactic diversity are reported (Sec 5.3).
+
+Meaning for the goal (my inference). A compiler-in-the-loop agent can write proofs of given statements, and the case study shows value in finding a hole in an informal argument. It leaves open the part the human asked for: turning a vague wish into a strong spec. Statement quality was only checked by experts, not by a procedure.
+
+## Distributed Locking as a Data Type (2024)
+
+Source: Haas, Mogk, Bieniusa, Mezini, arXiv 2405.15578, https://arxiv.org/abs/2405.15578. Read: whole text (8 pages including appendix code and references).
+
+Problem. Mixed-consistency programming models bake in one coordination method (a lock server or a token). That fits few deployments.
+
+What they did. They write coordination protocols as algebraic replicated data types (ARDTs): a Scala data type plus a merge function with lattice properties (idempotent, commutative, associative). Operations return deltas that are merged. Two examples: a token that moves between replicas (epoch plus owner plus set of requesters), and majority voting over rounds. A Raft-inspired protocol is also said to be implemented (Sec 2.4).
+
+What came out. No numbers. A proof sketch for the token protocol: "We can prove the stated mutual exclusion property by induction on the creation of deltas" (Sec 2.2). The invariant: for any delta with target owner r, either no greater delta exists or r has already seen a greater one.
+
+Human input. All protocol code and the proof idea.
+
+Assumptions and gaps.
+- Safety needs message integrity; "to ensure progress they require at-least-once delivery" (Sec 3).
+- "This simple protocol does not guarantee progress under (permanent) node failure." (Sec 2.2)
+- The voting protocol assumes a fixed voter set. No mechanized proof; the proof of the voting protocol is not given.
+- Verification in LoRe is future work: "While formal verification of such correctness is notoriously hard" (Sec 4).
+
+Evaluation. None; this is a position and design report.
+
+Meaning for the goal (my inference). The useful idea is the model: reason about sets of observed values, not message orderings. The authors cite Lewchenko and Kaki for Raft proofs getting simpler this way. It gives a human-readable target for an agent but no spec or liveness method.
+
+## Pretend Synchrony (2019)
+
+Source: von Gleissenthall, Kici, Bakst, Stefan, Jhala, POPL 2019, https://doi.org/10.1145/3290372, PDF from https://cseweb.ucsd.edu/~dstefan/pubs/gleissenthall:2019:pretend.pdf. Read: Sections 1-3, 7-9 closely; rewrite rules and soundness proofs (Sec 4-6) skimmed.
+
+Problem. Proofs of asynchronous protocols need invariants that list schedules, split cases over all nodes' joint state, and describe unbounded message buffers.
+
+Idea. "while distributed programs must execute asynchronously, we can often soundly treat them as if they were synchronous when verifying their correctness." The compiler rewrites the program so each send and receive pair becomes one assignment (Lipton reduction). Three language choices make this work: symmetric process ids (broadcast), typed channels (a drop is a receive that returns None), and explicit round ids (rounds cannot interfere).
+
+Results. Table 1 (Sec 7):
+- Two-phase commit, Raft election, single-decree Paxos in total: 744 Go lines; Goolong 23 loop-invariant lines vs 152 in Dafny; check time 1.73 s vs 1455.84 s.
+- Paxos alone: Dafny took 1141.35 s, Goolong 1.51 s.
+- The abstract: "reducing manually specified invariants by a factor of 6, and faster, by reducing checking time by three orders of magnitude."
+- Multi-Paxos KV store: 118.5 req/ms against PSync 32.4; Ivy-Raft 13.5 and IronKV about 30 are published numbers, "not directly comparable"; "slowdown between 1.5-3x" versus unverified EPaxos code.
+
+Human input. The Go code, short synchronous assertions and loop invariants (23 invariant lines total across three protocols). The Dafny baseline was written by the authors following IronFleet's method; this is a self-made baseline.
+
+Assumptions and gaps. "Currently, Goolong only proves safety properties" (Sec 8). No general loops, limited races, no state between rounds (so no stable-leader Multi-Paxos), pairwise communication only, no ring topologies. Authors say "our approach is not applicable to arbitrary protocols".
+
+Evaluation. Three questions: expressiveness (four protocols), proof burden (annotation lines), speed (check time), plus throughput of the key-value store on three EC2 t2.micro machines.
+
+Meaning for the goal (my inference). Strong evidence that proof structure, not just proof search, decides effort. For agents, a target with short, human-readable synchronous assertions looks easier than raw asynchronous invariants. The missing piece for this project is liveness, which the authors leave open.
+
+## OProver (2026)
+
+Source: M-A-P, arXiv 2605.17283v1 (17 May 2026), https://arxiv.org/abs/2605.17283. Read: whole text (33 pages), appendices skimmed.
+
+Problem. Provers usually use compiler feedback and retrieval only at test time, and public Lean data keeps only final proofs, not failures and repairs.
+
+What they did. Proving is a loop: given the theorem, the retrieved verified proofs, the last attempt and its compiler error, the model writes a new attempt. "the policy conditions only on the most recent proof attempt and its compiler feedback" (Sec 2.1). Training: continued pretraining on 65B tokens, then rounds of rollouts, supervised fine-tuning on repair steps, and reinforcement learning on hard cases; new verified proofs feed back into the corpus and retrieval index.
+
+Results (Pass@32, Table 2). OProver-32B: MiniF2F 93.3, ProverBench 58.2, PutnamBench 11.3 (best); MathOlympiad 22.8, ProofNet 33.2 (second to LongCat-Flash-Prover with tools). "Even OProver-8B outperforms Goedel-Prover-V2-32B on all five benchmarks despite having four times fewer parameters" (Sec 4.1).
+- Ablation (Table 3): without multi-turn feedback the 32B model gets 88.4 on MiniF2F and 7.0 on PutnamBench; without retrieval as well, 87.9 and 5.9.
+- Test-time budget: more compute gives diminishing returns; best split is 16 rounds on easier sets, 8 on PutnamBench (Sec 4.2).
+- Training rounds help steadily on MiniF2F (Fig 6).
+
+Human input. None at proving time; benchmark statements are human or autoformalized.
+
+Assumptions and gaps. Math only. The corpus size is stated two ways: abstract and Sec 3 say 1.77M statements and 6.86M proofs; Sec 2.2 says "about 1.5M" and "about 5.0M" (possibly different snapshots; not explained). Baseline numbers marked with a dagger were copied, not rerun. An "agentic rollout" spends several attempts per sample, so Pass@32 across systems is not equal compute; Sec 4.2 gives a budget-controlled study for OProver only.
+
+Evaluation. Unbiased Pass@k estimator with n=64 samples; success means the Lean compiler accepts.
+
+Meaning for the goal (my inference). Supports compiler-error repair loops plus retrieval of similar finished proofs as a standard ingredient. A corpus of proofs of distributed protocols would be the analog; none exists here.
+
+## Tunable Automation (2025)
+
+Source: Bai, Hawblitzel, Lattuada, arXiv 2512.03926 (FMCAD 2026 per the local folder name). Local copy already in the collection (folder with paper.pdf). Read: whole text (19 pages).
+
+Problem. SMT-based verifiers instantiate quantified facts by pattern match. More facts give more automation but slower, less predictable proofs. Dafny leans to automation; Verus to speed.
+
+What they did. In Verus, a lemma marked `broadcast` becomes a quantified fact that a user imports with `broadcast use`, singly or as a group, in a module, function or proof block. Verus also reports which broadcast facts the solver used (from the unsat core) so users can trim imports.
+
+Results.
+- Adding 49 lemmas from Dafny's prelude cut asserts 2% to 9% (Table 1: IronKV 268 to 245, Splinter 1158 to 1130, Anvil 343 to 336, CapybaraKV 449 to 415).
+- "more than half of the assertions in these projects do not contribute to the SMT solver achieving a successful verification" (Sec 5.2).
+- Time: "ambient facts do slow down verification" (Sec 5.3); about 2% of functions took 2x or more, worst 3x to 19x (Splinter 34 ms to 669 ms; Anvil 3508 ms to 43563 ms). Failure reports stayed within 2x for 78% of sampled functions.
+- More triggers on IronKV (206 `all_triggers` on 261 quantifiers) removed 33 more asserts (12.3%), more than the ambient facts, but did not scale to the other projects.
+
+Human input. Choosing groups and scopes; the experiment reused the projects' existing proofs.
+
+Assumptions and gaps. "It is important to note that counting the number of surviving asserts after "minimization" is a very rough measure of automation" (Sec 5.1); asserts are also used for debugging and documentation, lemma calls are ignored, and the greedy minimizer is only an approximation (exact search is 2^n).
+
+Evaluation. Assert count after greedy minimization as automation proxy; per-function time ratio for success and for failure (20 sampled removed asserts per project); machine: 16-core Xeon E5, 9 threads.
+
+Meaning for the goal (my inference). Gives a cheap, repeatable effort metric (minimal asserts) and a knob that would let an agent trade speed for fewer hints in Verus. The projects touched (IronKV, Anvil, Splinter, CapybaraKV) are also candidate case sources for distributed or temporal proofs.
+
+## Regular Model Checking Upside-Down (2025)
+
+Source: Esparza, Raskin, Welzel-Mohr, LMCS 21(1:4), 2025, arXiv 2205.03060 (v6 downloaded), https://doi.org/10.46298/lmcs-21(1:4)2025. Read: Sections 1, 7, 8 and statements of results closely; the automata proofs (Sec 3-6) skimmed.
+
+Problem. Regular model checking grows the set of reachable states from below and often never stops. This paper shrinks a set of all states from above.
+
+Idea. The reachable set is the intersection of all inductive invariants. That intersection is not regular in general, so they limit invariants to b-invariants: CNF formulas with at most b clauses over claims like "position i holds letter x". Result: for every b the intersection IndInv_b is regular, with a construction; checking it against unsafe states is in EXPSPACE, and PSPACE-complete for b=1.
+
+Why a systems reader may care. The authors say b "can be seen as a measure of how difficult it is for a human to understand the proof" (Sec 7). Their conclusion adds that other methods may "lead to invariants difficult to interpret by humans" and suggests searching "looking first for invariants for small values of b".
+
+Results (Figure 1, MONA). "IndInv 1 is strong enough to satisfy 46 out of 59 properties." Most take under 5 ms; Dijkstra took 1920 ms. Failures: mutual exclusion for Dijkstra ring, Mux array and resource allocator; deadlock freedom for Herman linear and plain Lehmann-Rabin philosophers; custom cache properties for Firefly (0 of 4) and Illinois (0 of 2). Dining philosophers with free/busy forks need b=3; Berkeley and Dragon need b=2 for all assertions. Computing IndInv_2 directly with MONA failed.
+
+Check on my reading. My tally from the extracted table gives 48 of 61 properties, not 46 of 59. The text extraction may have misaligned rows, so my per-system case lines are from that table and may be off for a property or two.
+
+Human input. The encoding of each system as WS1S formulas (word configurations and transducer), taken from earlier papers.
+
+Assumptions and gaps. Words and length-preserving transitions; "our goal is to evaluate the complexity of invariants needed for systems from diverse domains, not to present a tool ready to verify complex systems" (Sec 7). Safety properties (deadlock, mutual exclusion, token counts) only. Exact complexity for b>=2 is conjectured, not proved.
+
+Evaluation. The smallest b that proves a property, minimal automaton size, MONA time.
+
+Meaning for the goal (my inference). A candidate yardstick for invariant simplicity and a source of small parameterized benchmark systems. Nothing on liveness, LLMs or real code.
+
+## Counterexample Driven Quantifier Instantiations (2023)
+
+Source: Tamir, Taube, McMillan, Shoham, Howell, Gueta, Sagiv, OOPSLA 2023, https://doi.org/10.1145/3622864. Full text not obtained: dl.acm.org returned a browser-check page instead of the PDF and a web search found no other copy. I did not work around the check. Only the abstract-level summary was available; no quotes, no cases.
+
+What the summary says (not verified against the paper). Solvers can loop on quantifier alternations that involve function symbols. The authors abstract functions as relations, diagnose counterexamples, and add a few manual instantiations. Applied in Ivy to consensus protocols, most goals then verify automatically.
+
+Meaning for the goal (my inference, weak). Possibly useful for how a human and a tool split the work on solver-hostile protocols. Needs a real read.
+
+## SG4PM (2026)
+
+Source: Zenodo record 19343003 (concept DOI 10.5281/zenodo.19343002), README only, read through the Zenodo API. No PDF exists; a web search found no paper. No cases.
+
+What the README says. The tool generates Functional Scenario Form specifications from Java programs with an LLM, checks them for mutual exclusion and completeness, verifies code against them with testing-based formal verification (TBFV) "without requiring loop invariants", feeds failures back to the LLM, and lets users edit the specification to drive code updates. README motivation: "Generating such invariants is difficult and error-prone, even with large language models (LLMs)."
+
+Assumptions and gaps. No evaluation is in the record. The README links a GitHub repo and a 39 MB release zip; I did not run it.
+
+Meaning for the goal (my inference). The overlap-and-completeness check is a cheap test of whether a generated spec says anything weak. Unmeasured here.

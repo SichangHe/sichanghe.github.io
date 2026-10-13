@@ -1,11 +1,11 @@
 # 🤖 database, liveness cases by how strong the evidence is
 (authored by agents unless marked 🧑)
 
-221 cases whose guarantee says something eventually happens. Agents sorted them from the text of each case record, not from the papers; a wrong label is possible. Full records are in `cases.jsonl` under the case id.
+265 cases whose guarantee says something eventually happens. Agents sorted them from the text of each case record, not from the papers; a wrong label is possible. Full records are in `cases.jsonl` under the case id.
 
 ## running code, proof accepted by a proof checker
 
-32 cases.
+59 cases.
 
 - Anvil FluentBit controller
     - guarantee: Anvil's FluentBit controller is proved with Verus to eventually reach and keep a fixed desired state, with Rust steps checked against the model, assuming the desired state stabilizes, faults stop and actions are fair.
@@ -25,6 +25,12 @@
     - size or effort: Table 1 original Exec/Proof cells: 1134/8352; ~2.5 person-months each
     - tool: Verus temporal-model proof + Rust-step/model-step conformance; written by: human
     - case `B:systems:5`; source record `anvil-2024`
+- CLH lock (C)
+    - guarantee: VeriFast with ghost signals verified a CLH lock in C: acquiring terminates provided holders eventually release, using 343 annotation lines for 49 lines of code.
+    - assumes: Fair scheduling; every acquire creates a release obligation
+    - size or effort: 343 annotation lines for 49 lines of code (700%), 0.1 s
+    - tool: ghost signals in VeriFast; written by: human
+    - case `C:r6:46`; source record `ghost-signals-thesis-2024`
 - CRDT implementation (replicated)
     - guarantee: A Coq proof in Trillium/Aneris shows a replicated CRDT implementation is correct and strongly eventually consistent, assuming fair inter-replica messages.
     - assumes: fairness of inter-replica messages
@@ -126,6 +132,12 @@
     - size or effort: not seen
     - tool: Shipwright (own framework, proof assistant); written by: human
     - case `A:196`; source record `shipwright-2025`
+- Producer-consumer over a bounded FIFO of capacity 10 (C)
+    - guarantee: VeriFast with ghost signals verified that both threads of a capacity-10 bounded FIFO producer-consumer in C terminate despite busy-waiting, using 160 annotation lines for 37 lines of code (0.08 s); the ghost-signal rules are trusted axioms.
+    - assumes: Fair scheduling; ghost-signal rules added as axioms in a trusted header
+    - size or effort: 160 annotation lines for 37 lines of code (435%), 0.08 s
+    - tool: ghost signals encoded in VeriFast (call and wait permissions); written by: human
+    - case `C:r6:45`; source record `ghost-signals-thesis-2024`
 - ReplicaSet controller
     - guarantee: Anvil's ReplicaSet controller eventually reaches a stable replica count, assuming the desired state stabilizes and the controller is weakly fair.
     - assumes: Desired-state description eventually stabilizes; weak fairness on model actions; message drops/controller crashes eventually cease; PodMonkey disturbances eventually cease. Welder §5 PDFp11: faults eventually stop (including PodMonkey as specified below). Additional retry-on-conflict fairness: each retry loop terminates, either succeeding or returning a non-version-conflict error; §4.2 PDFp9: "RoC loop terminates". Always-preserved request-centric rely restrictions on other controllers, with own guarantee satisfying compatible controllers; no finite delivery/computation bound required. No external controller progress dependency in this model: §3.3 PDFp7 DS = True. PodMonkey eventually stops but must still obey applicable request rely restrictions. Gap: pinned ownership/rely predicates and retry fairness deployment validation unresolved
@@ -143,6 +155,156 @@
     - size or effort: unknown
     - tool: Rocq + Iris, Lawyer logic; written by: human
     - case `A:164`; Verifying Wait-Freedom for Concurrent Higher-Order Programs (ECOOP 2026), abstract
+- SV-Benchmarks C programs expected to terminate, verified by CPAchecker (ranking functions)
+    - guarantee: A verifier proved termination of SV-Benchmarks C programs (verified by CPAchecker (ranking functions)); 422 programs verified; 366 witnesses validated by at least one validator (87%), re-checked by other tools.
+    - assumes: Termination only (not deadlock or other non-progress); finite-state reduction for the reachability route; 900 s CPU and 15 GB per run; only programs the verifier itself solved are counted
+    - size or effort: 422 programs verified; 366 witnesses validated by at least one validator (87%)
+    - tool: CPAchecker (ranking functions) to produce the witness; validators CPAchecker-TransVer, UAutomizer-TransVer, CPAchecker-decreasing, CPAchecker-simplifying; written by: automatic tool
+    - case `C:r8:36`; Transition Invariants Revisited, Sec. 6.1 Tab. 2
+- SV-Benchmarks C programs expected to terminate, verified by CPAchecker via TransVer (reduction to reachability)
+    - guarantee: A verifier proved termination of SV-Benchmarks C programs (verified by CPAchecker via TransVer (reduction to reachability)); 200 programs verified; 192 witnesses validated by at least one validator (96%), re-checked by other tools.
+    - assumes: Termination only (not deadlock or other non-progress); finite-state reduction for the reachability route; 900 s CPU and 15 GB per run; only programs the verifier itself solved are counted
+    - size or effort: 200 programs verified; 192 witnesses validated by at least one validator (96%)
+    - tool: CPAchecker via TransVer (reduction to reachability) to produce the witness; validators CPAchecker-TransVer, UAutomizer-TransVer, CPAchecker-decreasing, CPAchecker-simplifying; written by: automatic tool
+    - case `C:r8:37`; Transition Invariants Revisited, Sec. 6.1 Tab. 2
+- SV-Benchmarks C programs expected to terminate, verified by Goblint via TransVer
+    - guarantee: A verifier proved termination of SV-Benchmarks C programs (verified by Goblint via TransVer); 286 programs verified; 176 witnesses validated by at least one validator (62%), re-checked by other tools.
+    - assumes: Termination only (not deadlock or other non-progress); finite-state reduction for the reachability route; 900 s CPU and 15 GB per run; only programs the verifier itself solved are counted; 110 witnesses failed because Goblint wrote 4394 invariants in total (about 16 per program), so validators timed out or ran out of memory
+    - size or effort: 286 programs verified; 176 witnesses validated by at least one validator (62%)
+    - tool: Goblint via TransVer to produce the witness; validators CPAchecker-TransVer, UAutomizer-TransVer, CPAchecker-decreasing, CPAchecker-simplifying; written by: automatic tool
+    - case `C:r8:39`; Transition Invariants Revisited, Sec. 6.1 Tab. 2
+- SV-Benchmarks C programs expected to terminate, verified by UAutomizer via TransVer
+    - guarantee: A verifier proved termination of SV-Benchmarks C programs (verified by UAutomizer via TransVer); 389 programs verified; 375 witnesses validated by at least one validator (96%), re-checked by other tools.
+    - assumes: Termination only (not deadlock or other non-progress); finite-state reduction for the reachability route; 900 s CPU and 15 GB per run; only programs the verifier itself solved are counted
+    - size or effort: 389 programs verified; 375 witnesses validated by at least one validator (96%)
+    - tool: UAutomizer via TransVer to produce the witness; validators CPAchecker-TransVer, UAutomizer-TransVer, CPAchecker-decreasing, CPAchecker-simplifying; written by: automatic tool
+    - case `C:r8:38`; Transition Invariants Revisited, Sec. 6.1 Tab. 2
+- SystemVerilog hardware design: 7-Segment
+    - guarantee: The new method solved 30 of 30 tasks of checking "something good eventually happens" properties of the SystemVerilog 7-Segment hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 30 of 30 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:30`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: 7-Segment
+    - guarantee: The new method solved 9 of 15 tasks of checking combined properties such as "a until b" of the SystemVerilog 7-Segment hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 9 of 15 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:41`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Blink
+    - guarantee: The new method solved 14 of 25 tasks of checking "something good eventually happens" properties of the SystemVerilog Blink hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 14 of 25 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:36`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Blink
+    - guarantee: The new method solved 11 of 25 tasks of checking combined properties such as "a until b" of the SystemVerilog Blink hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 11 of 25 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:47`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Delay
+    - guarantee: The new method solved 32 of 32 tasks of checking "something good eventually happens" properties of the SystemVerilog Delay hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 32 of 32 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:34`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Delay
+    - guarantee: The new method solved 32 of 32 tasks of checking combined properties such as "a until b" of the SystemVerilog Delay hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 32 of 32 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:45`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Gray Counter
+    - guarantee: The new method solved 33 of 33 tasks of checking "something good eventually happens" properties of the SystemVerilog Gray Counter hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 33 of 33 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:35`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Gray Counter
+    - guarantee: The new method solved 22 of 22 tasks of checking combined properties such as "a until b" of the SystemVerilog Gray Counter hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 22 of 22 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:46`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: i2c Stretch
+    - guarantee: The new method solved 20 of 20 tasks of checking "something good eventually happens" properties of the SystemVerilog i2c Stretch hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 20 of 20 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:29`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: i2c Stretch
+    - guarantee: The new method solved 3 of 20 tasks of checking combined properties such as "a until b" of the SystemVerilog i2c Stretch hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 3 of 20 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:40`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: LCD Controller
+    - guarantee: The new method solved 14 of 14 tasks of checking "something good eventually happens" properties of the SystemVerilog LCD Controller hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 14 of 14 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:27`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: LCD Controller
+    - guarantee: The new method solved 14 of 14 tasks of checking combined properties such as "a until b" of the SystemVerilog LCD Controller hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 14 of 14 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:38`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Load-Store (LS)
+    - guarantee: The new method solved 32 of 32 tasks of checking combined properties such as "a until b" of the SystemVerilog Load-Store (LS) hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 32 of 32 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:37`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Pulse Width Modulation
+    - guarantee: The new method solved 12 of 12 tasks of checking "something good eventually happens" properties of the SystemVerilog Pulse Width Modulation hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 12 of 12 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:31`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Pulse Width Modulation
+    - guarantee: The new method solved 12 of 12 tasks of checking combined properties such as "a until b" of the SystemVerilog Pulse Width Modulation hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 12 of 12 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:42`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Thermocouple
+    - guarantee: The new method solved 17 of 17 tasks of checking "something good eventually happens" properties of the SystemVerilog Thermocouple hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 17 of 17 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:28`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: Thermocouple
+    - guarantee: The new method solved 17 of 17 tasks of checking combined properties such as "a until b" of the SystemVerilog Thermocouple hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 17 of 17 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:39`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: UART Transmitter
+    - guarantee: The new method solved 10 of 10 tasks of checking "something good eventually happens" properties of the SystemVerilog UART Transmitter hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 10 of 10 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:33`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: UART Transmitter
+    - guarantee: The new method solved 10 of 10 tasks of checking combined properties such as "a until b" of the SystemVerilog UART Transmitter hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 10 of 10 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:44`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: VGA Controller
+    - guarantee: The new method solved 10 of 10 tasks of checking "something good eventually happens" properties of the SystemVerilog VGA Controller hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 10 of 10 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:32`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
+- SystemVerilog hardware design: VGA Controller
+    - guarantee: The new method solved 10 of 10 tasks of checking combined properties such as "a until b" of the SystemVerilog VGA Controller hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 10 of 10 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:43`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
 - Treiber stack, HSY stack, DCAS stack, Michael-Scott queue (+Doherty), RDCSS, Michael's list
     - guarantee: Lock-freedom or obstruction-freedom of Treiber, HSY, DCAS stacks, Michael-Scott queue, RDCSS and Michael's list were shown by an automatic tool; Fomitchev-Yahav delete was shown not obstruction-free.
     - assumes: any thread may be stopped; isolation for obstruction-freedom
@@ -187,7 +349,7 @@
 
 ## abstract model only, proof accepted by a proof checker
 
-84 cases.
+86 cases.
 
 - Ackermann (stack implementation)
     - guarantee: Timer reduction and implicit rankings with Z3 prove that a stack implementation of the Ackermann function terminates.
@@ -672,6 +834,18 @@
     - size or effort: Table 2: 0.3 s, 5, 0, 3, 69 tokens
     - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
     - case `A:319`; source record `timers-2026`
+- Wirehead distributed double buffer (Python+MongoDB) as Rocq state machine
+    - guarantee: In the Rocq model of Wirehead, once a process starts a swap it is proved to eventually finish it, under weak fairness.
+    - assumes: Single MongoDB instance; crash-stop (no partitions, no Byzantine); each MongoDB call atomic; weak fairness for liveness; model written by hand from the Python code, link to real code not proved
+    - size or effort: Seven chained uses of fairness, one per swap sub-step; fully checked; Liveness.v 1,342 lines total (48 lemmas, 2 theorems)
+    - tool: Rocq proof assistant, written by hand; written by: human
+    - case `C:r7:4`; Doan thesis, Sec 6.1-6.2, Table 6.1
+- Wirehead distributed double buffer (Python+MongoDB) as Rocq state machine
+    - guarantee: In the Rocq model of Wirehead, if the write buffer is full and a process tries to swap, a swap is proved to eventually complete, so lock contention cannot deadlock.
+    - assumes: Single MongoDB instance; crash-stop (no partitions, no Byzantine); each MongoDB call atomic; weak fairness for liveness; model written by hand from the Python code, link to real code not proved
+    - size or effort: Case split on lock free/held; fully checked
+    - tool: Rocq proof assistant, written by hand; written by: human
+    - case `C:r7:5`; Doan thesis, Sec 6.1-6.2, Table 6.1
 - Xen vchan inter-VM channel
     - guarantee: Xen vchan: data reported sent is eventually received, in a TLA+ model checked with TLC and TLAPS, assuming weak fairness on the receiver read and clean shutdown.
     - assumes: weak fairness on receiver read; clean shutdown; first version vacuously true when sender blocks forever
@@ -694,25 +868,25 @@
     - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Basic agent: all 100% syntax and runtime; conformance 100/100/66.67/66.67%; 186 lines Rust, 219 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:88`; source record `sysmobench-2026`
+    - case `C:r4:7`; source record `sysmobench-2026`
 - Asterinas Ringbuffer (SysMoBench task)
     - guarantee: LLMs wrote a TLA+ model of the Asterinas ring buffer (615 lines Rust); only Claude ran, with 100% conformance and invariants, while GPT-5, Gemini and DeepSeek failed at runtime.
     - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Basic agent: only Claude ran (100% conformance and invariants); GPT-5, Gemini, DeepSeek failed runtime; 615 lines Rust, 123 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:90`; source record `sysmobench-2026`
+    - case `C:r4:9`; source record `sysmobench-2026`
 - Asterinas Rwmutex (SysMoBench task)
     - guarantee: LLMs wrote a TLA+ model of the Asterinas read-write mutex (395 lines Rust, 250 lines TLA+), checked by TLC for its invariants; conformance was 100/75/0/50%.
     - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Basic agent: conformance 100/75/0/50%; invariants 90/80/80/90%; 395 lines Rust, 250 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:89`; source record `sysmobench-2026`
+    - case `C:r4:8`; source record `sysmobench-2026`
 - Asterinas Spinlock (SysMoBench task)
     - guarantee: LLMs wrote a TLA+ model of the Asterinas spinlock code, checked by TLC for mutual exclusion, lock consistency, no deadlock, guard lifecycle and eventual release; conformance to the code was 100/80/80/80% across four LLMs.
     - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Basic agent: all four LLMs 100% syntax and runtime; conformance 100/80/80/80%; invariants 100/100/85.71/100% (Claude/GPT-5/Gemini/DeepSeek); 213 lines Rust, 151 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:87`; source record `sysmobench-2026`
+    - case `C:r4:6`; source record `sysmobench-2026`
 - Azure Cosmos DB consistency levels
     - guarantee: Azure Cosmos DB 4 consistency levels were specified in TLA+ with 10 liveness and 14 safety properties, checked with TLC on logs up to length 6 plus random simulation, in 2 person-months.
     - assumes: bounded: logs up to length 6 plus random simulation
@@ -754,7 +928,7 @@
     - assumes: Finite model
     - size or effort: seconds
     - tool: SPIN (LTL); written by: human
-    - case `C:r1:48`; Von Hippel thesis Sec. 4.8, 5.6
+    - case `C:r1:5`; Von Hippel thesis Sec. 4.8, 5.6
 - decentralized lock (DL) - synthesis from sketch
     - guarantee: PolySemist completes a decentralized lock sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts; full synthesis from scratch took 125 s.
     - assumes: human-written sketch and property; fixed small node counts; simple decentralized lock
@@ -766,7 +940,7 @@
     - assumes: Source Go; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Basic agent: only Claude reached conformance (7.69%) and invariants (69.23%); code-translation agent: Claude 15.38% conformance, 92.31% invariants; 2,159 lines Go, 385 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:91`; source record `sysmobench-2026`
+    - case `C:r4:10`; source record `sysmobench-2026`
 - Fizzbee example status machine (idle/working/failed/shutdown)
     - guarantee: FizzBee model checking of a toy status machine checks that status always eventually returns to shutdown and to working, and that a failed state is reachable, assuming weak fairness on some actions.
     - assumes: Weak fairness on Start/Finish/Fix/Restart; Shutdown and Fail not fair
@@ -778,13 +952,13 @@
     - assumes: Non-probabilistic model, no reordering
     - size or effort: not stated in the sections read
     - tool: ACL2s (bisimulation, invariants); written by: human
-    - case `C:r1:46`; Von Hippel thesis Sec. 3.10
+    - case `C:r1:3`; Von Hippel thesis Sec. 3.10
 - Korg attacker synthesis on TCP/DCCP/SCTP handshakes
     - guarantee: Korg checks whether an off-path, evil-server or on-path attacker can break each TCP, DCCP and SCTP handshake property, and outputs the attack where one exists; TCP phi3 took 72-223 min.
     - assumes: Centralized single attacker; model fidelity
     - size or effort: TCP phi3 72-223 min, others seconds; up to 10 attacks per property
     - tool: Korg (LTL model checking via SPIN); written by: automatic tool
-    - case `C:r1:50`; Von Hippel thesis Table 5.1, 5.3
+    - case `C:r1:7`; Von Hippel thesis Table 5.1, 5.3
 - lock server (LS) - synthesis from sketch
     - guarantee: PolySemist completes a lock server sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
     - assumes: human-written sketch and property; fixed small node counts; lock server
@@ -796,7 +970,7 @@
     - assumes: Discretised water levels; not all pump/valve fault combinations; model confidential
     - size or effort: 5,000-line model, 4.98e14 states, each property under 40 min
     - tool: mCRL2, modal mu-calculus; written by: human
-    - case `C:r1:74`; Maeslant paper Sec. 5-6
+    - case `C:r1:31`; Maeslant paper Sec. 5-6
 - (paper's own) TLA+ liveness specs
     - guarantee: The paper's own TLA+ liveness specs were model checked on single-value Paxos up to 4 proposers and 4 acceptors.
     - assumes: stable duration start; leader election started at it
@@ -814,7 +988,7 @@
     - assumes: Source Go (compiler-generated); LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Code-translation: all four LLMs 100% runtime, 0% conformance, 100% invariants; 175 lines Go, 75 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:95`; source record `sysmobench-2026`
+    - case `C:r4:14`; source record `sysmobench-2026`
 - PGo Lock service
     - guarantee: TLC model checks the PGo lock service for mutual exclusion and liveness in the paper's checked configuration, with the compiled code not covered by that check.
     - assumes: paper checked configuration; compiler/glue/runtime/environment resources trusted; liveness scheduler assumptions need deployment justification
@@ -826,13 +1000,13 @@
     - assumes: Source Go (compiler-generated); LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Code-translation: Claude 83.33%, GPT-5 66.67%, DeepSeek 50% invariants, 0% conformance; 281 lines Go, 93 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:96`; source record `sysmobench-2026`
+    - case `C:r4:15`; source record `sysmobench-2026`
 - PGo raftkvs (SysMoBench task)
     - guarantee: LLMs wrote a TLA+ model of the PGo-generated Go Raft key-value store (3,163 lines Go), checked for its invariants; Claude got 50% runtime, 0% conformance and 90.91% invariants.
     - assumes: Source Go (compiler-generated); LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Code-translation: Claude 50% runtime, 0% conformance, 90.91% invariants; 3,163 lines Go, 508 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:97`; source record `sysmobench-2026`
+    - case `C:r4:16`; source record `sysmobench-2026`
 - Raft election (mCRL2 model)
     - guarantee: In an mCRL2 model of Raft election, weak liveness holds (a leader can be elected), but 'a leader must always eventually be elected' fails when messages are lost or nodes crash.
     - assumes: message loss and crashes allowed
@@ -855,13 +1029,13 @@
     - assumes: Source C; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Basic agent: no model ran; code-translation Claude 23.81% runtime, 9.09% conformance, 75% invariants; 2,394 lines C, 349 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:92`; source record `sysmobench-2026`
+    - case `C:r4:11`; source record `sysmobench-2026`
 - SCTP handshake model
     - guarantee: In a SPIN model of the SCTP handshake, ten properties hold, e.g. half-open states eventually end (gamma2) and teardown from Shutdown_Ack_Sent ends in Closed (gamma3).
     - assumes: Finite model; vtag and itag compressed
     - size or effort: seconds to hours per attacker check
     - tool: SPIN (LTL); written by: human
-    - case `C:r1:49`; Von Hippel thesis Sec. 4.10
+    - case `C:r1:6`; Von Hippel thesis Sec. 4.10
 - sharded key-value store (SKV) - synthesis from sketch
     - guarantee: PolySemist completes a sharded key-value store sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
     - assumes: human-written sketch and property; fixed small node counts; sharded KV store
@@ -879,7 +1053,7 @@
     - assumes: No crashes modelled; small finite model
     - size or effort: seconds to check
     - tool: SPIN (LTL); written by: human
-    - case `C:r1:47`; Von Hippel thesis Sec. 4.6
+    - case `C:r1:4`; Von Hippel thesis Sec. 4.6
 - two-phase commit (2PC) - synthesis from sketch
     - guarantee: PolySemist completes a human-written two-phase commit sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
     - assumes: human-written sketch and property; fixed small node counts; atomic commit sketch with pre- or post-conditions removed from 1-2 actions
@@ -897,7 +1071,7 @@
     - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: Basic agent: none ran; code-translation Claude 50% conformance, Gemini 66.67%, both 100% invariants; 4,064 lines Rust, 100 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:93`; source record `sysmobench-2026`
+    - case `C:r4:12`; source record `sysmobench-2026`
 - ZENITH SDN controller (microservices)
     - guarantee: For the ZENITH SDN controller (8.6K-line spec), TLC and hand TLAPS proofs check that switch routing state eventually matches the intended DAG and apps eventually see consistent network state (P1-P8).
     - assumes: modelled failures; switch behavior assumption; history variables used because TLAPS cannot prove some temporal properties directly
@@ -907,8 +1081,20 @@
 
 ## liveness bugs, failed attempts, and attacks
 
-9 cases.
+15 cases.
 
+- etcd/raft (Go, 16k lines; 120 lines of shim)
+    - guarantee: A Netrix test reproduced a known etcd/raft liveness bug: with leader 1 linked only to replica 2 and replica 5 isolated, no new leader is elected; hit in 15/100 iterations.
+    - assumes: Bounded liveness: success state means repeated election attempts observed; bug present with Prevote and CheckQuorum off
+    - size or effort: 5 filters, 3 states, 64 lines; hit in 15/100 iterations
+    - tool: Netrix DSL testing tool (filters + state-machine monitor, PCTCP random exploration); written by: human
+    - case `C:r8:18`; source record `netrix-2023`
+- Look-aside cache loss (web app, memcached-style cache, database)
+    - guarantee: After a look-aside cache is lost, the database's hidden 300 QPS capacity (versus 3,000 QPS advertised) can stop the cache from refilling and goodput from recovering; shown by informal analysis, no proof.
+    - assumes: 90% hit rate; app fills the cache; database 300 QPS limit
+    - size or effort: no proof; hidden capacity 300 QPS vs advertised 3,000 QPS
+    - tool: none (informal analysis); written by: human
+    - case `C:r10:38`; source record `metastable-failures-2021`
 - MongoDB RaftMongo replication (commit point)
     - guarantee: For MongoDB RaftMongo replication, the aim was no committed write lost and all servers eventually learning the newest commit point, but trace checking of the C++ server failed: 'Our traces never matched our specification'.
     - size or effort: trace checking failed: 'Our traces never matched our specification'; one month to instrument state snapshots
@@ -942,28 +1128,52 @@
     - size or effort: n/a
     - tool: informal attacks cited in testing paper; written by: human
     - case `A:44`; source record `liveness-checking-of-the-2023`
+- Request retries after a network outage (web app + database)
+    - guarantee: In an idealized web app plus database with one retry after 1 s, a short network outage can leave the system overloaded even after the outage ends; worked arithmetic shows recovery needs load below 150 QPS or retries below 20 QPS.
+    - assumes: idealized app: one query plus one retry after 1 s; database latency jumps above 300 QPS
+    - size or effort: no proof; recovery needs load below 150 QPS or retries below 20 QPS
+    - tool: none (informal analysis, worked arithmetic); written by: human
+    - case `C:r10:37`; source record `metastable-failures-2021`
+- SystemVerilog hardware design: Load-Store (LS)
+    - guarantee: The new method failed on all 16 tasks of checking "something good eventually happens" properties of the SystemVerilog Load-Store (LS) hardware design, using a learned certificate checked by the Bitwuzla SMT solver (paper's own report).
+    - assumes: Hardware/reactive systems only; no arrays, strings of parametric length, procedure calls or dynamic data structures; 5 h limit per task per tool
+    - size or effort: 0 of 16 tasks solved by the new method (Table 1)
+    - tool: Neural certificate (inductive invariant + ranking function) learned with MILP solver Gurobi, checked with Bitwuzla; compared with ABC, nuXmv, rIC3 (and NMC'24 for liveness); written by: automatic tool
+    - case `C:r7:26`; Let a Neural Network Be Your Invariant, Table 1 and Appendix A
 - Tendermint (fastsync, row 2)
     - guarantee: TLC and Apalache checked Tendermint fastsync liveness, and the SoK says TLC found a counterexample.
     - assumes: not stated in the table ; SoK 3.3: TLC found a counterexample violating termination; 'For complex liveness checks, the tool timed out after 24 hours'
     - size or effort: not given in SoK; see cited paper [7] Braithwaite et al., FMBC 2020
     - tool: TLA+/TLC, Apalache; explicit and symbolic MC; written by: human
     - case `A:235`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [7] Braithwaite et al., FMBC 2020
+- Tendermint v34.3 (Go, 150k lines; 600 lines of shim added)
+    - guarantee: A Netrix test found that a Tendermint replica that fell behind does not catch up on seeing f+1 messages from a higher round, a liveness bug; hit in 100/100 iterations.
+    - assumes: Bounded (timeout per iteration), so a 'bounded liveness' check; replica isolated for round 0
+    - size or effort: LaggingReplica 3 filters, 4 states, 71 lines, 100/100 iterations
+    - tool: Netrix DSL testing tool (filters + state-machine monitor, PCTCP random exploration); written by: human
+    - case `C:r8:15`; source record `netrix-2023`
 - Zab-FLE (fast leader election)
     - guarantee: Zab fast leader election has no stated guarantee and was later shown to cause a liveness issue where the system gets caught in an infinite loop.
     - assumes: none
     - size or effort: proof as stated by authors: fix argued informally, no proof ; paper's verdict: liveness bug found by the Zab-FLE authors; no liveness stated (not in Table 3)
     - tool: paper-only (no machine proof); written by: human
     - case `A:295`; source record `what-s-live-2021`
+- Zeebe Raft implementation (Camunda Platform 8 workflow engine), Java
+    - guarantee: Randomized tests of Zeebe Raft checking that, with no failures, a leader is eventually elected found issues #8324, #10180, #10202 and #10545.
+    - assumes: Testing, not proof: random sequences, fixed number of tries per build (@Property(tries=10)); liveness only checked after a failure-free tail; replicas single-threaded, CPU-level concurrency ignored
+    - size or effort: Liveness tests added while reproducing a customer bug; with the replicate property they found issues #8324, #10180, #10202, #10545
+    - tool: Property-based testing with jqwik; deterministic scheduler and controllable network; random operation sequences (append, snapshot and compact, receive message, execute task, tick clock, drop message, restart replica); written by: human
+    - case `C:r7:54`; Camunda blog, Properties section
 - ZooKeeper Fast Leader Election (SysMoBench task)
     - guarantee: No LLM and agent combination produced a TLA+ model of ZooKeeper Fast Leader Election (5,360 lines Java) that passed the runtime check; the paper calls it the most challenging task.
     - assumes: Source Java; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
     - size or effort: No agent/LLM combination passed the runtime check; paper calls it the most challenging; 5,360 lines Java, 141 lines TLA+
     - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
-    - case `C:r4:94`; source record `sysmobench-2026`
+    - case `C:r4:13`; source record `sysmobench-2026`
 
 ## everything else: paper proofs, tests, benchmark entries, unclear
 
-60 cases.
+69 cases.
 
 - ACT (Aguilera-Chen-Toueg, crash-recovery)
     - guarantee: The Aguilera-Chen-Toueg crash-recovery protocol is argued on paper to make every good process eventually decide, if a majority of processes are good.
@@ -971,6 +1181,12 @@
     - size or effort: proof as stated by authors: Systematic ; paper's verdict: 'All from Q-Alw single (Prop 3)': fine (Theorem 5 of ACT proves Each-Learn)
     - tool: paper-only (no machine proof); written by: human
     - case `A:287`; source record `what-s-live-2021`
+- ASML photolithography machine software (Coco Platform)
+    - guarantee: ASML says its Coco Platform tooling shows photolithography machine software is free of classes of errors including starvation; the claim comes from the company and cited talks, not shown in the paper.
+    - assumes: Author says his own contribution is minor; claims come from the company and cited talks
+    - size or effort: not reported
+    - tool: Coco Platform (CSP-like process algebra plus optimised model checker); written by: human
+    - case `C:r6:8`; source record `csp-retrospective-2024`
 - Bullshark
     - guarantee: Bullshark DAG-based consensus is claimed safe and live under stated conditions.
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
@@ -1016,6 +1232,12 @@
     - size or effort: proof as stated by authors: none ; paper's verdict: 'None from Alw-Q (Prop 7)': too weak, each quorum may not stay non-faulty long enough; Prop 7: 'No quorum-based consensus algorithm that executes in rounds can satisfy Some-Learn under Fair and Alw-Q.'
     - tool: paper-only (no machine proof); written by: human
     - case `A:296`; source record `what-s-live-2021`
+- etcd/raft (Go, 16k lines; 120 lines of shim)
+    - guarantee: Two Netrix variants of the etcd/raft liveness scenario check the bug appears with the Prevote/CheckQuorum options off and not with them on; both ran 100/100 iterations.
+    - assumes: Which variant uses which setting is not stated in the text
+    - size or effort: 5 filters; 100/100 iterations for both
+    - tool: Netrix DSL testing tool (filters + state-machine monitor, PCTCP random exploration); written by: human
+    - case `C:r8:19`; source record `netrix-2023`
 - Even/odd counter
     - guarantee: An even/odd counter visits every natural number under stated schedule premises.
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
@@ -1031,6 +1253,12 @@
     - size or effort: proof as stated by authors: Systematic ; paper's verdict: 'All from Q-Alw (Prop 4)': fine, assumption weaker than most
     - tool: paper-only (no machine proof); written by: human
     - case `A:277`; source record `what-s-live-2021`
+- FastMCP gateway for GPU vision-training workflows (12 tools, Celery queues, CIFS mounts)
+    - guarantee: In the same FastMCP gateway model, every allocated GPU worker is eventually released, checked at run time on generated traces.
+    - assumes: Model, 12 tools and states written by hand; trace generation not described; one-step lookahead check
+    - size or effort: check overhead 1.2 ms (depth 2) to 31.0 ms (depth 14); 672 vs 196,608 states at depth 14; 0.0% deadlocks on 500 traces
+    - tool: hand-written labeled transition system with run-time LTL guard in a FastMCP gateway; no external model checker named; written by: human
+    - case `C:r6:2`; source record `verified-mcp-gateway-2026`
 - FIFO queue
     - guarantee: FIFO queue: each sent item eventually received if receives recur, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
@@ -1041,6 +1269,12 @@
     - assumes: Stable desired-state description; weak fairness on controller/environment actions; modeled crashes and request failures eventually cease; built-in StatefulSet/DaemonSet updates eventually pause until the target updates again. Anvil §4.3.3 PDFp9: "eventually stop happening"; the competing-controller pause premise is stated in the same section. Trust TLA embedding, environment/API models, Verus/Z3, Rust compiler and OS (§4.1). DaemonSet competing updates use the corresponding pause assumption (§4.3.3 PDFp9). Gap: pinned ESR theorem predicates for permitted desired-state inputs and external interference unresolved
     - tool: liveness; written by: human
     - case `B:liveness:5`; source record `anvil-2024`
+- Handover protocol (primary/secondary)
+    - guarantee: The paper states the handover protocol is usually efficient, safe and live (the secondary takes over if the primary stalls), but only the same-decision interlock is checked with FDR here; liveness is a design goal, not shown.
+    - assumes: Only the same-decision interlock is modelled and checked in this paper; liveness is the stated design goal, not shown here
+    - size or effort: not reported
+    - tool: CSP/FDR for the interlock; stochastic analysis in cited papers; written by: human
+    - case `C:r6:5`; source record `csp-retrospective-2024`
 - HotStuff, 2-Phase HotStuff, Sync HotStuff
     - guarantee: The Twins test generator checks whether HotStuff, 2-Phase HotStuff and Sync HotStuff keep making progress under Byzantine twin replicas and partitions; 2-phase and Sync HotStuff are known to violate liveness in subtle fault scenarios.
     - assumes: partial synchrony; Byzantine twin replicas and network partitions
@@ -1124,6 +1358,12 @@
     - size or effort: not extracted
     - tool: paper proofs, checked by modal mu-calculus model checking; written by: human
     - case `A:36`; source record `on-the-notions-of-2026`
+- N producers and N consumers sharing a buffer of size 1
+    - guarantee: A written ghost-signal proof outline shows N producers and N consumers sharing a buffer of size 1 all terminate; it was not run in a tool in the text read.
+    - assumes: N chosen randomly at run time; proof uses N variants of each signal
+    - size or effort: several figures of proof outline; not run in a tool in the text read
+    - tool: ghost-signal logic, written proof outline (appendix); written by: human
+    - case `C:r6:47`; source record `ghost-signals-thesis-2024`
 - Narwhal with Jolteon
     - guarantee: Narwhal with Jolteon, a DAG-based consensus, is claimed safe and live under conditional fairness, timing and fault premises.
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted; Jolteon BFT requests buffered until vertex locally available, not original Narwhal-HotStuff
@@ -1259,11 +1499,23 @@
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
     - tool: liveness; written by: human
     - case `B:liveness:21`; liveness Ivy abstract model; inspected ticket files
+- Token-based mutual exclusion as an ARDT
+    - guarantee: The paper states, without proof, that the token in token-based mutual exclusion eventually moves on, and notes this fails under permanent owner failure.
+    - assumes: At-least-once delivery; owner does not fail permanently
+    - size or effort: states it fails under permanent owner failure
+    - tool: none (stated, not proved); written by: human
+    - case `C:r9:8`; Sec 2.2, 3
 - Token ring
     - guarantee: Token ring: requesting machine eventually enters, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
     - tool: liveness; written by: unclear
     - case `B:liveness:42`; liveness abstract model; Lotan–Shoham §6
+- Two threads with a signal (create, fork waiter, set)
+    - guarantee: A 3-line ghost-signal proof outline shows a waiting loop in a two-thread signal example terminates under fair scheduling.
+    - assumes: Fair scheduler; signal operations thread-safe in simplest form
+    - size or effort: 3-line proof outline
+    - tool: ghost-signal separation logic (hand proof outline); written by: human
+    - case `C:r6:44`; source record `ghost-signals-thesis-2024`
 - View synchronization for HotStuff, Tendermint, PBFT, SBFT (single-shot)
     - guarantee: View synchronization for HotStuff, Tendermint and PBFT guarantees that all correct processes eventually overlap in a view with a correct leader long enough to decide, under partial synchrony and Byzantine faults, by paper proof.
     - assumes: partial synchrony; Byzantine faults; bounded space despite message loss before GST
@@ -1282,6 +1534,12 @@
     - size or effort: proof as stated by authors: none ; paper's verdict: no liveness stated (not in Table 3)
     - tool: paper-only (no machine proof); written by: human
     - case `A:275`; source record `what-s-live-2021`
+- Wirehead distributed double buffer (Python+MongoDB) as Rocq state machine
+    - guarantee: The Rocq progress proof for Wirehead (with at least one generator and fair scheduling a swap eventually happens) is complete except 2 Admitted lemmas on pigeonhole counting over unbounded process ids.
+    - assumes: Single MongoDB instance; crash-stop (no partitions, no Byzantine); each MongoDB call atomic; weak fairness for liveness; model written by hand from the Python code, link to real code not proved
+    - size or effort: Proof chain complete except 2 Admitted lemmas (pigeonhole counting over unbounded process ids); about 800 lines of auxiliary invariants in Safety.v
+    - tool: Rocq proof assistant, written by hand; written by: human
+    - case `C:r7:6`; Doan thesis, Sec 6.1-6.2, Table 6.1
 - Yes-no concurrent example
     - guarantee: Yes-no concurrent example: fair termination, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
@@ -1293,3 +1551,9 @@
     - size or effort: proof as stated by authors: Sketch (about 2 paragraphs) ; paper's verdict: 'Weak from PQ-Alw (Cor 5.1)': assumption stronger than needed (PQ-Alw is stronger than P-Alw-Q, under which Paxos-VS solves consensus)
     - tool: paper-only (no machine proof); written by: human
     - case `A:294`; source record `what-s-live-2021`
+- Zeebe Raft implementation (Camunda Platform 8 workflow engine), Java
+    - guarantee: Randomized tests of Zeebe Raft check that, with no failures, all records are eventually committed and replicated to all replicas, after extra failure-free steps.
+    - assumes: Testing, not proof: random sequences, fixed number of tries per build (@Property(tries=10)); liveness only checked after a failure-free tail; replicas single-threaded, CPU-level concurrency ignored
+    - size or effort: Same liveness tests; checked after extra failure-free steps (run tasks, process messages, tick heartbeat)
+    - tool: Property-based testing with jqwik; deterministic scheduler and controllable network; random operation sequences (append, snapshot and compact, receive message, execute task, tick clock, drop message, restart replica); written by: human
+    - case `C:r7:55`; Camunda blog, Properties section
