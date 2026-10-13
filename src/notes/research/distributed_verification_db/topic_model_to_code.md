@@ -488,6 +488,17 @@
     - how much was read: parts read
     - [source](https://github.com/anvil-verifier/verus-tla); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: R02. Verus temporal libraries, 2025–2026 repository leads](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md); [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md)
     - record id: `verus-tla-2026`
+- 3SF model checking (2025)
+    - title: Technical Report: Exploring Automatic Model-Checking of the Ethereum specification
+    - what: The authors translate the Python spec of Ethereum's 3-slot-finality (3SF) consensus protocol into TLA+ and use the Apalache model checker to test Accountable Safety: if two conflicting chains are both finalized, at least one third of validators can be shown to have broken a voting rule. They then add hand-made abstractions and re-encode the problem in SMT (CVC5) and Alloy to check larger instances.
+    - number: Direct translation (Spec2): checking Accountable Safety timed out after more than 40 hours (Table 1)
+    - number: Alloy with Kissat: Accountable Safety holds for up to 6 blocks; e.g. 5 blocks, 25 checkpoints, 12 votes in 234 s (Table 5)
+    - number: CVC5: verified up to 5 blocks with 5 checkpoints (1h 40m) or 3 blocks with 6 checkpoints (74h) (Table 4)
+    - number: A 7-block Alloy run went over 16 days without finishing
+    - limits: Only the finality gadget and only Accountable Safety, on small bounded instances (at most 7 checkpoints and 24 votes); every validator has stake 1. The hand-made abstractions are not proved equal to the Python spec. Appendix A (translation rules) and B (soundness proofs) were skimmed, not read closely.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2501.07958); [notes: ## Exploring Automatic Model-Checking of the Ethereum specification (2](claude_readings.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - record id: `3sf-model-checking-2025`
 - A Refinement Methodology for Distributed Programs in Rust (precursor: Refinement Proofs in Rust Using Ghost Locks) (2025)
     - what: Proves that Rust distributed programs match a simpler model of what they should do (a refinement proof), using the Prusti verifier. The precursor paper also proves liveness (something good eventually happens). It writes those proofs as ghost code (code used only for proving, never run), using a direct encoding of LTL (a logic for statements about time). Cases include a simplified Memcached.
     - limits: The review notes could not get the final OOPSLA PDF and read the precursor instead. The verifier is Prusti, not Verus. The review notes do not know whether the final version keeps the liveness part.
@@ -930,14 +941,6 @@
     - how much was read: only abstract or first pages read
     - [source](https://arxiv.org/abs/2604.26495); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; [notes: specification-anchored auditing](../distributed_verification_primary_extension_20261012.md)
     - record id: `speca-2026`
-- Ethereum 3SF model checking (2025)
-    - title: Exploring Automatic Model-Checking of the Ethereum specification
-    - what: The authors translate the executable Python spec of 3SF consensus into TLA+ by hand. The translation uses folds, an integer abstraction of the graph, and chain decomposition. They check Accountable Safety with Apalache and cross-validate with CVC5 and Alloy.
-    - number: Accountable Safety checked exhaustively up to 7 checkpoints and 24 votes with no violation
-    - limits: The translation and abstractions are manual. Results cover safety within bounds only.
-    - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2501.07958); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
-    - record id: `ethereum-3sf-model-checking-2025`
 - hax / Bert13 (2025)
     - title: Formal Security and Functional Verification of Cryptographic Protocol Implementations in Rust
     - what: The developer annotates Rust code and picks a backend prover (F*, ProVerif or SSProve) through the hax pipeline. The authors evaluate it on Bert13, a Rust post-quantum TLS 1.3 implementation.

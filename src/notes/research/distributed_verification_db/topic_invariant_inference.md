@@ -1,7 +1,7 @@
 # 🤖 database, tools that find invariants automatically
 (authored by agents unless marked 🧑)
 
-70 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+73 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - Autogram (2026)
     - title: Invariant Discovery for Networked Systems
@@ -452,6 +452,17 @@
     - how much was read: parts read
     - [source](https://github.com/wilcoxjay/mypyvy); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: FOL-IC3 and mypyvy](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `mypyvy-2024`
+- Updria / Lambda (2024)
+    - title: Invariant Checking for SMT-Based Systems with Quantifiers
+    - what: Two algorithms that automatically find invariants of the form 'for all processes i, j: ...' for protocols with an unbounded number of nodes and numeric data. One refines an abstraction step by step (Updria); the other generalizes from small instances and then checks the guess (Lambda).
+    - number: benchmarks: 238 MCMT-format systems, 52 VMT/MyPyvy systems, 25 train-control systems
+    - number: MCMT family: Lambda solves 214, Updria 208, MCMT 172 of 238 (Table 3)
+    - number: VMT family: Lambda 29, Updria 29, Ic3po 36, MyPyvy 27 of 52
+    - number: trains family: Lambda 25, Updria 24 of 25
+    - limits: Finds only universally quantified invariants, so it fails where an existential quantifier is needed (7 more instances solved by Ic3po). The problem is undecidable, so both algorithms may not terminate; Lambda comes with no guarantee that its guess works. Safety only; no liveness.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3686153); [notes: ## Invariant Checking for SMT-based Systems with Quantifiers (2024)](claude_readings.md)
+    - record id: `updria-lambda-2024`
 - Yao thesis (DistAI, DuoAI, LVR) (2024)
     - title: Automated Verification of Safety and Liveness Properties for Distributed Protocols (PhD thesis)
     - what: It shows that liveness can be reduced to a list of simpler safety properties, which invariant-inference tools often prove automatically. One task is left: synthesize a ranking function (a number that decreases toward the goal) to prove termination. It was applied to 8 protocols, including Paxos. It also covers DistAI and DuoAI.
@@ -688,3 +699,15 @@
     - how much was read: reading depth not recorded
     - [source](https://doi.org/10.1145/3385412.3386018); [notes: FOL-IC3 and mypyvy](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: FOL-IC3 pinned properties](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `fol-ic3-2020`
+- Formally Specifying the Intended Behavior of the Program: LLM-Driven Neuro-Symbolic Program Specification Synthesis (2026)
+    - what: Per the input file: uses an LLM plus symbolic methods to write formal specifications (contracts, loop invariants) from intended behavior. The only source found is a video lecture page on underline.io (uploaded 2026-06-03) with no description, transcript, or paper.
+    - limits: Blocked: DOI redirects to a video page; the page text has no abstract, authors, or transcript, and no PDF or preprint was found.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.48448/hpwj-s947); [notes: ## Neuro-symbolic specification synthesis talk (2026)](claude_readings.md)
+    - record id: `formally-specifying-the-intended-2026`
+- Practical Verification of Distributed Systems: Streamlining Safety Proofs Using Invariant Taxonomies, and Verifying Latency Properties Using Symbolic Latency (2025)
+    - what: PhD thesis on proving distributed protocols safe by sorting the needed invariants into types, and on extending verification to end-to-end latency. Full text could not be fetched; this record rests on a search-engine summary of the library page.
+    - limits: Full text blocked: the Deep Blue library (deepblue.lib.umich.edu) returned a Cloudflare 'Just a moment' challenge to command-line fetches, and I did not try to get around it. Nothing here comes from reading the thesis.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.7302/25607); [notes: Practical Verification of Distributed Systems (2025)](claude_readings.md)
+    - record id: `practical-verification-of-distributed-2025`

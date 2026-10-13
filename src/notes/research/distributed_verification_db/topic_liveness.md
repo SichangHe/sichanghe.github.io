@@ -1,7 +1,7 @@
 # 🤖 database, proofs that something good eventually happens
 (authored by agents unless marked 🧑)
 
-122 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+126 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - Certifying rlive (2026)
     - title: Certifying rlive: A New Proof Strategy for Liveness Model Checking
@@ -131,6 +131,16 @@
     - how much was read: most of it read
     - [source](https://openreview.net/forum?id=ncFIZuIUyK); [notes: closest related work](../distributed_verification_review_b/review_b_tla_verus_20261007.md); [notes: reported results and populations](../distributed_verification_review_b/review_b_tla_verus_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
     - record id: `tla-verus-2026`
+- Verifying Graceful Degradation in a Distributed Malware-Detection System with SPIN (2026)
+    - what: The authors model, in Promela, the endpoint side of a Bitdefender-style malware-detection system that falls back from a primary server to a legacy server to a weaker local scan, and check six properties written in temporal logic (five safety, one liveness) plus deadlock freedom with the SPIN model checker.
+    - number: All six properties hold on the core 1 endpoint x 1 scan model: 6,168 states stored, depth 101, under 1 second (Table 2)
+    - number: Streaming model (1 endpoint, 2 scans): 314,527 states; concurrent model (2 endpoints, 1 scan): 22,177,616 states (Table 4)
+    - number: 2 endpoints each with 2 scans ran out of memory, so no result
+    - number: 4 reachability trap claims all violated, showing the checked behaviors occur (Table 3)
+    - limits: Assumes the transport is reliable (no loss or duplication), deadlines are untimed nondeterministic choices, and two detection contracts: the full servers always give the right verdict (A1) and the reduced scan never flags a benign file (A2). Finite instances only; unbounded endpoints and scans need parameterized techniques left to future work. The model is hand-abstracted from the production system and not tied to its code.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.4204/eptcs.452.11); [notes: ## Graceful degradation in a malware-detection system with SPIN (2026)](claude_readings.md)
+    - record id: `verifying-graceful-degradation-in-2026`
 - Welder (2026)
     - title: Welder: Compositional Liveness Verification of Cluster Control Planes
     - what: Welder proves, for each controller, that it makes progress and limits its requests. This statement is called the CORE spec. It then combines the proofs of controllers that fit together. The authors verified the ReplicaSet, Deployment, StatefulSet and RabbitMQ controllers.
@@ -539,6 +549,28 @@
     - how much was read: parts read
     - [source](https://tianyin.github.io/thesis/SUN-DISSERTATION-2025.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
     - record id: `anvil-thesis-2025`
+- Korg thesis (2025)
+    - title: Verification and Attack Synthesis for Network Protocols
+    - what: Proves properties of three network-protocol pieces with theorem provers (Karn's RTT algorithm and TCP's timeout rule in Ivy and ACL2s, and Go-Back-N efficiency in ACL2s), model-checks TCP, DCCP and SCTP handshakes in SPIN, then builds Korg, a tool that searches for attacker behaviour that breaks a given property.
+    - number: Handshake properties: TCP 4 (phi1-phi4), SCTP 10 (gamma1-gamma10), DCCP has its own set
+    - number: Korg asked for at most 10 attacks per property; default search depth 600,000, maximum 2,400,000
+    - number: TCP phi3 (peers do not get stuck) took 72 min to 223 min per attacker model; other TCP properties took seconds
+    - number: SCTP: one patched-vs-unpatched check; with the CVE-2021-3772 patch, Korg finds no off-path attack, which proves the patch closes it for the model
+    - limits: Models are small by design to avoid state-space explosion; the handshake models are not linked to the Ivy/ACL2s models. Korg handles one centralized attacker, not coordinated multi-process attackers, and is exact only for the model, not the real code. Models took long to write by hand.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2511.01124); [notes: ## Von Hippel thesis on protocol verification and attack synthesis (20](claude_readings.md)
+    - record id: `korg-thesis-2025`
+- PolySemist (2025)
+    - title: Accelerating Protocol Synthesis and Detecting Unrealizability with Interpretation Reduction
+    - what: A tool that fills in the missing guards and updates of a half-written TLA+ distributed protocol (a sketch) so the protocol meets a safety or liveness property. It loops: the TLC model checker finds a counterexample, the tool rules out every candidate that shares it, and it skips candidates that behave the same on the states seen so far.
+    - number: 7 benchmark protocols: 2PC, consensus, decentralized lock, lock server, sharded KV store, two reconfigurable Raft variants
+    - number: faster than the previous tool Scythe in 160 of 171 realizable problems; total time about 9,000 s vs 32,000 s on those both solve
+    - number: whole distributed-lock protocol (6 expressions over 2 actions) synthesized in 125 s; Scythe timed out at 1 hour
+    - number: detected 'no protocol exists' in 80 of 123 unrealizable problems vs 16 for Scythe (easy 46/50, medium 21/35, hard 13/38)
+    - limits: A human supplies the sketch (state variables, actions, hole grammars) and the property; results hold only for the chosen finite parameters (e.g. number of nodes), and the all-parameters step is left to TLAPS proofs from prior work. Termination is guaranteed only when each hole grammar has finitely many expressions up to interpretation equivalence.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2501.14585); [notes: ## PolySemist: protocol synthesis by sketching (2025)](claude_readings.md)
+    - record id: `polysemist-2025`
 - Shipwright (2025)
     - title: Shipwright: Proving liveness of distributed systems with Byzantine participants
     - what: A Dafny framework. A node is written as event handlers and compiled to Go. A refinement proof shows that the real handlers, running over a network model that eventually stabilizes, give safety and liveness. The case study is PBFT agreeing on one log entry, with infinitely many views.
@@ -605,6 +637,16 @@
     - how much was read: parts read
     - [source](https://arxiv.org/abs/2109.07863); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
     - record id: `trillium-fairis-2024`
+- Verification and synthesis of distributed systems with weak synchronisation (2024)
+    - what: A theory thesis on deciding, for processes that talk only by broadcast or only by taking and releasing locks, whether a system meets a property, and whether processes can be given local strategies that guarantee it. The trick is to pick a small description of what each process may do alone (an invariant or a set of patterns) and check whether any combination of such local runs can go wrong.
+    - number: 254 pages, three models: broadcast networks of register automata, lock-sharing systems, dynamic lock-sharing systems
+    - number: coverability for broadcast networks with data is complete for the class F_omega^omega, so needs non-primitive-recursive time
+    - number: verification of lock-sharing systems with 2 locks per process or nested locks is NP-complete; synthesis is Sigma_2^P-complete
+    - number: synthesis of local controllers is undecidable for general lock-sharing systems
+    - limits: Pure decidability and complexity results with no tool or benchmark; the models are heavily restricted (only broadcast or only locks), and the author notes adding a shared variable makes the lock model undecidable. Read from the introduction, summaries and conclusions only, not the proofs.
+    - how much was read: parts read
+    - [source](https://doi.org/10.70675/1997f072zd5b5z4103zb466z8701a406729c); [notes: ## Mascle thesis: weak synchronisation (2024)](claude_readings.md)
+    - record id: `verification-and-synthesis-of-2024`
 - Yao thesis (DistAI, DuoAI, LVR) (2024)
     - title: Automated Verification of Safety and Liveness Properties for Distributed Protocols (PhD thesis)
     - what: It shows that liveness can be reduced to a list of simpler safety properties, which invariant-inference tools often prove automatically. One task is left: synthesize a ranking function (a number that decreases toward the goal) to prove termination. It was applied to 8 protocols, including Paxos. It also covers DistAI and DuoAI.

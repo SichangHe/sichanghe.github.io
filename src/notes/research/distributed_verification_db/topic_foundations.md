@@ -1,7 +1,7 @@
 # 🤖 database, background theory and logic
 (authored by agents unless marked 🧑)
 
-146 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+154 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - Certifying rlive (2026)
     - title: Certifying rlive: A New Proof Strategy for Liveness Model Checking
@@ -309,6 +309,14 @@
     - how much was read: most of it read
     - [source](https://lamport.azurewebsites.net/pubs/refinement.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_foundations.md`; [notes: connecting different descriptions of the same behavior](../distributed_verification_review_b/review_b_foundations_20261007.md)
     - record id: `tale-of-two-clocks-1996`
+- The Semantics of TLA on the PVS Theorem Prover (1996)
+    - what: Defines Lamport's Temporal Logic of Actions (TLA, a logic where a system is a set of allowed state changes and properties are 'always' and 'eventually' statements) inside the PVS proof assistant. The hard part is hiding a variable (the existential quantifier over program variables), which needs a choice operator.
+    - number: 17 pages
+    - number: one worked example: two counters x, y with weak fairness on both increment actions
+    - limits: Definitions only. It proves one lemma (stut equals the stuttering-removal function, Theorem 1) and gives no verified system, proof rules, or tooling. Report is marked unpublished and not peer reviewed.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.82444/warw.33641848); [notes: ## The semantics of TLA on the PVS theorem prover (1996)](claude_readings.md)
+    - record id: `the-semantics-of-tla-1996`
 - Linearizability (1990)
     - title: Linearizability: A Correctness Condition for Concurrent Objects
     - what: Defines linearizability: each operation takes effect at a single instant between its call and its reply, and the history must match some allowed sequential history.
@@ -411,6 +419,14 @@
     - how much was read: parts read
     - [source](https://doi.org/10.1145/3808325); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`
     - record id: `verusbelt-2026`
+- Why Agentic Theorem Prover Works: A Statistical Provability Theory of Mathematical Reasoning Models (2026)
+    - what: A math model of agentic theorem proving as a step-by-step decision problem where the proof checker answers deterministically. It proves a bound on how far a prover that learns step values offline and then picks greedily falls short of the best possible prover within a budget of checker calls.
+    - number: Main bound: best success probability minus learned prover's is at most 2 times (worst per-step value error) times the learned prover's average number of checker calls before success or budget end
+    - number: Under an action-gap margin condition the dependence on error improves to a fast rate
+    - limits: Pure theory, no experiments. Assumes greedy proving after offline regression, idealized rollout labels, and smoothness (Lipschitz), coverage and margin conditions on the region the prover visits; practical beam search, backtracking and repair are not covered.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2602.10538); [notes: Why Agentic Theorem Prover Works (2026)](claude_readings.md)
+    - record id: `why-agentic-theorem-prover-2026`
 - DeepSeek-Prover-V2 (2025)
     - title: DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition
     - what: It breaks Lean math problems into subgoals and proves them with a smaller model. It then trains on the assembled solutions.
@@ -427,6 +443,28 @@
     - how much was read: parts read
     - [source](https://github.com/NethermindEth/EVMYulLean); [notes: Bytecode-semantics prerequisites: repository evidence and retrieval ga](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Bytecode-semantics prerequisites: repository evidence and retrieval ga](../distributed_verification_review_b/deep_14_program_agents.md)
     - record id: `evmyullean-2025`
+- Korg thesis (2025)
+    - title: Verification and Attack Synthesis for Network Protocols
+    - what: Proves properties of three network-protocol pieces with theorem provers (Karn's RTT algorithm and TCP's timeout rule in Ivy and ACL2s, and Go-Back-N efficiency in ACL2s), model-checks TCP, DCCP and SCTP handshakes in SPIN, then builds Korg, a tool that searches for attacker behaviour that breaks a given property.
+    - number: Handshake properties: TCP 4 (phi1-phi4), SCTP 10 (gamma1-gamma10), DCCP has its own set
+    - number: Korg asked for at most 10 attacks per property; default search depth 600,000, maximum 2,400,000
+    - number: TCP phi3 (peers do not get stuck) took 72 min to 223 min per attacker model; other TCP properties took seconds
+    - number: SCTP: one patched-vs-unpatched check; with the CVE-2021-3772 patch, Korg finds no off-path attack, which proves the patch closes it for the model
+    - limits: Models are small by design to avoid state-space explosion; the handshake models are not linked to the Ivy/ACL2s models. Korg handles one centralized attacker, not coordinated multi-process attackers, and is exact only for the model, not the real code. Models took long to write by hand.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2511.01124); [notes: ## Von Hippel thesis on protocol verification and attack synthesis (20](claude_readings.md)
+    - record id: `korg-thesis-2025`
+- Lean-auto (2025)
+    - title: Lean-auto: An Interface between Lean 4 and Automated Theorem Provers
+    - what: A Lean 4 tool that translates a Lean proof goal and its premises into the simpler logic that automated provers (SMT solvers like Z3 and CVC5, the Zipperposition prover, and Lean's own Duper) accept, so those provers can try to close the goal; the translation is proven sound.
+    - number: Benchmark: 149,142 user-declared Mathlib4 theorems, 10 s limit each, premises taken from the human proof
+    - number: Lean-auto + Duper (with proof reconstruction) solves 36.6%, 5.0 points more than the best earlier tool, Aesop
+    - number: Solved: Lean-auto best-of-all 61,906 vs Aesop best-of-all 48,413 vs simp_all 28,204; 22,020 solved only by Lean-auto
+    - number: All tools together solve 79,396 (53.2%)
+    - limits: Premise selection is not included: the evaluation hands the tool the exact theorems the human proof used. Proof reconstruction exists only for the native Duper prover; with SMT solvers the output is trusted. Sections 2-3 and the appendices (E, I-L) were not read closely.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2505.14929); [notes: ## Lean-auto (2025)](claude_readings.md)
+    - record id: `lean-auto-2025`
 - Ticl (2025)
     - title: Structural Temporal Logic for Mechanized Program Verification
     - what: A temporal logic over program structure, in Rocq. Liveness proofs follow loops and sequencing the way Hoare logic does, using invariants and well-founded variants (quantities that cannot decrease forever).
@@ -467,6 +505,27 @@
     - how much was read: parts read
     - [source](https://arxiv.org/abs/2109.07863); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
     - record id: `trillium-fairis-2024`
+- Updria / Lambda (2024)
+    - title: Invariant Checking for SMT-Based Systems with Quantifiers
+    - what: Two algorithms that automatically find invariants of the form 'for all processes i, j: ...' for protocols with an unbounded number of nodes and numeric data. One refines an abstraction step by step (Updria); the other generalizes from small instances and then checks the guess (Lambda).
+    - number: benchmarks: 238 MCMT-format systems, 52 VMT/MyPyvy systems, 25 train-control systems
+    - number: MCMT family: Lambda solves 214, Updria 208, MCMT 172 of 238 (Table 3)
+    - number: VMT family: Lambda 29, Updria 29, Ic3po 36, MyPyvy 27 of 52
+    - number: trains family: Lambda 25, Updria 24 of 25
+    - limits: Finds only universally quantified invariants, so it fails where an existential quantifier is needed (7 more instances solved by Ic3po). The problem is undecidable, so both algorithms may not terminate; Lambda comes with no guarantee that its guess works. Safety only; no liveness.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3686153); [notes: ## Invariant Checking for SMT-based Systems with Quantifiers (2024)](claude_readings.md)
+    - record id: `updria-lambda-2024`
+- Verification and synthesis of distributed systems with weak synchronisation (2024)
+    - what: A theory thesis on deciding, for processes that talk only by broadcast or only by taking and releasing locks, whether a system meets a property, and whether processes can be given local strategies that guarantee it. The trick is to pick a small description of what each process may do alone (an invariant or a set of patterns) and check whether any combination of such local runs can go wrong.
+    - number: 254 pages, three models: broadcast networks of register automata, lock-sharing systems, dynamic lock-sharing systems
+    - number: coverability for broadcast networks with data is complete for the class F_omega^omega, so needs non-primitive-recursive time
+    - number: verification of lock-sharing systems with 2 locks per process or nested locks is NP-complete; synthesis is Sigma_2^P-complete
+    - number: synthesis of local controllers is undecidable for general lock-sharing systems
+    - limits: Pure decidability and complexity results with no tool or benchmark; the models are heavily restricted (only broadcast or only locks), and the author notes adding a shared variable makes the lock model undecidable. Read from the introduction, summaries and conclusions only, not the proofs.
+    - how much was read: parts read
+    - [source](https://doi.org/10.70675/1997f072zd5b5z4103zb466z8701a406729c); [notes: ## Mascle thesis: weak synchronisation (2024)](claude_readings.md)
+    - record id: `verification-and-synthesis-of-2024`
 - IronSync (2023)
     - title: Sharding the State Machine: Automated Modular Reasoning for Complex Concurrent Systems
     - what: It connects ownership reasoning (who may access what) for thread-local code to a global transition model. Cases: a NUMA node-replication library, and SplinterCache, a concurrent page cache.
@@ -1046,6 +1105,13 @@
     - how much was read: reading depth not recorded
     - [source](https://civl-verifier.github.io/); [notes: Civl and inductive sequentialization](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `civl`
+- LeanMachines (2026)
+    - title: LeanMachines: State-based Modeling with Refinement (a Lean4 Framework)
+    - what: A Lean 4 library for modelling stateful systems as machines refined step by step, in the style of Event-B, where a refinement step cannot be built without discharging its proof obligations.
+    - limits: Full text not obtained: the journal article had no open PDF; only package-registry and search-result descriptions were read, which call the library alpha-stage and not compatible with Event-B or Rodin. The IFM 2024 predecessor ('Stateful Functional Modeling with Refinement (a Lean4 Framework)') was not read.
+    - how much was read: not read; title and metadata only
+    - [notes: ## LeanMachines (2026): metadata only](claude_readings.md)
+    - record id: `leanmachines-2026`
 - Cazamariposas (2025)
     - title: Cazamariposas: Automated instability debugging in SMT-based program verification
     - what: The paper automates debugging of verification instability, where proofs pass or fail unpredictably. It targets SMT-based verifiers (verifiers that use a solver) such as Dafny and F*.
@@ -1053,6 +1119,12 @@
     - how much was read: not read; title and metadata only
     - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gscholar.md`
     - record id: `cazamariposas-2025`
+- Practical Verification of Distributed Systems: Streamlining Safety Proofs Using Invariant Taxonomies, and Verifying Latency Properties Using Symbolic Latency (2025)
+    - what: PhD thesis on proving distributed protocols safe by sorting the needed invariants into types, and on extending verification to end-to-end latency. Full text could not be fetched; this record rests on a search-engine summary of the library page.
+    - limits: Full text blocked: the Deep Blue library (deepblue.lib.umich.edu) returned a Cloudflare 'Just a moment' challenge to command-line fetches, and I did not try to get around it. Nothing here comes from reading the thesis.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.7302/25607); [notes: Practical Verification of Distributed Systems (2025)](claude_readings.md)
+    - record id: `practical-verification-of-distributed-2025`
 - A Calculus for the Specification, Design, and Verification of Distributed Concurrent Systems (2024)
     - what: Listed as an unread search lead from OpenAlex. The notes give only its title, year and DOI.
     - limits: Not read. Claims are unverified.

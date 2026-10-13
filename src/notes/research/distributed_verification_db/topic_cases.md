@@ -1,7 +1,7 @@
 # 🤖 database, sources of concrete example problems and benchmarks
 (authored by agents unless marked 🧑)
 
-156 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+169 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - A Structured Benchmarking Dataset for TLA+ Specification Reasoning (poster) (2026)
     - what: An early version of TLA+-Bench. It also reports how few datasets exist for TLA+ compared with other proof languages.
@@ -279,6 +279,16 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2601.18944); [notes: Neural Theorem Proving for Verification Conditions: A Real-World Bench](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `ntp4vc-2026`
+- Open-Source LLM-Driven Formal Verification: A Multi-Agent Pipeline for RTL Repair (2026)
+    - what: An LLM pipeline fixes a bug in a small hardware design (RTL). A solver checks each fix and returns a counterexample trace when it fails; the trace goes back to the LLM until the fix is proved for all reachable states by k-induction (a proof that a property holds at every step, built from a base case and an inductive step).
+    - number: 6 hardware benchmarks, 5 runs each, GPT-4o, temperature 0, at most 10 iterations
+    - number: alu repaired in 5/5 runs, 2 iterations, 16.5 +/- 3.0 s
+    - number: counter, arbiter, axi_lite_slave, uart_tx: 0/5 each; fifo: 0/3 valid runs (2 excluded for API quota)
+    - number: failing runs always hit the 10-iteration cap
+    - limits: Six small modules, one hand-injected bug each, one model; the author calls it a feasibility study. Properties are bug-checking assertions written by the LLM from a natural-language spec, with no check that they capture the spec.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2607.28877); [notes: ## RTL repair with open-source formal tools (2026)](claude_readings.md)
+    - record id: `open-source-llm-driven-2026`
 - OSVBench (2026)
     - title: OSVBench: Benchmarking LLMs on Specification Generation Tasks for Operating System Verification
     - what: A benchmark in which an LLM writes a Python/Z3 specification of a syscall from a description. The spec is scored by whether it detects the same injected errors in code variants as the reference spec does. Declaration specs stay fixed.
@@ -352,6 +362,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2608.21935); [notes: Systematization of Knowledge: Formal Verification of Consensus Protoco](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`
     - record id: `sok-consensus-2026`
+- SpecCoder (2026)
+    - title: Teaching Code LLMs to Reason with Intermediate Formal Specifications
+    - what: Fine-tunes code LLMs to insert runnable assertions at internal program points (not just final postconditions), keeping only assertions that hold on correct runs and fail on buggy mutants. Also releases HumanExec, 150 Codeforces tasks with real buggy submissions.
+    - number: prompted Qwen2.5-Coder-32B: 0.8989 syntax validity, 0.6313 correctness, 0.2604 completeness (Table I)
+    - number: after SpecCoder, Qwen2.5-Coder-14B inline completeness 0.1989 to 0.7713 and validity 1.0000 (Table II)
+    - number: average inline completeness over three model sizes 0.2112 to 0.7459
+    - number: HumanExec: 150 tasks, 48-279 tests each (mean 79.53)
+    - limits: Sequential, single-run Python programs from competitive programming; no distributed or concurrent systems and no proofs, only assertions checked on test runs. Completeness is measured against available faulty runs, not all possible bugs; training data came from a teacher LLM plus test-suite filtering.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2607.04232); [notes: ## SpecCoder and HumanExec (2026)](claude_readings.md)
+    - record id: `speccoder-2026`
 - Specula (2026)
     - title: Specula: Scaling formal specifications for autonomous model checking of system code
     - what: Specula writes TLA+ models and properties from system source code. It checks observed traces against the model and repairs disagreements. It then model checks for violations and tries to reproduce each one in the real code.
@@ -446,6 +467,16 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2605.08553); [notes: VeriContest](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
     - record id: `vericontest-2026`
+- Verifying Graceful Degradation in a Distributed Malware-Detection System with SPIN (2026)
+    - what: The authors model, in Promela, the endpoint side of a Bitdefender-style malware-detection system that falls back from a primary server to a legacy server to a weaker local scan, and check six properties written in temporal logic (five safety, one liveness) plus deadlock freedom with the SPIN model checker.
+    - number: All six properties hold on the core 1 endpoint x 1 scan model: 6,168 states stored, depth 101, under 1 second (Table 2)
+    - number: Streaming model (1 endpoint, 2 scans): 314,527 states; concurrent model (2 endpoints, 1 scan): 22,177,616 states (Table 4)
+    - number: 2 endpoints each with 2 scans ran out of memory, so no result
+    - number: 4 reachability trap claims all violated, showing the checked behaviors occur (Table 3)
+    - limits: Assumes the transport is reliable (no loss or duplication), deadlines are untimed nondeterministic choices, and two detection contracts: the full servers always give the right verdict (A1) and the reduced scan never flags a benign file (A2). Finite instances only; unbounded endpoints and scans need parameterized techniques left to future work. The model is hand-abstracted from the production system and not tied to its code.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.4204/eptcs.452.11); [notes: ## Graceful degradation in a malware-detection system with SPIN (2026)](claude_readings.md)
+    - record id: `verifying-graceful-degradation-in-2026`
 - VERINA (2026)
     - title: VERINA: Benchmarking Verifiable Code Generation
     - what: A Lean benchmark that scores generation of code, spec and proof separately and in combination. It checks specs by trying to prove implications against a reference spec, then falls back to tests. A test pass without a proof returns 'unknown'.
@@ -572,6 +603,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2512.09758); [notes: LMGPA: prove supplied invariants rather than discover them](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
     - record id: `lmgpa-2025`
+- Maeslant BesW (2025)
+    - title: A Complete Formal Specification and Verification of the BESW Software Control System of the Maeslant Storm Surge Barrier
+    - what: Translates the 15,000-line PLC control design of the Rotterdam storm surge barrier's pump, valve and door controller into an mCRL2 model, then model-checks 40 requirements written as modal mu-calculus formulas.
+    - number: mCRL2 model about 5,000 lines, 4.98e14 states
+    - number: 40 properties: 36 valid at once, 3 valid after rewording, 1 invalid (deprecated requirement)
+    - number: Each property verified within 40 minutes on 2x24-core, 1.5 TB machine
+    - number: Found one design issue: with pump faults, more pumps can run than the power budget allows
+    - limits: Water levels are discretised, not all pump and valve fault combinations are checked, status and log messages and the BOS data protocol are left out. The real model is confidential, so it cannot be reused or re-checked.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2504.08518); [notes: ## Maeslant storm surge barrier control software in mCRL2 (2025)](claude_readings.md)
+    - record id: `maeslant-besw-2025`
 - miniF2F-Lean Revisited: Reviewing Limitations and Charting a Path Forward (2025)
     - what: Re-checks the miniF2F Lean statements against the original competition questions and corrects them. Separates simplified tasks from tasks faithful to the competition.
     - number: 488 problems; over 300 Lean 4 statements corrected; 16 problems with no solution
@@ -652,6 +694,17 @@
     - how much was read: most of it read
     - [source](https://sol.sbc.org.br/index.php/wtf/article/view/35652); [notes: Reusable TLA+ Communication Primitives for Modeling and Verifying Dist](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `reusable-tla-communication-primitives-2025`
+- SpecVerify (2025)
+    - title: Supporting software formal verification with large language models: An experimental study
+    - what: SpecVerify has Claude 3.5 Sonnet turn English requirements and C code into assertions that the ESBMC bounded model checker verifies. On nine Lockheed Martin flight-control tasks it completes 46.5% of properties, about the same as NASA's CoCoSim, and found extra floating-point bugs.
+    - number: Claude+ESBMC: 27 of 58 properties verified (46.5%); CoCoSim 27 (46.5%); SLDV 21 (36.2%); ChatGPT+ESBMC 15 (25.9%)
+    - number: 79.31% (46 of 58) of Claude's properties logically equivalent to the manual ones; others: 2 misunderstood, 2 lacking assumption, 4 skipped, 2 reversed, 1+1 over-verified
+    - number: Per Table V: false positives CoCoSim 2, SLDV 0, Claude 0, ChatGPT 8; false negatives CoCoSim 6, SLDV 0, Claude 2, ChatGPT 2
+    - number: Found a floating-point median error CoCoSim missed and a human wiring error in the CoCoSim study (REG-003)
+    - limits: Small C programs (41 to 251 lines) generated from Simulink, aircraft domain; bounded checking leaves 53.5% unverified (state explosion, timeouts). The LLM sees requirement and code together and runs without human review; bad requirement documents cause errors. Llama 3.1 8B failed every task and was dropped.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2507.04857); [notes: Supporting software formal verification with LLMs (2025)](claude_readings.md)
+    - record id: `specverify-2025`
 - TLAiBench (2025)
     - title: tlaplus/TLAiBench
     - what: 9 puzzle descriptions (for example DieHard, DiningPhilosophers, TowerOfHanoi) and 6 gold specs. A script asks an LLM to translate each description, then runs the syntax check and TLC.
@@ -925,6 +978,17 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1145/3133912); [notes: Specification errors and auditing](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Appendix B: Concrete systems and theorem scope](../distributed_verification_review_b/deep_6_intent_to_spec.md)
     - record id: `who-guards-the-guards-2017`
+- COS (Cloud Outage Study) (2016)
+    - title: Why Does the Cloud Stop Computing? Lessons from Hundreds of Service Outages
+    - what: The authors read 1247 news items and public post-mortems about 597 unplanned outages of 32 internet services (2009-2015), tag each by root cause, impact and fix, and report what causes outages and why redundancy still fails. The data set is released as COS DB.
+    - number: 597 outages, 1247 links, 3249 tags; 32 services; 2009-2015
+    - number: Root causes among known ones (355 of 597 unknown): upgrade 16%, network 15%, bugs 15%, config 10%, load 9%, cross-service 8%, power 6%, security 5%, human 4%, storage 4%
+    - number: 78% of services (25) averaged less than 99.9% uptime; 6% (2) less than 99%
+    - number: Impacts: full outage 59%, essential operation failure 22%, performance 14%, data loss 2%
+    - limits: Only publicly reported outages, skewed to popular services; root cause known for only about 40% of outages. The paper does not give fixes or any formal method. Tags come from manual reading by at least four authors.
+    - how much was read: most of it read
+    - [source](https://www.ece.iastate.edu/%7Emai/docs/papers/2016_SoCC_COS.pdf); [notes: ## Why Does the Cloud Stop Computing? (2016)](claude_readings.md)
+    - record id: `cos-cloud-outage-study-2016`
 - A Messy State of the Union: Taming the Composite State Machines of TLS (2015)
     - what: The authors test TLS libraries for state-machine bugs by generating traces that deviate from the allowed behavior. They also write a replacement C state machine for OpenSSL and prove in Frama-C that it only allows traces from a hand-written list of allowed traces. A Coq proof shows that two sides with equal handshake logs are in equal states.
     - number: 8 libraries tested, flaws in 6, ten attacks including eight impersonation attacks
@@ -1052,6 +1116,28 @@
     - how much was read: parts read
     - [source](https://github.com/anvil-verifier/verus-tla); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: R02. Verus temporal libraries, 2025–2026 repository leads](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md); [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md)
     - record id: `verus-tla-2026`
+- 3SF model checking (2025)
+    - title: Technical Report: Exploring Automatic Model-Checking of the Ethereum specification
+    - what: The authors translate the Python spec of Ethereum's 3-slot-finality (3SF) consensus protocol into TLA+ and use the Apalache model checker to test Accountable Safety: if two conflicting chains are both finalized, at least one third of validators can be shown to have broken a voting rule. They then add hand-made abstractions and re-encode the problem in SMT (CVC5) and Alloy to check larger instances.
+    - number: Direct translation (Spec2): checking Accountable Safety timed out after more than 40 hours (Table 1)
+    - number: Alloy with Kissat: Accountable Safety holds for up to 6 blocks; e.g. 5 blocks, 25 checkpoints, 12 votes in 234 s (Table 5)
+    - number: CVC5: verified up to 5 blocks with 5 checkpoints (1h 40m) or 3 blocks with 6 checkpoints (74h) (Table 4)
+    - number: A 7-block Alloy run went over 16 days without finishing
+    - limits: Only the finality gadget and only Accountable Safety, on small bounded instances (at most 7 checkpoints and 24 votes); every validator has stake 1. The hand-made abstractions are not proved equal to the Python spec. Appendix A (translation rules) and B (soundness proofs) were skimmed, not read closely.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2501.07958); [notes: ## Exploring Automatic Model-Checking of the Ethereum specification (2](claude_readings.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - record id: `3sf-model-checking-2025`
+- Astrogator (2025)
+    - title: Towards Formal Verification of LLM-Generated Code from Natural Language Prompts
+    - what: Has the user confirm a short, near-English formal query of what they want (for Ansible, an IT-automation language), then checks LLM-written Ansible code against it by symbolic execution. A knowledge base supplies system facts like package names so the user does not have to.
+    - number: 21 benchmark tasks, 6 LLMs, 10 samples each = 1,260 programs
+    - number: Only 334 (26.5%) of the programs are correct under tests; GPT-4o 108 of 210 (51.4%)
+    - number: Accepts 277 of 334 correct programs (82.9%) and rejects 856 of 926 incorrect ones (92.4%)
+    - number: About 70 seconds to check all 1,260 programs
+    - limits: Queries are written by hand in the evaluation; the LLM formalizer is not built or tested. All programs satisfying the query are accepted, so 68 of the 70 wrongly accepted programs came from under-specified queries. Ground truth is tests on VMs, not proof. No shell modules, Ansible only.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2507.13290); [notes: ## Astrogator, checking LLM Ansible code against a readable query (202](claude_readings.md)
+    - record id: `astrogator-2025`
 - Basilisk (2025)
     - title: Basilisk: Using Provenance Invariants to Automate Proofs of Undecidable Protocols
     - what: Basilisk automatically finds inductive invariants (facts that hold initially and are preserved by every step) for Dafny protocol proofs. It uses Provenance Invariants and Atomic Sharding. It was tested on 16 protocols, including Multi-Paxos.
@@ -1074,6 +1160,17 @@
     - how much was read: parts read
     - [source](https://arxiv.org/abs/2406.17455); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
     - record id: `ccf-smart-casual-verification-2025`
+- Clock-SI TLA+ (2025)
+    - title: Formal modelling and analysis of Clock-SI with TLA+
+    - what: A master's thesis that models the Clock-SI protocol (snapshot isolation for a partitioned database using loosely synchronized clocks) in TLA+ in two versions, a detailed one and a simpler one, and uses the TLC model checker to test that the protocol gives Snapshot Isolation, stated with a client-centric specification.
+    - number: Abstract model, Snapshot Isolation check: 2 keys, 2 partitions, 2 txns 3 s; 3 txns 3 min 28 s; 3 keys, 2 partitions, 3 txns 11 h 23 min 20 s; 3 keys, 3 partitions, 3 txns timed out (Table 10)
+    - number: Detailed model: 3 keys, 2 partitions, 2 txns 21 min; most larger cases timed out (Table 9)
+    - number: Symmetry and view features cut one 2-key, 2-partition, 3-txn state-space run from 2 h 54 min to 2 min 2 s (Table 8)
+    - number: Machine: i7-7700HQ, 16 GB RAM; each time is the average of 3 runs; maximum runtime 12 hours
+    - limits: Bounded to at most 3 transactions, keys, partitions; the target of 3/3/3 was not reached. The abstract model removes the message system, so it does not cover the real messaging. Only the safety property (Snapshot Isolation) is checked; no liveness. Chapters 2-3 (background) and the model listings in 4.1-4.2 were skimmed.
+    - how much was read: parts read
+    - [source](https://hdl.handle.net/1822/100401); [notes: ## Formal modelling and analysis of Clock-SI with TLA+ (2025)](claude_readings.md)
+    - record id: `clock-si-tla-2025`
 - Design and Modular Verification of Distributed Transactions in MongoDB (2025)
     - what: A TLA+ spec of MongoDB distributed transactions, with a modular spec of the interface. A follow-up blog generates conformance tests against WiredTiger.
     - number: TLA+ spec about 571 lines plus storage spec about 332 lines
@@ -1082,6 +1179,28 @@
     - how much was read: parts read
     - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
     - record id: `design-and-modular-verification-2025`
+- Korg thesis (2025)
+    - title: Verification and Attack Synthesis for Network Protocols
+    - what: Proves properties of three network-protocol pieces with theorem provers (Karn's RTT algorithm and TCP's timeout rule in Ivy and ACL2s, and Go-Back-N efficiency in ACL2s), model-checks TCP, DCCP and SCTP handshakes in SPIN, then builds Korg, a tool that searches for attacker behaviour that breaks a given property.
+    - number: Handshake properties: TCP 4 (phi1-phi4), SCTP 10 (gamma1-gamma10), DCCP has its own set
+    - number: Korg asked for at most 10 attacks per property; default search depth 600,000, maximum 2,400,000
+    - number: TCP phi3 (peers do not get stuck) took 72 min to 223 min per attacker model; other TCP properties took seconds
+    - number: SCTP: one patched-vs-unpatched check; with the CVE-2021-3772 patch, Korg finds no off-path attack, which proves the patch closes it for the model
+    - limits: Models are small by design to avoid state-space explosion; the handshake models are not linked to the Ivy/ACL2s models. Korg handles one centralized attacker, not coordinated multi-process attackers, and is exact only for the model, not the real code. Models took long to write by hand.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2511.01124); [notes: ## Von Hippel thesis on protocol verification and attack synthesis (20](claude_readings.md)
+    - record id: `korg-thesis-2025`
+- PolySemist (2025)
+    - title: Accelerating Protocol Synthesis and Detecting Unrealizability with Interpretation Reduction
+    - what: A tool that fills in the missing guards and updates of a half-written TLA+ distributed protocol (a sketch) so the protocol meets a safety or liveness property. It loops: the TLC model checker finds a counterexample, the tool rules out every candidate that shares it, and it skips candidates that behave the same on the states seen so far.
+    - number: 7 benchmark protocols: 2PC, consensus, decentralized lock, lock server, sharded KV store, two reconfigurable Raft variants
+    - number: faster than the previous tool Scythe in 160 of 171 realizable problems; total time about 9,000 s vs 32,000 s on those both solve
+    - number: whole distributed-lock protocol (6 expressions over 2 actions) synthesized in 125 s; Scythe timed out at 1 hour
+    - number: detected 'no protocol exists' in 80 of 123 unrealizable problems vs 16 for Scythe (easy 46/50, medium 21/35, hard 13/38)
+    - limits: A human supplies the sketch (state variables, actions, hole grammars) and the property; results hold only for the chosen finite parameters (e.g. number of nodes), and the all-parameters step is left to TLAPS proofs from prior work. Termination is guaranteed only when each hole grammar has finitely many expressions up to interpretation equivalence.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2501.14585); [notes: ## PolySemist: protocol synthesis by sketching (2025)](claude_readings.md)
+    - record id: `polysemist-2025`
 - Scimitar (2025)
     - title: Interpretable Safety Verification of Distributed Protocols by Inductive Proof Decomposition
     - what: Scimitar breaks a proof into a graph of lemmas and transitions. This exposes where guidance is needed. The target is Raft LogMatching, on a modified model of about 600 TLA+ lines.
@@ -1250,6 +1369,16 @@
     - how much was read: parts read
     - [source](https://doi.org/10.1007/s10703-021-00377-1); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`; [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); [notes: additional temporal methods](../distributed_verification_review_b/review_b_liveness_20261007.md)
     - record id: `temporal-prophecy-2021`
+- Elle (2020)
+    - title: Elle: Inferring Isolation Anomalies from Experimental Observations
+    - what: A test-time checker that runs random transactions against a database, records what clients saw, and rebuilds a dependency graph between transactions. A cycle in that graph is a proof that the database broke its claimed isolation level.
+    - number: Found anomalies in all 4 databases tested: TiDB, YugaByte DB, FaunaDB, Dgraph
+    - number: Checks histories of hundreds of thousands of transactions in tens of seconds; Knossos often fails after a few hundred
+    - number: Linear time in history length
+    - limits: Needs generated workloads where reads reveal the full write history (such as list append). Ignores predicates, so it cannot separate repeatable read from serializability. It finds bugs, not proof that a database is correct.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2003.10554); [notes: ## Elle isolation checker (2020)](claude_readings.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - record id: `elle-2020`
 - eXtreme Modelling (2020)
     - title: eXtreme Modelling in Practice
     - what: MongoDB compared two ways to link a model to code. One is model-based trace checking (MBTC), which checks whether logged runs fit the model. The other is model-based test-case generation (MBTCG). Trace checking of replication was impractical. For Realm Sync's operational-transformation rules, a Go generator turned TLC states into C++ tests.
@@ -1406,14 +1535,14 @@
     - how much was read: only abstract or first pages read
     - [source](https://arxiv.org/abs/2509.07157); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
     - record id: `crossword-2025`
-- Ethereum 3SF model checking (2025)
-    - title: Exploring Automatic Model-Checking of the Ethereum specification
-    - what: The authors translate the executable Python spec of 3SF consensus into TLA+ by hand. The translation uses folds, an integer abstraction of the graph, and chain decomposition. They check Accountable Safety with Apalache and cross-validate with CVC5 and Alloy.
-    - number: Accountable Safety checked exhaustively up to 7 checkpoints and 24 votes with no violation
-    - limits: The translation and abstractions are manual. Results cover safety within bounds only.
+- Machine Verification of Correctness for a Concurrent Union-Find Object (2025)
+    - what: A machine-checked proof, written in TLA+ and checked by TLAPS, that the Jayanti-Tarjan randomized-linking union-find objects are strongly linearizable (a property that keeps concurrent behaviour correct even with randomized callers).
+    - number: proof spans over 16,000 lines
+    - number: organized into 20 theorems
+    - limits: Full text not obtained: the Dartmouth Digital Commons PDF link returned a bot-check page and I did not work around it. Only the landing-page abstract was read.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2501.07958); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
-    - record id: `ethereum-3sf-model-checking-2025`
+    - [source](https://digitalcommons.dartmouth.edu/cs_senior_theses/53/); [notes: ## Karun Ram: union-find in TLA+ (abstract only)](claude_readings.md)
+    - record id: `machine-verification-of-correctness-2025`
 - Liveness Checking of the HotStuff Protocol Family (2023)
     - what: The paper tests for liveness bugs in HotStuff variants. It does not prove anything. It uses a temperature and lasso-detection approach on the Twins test generator. It lists known liveness violations in PBFT, Casper FFG, early Tendermint and FaB.
     - limits: It tests. It does not prove.
@@ -1476,12 +1605,15 @@
     - how much was read: not read; title and metadata only
     - [source](https://youtu.be/dGBSeagCAxw); [notes: R08. Oracle and Intel: scope of the public evidence](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `oracle-tla-talk-2024`
-- Elle (2020)
-    - what: Elle is a Jepsen checker. It infers an Adya dependency graph from what clients observe.
-    - limits: The Jepsen hierarchy page did not load.
+- TaxDC (2016)
+    - title: TaxDC: A Taxonomy of Non-Deterministic Concurrency Bugs in Datacenter Distributed Systems
+    - what: A study of 104 real timing-dependent bugs in Cassandra, Hadoop MapReduce, HBase and ZooKeeper, each labelled by what triggers it, how it shows up, and how it was fixed. Full text not obtained; this is from the input file and a web search summary, not from reading the paper.
+    - number: 104 bugs in 4 systems (input file and search summary)
+    - number: 2,083 classification labels (search summary, not checked in the paper)
+    - limits: Full text blocked: ACM page returned HTTP 403, no open copy found on author pages (uchicago.edu host did not respond), Semantic Scholar lists it as closed access. No claims here are from the paper body.
     - how much was read: not read; title and metadata only
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
-    - record id: `elle-2020`
+    - [source](https://doi.org/10.1145/2954679.2872374); [notes: ## TaxDC (2016)](claude_readings.md)
+    - record id: `taxdc-2016`
 - Intel pre-RTL (2008)
     - title: Pre-RTL Formal Verification: An Intel Experience
     - what: A historical lead on hardware design. Lamport's page on industrial use says TLA+ was still used at Intel in 2014.
@@ -1489,3 +1621,9 @@
     - how much was read: not read; title and metadata only
     - [notes: R08. Oracle and Intel: scope of the public evidence](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `intel-pre-rtl-2008`
+- Auth Invariant Tester: Temporal Authorization Correctness Verification for Distributed Systems
+    - what: Per the input list, a tester for whether distributed authorization (caching, delayed revocation, token lifetime) keeps temporal correctness properties; not read.
+    - limits: Full text could not be fetched: the Authorea page and DOI link return a Cloudflare 'Just a moment' challenge, which I did not work around. Everything here comes from the one-line description in the input file.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.22541/au.176790800.08611684/v1); [notes: ## Auth Invariant Tester (metadata only)](claude_readings.md)
+    - record id: `auth-invariant-tester-temporal`

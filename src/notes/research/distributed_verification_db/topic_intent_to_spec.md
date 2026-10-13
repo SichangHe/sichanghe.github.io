@@ -1,7 +1,7 @@
 # 🤖 database, from what a human wants to a formal statement
 (authored by agents unless marked 🧑)
 
-117 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+128 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
 
 - AeroReq2LTL (2026)
     - title: Automated LTL Specification Generation from Industrial Aerospace Requirements
@@ -119,6 +119,16 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2606.24060); [notes: Clarification and stakeholder requirements](../distributed_verification_review_b/deep_6_intent_to_spec.md)
     - record id: `collaborative-and-ai-supported-2026`
+- Evaluating LLM-Generated ACSL Annotations for Formal Verification (2026)
+    - what: Compares five ways to write ACSL contracts (specifications for C functions) for C programs: a rule-based Python script, Frama-C's RTE plugin, and three LLMs asked once with no feedback. Each contract set is then checked by Frama-C's WP prover with four SMT solvers.
+    - number: 355 of 506 CASP benchmark C programs kept after dropping 151 empty or incomplete ones
+    - number: Frama-C EVA analysed only 145 of 355 files (40.8%), median statement coverage 81%
+    - number: Mean share of proof goals proved (Table 2): Python script 71.9-72.6%, RTE 99.1%, DeepSeek 93.8-94.9%, GPT-5.2 81.0-82.1%, OLMo 83.1% (Table 2 labels for script and RTE look swapped relative to Tables 3-4)
+    - number: Alt-Ergo solver timeouts: 366 on one tool set (Table 4), 278 on another, 272 on GPT-5.2 output
+    - limits: One-shot generation only, no feedback loop; all models at default decoding (temperature 1.0). The rule-based and RTE methods only state safety facts (null checks, bounds), so a high proof rate there does not mean the program does what the user wants. Proof rate and timeouts are the only measures; no human judged whether contracts were meaningful.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2602.13851); [notes: ## ACSL annotation evaluation (2026)](claude_readings.md)
+    - record id: `evaluating-llm-generated-acsl-2026`
 - Expecto (2026)
     - title: Expecto: Extracting Formal Specifications from Natural Language Description for Trustworthy Oracles
     - what: Builds specs top-down from informal programming requirements, in a Dafny-based language with recursive helper definitions. It can check examples before every helper is defined, and it yields executable oracles (programs that judge whether an output is correct).
@@ -139,6 +149,15 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2604.11556); [notes: FM-Agent: useful bug finding, without sound proofs](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: FM-Agent: useful bug finding, without sound proofs](../distributed_verification_review_b/deep_17_model_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
     - record id: `fm-agent-2026`
+- FormaLLM (2026)
+    - title: Automating TLA+ Model Synthesis with Large Language Models and Formal Verification Pipelines (WIP)
+    - what: A one-page poster on a benchmark built from the public TLA+ examples repository to test whether small open code LLMs write TLA+ models from English that pass TLA+'s syntax checker (SANY) and model checker (TLC).
+    - number: 297 TLA+ specifications, 149 configurations, 49,700 lines of TLA+
+    - number: Models listed: StarCoder 3B, CodeLlama Instruct 7B, CodeT5+ 2B, CodeT5 Base 220M, SantaCoder 1.1B, DeepSeekCoder V2 Lite 13B (in progress)
+    - limits: Work in progress: no results reported. 'Passes TLC' only means the model runs; it does not say the model matches the English. The poster text also contains an unrelated paragraph about racist tweets, apparently left over from a template.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.6084/m9.figshare.31896151); [notes: ## FormaLLM TLA+ poster (2026)](claude_readings.md)
+    - record id: `formallm-2026`
 - Intent Formalization (2026)
     - title: Intent Formalization: A Grand Challenge for Reliable Coding in the Age of AI Agents
     - what: This research agenda argues that only the user can judge whether a spec is correct. It calls for support from tests, mutation, interaction and rich logic.
@@ -165,6 +184,15 @@
     - how much was read: most of it read
     - [source](https://kiro.dev/blog/deep-spec-analysis/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; [notes: Additional tools, not counted as papers](../distributed_verification_review_b/deep_6_intent_to_spec.md)
     - record id: `kiro-2026`
+- Lean-Agent Protocol (2026)
+    - title: Type-Checked Compliance: Deterministic Guardrails for Agentic Financial Systems Using Lean 4 Theorem Proving
+    - what: Proposes a gateway that turns English financial policies into Lean 4 statements (using Harmonic's Aristotle model) and blocks any trading-agent action that Lean cannot prove compliant. It is a design and regulatory argument; the paper reports no experiment on its own system.
+    - number: Cites AWS Cedar: Lean model evaluates a differential-test input in 5 microseconds on average vs 7 microseconds for the Rust code (from an AWS blog, not measured by the authors)
+    - number: Proposes a 3-phase rollout: shadow mode, WebAssembly-sandboxed interception, enterprise scale
+    - limits: No evaluation of translation accuracy, latency or blocked actions on the authors' own system; the claimed 'microsecond latency' and 'compliance certainty' come from other people's results and from argument. The paper itself names the English-to-Lean translation step as the main weak point.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2604.01483); [notes: Type-Checked Compliance (2026)](claude_readings.md)
+    - record id: `lean-agent-protocol-2026`
 - LeetProof (2026)
     - title: Certified Program Synthesis with a Multi-modal Verifier
     - what: LeetProof checks generated specifications against examples and reference implementations. It then synthesizes Velvet/Lean code, using SMT solvers to discharge proof goals automatically. A person finishes the remaining goals interactively.
@@ -246,6 +274,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2604.00280v2); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Spec-Harness, formerly VeriAct](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
     - record id: `spec-harness-formerly-veriact-2026`
+- SpecCoder (2026)
+    - title: Teaching Code LLMs to Reason with Intermediate Formal Specifications
+    - what: Fine-tunes code LLMs to insert runnable assertions at internal program points (not just final postconditions), keeping only assertions that hold on correct runs and fail on buggy mutants. Also releases HumanExec, 150 Codeforces tasks with real buggy submissions.
+    - number: prompted Qwen2.5-Coder-32B: 0.8989 syntax validity, 0.6313 correctness, 0.2604 completeness (Table I)
+    - number: after SpecCoder, Qwen2.5-Coder-14B inline completeness 0.1989 to 0.7713 and validity 1.0000 (Table II)
+    - number: average inline completeness over three model sizes 0.2112 to 0.7459
+    - number: HumanExec: 150 tasks, 48-279 tests each (mean 79.53)
+    - limits: Sequential, single-run Python programs from competitive programming; no distributed or concurrent systems and no proofs, only assertions checked on test runs. Completeness is measured against available faulty runs, not all possible bugs; training data came from a teacher LLM plus test-suite filtering.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2607.04232); [notes: ## SpecCoder and HumanExec (2026)](claude_readings.md)
+    - record id: `speccoder-2026`
 - Specy (2026)
     - title: Specy: Automatically Learning Specifications for Distributed Systems from Event Traces
     - what: It learns event-based formulas from traces of distributed systems (P models or logs). It builds monitors from them and checks fresh traces to reject guesses that are too strong. For six deductive-verification experiments, the learned formulas were translated by hand.
@@ -382,6 +421,16 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2605.26457); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Verus-SpecGym / Verus-SpecBench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `verus-specgym-2026`
+- A Short Survey on Formalising Software Requirements with Large Language Models (2025)
+    - what: Summarizes 35 papers on using LLMs to write formal specifications from English requirements, grouped by method and domain. Concludes that helper assertions come out better than whole contracts.
+    - number: 35 papers surveyed
+    - number: Laurel generates over 50% of needed Dafny helper assertions
+    - number: SpecGen: verifiable specs for 279 of 384 programs
+    - number: Req2Spec: 71% of 222 Bosch requirements formalized
+    - limits: Numbers are reported from the surveyed papers and not re-checked; the survey was selected with the AI tool Elicit and checked by hand. No distributed systems or liveness focus, and its comparisons mix very different tasks.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2506.11874); [notes: ## A short survey on formalising software requirements using LLMs (202](claude_readings.md)
+    - record id: `a-short-survey-on-2025`
 - ATLAS (2025)
     - title: Constrained LTL Specification Learning from Examples
     - what: ATLAS learns LTL formulas (formulas about behavior over time) from good and bad example traces. It also takes user constraints and priorities, and solves with MaxSAT, an optimizing solver. It uses no LLM. Cases: Peterson mutual exclusion, a voting machine, robot-arm repair, and weakening an invariant.
@@ -555,6 +604,17 @@
     - how much was read: most of it read
     - [source](https://arxiv.org/abs/2401.08807); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: SpecGen and StarVerus: human and model judges need an adequacy audit](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
     - record id: `specgen-2025`
+- Specification Consensus (2025)
+    - title: LLM-as-Specification-Judge: Multi-Model Consensus for Trustworthy Cryptographic Verification
+    - what: Several different LLMs each write a formal spec in F* from the same standard (SHA-256, AES-128, ML-KEM). The proof assistant then tries to prove each pair equivalent, and a failed proof flags an error or a vague spot in the standard.
+    - number: 3 primitives, 3 LLMs (GPT-4, Claude 3.5 Sonnet, Gemini 1.5 Pro)
+    - number: all 9 specs generated; type-check 3/3, 3/3, 2/3
+    - number: pairwise equivalence proved: SHA-256 3/3, AES-128 2/3, ML-KEM 1/3
+    - number: discrepancies found: 0, 1 (wrong MixColumns polynomial), 2 (edge cases in polynomial arithmetic)
+    - limits: Assumes LLM errors are independent; the paper admits correlated failures and ambiguous standards remain. Sample is three primitives with one run each and no baseline against single-author specs; no figures on how many human-written spec errors it caught, despite the abstract's claim.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.5281/zenodo.17765294); [notes: ## LLM-as-Specification-Judge (2025)](claude_readings.md)
+    - record id: `specification-consensus-2025`
 - SpecMAS (2025)
     - title: SpecMAS: A Multi-Agent System for Self-Verifying System Generation via Formal Model Checking
     - what: Agents turn a Standard Operating Procedure into a NuSMV model with CTL/LTL properties (statements about behavior over time). They revise both the model and the set of properties until model checking passes. The backbone is Qwen3-32B.
@@ -566,6 +626,17 @@
     - how much was read: most of it read
     - [source](https://proceedings.neurips.cc/paper_files/paper/2025/hash/61816fb8f7dd9677d23d00196ccbf126-Abstract-Conference.html); [notes: SpecMAS: model and property repair must be distinguished](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: SpecMAS: model and property repair must be distinguished](../distributed_verification_review_b/deep_17_model_agents.md)
     - record id: `specmas-2025`
+- SpecVerify (2025)
+    - title: Supporting software formal verification with large language models: An experimental study
+    - what: SpecVerify has Claude 3.5 Sonnet turn English requirements and C code into assertions that the ESBMC bounded model checker verifies. On nine Lockheed Martin flight-control tasks it completes 46.5% of properties, about the same as NASA's CoCoSim, and found extra floating-point bugs.
+    - number: Claude+ESBMC: 27 of 58 properties verified (46.5%); CoCoSim 27 (46.5%); SLDV 21 (36.2%); ChatGPT+ESBMC 15 (25.9%)
+    - number: 79.31% (46 of 58) of Claude's properties logically equivalent to the manual ones; others: 2 misunderstood, 2 lacking assumption, 4 skipped, 2 reversed, 1+1 over-verified
+    - number: Per Table V: false positives CoCoSim 2, SLDV 0, Claude 0, ChatGPT 8; false negatives CoCoSim 6, SLDV 0, Claude 2, ChatGPT 2
+    - number: Found a floating-point median error CoCoSim missed and a human wiring error in the CoCoSim study (REG-003)
+    - limits: Small C programs (41 to 251 lines) generated from Simulink, aircraft domain; bounded checking leaves 53.5% unverified (state explosion, timeouts). The LLM sees requirement and code together and runs without human review; bad requirement documents cause errors. Llama 3.1 8B failed every task and was dropped.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2507.04857); [notes: Supporting software formal verification with LLMs (2025)](claude_readings.md)
+    - record id: `specverify-2025`
 - The Coming Need for Formal Specification (2025)
     - what: An opinion piece proposing a workflow. First an English spec. Then several TLA+ models at different levels of detail. Then a formal proof, for example in Rocq, of the components the system depends on most. Finally an LLM audits the rest against the TLA+ spec.
     - number: seL4: 8,700 lines of C, 20 person-years, 200,000 lines of Isabelle (quoting Kleppmann)
@@ -732,6 +803,17 @@
     - how much was read: most of it read
     - [source](https://doi.org/10.1145/2837614.2837628); [notes: Maximal Specification Synthesis](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `maximal-specification-synthesis-2016`
+- Looney (2015)
+    - title: Analysing Sanity of Requirements for Avionics Systems
+    - what: Checks a set of temporal-logic requirements before any model exists: finds every smallest group of requirements that contradict each other, finds requirements implied by others, and suggests new requirements to cover behavior the set leaves open. Tested on random formulas, a plane-landing example, and four Honeywell avionics models.
+    - number: Honeywell sets of 3, 5, 10 and 10 formulas: all consistent; two redundancies found; consistency took 0.1 s, 0.1 s, 73.6 s and 210879 s for the largest (pbit)
+    - number: Landing example: R4 vs R6 and R1, R2, R5 were inconsistent; A5 and A6 were redundant; coverage rose 0% to 9.1%, 39.4%, 54.9% with 3 suggested formulas
+    - number: Switching to the SPOT translator sped up checking by several orders of magnitude on larger sets
+    - number: Honeywell engineers: tool-supported formalization took under 5 minutes per requirement after a week; requirement-elicitation stages took 18 per cent less time
+    - limits: Needs requirements already written in LTL (Honeywell used a pattern tool, ForReq, from English). Largest industrial set was 10 formulas, which the authors call hardly a demonstration of industrial scale. Completeness needs a human to separate assumptions, required and forbidden behavior, and was not tested on Honeywell data. Honeywell requirements are confidential.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/1510.02669); [notes: Analysing Sanity of Requirements for Avionics Systems (2015)](claude_readings.md)
+    - record id: `looney-2015`
 - PROPEL (2002)
     - title: PROPEL: An Approach Supporting Property Elucidation
     - what: Presents property patterns both as disciplined natural language and as finite-state automata. It shows the person writing the property the alternative meanings (repeats, response, scope boundaries).
@@ -831,6 +913,17 @@
     - how much was read: parts read
     - [source](https://proofsandintuitions.net/2026/02/09/distributed-verification-veil/); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `veil-blog-sergey-2026`
+- Astrogator (2025)
+    - title: Towards Formal Verification of LLM-Generated Code from Natural Language Prompts
+    - what: Has the user confirm a short, near-English formal query of what they want (for Ansible, an IT-automation language), then checks LLM-written Ansible code against it by symbolic execution. A knowledge base supplies system facts like package names so the user does not have to.
+    - number: 21 benchmark tasks, 6 LLMs, 10 samples each = 1,260 programs
+    - number: Only 334 (26.5%) of the programs are correct under tests; GPT-4o 108 of 210 (51.4%)
+    - number: Accepts 277 of 334 correct programs (82.9%) and rejects 856 of 926 incorrect ones (92.4%)
+    - number: About 70 seconds to check all 1,260 programs
+    - limits: Queries are written by hand in the evaluation; the LLM formalizer is not built or tested. All programs satisfying the query are accepted, so 68 of the 70 wrongly accepted programs came from under-specified queries. Ground truth is tests on VMs, not proof. No shell modules, Ansible only.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2507.13290); [notes: ## Astrogator, checking LLM Ansible code against a readable query (202](claude_readings.md)
+    - record id: `astrogator-2025`
 - FormalBench (2025)
     - title: Can LLMs Reason About Program Semantics? A Comprehensive Evaluation of LLMs on Formal Specification Inference
     - what: FormalBench measures how well models generate JML specs. It includes a flip rate: how often the result changes when the program is rewritten in a way that keeps its meaning.
@@ -1036,12 +1129,24 @@
     - how much was read: not read; title and metadata only
     - [source](https://github.com/Assassin187/APG); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
     - record id: `apg-2026`
+- Formally Specifying the Intended Behavior of the Program: LLM-Driven Neuro-Symbolic Program Specification Synthesis (2026)
+    - what: Per the input file: uses an LLM plus symbolic methods to write formal specifications (contracts, loop invariants) from intended behavior. The only source found is a video lecture page on underline.io (uploaded 2026-06-03) with no description, transcript, or paper.
+    - limits: Blocked: DOI redirects to a video page; the page text has no abstract, authors, or transcript, and no PDF or preprint was found.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.48448/hpwj-s947); [notes: ## Neuro-symbolic specification synthesis talk (2026)](claude_readings.md)
+    - record id: `formally-specifying-the-intended-2026`
 - HumanEvalComm (2024)
     - what: A benchmark with communication metrics that measure whether models ask clarifying questions.
     - limits: The review notes saw it only as a search snippet.
     - how much was read: not read; title and metadata only
     - [source](https://arxiv.org/abs/2406.00215); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
     - record id: `humanevalcomm-2024`
+- Consistency Checking in Requirements Analysis (title the input gave: Online enumeration of minimal inconsistent subsets of temporal requirements) (2017)
+    - what: A doctoral-symposium proposal: a framework to list every minimal inconsistent subset (a smallest group of requirements that cannot all hold together) of requirements written in temporal logic such as LTL, one at a time.
+    - limits: Full text not obtained: the ACM page returned no PDF and no open copy was found (the arXiv paper 1708.00400 is a different, later paper). Only the title and abstract-level description from a web search were seen; record is metadata only. Input file title does not match what the DOI resolves to.
+    - how much was read: not read; title and metadata only
+    - [source](https://doi.org/10.1145/3092703.3098239); [notes: ## Online enumeration of minimal inconsistent subsets of temporal requ](claude_readings.md)
+    - record id: `consistency-checking-in-requirements-2017`
 - An Experiment in Formal Verification with Claude
     - what: Claude Opus 4.6/4.7 wrote the Lean 4 statements and most of the proofs for the soundness and zero-knowledge theorems of Succinct's VEIL compiler. A CLAUDE.md file with simple rules guided it. Humans revised the statements and checked the Lean against the English descriptions.
     - number: human revised statements over dozens of iterations

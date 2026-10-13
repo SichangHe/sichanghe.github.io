@@ -1,7 +1,7 @@
 # 🤖 database, liveness cases by how strong the evidence is
 (authored by agents unless marked 🧑)
 
-196 cases whose guarantee says something eventually happens. Agents sorted them from the text of each case record, not from the papers; a wrong label is possible. Full records are in `cases.jsonl` under the case id.
+221 cases whose guarantee says something eventually happens. Agents sorted them from the text of each case record, not from the papers; a wrong label is possible. Full records are in `cases.jsonl` under the case id.
 
 ## running code, proof accepted by a proof checker
 
@@ -687,14 +687,44 @@
 
 ## checked by a model checker on a bounded or finite instance
 
-13 cases.
+36 cases.
 
+- Asterinas Mutex (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of the Asterinas mutex (186 lines Rust, 219 lines TLA+), checked by TLC for mutex invariants; conformance was 100/100/66.67/66.67% across four LLMs.
+    - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Basic agent: all 100% syntax and runtime; conformance 100/100/66.67/66.67%; 186 lines Rust, 219 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:88`; source record `sysmobench-2026`
+- Asterinas Ringbuffer (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of the Asterinas ring buffer (615 lines Rust); only Claude ran, with 100% conformance and invariants, while GPT-5, Gemini and DeepSeek failed at runtime.
+    - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Basic agent: only Claude ran (100% conformance and invariants); GPT-5, Gemini, DeepSeek failed runtime; 615 lines Rust, 123 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:90`; source record `sysmobench-2026`
+- Asterinas Rwmutex (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of the Asterinas read-write mutex (395 lines Rust, 250 lines TLA+), checked by TLC for its invariants; conformance was 100/75/0/50%.
+    - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Basic agent: conformance 100/75/0/50%; invariants 90/80/80/90%; 395 lines Rust, 250 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:89`; source record `sysmobench-2026`
+- Asterinas Spinlock (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of the Asterinas spinlock code, checked by TLC for mutual exclusion, lock consistency, no deadlock, guard lifecycle and eventual release; conformance to the code was 100/80/80/80% across four LLMs.
+    - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Basic agent: all four LLMs 100% syntax and runtime; conformance 100/80/80/80%; invariants 100/100/85.71/100% (Claude/GPT-5/Gemini/DeepSeek); 213 lines Rust, 151 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:87`; source record `sysmobench-2026`
 - Azure Cosmos DB consistency levels
     - guarantee: Azure Cosmos DB 4 consistency levels were specified in TLA+ with 10 liveness and 14 safety properties, checked with TLC on logs up to length 6 plus random simulation, in 2 person-months.
     - assumes: bounded: logs up to length 6 plus random simulation
     - size or effort: 2 person-months
     - tool: TLA+; written by: human
     - case `A:157`; Hackett et al., ICSE-SEIP 2023
+- Bitdefender-style endpoint decision pipeline (primary/legacy/local fallback), Promela model
+    - guarantee: In the Promela pipeline model, every scan eventually reaches its single terminal commit point; SPIN found zero errors over 5,659 states.
+    - assumes: Reliable transport; untimed deadlines; servers always correct (A1); reduced scan never flags benign (A2); 1 endpoint, 1 scan core model (also streaming and 2-endpoint models)
+    - size or effort: 5,659 states stored, under 1 s on the core model; zero errors; also zero errors on streaming (314,527 states) and concurrent (22,177,616 states) models
+    - tool: SPIN, LTL; written by: human
+    - case `C:K:14`; Aldea and Prelipcean 2026, Sec 6, Tables 2 and 4
 - ChonkyBFT
     - guarantee: ChonkyBFT liveness was checked with Quint and Apalache symbolic bounded model checking, per SoK Table 1.
     - assumes: not stated in the table
@@ -707,18 +737,66 @@
     - size or effort: TLC on Paxos up to 4 proposers and 4 acceptors in a few hours
     - tool: high-level specification language, TLA+/TLC; written by: human
     - case `A:42`; source record `what-s-live-2021`
+- consensus - synthesis from sketch
+    - guarantee: PolySemist completes a consensus protocol sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
+    - assumes: human-written sketch and property; fixed small node counts; consensus protocol sketch
+    - size or effort: easiest: all pre- or post-conditions of one action missing; hardest: all of two actions; DL fully from scratch 125 s; overall 160/171 faster than Scythe
+    - tool: PolySemist (CEGIS + TLC model checker); written by: automatic tool
+    - case `C:K:34`; source record `polysemist-2025`
 - Datadog Courier message queue
     - guarantee: TLC checks in the Datadog Courier message queue model that, under weak fairness, eventually no messages are lost: all are processed or in the dead-letter queue.
     - assumes: weak fairness WF_vars on handlers, sequencer and healthcheck actions
     - size or effort: first model: 5,515,710 distinct states, no violation; adding a sequencer produced a violation trace
     - tool: TLA+ / TLC; written by: human
     - case `A:139`; Datadog blog 'How We Use Formal Modeling...'
+- DCCP handshake model
+    - guarantee: In a SPIN model of the DCCP handshake, the RFC's correctness properties hold, and no attacker can violate looping-behavior properties theta1 and theta3.
+    - assumes: Finite model
+    - size or effort: seconds
+    - tool: SPIN (LTL); written by: human
+    - case `C:r1:48`; Von Hippel thesis Sec. 4.8, 5.6
+- decentralized lock (DL) - synthesis from sketch
+    - guarantee: PolySemist completes a decentralized lock sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts; full synthesis from scratch took 125 s.
+    - assumes: human-written sketch and property; fixed small node counts; simple decentralized lock
+    - size or effort: easiest: all pre- or post-conditions of one action missing; hardest: all of two actions; DL fully from scratch 125 s; overall 160/171 faster than Scythe
+    - tool: PolySemist (CEGIS + TLC model checker); written by: automatic tool
+    - case `C:K:35`; source record `polysemist-2025`
+- Etcd Raft (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of etcd Raft's Go code checked for Raft safety and liveness invariants; only Claude reached conformance (7.69%) and invariants (69.23%) with the basic agent.
+    - assumes: Source Go; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Basic agent: only Claude reached conformance (7.69%) and invariants (69.23%); code-translation agent: Claude 15.38% conformance, 92.31% invariants; 2,159 lines Go, 385 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:91`; source record `sysmobench-2026`
 - Fizzbee example status machine (idle/working/failed/shutdown)
     - guarantee: FizzBee model checking of a toy status machine checks that status always eventually returns to shutdown and to working, and that a failed state is reachable, assuming weak fairness on some actions.
     - assumes: Weak fairness on Start/Finish/Fix/Restart; Shutdown and Fail not fair
     - size or effort: toy model, model checked
     - tool: FizzBee; written by: human
     - case `A:365`; source record `fizzbee-2024`
+- Go-Back-N over token bucket filters
+    - guarantee: Go-Back-N over token bucket filters can reach perfect efficiency, with a formula for efficiency when the sender over-transmits, proved in ACL2s.
+    - assumes: Non-probabilistic model, no reordering
+    - size or effort: not stated in the sections read
+    - tool: ACL2s (bisimulation, invariants); written by: human
+    - case `C:r1:46`; Von Hippel thesis Sec. 3.10
+- Korg attacker synthesis on TCP/DCCP/SCTP handshakes
+    - guarantee: Korg checks whether an off-path, evil-server or on-path attacker can break each TCP, DCCP and SCTP handshake property, and outputs the attack where one exists; TCP phi3 took 72-223 min.
+    - assumes: Centralized single attacker; model fidelity
+    - size or effort: TCP phi3 72-223 min, others seconds; up to 10 attacks per property
+    - tool: Korg (LTL model checking via SPIN); written by: automatic tool
+    - case `C:r1:50`; Von Hippel thesis Table 5.1, 5.3
+- lock server (LS) - synthesis from sketch
+    - guarantee: PolySemist completes a lock server sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
+    - assumes: human-written sketch and property; fixed small node counts; lock server
+    - size or effort: easiest: all pre- or post-conditions of one action missing; hardest: all of two actions; DL fully from scratch 125 s; overall 160/171 faster than Scythe
+    - tool: PolySemist (CEGIS + TLC model checker); written by: automatic tool
+    - case `C:K:36`; source record `polysemist-2025`
+- Maeslant Barrier BesW control software
+    - guarantee: For the Maeslant Barrier control software, 40 requirements (e.g. Open Door finishes iff at least two limit switches show open; Move Out never trims; spring set to K2 when wall slit is below 3.5 m) were checked in mCRL2 on a 5,000-line model with 4.98e14 states, each under 40 min.
+    - assumes: Discretised water levels; not all pump/valve fault combinations; model confidential
+    - size or effort: 5,000-line model, 4.98e14 states, each property under 40 min
+    - tool: mCRL2, modal mu-calculus; written by: human
+    - case `C:r1:74`; Maeslant paper Sec. 5-6
 - (paper's own) TLA+ liveness specs
     - guarantee: The paper's own TLA+ liveness specs were model checked on single-value Paxos up to 4 proposers and 4 acceptors.
     - assumes: stable duration start; leader election started at it
@@ -731,35 +809,95 @@
     - size or effort: Table 2: 10 person-days; 160 MPCal SLOC; 185 glue Go SLOC
     - tool: TLC bounded-instance model checking + compilation to Go; written by: human
     - case `B:systems:48`; source record `pgo-2023`
+- PGo dqueue (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of the PGo-generated Go distributed queue (175 lines Go), checked for its invariants; all four LLMs got 100% runtime and invariants but 0% conformance.
+    - assumes: Source Go (compiler-generated); LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Code-translation: all four LLMs 100% runtime, 0% conformance, 100% invariants; 175 lines Go, 75 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:95`; source record `sysmobench-2026`
 - PGo Lock service
     - guarantee: TLC model checks the PGo lock service for mutual exclusion and liveness in the paper's checked configuration, with the compiled code not covered by that check.
     - assumes: paper checked configuration; compiler/glue/runtime/environment resources trusted; liveness scheduler assumptions need deployment justification
     - size or effort: Table 2: 2 person-days; 67 MPCal SLOC; 87 glue Go SLOC
     - tool: TLC bounded-instance model checking + compilation to Go; written by: human
     - case `B:systems:46`; source record `pgo-2023`
+- PGo locksvc (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of the PGo-generated Go lock server (281 lines Go), checked for its invariants; Claude passed 83.33%, GPT-5 66.67%, DeepSeek 50%, all with 0% conformance.
+    - assumes: Source Go (compiler-generated); LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Code-translation: Claude 83.33%, GPT-5 66.67%, DeepSeek 50% invariants, 0% conformance; 281 lines Go, 93 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:96`; source record `sysmobench-2026`
+- PGo raftkvs (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of the PGo-generated Go Raft key-value store (3,163 lines Go), checked for its invariants; Claude got 50% runtime, 0% conformance and 90.91% invariants.
+    - assumes: Source Go (compiler-generated); LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Code-translation: Claude 50% runtime, 0% conformance, 90.91% invariants; 3,163 lines Go, 508 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:97`; source record `sysmobench-2026`
 - Raft election (mCRL2 model)
     - guarantee: In an mCRL2 model of Raft election, weak liveness holds (a leader can be elected), but 'a leader must always eventually be elected' fails when messages are lost or nodes crash.
     - assumes: message loss and crashes allowed
     - tool: mCRL2; written by: human
     - case `A:176`; search result mentioning arXiv 2403.18916 (not opened)
+- reconfigurable Raft (RR, RR-big) - synthesis from sketch
+    - guarantee: PolySemist completes two reconfigurable Raft sketches (RR, RR-big) so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
+    - assumes: human-written sketch and property; fixed small node counts; two reconfigurable Raft sketches from prior work
+    - size or effort: easiest: all pre- or post-conditions of one action missing; hardest: all of two actions; DL fully from scratch 125 s; overall 160/171 faster than Scythe
+    - tool: PolySemist (CEGIS + TLC model checker); written by: automatic tool
+    - case `C:K:38`; source record `polysemist-2025`
 - Red Belly
     - guarantee: Red Belly liveness is checked with ByMC on parametric threshold automata, assuming a round-rigid adversary.
     - assumes: not stated in the table ; SoK 2.2: 'round-rigid adversary assumption ... to guarantee fair scheduling of transitions and termination'
     - size or effort: not given in SoK; see cited paper [37] Tholoniat, Gramoli, 2019
     - tool: ByMC; parametric threshold automata; written by: human
     - case `A:246`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [37] Tholoniat, Gramoli, 2019
+- Redis Raft (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of Redis Raft's C code (2,394 lines) checked for Raft invariants including linearizability; no basic-agent model ran, and the best code-translation result was Claude with 9.09% conformance and 75% invariants.
+    - assumes: Source C; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Basic agent: no model ran; code-translation Claude 23.81% runtime, 9.09% conformance, 75% invariants; 2,394 lines C, 349 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:92`; source record `sysmobench-2026`
+- SCTP handshake model
+    - guarantee: In a SPIN model of the SCTP handshake, ten properties hold, e.g. half-open states eventually end (gamma2) and teardown from Shutdown_Ack_Sent ends in Closed (gamma3).
+    - assumes: Finite model; vtag and itag compressed
+    - size or effort: seconds to hours per attacker check
+    - tool: SPIN (LTL); written by: human
+    - case `C:r1:49`; Von Hippel thesis Sec. 4.10
+- sharded key-value store (SKV) - synthesis from sketch
+    - guarantee: PolySemist completes a sharded key-value store sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
+    - assumes: human-written sketch and property; fixed small node counts; sharded KV store
+    - size or effort: easiest: all pre- or post-conditions of one action missing; hardest: all of two actions; DL fully from scratch 125 s; overall 160/171 faster than Scythe
+    - tool: PolySemist (CEGIS + TLC model checker); written by: automatic tool
+    - case `C:K:37`; source record `polysemist-2025`
 - Stellar SCP (row 1)
     - guarantee: Stellar SCP liveness is checked in UPPAAL with timed automata.
     - assumes: not stated in the table ; SoK 2.2: timer abstractions
     - size or effort: not given in SoK; see cited paper [42] Yoo et al., IWBOSE 2019
     - tool: UPPAAL; timed automata; written by: human
     - case `A:270`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [42] Yoo et al., IWBOSE 2019
+- TCP handshake (RFC 9293 model)
+    - guarantee: In a SPIN model of the TCP handshake from RFC 9293, there is no half-open connection, establishment eventually succeeds, peers never get stuck, and Syn_Received eventually leads to Established.
+    - assumes: No crashes modelled; small finite model
+    - size or effort: seconds to check
+    - tool: SPIN (LTL); written by: human
+    - case `C:r1:47`; Von Hippel thesis Sec. 4.6
+- two-phase commit (2PC) - synthesis from sketch
+    - guarantee: PolySemist completes a human-written two-phase commit sketch so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
+    - assumes: human-written sketch and property; fixed small node counts; atomic commit sketch with pre- or post-conditions removed from 1-2 actions
+    - size or effort: easiest: all pre- or post-conditions of one action missing; hardest: all of two actions; DL fully from scratch 125 s; overall 160/171 faster than Scythe
+    - tool: PolySemist (CEGIS + TLC model checker); written by: automatic tool
+    - case `C:K:33`; source record `polysemist-2025`
 - Two-thread mutex example (verus-tla export)
     - guarantee: A two-thread mutex example written in Verus was exported to TLA+ and TLC checked that both threads eventually terminate under weak fairness, over 8 states (a model check, not a proof).
     - assumes: weak fairness in Spec
     - size or effort: 8 states checked
     - tool: Verus code exported to TLA+ and checked by TLC (model check, not proof); written by: automatic tool
     - case `A:40`; BasisResearch/verus PR #51
+- Xline CURP (SysMoBench task)
+    - guarantee: LLMs wrote a TLA+ model of Xline's CURP replication Rust code (4,064 lines), checked for CURP invariants; with code translation Claude reached 50% and Gemini 66.67% conformance, both 100% invariants.
+    - assumes: Source Rust; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: Basic agent: none ran; code-translation Claude 50% conformance, Gemini 66.67%, both 100% invariants; 4,064 lines Rust, 100 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:93`; source record `sysmobench-2026`
 - ZENITH SDN controller (microservices)
     - guarantee: For the ZENITH SDN controller (8.6K-line spec), TLC and hand TLAPS proofs check that switch routing state eventually matches the intended DAG and apps eventually see consistent network state (P1-P8).
     - assumes: modelled failures; switch behavior assumption; history variables used because TLAPS cannot prove some temporal properties directly
@@ -769,7 +907,7 @@
 
 ## liveness bugs, failed attempts, and attacks
 
-8 cases.
+9 cases.
 
 - MongoDB RaftMongo replication (commit point)
     - guarantee: For MongoDB RaftMongo replication, the aim was no committed write lost and all servers eventually learning the newest commit point, but trace checking of the C++ server failed: 'Our traces never matched our specification'.
@@ -816,10 +954,16 @@
     - size or effort: proof as stated by authors: fix argued informally, no proof ; paper's verdict: liveness bug found by the Zab-FLE authors; no liveness stated (not in Table 3)
     - tool: paper-only (no machine proof); written by: human
     - case `A:295`; source record `what-s-live-2021`
+- ZooKeeper Fast Leader Election (SysMoBench task)
+    - guarantee: No LLM and agent combination produced a TLA+ model of ZooKeeper Fast Leader Election (5,360 lines Java) that passed the runtime check; the paper calls it the most challenging task.
+    - assumes: Source Java; LLM writes the model; invariants written by benchmark authors; best of 5 runs; 3 feedback rounds
+    - size or effort: No agent/LLM combination passed the runtime check; paper calls it the most challenging; 5,360 lines Java, 141 lines TLA+
+    - tool: TLA+ / TLC model checker, SANY, trace validation; written by: agent
+    - case `C:r4:94`; source record `sysmobench-2026`
 
 ## everything else: paper proofs, tests, benchmark entries, unclear
 
-59 cases.
+60 cases.
 
 - ACT (Aguilera-Chen-Toueg, crash-recovery)
     - guarantee: The Aguilera-Chen-Toueg crash-recovery protocol is argued on paper to make every good process eventually decide, if a majority of processes are good.
@@ -860,6 +1004,12 @@
     - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
     - tool: liveness; written by: human
     - case `B:liveness:45`; liveness abstract finite-but-unbounded models; Lotan–Shoham §6
+- Dynamic lock-sharing systems (processes spawn processes and create locks)
+    - guarantee: For dynamic lock-sharing systems, properties of the run's limit tree, including fairness and liveness, can be verified in Ptime for common small-arity, 3-priority cases, while synthesis has a complexity gap.
+    - assumes: finite-state or pushdown processes; shared read/write variable makes it undecidable unless the writer changes a bounded number of times
+    - size or effort: verification in Ptime for common small-arity, 3-priority cases; synthesis has a complexity gap
+    - tool: paper proofs (limit configurations, tree automata); written by: human
+    - case `C:K:42`; Mascle thesis Ch. 5 Conclusions
 - EPaxos
     - guarantee: The EPaxos paper argues on paper that liveness holds with high probability while a majority of replicas are non-faulty, because clients and replicas time out and retry.
     - assumes: Paper: link Fair; server Alw-Q (eventually always some quorum non-faulty, quorum may change); Some-Exec

@@ -109,6 +109,7 @@
             - [🤖 database, how to judge specifications, proofs, and agents](notes/research/distributed_verification_db/topic_evaluation.md)
             - [🤖 database, sources of concrete example problems and benchmarks](notes/research/distributed_verification_db/topic_cases.md)
             - [🤖 database, background theory and logic](notes/research/distributed_verification_db/topic_foundations.md)
+            - [🤖 database, papers read by Claude agents after the two reviews](notes/research/distributed_verification_db/claude_readings.md)
             - [🤖 database, relevant work found but not yet read](notes/research/distributed_verification_db/leads_to_read.md)
             - [🤖 known problems in the review notes behind the database](notes/research/distributed_verification_db/known_problems.md)
         - [🤖 research topic studies](notes/research/topic_studies/index.md)
