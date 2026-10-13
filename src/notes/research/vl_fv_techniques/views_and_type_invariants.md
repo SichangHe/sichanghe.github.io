@@ -101,6 +101,17 @@ The other steps are my inference from the other studies.
 - VeruSAGE, opacity: [study](../vl_paper_walkthrough/verusage_20261012.md)
   - NRKernel failures involve closed spec functions whose lemmas, not bodies, are the intended interface
   - the same idea applies to a closed `view`: prove lemmas about it, do not open it
+- Vosti, Verus inference engine: [study](../vl_paper_walkthrough/vosti_20261012.md)
+  - ghost histories and cache provenance tie physical KV-cache pages to the logical token prefix they must equal
+  - the invariant: "every live or retained reusable KV entry equals the value obtained by recomputing its token prefix without cache" (paper, §4.2, as quoted in the study)
+  - a second invariant, write isolation: new suffix writes cannot corrupt initialized or shared pages, so equal tokens alone do not give equal values
+  - the study recommends this logical-history and physical-storage split for cached, batched or relocated state; that is the study's recommendation, not a measured result
+
+- Fewer Assumptions by Design: DLL specifications over index, standard and SlotMap representations
+  - exact ghost order sequences make append, insertion and removal postconditions precise; reachability or endpoint preservation alone does not fix order
+  - the I3 run adds a ghost order witness; the authors warn "a ghost-heavy specification is less faithful to the concrete implementation"
+  - live slots, free slots and reachable nodes are tracked as separate sets
+  - [study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)
 
 ## evidence
 
@@ -135,8 +146,10 @@ They do not show it is what made the proofs succeed.
 - the invariant must be re-established by every method
   - the VeriStruct study lists redundant invariant invocations as an error class
 - type invariants do not cover raw pointers
-  - the hybrid study: "Verus cannot verify traditional raw pointers" (the study's summary of related work)
-  - use permission tokens, or a separation-logic tool for those parts
+  - the hybrid paper's related work says Verus does not support traditional raw pointers
+  - the Verus papers say Verus supports raw pointers through permissioned primitives
+  - the [hybrid study](../vl_paper_walkthrough/hybrid_rust_verification_20261012.md) says the papers do not reconcile the wordings
+  - so use permission tokens, or a separation-logic tool, for those parts
 - the hybrid tools leave gaps
   - shared references, more than one lifetime and closures are unsupported
   - the study says the meta-theory leaves "small gaps in the justification of its soundness"

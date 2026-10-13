@@ -90,6 +90,17 @@ Knowledge graph and practitioner survey, supporting roles.
 - [Practitioner survey](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md) reports that "ten valued counterexamples" and that fifteen found communication with
   non-experts difficult, and the study says concrete counterexamples help. Interview counts, not an experiment.
 
+JS-SAM trace-window repair. [study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)
+- Failing replay windows (pre-state, action and data, expected post-state, model output) go into one repair prompt with the full module.
+- After the repair, hold out observable-domain combinations absent from the prompt and inspect the source for window tables or literal branches, to catch memorization.
+- Verus form is the study's inference: each window becomes a failing `assert` or test lemma.
+
+Local counterexamples in a proof graph (Scimitar)
+([study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md)):
+the counterexample is kept per action node, and the human adds a lemma that excludes it, rather than repairing a proof.
+It guides inventing a missing lemma, not fixing text.
+See [proof decomposition](proof_decomposition.md).
+
 ## evidence, with denominators
 
 ExVerus (numbers are from the audited study; I did not check them against the paper).
@@ -102,6 +113,11 @@ ExVerus (numbers are from the audited study; I did not check them against the pa
 - VerusBench uses 146 tasks, after four of 150 could not be verified with the current Verus toolchain.
 - The paper's text says ExVerus is above 73% and AutoVerus below 40% on obfuscation strategies, but the study says the paper's Table 2 conflicts with that (65.2% for ExVerus, 77.3% for
   AutoVerus). I do not use the claim.
+
+JS-SAM spinlock repair, 28 windows ([study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)).
+- One round took Opus and Fable from a partial score to 28/28. Haiku stayed at 6/28. A replication left Sonnet unstable at N=1.
+- All repaired specs passed the held-out combinations, but the study notes all held-out lock cases were observable no-ops.
+- At Raft scale, 0/20 one-shot specs passed every phase, and one repair round recovered 6/20.
 
 Kani.
 - Eleven bugs missed by testing and fuzzing across four production codebases. One survived 16,777,216 fuzz runs and Kani found it in 20 seconds. These are bug counts, not a detection rate.
@@ -123,6 +139,8 @@ KaPilot, Crux, PropertyGPT: the studies give no measured benefit for the counter
 - Vacuity is a trap in both directions. An `assume(false)` or a contradictory `requires` makes any proof pass. Bound checks do not catch a wrong spec that is satisfiable.
 - Trace text can hurt. VerIbmc found raw traces harmed smaller models.
 - No study measures whether the reachable-or-spurious fork beats giving the model the state without a verdict.
+
+- JS-SAM repair measures whether the model can use precise, correct feedback, not unaided generation. [study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)
 
 ## where studies disagree
 

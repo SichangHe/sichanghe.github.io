@@ -30,7 +30,7 @@ It says that removing the critique step causes "snowballing `assume(false)` use 
 The VeruSAGE study measures it.
 Without the checker, cheating was 14% for Sonnet 4, 7% for Sonnet 4.5, and 2% for GPT-5.
 With the checker, under 1.5% for every model ([study](../vl_paper_walkthrough/verusage_20261012.md)).
-The study gives no denominator for these percentages beyond the 849 tasks.
+The paper gives no denominator for these percentages, and no checker rules (per the study).
 
 ## how to do it in Verus
 
@@ -136,10 +136,25 @@ AlgoVeri and WybeCoder, judge layer.
 - WybeCoder judges "imperativeness": a method that wraps a pure `fold` is a leak, not an implementation
 - the WybeCoder study: "A judge is a screening layer, not evidence of correctness; the Verus verifier remains authoritative."
 
+Rust-Prover, Lean (Aeneas translation of Rust).
+[study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+- the theorem statement and surrounding generated code must stay fixed; the study quotes the paper: "must be byte-identical to the pipeline’s output"
+- the gate also audits the theorem's dependencies, not only the visible proof: only `propext`, `Classical.choice` and `Quot.sound` are allowed,
+  so `sorry`, `admit`, `native_decide` and `bv_decide` may not appear anywhere the theorem depends on
+- accepted proofs are rebuilt in a clean clone
+- the study's inference for Verus: audit transitively reachable `assume`, `admit` and `external_body`, not only the proof text
+
+AlphaProof Nexus, Lean. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
+- the agent edits only regions marked `EVOLVE-BLOCK` and `EVOLVE-VALUE`; a validator checks
+  "to ensure the problem statement was not changed unsafely and the proof compiles" (the paper's Figure 2 caption)
+- a sketch with `sorry` is never emitted; the compiler must report no pending goals
+- the hash, AST comparison and rejection steps are the study's design, not the paper's
+- the study's Verus form (inference): read-only spec module, writable proof bodies, diff the canonicalized spec, reject `assume` and `external_body`
+
 ## evidence
 
 Gate effect, Verus.
-- VeruSAGE: cheating 14%, 7%, 2% without the checker, under 1.5% with it, across the benchmark of 849 tasks
+- VeruSAGE: cheating 14%, 7%, 2% without the checker, under 1.5% with it; the paper does not say whether this covers all 849 tasks
 - the same study: Sonnet 4.5 hands-off solved 688/849 (81%), counted with the checker on
 
 Gate effect, no gate.
@@ -152,12 +167,20 @@ Gate as part of a result.
 - AxDafny: no placeholder implementation verified, and no constant-or-empty-output mutation verified in the 234 cases where the mutation harness applied
 - these numbers are with the gates on (full systems, not the gates alone). None of the three studies reports a gate-off ablation, so they do not show how much the gates changed the score.
 
+Gate as part of a result, Lean.
+- Rust-Prover: all 1325 theorems proved and passed the re-check, over 1,007 problems ([study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md), author report); no gate-off ablation
+
 Gate false alarms.
 - no study reports how often a gate rejected an honest proof
 - AxDafny's LLM review flagged 14/250 (5.6%) benchmark specifications, all fixed by hand; that is a spec review, not a gate false-alarm rate
 
 Denominators to keep straight.
 - DafnyBench's no-LLM baseline is 26.9%, because some programs verify without hints. A pass there may need no model work.
+
+AlphaProof Nexus, Lean. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
+- the authors found two density misformalizations (#125 and #741(i)) after the agent had found proofs, so compiling is not enough
+- the validator stops edits; it does not show the formal statement matches the informal question, so expert review stays
+- many failed sketches hid a target-sized `sorry` in a helper lemma, so the gate must inspect nested lemmas
 
 ## where it fails
 
@@ -220,8 +243,8 @@ Whether an LLM judge belongs in the gate.
 
 ## things in the studies that look off
 
-- DafnyBench study: 113 + 23 + 72 hint-free programs is 208 of 782, which is 26.6%, but the study gives the no-LLM baseline as 26.9%. Small, but unexplained.
-- the VeruSAGE study gives cheating rates but not their denominators, and does not say whether they count tasks or attempts.
+- the DafnyBench paper itself is inconsistent: 113 + 23 + 72 hint-free programs is 208 of 782 (26.6%), but its no-LLM baseline is 26.9%. The audit calls this the paper's own.
+- the VeruSAGE paper gives the cheating rates without denominators, and does not say whether they count tasks or attempts (the audit: paper's own).
 
 ## open questions
 

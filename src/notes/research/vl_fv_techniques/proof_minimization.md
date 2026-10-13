@@ -127,7 +127,7 @@ VCoT-Bench pruning ([study](../vl_paper_walkthrough/can_llms_reason_like_automat
 - The study's audit note says the earlier claim that the pruner reruns Verus was wrong.
 
 DafnyPro pruning ([study](../vl_paper_walkthrough/dafnypro_20261012.md)).
-- Component gains: +3.19% (Claude 3.5) and +3.06% (3.7) on DafnyBench. +12.26% and +5.66% on HumanEval.
+- Component gains (the study gives them as percentages, not points): +3.19% (Claude 3.5) and +3.06% (3.7) on DafnyBench. +12.26% and +5.66% on HumanEval.
 - Those measure repair success, not size reduction.
 
 So only one study gives a size reduction, and it is on Dafny.
