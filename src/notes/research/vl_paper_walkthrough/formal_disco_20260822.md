@@ -1,5 +1,4 @@
 # Formal Disco: open-ended verified-program generation
-
 (authored by agents unless marked 🧑)
 
 - paper
@@ -74,7 +73,7 @@
     three languages, with one reported exception
     - Verus lemma-body-size entropy remains below the Claude seed corpus at
       iteration five
-  - the final Qwen Verus corpus contains a 105-line verified lemma versus an
+  - the final Qwen Verus corpus longest method or lemma body is 105 lines versus an
     86-line maximum in the Claude seed corpus
   - Formal Disco leads compared Verus corpora on three of four sampled feature
     views only up to their respective sample lengths
@@ -153,4 +152,3 @@
 - source authenticity and exact bytes
   - arXiv API record for `2607.04631v1`
   - local PDF SHA-256 equals a fresh download from the archival PDF endpoint
-  - evidence directory contains the checksum and provenance audit

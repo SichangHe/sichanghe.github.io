@@ -7,7 +7,7 @@ A doubly linked list must preserve agreement between forward and backward links.
 
 §2.2, p.106 describes “an interactive, exploratory methodology where a user collaborates with an agent to progressively strengthen specifications.” This differs from evaluating autonomous generation under a fixed, controlled benchmark.
 
-The progressive study first hand-writes a weak index-list proof, then targets chain validity, then strengthens the whole list invariant with Claude. Tables 3–4 report 9 assumptions and 3 axiomatic lemmas in the first experiment, then 6 and 2 with fewer operations covered. §3.3, p.109: “The final state is 45 verified, 0 errors, 11 assumes”. The remaining assumptions bridge exact-hop reachability to sequence indices. Verifier item counts must therefore be reported alongside residual trust.
+The progressive study first hand-writes a weak index-list proof, then targets chain validity, then strengthens the whole list invariant with Claude. Tables 3–4 report 9 assumptions and 3 axiomatic lemmas in the first experiment, then 6 and 2 with fewer operations covered. §3.3, p.109: “The final state is 45 verified, 0 errors, 11 assumes”. The remaining assumptions bridge exact-hop reachability to sequence indices. Inference: verifier item counts should be reported alongside residual trust.
 
 ## Demonstrations and what they show
 
@@ -19,11 +19,15 @@ Table 6 and §4.5 distinguish the results. I2 proves chain reachability and allo
 
 §3.4.2, p.112: “it leaves the implementation's space behaviour unverified.” The abstract deletion contract does not model physical recovery. Heap, array and map representations still need different ownership/storage infrastructure. A storage-agnostic chain model does not remove that obligation.
 
+## Prior work and threat
+
+The paper contrasts itself with AutoVerus, VeriStruct and VeruSAGE (§2.2, p.105–106). Its useful addition is reusable DLL guidance aimed at stronger specifications and lower trust.
+
 ## Validation
 
-Material quotations were checked against the PDF text, including a second raw-text extraction for Vosti's two-column layout. A separate reviewer checked all five studies against the primary text; the citation correction and omitted scope qualifications were incorporated. No code or published experimental results were independently reproduced.
+Material quotations were checked against the PDF text. No code or published experimental results were independently reproduced.
 
-ChatGPT offload was attempted with full PDFs. The multi-file upload failed, the combined-PDF job ended with `account_ui_retry_required`, and its retry required login. No ChatGPT answer was used to support the claims in this study. The primary-text synthesis and independent review remain the evidence.
+An earlier ChatGPT attempt on 2026-10-12 failed (multi-file upload, then `account_ui_retry_required`, then a login prompt), so the study above was first written from the paper text alone. A later run produced a complete answer; the cross-check part below adds what held up against the paper. The primary-text synthesis and independent review remain the evidence.
 
 ## ChatGPT cross-check (2026-10-12)
 
