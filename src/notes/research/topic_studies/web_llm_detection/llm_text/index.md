@@ -12,7 +12,7 @@ the short version
 - when AI text is rare, a 1% false positive rate makes about half the flags wrong
 - ordinary readers are near a coin flip; a few heavy ChatGPT users are almost never wrong
 - nobody has measured what detector browser extensions send to their servers
-- my top research picks: audit those extensions, and check the crowd-made AI site blocklist against DeGenTWeb
+- my top research picks: find out when pooling a site's pages protects the verdict against humanizers and new models, and audit what those extensions send
     - see [research proposals](research_proposals.md)
 
 reading order
@@ -27,8 +27,8 @@ reading order
 - [human detection](human_detection.md): when people can tell AI text, and when not
 - [browser extensions](browser_extensions.md): academic work and real extensions
 - [on web pages](on_web_pages.md): running detectors on crawled pages, and what DeGenTWeb already does
-- [research proposals](research_proposals.md): what DeGenTWeb already has, five ideas ranked, and what I would not do
-- [ChatGPT consultation](chatgpt_consultation.md): Extra High opinions on the proposals
+- [research proposals](research_proposals.md): what DeGenTWeb already has, five ideas ranked, three more from ChatGPT, and what I would not do
+- [ChatGPT consultation](chatgpt_consultation.md): its Extra High opinion on the proposals, and what I changed
 
 limits
 
