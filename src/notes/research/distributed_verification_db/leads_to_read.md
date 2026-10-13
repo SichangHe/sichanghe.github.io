@@ -3,478 +3,501 @@
 
 Claude agents read each lead's abstract and judged whether it serves the goal. Nobody has read the papers. Leads judged not relevant are only in `leads.jsonl`.
 
-## not judged yet
+## judged relevant from the abstract
 
-366 leads.
+18 leads.
+
+- A short survey on formalising software requirements using large language models
+    - what: Survey of 35 papers on using LLMs to turn software requirements into formal specifications.
+    - serves: intent_to_spec
+    - [source](https://arxiv.org/abs/2506.11874)
+- ACSLAgent: Verifier-Constrained Neural-Symbolic Synthesis of Formal Program Specifications
+    - what: An LLM tool that writes C program specifications (contracts, loop invariants, ranking functions) and uses the Frama-C verifier to reject wrong candidates.
+    - serves: agents, invariant_inference, intent_to_spec, liveness
+    - [source](https://doi.org/10.5281/zenodo.20776587)
+- AoA: Theorem Proving Agent over Abstract Syntax Tree of Redesigned Language (2026)
+    - what: An LLM agent that edits proofs as syntax trees rather than text to cut token cost in interactive theorem proving.
+    - serves: agents
+    - [source](https://doi.org/10.48550/arxiv.2607.16372)
+- Efficient Synthesis of Symbolic Distributed Protocols by Sketching
+    - what: Synthesizes missing parts of parameterized distributed protocols written in TLA+ from sketches, with the tool Scythe, including a Raft reconfiguration protocol.
+    - serves: verified_systems, invariant_inference, formulation
+    - [source](https://arxiv.org/abs/2405.07807)
+- Formal Verification of Agentic MLOps Protocols: Model Checking and Liveness Guarantees in Distributed Model Context Protocol Workflows
+    - what: Builds a checker inside a tool-calling gateway for LLM agents that verifies temporal properties such as deadlock freedom and liveness of multi-step workflows.
+    - serves: liveness, agents, verified_systems
+    - [source](https://doi.org/10.5281/zenodo.22715686)
+- Life, Death, and the Critical Transition: Finding Liveness Bugs in Systems Code (MaceMC)
+    - what: MaceMC, a model checker that finds liveness bugs (cases where something good never eventually happens) in implementations of Pastry, Chord and other distributed protocols.
+    - serves: liveness, verified_systems, cases
+    - [source](https://www.usenix.org/conference/nsdi-07/life-death-and-critical-transition-finding-liveness-bugs-systems-code)
+- LLM-Guided Formal Verification Coupled with Mutation Testing (2024)
+    - what: Uses an LLM to propose hardware design properties and invariants, then judges their quality with mutation testing.
+    - serves: invariant_inference, evaluation, agents
+    - [source](https://doi.org/10.23919/date58400.2024.10546729)
+- Multiparty session types for distributed and failure-prone systems
+    - what: A thesis that extends multiparty session types (types that describe who sends what to whom) to protocols running over lossy networks and fault-tolerant client-server systems, so that type-checked programs satisfy properties such as deadlock freedom and liveness.
+    - serves: formulation, foundations
+    - [source](https://doi.org/10.5525/gla.thesis.85779)
+- RefinedRust: A Type System for High-Assurance Verification of Rust Programs
+    - what: A Rust verification system that produces foundational (machine-checked in Rocq) proofs about Rust code.
+    - serves: verified_systems, foundations
+    - [source](https://doi.org/10.1145/3656422)
+- Security analysis and formal verification on blockchain and its applications (2025)
+    - what: A monograph that catalogs real blockchain correctness and security flaws and systematizes formal verification work on blockchains.
+    - serves: cases, verified_systems, foundations
+    - [source](https://doi.org/10.1561/3300000044)
+- Semi-Automated Modular Formal Verification of Critical Software: Liveness and Completeness Thresholds
+    - what: A dissertation giving a separation logic to verify termination of busy-waiting concurrent programs under fair scheduling, plus a safety contribution.
+    - serves: liveness, foundations
+    - [source](https://doi.org/10.48550/arxiv.2403.00934)
+- Smart Contract Invariants Protect Against Cybercriminals
+    - what: Measures whether program invariants would have stopped real smart-contract attacks and whether automated tools can find them.
+    - serves: invariant_inference, cases, evaluation
+    - [source](https://doi.org/10.48550/arxiv.2608.13191)
+- Surveying the Rust Verification Landscape
+    - what: A survey of tools that verify Rust programs, including code using the unsafe keyword.
+    - serves: foundations, verified_systems
+    - [source](https://arxiv.org/abs/2410.01981)
+- SysMoBench: Evaluating AI on Formally Specifying Complex Real-World Systems
+    - what: Benchmark of whether AI can write formal TLA+ models of real concurrent and distributed systems such as etcd Raft and ZooKeeper.
+    - serves: evaluation, intent_to_spec, agents, verified_systems
+    - [source](https://arxiv.org/abs/2509.23130)
+- The Challenges and Triumphs of CSP Based Formal Verification
+    - what: Author reflects on the CSP process algebra and its uses, including reasoning about Byzantine behaviour in decentralised systems.
+    - serves: foundations, formulation, cases
+    - [source](https://doi.org/10.29007/bbq9)
+- TLA+ Bench (2026)
+    - what: Benchmark and dataset of TLA+ specifications for testing whether LLMs can write them from natural language, graded by running the model checker.
+    - serves: evaluation, intent_to_spec, agents
+    - [source](https://arxiv.org/abs/2607.23425)
+- TrojanSpec-Bench: An Adversarial Benchmark for LLM-Based Formal Specification Elicitation
+    - what: A benchmark of 1,024 cases where LLM-written specs (Dafny, Lean 4, Verus) have subtly injected faults, plus a detector for them.
+    - serves: evaluation, intent_to_spec, agents
+    - [source](https://doi.org/10.5281/zenodo.21888213)
+- Verified LLM-Driven Synthesis for Concept Design
+    - what: Uses an LLM to generate application designs that satisfy checked safety invariants, steered by example scenarios toward the intended design.
+    - serves: intent_to_spec, agents
+    - [source](https://arxiv.org/abs/2607.15718)
+
+## no abstract found
+
+144 leads.
 
 - A Comparative Review of ZFC, NBG, and MK Axiom Systems: Theoretical Foundations and Formalization in Coq
-- A Complete Formal Specification and Verification of the BESW Software Control System of the Maeslant Storm Surge Barrier
-    - [source](https://doi.org/10.1007/978-3-032-00942-5_12)
-- A comprehensive survey of UPPAAL‐assisted formal modeling and verification
-- A Domain Specific Language for Testing Consensus Implementations
-    - [source](https://arxiv.org/pdf/2303.05893)
-- A Formal Framework for Requirements Engineering in Large Language Model-Integrated Cyber-Physical Systems
+- A Formal Framework for Requirements Engineering in Large Language Model-Integrated Cyber-Physical Systems (2026)
+    - [source](https://doi.org/10.1109/iscaie68866.2026.11576374)
 - A formal framework for the specification and verification of robotic skills composition for autonomous behaviors
     - [source](https://doi.org/10.1016/j.robot.2025.105041)
-- A Formal Framework for the Specification, Verification and Validation of Robotic Skills Composition for Autonomous Behaviors
+- A Formal Framework for the Specification, Verification and Validation of Robotic Skills Composition for Autonomous Behaviors (2025)
     - [source](https://doi.org/10.2139/ssrn.5105027)
-- A Formal Verification Method for Real-Time Embedded Systems
-    - [source](https://doi.org/10.1109/issatk69667.2026.11566770)
-- A Formally Verified AI Framework for Scheduling OptimiSation in Slurm-Based Distributed HPC Systems
-    - [source](https://doi.org/10.53022/oarjst.2026.17.2.0076)
 - A lean-based language for teaching proof in high school
-- A Minimal Agent for Automated Theorem Proving
-    - [source](https://doi.org/10.48550/arxiv.2602.24273)
-- A model-driven formal methods approach to software architectural security vulnerabilities specification and verification
+- A model-driven formal methods approach to software architectural security vulnerabilities specification and verification (2025)
     - [source](https://doi.org/10.1016/j.jss.2024.112219)
-- A Multimodal AI System: Comparing LLMs and Theorem Proving Systems
-    - [source](https://doi.org/10.3390/electronics15040892)
-- A Novel Approach for Specification and Verification of Symmetric Distributed Algorithms Using SPIN
-    - [source](https://doi.org/10.1109/dchpc60845.2024.10454070)
-- A review on agent-to-agent protocol: Concept, state-of-the-art, challenges and future directions
-- A short survey on formalising software requirements using large language models
-- A Survey on LLM-Integrated Hardware Design Verification
-    - [source](https://doi.org/10.48550/arxiv.2610.10580)
 - A temporal logic for the specification and verification of real-time systems
     - [source](https://doi.org/10.82444/warw.33803119)
-- A Theoretical Framework for Self-Play Theorem Proving Algorithms
-    - [source](https://doi.org/10.48550/arxiv.2606.01861)
-- About Trust and Proof: a situation, a contemplation, and a framework
-- Accelerating Protocol Synthesis and Detecting Unrealizability with Interpretation Reduction
-    - [source](https://doi.org/10.1007/978-3-031-90653-4_8)
-- Accountability Chains: A Formal Specification for AI Agent Delegation
-    - [source](https://doi.org/10.14293/pr2199.004019.v1)
-- ACSLAgent: Verifier-Constrained Neural-Symbolic Synthesis of Formal Program Specifications
-    - [source](https://doi.org/10.5281/zenodo.20776587)
-- Advancing Formal Verification: Fine-Tuning LLMs for Translating Natural Language Requirements to CTL Specifications
+- Advancing Formal Verification: Fine-Tuning LLMs for Translating Natural Language Requirements to CTL Specifications (2024)
     - [source](https://doi.org/10.1109/rsp64122.2024.10870993)
-- Advancing mathematics research with AI-driven formal proof search
 - Advancing multi-agent systems through model context protocol: Architecture, implementation, and applications
-- Adventures in FRET and Specification
+- Adventures in FRET and Specification (2024)
     - [source](https://doi.org/10.1007/978-3-031-75380-0_7)
-- AF-SGS: Blockchain-assisted secure authentication framework for smart grid systems
-- AgentRFC: Security Design Principles and Conformance Testing for Agent Protocols
-    - [source](https://doi.org/10.48550/arxiv.2603.23801)
-- AgentVerify: Compositional Formal Verification of AI Agent Safety Properties via LTL Model Checking
-    - [source](https://doi.org/10.20944/preprints202604.1029.v1)
 - AI-Enabled Formal Methods for Verifiable Software Requirements: A Survey
 - AI-generated test automation for autonomous software verification: Enhancing quality assurance through AI-driv
-- AI-powered cancer diagnosis: classifying viable (live) vs non-viable (dead) cells using transfer learning
-- An approach to using Golang programs for the specification and verification of distributed systems
-    - [source](https://doi.org/10.31144/bncc.cs.2542-1972.2023.n47.p1-9)
 - An LLM Benchmark Suite for Specification Inference
-- Analysing Sanity of Requirements for Avionics Systems
-    - [source](https://arxiv.org/pdf/1510.02669)
-- AoA: Theorem Proving Agent over Abstract Syntax Tree of Redesigned Language
-    - [source](https://doi.org/10.48550/arxiv.2607.16372)
-- Application of Directed Formal Verification to Detect Protocol Deadlocks in PCIe Systems
-    - [source](https://doi.org/10.22541/au.174890231.13052921/v1)
-- Architectural Specication and Invariant Graph Topology of the Phaistos Disc Corpus: A Deterministic Automaton Approach
-    - [source](https://doi.org/10.2139/ssrn.7511378)
-- Artifact for "Beyond Benchmarks: A Case Study of LLM-Generated Verus Specification Failures on Asterinas Vostd"
-    - [source](https://doi.org/10.5281/zenodo.19853280)
-- Artificial Intelligence for Mathematical Reasoning: An Integrated Survey of Language Models, Neuro-symbolic Sy
-- Auth Invariant Tester: Temporal Authorization Correctness Verification for Distributed Systems
-    - [source](https://doi.org/10.22541/au.176790800.08611684/v1)
-- AutoJML: Generation and Verification of JML Specifications Using LLM Agents
+- AutoJML: Generation and Verification of JML Specifications Using LLM Agents (2026)
     - [source](https://doi.org/10.1109/mpuls.2026.3659250)
 - Automated and interpretable verification of distributed protocols
     - [source](https://doi.org/10.17760/d20698934)
 - Automated and interpretable verification of distributed protocols (Stanford thesis)
     - [source](https://doi.org/10.17760/d20698934)
+- Automated Theorem Proving with Deep Reinforcement Learning (2026)
+    - [source](https://doi.org/10.5281/zenodo.22272013)
+- Automated Theorem Proving with Interactive Machine Learning (2026)
+    - [source](https://doi.org/10.5281/zenodo.22318818)
+- Automating the Verification of Distributed Systems (Michigan thesis)
+    - [source](https://doi.org/10.7302/6877)
+- AutoReSpec: A Framework for Generating Specification using Large Language Models (2026)
+    - [source](https://doi.org/10.1145/3793655.3793731)
+- Beyond Benchmarks: A Case Study of LLM-Generated Verus Specification Failures on Asterinas Vostd (2026)
+    - [source](https://doi.org/10.1145/3832783.3834504)
+- Beyond Monotonicity: Specification and Design of Concurrent Distributed Systems
+    - [source](https://doi.org/10.2139/ssrn.4752483)
+- Biometric authentication using IoT devices powered by deep learning and encrypted verification
+- Blockchain-Enabled Medical Waste Management System for Enhanced Traceability, Safety and Environmental Protect (2025)
+    - [source](https://doi.org/10.2139/ssrn.5281727)
+- Bridging the gap: a systematic framework for agentic AI root cause analysis in hybrid distributed systems
+- CertJudge: Evaluating Lean Formal-Code With Falsifiable Properties
+- Challenges of Multilingual Program Specification and Analysis (2024)
+    - [source](https://doi.org/10.1007/978-3-031-75380-0_8)
+- Checking Sanity of Software Requirements (2012)
+    - [source](https://www.ics.muni.cz/en/research/publications/1066876)
+- Circuitlm: A multi-agent llm-aided design framework for generating circuit schematics from natural language pr
+- Computational Cooperation Boundary Theorem: A Unified Theoretical Framework for Distributed and Multi-Agent Systems
+    - [source](https://doi.org/10.5281/zenodo.21801118)
+- Computational Invariant Fusion Theory (CIFT): A Framework for Deriving Higher‑Level Computational Laws from Low‑Level Invariants
+    - [source](https://doi.org/10.5281/zenodo.21962769)
+- Constrained Synchronization of Multi-Agent Systems Using Distributed MPC and Invariant Families of Terminal Sets (2024)
+    - [source](https://doi.org/10.23919/ecc64448.2024.10590746)
+- Context-Aware Contracts as a Lingua Franca for Behavioral Specification
+    - [source](https://doi.org/10.1007/978-3-031-75380-0_12)
+- Contract-LIB: A Proposal for a Common Interchange Format for Software System Specification (2024)
+    - [source](https://doi.org/10.1007/978-3-031-75380-0_6)
+- Correct Programs, Executed Correctly: Verifying Specifications And Executions
+- Cost-Efficient Theorem Proving via Agent Orchestration in Program Verification
+- Cross-Chain Interoperability: Formal Verification and Recursive Zero-Knowledge Architectures for Heterogeneous Distributed Systems
+    - [source](https://doi.org/10.5281/zenodo.22047128)
+- Cross-protocol Attack Surface Analysis in Multi-agent AI Systems: Formal Verification and Categorical Modelling of Translation-boundary Vulnerabilities (2026)
+    - [source](https://doi.org/10.2352/ei.2026.38.3.mobmu-331)
+- Data Consistency Verification and Detection Based on Formal Methods in Distributed Environment (2025)
+    - [source](https://doi.org/10.1109/smc58881.2025.11342595)
+- Deep Reinforcement Learning for Automated Theorem Proving
+    - [source](https://doi.org/10.5281/zenodo.22335709)
+- Deepscholar-bench: A live benchmark and automated evaluation for generative research synthesis
+- Design and Implementation of a Protocol for the SagaMAS Framework to Manage Distributed Transactions in Micros
+- Distributed Discontinuous Adaptive Impulsive Consensus of Uncertain Multi-agent Systems (2024)
+    - [source](https://doi.org/10.1007/978-981-97-6262-0_5)
+- Distributed Impulsive Consensus of Delayed Multi-agent Systems (2024)
+    - [source](https://doi.org/10.1007/978-981-97-6262-0_4)
+- Distributed safe control design and probabilistic safety verification for multi-agent systems (2025)
+    - [source](https://doi.org/10.1016/j.automatica.2025.112393)
+- Distributed Variable Impulsive Consensus of Multi-agent Systems
+    - [source](https://doi.org/10.1007/978-981-97-6262-0_2)
+- Ensuring Convergence and Invariants Without Coordination
+    - [source](https://doi.org/10.4230/lipics.ecoop.2025.4)
+- Equilibrium analysis of live-streaming e-commerce supply chain in the AI era
+- Event-based stochastic Lyapunov-type theorem and its application to leader-following multi-agent systems (2025)
+    - [source](https://doi.org/10.1016/j.ins.2025.122622)
+- Exploring LLMs for Verifying Technical System Specifications Against Requirements (2024)
+    - [source](https://doi.org/10.1109/oncon62778.2024.10931625)
+- Extracting Formal Smart-Contract Specifications from Natural Language with LLMs (2024)
+    - [source](https://doi.org/10.1007/978-3-031-71261-6_7)
+- Formal Consistency Checking over Specifications in Natural Languages
+    - [source](https://arxiv.org/pdf/1405.5003)
+- Formal Methods for Distributed Computing in Future Railway Systems (2024)
+    - [source](https://doi.org/10.1007/978-3-031-75390-9_7)
+- Formal Reasoning About the Security of Amazon Web Services (2018)
+    - [source](https://doi.org/10.1007/978-3-319-96145-3_3)
+- Formal Specification and Implementation of Distributed Lazy Group Membership Protocol (2025)
+    - [source](https://doi.org/10.1007/978-3-031-99751-8_18)
+- Formal specification and SMT verification of quantized neural network for autonomous vehicles (2025)
+    - [source](https://doi.org/10.1016/j.scico.2025.103316)
+- Formal Specification, and Verification of a Cooperative Multi-robots System for Delivery Service
+    - [source](https://doi.org/10.1109/isnib64820.2025.10983160)
+- Formal Specification and Verification of API Security Based on Design by Contract (2024)
+    - [source](https://doi.org/10.1109/icpics62053.2024.10796383)
+- Formal Specification and Verification of MQTT Protocol Using CoQ Proof Assistant (2024)
+    - [source](https://doi.org/10.1109/icaase64542.2024.10850926)
+- Formal Specification and Verification of Protection in Transit (PIT) Protocol Using UPPAAL (2025)
+    - [source](https://doi.org/10.1109/pst65910.2025.11268865)
+- Formal Specification and Verification of Time-Sensitive Drone Systems using TLA+: A Case Study (2024)
+    - [source](https://doi.org/10.1109/iatmsi60426.2024.10503145)
+- Formal Specification-Based Code Review via LLMs (2026)
+    - [source](https://doi.org/10.1007/978-3-032-30693-7_11)
+- Formal Verification (2025)
+    - [source](https://doi.org/10.1201/9781003598145-18)
+- Formal Verification of a Crash-Safe File System Based on Non-Persistent Conditions Extended Concurrent Separation Logic (2025)
+    - [source](https://doi.org/10.1109/icpads67057.2025.11322929)
+- Formal Verification of a JIT Backend Compiler (2025)
+    - [source](https://doi.org/10.1145/3705593.3705601)
+- Formal Verification of a Memory Allocator for Rust Hypervisors: From Verified to Deployable Code with Functional Equivalence Guarantees
+    - [source](https://doi.org/10.34727/2026/isbn.978-3-85448-093-8_55)
+- Formal Verification of a Rust-Based Buddy Physical Memory Allocator (2026)
+    - [source](https://doi.org/10.1007/978-3-032-30693-7_5)
+- Formal Verification of BDI Agents (2024)
+    - [source](https://doi.org/10.1007/978-3-031-73887-6_20)
+- Formal Verification of Blockchain Consensus Protocols Using Temporal Logic (2026)
+    - [source](https://doi.org/10.5281/zenodo.22184455)
+- Formal Verification of Decentralized Consensus Algorithms Using Abstract Interpretation
+    - [source](https://doi.org/10.5281/zenodo.22136568)
+- Formal Verification of Decentralized Consensus Protocols using Abstract Interpretation
+    - [source](https://doi.org/10.5281/zenodo.22219173)
+- Formal Verification of Distributed Consensus Algorithms using Temporal Logic
+    - [source](https://doi.org/10.5281/zenodo.22136833)
+- Formal Verification of Distributed Consensus Algorithms with Symbolic Execution
+    - [source](https://doi.org/10.5281/zenodo.22268957)
+- Formal Verification of Distributed Consensus Algorithms with Temporal Logic (2026)
+    - [source](https://doi.org/10.5281/zenodo.22187164)
+- Formal verification of distributed, data-intensive microservice applications using Petri Nets
+    - [source](https://doi.org/10.1145/3796563.3796583)
+- Formalization of security
+- Formalizing Requirements into Dafny Specifications with LLMs (2025)
+    - [source](https://doi.org/10.1007/978-981-95-4213-0_6)
+- Formally Verified Lock-Free Software Transactional Memory for Scientific Measurement
+- FormalSpecCpp: A Dataset of C++ Formal Specifications created using LLMs (2025)
+    - [source](https://doi.org/10.1109/msr66628.2025.00113)
+- Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Throug
+- From C to verifiable Rust: Towards practical migration of code and specifications (2026)
+    - [source](https://doi.org/10.1016/j.scico.2026.103535)
+- From natural language to solver-ready power system optimization: An llm-assisted, validation-in-the-loop frame
+- Generating formal smart-contract specifications: comparing few-shot learning and fine-tuned LLMs (2026)
+    - [source](https://doi.org/10.1016/j.scico.2026.103464)
+- Graphical-Probabilistic Modeling of Generative Flows in LLM-Native Software Systems
+- HAMILTON’S PRINCIPLE AND THE INVARIANTS
+    - [source](https://doi.org/10.34660/inf.2023.38.36.433)
+- Heterogeneous Face Recognition Using Domain Invariant Units (2024)
+    - [source](https://doi.org/10.1109/icassp48485.2024.10447481)
+- How does live streaming affect tourists' intention—a psychology theory perspective
+- Interest Beyond Violation: On Points-of-Interest in Runtime Verification
+    - [source](https://doi.org/10.1007/978-3-031-75380-0_5)
+- Investigation of Formal Verification of Autonomous Vehicle Control Systems Through Specification Translation from Cafeobj to Real-Time Maude
+    - [source](https://doi.org/10.1109/icmlc63072.2024.10935142)
+- Is truth futureproof?
+- Leveraging Applications of Formal Methods, Verification and Validation. Specification and Verification (2025)
+    - [source](https://doi.org/10.1007/978-3-031-75380-0)
+- Live: Learning Video LLM with Streaming Speech Transcription at Scale
+- LLM For Loop Invariant Generation and Fixing: How Far Are We?
+- LLM-guided Predicate Discovery and Data Augmentation for Learning Likely Program Invariants (2025)
+    - [source](https://doi.org/10.1145/3672608.3707984)
+- LLM-Powered Structurer: Normalizing Natural Language to Information Delivery Specification for Industrial Data (2026)
+    - [source](https://doi.org/10.1145/3774905.3793139)
+- Machine-Checked Proofs and Automated Verification for Post-Quantum Distributed Systems
+- Machine Learning for Automated Theorem Proving using Reinforcement Learning (2021)
+    - [source](https://doi.org/10.5281/zenodo.22137658)
+- MASA: A Modular Framework for LLM-Driven Multi-Agent Systems for Autoformalization
+    - [source](https://doi.org/10.48448/yt8h-h706)
+- MASA: LLM-Driven Multi-Agent Systems for Autoformalization (2025)
+    - [source](https://doi.org/10.18653/v1/2025.emnlp-demos.44)
+- Meet MASKS: integrating distributed knowledge and verification for multi-agent systems (2025)
+    - [source](https://doi.org/10.1007/s00500-025-10577-0)
+- Meta-Learning for Automated Theorem Proving
+    - [source](https://doi.org/10.5281/zenodo.22153603)
+- Model verification of real-time and distributed stream processing architecture (2024)
+    - [source](https://doi.org/10.1007/s00607-024-01384-w)
+- Olympiad-level formal mathematical reasoning with reinforcement learning
+- OpenProver: Agentic and Interactive Theorem Proving with Lean 4 (2026)
+    - [source](https://doi.org/10.1007/978-3-032-38214-6_21)
+- Operational intelligence at enterprise scale: Federated control assurance, multi-agent coordination, and value
+- Parameterized Verification of Timed Networks with Clock Invariants
+    - [source](https://doi.org/10.4230/lipics.fsttcs.2025.8)
+- Polynomial Invariants for Probabilistic Transition Systems with Unbounded Support
+    - [source](https://doi.org/10.48550/arxiv.2609.02446)
+- Probabilistic Formal Verification of Distributed Consensus Algorithms
+    - [source](https://doi.org/10.5281/zenodo.22635649)
+- Probabilistic Safety Verification of Distributed Systems: A Statistical Approach for Monitoring (2025)
+    - [source](https://doi.org/10.1007/978-3-031-95497-9_7)
+- ProofLoom: Proof-Obligation-Driven Theory Construction for Autoformalizing Research-Level Stochastic Optimizat
+- PROV-AGENT: Unified provenance for tracking AI agent interactions in agentic workflows (2025)
+    - [source](https://doi.org/10.1109/escience65000.2025.00093)
+- Provable AI ethics and explainability in medical and educational AI agents: trustworthy ethical firewall
+- Reinforcement Learning for Automated Theorem Proving with Symbolic State Representation
+    - [source](https://doi.org/10.5281/zenodo.22192891)
+- RvLLM: LLM Runtime Verification with Domain Knowledge (2025)
+    - [source](https://doi.org/10.52202/085713-2693)
+- SAT-Based Quantified Symmetric Minimization of the Reachable States of Distributed Protocols: An Update (2024)
+    - [source](https://doi.org/10.1007/978-3-031-75380-0_21)
+- Scalable Verification and Validation of Concurrent and Distributed Systems (ScaVeri) (Track Summary)
+    - [source](https://doi.org/10.1007/978-3-031-75380-0_15)
+- Securing the model context protocol (mcp): Risks, controls, and governance
+- Semi-Formal Verification (2025)
+    - [source](https://doi.org/10.1201/9781003598145-17)
+- Six-Layer Formal Verification of a Safety-Critical AI Governance Kernel
+- SoK: Agentic Skills--Beyond Tool Use in LLM Agents
+- SpecFSM: Extracting and Repairing Finite State Machines from Protocol Specification Documents (2026)
+    - [source](https://doi.org/10.1145/3832783.3834331)
+- Specification (2026)
+    - [source](https://doi.org/10.1002/9781394438532.ch42)
+- Specification-Driven Test Generation for Fault Localisation in Dafny
+- Specification-Guided Repair of Arithmetic Errors in Dafny Programs Using LLMs (2025)
+    - [source](https://doi.org/10.1007/978-3-032-10444-1_16)
+- Specification of Autonomous Behavior
+    - [source](https://doi.org/10.1007/978-3-031-88546-4_4)
+- STAFF: Towards Translating Formal Verification Benchmarks between Formal Specification Languages (2026)
+    - [source](https://doi.org/10.1145/3843777.3844531)
+- Symbolic AI for Automated Theorem Proving with Adaptive Rule Synthesis (2026)
+    - [source](https://doi.org/10.5281/zenodo.22274682)
+- Temporal Logic Verification of Distributed Consensus Algorithms
+    - [source](https://doi.org/10.5281/zenodo.22221229)
+- The reemergence of the New World screwworm and its potential distribution in North America
+- The Role of Communication Delays in the Optimal Control of Spatially Invariant Systems (2026)
+    - [source](https://doi.org/10.1109/tac.2025.3601758)
+- Title: Self-Organizing Constraint Propagation for Automated Theorem Proving
+    - [source](https://doi.org/10.5281/zenodo.22602322)
+- TLCrafter: Peeling the Layers of Natural Language to Reveal Temporal Logic Specifications (2026)
+    - [source](https://doi.org/10.1145/3832783.3834598)
+- Towards Formal Modeling and Verification of the Stellar Consensus Protocol in Z3 (2025)
+    - [source](https://doi.org/10.1109/qrs-c65679.2025.00090)
+- Towards Formal Specification of Agent-based Transport Models
+    - [source](https://doi.org/10.1016/j.procs.2025.03.067)
+- Towards Language Model Guided Proof Automation
+- Towards Specification-Driven LLM-Based Generation of Embedded Automotive Software (2024)
+    - [source](https://doi.org/10.1007/978-3-031-75434-0_9)
+- Towards the LLM-based generation of formal specifications from natural-language contracts: Early experiments w
+- Trainverify: Equivalence-based verification for distributed LLM training (2025)
+    - [source](https://doi.org/10.1145/3731569.3764850)
+- Typestates Specification and Verification in Frama-C (2025)
+    - [source](https://doi.org/10.1109/formalise66629.2025.00021)
+- Unleashing the power of LLM to infer state machine from the protocol implementation (2025)
+    - [source](https://doi.org/10.1109/iwqos65803.2025.11143461)
+- Verifying an HTTP Key-Value Server with Interaction Trees and VST
+    - [source](https://doi.org/10.4230/lipics.itp.2021.32)
+- Verifying Consensus Protocols from LLM-assisted TLA: A Case Study of Byzantine Reliable Broadcast
+- Verifying Distributed Protocols (Mark Yuen capstone, Yale-NUS, TLA+ to Ivy translation of Suzuki-Kasami and NOPaxos)
+    - [source](https://ilyasergey.net/assets/pdf/papers/Mark-Yuen-Capstone.pdf)
+- VerusSeek: Retrieval-Augmented LLM-Based Proof Synthesis for Rust Programs (2026)
+    - [source](https://doi.org/10.1145/3832783.3834603)
+
+## not judged yet
+
+122 leads.
+
+- A Domain Specific Language for Testing Consensus Implementations
+    - [source](https://arxiv.org/pdf/2303.05893)
+- A Formal Verification Method for Real-Time Embedded Systems
+    - [source](https://doi.org/10.1109/issatk69667.2026.11566770)
+- A Multimodal AI System: Comparing LLMs and Theorem Proving Systems
+    - [source](https://doi.org/10.3390/electronics15040892)
+- A Novel Approach for Specification and Verification of Symmetric Distributed Algorithms Using SPIN
+    - [source](https://doi.org/10.1109/dchpc60845.2024.10454070)
+- A Survey on LLM-Integrated Hardware Design Verification
+    - [source](https://doi.org/10.48550/arxiv.2610.10580)
+- About Trust and Proof: a situation, a contemplation, and a framework
+- Accountability Chains: A Formal Specification for AI Agent Delegation
+    - [source](https://doi.org/10.14293/pr2199.004019.v1)
+- Advancing mathematics research with AI-driven formal proof search
+- AF-SGS: Blockchain-assisted secure authentication framework for smart grid systems
+- AI-powered cancer diagnosis: classifying viable (live) vs non-viable (dead) cells using transfer learning
+- An approach to using Golang programs for the specification and verification of distributed systems
+    - [source](https://doi.org/10.31144/bncc.cs.2542-1972.2023.n47.p1-9)
+- Architectural Specication and Invariant Graph Topology of the Phaistos Disc Corpus: A Deterministic Automaton Approach
+    - [source](https://doi.org/10.2139/ssrn.7511378)
+- Artifact for "Beyond Benchmarks: A Case Study of LLM-Generated Verus Specification Failures on Asterinas Vostd"
+    - [source](https://doi.org/10.5281/zenodo.19853280)
+- Artificial Intelligence for Mathematical Reasoning: An Integrated Survey of Language Models, Neuro-symbolic Sy
 - Automated formal verification of secure aggregation protocols
     - [source](https://doi.org/10.1007/s10515-026-00670-5)
 - Automated Scientific Discovery via Causal Falsification and Formal Multi-Agent Verification
     - [source](https://doi.org/10.20944/preprints202607.1126.v1)
-- Automated Theorem Proving with Deep Reinforcement Learning
-    - [source](https://doi.org/10.5281/zenodo.22272013)
-- Automated Theorem Proving with Interactive Machine Learning
-    - [source](https://doi.org/10.5281/zenodo.22318818)
 - Automated Theorem Proving with Reinforcement Learning and Symbolic Reasoning
     - [source](https://doi.org/10.5281/zenodo.22335234)
-- Automating the Verification of Distributed Systems (Michigan thesis)
-    - [source](https://doi.org/10.7302/6877)
-- Automating TLA+ Model Synthesis with Large Language Models and Formal Verification Pipelines (WIP)
-    - [source](https://doi.org/10.6084/m9.figshare.31896151)
 - Autonomous Theorem Proving via Hierarchical Reinforcement Learning
     - [source](https://doi.org/10.5281/zenodo.22637310)
-- AutoReSpec: A Framework for Generating Specification using Large Language Models
 - Ax-Prover: a deep reasoning agentic framework for theorem proving in mathematics and quantum physics
     - [source](https://doi.org/10.1088/2632-2153/ae9452)
 - Bayesian Hierarchical Invariant Prediction
     - [source](https://doi.org/10.48550/arxiv.2505.11211)
 - Benchmarking Agents for Proving Theorems in Quantum Algorithms and Quantum Information
     - [source](https://doi.org/10.48550/arxiv.2607.21533)
-- Beyond Benchmarks: A Case Study of LLM-Generated Verus Specification Failures on Asterinas Vostd
-    - [source](https://doi.org/10.1145/3832783.3834504)
-- Beyond Monotonicity: Specification and Design of Concurrent Distributed Systems
-    - [source](https://doi.org/10.2139/ssrn.4752483)
-- Big data-driven distributed machine learning for scalable credit card fraud detection using PySpark, XGBoost,
-- Biometric authentication using IoT devices powered by deep learning and encrypted verification
-- Blockchain-Enabled Medical Waste Management System for Enhanced Traceability, Safety and Environmental Protect
 - Breaking the Composition Cliff: Mutation-Guided Specification Synthesis for Multi-Function Programs
     - [source](https://neurips.cc/virtual/2026/172957)
-- Bridging the gap: a systematic framework for agentic AI root cause analysis in hybrid distributed systems
-- BrokenMath: A Benchmark for Sycophancy in Theorem Proving with LLMs
-    - [source](https://doi.org/10.48550/arxiv.2510.04721)
 - Bulletproofing Zeebe concurrency bugs
     - [source](https://camunda.com/blog/2022/12/bulletproofing-zeebe-concurrency-bugs/)
 - Causal Past Logic for Runtime Verification of Distributed LLM Agent Workflows
     - [source](https://arxiv.org/pdf/2605.20923)
 - Certifying the Judge: Falsifiable Properties for LLM-Based Evaluation of Formal Code
-- CertJudge: Evaluating Lean Formal-Code With Falsifiable Properties
-- Challenges of Multilingual Program Specification and Analysis
-    - [source](https://doi.org/10.1007/978-3-031-75380-0_8)
-- Checking Sanity of Software Requirements
-    - [source](https://www.ics.muni.cz/en/research/publications/1066876)
-- Circuitlm: A multi-agent llm-aided design framework for generating circuit schematics from natural language pr
 - Clifford Circuit Synthesis for Distributed Quantum Architectures with Arbitrary Network Topology
     - [source](https://doi.org/10.48550/arxiv.2608.13543)
-- Computational Cooperation Boundary Theorem: A Unified Theoretical Framework for Distributed and Multi-Agent Systems
-    - [source](https://doi.org/10.5281/zenodo.21801118)
-- Computational Invariant Fusion Theory (CIFT): A Framework for Deriving Higher‑Level Computational Laws from Low‑Level Invariants
-    - [source](https://doi.org/10.5281/zenodo.21962769)
-- Constrained Synchronization of Multi-Agent Systems Using Distributed MPC and Invariant Families of Terminal Sets
-    - [source](https://doi.org/10.23919/ecc64448.2024.10590746)
 - Constructing formal models of cryptographic protocols from Alice&Bob style specifications via LLM
     - [source](https://doi.org/10.1038/s41598-025-93373-y)
-- Context-Aware Contracts as a Lingua Franca for Behavioral Specification
-    - [source](https://doi.org/10.1007/978-3-031-75380-0_12)
-- Continuum: Efficient and robust multi-turn llm agent scheduling with kv cache time-to-live
-- Contract-LIB: A Proposal for a Common Interchange Format for Software System Specification
-    - [source](https://doi.org/10.1007/978-3-031-75380-0_6)
 - Controller Synthesis for Linear Systems with Reach-avoid Specification
     - [source](https://doi.org/10.1145/3603288.3603297)
-- Correct Programs, Executed Correctly: Verifying Specifications And Executions
 - Corten - Foundational Verification of Rust Programs
     - [source](https://doi.org/10.48550/arxiv.2609.04372)
-- Cost-Efficient Theorem Proving via Agent Orchestration in Program Verification
 - Counterexample Driven Quantifier Instantiations with Applications to Distributed Protocols
     - [source](https://doi.org/10.1145/3622864)
-- Cross-Chain Interoperability: Formal Verification and Recursive Zero-Knowledge Architectures for Heterogeneous Distributed Systems
-    - [source](https://doi.org/10.5281/zenodo.22047128)
 - Cross-Model Evaluation of LLMs for Generating Formal Specification of Distributed Industrial Control Systems
     - [source](https://doi.org/10.1016/j.procs.2025.10.053)
-- Cross-protocol Attack Surface Analysis in Multi-agent AI Systems: Formal Verification and Categorical Modelling of Translation-boundary Vulnerabilities
-    - [source](https://doi.org/10.2352/ei.2026.38.3.mobmu-331)
-- Data Consistency Verification and Detection Based on Formal Methods in Distributed Environment
-    - [source](https://doi.org/10.1109/smc58881.2025.11342595)
-- Deep Reinforcement Learning for Automated Theorem Proving
-    - [source](https://doi.org/10.5281/zenodo.22335709)
-- Deepscholar-bench: A live benchmark and automated evaluation for generative research synthesis
-- Demystifying Invariant Effectiveness for Securing Smart Contracts
-    - [source](https://doi.org/10.1145/3660786)
-- Design and Implementation of a Protocol for the SagaMAS Framework to Manage Distributed Transactions in Micros
 - Deterministic Execution and Margin Enforcement in Financial Transaction Systems: Empirical Evaluation with For
 - Deterministic Execution and Margin Enforcement in Financial Transaction Systems: Empirical Evaluation with Formal Safety Verification
     - [source](https://doi.org/10.36227/techrxiv.176827209.92538217/v1)
-- Deterministic Runtime Enforcement: The Execution Authority for Autonomous AI Agents
-- Development of interactive E-LKPD based on Live-Worksheets for reading and viewing skills
-- Discover and Prove: An Open-source Agentic Framework for Hard Mode Automated Theorem Proving in Lean 4
-    - [source](https://arxiv.org/abs/2604.15839)
 - Distributed Asynchronous Impulsive Consensus of Multi-agent Systems
     - [source](https://doi.org/10.1007/978-981-97-6262-0_3)
-- Distributed Discontinuous Adaptive Impulsive Consensus of Uncertain Multi-agent Systems
-    - [source](https://doi.org/10.1007/978-981-97-6262-0_5)
-- Distributed Impulsive Consensus of Delayed Multi-agent Systems
-    - [source](https://doi.org/10.1007/978-981-97-6262-0_4)
 - Distributed Impulsive Consensus of Multi-agent Systems Under Cyber Attacks
     - [source](https://doi.org/10.1007/978-981-97-6262-0_7)
 - Distributed Locking as a Data Type
     - [source](https://doi.org/10.48550/arxiv.2405.15578)
 - Distributed Proximal-Gradient Algorithms for Nonsmooth Convex Optimization of Second-Order Multi-agent Systems
     - [source](https://doi.org/10.1007/978-981-96-0950-5_7)
-- Distributed safe control design and probabilistic safety verification for multi-agent systems
-    - [source](https://doi.org/10.1016/j.automatica.2025.112393)
-- Distributed synthesis of arbitrary graph states in quantum networks via rank-two GF(2) reduction
-    - [source](https://doi.org/10.48550/arxiv.2608.21166)
 - Distributed Theorem Proving with Evolutionary Strategies
     - [source](https://doi.org/10.5281/zenodo.22269591)
 - Distributed Unknown Input Observers for Discrete-Time Linear Time-Invariant Systems
     - [source](https://doi.org/10.48550/arxiv.2504.16815)
-- Distributed Variable Impulsive Consensus of Multi-agent Systems
-    - [source](https://doi.org/10.1007/978-981-97-6262-0_2)
-- Efficient Synthesis of Symbolic Distributed Protocols by Sketching
-    - [source](https://doi.org/10.48550/arxiv.2405.07807)
-- Elle: Inferring Isolation Anomalies from Experimental Observations
-    - [source](https://doi.org/10.48550/arxiv.2003.10554)
 - Encoding TLA+ proof obligations safely for SMT
     - [source](https://doi.org/10.1016/j.scico.2024.103178)
-- Ensuring Convergence and Invariants Without Coordination
-    - [source](https://doi.org/10.4230/lipics.ecoop.2025.4)
-- Ensuring Reliability in Self-Adaptive Systems: A Framework for Formal Specification and Verification
-    - [source](https://doi.org/10.37256/cm.6520256223)
-- Ensuring Safety and Reliability: Formal Verification of Communication-Based Train Control Systems
-    - [source](https://doi.org/10.62919/hejk9341)
-- Equilibrium analysis of live-streaming e-commerce supply chain in the AI era
-- Evaluating LLM-Generated ACSL Annotations for Formal Verification
-    - [source](https://arxiv.org/abs/2602.13851)
-- Event-based stochastic Lyapunov-type theorem and its application to leader-following multi-agent systems
-    - [source](https://doi.org/10.1016/j.ins.2025.122622)
-- Exploring LLMs for Verifying Technical System Specifications Against Requirements
-    - [source](https://doi.org/10.1109/oncon62778.2024.10931625)
-- Extracting Formal Smart-Contract Specifications from Natural Language with LLMs
-    - [source](https://doi.org/10.1007/978-3-031-71261-6_7)
-- Formal Consistency Checking over Specifications in Natural Languages
-    - [source](https://arxiv.org/pdf/1405.5003)
-- Formal Methods for Distributed Computing in Future Railway Systems
-    - [source](https://doi.org/10.1007/978-3-031-75390-9_7)
 - Formal Methods for Multi-Agent Feedback Control Systems
     - [source](https://doi.org/10.7551/mitpress/15136.001.0001)
 - Formal Modeling and Verification of Blockchain Consensus Mechanisms using Process Algebra
     - [source](https://doi.org/10.5281/zenodo.22338308)
-- Formal Modeling with Verification of Smart Courtroom Building System (SMCBS) Using UML and TLA+ Specification
-    - [source](https://doi.org/10.2478/ijssis-2026-0016)
-- Formal modelling and analysis of Clock-SI with TLA+
-    - [source](https://hdl.handle.net/1822/100401)
-- Formal Reasoning About the Security of Amazon Web Services
-    - [source](https://doi.org/10.1007/978-3-319-96145-3_3)
-- Formal Specification and Implementation of Distributed Lazy Group Membership Protocol
-    - [source](https://doi.org/10.1007/978-3-031-99751-8_18)
-- Formal specification and SMT verification of quantized neural network for autonomous vehicles
-    - [source](https://doi.org/10.1016/j.scico.2025.103316)
-- Formal Specification, and Verification of a Cooperative Multi-robots System for Delivery Service
-    - [source](https://doi.org/10.1109/isnib64820.2025.10983160)
-- Formal Specification and Verification of API Security Based on Design by Contract
-    - [source](https://doi.org/10.1109/icpics62053.2024.10796383)
-- Formal Specification and Verification of Autonomous Vehicle Group Control Systems Using Hybrid Automata and Maude
-    - [source](https://doi.org/10.3390/wevj17080434)
-- Formal Specification and Verification of MQTT Protocol Using CoQ Proof Assistant
-    - [source](https://doi.org/10.1109/icaase64542.2024.10850926)
-- Formal Specification and Verification of Protection in Transit (PIT) Protocol Using UPPAAL
-    - [source](https://doi.org/10.1109/pst65910.2025.11268865)
-- Formal specification and verification of rule-basedartificial intelligence systems using Event-B
-    - [source](https://doi.org/10.21203/rs.3.rs-7313564/v1)
-- Formal Specification and Verification of Time-Sensitive Drone Systems using TLA+: A Case Study
-    - [source](https://doi.org/10.1109/iatmsi60426.2024.10503145)
-- Formal Specification-Based Code Review via LLMs
-    - [source](https://doi.org/10.1007/978-3-032-30693-7_11)
 - Formal Specification of Distributed Consensus with Partial Observability
     - [source](https://doi.org/10.5281/zenodo.22636917)
-- Formal Verification
-    - [source](https://doi.org/10.1201/9781003598145-18)
 - Formal Verification and Security Analysis
     - [source](https://doi.org/10.1007/979-8-8688-2891-1_14)
-- Formal Verification Frameworks for Cloud-Native Microservices
-    - [source](https://doi.org/10.59543/jidmis.v3.912)
-- Formal Verification of a Crash-Safe File System Based on Non-Persistent Conditions Extended Concurrent Separation Logic
-    - [source](https://doi.org/10.1109/icpads67057.2025.11322929)
-- Formal Verification of a JIT Backend Compiler
-    - [source](https://doi.org/10.1145/3705593.3705601)
-- Formal Verification of a Memory Allocator for Rust Hypervisors: From Verified to Deployable Code with Functional Equivalence Guarantees
-    - [source](https://doi.org/10.34727/2026/isbn.978-3-85448-093-8_55)
 - Formal Verification of a Pacemaker
     - [source](https://doi.org/10.1145/3731217.3731230)
-- Formal Verification of a Rust-Based Buddy Physical Memory Allocator
-    - [source](https://doi.org/10.1007/978-3-032-30693-7_5)
 - Formal Verification of Access Control Policies for Critical IoT Systems
     - [source](https://doi.org/10.4018/ijdcf.412447)
-- Formal Verification of Agentic MLOps Protocols: Model Checking and Liveness Guarantees in Distributed Model Context Protocol Workflows
-    - [source](https://doi.org/10.5281/zenodo.22715686)
-- Formal Verification of Autonomous Vehicle Group Control Systems via Specification Translation of Multitask Hybrid Observational Transition Systems
-    - [source](https://doi.org/10.3390/electronics14071483)
-- Formal Verification of BDI Agents
-    - [source](https://doi.org/10.1007/978-3-031-73887-6_20)
-- Formal Verification of Blockchain Consensus Protocols Using Temporal Logic
-    - [source](https://doi.org/10.5281/zenodo.22184455)
 - Formal Verification of Data Integrity and API Security in Distributed Analytics Systems
     - [source](https://doi.org/10.1109/csnt69054.2026.11502499)
-- Formal Verification of Decentralized Consensus Algorithms Using Abstract Interpretation
-    - [source](https://doi.org/10.5281/zenodo.22136568)
 - Formal Verification of Decentralized Consensus Algorithms Using Process Algebra
     - [source](https://doi.org/10.5281/zenodo.22242181)
-- Formal Verification of Decentralized Consensus Protocols using Abstract Interpretation
-    - [source](https://doi.org/10.5281/zenodo.22219173)
 - Formal Verification of Distributed Byzantine Fault Tolerance Protocols via Abstract Interpretation
     - [source](https://doi.org/10.5281/zenodo.22457932)
 - Formal Verification of Distributed Consensus Algorithms using Model Checking
     - [source](https://doi.org/10.5281/zenodo.22241481)
-- Formal Verification of Distributed Consensus Algorithms using Temporal Logic
-    - [source](https://doi.org/10.5281/zenodo.22136833)
-- Formal Verification of Distributed Consensus Algorithms with Symbolic Execution
-    - [source](https://doi.org/10.5281/zenodo.22268957)
-- Formal Verification of Distributed Consensus Algorithms with Temporal Logic
-    - [source](https://doi.org/10.5281/zenodo.22187164)
-- Formal verification of distributed, data-intensive microservice applications using Petri Nets
-    - [source](https://doi.org/10.1145/3796563.3796583)
-- Formal Verification of Epistemic States with Uncertainty in Multi-Agent Systems
-    - [source](https://doi.org/10.2139/ssrn.7198890)
 - Formal Verification of Impure Coq JITs
     - [source](https://doi.org/10.1145/3705593.3705600)
-- Formal Verification of Parameterised Neural-symbolic Multi-agent Systems
-    - [source](https://doi.org/10.24963/ijcai.2024/12)
 - Formal Verification of Smart Contracts for EEG Data Governance: A Case Study with Slither and Formal Specification
     - [source](https://doi.org/10.21203/rs.3.rs-9805828/v1)
 - Formal verification of time-bounded BPMN model with message broker using timed automata
     - [source](https://doi.org/10.1016/j.sasc.2026.200453)
-- Formalization of security
-- Formalizing Requirements into Dafny Specifications with LLMs
-    - [source](https://doi.org/10.1007/978-981-95-4213-0_6)
-- Formally Specifying the Intended Behavior of the Program: LLM-Driven Neuro-Symbolic Program Specification Synthesis
-    - [source](https://doi.org/10.48448/hpwj-s947)
-- Formally Verified Lock-Free Software Transactional Memory for Scientific Measurement
-- FormalSpecCpp: A Dataset of C++ Formal Specifications created using LLMs
-    - [source](https://doi.org/10.1109/msr66628.2025.00113)
 - ForMAt: Formal Verification of Scalable Multiply and Accumulate Units
     - [source](https://doi.org/10.1109/fdl68117.2025.11165398)
-- Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Throug
 - Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Through Formal Verification with TLA+
     - [source](https://doi.org/10.1109/conit65521.2025.11167034)
-- From C to verifiable Rust: Towards practical migration of code and specifications
-    - [source](https://doi.org/10.1016/j.scico.2026.103535)
 - From Natural Language to Formal Specifications: A Metamodel-Driven LLM Pipeline
     - [source](https://doi.org/10.1145/3837062.3838893)
-- From natural language to solver-ready power system optimization: An llm-assisted, validation-in-the-loop frame
-- Generating formal smart-contract specifications: comparing few-shot learning and fine-tuned LLMs
-    - [source](https://doi.org/10.1016/j.scico.2026.103464)
-- Graphical-Probabilistic Modeling of Generative Flows in LLM-Native Software Systems
-- Growing an Agent/Prover Interface: Evolutionary Tool Design for Cost-Efficient Theorem Proving in Rocq and Lean
-    - [source](https://doi.org/10.48550/arxiv.2609.39544)
 - Guiding LLM-based Loop Invariant Synthesis via Feedback on Local Reasoning Errors
-- HAMILTON’S PRINCIPLE AND THE INVARIANTS
-    - [source](https://doi.org/10.34660/inf.2023.38.36.433)
 - HarnessLLM: Rust Verification Harness Generation with Large Language Models
     - [source](https://doi.org/10.1145/3744916.3773122)
-- Heterogeneous Face Recognition Using Domain Invariant Units
-    - [source](https://doi.org/10.1109/icassp48485.2024.10447481)
-- Hilbert: Recursively building formal proofs with informal reasoning
-- HornStr: Invariant Synthesis for Regular Model Checking as Constrained Horn Clauses(Technical Report)
-    - [source](https://doi.org/10.48550/arxiv.2505.15959)
-- How does live streaming affect tourists' intention—a psychology theory perspective
 - How Stable Are LLM-Generated Proofs Under Program Refactoring? A Stress Test for Verifiable Code Generation
 - Inside AgentGuard: A Four-Stage Pipeline for Structured LLM Generation
 - Intelligent software validation frameworks for mission-critical enterprise applications using AI and knowledge
-- Interest Beyond Violation: On Points-of-Interest in Runtime Verification
-    - [source](https://doi.org/10.1007/978-3-031-75380-0_5)
 - Interoperability Challenges and Machine Learning Protocols for Scalable Distributed Automation Systems Across Intelligent Industrial Workcells
     - [source](https://doi.org/10.6084/m9.figshare.33985792)
-- Invariant Checking for SMT-Based Systems with Quantifiers
-    - [source](https://doi.org/10.1145/3686153)
 - Investigating the Role of Formal Verification in Software Development: From Automatic Specification Generation to Usability of Verification Languages
     - [source](https://doi.org/10.1145/3696630.3731465)
-- Investigation of Formal Verification of Autonomous Vehicle Control Systems Through Specification Translation from Cafeobj to Real-Time Maude
-    - [source](https://doi.org/10.1109/icmlc63072.2024.10935142)
-- Is truth futureproof?
 - Is truth futureproof? On the possible futures of mechanized proofs
 - KaPilot: LLM-Assisted Generation of Kani Specifications for Unsafe Rust Verification
     - [source](https://doi.org/10.1145/3832239)
 - Large Language Models (LLM) and Temporal Logic of Actions (TLA): How Effective are LLMs for Verification Systems
     - [source](https://doi.org/10.6084/m9.figshare.31988706)
-- Lean-auto: an interface between lean 4 and automated theorem provers
-- lean-smt: An SMT Tactic for Discharging Proof Goals in Lean
-- Lean4Agent: Formal Modeling and Verification for Agent Workflow and Trajectory
-    - [source](https://arxiv.org/pdf/2606.06523)
 - LeanDY: Type-Based and Trace-Based Symbolic Protocol Verification in Lean
-- LeanMachines: State-based Modeling with Refinement (a Lean4 Framework)
-- Learning Normative Behaviour Through Automated Theorem Proving
-    - [source](https://doi.org/10.1007/s13218-024-00844-x)
 - Let a Neural Network Be Your Invariant
     - [source](https://research.birmingham.ac.uk/en/publications/fe64a278-7ad4-495e-9751-663b05f077c6)
-- Leveraging Applications of Formal Methods, Verification and Validation. Specification and Verification
-    - [source](https://doi.org/10.1007/978-3-031-75380-0)
 - Leveraging Cryptographic Simulator Synthesis for Formally Verifying the FOO E-Voting Protocol
     - [source](https://inria.hal.science/hal-05453231)
 - Leveraging LLMs for Formal Software Requirements--Challenges and Prospects
 - Leveraging TLA+ Specifications to Improve the Reliability of the ZooKeeper Coordination Service
     - [source](https://doi.org/10.1007/978-981-99-8664-4_11)
-- Life, Death, and the Critical Transition: Finding Liveness Bugs in Systems Code (MaceMC)
-    - [source](https://www.usenix.org/conference/nsdi-07/life-death-and-critical-transition-finding-liveness-bugs-systems-code)
-- Live: Learning Video LLM with Streaming Speech Transcription at Scale
 - Liveresearchbench: A live benchmark for user-centric deep research in the wild
 - LLM-aided automatic modeling for security protocol verification
-- LLM-as-Specification-Judge: Multi-Model Consensus for Trustworthy Cryptographic Verification
-    - [source](https://doi.org/10.5281/zenodo.17765294)
 - Llm-based unknown function automated modeling in sensor-driven systems for multi-language software security ve
 - LLM-Driven Automated Generation of Formal Specifications for C Programs
-- LLM For Loop Invariant Generation and Fixing: How Far Are We?
-- LLM-Guided Formal Verification Coupled with Mutation Testing
-    - [source](https://doi.org/10.23919/date58400.2024.10546729)
-- LLM-guided Predicate Discovery and Data Augmentation for Learning Likely Program Invariants
-    - [source](https://doi.org/10.1145/3672608.3707984)
-- LLM-Powered Structurer: Normalizing Natural Language to Information Delivery Specification for Industrial Data
 - Loka protocol: A decentralized framework for trustworthy and ethical ai agent ecosystems
-- Machine-Checked Proofs and Automated Verification for Post-Quantum Distributed Systems
 - Machine learning-driven framework for realtime air quality assessment and predictive environmental health risk
-- Machine Learning for Automated Theorem Proving using Reinforcement Learning
-    - [source](https://doi.org/10.5281/zenodo.22137658)
-- Machine Verification of Correctness for a Concurrent Union-Find Object
-- Mahi-mahi: Low-latency asynchronous bft dag-based consensus
 - Map the blockchain world: A trustless and scalable blockchain interoperability protocol for cross-chain applic
-- MASA: A Modular Framework for LLM-Driven Multi-Agent Systems for Autoformalization
-    - [source](https://doi.org/10.48448/yt8h-h706)
-- MASA: LLM-Driven Multi-Agent Systems for Autoformalization
-    - [source](https://doi.org/10.18653/v1/2025.emnlp-demos.44)
-- Mediation, State, and Verification in Enterprise Multi-Agent AI Systems: A Formal Reference Architecture and Evaluation Protocol
-    - [source](https://doi.org/10.2139/ssrn.7562798)
-- Meet MASKS: integrating distributed knowledge and verification for multi-agent systems
-    - [source](https://doi.org/10.1007/s00500-025-10577-0)
-- MerLean-Prover: A Recursive Looping Harness for Lean 4 Theorem Proving
-    - [source](https://doi.org/10.48550/arxiv.2605.26959)
-- Meta-Learning for Automated Theorem Proving
-    - [source](https://doi.org/10.5281/zenodo.22153603)
 - Metastable failures in distributed systems
     - [source](https://doi.org/10.1145/3458336.3465286)
-- Model verification of real-time and distributed stream processing architecture
-    - [source](https://doi.org/10.1007/s00607-024-01384-w)
-- Modeling and Verification of Multi-Agent Cyber-Physical Systems in Verse Library
-    - [source](https://doi.org/10.36227/techrxiv.172470839.93311927/v2)
-- Modelling and Verification of Multi-agent Hybrid Systems
-    - [source](https://doi.org/10.31237/osf.io/r2bxw)
 - Moving Beyond Specification Validation to Specification Refinement with Mutation Verification
-- Mucosal-associated invariant T cells recognize a tumor-derived metabolite in the DNA synthesis pathway
-    - [source](https://doi.org/10.3389/fimmu.2026.1797918)
 - Multi-Agent Systems and Control Theory
     - [source](https://doi.org/10.7551/mitpress/15136.003.0007)
-- Multiparty session types for distributed and failure-prone systems
-    - [source](https://doi.org/10.5525/gla.thesis.85779)
 - Neuro-Symbolic Programming with Reinforcement Learning for Automated Theorem Proving
     - [source](https://doi.org/10.5281/zenodo.22188890)
 - Numina-Lean-Agent: An Open and General Agentic Reasoning System for Formal Mathematics
     - [source](https://doi.org/10.48550/arxiv.2601.14027)
-- Observability of Linear Time-Invariant Systems with Relative Measurements: A Geometric Approach
-    - [source](https://doi.org/10.48550/arxiv.2410.20637)
-- Olympiad-level formal mathematical reasoning with reinforcement learning
 - On the Formal Verification of Smart Contracts and Blockchain: Challenges and Future Directions
     - [source](https://doi.org/10.1109/edis63605.2024.10783327)
-- Online enumeration of minimal inconsistent subsets of temporal requirements
-    - [source](https://doi.org/10.1145/3092703.3098239)
-- Open-Source LLM-Driven Formal Verification: A Multi-Agent Pipeline for RTL Repair
-    - [source](https://doi.org/10.48550/arxiv.2607.28877)
-- OpenProver: Agentic and Interactive Theorem Proving with Lean 4
-    - [source](https://doi.org/10.1007/978-3-032-38214-6_21)
-- Operational intelligence at enterprise scale: Federated control assurance, multi-agent coordination, and value
 - OProver: A Unified Framework for Agentic Formal Theorem Proving
     - [source](https://doi.org/10.48550/arxiv.2605.17283)
-- Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean
-    - [source](https://doi.org/10.48550/arxiv.2606.04883)
-- OracleSFT — Verifier-Filtered Self-Training for Verus with Five Training Signals: Replication Package
-    - [source](https://doi.org/10.5281/zenodo.21523431)
-- Origin and Limits of Invariant Warming Patterns in Climate Models
-    - [source](https://doi.org/10.1175/jcli-d-24-0683.1)
-- Parameterized Verification of Timed Networks with Clock Invariants
-    - [source](https://doi.org/10.4230/lipics.fsttcs.2025.8)
 - PhysProver: Advancing Automatic Theorem Proving for Physics
     - [source](https://doi.org/10.48550/arxiv.2601.15737)
-- Polynomial Invariants for Probabilistic Transition Systems with Unbounded Support
-    - [source](https://doi.org/10.48550/arxiv.2609.02446)
-- Practical Verification of Distributed Systems: Streamlining Safety Proofs Using Invariant Taxonomies, and Verifying Latency Properties Using Symbolic Latency
-    - [source](https://doi.org/10.7302/25607)
 - Pramana: A Protocol-Layer Treatment of Claim Verification in Autonomous Agent Networks
 - Pretend synchrony: synchronous verification of asynchronous distributed programs
     - [source](https://doi.org/10.1145/3290372)
 - Privacy-preserving techniques in biometric systems: Approaches and challenges
-- Probabilistic Formal Verification of Distributed Consensus Algorithms
-    - [source](https://doi.org/10.5281/zenodo.22635649)
-- Probabilistic Safety Verification of Distributed Systems: A Statistical Approach for Monitoring
-    - [source](https://doi.org/10.1007/978-3-031-95497-9_7)
 - Probably Correct: Rethinking Formal Verification for LLM-Driven Systems
     - [source](https://doi.org/10.1109/cscloud66326.2025.00020)
 - Programming LLM Reasoning: A Meta-Template for Constraint Specifications
     - [source](https://doi.org/10.5281/zenodo.18653641)
-- ProofLoom: Proof-Obligation-Driven Theory Construction for Autoformalizing Research-Level Stochastic Optimizat
-- Protecting context and prompts: Deterministic security for non-deterministic AI
-- PROV-AGENT: Unified provenance for tracking AI agent interactions in agentic workflows
-- Provable AI ethics and explainability in medical and educational AI agents: trustworthy ethical firewall
 - Prover agent: An agent-based framework for formal mathematical proofs
 - Quantum-Enhanced Distributed Systems: A Practical Framework for Autonomous Agent Networks
     - [source](https://doi.org/10.62891/e2b8dd76)
@@ -484,162 +507,48 @@ Claude agents read each lead's abstract and judged whether it serves the goal. N
     - [source](https://doi.org/10.18653/v1/2023.findings-emnlp.614)
 - Real-Time Protocol Engineering with the B Language
     - [source](https://doi.org/10.2172/2342038)
-- Recovery Algorithm for Correlated Errors in Permutation-Invariant Quantum Codes
-    - [source](https://doi.org/10.48550/arxiv.2607.02346)
-- RefinedRust: A Type System for High-Assurance Verification of Rust Programs
-    - [source](https://doi.org/10.1145/3656422)
 - Regular Model Checking Upside-Down: An Invariant-Based Approach
     - [source](https://doi.org/10.46298/lmcs-21(1:4)2025)
 - Reinforcement Learning for Automated Theorem Proving
     - [source](https://doi.org/10.5281/zenodo.22441642)
-- Reinforcement Learning for Automated Theorem Proving with Symbolic State Representation
-    - [source](https://doi.org/10.5281/zenodo.22192891)
 - Reusable Specification Patterns for Verification of Resilience in Autonomous Hybrid Systems
     - [source](https://doi.org/10.1007/978-3-031-71177-0_14)
-- RvLLM: LLM Runtime Verification with Domain Knowledge
-    - [source](https://doi.org/10.52202/085713-2693)
 - Safe: Enhancing mathematical reasoning in large language models via retrospective step-aware formal verificati
-- SAT-Based Quantified Symmetric Minimization of the Reachable States of Distributed Protocols: An Update
-    - [source](https://doi.org/10.1007/978-3-031-75380-0_21)
-- Scalable Verification and Validation of Concurrent and Distributed Systems (ScaVeri) (Track Summary)
-    - [source](https://doi.org/10.1007/978-3-031-75380-0_15)
 - SCION and cross-border payments: Enhancing security and compliance in distributed ledger networks
-- Secure and efficient cloudlet networks: blockchain integration with agent-based proof of trust mechanism
 - Secure Synthesis of Distributed Cryptographic Applications (Technical Report)
     - [source](https://doi.org/10.48550/arxiv.2401.04131)
-- Securing the model context protocol (mcp): Risks, controls, and governance
-- Security analysis and formal verification on blockchain and its applications
 - Security of the Lightning Network: Model Checking a Stepwise Refinement with TLA+
     - [source](https://doi.org/10.1007/978-3-032-10794-7_16)
 - Seed-Prover 1.5: Mastering Undergraduate-Level Theorem Proving via Learning from Experience
     - [source](https://doi.org/10.48550/arxiv.2512.17260)
-- Semi-Automated Modular Formal Verification of Critical Software: Liveness and Completeness Thresholds
-    - [source](https://doi.org/10.48550/arxiv.2403.00934)
-- Semi-Formal Verification
-    - [source](https://doi.org/10.1201/9781003598145-17)
 - Septemberember/SG4PM: Specification Generation for Program Maintenance via LLMs and Testing-Based Formal Verification
     - [source](https://doi.org/10.5281/zenodo.19343002)
 - Sieve and Acto (testing Kubernetes controllers for liveness and safety bugs): the search result says 46 bugs for Sieve (OSDI 2022
     - [source](https://www.usenix.net/conference/osdi22/presentation/sun)
-- Six-Layer Formal Verification of a Safety-Critical AI Governance Kernel
-- Smart Contract Invariants Protect Against Cybercriminals
-    - [source](https://doi.org/10.48550/arxiv.2608.13191)
-- SoK: Agentic Skills--Beyond Tool Use in LLM Agents
-- Solving Zebra Puzzles Using Constraint-Guided Multi-Agent Systems
-    - [source](https://doi.org/10.48550/arxiv.2407.03956)
-- SpecFSM: Extracting and Repairing Finite State Machines from Protocol Specification Documents
-    - [source](https://doi.org/10.1145/3832783.3834331)
-- Specification
-    - [source](https://doi.org/10.1002/9781394438532.ch42)
-- Specification and Verification of a Formal Model for a Real-Time System Using TLA+
-    - [source](https://doi.org/10.32515/2664-262x.2025.11(42).2.38-44)
-- Specification-Driven Test Generation for Fault Localisation in Dafny
-- Specification-Guided Repair of Arithmetic Errors in Dafny Programs Using LLMs
-    - [source](https://doi.org/10.1007/978-3-032-10444-1_16)
-- Specification of Autonomous Behavior
-    - [source](https://doi.org/10.1007/978-3-031-88546-4_4)
 - SpecifyThis Bridging Gaps Between Program Specification Paradigms: Track Introduction
     - [source](https://doi.org/10.1007/978-3-031-75380-0_1)
 - SpecIntelli: Leveraging LLMs for Formal Specification and Verification from Natural Language Requirements
     - [source](https://doi.org/10.13140/rg.2.2.19630.68166)
-- STAFF: Towards Translating Formal Verification Benchmarks between Formal Specification Languages
-    - [source](https://doi.org/10.1145/3843777.3844531)
-- Statically verified refinements for multiparty protocols
-    - [source](https://doi.org/10.1145/3428216)
-- Supporting software formal verification with large language models: An experimental study
-- Surveying the Rust Verification Landscape
-    - [source](https://doi.org/10.48550/arxiv.2410.01981)
 - Swe-bench goes live!
-- Symbolic AI for Automated Theorem Proving with Adaptive Rule Synthesis
-    - [source](https://doi.org/10.5281/zenodo.22274682)
-- SysMoBench: Evaluating AI on Formally Specifying Complex Real-World Systems
-- Systems Engineering With Architecture Modeling, Formal Verification, and Human Interactions for Learning‐Enabled Autonomous Agent
-    - [source](https://doi.org/10.1002/sys.21816)
-- TaxDC: A Taxonomy of Non-Deterministic Concurrency Bugs in Datacenter Distributed Systems
-    - [source](https://doi.org/10.1145/2954679.2872374)
-- Teaching Code LLMs to Reason with Intermediate Formal Specifications
-    - [source](https://doi.org/10.48550/arxiv.2607.04232)
-- Technical Report: Exploring Automatic Model-Checking of the Ethereum specification
-    - [source](https://doi.org/10.48550/arxiv.2501.07958)
-- Temporal Logic Verification of Distributed Consensus Algorithms
-    - [source](https://doi.org/10.5281/zenodo.22221229)
 - $$\textsf{HornStr}$$: Invariant Synthesis for Regular Model Checking as Constrained Horn Clauses
     - [source](https://doi.org/10.1007/978-3-031-98668-0_10)
-- The Accountability Horizon: An Impossibility Theorem for Governing Human-Agent Collectives
-    - [source](https://doi.org/10.48550/arxiv.2604.07778)
-- The Challenges and Triumphs of CSP Based Formal Verification
-    - [source](https://doi.org/10.29007/bbq9)
 - The Missing Layer: Specification Infrastructure for AI Oversight
     - [source](https://doi.org/10.48550/arxiv.2607.24866)
 - THE MODEL CONTEXT PROTOCOL IN LLM AGENT ARCHITECTURES
-- The reemergence of the New World screwworm and its potential distribution in North America
-- The Role of Communication Delays in the Optimal Control of Spatially Invariant Systems
-    - [source](https://doi.org/10.1109/tac.2025.3601758)
-- The semantics of TLA on the PVS theorem prover
-    - [source](https://doi.org/10.82444/warw.33641848)
-- Theorem proving in artificial neural networks: new frontiers in mathematical AI
-    - [source](https://doi.org/10.1007/s13194-024-00569-6)
-- Three Patterns for 99.9% Reliability in Distributed Payments: Velocity-Aware Idempotency, Cross-Protocol Failover, and Shadow-Compare Migration
-    - [source](https://doi.org/10.62643/ijerst.2026.v22.n3.3800)
-- Title: Self-Organizing Constraint Propagation for Automated Theorem Proving
-    - [source](https://doi.org/10.5281/zenodo.22602322)
-- TLA+ Bench
-    - [source](https://doi.org/10.7910/dvn/ryxbrk)
-- TLCrafter: Peeling the Layers of Natural Language to Reveal Temporal Logic Specifications
-    - [source](https://doi.org/10.1145/3832783.3834598)
 - Toward Formal Verification of a Lock-Free Distributed Double Buffer Cache
     - [source](https://doi.org/10.57709/138)
-- Towards Formal Modeling and Verification of the Stellar Consensus Protocol in Z3
-    - [source](https://doi.org/10.1109/qrs-c65679.2025.00090)
-- Towards Formal Specification of Agent-based Transport Models
-    - [source](https://doi.org/10.1016/j.procs.2025.03.067)
-- Towards formal verification of llm-generated code from natural language prompts
-- Towards Language Model Guided Proof Automation
-- Towards Specification-Driven LLM-Based Generation of Embedded Automotive Software
-    - [source](https://doi.org/10.1007/978-3-031-75434-0_9)
 - Towards the Formal Specification of Iot Systems
     - [source](https://doi.org/10.2139/ssrn.4861727)
-- Towards the LLM-based generation of formal specifications from natural-language contracts: Early experiments w
-- Trainverify: Equivalence-based verification for distributed LLM training
-- Transforming Formal Verification - Insights from MALPAS
-    - [source](https://doi.org/10.65391/r3338)
 - Transforming Natural Language Requirements to Formalism Using LLMs
 - Transition Invariants Revisited: Termination Witnesses and Their Validation
     - [source](https://doi.org/10.1007/978-3-032-32537-2_2)
-- TrojanSpec-Bench: An Adversarial Benchmark for LLM-Based Formal Specification Elicitation
-    - [source](https://doi.org/10.5281/zenodo.21888213)
 - Tunable Automation in Automated Program Verification
     - [source](https://doi.org/10.34727/2026/isbn.978-3-85448-093-8_38)
-- Type-Checked Compliance: Deterministic Guardrails for Agentic Financial Systems Using Lean 4 Theorem Proving
-    - [source](https://doi.org/10.48550/arxiv.2604.01483)
-- Typestates Specification and Verification in Frama-C
-    - [source](https://doi.org/10.1109/formalise66629.2025.00021)
-- Unleashing the power of LLM to infer state machine from the protocol implementation
 - Utilizing LLM Chatbots for Formal Descriptions of Cryptographic Protocols
     - [source](https://doi.org/10.1007/978-981-95-0172-4_5)
 - Validating Generative AI Outputs Through Co-Generation of Code and Specifications
 - Verifiable Lifecycle Assurance for Agentic Software: From Selection and Deployment through Continuous Audit to
-- Verification and attack synthesis for network protocols
-    - [source](https://doi.org/10.17760/d20668635)
-- Verification and synthesis of distributed systems with weak synchronisation
-    - [source](https://doi.org/10.70675/1997f072zd5b5z4103zb466z8701a406729c)
-- Verified LLM-Driven Synthesis for Concept Design
 - Verifier-supervised fine-tuning for Rust/Verus: vericoding dataset (restricted)
     - [source](https://doi.org/10.5281/zenodo.21523433)
-- Verifying an HTTP Key-Value Server with Interaction Trees and VST
-    - [source](https://doi.org/10.4230/lipics.itp.2021.32)
-- Verifying Consensus Protocols from LLM-assisted TLA: A Case Study of Byzantine Reliable Broadcast
-- Verifying Distributed Protocols (Mark Yuen capstone, Yale-NUS, TLA+ to Ivy translation of Suzuki-Kasami and NOPaxos)
-    - [source](https://ilyasergey.net/assets/pdf/papers/Mark-Yuen-Capstone.pdf)
-- Verifying Graceful Degradation in a Distributed Malware-Detection System with SPIN
-    - [source](https://doi.org/10.4204/eptcs.452.11)
 - Verifying Rust code with Verus
     - [source](https://doi.org/10.34727/2026/isbn.978-3-85448-093-8_1)
-- VerusSeek: Retrieval-Augmented LLM-Based Proof Synthesis for Rust Programs
-    - [source](https://doi.org/10.1145/3832783.3834603)
-- Why Agentic Theorem Prover Works: A Statistical Provability Theory of Mathematical Reasoning Models
-    - [source](https://doi.org/10.48550/arxiv.2602.10538)
-- Why Does the Cloud Stop Computing? Lessons from Hundreds of Service Outages
-    - [source](https://www.ece.iastate.edu/%7Emai/docs/papers/2016_SoCC_COS.pdf)
-- WIP: An Engaging Undergraduate Intro to Model Checking in Software Engineering Using TLA+
-    - [source](https://doi.org/10.48550/arxiv.2407.21152)
