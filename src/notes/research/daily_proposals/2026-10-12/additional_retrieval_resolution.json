@@ -1,0 +1,17 @@
+{
+  "earlier_failures_record": "additional_retrieval.json",
+  "successful": [
+    {
+      "key": "gojournal",
+      "method": "curl",
+      "url": "https://pdos.csail.mit.edu/papers/gojournal:osdi21.pdf"
+    },
+    {
+      "key": "squirrelfs",
+      "method": "curl",
+      "url": "https://www.usenix.org/system/files/osdi24-leblanc.pdf"
+    }
+  ],
+  "retrieval_date_utc": "2026-10-12",
+  "hash_receipt": "collection_record.json"
+}

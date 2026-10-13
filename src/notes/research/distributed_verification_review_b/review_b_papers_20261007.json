@@ -1,0 +1,590 @@
+{
+  "unique_sources": 82,
+  "source_entries": 90,
+  "records": [
+    {
+      "title": "IronFleet: Proving Practical Distributed Systems Correct",
+      "slices": [
+        "systems_tools.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Verdi: A Framework for Implementing and Formally Verifying Distributed Systems",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Planning for Change in a Formal Verification of the Raft Consensus Protocol",
+      "slices": [
+        "systems_tools.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Anvil: Verifying Liveness of Cluster Management Controllers",
+      "slices": [
+        "systems_tools.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Welder: Compositional Liveness Verification of Cluster Control Planes",
+      "slices": [
+        "systems_tools.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Grove: a Separation-Logic Library for Verifying Distributed Systems",
+      "slices": [
+        "systems_tools.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Aneris: A Mechanised Logic for Modular Reasoning about Distributed Systems",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Trillium: Higher-Order Concurrent and Distributed Separation Logic for Intensional Refinement",
+      "slices": [
+        "systems_tools.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Adore: Atomic Distributed Objects with Certified Reconfiguration",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Igloo: Soundly Linking Compositional Refinement and Separation Logic for Distributed System Verification",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Chapar: Certified Causally Consistent Distributed Key-Value Stores",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Modular Verification of Op-Based CRDTs in Separation Logic",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Verifying the DaisyNFS concurrent and crash-safe file system with sequential reasoning",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Sharding the State Machine: Automated Modular Reasoning for Complex Concurrent Systems",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Shipwright: Proving liveness of distributed systems with Byzantine participants",
+      "slices": [
+        "systems_tools.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Compiling Distributed System Models with PGo",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Multi-Grained Specifications for Distributed System Model Checking and Verification",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Smart Casual Verification of the Confidential Consortium Framework",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "How Amazon Web Services Uses Formal Methods",
+      "slices": [
+        "systems_tools.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "SysMoBench: Evaluating AI on Formally Modeling Complex Real-World Systems",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Specula: Scaling formal specifications for autonomous model checking of system code",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "VeruSAGE: A Study of Agent-Based Verification for Rust Systems",
+      "slices": [
+        "agents_evaluation.md",
+        "liveness_cases.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Vero: Can AI Agents Build Formally Verified Software Repositories?",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Verus-SpecGym: An Agentic Environment for Evaluating Specification Autoformalization",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "VERINA: Benchmarking Verifiable Code Generation",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "VerifyThisBench: Generating Code, Specifications, and Proofs All At Once",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "AutoVerus: Automated Proof Generation for Rust Code",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "AlphaVerus: Bootstrapping Formally Verified Code Generation through Self-Improving Translation and Treefinement",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "KVerus: Scalable and Resilient Formal Verification Proof Generation for Rust Code",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "P3: Joint Program-and-Proof Planning for Verified Code Generation",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Intent-aligned Formal Specification Synthesis via Traceable Refinement",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "VeriAct: Beyond Verifiability – Agentic Synthesis of Correct and Complete Formal Specifications",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Proofs Promptly: Proof-Oriented Programming with AI Agents (Experience Report)",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Can LLMs Write Correct TLA+ Specifications? Evaluating Natural-Language-to-TLA+ Generation",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large Language Models",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Property Specification Patterns for Finite-State Verification",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Verifiable Natural Language to Linear Temporal Logic Translation: A Benchmark Dataset and Evaluation Suite",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "ClarifySTL: An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification",
+      "slices": [
+        "agents_evaluation.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "DistAI: Data-Driven Automated Invariant Learning for Distributed Protocols",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "DuoAI: Fast, Automated Inference of Inductive Invariants for Verifying Distributed Protocols",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Finding Invariants of Distributed Systems: It’s a Small (Enough) World After All",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "On Symmetry and Quantification: A New Approach to Verify Distributed Protocols",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Towards an Automatic Proof of Lamport’s Paxos",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Plain and Simple Inductive Invariant Inference for Distributed Protocols in TLA+",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Inductive Invariants That Spark Joy: Using Invariant Taxonomies to Streamline Distributed Protocol Proofs",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Basilisk: Using Provenance Invariants to Automate Proofs of Undecidable Protocols",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Synthesizing Inductive Invariants for Distributed Protocols via IC3 and Large Language Models",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Sift: Using Refinement-guided Automation to Verify Complex Distributed Systems",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Interpretable Safety Verification of Distributed Protocols by Inductive Proof Decomposition",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Paxos Made EPR: Decidable Reasoning about Distributed Protocols",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Veil: A Framework for Automated and Interactive Verification of Transition Systems",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "DissProve: Automated Verification of Asynchronous Distributed Protocols with Affine Communication",
+      "slices": [
+        "invariant_discovery.md"
+      ],
+      "evidence": "primary paper inspected"
+    },
+    {
+      "title": "Programming and Proving with Distributed Protocols",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "Verifying Strong Eventual Consistency in Distributed Systems",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "Fairneris: Verifying Liveness Properties of Distributed Systems via Trace Refinement in Higher-Order Concurrent Separation Logic",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "LVR: Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "LiDO: Linearizable Byzantine Distributed Objects with Refinement-Based Liveness Proofs",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "LiDO-DAG: A Framework for Verifying Safety and Liveness of DAG-Based Consensus Protocols",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "Mechanized Safety and Liveness Proofs for the Mysticeti Consensus Protocol under the LiDO-DAG Framework",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "Implicit Rankings for Verifying Liveness Properties in First-Order Logic",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "Temporal Prophecy for Proving Temporal Properties of Infinite-State Systems",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "Reducing Liveness to Safety in First-Order Logic",
+      "slices": [
+        "liveness_cases.md"
+      ],
+      "evidence": "primary full text inspected"
+    },
+    {
+      "title": "High-Level Specifications: Lessons from Industry",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "Specifying Systems",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "Defining Liveness",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "Impossibility of Distributed Consensus with One Faulty Process",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "The Temporal Logic of Actions",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "The Existence of Refinement Mappings",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "Auxiliary Variables in TLA+",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "Refinement in State-Based Formalisms",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "Hyperproperties",
+      "slices": [
+        "foundations.md"
+      ],
+      "evidence": "primary text; full short papers and selected long-paper/book sections"
+    },
+    {
+      "title": "TLA-Verus: Generating and Solving Temporal Proof Obligations with LLM Agents",
+      "slices": [
+        "tla_verus_latest.md"
+      ],
+      "evidence": "primary paper and official forum inspected; translation fidelity and implementation refinement not proved"
+    },
+    {
+      "title": "Message Chains for Distributed System Verification",
+      "slices": [
+        "additional_tools.md"
+      ],
+      "evidence": "primary text inspected; protocol proof scope retained in linked note"
+    },
+    {
+      "title": "Velisarios: Byzantine Fault-Tolerant Protocols Powered by Coq",
+      "slices": [
+        "additional_tools.md"
+      ],
+      "evidence": "primary text inspected; protocol proof scope retained in linked note"
+    },
+    {
+      "title": "Consensus in the Presence of Partial Synchrony",
+      "slices": [
+        "consensus_assumptions.md"
+      ],
+      "evidence": "primary text inspected; protocol proof scope retained in linked note"
+    },
+    {
+      "title": "Practical Byzantine Fault Tolerance",
+      "slices": [
+        "consensus_assumptions.md"
+      ],
+      "evidence": "primary text inspected; protocol proof scope retained in linked note"
+    },
+    {
+      "title": "HotStuff: BFT Consensus in the Lens of Blockchain",
+      "slices": [
+        "consensus_assumptions.md"
+      ],
+      "evidence": "primary text inspected; protocol proof scope retained in linked note"
+    },
+    {
+      "title": "The latest gossip on BFT consensus",
+      "slices": [
+        "consensus_assumptions.md"
+      ],
+      "evidence": "primary text inspected; protocol proof scope retained in linked note"
+    },
+    {
+      "title": "TLA-Prover: Verifiable TLA+ Specification Synthesis via Preference-Optimized Low-Rank Adaptation",
+      "slices": [
+        "review_b_tla_prover_20261007.md"
+      ],
+      "evidence": "full primary paper and public artifact inspected; direct grading probe run; headline trained-model result not reproduced",
+      "source_url": "https://arxiv.org/abs/2606.06133v5"
+    },
+    {
+      "title": "AutoMan: Facilitating Verified Distributed Systems Development Through Automatic Code Generation and Manual Optimizations",
+      "slices": [
+        "review_b_automan_20261007.md"
+      ],
+      "evidence": "full primary paper and public artifact inspected; generated output refinement, no new progress theorem audited",
+      "source_url": "https://doi.org/10.1145/3731569.3764822"
+    }
+  ]
+}

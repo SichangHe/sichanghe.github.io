@@ -133,6 +133,11 @@
     - current VL evidence establishes local proof closure
     - it does not establish repository-wide proof completion or broad invariant
       invention [`VL-proof`, `VL-boundary`]
+    - StarVerus and current VL evidence do not by themselves prove that
+      specification generation is VL's largest empirical bottleneck
+    - making it the working research priority combines the human's stated
+      priority with the shared unresolved intent gap; it remains a hypothesis
+      for the reviewed evaluation to test
   - therefore
     - use Verus as the necessary code-versus-contract consistency oracle
     - evaluate specification meaning and strength independently
@@ -144,6 +149,12 @@
   - first add dependency ordering and information from both called functions
     and callers
     - repository-scale contracts need both
+    - define the initial treatment as direct-callee contracts and direct-caller
+      call sites; let verified summaries carry transitive information
+    - predeclare whether mutually recursive components are synthesized jointly
+      or excluded from the initial treatment, and report either choice
+    - tag external or not-yet-verified dependency contracts by provenance and
+      do not present them as verifier-established facts
   - then separate contract failure from proof failure
     - compare the contract with an independently stated requirement first
     - regenerate the contract when that semantic check fails
@@ -152,16 +163,53 @@
     - after the unchanged implementation and contract verify, test contract
       strength with named faulty implementations under a fixed evaluation
       harness
+      - require each faulty implementation to compile, preserve the interface,
+        and have an independently named requirement violation
+      - count rejection only when the frozen contract and harness expose that
+        named violation
+      - report timeouts, type errors, unrelated proof breakage, and tool errors
+        separately rather than as semantic rejection
     - regenerate the contract when the post-verification strength check fails
   - allow one clean proof rewrite after a fixed, predeclared repair limit
   - center the stronger research contribution on trustworthy evaluation
     - use previously unseen repositories
     - publish the faulty-code changes used to test contract strength
-    - have reviewers judge contract meaning without knowing which system wrote
-      it
+    - have the benchmark author or domain expert state the intended behavior
+      and prevalidate that each named faulty implementation is a real,
+      non-equivalent fault before any agent run
+    - have two other domain reviewers judge required cases, edge conditions,
+      underconstraint, and overconstraint without knowing which system wrote
+      the contract
+    - use a prewritten behavior checklist
+      - too weak if a prevalidated violation is still admitted
+      - too strong if a required valid case is excluded
+    - keep the benchmark-author role separate from both reviewers
+    - count reviewer disagreement as an unresolved non-success in the fixed
+      denominator and report it separately rather than silently excluding it
     - equalize model budgets and repeat runs
+      - impose call, processed-token, and wall-time ceilings simultaneously
+      - stop a run when it reaches the first ceiling
+      - freeze model/version, prompts, toolchain, decoding settings, and input
+        context apart from the intended treatment
     - reject generated annotations that tell Verus to trust unproved code
     - save a complete verifier result ledger for every project target
+  - compare improvements to the existing command-line agent under this
+    protocol, not to a newly built third system
+    - count a target as successful only when both reviewers agree on semantic
+      adequacy, the original implementation verifies, and every prevalidated
+      non-equivalent fault is rejected
+    - define the composite rate as successful fixed targets divided by all
+      attempted fixed targets
+    - adopt a change only on a predeclared improvement in this composite rate
+      under equal budgets, without degrading proof closure
+    - treat reviewer disagreement, a tie, or an underpowered result as
+      unresolved rather than automatic evidence for adoption
+    - preserve the evidence boundary that even blinded expert review is a
+      bounded judgment against the prewritten requirement, not a proof of
+      exhaustive human intent
+    - leave repository count, run count, and statistical decision thresholds to
+      the separately reviewed evaluation protocol; StarVerus does not justify
+      values for them
   - primary evaluation question
     - does the generated contract capture an independently stated requirement
       strongly enough to reject meaningful faulty implementations

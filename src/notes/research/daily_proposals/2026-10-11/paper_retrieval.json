@@ -1,0 +1,31 @@
+[
+  {
+    "name": "everparse3d",
+    "url": "https://www.normalesup.org/~ramanana/research/everparse/pldi2022/paper.pdf",
+    "status": 200,
+    "bytes": 941518,
+    "sha256": "f0562bb6adbf6e3a95a77ea99b2f1db3c8aea0f33a088faf57c65543a15ea025",
+    "extraction_exit": 0
+  },
+  {
+    "name": "pulseparse",
+    "url": "https://arxiv.org/pdf/2505.17335v2",
+    "status": 200,
+    "bytes": 824030,
+    "sha256": "baf23d71a0fc31e17dabac91381ffb958e9e00e0b67008c1b9cd9a242362d421",
+    "extraction_exit": 0
+  },
+  {
+    "name": "leapfrog",
+    "url": "https://arxiv.org/pdf/2205.08762v1",
+    "status": 200,
+    "bytes": 1887510,
+    "sha256": "af141aa99cb6704e010bc240d7d695f3e6186c0a8d1e0987e63978b69d2bc6db",
+    "extraction_exit": 0
+  },
+  {
+    "name": "narcissus",
+    "url": "https://adam.chlipala.net/papers/NarcissusICFP19/NarcissusICFP19.pdf",
+    "error": "HTTP Error 403: Forbidden"
+  }
+]

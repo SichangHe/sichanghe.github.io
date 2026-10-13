@@ -1,0 +1,37 @@
+[
+  {
+    "title": "iCoq",
+    "url": "https://users.ece.utexas.edu/~gligoric/papers/CelikETAL17iCoq.pdf",
+    "pdf": "/hdd1/sichanghe/paper_collection/iCoq- Regression Proof Selection for Large-Scale Verification Projects, Ahmet Celik, Karl Palmskog, Milos Gligoric, ASE, 2017/daily-20261007-primary.pdf",
+    "text": "/hdd1/sichanghe/paper_collection/iCoq- Regression Proof Selection for Large-Scale Verification Projects, Ahmet Celik, Karl Palmskog, Milos Gligoric, ASE, 2017/daily-20261007-primary.txt",
+    "sha256": "f232fb5586b6eb8ff6ac9da884a372cae2f1bda8d8b19c17b441a4438cd3554a"
+  },
+  {
+    "title": "piCoq",
+    "url": "https://users.ece.utexas.edu/~gligoric/papers/PalmskogETAL18piCoq.pdf",
+    "pdf": "/hdd1/sichanghe/paper_collection/piCoq- Parallel Regression Proving for Large-Scale Verification Projects, Karl Palmskog, Ahmet Celik, Milos Gligoric, ISSTA, 2018/daily-20261007-primary.pdf",
+    "text": "/hdd1/sichanghe/paper_collection/piCoq- Parallel Regression Proving for Large-Scale Verification Projects, Karl Palmskog, Ahmet Celik, Milos Gligoric, ISSTA, 2018/daily-20261007-primary.txt",
+    "sha256": "0aa57bb652da848416f1cbf5a5001da51499a483eb2cbfc8ae858efd2eeb96f7"
+  },
+  {
+    "title": "IronSpec",
+    "url": "https://www.usenix.org/system/files/osdi24-goldweber.pdf",
+    "pdf": "/hdd1/sichanghe/paper_collection/IronSpec- Increasing the Reliability of Formal Specifications, Eli Goldweber, Weixin Yu, Seyed Armin Vakil Ghahani, Manos Kapritsos, OSDI, 2024/daily-20261007-primary.pdf",
+    "text": "/hdd1/sichanghe/paper_collection/IronSpec- Increasing the Reliability of Formal Specifications, Eli Goldweber, Weixin Yu, Seyed Armin Vakil Ghahani, Manos Kapritsos, OSDI, 2024/daily-20261007-primary.txt",
+    "sha256": "66c43ea51e97cb37adba010ff692e9e492585a846eecff8159de80119aec5b53"
+  },
+  {
+    "title": "Spec-Harness",
+    "url": "https://arxiv.org/pdf/2604.00280v2",
+    "pdf": "/hdd1/sichanghe/paper_collection/Spec-Harness- Measuring and Improving Behavioral Adequacy of LLM-Synthesized Formal Specifications, Md Rakib Hossain Misu, Iris Ma, Cristina V. Lopes, arXiv, 2026/daily-20261007-primary.pdf",
+    "text": "/hdd1/sichanghe/paper_collection/Spec-Harness- Measuring and Improving Behavioral Adequacy of LLM-Synthesized Formal Specifications, Md Rakib Hossain Misu, Iris Ma, Cristina V. Lopes, arXiv, 2026/daily-20261007-primary.txt",
+    "sha256": "4d95fe9a27932ebe0a884aa2a740df3ec0dca06aff9f85f5077dd52300c9ddbf"
+  },
+  {
+    "title": "AutoVerus",
+    "url": "https://arxiv.org/pdf/2409.13082v3",
+    "pdf": "/hdd1/sichanghe/paper_collection/AutoVerus- Automated Proof Generation for Rust Code, Chenyuan Yang, Xuheng Li, Md Rakib Hossain Misu, Jianan Yao, Weidong Cui, Yeyun Gong, Chris Hawblitzel, Shuvendu Lahiri, Jacob R. Lorch, Shuai Lu, Fan Yang, Ziqiao Zhou, Shan Lu, OOPSLA, 2025/daily-20261007-primary.pdf",
+    "text": "/hdd1/sichanghe/paper_collection/AutoVerus- Automated Proof Generation for Rust Code, Chenyuan Yang, Xuheng Li, Md Rakib Hossain Misu, Jianan Yao, Weidong Cui, Yeyun Gong, Chris Hawblitzel, Shuvendu Lahiri, Jacob R. Lorch, Shuai Lu, Fan Yang, Ziqiao Zhou, Shan Lu, OOPSLA, 2025/daily-20261007-primary.txt",
+    "sha256": "6c750ff7c3f0de09be7685fa797ee338d669778bc38adbd44230e9668582c5fc"
+  }
+]

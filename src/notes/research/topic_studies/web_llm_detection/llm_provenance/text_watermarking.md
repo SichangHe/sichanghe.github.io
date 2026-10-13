@@ -1,13 +1,10 @@
-watermarking LLM-generated text
+# Watermarking LLM-generated text
+
 (authored by agents unless marked 🧑)
 
-- written 7 Oct 2026
-    - this note covers the hidden statistical marks that AI companies put into the words a chatbot writes, so that a detector holding a secret key can later say "our model wrote this"
-    - marks for images, audio and video are in [image_watermarking](image_watermarking.md)
-    - the laws that force all this, and what platforms do with labels, are in [labeling_rules_and_practice](labeling_rules_and_practice.md)
-    - detectors that guess from writing style, without any mark, are in [llm_text](../llm_text/index.md)
+Written 7 Oct 2026. This note covers the hidden statistical marks that AI companies put into the words a chatbot writes, so that a detector holding a secret key can later say "our model wrote this". Marks for images, audio and video are in [image_watermarking](image_watermarking.md). The laws that force all this, and what platforms do with labels, are in [labeling_rules_and_practice](labeling_rules_and_practice.md). Detectors that guess from writing style, without any mark, are in [llm_text](../llm_text/index.md).
 
-short answer
+## Short answer
 
 - the idea is simple and it works on untouched text: when the model could pick any of several words, a secret key decides which one, and a detector with the key counts how often the text agrees with the key
     - a few hundred words of ordinary prose are enough; short answers, math and code carry little or no mark
@@ -21,13 +18,9 @@ short answer
 - nobody outside the three companies can check any of it yet; the detectors are in private preview, and Anthropic and OpenAI both say researchers may apply
 - I found zero studies that counted watermarked text on the web, in student essays, on Reddit or anywhere else in the wild; that was impossible until Aug 2026, and it is the opening for us (ideas at the end)
 
-how the schemes work
+## How the schemes work
 
-- one mechanism underlies everything deployed
-    - A language model writes one token (a word or word piece) at a time by drawing at random from a list of likely next tokens
-    - A watermark replaces the dice with numbers computed from a secret key and the few tokens just written
-    - the text still looks random
-    - Whoever has the key can recompute the numbers and test whether the text follows them more than chance allows
+One mechanism underlies everything deployed. A language model writes one token (a word or word piece) at a time by drawing at random from a list of likely next tokens. A watermark replaces the dice with numbers computed from a secret key and the few tokens just written. The text still looks random. Whoever has the key can recompute the numbers and test whether the text follows them more than chance allows.
 
 The schemes differ in how they turn those numbers into a choice.
 
@@ -104,11 +97,11 @@ Surveys and toolkits, if we need to run these ourselves.
 - [MarkLLM: An Open-Source Toolkit for LLM Watermarking](https://arxiv.org/abs/2405.10051), Leyi Pan, Aiwei Liu, Zhiwei He, Zitian Gao, Xuandong Zhao, Yijian Lu, Binglin Zhou, Shuliang Liu, Xuming Hu, Lijie Wen, Irwin King, Philip S. Yu, EMNLP 2024 Demo: one code base for most schemes above plus attack and quality tools
 - [A Statistical Framework of Watermarks for Large Language Models](https://arxiv.org/abs/2404.01245), Xiang Li, Feng Ruan, Huiyuan Wang, Qi Long, Weijie J. Su, Annals of Statistics 2025: how to pick the best test for a given scheme; one of the two schemes analyzed "has been internally implemented at OpenAI"
 
-how well they survive editing, paraphrase and translation
+## How well they survive editing, paraphrase and translation
 
 The honest summary is a slope. Copy-paste and cropping cost nothing. Light edits cost a lot more than the marketing suggests. A rewrite by another model or a translation ends it.
 
-light edits and mixing with human text
+### Light edits and mixing with human text
 
 - [On the Reliability of Watermarks for Large Language Models](https://arxiv.org/abs/2306.04634), John Kirchenbauer, Jonas Geiping, Yuxin Wen, Manli Shu, Khalid Saifullah, Kezhi Kong, Kasun Fernando, Aniruddha Saha, Micah Goldblum, Tom Goldstein, ICLR 2024
     - the optimistic reading, for KGW with a strong setting: "after strong human paraphrasing the watermark is detectable after observing 800 tokens on average, when setting a 1e-5 false positive rate"
@@ -127,7 +120,7 @@ light edits and mixing with human text
         - for web pages this is the relevant case: one AI paragraph inside a long human page is findable, scattered AI sentences are not
 - apart from those 14 writers, who were trying to remove the mark, all edit studies I found use synthetic edits (random swaps, synonym tools, another model); I found no study where real people edited marked text the way they edit a draft before posting it
 
-paraphrase by another model
+### Paraphrase by another model
 
 - [Paraphrasing evades detectors of AI-generated text, but retrieval is an effective defense](https://arxiv.org/abs/2303.13408), Kalpesh Krishna, Yixiao Song, Marzena Karpinska, John Wieting, Mohit Iyyer, NeurIPS 2023
     - their paraphraser DIPPER "successfully evades several detectors, including watermarking"
@@ -142,7 +135,7 @@ paraphrase by another model
 - [Vaporizer: Breaking Watermarking Schemes for Large Language Model Outputs](https://arxiv.org/abs/2605.07481), Jonathan Hong Jin Ng, Anh Tu Ngo, Anupam Chattopadhyay, arXiv 2026: word swaps, machine translation and neural paraphrase; "it is possible to remove the watermark with reasonable effort"
 - the semantic schemes (family 4) were built for this, and they do better against a blind paraphraser, but an attacker who can sample the marked model beats them too: [Revisiting the Robustness of Watermarking to Paraphrasing Attacks](https://arxiv.org/abs/2411.05277), Saksham Rastogi, Danish Pruthi, EMNLP 2024, "with access to only a limited number of generations from a black-box watermarked model, we can drastically increase the effectiveness of paraphrasing attacks"
 
-translation
+### Translation
 
 - [Can Watermarks Survive Translation? On the Cross-lingual Consistency of Text Watermark for Large Language Models](https://arxiv.org/abs/2402.14007), Zhiwei He, Binglin Zhou, Hongkun Hao, Aiwei Liu, Xing Wang, Zhaopeng Tu, Zhuosheng Zhang, Rui Wang, ACL 2024
     - ask the model in another language, then translate the answer: this "can effectively remove watermarks, decreasing the AUCs to a random-guessing level without performance loss"
@@ -157,21 +150,21 @@ translation
     - [Who Gets Flagged? The Pluralistic Evaluation Gap in AI Content Watermarking](https://arxiv.org/abs/2604.13776), Alexander Nemecek, Osama Zafar, Yuqiao Xu, Wenbiao Li, Erman Ayday, CVPR 2026 MAPS Workshop: of the major benchmarks, "with one exception, none report performance across languages, cultural content types, or population groups"
 - Anthropic's translation statement is about a different case: "A translation produced by Claude carries a watermark, because in this case every word is chosen by Claude". Text written by Claude and then translated by DeepL or Google Translate keeps nothing
 
-code
+### Code
 
 - [Is The Watermarking Of LLM-Generated Code Robust?](https://arxiv.org/abs/2403.17983), Tarun Suresh, Shubham Ugare, Gagandeep Singh, Sasa Misailovic, arXiv 2024: "variable renaming and dead code insertion, can effectively erase watermarks"; detection drops "below 50% in many cases"
 - [Mark My Words](https://arxiv.org/abs/2312.00273), Julien Piet, Chawin Sitawarin, Vivian Fang, Norman Mu, David Wagner, SaTML 2025: KGW on prose is fine ("detected with fewer than 100 tokens"), but schemes "struggle to efficiently watermark code generations"
 - [Watermarks Without Verification](https://arxiv.org/abs/2609.09604), Alexander Nemecek, Vipin Chaudhary, Erman Ayday, arXiv 2026, ran open SynthID-Text on two open models: "On code, the cost is three points of correctness on one model and below measurement on the other, while detection remains near chance"
 - so the loud complaint in Aug 2026 that the mark ruins code has it backwards: on code the mark is mostly absent
 
-does the mark hurt the text?
+### Does the mark hurt the text?
 
 - the old green-list schemes do: [Downstream Trade-offs of a Family of Text Watermarks](https://arxiv.org/abs/2311.09816), Anirudh Ajith, Sameer Singh, Danish Pruthi, EMNLP Findings 2024, "drops of 10 to 20% in CLS tasks in the average case"; [New Evaluation Metrics Capture Quality Degradation due to LLM Watermarking](https://arxiv.org/abs/2312.02382), Karanpartap Singh, James Zou, arXiv 2023, "current watermarking methods are detectable by even simple classifiers"; [WaterBench](https://arxiv.org/abs/2311.07138), Shangqing Tu, Yuliang Sun, Yushi Bai, Jifan Yu, Lei Hou, Juanzi Li, ACL 2024
 - the deployed family does not, as far as vendors and one outside test show: Google's 20 million responses; OpenAI's benchmark table (for example "Terminal-Bench 4.0 53.90%" without and "56.06%" with); Nemecek et al.: "On prose, the measured effect of the watermark does not exceed that of changing the sampling seed"
 
-attacks
+## Attacks
 
-finding out that a model is marked
+### Finding out that a model is marked
 
 - [Black-Box Detection of Language Model Watermarks](https://arxiv.org/abs/2405.20777), Thibaud Gloaguen, Nikola Jovanović, Robin Staab, Martin Vechev, ICLR 2025
     - tests that reveal a mark, and estimate its settings, "using only a limited number of black-box queries"; "current watermarking schemes are more detectable than previously believed"
@@ -182,7 +175,7 @@ finding out that a model is marked
     - "we found no reliable evidence of a watermark on the Gemini 1.5 API. This matches the official claims, stating that the watermark is only present in the Gemini App and Web"
     - they tested a local copy, because the app is "not suitable for querying with thousands of similar prompts"
 
-removal (scrubbing)
+### Removal (scrubbing)
 
 Paraphrase is the baseline and it already works (section above). The research adds cheaper and more targeted ways.
 
@@ -204,7 +197,7 @@ Paraphrase is the baseline and it already works (section above). The research ad
     - plain meaning: the fancy attacks are not needed, asking another model to rewrite is as good
 - what happened in practice in Aug 2026, per Nemecek et al.: "A tool posted on GitHub that claimed to remove the watermark collected more than ten thousand stars ... within a week of the announcement, although no evidence of its effectiveness had been published"
 
-forgery (spoofing)
+### Forgery (spoofing)
 
 Forgery means writing text, or taking a human's text, so that it tests positive for a vendor's mark. It can frame a person ("you used Claude") or a vendor ("Claude wrote this hate speech").
 
@@ -219,7 +212,7 @@ Forgery means writing text, or taking a human's text, so that it tests positive 
 - forgeries can be caught afterwards: [Discovering Spoofing Attempts on Language Model Watermarks](https://arxiv.org/abs/2410.02693), Thibaud Gloaguen, Nikola Jovanović, Robin Staab, Martin Vechev, ICML 2025, "all current learning-based spoofing methods consistently leave observable artifacts"
 - the public-key signature scheme of Fairoze et al. (family 3) is "unforgeable" by proof; I expect it tolerates edits worse than the statistical marks, but have not checked its numbers
 
-the mark leaks into models trained on marked text
+### The mark leaks into models trained on marked text
 
 - [Watermarking Makes Language Models Radioactive](https://arxiv.org/abs/2402.14904), Tom Sander, Pierre Fernandez, Alain Durmus, Matthijs Douze, Teddy Furon, NeurIPS 2024
     - a model fine-tuned on marked text shows the mark in its own output; detectable "even when as little as 5% of training text is watermarked"
@@ -228,7 +221,7 @@ the mark leaks into models trained on marked text
 - same trick, used by data owners: [Ward: Provable RAG Dataset Inference via LLM Watermarks](https://arxiv.org/abs/2410.03537), Nikola Jovanović, Robin Staab, Maximilian Baader, Martin Vechev, ICLR 2025: mark your own documents to prove a retrieval system uses them
 - for the web this matters in a new way: from Aug 2026 a large share of new web text carries one of three marks, and the next models will train on it
 
-open-weight models
+### Open-weight models
 
 - anyone who runs the model controls the dice, so a mark applied at sampling time is optional
 - [Towards Watermarking of Open-Source LLMs](https://arxiv.org/abs/2502.10525), Thibaud Gloaguen, Nikola Jovanović, Robin Staab, Martin Vechev, arXiv 2025: marks baked into weights must survive "model merging, quantization, or finetuning"; "existing methods ... are not durable"
@@ -236,7 +229,7 @@ open-weight models
 - Gu et al. (above): a learned mark fades "under fine-tuning on normal text"
 - so the content farms that DeGenTWeb finds, if they run local open models, will never carry a mark
 
-what is deployed
+## What is deployed
 
 As of 7 Oct 2026, three vendors mark text. All detectors are closed.
 
@@ -269,7 +262,7 @@ Three deployment facts matter for any measurement.
 - the three marks are separate. A page must be sent to three detectors with three access agreements. Article 50 asks for "interoperable"; nothing is
 - the vendor chooses the threshold and can change keys or settings without notice; Nemecek et al.: "evidence about a watermark family is not evidence about a deployment"
 
-has anyone measured watermarked text in the wild?
+## Has anyone measured watermarked text in the wild?
 
 No. I searched for any study that ran a text watermark detector over web pages, social posts, reviews, homework, papers or code repositories, and found none.
 
@@ -286,7 +279,7 @@ No. I searched for any study that ran a text watermark detector over web pages, 
 
 I think this is the most open question in the whole area, and it lines up with what DeGenTWeb already does.
 
-what remains open
+## What remains open
 
 - how much marked text reaches the public web, and how much of it is still readable after people edit, translate and reformat it; unknown
 - false alarms at scale: OpenAI in 2024, "applying it to large volumes of text would lead to a large number of total false positives"; at a 1% target, a crawl of a billion human pages flags ten million. No deployed detector has published its rate on real human text by language and genre
@@ -301,7 +294,7 @@ what remains open
 - the mark in training data: what happens to detectors and to new models when a large share of crawled text carries three vendors' marks is unstudied outside small fine-tuning runs
 - evidence value: Tamim and Khan argue no method meets court standards ("None of the three methods satisfy more than two of five Daubert factors")
 
-research we could do
+## Research we could do
 
 I ordered these by how well they fit a web-measurement group that already has a crawler and a pipeline for finding LLM-generated sites. The first step for almost all of them is the same and should happen this week: apply for detector access at Anthropic and OpenAI as independent researchers, and join Google's waitlist. OpenAI names "academic and research organizations studying text provenance, detection reliability, or how people understand provenance results" as a qualifying use.
 
@@ -359,17 +352,13 @@ I ordered these by how well they fit a web-measurement group that already has a 
     - method: document what each preview API returns and how fast; estimate from published attacks how many queries removal and forgery would need under those limits; test on our own open-source deployment configured the same way, never on the vendor's
     - risk: must stay within access terms; this is an analysis paper more than an attack paper
 
-- if I had to pick two, I would do idea 1 and idea 2 together
-    - Idea 2 tells us how to read idea 1's lower bound, and both reuse the DeGenTWeb pipeline
+If I had to pick two, I would do idea 1 and idea 2 together. Idea 2 tells us how to read idea 1's lower bound, and both reuse the DeGenTWeb pipeline.
 
-gaps in this review
+## Gaps in this review
 
 - I read abstracts for most papers and full text only for the SynthID-Text paper's main sections, the textGrain report's opening, the Nemecek et al. 2026 paper, parts of Kirchenbauer et al. 2024, TextSeal and Pang et al., and the vendor pages; numbers come from abstracts unless I name a section or page
 - SynthID-Text's own paraphrase numbers are in its supplement (section C.6), which I did not open; the ETH blog cites it as "AUC reduced to 0.7 for texts of 1000 tokens"
 - I could not open OpenAI's June 2026 provenance post (HTTP 403) or the Wall Street Journal's 2024 report; both are cited through others
 - I did not check the EU Code of Practice text for the exact rules on text marks and detector access; see the labeling note
+- no ChatGPT opinion is included: I asked once at Extra High on 7 Oct 2026 and the helper failed (`chatgpt_helper_failure_redacted`)
 - some venue labels are from my memory, not from a page I opened: ICLR 2024 for Zhao et al. and Hu et al.; CRYPTO 2024 for Christ and Gunn; IEEE S&P 2025 for Cohen et al.; ICML 2025 for Gloaguen et al. on spoofing
-
-consultation
-
-- see the [provenance index](index.md) for the current Extra High consultation

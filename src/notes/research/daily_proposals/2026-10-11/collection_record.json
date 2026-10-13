@@ -1,0 +1,61 @@
+[
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Hardening Attack Surfaces with Formally Proven Binary Format Parsers, Nikhil Swamy et al., PLDI, 2022/everparse3d-retrieved20261011.pdf",
+    "sha256": "f0562bb6adbf6e3a95a77ea99b2f1db3c8aea0f33a088faf57c65543a15ea025",
+    "bytes": 941518
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Hardening Attack Surfaces with Formally Proven Binary Format Parsers, Nikhil Swamy et al., PLDI, 2022/everparse3d-retrieved20261011.txt",
+    "sha256": "f9de20f05cdc82bf575d728a08ab4684bd6382c4cb9af4fe17ff55e5afe506c6",
+    "bytes": 104514
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Secure Parsing and Serializing with Separation Logic Applied to CBOR, CDDL, and COSE, Tahina Ramananandro et al., arXiv, 2025/pulseparse-retrieved20261011.pdf",
+    "sha256": "baf23d71a0fc31e17dabac91381ffb958e9e00e0b67008c1b9cd9a242362d421",
+    "bytes": 824030
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Secure Parsing and Serializing with Separation Logic Applied to CBOR, CDDL, and COSE, Tahina Ramananandro et al., arXiv, 2025/pulseparse-retrieved20261011.txt",
+    "sha256": "6ff2055c98265a8583f6b29454961155915b33daf9ce8598f59d0c21251d9f58",
+    "bytes": 155062
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Leapfrog- Certified Equivalence for Protocol Parsers, Ryan Doenges et al., PLDI, 2022/leapfrog-retrieved20261011.pdf",
+    "sha256": "af141aa99cb6704e010bc240d7d695f3e6186c0a8d1e0987e63978b69d2bc6db",
+    "bytes": 1887510
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Leapfrog- Certified Equivalence for Protocol Parsers, Ryan Doenges et al., PLDI, 2022/leapfrog-retrieved20261011.txt",
+    "sha256": "24a8fae048ee9b6c8af04eed3a716cd3ac0e984b3ef2c3a196bbf451bbc80bb4",
+    "bytes": 161970
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Narcissus- Correct-by-Construction Derivation of Decoders and Encoders from Binary Formats, Benjamin Delaware et al., ICFP, 2019/narcissus_candidate-retrieved20261011.pdf",
+    "sha256": "89085c2944800b2c3ca7a4a142b877a167aedde6b8af70d2fb69e39fab34c365",
+    "bytes": 457322
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Narcissus- Correct-by-Construction Derivation of Decoders and Encoders from Binary Formats, Benjamin Delaware et al., ICFP, 2019/narcissus_candidate-retrieved20261011.txt",
+    "sha256": "ea1666e6c494ea4b7bdc2b0823f1ab06dc21b6e4325ed5b284b83c8bc0562adf",
+    "bytes": 122815
+  },
+  {
+    "existing_collection": "/hdd1/sichanghe/paper_collection/Vest- Verified, Secure, High-Performance Parsing and Serialization for Rust, Yi Cai, Pratap Singh, Zhengyao Lin, Jay Bosamiya, Joshua Gancher, Milijana Surbatovich, Bryan Parno, USENIX Security, 2026",
+    "files": [
+      "vest-security2025-retrieved20261010.txt",
+      "vest-security2025-retrieved20261010.pdf"
+    ]
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/EverParse- Verified Secure Zero-Copy Parsers for Authenticated Message Formats, Tahina Ramananandro et al., USENIX Security, 2019/everparse-author-retrieved20261010.pdf",
+    "sha256": "131693837884685fec454ee770a9e9ea3844970f55c8902258cbeae8404ba373",
+    "original_retrieval": "2026-10-10",
+    "collected": "2026-10-11"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/EverParse- Verified Secure Zero-Copy Parsers for Authenticated Message Formats, Tahina Ramananandro et al., USENIX Security, 2019/everparse-author-retrieved20261010.txt",
+    "sha256": "3c6fa9dc9ecf77c78a6edbe4c2ccd16c1b3fe1af2678513dfc2e64b012f79c64",
+    "original_retrieval": "2026-10-10",
+    "collected": "2026-10-11"
+  }
+]

@@ -490,52 +490,96 @@ third product arm. [VL-HANDOFF]
 
 ### status
 
-This is a protocol outline, not launch authorization. The manager has directed
-that no subject be launched and no VL instruction be changed until all of the
+This is a protocol outline, not launch authorization. A bounded implementation
+audit has now verified one exact installed mechanism: `pcodx` compacts a SQLite
+ledger range, and `pcodx-model-turn` injects the resulting visible ledger into a
+new empty ephemeral upstream thread before the next answer. This is fresh-thread
+replacement plus compacted-ledger injection, not mutation of an already-running
+native Codex thread. The controlled proof used a fake app-server; live provider
+acceptance, actual token counts, and semantic recall remain untested. [PCODX]
+
+No subject may be launched and no VL instruction may be changed until all of the
 following are resolved:
 
-- the installed PCODX path is shown to shorten or replace the *model-visible*
-  context, rather than only changing a sidecar ledger or token report;
-- the proper VL/PCC owner and execution route are identified;
+- the exact qualifying installed executables and hashes are pinned; ordinary
+  `pcodx serve` and the manager sidecar are not substituted;
+- a live no-tool canary verifies the model-visible injected artifact, provider
+  token-usage event, retained-summary recall, and raw-sentinel absence;
+- the proper VL/PCC owner and a write-capable, reinjectable tool-history route
+  are identified for any repository-editing subject;
 - the human's ambiguous final sentence is clarified;
 - immutable task snapshots and hidden evaluator packets are recovered;
 - the protocol receives independent review and fresh launch approval.
 
 ### research question and treatment
 
-The mechanism question should be isolated from the CLI efficacy question:
+The mechanism question should be isolated from the CLI efficacy question and
+from the effect of merely starting a fresh thread:
 
-> At fixed task, worktree, model, prompt, guidance CLI, tool access, and total
-> budget, does verified partial context compaction improve semantic completion or
-> reduce drift relative to continuing the full context?
+> At fixed task, worktree, model, prompt, guidance CLI, tool access, total
+> budget, and fresh-thread controller, does replacing a preregistered ledger
+> range with a preregistered summary improve semantic completion or reduce drift
+> relative to reinjecting the full ledger?
 
 Use exactly two PCC conditions:
 
-- `P0_CONTINUED_CONTEXT`
-- `P1_VERIFIED_PCC`
+- `P0_FULL_LEDGER_FRESH_THREAD`
+- `P1_COMPACTED_LEDGER_FRESH_THREAD`
 
-Both conditions receive the same frozen Midas Lex CLI release or both receive no
-CLI. The choice must be fixed before launch. PCC is the only intended treatment
-difference. This is a separate two-condition mechanism pilot, not a third arm in
-the `E0_NO_CLI` versus `E1_CLI` product study.
+At the treatment boundary, freeze one immutable, hashed ledger and worktree
+snapshot, then restore it into two isolated arm-owned database and worktree
+copies. Both conditions use the same pinned `pcodx-model-turn` controller and
+therefore both start a new empty ephemeral upstream thread. P0 injects its full
+visible-ledger copy. P1 first replaces the preregistered range in its separate
+copy with the frozen summary and then injects the compacted view. This avoids
+both thread-reset confounding and cross-arm ledger or worktree contamination.
+Both receive the same frozen Midas Lex CLI release or both receive no CLI; that
+choice must be fixed before launch. This is a separate two-condition mechanism
+pilot, not a third arm in the `E0_NO_CLI` versus `E1_CLI` product study.
+
+PCODX accepts a non-empty summary; it does not verify that the summary is
+faithful. Before either arm continues, preregister and record the summary
+generator, model and version, prompt, seed or determinism setting, input range,
+token and cost budget, and failure policy. Hash the produced summary and charge
+its tokens, cost, and time to P1. Summary fidelity is an evaluated outcome, not
+a premise of the treatment. No human may repair it after seeing either arm.
 
 ### model-visible preflight gate
 
-Before any research subject, run a non-task canary through the exact installed
+Before any research subject, run a no-tool canary through the exact installed
 route and require evidence that:
 
-1. the upstream request after compaction is shorter than the corresponding
-   pre-compaction request;
-2. the retained summary and current worktree are present;
-3. deleted historical turns are absent from future model input, not merely hidden
-   from the UI;
-4. the subject continues through the same declared PCODX session/thread mapping;
-5. tool availability, system instructions, model settings, and budget accounting
-   are unchanged;
-6. raw payload or equivalent trustworthy instrumentation is sealed for review.
+1. the exact executable paths and SHA-256 hashes match the frozen protocol;
+2. both conditions restore isolated database and worktree copies from the same
+   immutable, hashed pre-boundary snapshot, with separate arm outputs and logs;
+3. each answering turn intentionally receives a new empty ephemeral upstream
+   thread through the same controller;
+4. the sealed injected artifacts differ only because P1 replaces the declared
+   raw range with the declared summary;
+5. the eligible no-tool range contains assistant messages only; system,
+   developer, and human-prompt entries are never compacted;
+6. the P1 artifact contains the retained summary and task state, and the raw
+   sentinel from the covered range is absent;
+7. the real provider token-usage event reports the input for each condition; a
+   shorter serialized artifact or fake-server count alone is not a live token
+   result;
+8. the answering model recalls the retained canary fact without recovering the
+   removed raw sentinel;
+9. system instructions, model settings, prompt, budget accounting, and every
+   non-treatment ledger entry are unchanged; and
+10. all injected artifacts, thread and turn identifiers, and usage events are
+   sealed for review.
 
 If this gate fails, the task stops as an infrastructure study. A PCC label or a
 shorter sidecar transcript is not enough.
+
+The current installed controller rejects visible flat tool rows because they
+lack reinjectable Responses API call metadata, and it starts the upstream thread
+read-only. The canary must therefore invoke no tools. A repository-editing VL
+pilot additionally requires a reviewed integration that either preserves raw
+tool-call metadata or compacts every tool row with its associated assistant call
+before the next turn, and that provides the frozen write boundary. Even then,
+system, developer, and human-prompt entries remain ineligible. [PCODX]
 
 ### smallest useful task panel
 
@@ -561,19 +605,33 @@ be recovered, do not reconstruct it from memory and call it the same task. The
 owner must either locate an immutable copy or prepare a newly named development
 task with a fresh evaluator packet. [VL-HANDOFF]
 
+These are candidate task shapes, not tasks the current installed controller can
+run today. The pinned `pcodx-model-turn` boundary is suitable for a no-tool recall
+canary but is read-only and cannot safely reinject ordinary flat tool histories.
+A code-editing subject waits for the execution integration gate in the status
+section.
+
 ### controlled compaction point
 
 A short task may finish before natural context bloat appears, so the pilot needs
 a preregistered, harness-controlled boundary. A defensible small pilot is:
 
-1. Let the subject implement and reach its first complete compile/test/verifier
-   cycle.
-2. Give both conditions the same evaluator-held structured failure packet for
-   one non-trivial semantic trap.
-3. At that boundary, continue P0 with its full context and apply PCODX to P1.
-4. Preserve the same worktree, remaining budget, failure packet, and next user
-   instruction.
-5. Do not allow a human to repair or enrich the PCC summary after seeing the
+1. Let one preregistered prefix run implement and reach its first complete
+   compile/test/verifier cycle.
+2. Add the evaluator-held structured failure packet for one non-trivial semantic
+   trap, then freeze and hash the exact ledger, worktree, budget, and next user
+   instruction before either arm continues.
+3. Restore that common snapshot into isolated P0 and P1 databases, worktrees,
+   output directories, and usage logs.
+4. Run the preregistered summary procedure over an eligible assistant-only range,
+   freeze its output and full generation metadata before either arm continues,
+   and charge its resource use to P1.
+5. Leave P0's ledger copy un-compacted and apply that exact range and summary
+   only to P1's copy.
+6. Invoke the same pinned fresh-thread controller for both, with the same total
+   post-prefix budget, failure packet, and next user instruction; deduct the P1
+   summary-generation use from P1's budget before its answering turn.
+7. Do not allow a human to repair or enrich the PCC summary after seeing either
    arm's output.
 
 The exact trigger must be deterministic and observable. If the owner instead
@@ -622,11 +680,19 @@ with agreement and adjudication recorded. Machine evidence remains separate.
 For each run preserve:
 
 - source and worktree hashes before and after the compaction boundary;
+- the immutable common-prefix ledger and worktree snapshot hashes, plus a clone
+  manifest proving each arm began from that exact state;
 - exact system, user, and task prompts;
 - model, provider, settings, seed, and budgets;
-- PCODX binary/commit/config and session/thread mapping;
+- exact PCODX and `pcodx-model-turn` paths, hashes, config, isolated arm database
+  and worktree paths, wrapper-session IDs, upstream thread and turn IDs, and
+  controller strategy;
 - pre- and post-compaction model-visible payload evidence;
-- the exact generated summary and removed message IDs;
+- the exact generated summary and removed message IDs, plus the frozen summary
+  generator, version, prompt, seed or determinism setting, budget, token usage,
+  cost, wall time, and failure policy;
+- a role manifest proving no system, developer, or human-prompt entry was
+  compacted;
 - complete transcripts and tool calls for both conditions;
 - verifier/test commands and raw outputs;
 - agent claims, independent scores, adjudication, and false-green classification;
@@ -637,9 +703,10 @@ For each run preserve:
 The first question is not “did PCC win?” It is:
 
 1. Was model-visible compaction actually applied?
-2. Did the treatment preserve the task and current state?
-3. Did any semantic or trust-boundary regression appear?
-4. Is there enough signal to justify a larger, still two-condition pilot?
+2. Did both arms actually use the same fresh-thread controller boundary?
+3. Did the treatment preserve the task and current state?
+4. Did any semantic or trust-boundary regression appear?
+5. Is there enough signal to justify a larger, still two-condition pilot?
 
 Four or eight runs support a mechanism smoke result, not a publication claim.
 Do not merge them into the main CLI efficacy estimate.
@@ -819,6 +886,37 @@ Do not merge them into the main CLI efficacy estimate.
   - exact quotes: “Do not add a third arm”; “not launch authority”
   - classification: current evaluation design, not completed experimental evidence
 
+### PCODX local implementation evidence
+
+- ID: `PCODX`
+  - [focused implementation audit](</hdd1/sichanghe/paper_collection/LeetProof- Certified Program Synthesis with a Multi-modal Verifier, Yueyang Feng, Dipesh Kafle, Vladimir Gladshtein, Vitaly Kurin, George Pîrlea, Qiyuan Zhao, Peter Müller, Ilya Sergey, ASE, 2026/pcodx-model-visible-context-audit-20260808.md>)
+  - primary local source repository:
+    `/ssd1/sichangheagent/partial_compact_codex`
+  - inspected clean source revision:
+    `cc493c2f4b7345b49e6dd8bf0547fb9b90540a87`
+  - exact installed artifacts:
+    - `/home/sichangheagent/.local/bin/pcodx`, sha256
+      `0563d037bbf2a4001e8c2a464a0df3e31042509322694db45441faf917738da9`
+    - `/home/sichangheagent/.local/bin/pcodx-model-turn`, sha256
+      `b2d76c29bc92dea08a2b9e9db9c7ecd16df5ee0a923d06a17df5822710091294`
+  - source points: `src/storage.rs`, `Store::visible_entries`; and
+    `src/model_context.rs`, `run_model_turn`, `run_protocol`,
+    `build_model_context`, and
+    `next_model_payload_and_reported_tokens_shrink_after_compaction`
+  - claim: the qualifying controller builds from the visible compacted ledger,
+    starts a new empty ephemeral app-server thread, injects the render, and then
+    starts the answering turn
+  - exact quotes: “fresh_ephemeral_thread_plus_thread/inject_items”;
+    “active_thread_kv_reuse_not_claimed”
+  - classification: verified current controller mechanism at the exact installed
+    byte identity, with controlled fake-app-server evidence
+  - provenance uncertainty: installed binaries embed no Git SHA; build evidence
+    strongly correlates them with source commit `892f6746...` but does not attest
+    that correspondence cryptographically
+  - experiment uncertainty: no live-provider turn, real token result, semantic
+    recall task, or VL subject was run; visible flat tool rows are not generally
+    reinjectable and the current controller starts read-only
+
 ### lifecycle records excluded from research evidence
 
 The manager mail, task record, and private routing reports establish ownership,
@@ -837,11 +935,12 @@ them as research evidence.
     resets without evaluating their causal effect.
 - medium confidence:
   - the venue-fit explanation, because public ASE criteria and paper structure
-    support it but private reviews are unavailable;
-  - the exact practical value of a PCC pilot, because the installed model-visible
-    treatment path remains under manager verification.
+    support it but private reviews are unavailable.
 - low confidence until new evidence:
   - any general success-rate claim for either paper beyond its evaluated scope;
+  - live-provider acceptance and real token or recall behavior for the exact
+    installed PCODX controller;
   - any claim that PCODX partial compaction improves VL subjects;
   - any launch-ready PCC task equivalence until exact snapshots and hidden
-    evaluator packets are recovered.
+    evaluator packets, tool-history handling, and a write-capable route are
+    recovered and reviewed.

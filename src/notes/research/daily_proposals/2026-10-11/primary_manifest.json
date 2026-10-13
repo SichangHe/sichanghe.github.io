@@ -1,0 +1,107 @@
+[
+  {
+    "file": "everparse.txt",
+    "bytes": 130711,
+    "sha256": "3c6fa9dc9ecf77c78a6edbe4c2ccd16c1b3fe1af2678513dfc2e64b012f79c64"
+  },
+  {
+    "file": "everparse3d.pdf",
+    "bytes": 941518,
+    "sha256": "f0562bb6adbf6e3a95a77ea99b2f1db3c8aea0f33a088faf57c65543a15ea025"
+  },
+  {
+    "file": "everparse3d.txt",
+    "bytes": 104514,
+    "sha256": "f9de20f05cdc82bf575d728a08ab4684bd6382c4cb9af4fe17ff55e5afe506c6"
+  },
+  {
+    "file": "everparse_msr.pdf",
+    "bytes": 451564,
+    "sha256": "131693837884685fec454ee770a9e9ea3844970f55c8902258cbeae8404ba373"
+  },
+  {
+    "file": "leapfrog.pdf",
+    "bytes": 1887510,
+    "sha256": "af141aa99cb6704e010bc240d7d695f3e6186c0a8d1e0987e63978b69d2bc6db"
+  },
+  {
+    "file": "leapfrog.txt",
+    "bytes": 161970,
+    "sha256": "24a8fae048ee9b6c8af04eed3a716cd3ac0e984b3ef2c3a196bbf451bbc80bb4"
+  },
+  {
+    "file": "narcissus_candidate.pdf",
+    "bytes": 457322,
+    "sha256": "89085c2944800b2c3ca7a4a142b877a167aedde6b8af70d2fb69e39fab34c365"
+  },
+  {
+    "file": "narcissus_candidate.txt",
+    "bytes": 122815,
+    "sha256": "ea1666e6c494ea4b7bdc2b0823f1ab06dc21b6e4325ed5b284b83c8bc0562adf"
+  },
+  {
+    "file": "nom_current_readme.md",
+    "bytes": 15141,
+    "sha256": "fa920001c45e9537d175bca19ade3426ecc7e068c2237e3f4693a40ffeb9a856"
+  },
+  {
+    "file": "nom_readme.md",
+    "bytes": 15141,
+    "sha256": "fa920001c45e9537d175bca19ade3426ecc7e068c2237e3f4693a40ffeb9a856"
+  },
+  {
+    "file": "pulseparse.pdf",
+    "bytes": 824030,
+    "sha256": "baf23d71a0fc31e17dabac91381ffb958e9e00e0b67008c1b9cd9a242362d421"
+  },
+  {
+    "file": "pulseparse.txt",
+    "bytes": 155062,
+    "sha256": "6ff2055c98265a8583f6b29454961155915b33daf9ce8598f59d0c21251d9f58"
+  },
+  {
+    "file": "vest.pdf",
+    "bytes": 854851,
+    "sha256": "84e413e4f118d02efac498d6bbbc2e5c8a3a7246ce7d1e4ab6ac04ee98b72222"
+  },
+  {
+    "file": "vest.txt",
+    "bytes": 131130,
+    "sha256": "35650418c3bafb034b685949df4ee80b89a57c6c533eb08424d6e39a69abd4c5"
+  },
+  {
+    "file": "vest_current_readme.md",
+    "bytes": 6514,
+    "sha256": "e2fccce5c586b436b973f49b63ba6b3515a0c18ac01b0b56a41abec26f994a78"
+  },
+  {
+    "file": "vest_error.rs",
+    "bytes": 7744,
+    "sha256": "3f25495e643c693ccee15c494ca15a4d3a2c54b5bc90f86f01980498f3dfdee8"
+  },
+  {
+    "file": "vest_guarantees.html",
+    "bytes": 29456,
+    "sha256": "cad46c2be8bdfecbca782f20f7d15262436fc94278cf10301bce6ed4df5b3c8e"
+  },
+  {
+    "file": "vest_pair.rs",
+    "bytes": 5994,
+    "sha256": "1ef2366d600958bf317e7636d5ecae390fe303a7a493caed5d0baf79584343d5"
+  },
+  {
+    "file": "vest_parser.rs",
+    "bytes": 4504,
+    "sha256": "26f4fee7ee3e81f6656e1f45f477ae4b372dac1073d499b9548622010dab4aa9"
+  },
+  {
+    "file": "vest_proof.rs",
+    "bytes": 13684,
+    "sha256": "a2b00c6bab8cbcb3600b590f95a6f82571242b5e51b725ca63e0d9d5e49b129c"
+  },
+  {
+    "file": "vest_readme.md",
+    "bytes": 6514,
+    "sha256": "e2fccce5c586b436b973f49b63ba6b3515a0c18ac01b0b56a41abec26f994a78"
+  }
+]

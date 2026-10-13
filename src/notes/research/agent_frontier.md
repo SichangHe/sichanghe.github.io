@@ -16,6 +16,9 @@ evidence labels
 
 - accepted evidence: 21 peer-reviewed papers in the fixed set
 - first-party preprint evidence: BrowseComp only
+- 🤖 separate post-cutoff companion note: [HANDBOOK.md](handbook.md)
+  - outside the fixed 22-paper packet because its arXiv v1 arrived after the cutoff
+  - workshop-status preprint, not accepted main-track evidence
 - inference: conclusions drawn across non-comparable studies
 - recommendation: proposed research, not a demonstrated capability
 - source cards preserve method, result, limitation, uncertainty, short quotes, and local OCR paths

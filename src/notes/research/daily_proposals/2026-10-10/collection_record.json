@@ -1,0 +1,62 @@
+[
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Vest- Verified, Secure, High-Performance Parsing and Serialization for Rust, Yi Cai, Pratap Singh, Zhengyao Lin, Jay Bosamiya, Joshua Gancher, Milijana Surbatovich, Bryan Parno, USENIX Security, 2026/vest-security2025-retrieved20261010.pdf",
+    "sha256": "84e413e4f118d02efac498d6bbbc2e5c8a3a7246ce7d1e4ab6ac04ee98b72222",
+    "url": "https://www.usenix.org/system/files/usenixsecurity25-cai-yi.pdf"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Vest- Verified, Secure, High-Performance Parsing and Serialization for Rust, Yi Cai, Pratap Singh, Zhengyao Lin, Jay Bosamiya, Joshua Gancher, Milijana Surbatovich, Bryan Parno, USENIX Security, 2026/vest-security2025-retrieved20261010.txt",
+    "sha256": "35650418c3bafb034b685949df4ee80b89a57c6c533eb08424d6e39a69abd4c5",
+    "url": "https://www.usenix.org/system/files/usenixsecurity25-cai-yi.pdf"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Second-Order Problem Solving for Recursive Self-Improvement in Formal Verification, Yuxuan Jiang, Aditya Vempaty, Ashish Jagmohan, arXiv, 2026/2610.05701v2.pdf",
+    "sha256": "200853621bbb8ccb8857c6133fedadfcc7dfac510bf68799e21bee36bb4a59ec",
+    "url": "https://arxiv.org/pdf/2610.05701v2"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Second-Order Problem Solving for Recursive Self-Improvement in Formal Verification, Yuxuan Jiang, Aditya Vempaty, Ashish Jagmohan, arXiv, 2026/2610.05701v2.txt",
+    "sha256": "40f8911c291a92780d894b702a5dbb70327b2fa9f391567a41c38afe4df4d052",
+    "url": "https://arxiv.org/pdf/2610.05701v2"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Automatic Linear Resource Bound Analysis for Rust via Prophecy Potentials, Qihao Lian, Di Wang, arXiv, 2025/2502.19810v1.pdf",
+    "sha256": "2eb3ce6b222cc3c8e37043b61832f578e2f37f756942fb26ac5954f42feb2ff7",
+    "url": "https://arxiv.org/pdf/2502.19810v1"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Automatic Linear Resource Bound Analysis for Rust via Prophecy Potentials, Qihao Lian, Di Wang, arXiv, 2025/2502.19810v1.txt",
+    "sha256": "59d5e83a972782c79e1ab13cd3160c2cc07dc0c94bac1aaea4b7670229b54372",
+    "url": "https://arxiv.org/pdf/2502.19810v1"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Verifying Probabilistic Programs in Rust, arXiv, 2026/2607.12282v1-retrieved20261010.pdf",
+    "sha256": "c4135cfa2fe6c892b57d63421a68f2526807859d5eec66205218e94c92618037",
+    "url": "https://arxiv.org/pdf/2607.12282v1"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Verifying Probabilistic Programs in Rust, arXiv, 2026/2607.12282v1-retrieved20261010.txt",
+    "sha256": "fe3af97de8d6ecc2a760da9998df1e34ce81528204a1453366d440fbd1fc40e6",
+    "url": "https://arxiv.org/pdf/2607.12282v1"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/VerusBelt: A Semantic Foundation for Verus\u2019s Proof-Oriented Extensions to the Rust Type System, ACM PLDI, 2026/verusbelt-retrieved20261010.pdf",
+    "sha256": "6ca867d564fc26bb3983a98fc03f05d72d1b880e1007b18f98ac1b60071a70e7",
+    "url": "https://iris-project.org/pdfs/2026-pldi-verusbelt.pdf"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/VerusBelt: A Semantic Foundation for Verus\u2019s Proof-Oriented Extensions to the Rust Type System, ACM PLDI, 2026/verusbelt-retrieved20261010.txt",
+    "sha256": "469a7fe830c802221559e36a022e6aaf017005fa2ef7b216692f47f7ffef36b1",
+    "url": "https://iris-project.org/pdfs/2026-pldi-verusbelt.pdf"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Verus- Verifying Rust Programs using Linear Ghost Types, Andrea Lattuada, Travis Hance, Chanhee Cho, Matthias Brun, Isitha Subasinghe, Yi Zhou, Jon Howell, Bryan Parno, Chris Hawblitzel, OOPSLA, 2023/verus-ghost-retrieved20261010.pdf",
+    "sha256": "b4671037a721d47679b3bf3a145d9f8515527a7f672258d28b9ba63234e71f1e",
+    "url": "https://www.andrew.cmu.edu/user/bparno/papers/verus-ghost.pdf"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Verus- Verifying Rust Programs using Linear Ghost Types, Andrea Lattuada, Travis Hance, Chanhee Cho, Matthias Brun, Isitha Subasinghe, Yi Zhou, Jon Howell, Bryan Parno, Chris Hawblitzel, OOPSLA, 2023/verus-ghost-retrieved20261010.txt",
+    "sha256": "fb6f3ba4ccb1df05eafb5f3d6c1530aed0bc9fc906aab3691be90728fb005cdd",
+    "url": "https://www.andrew.cmu.edu/user/bparno/papers/verus-ghost.pdf"
+  }
+]

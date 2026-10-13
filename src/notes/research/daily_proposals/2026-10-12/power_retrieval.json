@@ -1,0 +1,9 @@
+{
+  "url": "https://www.usenix.org/system/files/osdi25-leblanc.pdf",
+  "retrieved_utc": "2026-10-12T11:04:07.331585+00:00",
+  "path": "runs/2026-10-12/primary/power.pdf",
+  "sha256": "e0f39f87f558091bd86b344b4a555eeeec61f50cb381f37b65611d7010c026b1",
+  "bytes": 570516,
+  "signature_pdf": true,
+  "destination_hold": "staging only; /hdd1 read-only"
+}

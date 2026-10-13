@@ -1,0 +1,110 @@
+[
+  {
+    "stem": "adore",
+    "path": "/hdd1/sichanghe/paper_collection/Adore- Atomic Distributed Objects with Certified Reconfiguration, Wolf Honoré, Ji-Yong Shin, Jieung Kim, Zhong Shao, PLDI, 2022/paper.pdf",
+    "status": "copied inherited PDF after title-page audit",
+    "url": "https://flint.cs.yale.edu/flint/publications/adore.pdf"
+  },
+  {
+    "stem": "chapar",
+    "path": "/hdd1/sichanghe/paper_collection/Chapar- Certified Causally Consistent Distributed Key-Value Stores, Mohsen Lesani, Christian J. Bell, Adam Chlipala, POPL, 2016/paper.pdf",
+    "status": "copied inherited PDF after title-page audit",
+    "url": "https://adam.chlipala.net/papers/ChaparPOPL16/ChaparPOPL16.pdf"
+  },
+  {
+    "stem": "igloo",
+    "path": "/hdd1/sichanghe/paper_collection/Igloo- Soundly Linking Compositional Refinement and Separation Logic for Distributed System Verification, Christoph Sprenger et al., OOPSLA, 2020/paper.pdf",
+    "status": "copied inherited PDF after title-page audit",
+    "url": "https://arxiv.org/pdf/2010.04749"
+  },
+  {
+    "stem": "daisynfs",
+    "path": "/hdd1/sichanghe/paper_collection/Verifying the DaisyNFS concurrent and crash-safe file system with sequential reasoning, Tej Chajed et al., OSDI, 2022/paper.pdf",
+    "status": "copied inherited PDF after title-page audit",
+    "url": "https://pdos.csail.mit.edu/papers/daisy-nfs:osdi22.pdf"
+  },
+  {
+    "stem": "ironsync",
+    "path": "/hdd1/sichanghe/paper_collection/Sharding the State Machine- Automated Modular Reasoning for Complex Concurrent Systems, Travis Hance et al., OSDI, 2023/paper.pdf",
+    "status": "copied inherited PDF after title-page audit",
+    "url": "https://www.andrew.cmu.edu/user/bparno/papers/ironsync.pdf"
+  },
+  {
+    "stem": "shipwright",
+    "path": "/hdd1/sichanghe/paper_collection/Shipwright- Proving liveness of distributed systems with Byzantine participants, Derek Leung, Nickolai Zeldovich, M. Frans Kaashoek, arXiv, 2025/paper.pdf",
+    "status": "copied inherited PDF after title-page audit",
+    "url": "https://arxiv.org/abs/2507.14080"
+  },
+  {
+    "stem": "opcrdt",
+    "path": "/hdd1/sichanghe/paper_collection/Modular Verification of Op-Based CRDTs in Separation Logic, Abel Nieto, Léon Gondelman, Alban Reynaud, Amin Timany, Lars Birkedal, OOPSLA, 2022/paper.pdf",
+    "status": "copied inherited PDF after title-page audit",
+    "url": "https://iris-project.org/pdfs/2022-oopsla-crdts.pdf"
+  },
+  {
+    "stem": "pgo",
+    "path": "/hdd1/sichanghe/paper_collection/Compiling Distributed System Models with PGo, Finn Hackett, Shayan Hosseini, Renato Costa, Matthew Do, Ivan Beschastnikh, ASPLOS, 2023/paper.pdf",
+    "status": "fresh author-repository download; PDF and title page checked",
+    "url": "https://raw.githubusercontent.com/DistCompiler/pgo/main/doc/papers/asplosb23main-p12-p-e73de3693c-62943-final.pdf"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/ClarifySTL- An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification, Yue Fang, Zhi Jin, Jie An, Jia Li, Hongshen Chen, Xiaohong Chen, Naijun Zhan, arXiv, 2026/paper.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "ClarifySTL- An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification, Yue Fang, Zhi Jin, Jie An, Jia Li, Hongshen Chen, Xiaohong Chen, Naijun Zhan, arXiv, 2026"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Verifiable Natural Language to Linear Temporal Logic Translation- A Benchmark Dataset and Evaluation Suite, William English, Chase Walker, Dominic Simon, Sumit Jha, Rickard Ewetz, arXiv, 2025/paper.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "Verifiable Natural Language to Linear Temporal Logic Translation- A Benchmark Dataset and Evaluation Suite, William English, Chase Walker, Dominic Simon, Sumit Jha, Rickard Ewetz, arXiv, 2025"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Finding Invariants of Distributed Systems- It’s a Small (Enough) World After All, Travis Hance, Marijn Heule, Ruben Martins, Bryan Parno, NSDI, 2021/paper.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "Finding Invariants of Distributed Systems- It’s a Small (Enough) World After All, Travis Hance, Marijn Heule, Ruben Martins, Bryan Parno, NSDI, 2021"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Paxos Made EPR- Decidable Reasoning about Distributed Protocols, Oded Padon, Giuliano Losa, Mooly Sagiv, Sharon Shoham, OOPSLA, 2017/paper.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "Paxos Made EPR- Decidable Reasoning about Distributed Protocols, Oded Padon, Giuliano Losa, Mooly Sagiv, Sharon Shoham, OOPSLA, 2017"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Reducing Liveness to Safety in First-Order Logic, Oded Padon, Jochen Hoenicke, Giuliano Losa, Andreas Podelski, Mooly Sagiv, Sharon Shoham, POPL, 2018/paper.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "Reducing Liveness to Safety in First-Order Logic, Oded Padon, Jochen Hoenicke, Giuliano Losa, Andreas Podelski, Mooly Sagiv, Sharon Shoham, POPL, 2018"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Hyperproperties, Michael R. Clarkson, Fred B. Schneider, Journal of Computer Security, 2010/Hyperproperties, Michael R. Clarkson, Fred B. Schneider, Journal of Computer Security, 2010.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "Hyperproperties, Michael R. Clarkson, Fred B. Schneider, Journal of Computer Security, 2010"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Auxiliary Variables in TLA+, Leslie Lamport, Stephan Merz, arXiv, 2017/Auxiliary Variables in TLA+, Leslie Lamport, Stephan Merz, arXiv, 2017.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "Auxiliary Variables in TLA+, Leslie Lamport, Stephan Merz, arXiv, 2017"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/High-Level Specifications- Lessons from Industry, Brannon Batson, Leslie Lamport, FMCO proceedings, 2003/High-Level Specifications- Lessons from Industry, Brannon Batson, Leslie Lamport, FMCO proceedings, 2003.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "High-Level Specifications- Lessons from Industry, Brannon Batson, Leslie Lamport, FMCO proceedings, 2003"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/TLA-Verus- Generating and Solving Temporal Proof Obligations with LLM Agents, Kseniia Strelbytska, Balázs Szilágyi, Anna Mészáros, Ferenc Huszár, NeurIPS VERICODEGEN Workshop, 2026/paper.pdf",
+    "status": "saved during review B; primary source audited",
+    "title": "TLA-Verus- Generating and Solving Temporal Proof Obligations with LLM Agents, Kseniia Strelbytska, Balázs Szilágyi, Anna Mészáros, Ferenc Huszár, NeurIPS VERICODEGEN Workshop, 2026"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/Verifying Liveness Properties of Distributed Systems via Trace Refinement in Higher-Order Concurrent Separation Logic, Jonas Kastberg Hinrichsen, Léo Stefanesco, Lars Birkedal, Amin Timany, manuscript, 2024/paper.pdf",
+    "title": "Verifying Liveness Properties of Distributed Systems via Trace Refinement in Higher-Order Concurrent Separation Logic, Jonas Kastberg Hinrichsen, Léo Stefanesco, Lars Birkedal, Amin Timany, manuscript, 2024",
+    "status": "Fairneris primary manuscript saved and read"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/AutoMan- Facilitating Verified Distributed Systems Development Through Automatic Code Generation and Manual Optimizations, Zihao Zhang, Ti Zhou, Christa Jenkins, Omar Chowdhury, Shuai Mu, SOSP, 2025/paper.pdf",
+    "title": "AutoMan- Facilitating Verified Distributed Systems Development Through Automatic Code Generation and Manual Optimizations, Zihao Zhang, Ti Zhou, Christa Jenkins, Omar Chowdhury, Shuai Mu, SOSP, 2025",
+    "status": "saved after primary paper and title audit"
+  },
+  {
+    "path": "/hdd1/sichanghe/paper_collection/TLA-Prover- Verifiable TLA+ Specification Synthesis via Preference-Optimized Low-Rank Adaptation, Eric Spencer, Arslan Bisharat, Brian Ortiz, et al., arXiv, 2026/paper.pdf",
+    "title": "TLA-Prover- Verifiable TLA+ Specification Synthesis via Preference-Optimized Low-Rank Adaptation, Eric Spencer, Arslan Bisharat, Brian Ortiz, et al., arXiv, 2026",
+    "status": "saved after primary paper and title audit"
+  }
+]

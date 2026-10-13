@@ -1,0 +1,8 @@
+error: assertion failed
+ --> /ssd1/sichangheagent/browser-agent-proposal-pipeline-private/runs/2026-10-08/verification/division_invalid.rs:5:63
+  |
+5 | { let x: int = 3; let y: int = 2; let z = x / (y + 1); assert(z == 2); }
+  |                                                               ^^^^^^ assertion failed
+
+error: aborting due to 1 previous error
+

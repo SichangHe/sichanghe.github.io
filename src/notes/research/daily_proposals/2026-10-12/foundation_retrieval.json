@@ -1,0 +1,26 @@
+[
+  {
+    "key": "perennial",
+    "url": "https://www.chajed.io/papers/perennial:sosp2019.pdf",
+    "status": "failed",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "key": "veribetrkv",
+    "url": "https://www.andrew.cmu.edu/user/bparno/papers/veribetrkv.pdf",
+    "path": "runs/2026-10-12/primary/veribetrkv.pdf",
+    "sha256": "2d7a0f1b9b057df1cfcff7c60728a4b42dcfd2cf09c26cdbc9746154356291e7",
+    "bytes": 356748,
+    "retrieved_utc": "2026-10-12T11:07:44.105327+00:00",
+    "status": "success"
+  },
+  {
+    "key": "daisynfs",
+    "url": "https://pdos.csail.mit.edu/papers/daisy-nfs:osdi22.pdf",
+    "path": "runs/2026-10-12/primary/daisynfs.pdf",
+    "sha256": "45bf7d347235085183c41057b11d2598be398d8be11c61d2c8e4395c850bb162",
+    "bytes": 457542,
+    "retrieved_utc": "2026-10-12T11:07:45.015703+00:00",
+    "status": "success"
+  }
+]

@@ -1,0 +1,189 @@
+# agent research and evaluation for verified distributed software
+(authored by agents unless marked 🧑)
+
+takeaways
+
+- inference: evaluate intended requirements, model agreement, and proof completion separately
+- inference: a proof establishes the stated contract rather than its agreement with human intent
+- inference: compare harnesses under equal budgets
+    - their benchmark inputs and success definitions differ
+
+papers
+
+- page references count from the PDF title page
+- 1. SysMoBench: Evaluating AI on Formally Modeling Complex Real-World Systems
+    - Qian Cheng, Ruize Tang, Emilie Ma, Finn Hackett, Peiyang He, Yiming Su, Ivan Beschastnikh, Yu Huang, Xiaoxing Ma, Tianyin Xu. ICLR 2026. [paper](https://arxiv.org/abs/2509.23130)
+    - evaluates models against code traces and supplied properties
+    - bounded model checking and sampled traces do not prove implementation refinement
+    - property templates and mapping helpers require an independent audit
+    - original evidence: “S YS M O B ENCH currently includes eleven real-world artifacts” (p. 2); “we run each agent five times and evaluate the best output model” (p. 8)
+- 2. Specula: Scaling formal specifications for autonomous model checking of system code
+    - Qian Cheng, Saad Mohammad Rafid Pial, Ruize Tang, Yiming Su, Emilie Ma, Finn Hackett, Ivan Beschastnikh, Yu Huang, Tianyin Xu. arXiv 2026, version 2 dated 3 August. [paper](https://arxiv.org/abs/2607.25333); [code](https://github.com/specula-org/Specula); [case archive](https://github.com/specula-org/specula-case-studies)
+    - agents model code, check properties, and reproduce violations in executable code
+    - a reproduced bug establishes that bug exists
+    - the reported work mostly checks safety and deadlocks rather than general eventual progress
+    - original evidence: “weakening guards, adding permissive transitions, or even hardcoding trace-specific state updates” (p. 6); “Only 0.90% are liveness properties” (p. 10)
+- 3. VeruSAGE: A Study of Agent-Based Verification for Rust Systems
+    - Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu. arXiv, version 2 dated 15 April 2026. [paper](https://arxiv.org/abs/2512.18436); [code and benchmark](https://github.com/microsoft/verus-proof-synthesis)
+    - agents restore removed proofs while contracts and implementation stay fixed
+    - 849 tasks come from eight systems
+    - Anvil library and controller are separate groups, giving nine task groups
+    - dependency bodies remain trusted signatures in extracted tasks
+    - original evidence: “849 proof tasks extracted from eight open-source Verus-verified Rust systems” (p. 1); “we do not change the pre- and post-conditions of F” (p. 3)
+- 4. Vero: Can AI Agents Build Formally Verified Software Repositories?
+    - Zhe Ye, Hantao Lou, Yuechun Sun, Peiyang Song, Zhengxu Yan, Timothe Kasriel, Qingyang Zhang, Kaiyu Yang, Soonho Kong, Jingxuan He, Dawn Song. arXiv, 13 August 2026. [paper](https://arxiv.org/abs/2608.13522)
+    - requires every scored obligation in each curated multi-module Lean 4 instance
+    - fixed interfaces and contracts allow separate proof-only and code-plus-proof modes
+    - restores frozen source and checks trusted axioms
+    - accepts formal evidence of defective benchmark contracts or reference code
+    - efficient behavior needs its own specification
+    - original evidence: “743 scored APIs and 2,705 scored specifications” (p. 6); “27 of 43 instances in code-and-proof and 25 in proof-only” (p. 8)
+- 5. Verus-SpecGym: An Agentic Environment for Evaluating Specification Autoformalization
+    - Anmol Agarwal, Natalie Neamtu, Pranjal Aggarwal, Jannis Limperg, Seungone Kim, Cedric Flamant, Kanna Shimizu, Bryan Parno, Sean Welleck. arXiv, 26 May 2026. [paper](https://arxiv.org/abs/2605.26457); [code](https://github.com/formal-verif-is-cool/verus-spec-gym)
+    - tests generated contracts against official Codeforces cases and human adversarial cases
+    - separates accepting valid inputs, rejecting invalid inputs, accepting valid outputs, and rejecting invalid outputs
+    - finite cases cannot establish complete agreement with informal intent
+    - original evidence: “581 specification-writing tasks” (p. 3); “finite test suites can expose many specification errors, but they cannot rule out all possible errors” (p. 15)
+- 6. VERINA: Benchmarking Verifiable Code Generation
+    - Zhe Ye, Zhengxu Yan, Jingxuan He, Timothe Kasriel, Kaiyu Yang, Dawn Song. ICLR 2026. [paper](https://arxiv.org/abs/2505.23135); [code](https://github.com/sunblaze-ucb/verina)
+    - separates code, specification, and proof generation
+    - reference contracts and positive and negative cases support independent scores
+    - lack of identical answers in searched training corpora does not exclude algorithm familiarity
+    - original evidence: “189 standalone programs” (p. 4); “Ground truth proofs are optional in V ERINA” (p. 4)
+- 7. VerifyThisBench: Generating Code, Specifications, and Proofs All At Once
+    - Xun Deng, Sicheng Zhong, Barış Bayazıt, Andreas Veneris, Fan Long, Xujie Si. arXiv, version 2 dated 7 October 2025. [paper](https://arxiv.org/abs/2505.19271)
+    - uses human verification-competition problems across several proof tools
+    - end-to-end variant asks for specification, implementation, and proof
+    - reviewed success and specification alignment remain different measurements
+    - original evidence: “We manually inspected a subset of successful solutions” (p. 8); “a test-based proxy to evaluate specification alignment” (Appendix B, p. 14)
+- 8. AutoVerus: Automated Proof Generation for Rust Code
+    - Chenyuan Yang, Xuheng Li, Md Rakib Hossain Misu, Jianan Yao, Weidong Cui, Yeyun Gong, Chris Hawblitzel, Shuvendu Lahiri, Jacob R. Lorch, Shuai Lu, Fan Yang, Ziqiao Zhou, Shan Lu. OOPSLA 2025. [paper](https://arxiv.org/abs/2409.13082); [code](https://github.com/microsoft/verus-proof-synthesis)
+    - generates proof annotations and repairs verifier errors for supplied code and contracts
+    - small-program benchmark result does not establish whole distributed repository completion
+    - original evidence: “150 non-trivial proof tasks” (p. 1); “more than 90% of them” (p. 1)
+- 9. AlphaVerus: Bootstrapping Formally Verified Code Generation through Self-Improving Translation and Treefinement
+    - Pranjal Aggarwal, Bryan Parno, Sean Welleck. ICML 2025. [paper](https://arxiv.org/abs/2412.06176)
+    - translates verified programs, searches repairs, and filters false successes
+    - unchecked assumptions can spread through reused successful examples
+    - the quoted “it” refers to assume(false)
+    - original evidence: “learns to use it in all programs” (Appendix D, p. 20); “checking for assume(false)” (p. 5)
+- 10. VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
+    - Chuyue Sun, Yican Sun, Daneshvar Amrollahi, Ethan Zhang, Shuvendu Lahiri, Shan Lu, David Dill, Clark Barrett. arXiv, version 4 dated 3 March 2026. [paper](https://arxiv.org/abs/2510.25015); [code](https://github.com/ChuyueSun/VeriStruct)
+    - plans abstractions, data invariants, contracts, and proofs across data-structure methods
+    - cases include bitmap, tree map, ring buffer, and reader/writer lock
+    - external tests still supply part of the intended behavior
+    - original evidence: “128/129 (99.2%) of functions” (p. 16); “requires users to manually provide a comprehensive unit test suite” (p. 16)
+- 11. KVerus: Scalable and Resilient Formal Verification Proof Generation for Rust Code
+    - Yuwei Liu, Xinyi Wan, Yanhao Wang, Minghua Wang, Lin Huang, Tao Wei. arXiv, 5 May 2026. [paper](https://arxiv.org/abs/2605.03822)
+    - uses verifier-version knowledge and cross-file context for proof debugging
+    - includes breaking verifier updates in evaluation
+    - fixed proof tasks do not assess new requirements
+    - original evidence: “251 of 313 tasks (80.2%)” (p. 8)
+- 12. P3: Joint Program-and-Proof Planning for Verified Code Generation
+    - Zenan Li, Ziran Yang, Peiyang Song, Zhaoyu Li, Kaiyu Yang. arXiv, 10 August 2026. [paper](https://arxiv.org/abs/2608.09277)
+    - plans code and proof together from a supplied formal specification
+    - compares with sequential code-then-proof workflows
+    - does not establish autonomous interpretation of vague requests
+    - original evidence: “a unified program-and-proof plan from the specification” (p. 1); “4.6–11.2 percentage points” (p. 1)
+- 13. Intent-aligned Formal Specification Synthesis via Traceable Refinement
+    - Zhe Ye, Aidan Z. H. Yang, Huangyuan Su, Zhenyu Liao, Samuel Tenka, Zhizhen Qin, Udaya Ghai, Dawn Song, Soonho Kong. arXiv, 12 April 2026. [paper](https://arxiv.org/abs/2604.10392)
+    - links generated tests to individual requirements
+    - repairs affected contract clauses instead of replacing the whole contract
+    - tests generated by the same model can share its misunderstanding
+    - original evidence: “positive tests”, “negative-output tests”, “negative-input tests”, and “an explicit traceability map” (Figure 1 caption, p. 2)
+- 14. VeriAct: Beyond Verifiability – Agentic Synthesis of Correct and Complete Formal Specifications
+    - Md Rakib Hossain Misu, Iris Ma, Cristina V. Lopes. arXiv, 31 March 2026. [paper](https://arxiv.org/abs/2604.00280)
+    - checks Java contracts beyond verifier acceptance
+    - compares against reference behavior and deliberately changed implementations
+    - results depend on which incorrect implementations the evaluation includes
+    - original evidence: “Trivial or partial specifications pass verification easily” (p. 3)
+- 15. Proofs Promptly: Proof-Oriented Programming with AI Agents (Experience Report)
+    - Eleftherios Ioannidis, Nikhil Swamy, Gabriel Ebner, Matthai Philipose, Tahina Ramananandro. ICFP 2026. [paper](https://doi.org/10.1145/3828709); [verified artifacts](https://doi.org/10.5281/zenodo.20538205)
+    - reports F*/Pulse data structures, concurrency primitives, MSQuic buffers, and garbage-collector proof translation
+    - distinguishes autonomous work from contract review and invariant guidance
+    - manual effort estimate is anecdotal rather than a controlled speedup
+    - original evidence: “occasionally supplying a key invariant” (p. 1); “manual proof-engineering cost we estimate at roughly half a year” (p. 1)
+- 16. Can LLMs Write Correct TLA+ Specifications? Evaluating Natural-Language-to-TLA+ Generation
+    - Arslan Bisharat, Brian Ortiz, Eric Spencer, Khushboo Bhadauria, TaiNing Wang, George K. Thiruvathukal, Konstantin Läufer, Mohammed Abuhamad. arXiv, 4 June 2026. [paper](https://arxiv.org/abs/2606.05792)
+    - evaluates generation from natural language on the TLA+ examples collection
+    - SANY parsing and TLC acceptance do not establish equivalence to informal requirements
+    - 205 collected specifications are not necessarily 205 eligible tasks in each experiment
+    - original evidence: “205 TLA+ speciﬁcations” (p. 1); “all validated by the SANY parser and TLC model checker” (p. 1)
+- 17. nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large Language Models
+    - Matthias Cosler, Christopher Hahn, Daniel Mendoza, Frederik Schmitt, Caroline Trippel. CAV 2023. [paper](https://arxiv.org/abs/2303.04864); [code](https://github.com/realChrisHahn2/nl2spec)
+    - maps sentence fragments to temporal formula fragments for local human correction
+    - five experts supplied 36 challenging one-sentence requirements using five proposition names
+    - Table 1 reports initial Codex 16/36 and interactive 31/36
+    - 21/36 augmented-prompt score includes four prompt examples in the evaluated set
+    - original evidence: “resulting in 36 benchmark instances” (p. 8); “no alternative translation to ambiguous input was accepted” (p. 9)
+- 18. Property Specification Patterns for Finite-State Verification
+    - Matthew B. Dwyer, George S. Avrunin, James C. Corbett. FMSP 1998. [Author-maintained paper list](https://matthewbdwyer.github.io/psp/papers.html). Existing primary PDF read from its named collection directory
+    - combines recurring property forms with execution scopes
+    - scope means the part of an execution where the promise applies
+    - response promises a later event after a trigger
+    - a scoped property can hold when its boundary events never occur
+    - 1998 catalog does not fully handle fairness
+    - original evidence: “A state/event P must always be followed” (response pattern, p. 7); “if the scope delimiters are not present in an execution” (p. 5)
+- 19. Verifiable Natural Language to Linear Temporal Logic Translation: A Benchmark Dataset and Evaluation Suite
+    - William English, Chase Walker, Dominic Simon, Sumit Jha, Rickard Ewetz. arXiv, version 2 dated 18 December 2025. [paper](https://arxiv.org/abs/2507.00877)
+    - separates proposition phrases, temporal structure, concrete action mapping, and execution checking
+    - Table 2 lists four generated datasets: 10,000; 7,304; 7,319; 7,457 entries
+    - these 32,080 entries reuse 43 templates
+    - abstract and conclusion say three datasets while the body lists four
+    - each template supplies one positive and one negative trace
+    - original evidence: “36 expert-crafted lifted NL-LTL pairs” and “7 new ones of our own” (p. 4); “one satisfying and one violating” (p. 4)
+- 20. ClarifySTL: An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification
+    - Yue Fang, Zhi Jin, Jie An, Jia Li, Hongshen Chen, Xiaohong Chen, Naijun Zhan. arXiv, 2 May 2026. [paper](https://arxiv.org/abs/2605.01209)
+    - asks for missing details before resolving alternative interpretations
+    - Signal Temporal Logic describes numerical conditions over timed signals
+    - AmbiEval has 6,000 vagueness and 3,200 ambiguity instances
+    - transformation evaluation uses 10 experienced participants and three responses per defective requirement
+    - journal footer has placeholder metadata and conflicts with arXiv date
+    - original evidence: “contains 9,200 labeled instances” (AmbiEval, p. 13); “at least three years of experience” (clarification participants, p. 16)
+
+evaluation recommendations
+
+- preserve the original request and added assumptions
+    - record failures, delivery, scheduling, persistence, and recovery
+- test the specification independently
+    - valid behavior must remain allowed
+    - invalid behavior and deliberately faulty implementations must fail
+    - check whether a trigger or scope boundary can occur
+- check model agreement independently
+    - replay withheld implementation traces
+    - reproduce model failures through legal external actions
+    - distinguish sampled agreement from an implementation refinement proof
+- freeze approved requirements before proof grading
+    - rebuild in a fresh checkout
+    - check allowed edits and trusted assumptions
+    - check dependencies before claiming whole-system correctness
+- evaluate eventual progress explicitly
+    - state which continuously or repeatedly available actions must eventually run
+    - test delivery failures, repeated crashes, and starvation
+    - distinguish deadlock freedom from request completion
+- report whole-task completion and partial proof scores separately
+    - record cost, elapsed time, retries, human edits and hints, tool versions, and trusted dependencies
+    - separate formally demonstrated benchmark defects from agent failures
+- split by source project and protocol family
+    - include unpublished variants
+    - report familiar cases separately
+
+coverage and gaps
+
+- 20 primary papers inspected
+    - deeper evaluation checks for central benchmarks
+- two PDFs added to the paper collection
+    - ClarifySTL and VLTL-Bench
+- four fresh unique Google result pages
+    - temporal ambiguity, counterexamples, ClarifySTL, and property patterns
+- inherited Scholar pagination repeated the same page
+    - excluded from coverage counts
+- no reviewed source establishes the whole target autonomously
+    - vague intent, independently justified distributed requirements, implementation refinement, and general liveness
+- remaining leads: Lang2LTL, NL2TL, Grammar-Forced Translation, ClarifyCodeBench
+- 1999 ICSE patterns author PDF host unreachable
+    - claims above use the saved 1998 paper
+- detailed source audit and search snapshots: /ssd1/sichangheagent/verus_distributed/lit_b/agents_evaluation.md
+- two misleading collection matches corrected during reading
+    - Proofs Promptly print-warning PDF replaced by its actual paper
+    - unrelated photo-sharing P3 excluded

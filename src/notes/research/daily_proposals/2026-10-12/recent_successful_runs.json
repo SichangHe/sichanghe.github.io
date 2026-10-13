@@ -1,0 +1,8 @@
+[
+  {
+    "marker": "runs/2026-10-06/email_sent.status",
+    "contents": "delivery source: manual-catchup\nmemo path: runs/2026-10-06/daily_memo.md\nnovelty check path: runs/2026-10-06/novelty_check.md\nsend record path: runs/2026-10-06/email-send-record.md\nsubject: Resuming the three browser tasks\nMessage-ID: <1791337719461005925.1826575@gmail.com>\nexit status: 0\n",
+    "memo": "runs/2026-10-06/daily_memo.md",
+    "subject": "Check the gap between proofs and deployed kernels\n"
+  }
+]
