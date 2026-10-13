@@ -1,5 +1,6 @@
 # Solving VeriContest with a Lean-Backed Rust Verifier
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 Source: [2610.03994v2](https://arxiv.org/abs/2610.03994v2); [saved full PDF](/ssd1/sichangheagent/vlpw/lean_rust.pdf). This study uses the full primary text, including appendices. Page numbers are printed PDF pages. Results are author reports unless labeled otherwise.
 
@@ -13,7 +14,7 @@ The pipeline restates Verus contracts in executable Rust, translates code and co
 
 Proof agents cannot change the statement or generated surrounding code. §3.4, p. 5: “must be byte-identical to the pipeline’s output”. Dependency auditing allows only `propext`, `Classical.choice`, and `Quot.sound`; §3.4: “Nothing the theorem depends on may use them”, referring to `sorry`, `admit`, `native_decide`, and `bv_decide`. Accepted proofs are rebuilt in a clean clone. Inference: audit transitive theorem dependencies, not merely forbidden words in the visible proof.
 
-Agents have three hours and 40 official checks, with unrestricted scratch Lean checks between submissions. §3.4: “most of the revision happens there.” Inference: first official acceptance is not one-shot proof generation. Their reverse-integer proof invents a loop invariant relating the current accumulator to the recursive specification; induction proves the loop lemma, then arithmetic and branch cases finish the outer theorem.
+Agents have three hours and 40 official checks, with unrestricted scratch Lean checks between submissions. §3.4: “most of the revision happens there.” Inference: first official acceptance is not one-shot proof generation. Their reverse-integer proof invents a loop invariant relating the current accumulator to the recursive specification; induction proves the loop lemma, then the rest of the proof handles the code outside the loop and applies the lemma (§3.4, p. 5).
 
 ## Results and their denominators
 
@@ -52,3 +53,4 @@ The available ChatGPT answer was checked against `lean_rust.txt`. These addition
 - the Verus comparison explicitly says the reported rates “are not comparable rates” (§4.5, p. 10), so it cannot establish a controlled Lean-versus-Verus advantage
 
 The answer's threat ratings remain its opinions; no independent artifact reproduction was performed.
+Audited 2026-10-12 against the paper: checked every number, fraction, percentage and section/page reference (counts 1007/946/61/1325, 768/239, 658/349 and its 134+44+169+2 split, 114/105/19,555, 27 specializations by kind, Tables 2, 4-7, $1,792, $643, 348/2,198, 1,146/179, 49/50, 18/50), the quotations, the Verus-vs-Lean comparison caveats and the marked inferences; all match. Changed one sentence: the reverse-integer proof tail was described as 'arithmetic and branch cases', which the paper does not say; it now follows §3.4 (rest of the proof handles the code outside the loop and applies the lemma). Not checked: the process claims in Study status (ChatGPT run, independent review) and the local evaluation.md link target.

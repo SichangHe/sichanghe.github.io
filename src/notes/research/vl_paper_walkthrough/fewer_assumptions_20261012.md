@@ -1,5 +1,6 @@
 # Fewer Assumptions by Design: reusable DLL verification guidance
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 Andrada-Livia Antoneac, Dorel Lucanu and Dragoș Teodor Gavriluț, [arXiv 2609.34886v1](https://arxiv.org/abs/2609.34886v1), September 28, 2026; EPTCS 452, pp.104–121, [DOI](https://doi.org/10.4204/EPTCS.452.8). [Saved PDF](/ssd1/sichangheagent/vlpw/fewer_assumptions.pdf), [text](/ssd1/sichangheagent/vlpw/fewer_assumptions.txt). [Skill repository](https://github.com/andradaAntoneac/generate-verus-specification), [experiment repository](https://github.com/andradaAntoneac/Verus-dll-Experiments).
 
@@ -11,11 +12,11 @@ A doubly linked list must preserve agreement between forward and backward links.
 
 §2.2, p.106 describes “an interactive, exploratory methodology where a user collaborates with an agent to progressively strengthen specifications.” This differs from evaluating autonomous generation under a fixed, controlled benchmark.
 
-The progressive study first hand-writes a weak index-list proof, then targets chain validity, then strengthens the whole list invariant with Claude. Tables 3–4 report 9 assumptions and 3 axiomatic lemmas in the first experiment, then 6 and 2 with fewer operations covered. §3.3, p.109: “The final state is 45 verified, 0 errors, 11 assumes”. The remaining assumptions bridge exact-hop reachability to sequence indices. Verifier item counts must therefore be reported alongside residual trust.
+The progressive study first hand-writes a weak index-list proof, then targets chain validity, then strengthens the whole list invariant with Claude. Tables 3–4 report 9 assumptions and 3 axiomatic lemmas in the first experiment, then 6 and 2 with fewer operations covered. §3.3, p.109: “The final state is 45 verified, 0 errors, 11 assumes”. The remaining assumptions bridge exact-hop reachability to sequence indices. Inference: verifier item counts should be reported alongside residual trust.
 
 ## Techniques VL can reuse
 
-§3.3 splits bookkeeping `wf()` from structural `full_wf()`: “decouples the helper primitives (e.g., allocate and link) from chain reasoning” Do not force a slot allocator to prove a complete linked chain in a transient state. Add an explicit ghost membership set instead of relying exclusively on opaque computed set expressions. A ghost boolean captures a postcondition before a later mutation removes the relevant local context. The study reduced assumptions from 75 to 11 through invariant strengthening, acyclicity lemmas, ghost facts and direct witnesses.
+§3.3 splits bookkeeping `wf()` from structural `full_wf()`: “decouples the helper primitives (e.g., allocate and link) from chain reasoning” Inference: do not force a slot allocator to prove a complete linked chain in a transient state. Add an explicit ghost membership set instead of relying exclusively on opaque computed set expressions. A ghost boolean captures a postcondition before a later mutation removes the relevant local context. The study reduced assumptions from 75 to 11 through invariant strengthening, acyclicity lemmas, ghost facts and direct witnesses.
 
 §3.4, pp.110–113 supplies concrete engineering lessons:
 
@@ -46,19 +47,19 @@ Count assumptions and external bodies, but also inspect where they occur. The pa
 
 ## Prior work and threat
 
-The paper builds on AutoVerus, VeriStruct and VeruSAGE (§2.2). Its useful addition is reusable DLL guidance aimed at stronger specifications and lower trust. It is directly overlapping prior art for domain skills, generation workflow, framing and proof-debugging guidance. VL should reuse or compare against this workflow rather than describe these ideas as new.
+The paper contrasts itself with AutoVerus, VeriStruct and VeruSAGE (§2.2, p.105–106). Its useful addition is reusable DLL guidance aimed at stronger specifications and lower trust. Inference: it is directly overlapping prior art for domain skills, generation workflow, framing and proof-debugging guidance. VL should reuse or compare against this workflow rather than describe these ideas as new.
 
 Inference: the product threat is real within index-list generation, but the scope is narrow and interactive. Six heterogeneous demonstrations do not establish robust repository-wide autonomous generation. The strongest opportunity for VL is demonstrating semantic adequacy and low trust across representations under fixed inputs, not competing on the number of verifier-accepted items alone.
 
 ## Evidence and VL context
 
-Page numbers below are PDF pages unless printed pages are explicitly named. Quotations and reported results come from the linked primary paper, not an independent reproduction. Recommendations and competitive assessments are our inferences. VL's current [vision](/ssd1/sichangheagent/VeruLaw/docs/vision.md) says: “The product direction is autonomous Verus project generation.” Its intended inputs are ordinary intent, code, tests and project documents. This study does not establish that VL currently achieves that goal.
+Page numbers in this study are printed pages (EPTCS 452 pp.104–121). Quotations and reported results come from the linked primary paper, not an independent reproduction. Recommendations and competitive assessments are our inferences. VL's current [vision](/ssd1/sichangheagent/VeruLaw/docs/vision.md) says: “The product direction is autonomous Verus project generation.” Its intended inputs are ordinary intent, code, tests and project documents. This study does not establish that VL currently achieves that goal.
 
 ## Validation
 
-Material quotations were checked against the PDF text, including a second raw-text extraction for Vosti's two-column layout. A separate reviewer checked all five studies against the primary text; the citation correction and omitted scope qualifications were incorporated. No code or published experimental results were independently reproduced.
+Material quotations were checked against the PDF text. No code or published experimental results were independently reproduced.
 
-ChatGPT offload was attempted with full PDFs. The multi-file upload failed, the combined-PDF job ended with `account_ui_retry_required`, and its retry required login. No ChatGPT answer was used to support the claims in this study. The primary-text synthesis and independent review remain the evidence.
+An earlier ChatGPT attempt on 2026-10-12 failed (multi-file upload, then `account_ui_retry_required`, then a login prompt), so the study above was first written from the paper text alone. A later run produced a complete answer; the cross-check part below adds what held up against the paper. The primary-text synthesis and independent review remain the evidence.
 
 ## ChatGPT cross-check (2026-10-12)
 
@@ -69,3 +70,5 @@ The available ChatGPT answer was checked against `fewer_assumptions.txt`. These 
 - the strongest Index run says it “achieves full verification while enabling high-precision ordering postconditions” (§4.5, p. 119), while the authors' “longer-term goal remains verifying all eleven implementations against the single shared specification” (§5, p. 120)
 
 The answer's direct-threat rating is an opinion; these quotations do not establish repository-scale completion.
+
+Audited 2026-10-12 against the paper: checked every number (Tables 3-6, 75 to 11 assumes, 45 verified, line counts, times), all quotations and their section/printed-page references, the Table 6 ratings, and the workflow and challenge descriptions against §3-§5 text. Changed: 'builds on' prior systems to 'contrasts itself with' (§2.2 says 'differs from the above'); marked three unmarked inferences; corrected the page-numbering statement (the study uses printed pages, not PDF pages); removed a template sentence about 'Vosti' and 'five studies' that does not belong to this paper. Not checked: arXiv id and date (not in the txt), the repositories, the VL vision quote (present in vision.md) beyond existence.

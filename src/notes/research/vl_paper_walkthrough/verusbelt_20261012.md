@@ -1,5 +1,6 @@
 # VerusBelt: sound proof types and the limits of Verus's foundation
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## Paper and reading boundary
 
@@ -15,7 +16,7 @@ The authors state the boundary directly (§1, p. 4): “We do not attempt to ver
 
 ## What it does
 
-The abstract (p. 1) reports “the first semantic soundness proof for a significant subset of Verus” and says “All our proofs are mechanized in Iris/Rocq.” The modeled primitives are PPtr, PCell, PointsTo, LocalInvariant, AtomicInvariant, resource algebras, and storage protocols. Resource algebras define how proof resources combine and change; storage protocols let exclusive and shared permissions mediate access to stored resources.
+The abstract (p. 1) reports “the first semantic soundness proof for a significant subset of Verus” and says “All our proofs are mechanized in Iris/Rocq.” The modeled primitives are PPtr, PCell, PointsTo, LocalInvariant, AtomicInvariant, resource algebras, and storage protocols. Resource algebras define how proof resources combine and change; storage protocols are a highly configurable interface for enforcing safe usage of shared state (§1, p. 3).
 
 The model also covers boxes, products, sums, shared and mutable borrows, thread spawning, recursive types, and relevant Copy, Send, and Sync bounds (§6, p. 20). These are modeled typing rules and APIs, not a demonstration that an agent can infer contracts for an arbitrary repository.
 
@@ -70,9 +71,11 @@ Checked the material claims and quotations against the saved primary paper text.
 
 ChatGPT analysis of the full PDF, 2026-10-12: [answer](/ssd1/sichangheagent/vlpw/verusbelt_chatgpt_answer.md). It agrees with this study on what is proved and what stays trusted. Checked against the paper text and added from it:
 
-- An earlier Verus formalism covers part of what VerusBelt leaves out. §7, p. 21: it “proves termination of ghost code, as well as an erasure-validity theorem, which VerusBelt does not do.” The same sentence adds that it “does not address all the challenges described in §6.”
-- The prophecy restriction was found independently. §7, p. 22: “Lafeychine [22] has adapted RustHornBelt to model “ghost snapshots” (a particular proof-oriented API) using a similar prophecy-stratification to ours.”
+- An earlier Verus formalism covers part of what VerusBelt leaves out. §7, p. 21: it “proves termination of ghost code, as well as an erasure-validity theorem, which VerusBelt does not do.” The next sentence adds that it “does not address all the challenges described in §6.”
+- The prophecy restriction also appears in later work by another author. Footnote 2, p. 4 (the same work is described in §7, p. 22, in slightly different words): “Lafeychine [22] has adapted RustHornBelt to model “ghost snapshots” (a particular proof-oriented API) using a similar prophecy-stratification to ours.”
 - The division of labor the authors intend. §7, p. 22: “VerusBelt uses Iris only to verify the proof-oriented primitive types of Verus, and expects developers to verify these libraries by (safely!) building on” them. Agent inference: VL agents should build on these primitives in Verus and never need Iris.
 - Callers see only contracts. §2, p. 5: “Verus treats every function call as opaque and only reasons about it via its declared requires and ensures.”
 
 Not checked: its 30-item technique list beyond the items above, its threat ratings (its opinion), and its section 6 recommendations. Seven of its quotations were checked and all are in the paper; the rest were not checked.
+
+Audited 2026-10-12 against the paper: read the whole study and the whole paper text; checked every quotation location, section and page reference, Theorem 6.1, the limitation list (Send bound, trusted translation, solvers, erasure), the prophecy paradox example, the cell-logic and Leaf-guard claims, and the section 7 claims. Changed three things: the storage-protocol gloss (the exclusive and shared permissions wording was not in the paper; replaced with the paper's own description), the sentence-position slip for the does-not-address-all-challenges remark (it is the next sentence, not the same one), and the Lafeychine quotation reference (the quoted wording is in footnote 2 on p. 4, not in section 7; the paper calls it follow-on work learned of after acceptance, so the word independently was dropped). The agent-marked inferences and recommendations were left as is. Not checked: the ChatGPT answer file beyond the four items quoted, and the Rocq artifact.

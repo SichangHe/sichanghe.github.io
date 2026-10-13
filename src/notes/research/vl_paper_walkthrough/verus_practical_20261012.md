@@ -1,5 +1,6 @@
 # Verus systems foundation: proof architecture, automation, and realistic limits
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## Paper and reading boundary
 
@@ -17,7 +18,7 @@ The paper's architectural premise (§1, p. 2) is to organize proof obligations s
 
 ### Check the supported memory operations before translating code
 
-§2, p. 3, says Verus “rejects usage of features outside that subset” of supported unsafe features. For the systems case studies, the authors “extended Verus’s support for raw pointers.” Agent recommendation: first map the target code's memory operations to supported proof APIs. A proof-oriented rewrite or a separately specified trusted primitive may be necessary; existing unsafe syntax does not itself establish that its behavior is covered. This extends the older linear-ghost-types paper's memory model, without claiming complete Rust provenance support.
+§2, p. 3, says Verus “rejects usage of features outside that subset” of supported unsafe features. For the systems case studies, the authors “extended Verus’s support for raw pointers.” Agent recommendation: first map the target code's memory operations to supported proof APIs. A proof-oriented rewrite or a separately specified trusted primitive may be necessary; existing unsafe syntax does not itself establish that its behavior is covered. Agent inference: this builds on the earlier Verus unsafe-Rust work the paper cites as [10], and the paper does not claim complete Rust provenance support.
 
 ### Keep ordinary proof obligations small
 
@@ -31,7 +32,7 @@ Agent recommendation: reuse narrow proof contexts, small useful assertions, reve
 
 §3.2, pp. 4–5, integrates EPR, a restricted first-order fragment designed for predictable automated reasoning. The four steps are: define the unrestricted implementation; create an EPR abstraction; prove its invariant automatically; transport the result back through checked connections. The author says the developer “still writes an inductive invariant” (p. 5). Fully automated checking is not automatic invariant discovery.
 
-In IronKV's delegation map, integer keys are abstracted to a totally ordered set. Verus checks the correspondence. The original default-mode set proof required about 300 lines and several days; EPR avoids much of the case-splitting proof. EPR excludes direct arithmetic and imposes acyclicity constraints. A caveat matters: “epr_mode queries are not strictly in EPR” because of polymorphic encoding (p. 5); the reported success is empirical for the tested cases.
+In IronKV's delegation map, integer keys are abstracted to a totally ordered set. Verus checks the correspondence. The initial default-mode Verus set proof required about 300 lines and several days; EPR avoids much of the case-splitting proof. EPR excludes direct arithmetic and imposes acyclicity constraints. A caveat matters: “epr_mode queries are not strictly in EPR” because of polymorphic encoding (p. 5); the reported success is empirical for the tested cases.
 
 A small distributed-lock example shows the cost of abstraction can outweigh its benefit: about 25 default proof lines versus about 100 lines to create and use the EPR abstraction (§4.1.3, p. 10). Agent recommendation: select EPR for complex fitting invariants; do not assume every simple proof benefits from a new model.
 
@@ -117,3 +118,5 @@ The full ChatGPT answer was checked against `verus_practical.txt`. These additio
 - the paper reports “does not yet reach performance parity” for the verified allocator (§4.2.4, p. 13), and says “our unmap is much slower” for the page table (§4.2.3, p. 12)
 
 The answer also identified a Figure 9 line-count reconciliation issue; that arithmetic was not independently resolved here. Its threat ratings and recommendations are opinions.
+
+Audited 2026-10-12 against the paper: checked every number in Figures 7-9, 4.1.3, 4.2.1-4.2.5 (line counts, times, ratios, 62/39/11 mode counts, 8 of 19 benchmarks, 128 KiB limit, 25 vs 100 lines, 1.6 and 1.8 ms per push), page and section references, the quoted passages, the EPR four steps, the VerusSync description and the solver-mode descriptions; all matched. Changed two things: original default-mode set proof now reads initial default-mode Verus proof (the paper says initial, and original is the Dafny proof); the unmarked claim that this extends the linear-ghost-types memory model is now marked as inference and tied to the paper's citation [10]. Not resolved: the Figure 9 per-system rows do not sum to its Verus total row (for example proof lines 4509+5237+5329+13703+2913 = 31691 versus 31231), as the earlier cross-check noted; the study reports the total row as printed. No Verus code in the study. Did not check the prior-tool numbers beyond those quoted.

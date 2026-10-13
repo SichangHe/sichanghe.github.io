@@ -1,6 +1,6 @@
 # Formal Disco: open-ended verified-program generation
-
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-13 against the paper; slips corrected in place; details in the last line.
 
 - paper
   - Gabriel Poesia, Simon Henniger, Tzu-Han Hsu, Yilun Du, and Nada Amin
@@ -89,7 +89,7 @@
     three languages, with one reported exception
     - Verus lemma-body-size entropy remains below the Claude seed corpus at
       iteration five
-  - the final Qwen Verus corpus contains a 105-line verified lemma versus an
+  - the final Qwen Verus corpus longest method or lemma body is 105 lines versus an
     86-line maximum in the Claude seed corpus
   - Formal Disco leads compared Verus corpora on three of four sampled feature
     views only up to their respective sample lengths
@@ -136,6 +136,7 @@
 
 ## what VL should learn
 
+- recommendations of this note, not claims about the paper
 - treat verified traces as compounding product data
   - retain task input, model output, patches, verifier diagnostics, attempt
     outcome, program ancestry, cost, and toolchain identity
@@ -186,6 +187,7 @@
 
 ## product threat
 
+- the whole section is the note's inference, not a paper claim
 - overall: high strategic threat, medium current substitution threat
 - high capability threat
   - verifier-filtered synthetic data can rapidly erase a scarce-data advantage
@@ -383,3 +385,5 @@
     - confirm identity against the completed arXiv `2606.17374` study before reuse
   - `vpsd_0afb0f867a034bfa9a427997d33ac0df1ca615a1beaf3facd21452410c1799f4`
     - A Hybrid Approach to Semi-Automated Rust Verification
+
+Audited 2026-10-13 against the paper: checked every number, section, figure and table reference, worker steps, selection rule, ablations, appendix A and C details (48 processes, 8-12 h on 4 H100, k cap 4 vs 32) and the limitations against the full text and found them right; corrected one slip (the Verus 105-line vs 86-line figures are from the table of longest method or lemma bodies, not specifically a lemma); labeled the what-VL-should-learn and product-threat sections as the note's recommendation and inference. The file is a bullet-tree study with a plan part: sections decision, what VL should learn, recommended integration, product threat and next discussion question, plus the manifest and the excluded-discoveries list, are the note's plans, opinions or project bookkeeping and say nothing about the paper; the rest is paper claims and they are right. The 23-paper manifest and rank statuses were not checked, being outside the paper.

@@ -1,5 +1,6 @@
 # Automatically Building Machine-Checked Assurance Cases from C Codebases to Requirements
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and existing notes
 
@@ -15,20 +16,20 @@ How to do it. First freeze the C input as a Clight AST (V_Preprocess). Analyze i
 
 Evidence and limits. All 299 bodies passed the no-admitted-obligation gate, with machine-checked proofs of memory safety and leak freedom. The six benchmarks contain 299 functions across 18 translation units; human effort is reported as under one person-day per benchmark. These numbers are benchmark results, not a success rate over arbitrary C. Functional correctness, termination, and concurrency are outside scope. Contracts and external specifications remain assumptions, and proof success does not establish that a specification expresses intended requirements.
 
-Quote (Section 2, page 2): “A usable, provable pair is therefore the outcome of an iterative co-evolution, not of a single synthesis pass.”
+Quote (Section 1, page 2): “A usable, provable pair is therefore the outcome of an iterative co-evolution, not of a single synthesis pass.”
 
 ## technique 2: resource-aware interface protocol for open libraries
 
-What it is. An open library has no `main` to define legal call sequences. CCV therefore builds a state-based interface protocol P = (F, S, transitions, guards, branches). A state records global variables, borrowed caller resources, and library-managed objects; its interpretation is a separation-logic assertion. Each function has a guard and branches describing possible observations, successor states, pure facts, and residual resources.
+What it is. An open library has no `main` to define legal call sequences. CCV therefore builds a state-based interface protocol P = (F, S, ⟦·⟧, G, B): interface functions, state space, separation-logic interpretation of states, guards, branches; transitions are derived from guards and branches. A state records global variables, borrowed caller resources, and library-managed objects; its interpretation is a separation-logic assertion. Each function has a guard and branches describing possible observations, successor states, pure facts, and residual resources.
 
 When to use it. Use this when requirements constrain sequences of exported calls and there is no designated client. A protocol makes legal sequences, ownership assumptions, and resource flow explicit for human review and allows per-function proofs to compose.
 
 How to do it. Identify externally callable functions F and logical variables W for each interface. Define state domains for globals, borrowed resources, and library objects, plus `Inv`, `GlobalRep`, `BorrowRep`, and `LibObjRep`. For each function define a guard `G_f(state,w)` and branch set `Br_f(state,w,o)` containing next state, observable result, proposition, and residual resource. Define protocol transitions only when the guard holds and a branch reaches the successor. For every enabled state/function pair create a protocol edge whose precondition combines the guard, interpreted state, and caller-borrowed resources; its postcondition existentially selects a declared branch and successor. Prove per-edge subsumption: the edge precondition entails the interface precondition, and every interface outcome fits an edge postcondition under a frame. Then require a covering witness: one satisfiable run from an empty grounded state that exercises every interface.
 
-Evidence and limits. The protocol soundness theorem states that a valid input-aware run, realized by a client supplying represented arguments and borrowed resources, is safe when (H1) implementations satisfy interfaces and (H2) every edge is subsumed. The theorem is conditional: it does not verify arbitrary clients, prove that every abstract run has a client, establish maximality of accepted calls, termination, liveness, callbacks, or concurrent ownership. Unsatisfiable preconditions and over-strong guards can make proofs vacuous, so model fidelity, realizability, coverage, and conformance review are required.
+Evidence and limits. The protocol soundness theorem states that a valid input-aware run, realized by a client supplying represented arguments and borrowed resources, is safe when (H1) implementations satisfy interfaces and (H2) every edge is subsumed. The theorem is conditional: it does not verify arbitrary clients, prove that every abstract run has a client, establish maximality of accepted calls, termination, liveness, callbacks, or concurrent ownership. An unsatisfiable precondition can make a subsumption obligation vacuously easy, and an over-strong guard can silently reject intended clients, so model fidelity, realizability, coverage, and conformance review are required.
 
 Quote (Section 4.3, page 10): “Under H1 and H2, every concrete execution that realizes a valid input-aware run is safe.”
-Quote (Section 4.4, page 10): “It does not prove that every declared state is satisfiable, that every branch occurs in the implementation, or that a concrete client program realizing the witness exists.”
+Quote (Section 4.4, page 11): “It does not prove that every declared state is satisfiable, that every branch occurs in the implementation, or that a concrete client program realizing the witness exists.”
 
 ## technique 3: evidence-producing workflow and explicit trust gates
 
@@ -43,7 +44,7 @@ Quote (Section 5.5, page 13): “The LLM agent is not in the TCB: Rocq rechecks 
 
 ## what is proved, measured, and trusted
 
-Proved: each listed function body satisfies its VST specification; memory safety and leak freedom hold under preconditions; protocol soundness follows from H1/H2; four openHiTLS cases additionally have protocols, edge subsumption proofs, and witnesses. Measured: 299 functions, 18 translation units, six benchmarks, listed C LOC, elapsed days, tokens where available, and under one human day per benchmark. Trusted or assumed: Rocq kernel, VST/CompCert soundness, frozen preprocessing/front end, gate bindings, allocator and external-function premises, formal specifications, protocol model, caller arguments/resources, and human requirement-conformance judgments. The paper says it does not verify functional correctness of cryptographic algorithms, termination, or concurrency. Token/time records are incomplete (dashes for some cases), and model-service downtime makes cross-run efficiency comparisons invalid.
+Proved: each listed function body satisfies its VST specification; memory safety and leak freedom hold under preconditions; protocol soundness follows from H1/H2; the linked-list case and three openHiTLS cases (SLH-DSA, SHA-256/224, FrodoKEM) additionally have protocols, edge subsumption proofs, and witnesses. Measured: 299 functions, 18 translation units, six benchmarks, listed C LOC, elapsed days, tokens where available, and under one human day per benchmark. Trusted or assumed: Rocq kernel, VST/CompCert soundness, frozen preprocessing/front end, gate bindings, allocator and external-function premises, formal specifications, protocol model, caller arguments/resources, and human requirement-conformance judgments. The paper says it does not verify functional correctness of cryptographic algorithms, termination, or concurrency. Token/time records are incomplete (dashes for some cases), and the paper says different models, service availability, and accounting conventions “preclude a controlled efficiency comparison”.
 
 ## what VL should reuse and threat inference
 
@@ -56,3 +57,5 @@ VL should reuse the separation-logic pattern of carrying state and ownership acr
 - input-aware protocol soundness — obtain conditional safety for realized runs under implementation satisfaction and caller obligations
 - evidence-producing verification gates — freeze inputs, audit proofs/axioms, and require human conformance review before delivery
 - covering witness — require one satisfiable run exercising every interface to block vacuous protocol proofs
+
+Audited 2026-10-12 against the paper: checked numbers (299 functions, 18 TUs, per-benchmark sums, tool versions, <1 person-day), definitions of the protocol, steps of the workflow, all four quotations and their sections and pages, and the SHA-256/224 example. Changed: quote section 2 to 1, quote page 10 to 11, protocol tuple, protocol-bearing cases (linked list plus three openHiTLS, not four openHiTLS), vacuity/guard statement, efficiency-comparison wording. Not checked: absence of earlier notes with this title; Verus relevance is the study's own inference.; follow-up: arXiv id dismissed, the paper's first page reads arXiv:2609.40119v1 [cs.PL] 30 Sep 2026, matching the study; no edit.

@@ -1,5 +1,6 @@
 # Alerus: verifying probabilistic Rust with error credits
 (authored by agents unless marked 🧑)
+Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 Alexander Y. Bai and Joseph Tassarotti, *Verifying Probabilistic Programs in Rust*, [arXiv 2607.12282v1](https://arxiv.org/abs/2607.12282v1), July 14, 2026. [Saved PDF](/ssd1/sichangheagent/vlpw/probabilistic_rust.pdf), [extracted text](/ssd1/sichangheagent/vlpw/probabilistic_rust.txt).
 
@@ -12,14 +13,14 @@ An error credit is ghost state representing permission for a bounded probability
 1. Encode credits using Verus tracked resource algebra. §3.1, p.8: “All error credits live at a single global ghost location.” The carrier has a real-valued credit, an empty identity and an invalid element. Composition adds nonnegative values; validity requires a value in [0,1). Splitting and joining follow the existing resource interfaces. Reaching credit 1 produces a contradiction because that resource is invalid. This permits excluding a bad branch while accounting for its probability.
 2. Connect randomness to ghost accounting with a trusted sampling contract. §3.2, p.9: “expectation preservation (Err-Rand-Exp) and thin air (Err-Thin-Air), are the only constructs Alerus adds as trusted axioms.” `rand_ubig` draws uniformly below an arbitrary-precision bound. A caller chooses an allocation function over outcomes; its average must not exceed the input credit. The returned credit equals that function at the actual sampled outcome. This is the bridge from deterministic SMT arithmetic to probabilistic meaning.
 3. Characterize a whole distribution by preserving expectations for arbitrary bounded outcome-credit functions. §2.2, p.7: “appropriately bounding error probabilities suffices to completely characterize the distribution of values that a program can return.” The expectation-preserving transformation specification quantifies over allocations, rather than proving only one bad-event bound. Indicator allocations recover individual event probabilities.
-4. Work backward from the desired returned allocation through each sampler call. §5, p.14 and §5.1, p.16: “We prove this specification by reasoning backwards from the credit allocation”. Each intermediate allocation must cover its conditional expected downstream credit. Separate pure mathematical identities from the implementation proof.
+4. Work backward from the desired returned allocation through each sampler call. §5.1, p.16: “We prove this specification by reasoning backwards from the credit allocation”. Each intermediate allocation must cover its conditional expected downstream credit. Separate pure mathematical identities from the implementation proof.
 5. Prove almost-sure termination using a ghost fuel measure. §4, p.12: “find a way to bound the number of steps or repetitions that it will take to reach” credit 1. Obtain an arbitrary positive thin-air credit. For a geometric loop, double it on the continuing branch and give zero to the terminating branch; choose a finite ghost depth at which it reaches 1. The depth decreases, while executable behavior remains unbounded. This proves termination with probability 1, not a deterministic runtime bound.
 6. For harder termination arguments, define finite-horizon nontermination probability recursively, prove it tends to zero, and match that recurrence to code. §4, p.13: “Isolating the pure mathematical reasoning in steps 1 and 2 from the code reasoning in step 3 helps to structure the proofs.” The one-dimensional random walk needs position-dependent allocations, not a constant amplification factor. Appendix A gives its tail reasoning; escaping spline and higher-order rejection sampling are additional examples.
 7. Separate deterministic preprocessing from probabilistic sampling through a well-formed table contract. §5.2, p.20: “the probabilistic sampling step just updates credits, relying on the table being correctly structured”. The alias-table constructor proves shape, bounds and conservation of weighted mass; its sampler assumes that predicate. §5.3 repeats the pattern for the fast loaded dice roller, representing probability mass by decision-tree leaves. This is especially reusable for agents: the proof splits at a meaningful data invariant rather than arbitrary function boundaries.
 
 ## Case studies and foundations
 
-The full paper develops discrete negative-exponential Bernoulli, geometric Bernoulli, discrete Laplace and discrete Gaussian samplers, plus Walker's alias method and the fast loaded dice roller (§5). Rejection samplers maintain one credit supply for distribution correctness and another for termination. §5, p.15: “This separates out the termination reasoning from reasoning about” sampler correctness. Appendix B develops Bernoulli allocations; Appendix C states the exponential Taylor bound; Appendix D proves the fast geometric sampler; Appendix E gives the Laplace credit split; Appendix F develops the Gaussian sampler; Appendix G supplies dice-roller allocation bounds.
+The full paper develops discrete negative-exponential Bernoulli, geometric Bernoulli, discrete Laplace and discrete Gaussian samplers, plus Walker's alias method and the fast loaded dice roller (§5). Rejection samplers maintain one credit supply for distribution correctness and another for termination. §5, p.15: “This separates out the termination reasoning from reasoning about” sampler correctness. Appendix B proves invariant preservation for the negative-exponential Bernoulli sampler; Appendix C states the exponential Taylor bound; Appendix D proves the fast geometric sampler; Appendix E gives the Laplace credit split; Appendix F develops the Gaussian sampler; Appendix G supplies dice-roller allocation bounds.
 
 These are proof demonstrations, not a benchmark of autonomous agent success. §1, p.3: “we employ Claude Opus 4.7 and 4.8”. The paper does not provide a controlled comparison establishing the model's success rate or the cost of a VL-style pipeline.
 
@@ -39,7 +40,7 @@ Inference: an ordinary Verus pass after adding these axioms cannot by itself est
 
 Recommendations: reuse tracked probability resources, outcome-allocation templates, backward expectation reasoning, and constructor/sampler decomposition for probabilistic targets. Keep foundation coverage distinct from accepted example proofs. Record a feature-compatibility check before permitting prophecy-based borrows or concurrency with error credits. These are proposed practices, not implemented VL changes.
 
-The threat is specialized: Alerus already supplies probability proof infrastructure and realistic Rust sampler examples, so VL should not sell their invention as its novelty. The paper does not demonstrate autonomous specification discovery or repository-wide project generation. It is a potential enabling dependency and a specialized proof target, rather than evidence that the full VL product already exists. Its relationship to Forte is complementary: sensitivity accounting does not prove that a noise sampler has the promised distribution.
+The threat is specialized: Alerus already supplies probability proof infrastructure and realistic Rust sampler examples, so VL should not sell their invention as its novelty. The paper does not demonstrate autonomous specification discovery or repository-wide project generation. It is a potential enabling dependency and a specialized proof target, rather than evidence that the full VL product already exists. Inference, not from this paper: its relationship to Forte is complementary: sensitivity accounting does not prove that a noise sampler has the promised distribution.
 
 ## Evidence and VL context
 
@@ -47,7 +48,7 @@ Page numbers below are PDF pages unless printed pages are explicitly named. Quot
 
 ## Validation
 
-Material quotations were checked against the PDF text, including a second raw-text extraction for Vosti's two-column layout. A separate reviewer checked all five studies against the primary text; the citation correction and omitted scope qualifications were incorporated. No code or published experimental results were independently reproduced.
+Material quotations were checked against the PDF text. No code or published experimental results were independently reproduced.
 
 ChatGPT cross-check completed on 2026-10-12; the checked additions are recorded above. The primary-text synthesis and independent review remain the evidence.
 
@@ -57,8 +58,10 @@ ChatGPT cross-check completed on 2026-10-12; the checked additions are recorded 
 The complete ChatGPT answer was checked against `probabilistic_rust.txt`. These additions hold:
 
 - Alerus adds two probabilistic rules as trusted axioms: “expectation preservation (Err-Rand-Exp) and thin air (Err-Thin-Air)” (§3.2, p. 9), while bignum operations have trusted specifications because “verifying the bignum library itself is beyond the scope of this paper” (§3.2, p. 9)
-- the paper states that `external_body` specifications extend the trusted computing base (§3.1, p. 8), so “only two axioms” does not describe the whole trust surface
+- the paper states that `external_body` specifications extend the trusted computing base (§2.1, p. 5), so “only two axioms” does not describe the whole trust surface
 - the authors report that Claude Opus 4.7 and 4.8 produced the mathematical lemmas “without human intervention” (§5, p. 15), but the paper gives no controlled success-rate or cost evaluation for complete end-to-end tasks
 - the model removes concurrency: “we have additionally removed concurrency” (§6, p. 24), and Caesar/HeyVL support properties “not directly captured by specifications with Alerus,” including expected running-time bounds (§7, p. 24)
 
 The answer's termination caveats, threat rating, and interpretation of missing experimental denominators are analysis. No artifact execution was performed.
+
+Audited 2026-10-12 against the paper: read the study and the full paper text; checked every quotation location, the credit algebra, the rand_ubig contract, the geometric-sampler and random-walk termination steps, the AlerusBelt limits, the appendix list and the trust claims. Changed: the external_body trust-base reference (paper puts it in section 2.1, p.5-6, not 3.1, p.8); one page pointer for the backward-reasoning quote (p.16 only); the Appendix B description; removed a Vosti and five-studies sentence that does not belong to this paper; marked the Forte comparison as the study's inference. Could not check: Forte (not in this paper), the unreproduced experiments, the Rocq mechanization.
