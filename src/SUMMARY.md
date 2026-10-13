@@ -96,6 +96,7 @@
         - [🤖 distributed verification literature review A](notes/research/distributed_verification_review_a_20261007.md)
             - [🤖 review A, second pass: 2025–2026 work, agents, liveness, evaluation](notes/research/distributed_verification_review_a2_20261009.md)
         - [🤖 distributed implementations and specification methods, review B](notes/research/distributed_verification_review_b/review_b_systems_20261007.md)
+        - [🤖 agent evaluation procedure from distributed-verification literature](notes/research/agent_evaluation_procedure_20261012.md)
         - [🤖 research topic studies](notes/research/topic_studies/index.md)
             - [🤖 distributed systems](notes/research/topic_studies/distributed_systems/index.md)
                 - [🤖 consensus and replication](notes/research/topic_studies/distributed_systems/consensus_replication/index.md)
