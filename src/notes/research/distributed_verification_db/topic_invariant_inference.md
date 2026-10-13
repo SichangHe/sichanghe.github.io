@@ -1,0 +1,690 @@
+# 🤖 database, tools that find invariants automatically
+(authored by agents unless marked 🧑)
+
+70 sources, best-read first, then newest first. Generated from `sources.jsonl`; edit the reviews' notes, not this page.
+
+- Autogram (2026)
+    - title: Invariant Discovery for Networked Systems
+    - what: An LLM proposes typed expressions using telemetry metadata, not raw values. Then deterministic enumeration, logic checks and statistical tests keep the approximate relations that usually hold between live network measurements.
+    - number: Full recall on Abilene and GÉANT vs NetNomos 19.8% and 15.1%
+    - number: GÉANT: 101 relations vs NetNomos 1,645 (946 vacuous, 27 match reference)
+    - number: Production WAN (about 100 routers, 1000 links): 41 relations in ten minutes; link hold rate 96.5%
+    - number: full recall on Abilene and GÉANT vs NetNomos 19.8% and 15.1%
+    - limits: The relations are approximate. They are not inductive invariants (facts that hold initially and are preserved by every step). The paper states no safety or liveness contract, program proof or measure of human effort. It admits false acceptances but gives no rate. Proofs are left to future work.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2607.22944); [notes: Invariant Discovery for Networked Systems](../distributed_verification_review_b/deep_18_invariant_agents.md); [notes: Invariant Discovery for Networked Systems](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - record id: `autogram-2026`
+- Beyond Basic Specifications? A Systematic Study of Logical Constructs in LLM-based Specification Generation (2026)
+    - what: Compares LLM-generated ACSL annotations for 49 C programs, checked with Frama-C, under four settings of allowed constructs: basic, proved lemmas, axioms, and all. Failing annotations are fixed by deleting or modifying them.
+    - number: 49 programs, 5 runs each; stable = at least 2 of 5
+    - number: GPT-5 NVP/stable: deletion basic 32/28, full 40/39; modification basic 39/37, full 42/41
+    - number: Gemini modification verifiable NVP 48, stable 46
+    - number: modification raises runtime generally over 100%
+    - limits: The annotations come from the code, not from requirements. Axioms are assumed true and can make the proof unsound, and nothing audits them. NVP counts a program as solved if any run solved it, not pass@1 (success on the first try).
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2602.00715); [notes: Beyond Basic Specifications? A Systematic Study of Logical Constructs ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - record id: `beyond-basic-specifications-a-2026`
+- DissProve (2026)
+    - title: DissProve: Automated Verification of Asynchronous Distributed Protocols with Affine Communication
+    - what: DissProve takes P actor code and a forbidden state. It works backward to try to show that no execution reaches that state. 'Affine' means communication histories are limited to a bounded number of rounds, while the number of actors is unbounded.
+    - number: Table 1: 7 cases (One-Shot Election 56 P lines, Bakery 99, Dekker 68, Drinking Philosophers 58, Two-Phase Commit 55, Barrier Lock 49, Atomic Broadcast 80)
+    - limits: There is no artifact URL, and the notes did not locate the source archive. These are P actor programs. They are not interchangeable with Ivy or TLA+ models of the same name.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2606.24003); [notes: DissProve: start at a forbidden outcome and work backward](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - record id: `dissprove-2026`
+- IC3Syn (2026)
+    - title: Synthesizing Inductive Invariants for Distributed Protocols via IC3 and Large Language Models
+    - what: An IC3 controller hands an LLM (Claude Opus 4.6) concrete bad states to block. The LLM proposes TLA+ clauses. TLC and Apalache check them on small instances. TLAPS then proves the invariant for all sizes.
+    - number: 29 of 29 protocols solved (Table 1 p. 9); direct Claude baseline 23/29; Gemini 3 Flash inside IC3 solves 27/29
+    - number: MLDR (MongoDB Raft model): 4525 s, 16 clauses, proof over 3,000 lines; EPR Paxos: 1806 s, 9 clauses
+    - number: Default synthesis timeout 30 minutes, 2 hours for the two hardest cases
+    - number: Paper's rerun of Endive solves 24 shared cases
+    - limits: The models and safety goals are supplied. Liveness is not evaluated. The synthesis loop works on finite instances only. The proof stage used a scaffold plus Codex automation. The model, budget and log of human intervention are not stated. Full end-to-end automation is ongoing work. No public code or proof artifact was found. The results are the authors' own reports.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2605.24619); [notes: IC3Syn: a direct 2026 LLM invariant search result](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: IC3Syn: agent-written proofs of unbounded distributed protocol safety](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: IC3Syn protocol inventory](../distributed_verification_review_b/deep_5_llm_agents.md)
+    - record id: `ic3syn-2026`
+- NetNomos (2026)
+    - title: Making Logic a First-Class Citizen in Generative ML for Networking
+    - what: NetNomos learns logical rules that fit network traces, using a minimal-hitting-set encoding. It filters them with GPT-4.1 and retrieval. It then uses them to constrain a generative model.
+    - number: over 75% reference coverage within 12 hours vs DuoAI under 60% at 24 hours
+    - number: 1.6-6.5x scalability gain
+    - number: GPT-4.1 with retrieval precision at least 98.1%, false positives at most 0.73%, vs 82.5%/9.2% without
+    - number: generated data violates 0.3% of learned rules on MAWI
+    - limits: The rules are only consistent with a finite dataset. It has no protocol liveness result and no theorem about an implementation. Human hours are not stated.
+    - how much was read: most of it read
+    - [source](https://www.usenix.org/system/files/nsdi26-he.pdf); [notes: Making Logic a First-Class Citizen in Generative ML for Networking (Ne](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Making Logic a First-Class Citizen in Generative ML for Networking (Ne](../distributed_verification_review_b/deep_18_invariant_agents.md)
+    - record id: `netnomos-2026`
+- Simplifying Safety Proofs with Forward-Backward Reasoning and Prophecy (2026)
+    - what: Proves consensus safety of first-order Paxos-family models and an abstract Raft model. Combines forward reasoning, backward reasoning and prophecy (a recorded guess about the future). Checked with mypyvy and Z3. All proofs were written by hand.
+    - number: Table 1: 13 model variants, median of 15 runs
+    - number: Paxos value-only: Q=4, A=1, B=5 and 0.59 s to universal clauses and 0.43 s
+    - number: Fast Paxos value-only: Q=5, A=1, B=7, 1.5 s to 0.8 s
+    - number: Raft: Q=7, A=2, B=9, 3.7 s to 2.8 s
+    - limits: Safety only, on abstract models. No implementation or progress result. Human effort and lines of code are not reported. No measured rate of successful proof generation.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1145/3808341); [notes: Simplifying Safety Proofs with Forward-Backward Reasoning and Prophecy](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - record id: `simplifying-safety-proofs-with-2026`
+- Specy (2026)
+    - title: Specy: Automatically Learning Specifications for Distributed Systems from Event Traces
+    - what: It learns event-based formulas from traces of distributed systems (P models or logs). It builds monitors from them and checks fresh traces to reject guesses that are too strong. For six deductive-verification experiments, the learned formulas were translated by hand.
+    - number: all 43 goal specs recovered, 28 (65%) without help, 15 needed guidance
+    - number: 14 benchmarks incl. 3 industrial, 10,000 traces each
+    - number: about 9% of extra learned formulas fail on fresh traces, no designated goal formula does
+    - number: pruning speeds up by geometric mean 14.8
+    - limits: The only guarantee is consistency with the supplied traces. Hard properties need predicates, event choices or ghost state. The deductive results cover selected safety properties of P models. There is no refinement to production code.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1145/3798209); [notes: Specy: Learning Specifications for Distributed Systems from Event Trac](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Specy: Learning Specifications for Distributed Systems from Event Trac](../distributed_verification_review_b/deep_18_invariant_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - record id: `specy-2026`
+- Timers (2026)
+    - title: Verifying First-Order Temporal Properties of Infinite-State Systems via Timers and Rankings
+    - what: Turns a claim about time into a termination problem by adding timers that predict when formulas become true. A human supplies the model, the claim, the implicit ranking, the invariant and finite-set approximations. Z3 checks the generated conditions.
+    - number: 17 tasks in Table 2, e.g. Ticket: 2 s, 20 invariant conjuncts, 256 proof tokens
+    - number: Paxos: 101 s, 238 tokens; ABP: 4 s, 539 tokens; HRB-Correct: 135 s, 99 tokens; Dijkstra k-State: 64.8 s, 213 tokens
+    - number: Ivy proof sizes for six tasks: 407, 521, 860, 446, 593, 748 tokens (Ticket, Paxos, ABP, HRB-Correct, HRB-Relay, Ackermann)
+    - number: runtime is Z3 validation on Apple M1 Pro, Z3 4.13.3
+    - limits: The guarantees cover first-order transition-system models, not deployed code. Rankings and invariants are not discovered automatically. Sizes count proof tokens, not human effort.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1007/978-3-032-22749-2_18); [notes: Verifying First-Order Temporal Properties of Infinite-State Systems vi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - record id: `timers-2026`
+- ATLAS (2025)
+    - title: Constrained LTL Specification Learning from Examples
+    - what: ATLAS learns LTL formulas (formulas about behavior over time) from good and bad example traces. It also takes user constraints and priorities, and solves with MaxSAT, an optimizing solver. It uses no LLM. Cases: Peterson mutual exclusion, a voting machine, robot-arm repair, and weakening an invariant.
+    - number: Table I: 30/30 tasks mean 43.65 s (Peterson); 10/10, 3.08 s (voting); 20/20, 37.25 s (robot arm); 53/78, 66.75 s (invariant weakening)
+    - limits: It finds the best formula only within the formula-size bound. A formula that fits the traces may not capture what the user meant. The benchmarks were built around the authors' use cases. Using it needs formal-methods expertise.
+    - how much was read: most of it read
+    - [source](https://eskang.github.io/assets/papers/icse25-atlas.pdf); [notes: Constrained LTL Specification Learning from Examples (ATLAS)](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
+    - record id: `atlas-2025`
+- Compositional Inductive Invariant Inference via Assume-Guarantee Reasoning (2025)
+    - what: This work splits a TLA+ protocol into components with assume-guarantee contracts (each component assumes something of the others and guarantees something in return). It uses Endive to search for local inductive invariants. It then proves safety with TLAPS for arbitrary instances.
+    - number: two-phase commit: global search 34.82 s, 107 proof steps; local searches 15.44/30.43/6.13 s
+    - number: Mongo Static Raft: global search fails, manual 17-conjunct invariant, 1686 proof steps; local proofs total 372 steps, only one of three local searches succeeds
+    - number: Two-phase commit: global search 34.82 s, 10 conjuncts, 107 proof steps; components 15.44/30.43/6.13 s
+    - number: Mongo Static Raft: global search fails; manual 17-conjunct invariant, 1686 proof steps; components total 372 proof steps but only one of three searches succeeds automatically
+    - limits: Humans split up the spec and write all the contracts. It proves safety only. It uses abstract TLA+, not the MongoDB code. The authors did not measure effort.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2509.06250); [notes: Compositional Inductive Invariant Inference via Assume-Guarantee Reaso](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Compositional Inductive Invariant Inference via Assume-Guarantee Reaso](../distributed_verification_review_b/deep_18_invariant_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - record id: `compositional-inductive-invariant-inference-2025`
+- DAISY (2025)
+    - title: Inferring multiple helper Dafny assertions with LLMs
+    - what: GPT-4.1 with heuristics over error messages finds where to insert missing helper assertions in verified Dafny programs taken from DafnyBench. Dafny and the Z3 solver then check the candidates.
+    - number: Table 3: w/o-one 153 (63.4%), w/o-two 76 (32.3%), w/o-all 8 (26.7%), combined 237 (46.8%)
+    - number: dataset 241 w/o-1, 235 w/o-2, 30 w/o-all instances
+    - number: default two insertion sites, ten candidates per site
+    - limits: The specs already exist. It excludes cases where removing an assertion still verifies. Faria et al. misquote single-assertion success as 63.2%.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2511.00125); [notes: Inferring multiple helper Dafny assertions with LLMs (DAISY)](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
+    - record id: `daisy-2025`
+- FORCE (2025)
+    - title: Inductive First-Order Formula Synthesis by ASP: A Case Study in Invariant Inference
+    - what: FORCE uses answer-set programming to list first-order formulas that are consistent with supplied traces, and to prune them. It plugs into DuoAI and Flyvy, which check that candidates are inductive.
+    - number: times: sharded KV 0.17 s, toy consensus 0.31, Paxos 20.4, Flexible Paxos 56.3, Multi-Paxos 81.5
+    - number: without quantifier restriction Multi-Paxos 842 s
+    - number: about 13% smaller invariants for Paxos and 7% for Flexible Paxos
+    - number: code: 250 ASP, 80 pruning, 400 C++, 200 integration lines
+    - limits: The evaluation configuration contains the desired invariant. It has no liveness and no code refinement. Flyvy's runtime did not improve notably.
+    - how much was read: most of it read
+    - [source](https://verse-lab.org/papers/force-iclp25.pdf); [notes: FORCE: Inductive First-Order Formula Synthesis by ASP: A Case Study in](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: FORCE: Inductive First-Order Formula Synthesis by ASP: A Case Study in](../distributed_verification_review_b/deep_18_invariant_agents.md)
+    - record id: `force-2025`
+- Implicit rankings (2025)
+    - title: Implicit Rankings for Verifying Liveness Properties in First-Order Logic
+    - what: The method compares old and new states through formulas, instead of computing a number that must shrink (a ranking function). Constructors combine them pointwise, lexicographically, by multiset or permutation, and across a whole domain. Z3 checks the conditions that result. It verifies toy stabilization, a binary counter, token-ring non-starvation, Chang-Roberts leader election, SAT backtracking and abstract CDCL termination. It also verifies Dijkstra's k-, 4- and 3-state stabilization and Ghosh's 4-state stabilization.
+    - number: all examples verified within 10 minutes (§6, p.388)
+    - number: All examples verified within 10 minutes
+    - number: 8 examples
+    - number: all examples verified within 10 minutes
+    - limits: The user supplies how the ranking is composed, the other proof-rule formulas, and sometimes hints for existential witnesses. Domains are finite but unbounded. It does not cover unrestricted infinite domains in full. The review notes found no person-month figures.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2412.13996); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); [notes: Ivy, ranking, Coq, and Iris case index](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - record id: `implicit-rankings-2025`
+- LMGPA (2025)
+    - title: Towards Language Model Guided TLA+ Proof Automation
+    - what: An LLM splits hard TLAPS proof obligations into smaller claims. Symbolic provers check them. The invariant is given as input.
+    - number: 26 inductiveness proofs of distributed protocols plus 93 math theorems (119 total)
+    - number: Distributed protocols (Table 1 p. 13): symbolic-only 38.5%; DeepSeek-V3.2-Exp 50.0% with decomposition (13/26), 0% direct; Claude 3.7 Sonnet 42.3% vs 15.4% direct; GPT-5 42.3% vs 3.8% direct
+    - number: Runtime DeepSeek 9h 14m vs Claude 1h 32m
+    - number: Four decomposition attempts per claim; TLAPS timeouts Z3 5 s, Zenon 10 s, Isabelle 30 s
+    - limits: It tests proving a supplied invariant. It does not test finding one or reading vague requirements. Training leakage is possible from public protocol proofs (Section 4.2). The suite leaves out both learning switches, chord and hybrid broadcast.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2512.09758); [notes: LMGPA: prove supplied invariants rather than discover them](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - record id: `lmgpa-2025`
+- PSyn / ISyn (2025)
+    - title: Guiding Likely Invariant Synthesis on Distributed Systems with Large Language Models
+    - what: GPT-3.5 proposes predicates (PSyn) or whole candidate invariants (ISyn) for Promela models. It refines them using monitoring and Spin counterexamples. Likely invariants hold only for the states that were observed.
+    - number: PSyn sound and sufficient on 7 of 8 models; ISyn sound on 8 of 8 but sufficient on 7
+    - number: RunVS sound and sufficient on all 8; GPT-o3 direct sound 7, sufficient 3
+    - number: observed/reachable ratio 0.00044 for producer-consumer, 0.000024 train/gate
+    - number: Ethereum model 962 Promela lines
+    - limits: Observing states is not a proof. The invariant must be sound and also sufficient. It has no refinement to code and no liveness. Humans provide the model, the grammar and the target safety properties.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.34727/2025/isbn.978-3-85448-084-6_29); [notes: Guiding Likely Invariant Synthesis on Distributed Systems with Large L](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Guiding Likely Invariant Synthesis on Distributed Systems with Large L](../distributed_verification_review_b/deep_18_invariant_agents.md)
+    - record id: `psyn-isyn-2025`
+- QSM-Cutoff (2025)
+    - title: QSM-Cutoff: Systematic Derivation of Quantified Cutoff Formulas for Distributed Protocols
+    - what: Enumerates reachable finite states using symmetry. Minimizes their logical description. Grows the domain sizes until a saturation test passes.
+    - number: 19-model evaluation (Section 7, pp. 278-280), e.g. toy consensus forall: node=5, quorum=10, value=3
+    - number: Pages 263-286
+    - limits: That the formula is a true reachability invariant for every size is still a conjecture. Ordered protocols such as Paxos and Bakery are future work.
+    - how much was read: most of it read
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98682-6_14.pdf); [notes: QSM-Cutoff: a full 19-model 2025 set](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `qsm-cutoff-2025`
+- rlive (2025)
+    - title: Infinite-State Liveness Checking with rlive
+    - what: rlive is a model checker for liveness of infinite-state transition systems. It searches for counterexamples, learns abstraction predicates and synthesizes ranking functions. The ranking functions rule out loops that cannot run forever.
+    - number: 835 liveness verification problems
+    - number: timeout 1200 s, 8 GB per instance
+    - number: solves 22 more instances than alpha-L2S
+    - number: average speedup 6.47x on instances solved by both
+    - limits: It handles Boolean and linear arithmetic constraints. It is model checking. It does not prove that software implements the model. It does not terminate on systems whose only counterexamples are not lasso-shaped (a prefix followed by a repeating loop).
+    - how much was read: most of it read
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98668-0_11.pdf); [notes: Infinite-State Liveness Checking with rlive](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
+    - record id: `rlive-2025`
+- SLD-Spec (2025)
+    - title: SLD-Spec: Enhancing LLM-based Specification Generation via Program Slicing and Logical Deletion
+    - what: SLD-Spec slices C functions and has an LLM generate ACSL annotations for each slice. It screens them. After integration, Frama-C/WP removes the ones that fail.
+    - number: 37 of 51 programs and 10 of 11 complex programs
+    - number: 37 SLD-Spec vs 36 SpecGen vs 27 AutoSpec
+    - number: average runtimes 27.85 s, 42.04 s, 100.21 s
+    - number: five runs; WP timeout 8 s
+    - limits: It counts tasks solved across five runs, not pass@1. The complex dataset is composed from earlier small examples. It has no distributed progress.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2509.09917); [notes: SLD-Spec: Enhancing LLM-based Specification Generation via Program Sli](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
+    - record id: `sld-spec-2025`
+- Veil (2025)
+    - title: Veil: A Framework for Automated and Interactive Verification of Transition Systems
+    - what: It embeds distributed transition systems in Lean. It sends first-order proof obligations to SMT solvers and leaves the rest as interactive Lean goals.
+    - number: 16 evaluated cases incl. Rabia, SCP, Suzuki-Kasami, Vertical Paxos
+    - number: 1704 non-empty, non-comment lines of Lean; 85 actions and 185 invariants; about 100 lines per file
+    - number: 16 case studies: 1704 lines of Lean, 85 actions, 185 invariants
+    - number: Veil verifies all, Ivy fails on two (Paxos and Vertical Paxos time out)
+    - limits: It evaluates checking supplied invariants, not finding them. It is not an LLM agent. All its guarantees are safety. The notes record no agent success rate.
+    - how much was read: most of it read
+    - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - record id: `veil-2025`
+- AutoSpec (C/ACSL) (2024)
+    - title: Enchanting Program Specification Synthesis by Large Language Models using Static Analysis and Program Verification (AutoSpec)
+    - what: AutoSpec runs static analysis to split a program into parts. GPT-3.5 then writes ACSL contracts and loop invariants bottom-up. Frama-C/WP removes the candidates that fail, and the loop repeats until the given assertion is proved.
+    - number: 79% (199/251) C programs verified; Table 1: 51 Frama-C, 133 SyGuS, 46 OOPSLA-13, 21 SV-COMP
+    - number: six X.509 parser functions all succeed at least once; two succeed in only 2/5 runs, averaging 260.96 s and 957.14 s
+    - number: 79% of 251 programs overall: 31/51 general, 114/133 SyGuS, 38/46 OOPSLA-13, 16/21 SV-COMP
+    - number: 5 attempts per general problem; binary search 1/5, bubble sort 3/5
+    - limits: A human chooses the target assertion. The paper compares against five months of annotating a whole parser, which had a different scope. It does not cover liveness.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2404.00762); [notes: AutoSpec: Enchanting Program Specification Synthesis by Large Language](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); [notes: Enchanting Program Specification Synthesis by Large Language Models us](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Enchanting Program Specification Synthesis by Large Language Models us](../distributed_verification_review_b/deep_14_program_agents.md)
+    - record id: `autospec-c-acsl-2024`
+- LVR (2024)
+    - title: LVR: Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions
+    - what: LVR turns a progress goal into ranking obligations and safety obligations: the measure decreases, stays nonnegative, cannot leave the pending condition without reaching the good state, and no deadlock occurs. It infers integer variables, bounds and polynomial coefficients. mypyvy and P-FOL-IC3 discharge the safety obligations. Humans supply any missing variables, bounds and tiers.
+    - number: 37 out of 40 (§9.2, p.35:27) automatically; the rest manually in a few hours each
+    - number: each final coefficient-solving query takes less than a second
+    - number: eight models: ticket lock 68 lines, hybrid reliable broadcast 137, alternating bit 127, TLB shootdown 361, Paxos 133, multi-Paxos 135, stoppable Paxos 160, sliding window 119
+    - number: all eight protocols succeed: ticket lock, hybrid reliable broadcast, alternating bit, TLB shootdown, Paxos, Multi-Paxos, Stoppable Paxos, sliding window
+    - limits: By default, scheduling assumes a globally bounded interval. This is a slightly stronger fairness than "infinitely often". For example, scheduling at times 1, 2, 4, 8 satisfies "infinitely often" but not any fixed bound. Prophecy variables and a three-tier ranking keep the original fairness. LVR's multi-Paxos leaves out the local scheduler and the I/O queue. So fewer lines than IronFleet does not mean equally less effort. A cheap solver query is not the whole cost.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1145/3632877); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`
+    - record id: `lvr-2024`
+- neuralmc (2024)
+    - title: Neural Model Checking
+    - what: NeuralMC trains neural ranking functions (measures that shrink toward the goal) from simulation samples. It targets LTL liveness of SystemVerilog hardware. It then validates the functions symbolically with SMT over all transitions.
+    - number: Table 1: 194 tasks; own tool 180, ABC 57, nuXmv 117, commercial X 156
+    - number: five hours per task
+    - number: VGA solves 0 of 10
+    - limits: It covers finite hardware models. Training failures and timeouts are separate from proved violations.
+    - how much was read: most of it read
+    - [source](https://papers.nips.cc/paper_files/paper/2024/file/9d0947107ea92d6ce369dce7749180dd-Paper-Conference.pdf); [notes: Related work absent from the first pass: Neural Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
+    - record id: `neuralmc-2024`
+- ByMC (2023)
+    - title: ByMC: Byzantine Model Checker, and Survey on Parameterized Verification with Threshold Automata
+    - what: ByMC models nodes that count messages against thresholds, abstracts the counts, and uses an SMT solver to check safety and liveness for every allowed number of processes and faults. Verified for both safety and liveness: folklore and Srikanth-Toueg reliable broadcast, asynchronous Byzantine agreement, nonblocking atomic commit, condition-based consensus, CF1S, C1CS, and BOSCO. The randomised protocols (Ben-Or, Byzantine consensus, k-set agreement and RS-BOSCO) get safety plus almost-sure termination (they finish with probability 1).
+    - number: Table 4 (§6.2, p.5:20) lists the verified protocols
+    - limits: The randomised cases hold only against adversaries that respect round boundaries. The Tendermint one-round agreement analysis covers safety only. The benchmarks are compact models, not runnable implementations. The review notes did not recover the original 2018 ISoLA chapter and read the 2023 survey instead. The review notes found no human person-time.
+    - how much was read: most of it read
+    - [source](https://lmcs.episciences.org/10824/pdf); [notes: ByMC: fully parameterized model checking](../distributed_verification_review_b/deep_2_liveness.md); [notes: Ivy, ranking, Coq, and Iris case index](../distributed_verification_review_b/deep_2_liveness.md)
+    - record id: `bymc-2023`
+- Loopy (2023)
+    - title: Finding Inductive Loop Invariants using Large Language Models
+    - what: An LLM proposes pieces of loop invariants for C programs. Houdini prunes them. Frama-C/WP checks that they are inductive (hold at the start and are preserved by each step). The model repairs failures.
+    - number: 469 positive tasks
+    - number: Houdini raises solved cases from 293 to 383
+    - number: eight generations plus seven repairs: 398 solved
+    - number: Ultimate solves 430 of 469 vs Loopy 398; 31 solved only by Loopy
+    - limits: Proves assertion safety for the supplied programs. No termination proof. Arrays and pointers are filtered out. One loop and one method.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2311.07948); [notes: Finding Inductive Loop Invariants using Large Language Models (Loopy)](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
+    - record id: `loopy-2023`
+- Message Chains / UPVerifier (2023)
+    - title: Message Chains for Distributed System Verification
+    - what: Records the chain of messages that caused a later message, so causal facts can be stated directly without inventing ghost state (extra proof-only variables). It is used to check proofs of P-like programs for any system size.
+    - number: 19 evaluated cases: 16 reused mypyvy models plus Tor/onion routing, GlobalClock (150 lines, under 2 s) and 2PC-MVCC (250 lines, about 12 minutes)
+    - number: Pages 2224-2250
+    - limits: It automates the bookkeeping for proofs that are supplied, and mines facts from examples. It does not discover invariants in general. The review notes did not locate a complete fixed archive of all 19 models.
+    - how much was read: most of it read
+    - [source](https://people.eecs.berkeley.edu/~sseshia/pubdir/oopsla23.pdf); [notes: Message Chains / UPVerifier: full 19-case paper set recovered](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Message Chains for Distributed System Verification](../distributed_verification_review_b/review_b_additional_tools_20261007.md)
+    - record id: `message-chains-upverifier-2023`
+- Endive (2022)
+    - title: Plain and Simple Inductive Invariant Inference for Distributed Protocols in TLA+
+    - what: Samples candidate lemmas from a predicate grammar the user gives. Checks them on small finite instances. Greedily picks the lemmas that remove counterexamples to the induction step. A separate TLAPS proof is still needed for the protocol at unbounded size.
+    - number: Invariant for 25 of 29 protocol benchmarks
+    - number: Table I has 30 rows incl. MLDR; 2 rows have no TLA+ translation
+    - number: Paper's Endive rerun in IC3Syn solves 24 shared cases
+    - number: 30 named rows in original Table II, two with n/a for Endive
+    - limits: The generated invariant is not guaranteed to be truly inductive, because counterexamples are sampled at random. Needs a grammar from the user.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/2205.06360); [notes: Endive: TLA+ candidates, followed by an unbounded proof](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: concrete reusable cases](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - record id: `endive-2022`
+- SpecFuzzer (2022)
+    - title: Fuzzing Class Specifications (SpecFuzzer)
+    - what: Infers likely class invariants for Java. It fuzzes a fixed grammar of assertions, filters candidates with Daikon against Randoop tests, and ranks them by how many mutants they kill.
+    - number: 65 ground-truth assertions over 43 methods; up to 500 tests and 2,000 candidates per run, 10 runs, 90-minute timeout
+    - number: 20,277 assertions before selection, 975 after (95.1% reduction)
+    - number: 34/65 recall (52.3%), precision 65.8%, F1 0.57; GAssert 92.3%/27.6%/0.42; EvoSpex 88.5%/38.4%/0.53
+    - number: Evaluation on 43 methods and 65 ground-truth assertions; 20,277 assertions before selection, 975 after (95.1% reduction)
+    - limits: The output is likely invariants consistent with the tests, not proofs. The authors wrote the ground truth. Choosing by mutants can discard valid assertions. The intro's 75% claim is not supported by the tables.
+    - how much was read: most of it read
+    - [source](https://www.cin.ufpe.br/~damorim/publications/Molina_ETAL_ICSE2022.pdf); [notes: Fuzzing Class Specifications (SpecFuzzer), Molina et al., ICSE 2022](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Fuzzing Class Specifications (SpecFuzzer), Molina et al., ICSE 2022](../distributed_verification_review_b/deep_21_program_agents_baselines.md)
+    - record id: `specfuzzer-2022`
+- CLN2INV (2020)
+    - title: CLN2INV: Learning Loop Invariants with Continuous Logic Networks
+    - what: It trains continuous logic networks on execution traces to propose loop invariants (facts that hold at every pass through a loop). It extracts SMT formulas from them. Z3 then checks the three conditions that make an invariant inductive: it holds at the start, each step preserves it, and it implies the goal.
+    - number: solves all 124 valid tasks in one hour each; LoopInvGen 104, Code2Inv 90
+    - number: average time 1.07 s vs 45.11 s and 266.71 s; 31.77 Z3 calls vs 3,605.43 and 16.62
+    - number: without learning still solves 91 tasks
+    - number: 12 extra author-built harder tasks solved; degree three to five polynomial representations fail
+    - limits: It gives partial correctness of the source program only (if it finishes, the result is right). It does not handle nested loops. The trace bounds (50 iterations, width 10) limit what is learned. They do not limit the proof. The result that training reaches the global optimum holds only for linear equalities. Nine invalid Code2Inv tasks were removed.
+    - how much was read: most of it read
+    - [source](https://www.cs.columbia.edu/~suman/docs/cln2inv.pdf); [notes: CLN2INV: Learning Loop Invariants with Continuous Logic Networks, Ryan](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: CLN2INV: Learning Loop Invariants with Continuous Logic Networks, Ryan](../distributed_verification_review_b/deep_21_program_agents_baselines.md)
+    - record id: `cln2inv-2020`
+- Code2Inv (2020)
+    - title: Code2Inv: A Deep Learning Framework for Program Verification
+    - what: A neural network learns candidate loop invariants (facts true on every pass through a loop) from solver feedback. It is given an assertion, a checker, a grammar and rules for building graphs.
+    - number: 133 C programs and 120 CHC instances
+    - number: 94 of 120 CHC solved vs Spacer 112 and LinearArbitrary 118
+    - number: 5 of 7 on a nonlinear case study
+    - number: 90% of solved C cases within two hours, rest up to twelve
+    - limits: It excludes programs with multiple loops, calls or recursion. It needs a predefined grammar and a long search budget.
+    - how much was read: most of it read
+    - [source](https://www.cis.upenn.edu/~mhnaik/papers/cav20.pdf); [notes: Code2Inv: A Deep Learning Framework for Program Verification](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
+    - record id: `code2inv-2020`
+- Code2Inv (2018)
+    - title: Learning Loop Invariants for Program Verification (Code2Inv)
+    - what: Learns loop invariants (facts that hold on every pass through a loop) for C programs with one loop. Uses graph neural networks and reinforcement learning. Z3 checks each candidate, and its counterexamples are fed back as rewards. Training needs no known-correct invariants.
+    - number: 133 arithmetic C programs; 12 h / 4 GB limit: Code2Inv 106, ICE-DT 100, LoopInvGen 77, C2I 74 (abstract says 73)
+    - number: 92 solved under one-hour limit
+    - number: Figure 1 loop: 26 Z3 calls vs 1,119 for LoopInvGen, which then crashes
+    - number: ablation without counterexamples and attention: 91 solved, 415,000 queries
+    - limits: A human supplies the pre- and postcondition. Proves partial correctness only (the result is right if the loop terminates). Nine tasks were later found invalid. Invariants must be in CNF form. The gain is fewer Z3 queries, not less wall-clock time.
+    - how much was read: most of it read
+    - [source](https://proceedings.neurips.cc/paper_files/paper/2018/file/65b1e92c585fd4c2159d5f33b5030ff2-Paper.pdf); [notes: Learning Loop Invariants for Program Verification (Code2Inv), Si et al](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md)
+    - record id: `code2inv-2018`
+- Code2Inv (2018)
+    - title: Learning Loop Invariants for Program Verification
+    - what: Code2Inv learns loop invariants (facts true on every pass through a loop) with graph neural networks and reinforcement learning. Z3 checks that each candidate holds at the start, stays true after each pass, and implies the postcondition. Counterexamples are fed back as rewards.
+    - number: 133 single-loop arithmetic C programs; 12 h limit: Code2Inv 106 solved, ICE-DT 100, LoopInvGen 77, C2I 74 (abstract says 73); 92 under one hour
+    - number: Max 276 Z3 queries; without counterexamples and attention 91 solved, 415,000 queries
+    - limits: Humans supply the precondition and postcondition. It shows partial correctness only: it does not show that the program terminates. The benchmark is invalid for 9 tasks. Invariants are constrained to conjunctive normal form. It has no wall-clock advantage over competing solvers.
+    - how much was read: most of it read
+    - [source](https://proceedings.neurips.cc/paper_files/paper/2018/file/65b1e92c585fd4c2159d5f33b5030ff2-Paper.pdf); [notes: Learning Loop Invariants for Program Verification (Code2Inv), Si et al](../distributed_verification_review_b/deep_21_program_agents_baselines.md)
+    - record id: `code2inv-2018-2`
+- Dinv (2018)
+    - title: Inferring and Asserting Distributed System Invariants
+    - what: It mines likely invariants over distributed snapshots of Go programs, using static slicing, vector clocks and Daikon. It turns chosen invariants into runtime assertions.
+    - number: four Go systems, 1.7K-144K lines
+    - number: Serf: about 1 million invariants reduced to 40 by manual refinement
+    - number: Raft assertions 11, 13, 72 lines; detection 0.07, 0.36, 2.22 s
+    - number: always-on check 52x slowdown, 1% sampling 1.02x
+    - limits: The invariants are likely, not verified. It is designed for runs where no node fails. Humans choose which properties matter and write the assertion functions.
+    - how much was read: most of it read
+    - [source](https://www.cs.ubc.ca/~bestchai/papers/dinv-icse18.pdf); [notes: Related-work omission: Inferring and Asserting Distributed System Inva](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Related-work omission: Inferring and Asserting Distributed System Inva](../distributed_verification_review_b/deep_15_runtime_foundations.md)
+    - record id: `dinv-2018`
+- Ivy liveness-to-safety (2018)
+    - title: Reducing liveness to safety in first-order logic
+    - what: After a finite prefix of an execution, picks a finite projection of the state (the freeze point). Proves that no two later states can agree on that projection while all fairness obligations are met. This turns a progress proof into a safety proof about a finite bad pattern. Cases: ticket, alternating bit, TLB shootdown, Paxos, Multi-Paxos, Stoppable Paxos.
+    - number: finding the invariants 'requires a sophisticated user'; conjecture counts for liveness are '2 - 4 times higher' than for safety (§7.2, pp.26:27-28)
+    - number: six cases: ticket protocol, alternating bit, TLB shootdown, Paxos, Multi-Paxos, Stoppable Paxos
+    - number: checking takes 3.7 to 219 seconds excluding invariant discovery
+    - number: liveness needs two to four times as many invariant conjectures as safety (§7.2)
+    - limits: The user still supplies the inductive invariants (facts preserved by every step). Humans applied the reduction by hand. Paxos assumes that the actions of a chosen leader or quorum are fair, that messages are eventually delivered, and that competing proposals eventually stop. Multi-Paxos and Stoppable Paxos cover one incarnation with fixed membership. The comparison counts invariants, not person-time.
+    - how much was read: most of it read
+    - [source](https://doi.org/10.1145/3158114); [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`
+    - record id: `ivy-liveness-to-safety-2018`
+- Paxos Made EPR (2017)
+    - title: Paxos Made EPR: Decidable Reasoning about Distributed Protocols
+    - what: The paper transforms Paxos-family models so that checking a human-supplied proof falls in EPR. EPR is a first-order fragment where satisfiability is decidable (an algorithm always answers). It checks proofs. It does not discover invariants.
+    - number: Six variants: Paxos, Multi-Paxos, Vertical Paxos, Fast Paxos, Flexible Paxos, Stoppable Paxos
+    - number: cases: Paxos, Multi-Paxos, Vertical Paxos, Fast Paxos, Flexible Paxos, Stoppable Paxos
+    - limits: Z3 did not terminate on unbounded checks of the original models. The URL of the original artifact returns 404, and the review notes found no verified copy.
+    - how much was read: most of it read
+    - [source](https://arxiv.org/abs/1710.07191); [notes: Paxos Made EPR](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - record id: `paxos-made-epr-2017`
+- alpha-L2S (2016)
+    - title: Infinite-State Liveness-to-Safety via Implicit Abstraction and Well-Founded Relations
+    - what: alpha-L2S checks that an infinite-state system eventually does something good (liveness). It reduces that question to a safety question, where nothing bad ever happens. It learns the needed predicates and ranking functions (measures that shrink toward the goal) by refining an abstraction. It is the direct predecessor of rlive and its baseline.
+    - number: Fig 4: L2Sia-wfr solved 602 (477 valid, 125 violated) vs Ultimate-LTL 263 (185, 78)
+    - number: timeout 1200 s, memory 6 GB
+    - number: on 193 termination benchmarks T2 solves 191 vs 152 for this method
+    - limits: It checks liveness on a model. Its benchmarks come from programs, so they test translated program semantics, not the programs themselves.
+    - how much was read: most of it read
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-319-41528-4_15.pdf); [notes: Related work absent from the first pass: αL2S](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
+    - record id: `alpha-l2s-2016`
+- Daikon (2007)
+    - title: The Daikon system for dynamic detection of likely invariants
+    - what: Records values from runs of a program and reports candidate preconditions, postconditions and invariants that held on every observed run, after filtering out coincidences.
+    - number: cited earlier studies: precision over 95%, recall over 90%
+    - number: about 90% automated lemmas/tactics for three distributed-algorithm proofs (cited)
+    - number: NASA CTAS codebase over one million lines had partial specs
+    - limits: The properties are not guaranteed over all executions. They are not proofs of safety or liveness.
+    - how much was read: most of it read
+    - [source](https://homes.cs.washington.edu/~mernst/pubs/daikon-tool-scp2007.pdf); [notes: The Daikon system for dynamic detection of likely invariants](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
+    - record id: `daikon-2007`
+- I3DP (2026)
+    - title: I3DP: Neuro-Symbolic Inductive Invariant Inference for Distributed Protocols
+    - what: I3DP takes a TLA+ model and a safety goal. TLC screens candidate invariants (facts meant to hold in every reachable state). Apalache checks that each one stays true after every step. An LLM proposes stronger candidates. TLAPS, a proof checker, checks proofs that hold without a size bound. The notes know it only through its public artifact.
+    - number: Artifact README records 29/29 passed in replay (not run by the reviewers)
+    - number: artifact README records 29/29 replay passed (not rerun by notes)
+    - limits: The paper's full text was not accessible. It covers safety of the model only, not running code or liveness. It has the same authors and benchmarks as IC3Syn (2605.24619) and is apparently its successor, but this is not confirmed. So it is not an independent evaluation.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1145/3830418.3843876); [notes: I3DP: Neuro-Symbolic Inductive Invariant Inference for Distributed Pro](../distributed_verification_review_b/deep_18_invariant_agents.md); [notes: I3DP: Neuro-Symbolic Inductive Invariant Inference for Distributed Pro](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md)
+    - record id: `i3dp-2026`
+- LiveFMBench (2026)
+    - title: LiveFMBench: Unveiling the Power and Limits of Agentic Workflows in Specification Generation
+    - what: 630 C programs annotated with ACSL (360 collected in 2025 to avoid training leaks), verified with Frama-C/WP. Models generate loop invariants and assertions. A faithfulness check requires that the ASTs are equal and that every original assertion appears in the output.
+    - number: true accuracy drops about 20% after excluding unfaithful cases
+    - number: pass@5 doubles pass@1; pass@32 triples it
+    - number: incorrect loop invariants are the dominant error type
+    - number: After removing unfaithful behaviors true accuracy drops about 20%
+    - limits: One notes file says the full claims await deeper reading. Another read the faithfulness section.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2605.01394); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - record id: `livefmbench-2026`
+- Veil blog (Sergey) (2026)
+    - title: Verifying Distributed Protocols in Veil
+    - what: Reports Claude Code finding agreement and validity invariants for FloodSet, using feedback from the checker. The faulty model lumped all crashes together with the broadcast and left out partial delivery, which made agreement hold trivially.
+    - limits: A case study by a single author, not a comparative score.
+    - how much was read: parts read
+    - [source](https://proofsandintuitions.net/2026/02/09/distributed-verification-veil/); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `veil-blog-sergey-2026`
+- Basilisk (2025)
+    - title: Basilisk: Using Provenance Invariants to Automate Proofs of Undecidable Protocols
+    - what: Basilisk automatically finds inductive invariants (facts that hold initially and are preserved by every step) for Dafny protocol proofs. It uses Provenance Invariants and Atomic Sharding. It was tested on 16 protocols, including Multi-Paxos.
+    - number: 16 protocols
+    - number: Paxos: 418 lines, 0 user invariants, 486 proof lines, 24.6 s
+    - number: Multi-Paxos: 447 lines, 0 user invariants, 565 proof lines, 61.5 s
+    - number: Paxos row: 418 model lines, no user invariant clauses, five monotonicity annotations, no provenance hints, 444 safety-lemma lines, 486 total proof lines, 24.6 verification seconds
+    - limits: The safety specification, and how it corresponds to the implementation, stay trusted. Liveness is out of scope. Extra proof code is still needed to show that the invariants imply the property.
+    - how much was read: parts read
+    - [source](https://www.usenix.org/conference/osdi25/presentation/zhang-tony); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - record id: `basilisk-2025`
+- PSyn (2025)
+    - title: Guiding Likely Invariant Synthesis on Distributed Systems with LLMs
+    - what: Compares LLMs generating invariants directly against symbolic synthesis, on eight Promela distributed systems checked with Spin. In PSyn, the LLM proposes predicates from counterexamples.
+    - number: 8 Promela systems: Peterson, Bakery, Alternating Bit, Leader Election, UPPAAL Train/Gate, Distributed Lock Server, Producer Consumer, Smart Contract
+    - limits: The target is probably invariants for monitoring, not proofs.
+    - how much was read: parts read
+    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - record id: `psyn-2025`
+- Scimitar (2025)
+    - title: Interpretable Safety Verification of Distributed Protocols by Inductive Proof Decomposition
+    - what: Scimitar breaks a proof into a graph of lemmas and transitions. This exposes where guidance is needed. The target is Raft LogMatching, on a modified model of about 600 TLA+ lines.
+    - number: 21 hours, 33 total lemma nodes
+    - number: grammar has 173 predicates
+    - number: 33 lemma nodes
+    - number: 173 grammar predicates
+    - limits: The draft the notes inspected has a different title from earlier and later records, and a placeholder conference header. One property of an edited model is not a complete verification of Raft.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2404.18048); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - record id: `scimitar-2025`
+- Kondo (2024)
+    - title: Inductive Invariants That Spark Joy: Using Invariant Taxonomies to Streamline Distributed Protocol Proofs
+    - what: Kondo derives inductive invariants for Dafny protocol proofs from the protocol's structure. This reduces the invariants the user must write.
+    - number: Paxos: 418 lines, Kondo needs 20 user invariants, 777 total proof lines, 42.9 s
+    - number: IronFleet 4,581 lines of Dafny and Verdi 50,000 lines of Coq for manual proofs
+    - number: Paxos row: 631 model lines; 27 invariant clauses without Kondo vs 20 synchronous; 856 proof lines without Kondo vs 557 synchronous plus 220 modified
+    - number: Table 1 p. 848: 10 systems (Echo Server, Ring Leader Election, Simplified Leader Election, Two-Phase Commit, Paxos, Flexible Paxos, Distributed Lock, ShardedKV, ShardedKV-Batched, Lock Server)
+    - limits: Liveness proofs are beyond its scope. Line counts are not measured human hours.
+    - how much was read: parts read
+    - [source](https://www.usenix.org/conference/osdi24/presentation/zhang-tony); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - record id: `kondo-2024`
+- mypyvy (2024)
+    - title: mypyvy: A Research Platform for Verification of Transition Systems in First-Order Logic
+    - what: A language for symbolic transition systems. Its commands verify invariants you supply, infer strengthening with UPDR, and find counterexamples within a bound.
+    - number: 43 top-level examples, 83 more under misc and fbii
+    - number: examples/misc/pd at the inspected checkout has 39 .pyv files covering cache, consensus, lock service, ring election, sharded KV, TLB and Paxos variants
+    - limits: Bounded checking finds mistakes but cannot show correctness for arbitrary lengths.
+    - how much was read: parts read
+    - [source](https://github.com/wilcoxjay/mypyvy); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: FOL-IC3 and mypyvy](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `mypyvy-2024`
+- Yao thesis (DistAI, DuoAI, LVR) (2024)
+    - title: Automated Verification of Safety and Liveness Properties for Distributed Protocols (PhD thesis)
+    - what: It shows that liveness can be reduced to a list of simpler safety properties, which invariant-inference tools often prove automatically. One task is left: synthesize a ranking function (a number that decreases toward the goal) to prove termination. It was applied to 8 protocols, including Paxos. It also covers DistAI and DuoAI.
+    - number: 37 of 40 generated safety properties are always true, inductive, or get an invariant automatically; 3 found manually in a few hours each
+    - number: every Z3 query to synthesize a ranking function finished in under a second
+    - number: manual effort 128 and 165 lines versus IronFleet's 2,093 and 7,869 lines of Dafny (16x and 47x less)
+    - number: DuoAI covers 27 protocols and solves Paxos more than two orders of magnitude faster than any alternative
+    - limits: It handles only "eventually" properties, not bounded time. Ranking functions are polynomials only. It works on protocol-level models, not code. It assumes fair scheduling, minimum packet delivery and a contention-free Paxos round. Part of the line-count gap is Dafny versus mypyvy. The notes' author read about 20% of the 137 pages.
+    - how much was read: parts read
+    - [source](https://academiccommons.columbia.edu/doi/10.7916/fexf-nt82/download); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - record id: `yao-thesis-distai-duoai-lvr-2024`
+- Cutoff automation 2022 (2022)
+    - title: Automating and Mechanizing Cutoff-based Verification of Distributed Protocols
+    - what: Proves that a small modified system simulates (behaves like) every size of the real system. It finds the mapping and the proof obligations by static analysis. Then it verifies the small system with Z3.
+    - number: Table 2: 7 protocols, cutoff 2 (3 for 2PC), 20-40 ms synthesis plus verification
+    - number: 4 synthesized automatically; 3 need human changes (basic KV store precondition, distributed lock stale-message change, 2PC third node)
+    - limits: The timing covers proving the cutoff, not the full end-to-end cost. The review notes found no source repository.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/2211.15175); [notes: Cutoff automation with seven concrete protocols](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `cutoff-automation-2022-2022`
+- DuoAI (2022)
+    - title: DuoAI: Fast, Automated Inference of Inductive Invariants for Verifying Distributed Protocols
+    - what: It extends DistAI so invariants can include existential facts (claims that some element exists). It adds a few of them to a core of universal facts (claims about all elements). A fixed order of quantifiers keeps checking decidable.
+    - number: solves 26 of 27 protocols including Paxos variants; Vertical Paxos runs out of memory
+    - number: Fast Paxos takes 26,979 seconds (about 7.5 hours)
+    - number: solves all but 1 of 27 protocols (Vertical Paxos unsolved)
+    - number: evaluation permits a week per tool and protocol
+    - limits: It fails on protocols that cannot be verified in a decidable logic. It covers safety of models only. It does not use a language model.
+    - how much was read: parts read
+    - [source](https://www.usenix.org/system/files/osdi22-yao.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: concrete reusable cases](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - record id: `duoai-2022`
+- Sift (2022)
+    - title: Sift: Using Refinement-guided Automation to Verify Complex Distributed Systems
+    - what: Starting from a specification, an implementation model and intermediate layers, it turns each layer-to-layer obligation into a safety problem. It infers invariants with IC3PO and generates C++ with Ivy.
+    - number: six cases: leader election, distributed lock, two-phase commit, sharded hash table, Raft, Multi-Paxos
+    - number: manual work under five minutes for the three small cases, one person-month for Raft, three person-weeks for Multi-Paxos
+    - number: Raft proof effort 1 person-month
+    - number: MultiPaxos effort 3 person-weeks
+    - limits: The top-level abstraction proofs for Raft and Multi-Paxos are manual or reused. Imperative optimizations may need loop invariants written by hand. It targets C++, not Rust.
+    - how much was read: parts read
+    - [source](https://www.usenix.org/system/files/atc22-ma.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: Sift: refinement from protocol down to executable systems](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `sift-2022`
+- DistAI (2021)
+    - title: DistAI: Data-Driven Automated Invariant Learning for Distributed Protocols
+    - what: Simulates the protocol at small finite sizes. Lists all universally quantified candidate invariants that agree with the samples. Checks them with an SMT solver, and weakens a candidate whenever its induction step fails.
+    - number: solves 13 of 14 protocols; Paxos fails
+    - number: verifies 13 common distributed protocols automatically
+    - number: 14 protocols
+    - number: Suite: 14 distributed protocols written in Ivy (e.g. Paxos, two-phase commit, Chord, Ricart-Agrawala)
+    - limits: Convergence holds only if a suitable universally quantified invariant exists. Paxos needs existential quantifiers.
+    - how much was read: parts read
+    - [source](https://www.usenix.org/system/files/osdi21-yao.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - record id: `distai-2021`
+- IC3PO (2021)
+    - title: On Symmetry and Quantification: A New Approach to Verify Distributed Protocols
+    - what: IC3PO learns clauses (logical conditions) on finite instances. It uses symmetry between interchangeable nodes to generalize the clauses, and then checks larger sizes.
+    - number: solves all 29 benchmarks within one hour vs 13 for I4, 14 for UPDR, 23 for FOL-IC3 (Table 2)
+    - number: Table 2, Section 8: solves 29 of 29 problems
+    - number: Pages 131-150
+    - limits: It has no formal proof that it converges. A run on a finite instance alone must not count as verified. DuoAI contests some of the comparison encodings. The domains are mostly unordered and symmetric.
+    - how much was read: parts read
+    - [source](https://arxiv.org/pdf/2103.14831); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `ic3po-2021`
+- Paxos with IC3PO (2021)
+    - title: Towards an Automatic Proof of Lamport’s Paxos
+    - what: Uses IC3PO along a hierarchy of simpler protocols chosen by a human: Voting, SimplePaxos, ImplicitPaxos, Paxos, then Flexible Paxos and Multi-Paxos. It passes strengthening assertions (extra facts that make the proof go through) upward.
+    - number: Pages 112-122
+    - limits: The hierarchy of abstractions, and its link to the intended system, are separate human work.
+    - how much was read: parts read
+    - [source](https://arxiv.org/pdf/2108.08796); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `paxos-with-ic3po-2021`
+- SWISS (2021)
+    - title: Finding Invariants of Distributed Systems: It’s a Small (Enough) World After All
+    - what: It searches a bounded space of candidate formulas for Ivy and mypyvy models, reusing counterexamples to discard unsuitable candidates.
+    - number: solves 19 of 27 benchmarks with a six-hour timeout, median of five runs
+    - number: Paxos and Flexible Paxos take about 4.4 and 5.1 hours
+    - number: Multi-Paxos succeeds only with supplied templates
+    - number: Paxos: around 4 hours on an 8-core machine; with guidance 20 minutes
+    - limits: Formula size makes the search grow exponentially. The templates the user chooses matter a lot.
+    - how much was read: parts read
+    - [source](https://www.usenix.org/system/files/nsdi21-hance.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: concrete reusable cases](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - record id: `swiss-2021`
+- Temporal prophecy (2021)
+    - title: Temporal prophecy for proving temporal properties of infinite-state systems
+    - what: Adds prophecy variables (recorded predictions about future execution) to the earlier abstraction method. This lets it keep distinctions that the abstraction lost, without strengthening the contract with the environment.
+    - number: four cases: ticket protocol, alternating bit, hybrid reliable broadcast, TLB shootdown
+    - number: user invariant conjectures 60, 70, 58, 102
+    - number: checking takes 7, 25, 25, 240 seconds
+    - number: Figure 3 (model lines; conjectures; checker seconds): ticket with task queues 90; 60; 7; alternating bit 143; 70; 25; hybrid reliable broadcast 166; 58; 25; TLB shootdown 468; 102; 240 (checking time, not authoring time)
+    - limits: Prophecy formulas are extracted automatically only from an invariant the user supplies. Choosing the witness is manual. No claim of completeness.
+    - how much was read: parts read
+    - [source](https://doi.org/10.1007/s10703-021-00377-1); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`; [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); [notes: additional temporal methods](../distributed_verification_review_b/review_b_liveness_20261007.md)
+    - record id: `temporal-prophecy-2021`
+- Apalache (2019)
+    - title: Apalache: temporal properties tutorial, feature table and TLA+ model checking made symbolic
+    - what: Apalache is a model checker for TLA+ that works on symbols instead of listing states, using an SMT solver. It checks state, action and trace invariants, inductive invariants (a property that holds at the start and is preserved by every step) and temporal properties.
+    - limits: Apalache parses ASSUME but does not pass it to the solver. It does not use THEOREM. Its bounded checks do not prove properties for unbounded runs. The authors did not read the original paper.
+    - how much was read: parts read
+    - [source](https://github.com/apalache-mc/apalache); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Model checking: what a successful run means](../distributed_verification_review_b/deep_2_liveness.md)
+    - record id: `apalache-2019`
+- I4 (2019)
+    - title: I4: Incremental Inference of Inductive Invariants for Verification of Distributed Protocols
+    - what: I4 finds invariants on a small, finite instance of a protocol. It generalizes them with universal quantifiers ("for all"). Ivy then checks them for any size. When a check fails, the instance grows.
+    - number: seven cases: lock server, ring leader election, distributed lock, Chord ring maintenance, learning switch, database-chain consistency, two-phase commit
+    - number: Seven-model suite: chord_ring_maintenance, database_chain_replication, distributed_lock, leader_election_in_ring, learning_switch, lock_server, two_phase_commit
+    - limits: Universally quantified invariants rule out some specifications. Two-phase commit was reformulated to avoid invariants that need "there exists". It verifies protocol models, not code.
+    - how much was read: parts read
+    - [source](https://github.com/GLaDOS-Michigan/I4); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: I4](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `i4-2019`
+- Bounded quantifier instantiation (2017)
+    - title: Bounded Quantifier Instantiation for Checking Inductive Invariants
+    - what: This work limits how deeply quantifiers are instantiated, not the number of participants. That makes checking an inductive invariant decidable (a procedure always gives an answer).
+    - number: Journal Table 1: 9 rows; conference Table 1 has 7 (no trusted-chain rows)
+    - number: Bound 1 proves the invariant inductive in all correct examples
+    - limits: No artifact is available. The ring case checks an invariant related to termination, not a full liveness proof.
+    - how much was read: parts read
+    - [source](https://arxiv.org/abs/1710.08668); [notes: Cutoff and bounded instantiation leads](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `bounded-quantifier-instantiation-2017`
+- IVy (2016)
+    - title: Ivy: Safety Verification by Interactive Generalization
+    - what: A tool for interactive protocol specification. It supports inductive invariants, modular refinement and test generation. Small failure scenarios guide the user in strengthening the invariant.
+    - number: Bounded verification about 10 transitions in a few minutes
+    - number: Pages 614-630
+    - limits: The notes' author read only the official HTML, not the PLDI paper. Liveness support for particular protocols is not established.
+    - how much was read: parts read
+    - [source](https://microsoft.github.io/ivy/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`
+    - record id: `ivy-2016`
+- Proving that non-blocking algorithms don't block (2009)
+    - what: The first fully automatic tool to prove non-blocking liveness (lock-free and obstruction-free) of concurrent data structures. It uses rely-guarantee reasoning (each thread assumes what others do and promises what it does), shape analysis and a termination prover.
+    - number: lock-freedom proofs found in under 10 minutes for all cases except Michael's list, which took about 8 hours
+    - number: found a linked-list deletion in Fomitchev and Yahav that is not obstruction-free
+    - limits: It is not about distributed systems. The review notes read about 25% of the paper.
+    - how much was read: parts read
+    - [source](https://www.mpi-sws.org/~viktor/papers/popl2009-nonblocking.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - record id: `proving-that-non-blocking-2009`
+- IvyBench
+    - what: 54 safety-checking problems in Ivy, PYV and VMT format.
+    - number: 54 problems: paxos 10, tla 5, ex 14, i4 7, mypyv 16, distai 2
+    - number: README says 54 safety checking problems; six advertised groups total 54, but multisig adds four files making 58 Ivy inputs
+    - number: Group sizes: distai 2, ex 14, i4 7, multisig 4, mypyv 16, paxos 10, tla 5
+    - limits: Almost all are safety properties.
+    - how much was read: parts read
+    - [source](https://github.com/aman-goel/ivybench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `ivybench`
+- PVerifier
+    - title: PVerifier (P language verification extensions)
+    - what: It checks inductive proofs of designs written in the P language. Users supply assumptions and an inductive invariant. UCLID5 and an SMT solver check that the invariant holds initially, that each step preserves it, and that it implies the desired property. A two-phase-commit tutorial shows that if the protocol accepts, every participant preferred acceptance.
+    - limits: The claim holds for the supplied P design under its assumptions. The 2PC tutorial proves no theorem that the protocol completes despite crashes. An internal verification of sharded transactions with snapshot isolation is reported by the author, and its details are unreleased.
+    - how much was read: parts read
+    - [source](https://github.com/p-org/P/blob/master/Docs/docs/advanced/PVerifierLanguageExtensions/announcement.md); [notes: PVerifier](../distributed_verification_review_b/review_b_additional_tools_20261007.md)
+    - record id: `pverifier`
+- CIll (2026)
+    - title: CIll: CTI-Guided Invariant Generation via LLMs for Model Checking
+    - what: An LLM proposes invariants (facts true in every reachable state) from counterexamples to induction (states where the induction check fails). Bounded model checking and induction check them, on two CPU cores.
+    - number: Targets (Table 1 p. 14): nerv, picorv32, serv and three RISC-V cores
+    - limits: This is hardware model checking, not distributed systems.
+    - how much was read: only abstract or first pages read
+    - [source](https://arxiv.org/abs/2602.23389); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; [notes: Adjacent 2026 LLM result that is not a protocol benchmark](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `cill-2026`
+- ProofSaX (2026)
+    - title: Synthesizing Proofs Using Proof Sharding and Exploration
+    - what: ProofSAX is not an LLM. It splits a proof task into shards and searches annotations in parallel for safety proofs of distributed systems.
+    - number: finds the last proof annotation in 86 of 103 proof-completion tasks, runtimes one minute to two hours
+    - number: leader election fully automatic in under two minutes
+    - number: ten 20-core machines
+    - limits: It covers safety only. For Paxos and Raft it finds only the last annotation.
+    - how much was read: only abstract or first pages read
+    - [source](https://arxiv.org/abs/2609.28535); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`
+    - record id: `proofsax-2026`
+- Towards Quantifier-Free Interpolation in Array Languages with Unbounded Data Specifications (2026)
+    - what: The paper proves quantifier-free interpolation for combinatory array logic with iterated diffs. It also proves uniform interpolation for a flat array fragment.
+    - limits: It has no distributed case study and no LLM component.
+    - how much was read: only abstract or first pages read
+    - [source](https://arxiv.org/abs/2607.05126); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - record id: `towards-quantifier-free-interpolation-2026`
+- Super-V (2025)
+    - title: Bolt-On Strong Consistency: Specification, Implementation, and Verification
+    - what: It verifies a Raft-like replicated store built on a weak replicated store. SMT checks local, stable preconditions on updates.
+    - limits: Only the abstract was read. The PDF was not obtained.
+    - how much was read: only abstract or first pages read
+    - [source](https://doi.org/10.1145/3720502); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - record id: `super-v-2025`
+- Bakery IC3PO (2023)
+    - title: Towards an Automatic Proof of the Bakery Algorithm
+    - what: It uses IC3PO to compute invariants that hold in every reachable state and are strong enough to prove the property, for two versions of the Bakery mutual-exclusion algorithm. It starts from TLA+ specifications.
+    - number: Pages 21-28
+    - limits: The notes did not retrieve the open PDF, the exact version names, or the proof artifacts. The paper makes no claim about liveness (that something good eventually happens).
+    - how much was read: only abstract or first pages read
+    - [source](https://doi.org/10.1007/978-3-031-35355-0_2); [notes: Cutoff automation with seven concrete protocols](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `bakery-ic3po-2023`
+- Scimitar (2026)
+    - title: Interactive Safety Verification of Distributed Protocols by Inductive Proof Decomposition
+    - what: It shows a human verifier small induction failures, each tied to one lemma and one action, while hiding irrelevant variables. This builds an inductive proof graph step by step. TLAPS checks the final invariants.
+    - number: Table 1: SimpleConsensus 111/18 lines, 8 lemmas; TwoPhase 192/140, 16; AbstractRaft 220/138, 10; Bakery 283/116, 27; AsyncRaft 638/920, 39
+    - number: AsyncRaft invariant development took approximately 3 human weeks
+    - limits: The cited fixed artifact (nfm26-artifact) was unavailable. The live repository has many more configurations than the five evaluated.
+    - how much was read: reading depth not recorded
+    - [source](https://doi.org/10.1007/978-3-032-28079-4_1); [notes: Scimitar: distinguish the final interactive paper from an older automa](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Full live Scimitar configuration inventory (not an evaluated success l](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `scimitar-2026`
+- Lemur (2024)
+    - title: Lemur: Integrating Large Language Models in Automated Program Verification
+    - what: Lemur uses an LLM to propose intermediate proof goals. A conventional verifier either establishes them or gives feedback.
+    - number: Section 5.2: 133 benchmarks (C program plus assertion)
+    - number: Section 5.3: 47 selected SV-COMP C programs
+    - limits: It covers sequential C programs. It has no list of distributed protocols.
+    - how much was read: reading depth not recorded
+    - [source](https://arxiv.org/abs/2310.04870); [notes: Lemur: a useful architecture, with no protocol benchmark](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `lemur-2024`
+- P-FOL-IC3 (2022)
+    - title: Inferring Invariants with Quantifier Alternations: Taming the Search Space Explosion
+    - what: Searches breadth-first for lemmas of a restricted formula shape that allows both conjunctions and disjunctions.
+    - number: 30 models in Table 1 (printed p. 350), versus 19 files in the PLDI 2020 artifact
+    - number: Pages 338-356
+    - limits: It still needs confirming whether the exact experiment checkout matches the current branch.
+    - how much was read: reading depth not recorded
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-030-99524-9_18.pdf); [notes: P-FOL-IC3: full 30-model experiment recovered](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `p-fol-ic3-2022`
+- primal-dual Houdini (2022)
+    - title: Induction Duality: Primal-Dual Search for Invariants
+    - what: The paper pairs Houdini with a dual search over states. Houdini drops candidate invariants until the remaining ones hold. The method also finds counterexamples for broken protocols.
+    - number: Table 2: 20 benchmarks (10 safe, 10 unsafe)
+    - number: Fixed VM artifact about 5.45 GB
+    - number: Pages 1-29
+    - limits: The publisher PDF returned HTTP 403, so the review notes read the artifact instructions and source instead.
+    - how much was read: reading depth not recorded
+    - [source](https://doi.org/10.1145/3498712); [notes: Primal-dual Houdini: full fixed 20-task evaluation](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `primal-dual-houdini-2022`
+- FOL-IC3 (2020)
+    - title: First-Order Quantified Separators
+    - what: Searches for formulas that separate good finite states from bad ones, inside an IC3 proof search. IC3 builds a proof by ruling out states that could lead to a violation.
+    - number: Pinned examples/fol directory has 19 files (a manifest, not a count of successes)
+    - number: Pages 703-717
+    - limits: The list of 19 files is the repository's contents. It does not claim all of them were proved.
+    - how much was read: reading depth not recorded
+    - [source](https://doi.org/10.1145/3385412.3386018); [notes: FOL-IC3 and mypyvy](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: FOL-IC3 pinned properties](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - record id: `fol-ic3-2020`

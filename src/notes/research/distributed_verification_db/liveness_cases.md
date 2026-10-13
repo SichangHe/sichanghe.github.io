@@ -1,0 +1,1145 @@
+# 🤖 database, liveness cases by how strong the evidence is
+(authored by agents unless marked 🧑)
+
+196 cases whose guarantee says something eventually happens. Agents sorted them from the text of each case record, not from the papers; a wrong label is possible. Full records are in `cases.jsonl` under the case id.
+
+## running code, proof accepted by a proof checker
+
+32 cases.
+
+- Anvil FluentBit controller
+    - guarantee: Anvil's FluentBit controller is proved with Verus to eventually reach and keep a fixed desired state, with Rust steps checked against the model, assuming the desired state stabilizes, faults stop and actions are fair.
+    - assumes: desired state stabilizes; disruptive faults eventually stop; fair actions; modeled external API behavior
+    - size or effort: Table 1 original Exec/Proof cells: 1208/8395; ~2.5 person-months each
+    - tool: Verus temporal-model proof + Rust-step/model-step conformance; written by: human
+    - case `B:systems:7`; source record `anvil-2024`
+- Anvil RabbitMQ controller
+    - guarantee: Verus proves that the Anvil RabbitMQ controller eventually reaches and keeps a fixed desired state, with the Rust code checked against the model, assuming the desired state stabilizes and disruptive faults eventually stop.
+    - assumes: desired state stabilizes; disruptive faults eventually stop; fair actions; modeled external API behavior
+    - size or effort: Table 1 original Exec/Proof cells: 1598/7228; ~2.5 person-months each
+    - tool: Verus temporal-model proof + Rust-step/model-step conformance; written by: human
+    - case `B:systems:6`; source record `anvil-2024`
+- Anvil ZooKeeper controller
+    - guarantee: Anvil ZooKeeper controller: fixed desired state eventually reached and retained.
+    - assumes: desired state stabilizes; disruptive faults eventually stop; fair actions; modeled external API behavior
+    - size or effort: Table 1 original Exec/Proof cells: 1134/8352; ~2.5 person-months each
+    - tool: Verus temporal-model proof + Rust-step/model-step conformance; written by: human
+    - case `B:systems:5`; source record `anvil-2024`
+- CRDT implementation (replicated)
+    - guarantee: A Coq proof in Trillium/Aneris shows a replicated CRDT implementation is correct and strongly eventually consistent, assuming fair inter-replica messages.
+    - assumes: fairness of inter-replica messages
+    - size or effort: unknown (appendix)
+    - tool: Coq, Trillium/Aneris; written by: human
+    - case `A:180`; source record `trillium-2024`
+- Deployment controller, including rolling update
+    - guarantee: Deployment controller, including rolling update: eventual stable reconciliation with ReplicaSet dependency, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: Desired-state description eventually stabilizes; weak fairness on model actions; message drops/controller crashes eventually cease; PodMonkey disturbances eventually cease. Welder §5 PDFp11: faults eventually stop (including PodMonkey as specified below). Additional retry-on-conflict fairness: each retry loop terminates, either succeeding or returning a non-version-conflict error; §4.2 PDFp9: "RoC loop terminates". Always-preserved request-centric rely restrictions on other controllers, with own guarantee satisfying compatible controllers; no finite delivery/computation bound required. External liveness dependency: ReplicaSet ESR (§3.3 PDFp7); §3.3 states DS equals ReplicaSet ESR. Rolling update uses Iter-ESR rather than assuming every intermediate lower-layer desired state remains fixed (§4.1). Gap: pinned per-request rely/guarantee predicates and retry fairness connection to Kubernetes execution unresolved
+    - tool: liveness; written by: human
+    - case `B:liveness:6`; source record `welder-2026`
+- Four-controller control plane
+    - guarantee: Four-controller control plane: compatible CORE guarantees compose, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: Desired-state description eventually stabilizes; weak fairness on model actions; message drops/controller crashes eventually cease; PodMonkey disturbances eventually cease. Welder §5 PDFp11: faults eventually stop (including PodMonkey as specified below). Additional retry-on-conflict fairness: each retry loop terminates, either succeeding or returning a non-version-conflict error; §4.2 PDFp9: "RoC loop terminates". Always-preserved request-centric rely restrictions on other controllers, with own guarantee satisfying compatible controllers; no finite delivery/computation bound required. Compose only compatible controller groups; dependency resolution requires lower-layer ESR implies upper-layer Depend (§4.4 PDFp11). Deployment/ReplicaSet and RabbitMQ/StatefulSet dependencies are resolved within their pairs, then independent pairs composed (§6). StatefulSet naming restrictions hold throughout execution. Scope: demonstrated acyclic dependencies, not arbitrary circular progress dependencies (§8). Gap: concrete pinned compatibility/dependency formulas and deployment fairness validation unresolved
+    - tool: liveness; written by: human
+    - case `B:liveness:10`; source record `welder-2026`
+- IronKV sharded store
+    - guarantee: IronKV sharded store: functional correctness; reliable-transmission packets eventually arrive under fair retransmission, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: Each host main loop executes infinitely often; every packet sent infinitely often is eventually delivered. IronFleet §2.5 PDFp3: "each host’s main loop executes infinitely often"; §5.2 PDFp10: "any packet sent infinitely often is eventually delivered". Guarantee concerns the reliable-transmission component, not every store request. Trusted packet integrity, I/O, Dafny/compiler/runtime/OS/hardware (§2.5). Gap: pinned implementation theorem and environmental validation unresolved
+    - tool: liveness; written by: human
+    - case `B:liveness:2`; source record `ironfleet-2015`
+- IronKV transmission
+    - guarantee: Dafny proves the IronKV implementation is a correct sharded store and that repeated transmission eventually delivers each message, assuming fair networking and hosts whose main loops run infinitely often.
+    - assumes: fair networking; host main loops execute infinitely often
+    - tool: Dafny implementation proof; written by: human
+    - case `B:systems:2`; source record `ironfleet-2015`
+- IronRSL
+    - guarantee: IronRSL: replicated service behaves as specified; a repeatedly submitted request eventually receives a reply.
+    - assumes: liveness: live quorum, eventual bounded-time networking, minimum loop frequency, sufficient memory; safety: message integrity
+    - tool: Dafny implementation proof; state-machine refinement; temporal proof; written by: human
+    - case `B:systems:1`; source record `ironfleet-2015`
+- IronRSL (IronFleet)
+    - guarantee: IronFleet proves in Dafny that if the network is eventually synchronous for a live quorum of replicas, a client that keeps submitting a request to IronRSL eventually gets a reply.
+    - assumes: From the artifact repo: NoZenoBehavior; ClockAmbiguityLimitedForHosts; LiveQuorum; HostExecutesPeriodically (period asp.host_period); PersistentClientSendsRequestPeriodically; NetworkSynchronousForHosts (latency_bound); NetworkDeliveryRateBoundedForHosts. Paper: link Sure; server PQ-Alw
+    - size or effort: proof as stated by authors: Formal (Dafny) ; paper's verdict: 'Weak from PQ-Alw (Cor 5.1)': assumption stronger than needed
+    - tool: Dafny (IronFleet); written by: human
+    - case `A:300`; source record `what-s-live-2021`
+- Kubernetes FluentBit controller (Anvil)
+    - guarantee: Anvil with Verus proves eventually stable reconciliation for the Kubernetes FluentBit controller, for all features of the reference controller.
+    - assumes: Same as the other controllers
+    - size or effort: ~2 person-weeks; average feature change under a day and 47 lines (19 proof lines); largest change 403 lines (211 proof)
+    - tool: Verus + Anvil; written by: human
+    - case `A:348`; Sun, PhD dissertation 2025, Sec. 4.4, 4.5.1
+- Kubernetes RabbitMQ controller (Anvil)
+    - guarantee: Verus with Anvil proves that the Kubernetes RabbitMQ controller eventually reaches a stable reconciliation for 9 state objects, and that the replica count in the data store never decreases.
+    - assumes: Same as ZooKeeper controller; the garbage collector eventually stops racing with the controller
+    - size or effort: ~2 person-weeks for ESR using the existing strategy; executable 1,598 lines, proof 7,228 lines (ESR 5,211, safety 358), trusted 548 lines; found a GC-race safety bug and a duplicate-service-name liveness bug
+    - tool: Verus + Anvil; written by: human
+    - case `A:347`; Sun, PhD dissertation 2025, Sec. 4.4.2, Table 4.1
+- Kubernetes ZooKeeper controller (Anvil)
+    - guarantee: Kubernetes ZooKeeper controller (Anvil, Verus): if the desired state stops changing, the cluster eventually matches it and stays matched; 1,134 executable and 8,352 proof lines.
+    - assumes: Trusted Kubernetes environment model; controller written as an atomic-step state machine; desired state eventually stops changing; no conflicting controllers; faults eventually stop; fairness of the API server and garbage collector
+    - size or effort: ~2 person-months (including developing the proof strategy); executable 1,134 lines, proof 8,352 lines (ESR 7,245), trusted 950 lines; two liveness bugs found
+    - tool: Verus + Anvil TLA embedding; written by: human
+    - case `A:346`; Sun, PhD dissertation 2025, Sec. 4.4.1, 4.5.1, Table 4.1
+- Lion async runtime (executor, reactor, timer wheel)
+    - guarantee: Verus proves that in the Lion async runtime a spawned task is driven to completion and a registered timer eventually wakes, under a monotonic clock and bounded-delay wake sources.
+    - assumes: monotonic clock; registered wake sources eventually fire within bounded polls; tasks return Ready within bounded polls; tasks keep resources registered; FIFO injection
+    - size or effort: 3393 exec lines vs 39648 spec/proof lines (Verus count); 126 external_body trusted items
+    - tool: Verus (ghost event logs, no temporal operators); written by: unclear
+    - case `A:29`; source record `lion-2026`
+- Lock-free concurrent stack with helping
+    - guarantee: Iris/Coq with call permissions proves every operation of a lock-free stack with helping terminates, with no scheduler assumption.
+    - assumes: non-blocking so no scheduler assumption
+    - size or effort: unknown
+    - tool: Iris/Coq with call permissions; written by: human
+    - case `A:185`; source record `modular-termination-verification-with-2022`
+- Memcached (simplified) and small concurrent examples
+    - guarantee: Prusti proves in Rust that a simplified Memcached and small concurrent examples refine an abstract guarded transition system, with safety and liveness stated as LTL in ghost code.
+    - assumes: not extracted
+    - size or effort: per-case implementation/model/proof line counts in Fig 3 of the paper
+    - tool: Prusti (Rust); written by: human
+    - case `A:215`; source record `a-refinement-methodology-for-2025`
+- MPI programs (three PDE solvers)
+    - guarantee: Three MPI PDE solvers written with DafnyMPI are verified deadlock free and terminating, and equal to the sequential implementation, given a declared communication topology.
+    - assumes: communication topology declared up front; preconditions on MPI_ISEND, MPI_WAIT
+    - size or effort: not extracted
+    - tool: Dafny (DafnyMPI library); written by: human
+    - case `A:46`; source record `dafnympi-2025`
+- OpLib Add-Wins Set
+    - guarantee: OpLib proves in Aneris/Coq that an Add-Wins Set replica state equals the data-type interpretation of its delivered causal operations, and replicas with the same delivered operations converge.
+    - assumes: causal broadcast library contract; serializable values; operations satisfy datatype-specific commutation conditions
+    - tool: Aneris/Coq modular implementation proof; written by: human
+    - case `B:systems:32`; source record `op-based-crdts-2022`
+- OpLib Last-Writer-Wins Register
+    - guarantee: OpLib proves in Aneris/Coq that a Last-Writer-Wins Register replica state equals the data-type interpretation of its delivered causal operations, and replicas with the same delivered operations converge.
+    - assumes: causal broadcast library contract; serializable values; operations satisfy datatype-specific commutation conditions
+    - tool: Aneris/Coq modular implementation proof; written by: human
+    - case `B:systems:36`; source record `op-based-crdts-2022`
+- PBFT agreement on a single log entry (Shipwright), executable Go from Dafny
+    - guarantee: Shipwright proves in Dafny (with Go extraction) that a PBFT single-log-entry implementation satisfies agreement, termination and validity with Byzantine nodes, assuming partial synchrony and unforgeable signatures.
+    - assumes: partial synchrony: network eventually stabilizes; unforgeable signatures; unverified Go runtime
+    - size or effort: Shipwright 13,357 lines (1,351 trusted); PBFT 31,138 lines (266 trusted); total 44,495 lines; person-effort not given
+    - tool: Dafny + Go extraction (Shipwright); written by: human
+    - case `A:205`; source record `shipwright-2025`
+- PBFT single-log-entry agreement (Go implementation)
+    - guarantee: Shipwright proves, for a Go implementation of PBFT single-log-entry agreement, eventual progress with malicious participants in the common case and failure scenarios, and also correctness.
+    - assumes: Byzantine participants; fairness details not seen
+    - size or effort: not seen
+    - tool: Shipwright (own framework, proof assistant); written by: human
+    - case `A:196`; source record `shipwright-2025`
+- ReplicaSet controller
+    - guarantee: Anvil's ReplicaSet controller eventually reaches a stable replica count, assuming the desired state stabilizes and the controller is weakly fair.
+    - assumes: Desired-state description eventually stabilizes; weak fairness on model actions; message drops/controller crashes eventually cease; PodMonkey disturbances eventually cease. Welder §5 PDFp11: faults eventually stop (including PodMonkey as specified below). Additional retry-on-conflict fairness: each retry loop terminates, either succeeding or returning a non-version-conflict error; §4.2 PDFp9: "RoC loop terminates". Always-preserved request-centric rely restrictions on other controllers, with own guarantee satisfying compatible controllers; no finite delivery/computation bound required. No external controller progress dependency in this model: §3.3 PDFp7 DS = True. PodMonkey eventually stops but must still obey applicable request rely restrictions. Gap: pinned ownership/rely predicates and retry fairness deployment validation unresolved
+    - tool: liveness; written by: human
+    - case `B:liveness:7`; source record `welder-2026`
+- SAT-Backtrack
+    - guarantee: Deterministic backtracking SAT algorithm terminates; checked in 0.3 s.
+    - assumes: none
+    - size or effort: Table 2: 0.3 s, 9, 0, 8, 157 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:322`; source record `timers-2026`
+- Single-producer single-consumer queue (memory-efficient)
+    - guarantee: A Rocq/Iris proof using Lawyer logic shows a memory-efficient single-producer single-consumer queue is wait-free (operations terminate) when there is at most one enqueuer and one dequeuer thread.
+    - assumes: at most 1 enqueuer and 1 dequeuer
+    - size or effort: unknown
+    - tool: Rocq + Iris, Lawyer logic; written by: human
+    - case `A:164`; Verifying Wait-Freedom for Concurrent Higher-Order Programs (ECOOP 2026), abstract
+- Treiber stack, HSY stack, DCAS stack, Michael-Scott queue (+Doherty), RDCSS, Michael's list
+    - guarantee: Lock-freedom or obstruction-freedom of Treiber, HSY, DCAS stacks, Michael-Scott queue, RDCSS and Michael's list were shown by an automatic tool; Fomitchev-Yahav delete was shown not obstruction-free.
+    - assumes: any thread may be stopped; isolation for obstruction-freedom
+    - size or effort: under 10 minutes each, Michael's list about 8 hours
+    - tool: automatic tool (shape analysis + termination prover), rely-guarantee; written by: automatic tool
+    - case `A:182`; Gotsman et al., POPL 2009, s.6
+- Welder Deployment controller
+    - guarantee: Welder Deployment controller: desired state eventually reached while compatible controllers interact; interference restrictions hold.
+    - assumes: compatible rely/guarantee conditions; eventual stable desired state; environment fairness/fault conditions; acyclic liveness dependencies
+    - tool: Verus implementation/model conformance and compositional temporal proof; written by: human
+    - case `B:systems:9`; source record `welder-2026`
+- Welder four-controller composition
+    - guarantee: Welder shows the four verified controllers together satisfy CORE, with compatibility obligations (Deployment depends on ReplicaSet, RabbitMQ on StatefulSet).
+    - assumes: Deployment depends on ReplicaSet; RabbitMQ depends on StatefulSet
+    - tool: compatibility obligations and compositional theorem; written by: human
+    - case `B:systems:12`; source record `welder-2026`
+- Welder RabbitMQ controller
+    - guarantee: Welder's RabbitMQ controller is proved with Verus to eventually reach the desired state while compatible controllers interact, and to respect interference restrictions.
+    - assumes: compatible rely/guarantee conditions; eventual stable desired state; environment fairness/fault conditions; acyclic liveness dependencies
+    - tool: Verus implementation/model conformance and compositional temporal proof; written by: human
+    - case `B:systems:11`; source record `welder-2026`
+- Welder ReplicaSet controller
+    - guarantee: Welder verifies in Verus that the ReplicaSet controller reaches the desired state while compatible controllers interact, under rely/guarantee conditions.
+    - assumes: compatible rely/guarantee conditions; eventual stable desired state; environment fairness/fault conditions; acyclic liveness dependencies
+    - tool: Verus implementation/model conformance and compositional temporal proof; written by: human
+    - case `B:systems:8`; source record `welder-2026`
+- Welder StatefulSet controller
+    - guarantee: Verus proves that the Welder StatefulSet controller eventually reaches the desired state while compatible controllers interact, and that interference restrictions hold.
+    - assumes: compatible rely/guarantee conditions; eventual stable desired state; environment fairness/fault conditions; acyclic liveness dependencies
+    - tool: Verus implementation/model conformance and compositional temporal proof; written by: human
+    - case `B:systems:10`; source record `welder-2026`
+- Yes-no with diverging thread
+    - guarantee: A concurrent 'yes-no' implementation is proved to make its specified progress even if another thread diverges.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:15`; source record `trillium-2024`
+- ZooKeeper controller
+    - guarantee: Anvil's ZooKeeper controller eventually reaches a stable desired cluster configuration, assuming the desired state stabilizes and the controller is weakly fair.
+    - assumes: Stable desired-state description; weak fairness on controller/environment actions; modeled crashes and request failures eventually cease; built-in StatefulSet/DaemonSet updates eventually pause until the target updates again. Anvil §4.3.3 PDFp9: "eventually stop happening"; the competing-controller pause premise is stated in the same section. Trust TLA embedding, environment/API models, Verus/Z3, Rust compiler and OS (§4.1). Additional trusted ZooKeeper API model and response fairness: §6.1 PDFp12 "eventually receives a response" for a request sent to the deployed cluster. Gap: exact pinned ESR theorem predicates for allowed external interference and revised ZooKeeper API contract must be extracted before reuse
+    - tool: liveness; written by: human
+    - case `B:liveness:3`; source record `anvil-2024`
+
+## abstract model only, proof accepted by a proof checker
+
+84 cases.
+
+- Ackermann (stack implementation)
+    - guarantee: Timer reduction and implicit rankings with Z3 prove that a stack implementation of the Ackermann function terminates.
+    - assumes: none; source [22] Hoenicke, Padon, Shoham
+    - size or effort: Table 2: 0.8 s, 5, 2, 9, 211 tokens (748 L2S)
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:312`; source record `timers-2026`
+- Allocator (clients, resources)
+    - guarantee: In a 297-line TLA+ allocator file, TLAPS proves only the Mutex safety property; the liveness properties ClientsWillReturn, ClientsWillObtain and InfOftenSatisfied are stated with no theorem found.
+    - assumes: WF on Return, SF on Allocate
+    - size or effort: 297-line file
+    - tool: TLA+ with TLAPS (safety only proved); written by: human
+    - case `A:188`; tlapm/examples/Allocator.tla
+- alternating bit
+    - guarantee: Alternating bit: data from the sender is eventually received despite packet loss, assuming a minimum delivery guarantee; 127 LoC.
+    - assumes: 'minimum guarantee on packet delivery'; channel with packet loss
+    - size or effort: Table 4: 9 transitions, 127 LoC, 2 user-guidance bounds, tier 2
+    - tool: LVR (ranking function synthesis, mypyvy, P-FOL-IC3, Z3/CVC4); written by: automatic tool
+    - case `A:334`; Yao, Tao, Gu, Nieh, Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions (POPL 2024), Table 3-5
+- Alternating bit protocol
+    - guarantee: Ivy with a manual liveness-to-safety reduction proves the alternating bit protocol eventually transmits every array entry, a stronger property than that of Abdulla et al. 2006.
+    - assumes: 'for each channel: if messages are infinitely often sent, then messages are infinitely often received'; assumes i0 reachable (finitely many indices below i0)
+    - size or effort: Fig. 10: 2 nesting levels; Cs=13, Ce=2, Cm=20; EPR; 6.9 s
+    - tool: Ivy (Z3), manual liveness-to-safety reduction + inductive invariant; written by: automatic tool
+    - case `A:341`; Padon, Hoenicke, Losa, Podelski, Sagiv, Shoham, Reducing Liveness to Safety in First-Order Logic (POPL 2018), Sec 2, Sec 7, Fig. 10
+- Alternating bit protocol (ABP)
+    - guarantee: For the alternating bit protocol under weak fairness of lossy FIFO channels with unbounded drops, all sender data is eventually received, proved with a timer reduction, implicit rankings and Z3 (4 s).
+    - assumes: weak fairness of lossy FIFO channels
+    - size or effort: Table 2: 4 s, 31 constructors, 2, 34, 539 tokens (860 L2S)
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:309`; source record `timers-2026`
+- Alternating bit protocol (lossy channel)
+    - guarantee: LVR proves that over a lossy channel the alternating bit protocol eventually delivers any data the sender sends, assuming a minimum guarantee on packet delivery.
+    - assumes: Minimum guarantee on packet delivery
+    - size or effort: 127 lines, 9 transitions; 2 bound hints, 2 tiers
+    - tool: LVR (mypyvy); written by: automatic tool
+    - case `A:351`; Yao, PhD thesis 2024, Sec. 4.8, Table 4.3-4.4
+- Asynchronous Byzantine binary agreement (HoneyBadger BA with fix), graded crusader agreement, common coin
+    - guarantee: Rocq (SureDistrib) proves asynchronous Byzantine binary agreement (HoneyBadger style) terminates with probability 1 against an adversarial scheduler, treating the common coin as a black box.
+    - assumes: asynchronous network, adversarial scheduler, common coin as black box
+    - size or effort: not extracted
+    - tool: Rocq (SureDistrib); written by: human
+    - case `A:213`; source record `suredistrib-2026`
+- Barnacle over Mysticeti, Blue Bottle, Nemo-Nemo, Orcaella (DAG consensus)
+    - guarantee: A Lean 4 proof (about 3,900 lines, about 2,000 AI-generated, no sorry) shows DAG consensus protocols (Barnacle over Mysticeti, Blue Bottle, Nemo-Nemo, Orcaella) have honest validators commit the same leader sequence, and after GST commit new leaders infinitely often.
+    - assumes: partial synchrony (GST, bound Δ); Byzantine 3f+1 or 5f+1, crash 2c+1, mixed 5f+3c+1
+    - size or effort: ~3,900 Lean lines: ~1,900 definitions and statements, ~2,000 AI-generated proofs, ~3,200 lines executable witnesses; no sorry
+    - tool: Lean 4; written by: agent
+    - case `A:136`; source record `barnacle-2026`
+- Ben-Or
+    - guarantee: Ben-Or consensus liveness is verified with ByMC using threshold automata and round-rigid adversaries.
+    - assumes: not stated in the table
+    - size or effort: not given in SoK; see cited paper [6] Bertrand et al., STTT 2021
+    - tool: ByMC; threshold automata, round-rigid adversaries; written by: human
+    - case `A:230`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [6] Bertrand et al., STTT 2021
+- Binary Counter (Example 2)
+    - guarantee: A binary counter starting from all 1s is proved to eventually hold all 0s with no fairness assumption, using implicit rankings and Z3.
+    - assumes: no fairness assumption; ♦true
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:325`; source record `implicit-rankings-2025`
+- BinaryCounter
+    - guarantee: A binary counter in an array that changes one cell per operation is proved to terminate, using implicit rankings and Z3 (0.02 s).
+    - assumes: none
+    - size or effort: Table 2: 0.02 s, 4, 0, 0, 21 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:321`; source record `timers-2026`
+- Cascaded/blocked/bypassing queues
+    - guarantee: Ivy abstract models of cascaded, blocked and bypassing queues give compositional progress examples.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:23`; liveness Ivy abstract models; CAV2024 repository README
+- CascadingQueue
+    - guarantee: Z3 with timers and implicit rankings proves that in CascadingQueue any sent message is eventually received, if both queues are polled infinitely often.
+    - assumes: 'both queues are polled infinitely often'; source [29]
+    - size or effort: Table 2: 1.2 s, 9, 2, 7, 175 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:315`; source record `timers-2026`
+- Casper (FFG)
+    - guarantee: Rocq proves liveness of the Casper FFG finality gadget model.
+    - assumes: not stated in the table ; SoK 2.2: 'plausible liveness': 'from any reachable state there still exists a continuation in which checkpoints can again be finalized without violating slashing conditions, provided that more than two thirds of the stake follows the protocol'
+    - size or effort: not given in SoK; see cited paper [32] Palmskog et al., Verification of Casper in Coq
+    - tool: Rocq; finality gadget model; written by: human
+    - case `A:251`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [32] Palmskog et al., Verification of Casper in Coq
+- Chandra-Toueg consensus with failure detector diamond-S (Isabelle)
+    - guarantee: Chandra-Toueg consensus with diamond-S: agreement, validity and termination proved in Isabelle/HOL, ~10k LOC.
+    - assumes: Fairness assumptions on communication and failure detection (as in Chandra-Toueg)
+    - size or effort: ~10k LOC Isabelle/HOL
+    - tool: Isabelle/HOL; written by: human
+    - case `A:358`; Kufner, Nestmann, Rickmann, TCS 2012, Sec. 5
+- Chandra-Toueg failure detector (partial synchrony)
+    - guarantee: The Chandra-Toueg failure detector eventually becomes accurate and complete under partial synchrony (GST, bounds Delta and Phi), shown in Ivy with liveness reduced by hand to safety, and in TLA+.
+    - assumes: partial synchrony with GST, bounds Delta and Phi; processes send alive infinitely often; reliable communication between correct processes
+    - size or effort: not extracted; invariants in Table 4 of the paper
+    - tool: Ivy (liveness reduced by hand to safety), TLA+ (TLC/Apalache), counter automata (FAST); written by: unclear
+    - case `A:33`; source record `a-case-study-on-2023`
+- Chang–Roberts leader ring
+    - guarantee: Implicit rankings prove on an abstract model that Chang-Roberts leader ring eventually elects a leader.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: automatic tool
+    - case `B:liveness:43`; liveness abstract model; Lotan–Shoham §6
+- Concurrent counter increment and higher-order list map
+    - guarantee: Rocq with Iris and the Lawyer logic proves wait-freedom, meaning every call terminates regardless of other threads, for a concurrent counter increment and higher-order list map, without fairness assumptions.
+    - assumes: no fairness needed (wait-freedom is claimed without a fair scheduler)
+    - size or effort: unknown (see artifact)
+    - tool: Rocq + Iris, Lawyer logic; written by: human
+    - case `A:163`; Verifying Wait-Freedom for Concurrent Higher-Order Programs (ECOOP 2026), s.1, abstract
+- Countdown timer (toy)
+    - guarantee: A countdown timer is proved in Dafny to eventually reach 0 under weak fairness.
+    - assumes: weak fairness encoded as a predicate over traces
+    - size or effort: blog
+    - tool: Dafny with embedded TLA operators; written by: human
+    - case `A:39`; source record `dafny-2010`
+- DAG BFT consensus: Narwhal, Bullshark, Sailfish
+    - guarantee: Coq/Rocq (LiDO-DAG) proves safety, liveness (every non-faulty block eventually committed) and fairness of Narwhal, Bullshark and Sailfish under partial synchrony, at model level only.
+    - assumes: partial synchrony; authenticated; model-level only
+    - size or effort: LiDO-DAG model 747 spec + 1,500 proof lines; Narwhal 2,307 spec + 9,697 proof; Bullshark 603 spec + 4,343 proof
+    - tool: Coq/Rocq (LiDO-DAG); written by: human
+    - case `A:211`; source record `lido-dag-2025`
+- Dekker mutual exclusion (2 processes)
+    - guarantee: TLAPS proves Dekker's two-process algorithm gives mutual exclusion and never gets stuck, and that process 1 starting to enter eventually reaches the critical section (pc1=2 ~> pc1=6) under weak fairness.
+    - assumes: WF_vars1(pc1 # 9 /\ Next1), WF_vars2
+    - size or effort: 978-line file; 2 steps OMITTED (ENABLED axioms)
+    - tool: TLAPS; written by: human
+    - case `A:187`; tlapm/examples/Dekker/Dekker.tla
+- Dijkstra 3-State protocol
+    - guarantee: Implicit rankings with Z3 prove that Dijkstra's 3-state protocol stabilizes and is fair.
+    - assumes: ranking from [26] Kessels, based on [13]
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:331`; source record `implicit-rankings-2025`
+- Dijkstra 4-State protocol
+    - guarantee: Dijkstra 4-state stabilization is proved: a unique privilege eventually exists and every machine gets the privilege infinitely often, using implicit rankings and Z3.
+    - assumes: based on [11]
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:329`; source record `implicit-rankings-2025`
+- Dijkstra k-state, 4-state, 3-state self-stabilizing protocols
+    - guarantee: Z3 with implicit rankings proves that Dijkstra's k-state, 4-state and 3-state protocols eventually leave only one machine with a privilege.
+    - assumes: parameterized fairness assumptions ri; ♦true when transition relation is total
+    - size or effort: all examples verified in under 10 minutes
+    - tool: Z3 + implicit rankings (Python tool); written by: automatic tool
+    - case `A:135`; source record `implicit-rankings-2025`
+- Dijkstra k-State protocol
+    - guarantee: Implicit rankings with Z3 (verified within 10 minutes) prove Dijkstra's k-state protocol eventually has a unique privilege and then every machine gets the privilege infinitely often.
+    - assumes: (b) assumes bot scheduled infinitely often; based on [24],[20]
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:328`; source record `implicit-rankings-2025`
+- Dijkstra k-State self-stabilization
+    - guarantee: Timer reduction and implicit rankings with Z3 prove that Dijkstra's k-state ring, under any scheduling, eventually reaches a state with exactly one privileged node.
+    - assumes: any scheduling of privileged nodes; source [28] Lotan, Shoham TACAS 2025
+    - size or effort: Table 2: 64.8 s, 6, 0, 3, 213 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:320`; source record `timers-2026`
+- First-order infinite-state transition systems (benchmarks from prior work)
+    - guarantee: An SMT-based method with prophecy timers and implicit ranking functions proves first-order temporal (liveness) properties of infinite-state transition systems without a fairness assumption.
+    - assumes: no fairness assumption needed (per summary)
+    - tool: SMT with implicit rankings; written by: automatic tool
+    - case `A:201`; source record `timers-2026`
+- Ghosh 4-State protocol
+    - guarantee: Ghosh 4-State protocol stabilizes and is fair; verified within 10 minutes.
+    - assumes: based on [21]
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:330`; source record `implicit-rankings-2025`
+- Heard-Of LastVoting (Paxos-like consensus)
+    - guarantee: Isabelle/HOL proves the Heard-Of LastVoting (Paxos-like) algorithm terminates, agrees and keeps integrity, if one phase has a coordinator that hears a majority.
+    - assumes: communication predicate: one phase with a coordinator that hears a majority and is heard by everyone
+    - size or effort: unknown (AFP session of 9 algorithm theories)
+    - tool: Isabelle/HOL; written by: human
+    - case `A:189`; Debrat and Merz, AFP Heard_Of, LastVotingProof
+- Hybrid reliable broadcast
+    - guarantee: Hybrid reliable broadcast: messages are eventually delivered, assuming minimum packet delivery; 137 lines.
+    - assumes: Minimum guarantee on packet delivery
+    - size or effort: 137 lines, 8 transitions; 2 derived-variable and 2 bound hints
+    - tool: LVR (mypyvy); written by: automatic tool
+    - case `A:350`; Yao, PhD thesis 2024, Sec. 4.8
+- hybrid reliable broadcast (HRB)
+    - guarantee: LVR proves in hybrid reliable broadcast that any correct node eventually accepts a message broadcast by all non-Byzantine nodes, given minimum packet delivery.
+    - assumes: network protocol, 'requires some minimum guarantee on packet delivery'
+    - size or effort: Table 4: 8 transitions, 137 LoC
+    - tool: LVR (ranking function synthesis, mypyvy, P-FOL-IC3, Z3/CVC4); written by: automatic tool
+    - case `A:333`; Yao, Tao, Gu, Nieh, Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions (POPL 2024), Table 3-5
+- Hybrid reliable broadcast (HRB-Correct)
+    - guarantee: Hybrid reliable broadcast: if a message was sent to all non-faulty nodes, some obedient node eventually accepts it; checked with timer reduction and Z3 in 135 s.
+    - assumes: 'non-faulty nodes that received the initial message eventually send it, and non-faulty nodes that are sent a message eventually receive it'; nodes have 4 failure modes; source [6] Berkovits et al. CAV 2019
+    - size or effort: Table 2: 135 s, 7, 0, 6, 99 tokens (446 L2S)
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:310`; source record `timers-2026`
+- Hybrid reliable broadcast (HRB-Relay)
+    - guarantee: Z3 with timers and implicit rankings proves that in hybrid reliable broadcast, if some obedient node accepts a message then all non-faulty nodes eventually will.
+    - assumes: same as HRB-Correct
+    - size or effort: Table 2: 56 s, 8, 0, 17, 316 tokens (593 L2S)
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:311`; source record `timers-2026`
+- Jolteon, pipelined
+    - guarantee: Coq proves safety of pipelined Jolteon and that it keeps committing.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:27`; source record `refinement`
+- LastVoting-PSync (Dragoi-Henzinger-Zufferey)
+    - guarantee: LastVoting terminates if eventually a four-round sequence occurs where the coordinator is heard by all and at least n/2 processes are heard in two rounds; formalized in PSync.
+    - assumes: Paper: link Sure; server PQ-Dur; Each-Learn + bound
+    - size or effort: proof as stated by authors: Formal (PSync) ; paper's verdict: 'assuming primary'
+    - tool: PSync (logic CL); written by: human
+    - case `A:302`; source record `what-s-live-2021`
+- Leader election on a unidirectional ring
+    - guarantee: In Rocq with Ticl, a leader is eventually elected on a unidirectional ring, assuming no network, process or Byzantine failures; 123 lines of definitions and 115 lines of proof.
+    - assumes: no network, process or Byzantine failures; ring scheduling
+    - size or effort: 123 lines definitions + 115 lines proof
+    - tool: Rocq with Ticl (interaction trees); written by: human
+    - case `A:30`; source record `ticl-2025`
+- Leader Ring (Chang-Roberts)
+    - guarantee: Implicit rankings with Z3 prove that Chang-Roberts leader ring eventually elects a leader.
+    - assumes: source [4]
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:327`; source record `implicit-rankings-2025`
+- LeaderRing (Chang-Roberts)
+    - guarantee: LeaderRing (Chang-Roberts): under fair scheduling a leader is eventually elected; checked in 0.3 s.
+    - assumes: fair scheduling of all nodes; source [8] Chang, Roberts
+    - size or effort: Table 2: 0.3 s, 8, 1, 4, 76 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:318`; source record `timers-2026`
+- LexArray (Example 5)
+    - guarantee: A program that decrements an array cell c[i]>0 and sets c[i-1] arbitrarily is proved to terminate using an implicit ranking and Z3 (0.08 s).
+    - assumes: none
+    - size or effort: Table 2: 0.08 s, 4, 1, 2, 30 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:313`; source record `timers-2026`
+- Logres, BFT log replication with signatures (lock-step Heard-Of rounds)
+    - guarantee: In Isabelle/HOL, Logres BFT log replication always produces a new valid log for every correct node, plus Agreement and Completeness, assuming n-f >= f+1 correct nodes and reliable channels; two flaws were found in previous protocols.
+    - assumes: n - f >= f + 1 correct nodes (A1); reliable channels between correct nodes (A2)
+    - size or effort: about 300 lines model, 1000 lines proof; two flaws found in previous protocols
+    - tool: Isabelle/HOL, Heard-Of framework of Debrat and Merz; written by: human
+    - case `A:166`; source record `logres-2020`
+- LVR sliding window
+    - guarantee: LVR proves on an abstract model with a synthesized ranking that the sliding window protocol transfers reliably despite loss and reordering.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: automatic tool
+    - case `B:liveness:39`; liveness abstract model, synthesized ranking; LVR Table 3
+- LVR TLB shootdown
+    - guarantee: LVR proves on an abstract model with a synthesized ranking that processor translations are eventually updated in TLB shootdown.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: automatic tool
+    - case `B:liveness:35`; liveness abstract model, synthesized ranking; LVR Table 3
+- Message-passing programs with channels, higher-order session types (GV-style)
+    - guarantee: In Coq with Iris, LinearActris proves message-passing programs with channels never deadlock or leak, because linearity rules out states where all threads wait on receive; locks and semaphores are not covered.
+    - assumes: message passing only; no locks, semaphores or monitors
+    - size or effort: unknown
+    - tool: Coq + Iris, LinearActris; written by: human
+    - case `A:165`; source record `linearactris-2024`
+- Modified Mysticeti
+    - guarantee: Rocq proves safety and liveness of a modified Mysticeti with a repaired round-jumping rule.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:31`; liveness Rocq model proof; original deployed code only audited separately
+- multi-Paxos
+    - guarantee: LVR proves multi-Paxos nodes reach consensus on a growing log, under the usual Paxos assumptions.
+    - assumes: same Paxos assumptions
+    - size or effort: Table 4: 10 transitions, 135 LoC
+    - tool: LVR (ranking function synthesis, mypyvy, P-FOL-IC3, Z3/CVC4); written by: automatic tool
+    - case `A:337`; Yao, Tao, Gu, Nieh, Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions (POPL 2024), Table 3-5
+- Multi-Paxos
+    - guarantee: Ivy with a manual liveness-to-safety reduction proves every log position in Multi-Paxos is eventually agreed upon, under the same Paxos fairness assumptions.
+    - assumes: same Paxos fairness assumptions
+    - size or effort: Fig. 10: 1 level; Cs=10, Ce=13, Cm=32; EPR; 9.0 s
+    - tool: Ivy (Z3), manual liveness-to-safety reduction + inductive invariant; written by: human
+    - case `A:344`; Padon, Hoenicke, Losa, Podelski, Sagiv, Shoham, Reducing Liveness to Safety in First-Order Logic (POPL 2018), Sec 2, Sec 7, Fig. 10
+- Multi-Paxos / Stoppable Paxos
+    - guarantee: Multi-Paxos and Stoppable Paxos reach consensus on a growing log; 135 and 160 lines vs 7,869 manual LoC in IronFleet.
+    - assumes: As for Paxos
+    - size or effort: multi-Paxos 135 lines, stoppable Paxos 160 lines; manual effort 165 LoC vs 7,869 LoC for IronFleet's multi-Paxos in Dafny
+    - tool: LVR (mypyvy); written by: automatic tool
+    - case `A:354`; Yao, PhD thesis 2024, Sec. 4.8
+- Mutex Ring
+    - guarantee: Mutex Ring: every machine that tries to enter the critical section eventually does; verified within 10 minutes.
+    - assumes: ♦true unless stated; source [16]
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:326`; source record `implicit-rankings-2025`
+- MutexRing
+    - guarantee: A MutexRing token ring is verified under fair scheduling using implicit rankings and Z3 (0.5 s).
+    - assumes: fair scheduling; source [16]
+    - size or effort: Table 2: 0.5 s, 8, 0, 5, 93 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:317`; source record `timers-2026`
+- Network control plane routing (fat-tree, Internet2)
+    - guarantee: CB-Ver (SMT with a Lean-mechanized soundness proof) shows that in network routing (fat-tree, Internet2) router X eventually always has a path to destination D, assuming an unchanged environment and fair schedule.
+    - assumes: environment unchanged; fair schedule
+    - size or effort: not extracted; 24 h timeout benchmarks
+    - tool: SMT + Lean-mechanized soundness (CB-Ver); written by: human
+    - case `A:208`; source record `cb-ver-2026`
+- Network control planes (reachability, access control, path length)
+    - guarantee: CB-Ver uses SMT with a Lean soundness proof to show network control planes eventually reach stable properties (reachability, access control, path length) once the environment stops changing.
+    - assumes: environment stops changing
+    - tool: CB-Ver (SMT, Lean soundness proof); written by: human
+    - case `A:204`; source record `cb-ver-2026`
+- One-step consensus abstraction (toy)
+    - guarantee: In Lean 4 with Veil, a toy one-step consensus eventually chooses some value, assuming weak fairness on choose; about 30 lines.
+    - assumes: weak fairness on choose
+    - size or effort: about 30 lines, WF1 rule
+    - tool: Lean 4 with Veil; written by: human
+    - case `A:38`; source record `veil-2025`
+- Paxos
+    - guarantee: Using timer reduction and implicit rankings with Z3, Paxos is shown to eventually have a quorum agree on a value, if proposals stop after some round, a quorum responds and a value is proposed in that round.
+    - assumes: as in the property; source [32] Padon et al. POPL 2018
+    - size or effort: Table 2: 101 s, 11 constructors, 1, 20, 238 tokens (521 L2S)
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:308`; source record `timers-2026`
+- Paxos
+    - guarantee: LVR proves that Paxos eventually reaches some consensus, assuming some round r0 has no later contending round and its leader and packets behave.
+    - assumes: 'there exists a round r0 which no later round contends with. The leader of round r0 carries out its duty in initializing the round and proposing a value. For any packet that belongs to round r0, if it is sent between the leader and a participant that belongs to a live quorum q0, then it will eventually be delivered.'
+    - size or effort: Table 4: 9 transitions, 133 LoC, 3 delta corrections
+    - tool: LVR (ranking function synthesis, mypyvy, P-FOL-IC3, Z3/CVC4); written by: automatic tool
+    - case `A:336`; Yao, Tao, Gu, Nieh, Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions (POPL 2024), Table 3-5
+- Paxos
+    - guarantee: Ivy with a manual liveness-to-safety reduction proves that Paxos eventually reaches a decision given a node l and a majority of nodes Q whose actions are not interfered with.
+    - assumes: as quoted
+    - size or effort: Fig. 10: 1 level; Cs=9, Ce=11, Cm=22; EPR; 8.4 s; Lamport 2006 informal proof 'about a page'
+    - tool: Ivy (Z3), manual liveness-to-safety reduction + inductive invariant; written by: human
+    - case `A:343`; Padon, Hoenicke, Losa, Podelski, Sagiv, Shoham, Reducing Liveness to Safety in First-Order Logic (POPL 2018), Sec 2, Sec 7, Fig. 10
+- Paxos-EPR (Padon et al.)
+    - guarantee: Ivy proves that Paxos eventually reaches a decision given a node l and a majority of nodes Q whose actions are not interfered with.
+    - assumes: as quoted; paper: link Fair; server PQ-Alw
+    - size or effort: proof as stated by authors: Formal (Ivy) ; paper's verdict: 'Weak from PQ-Alw (Cor 5.1), Each-Vote insufficient (Prop 1)': Each-Vote is too weak an assertion (Raft can satisfy it forever without reaching consensus)
+    - tool: Ivy; written by: human
+    - case `A:303`; source record `what-s-live-2021`
+- Paxos (single-decree)
+    - guarantee: LVR proves single-decree Paxos eventually reaches a consensus value, given a period of synchrony and a round r0 with no later contention.
+    - assumes: Period of synchrony; some round r0 that no later round contends with; packets within r0 between the leader and a live quorum eventually delivered
+    - size or effort: 133 lines, 9 transitions; 3 contradiction hints (e.g. cast_vote cannot fire when two proposals exist in a round); previously 25 extra relations, 143 lines and 40 invariants under Dynamic Abstraction
+    - tool: LVR (mypyvy); written by: automatic tool
+    - case `A:353`; Yao, PhD thesis 2024, Sec. 4.8
+- Raft (production Mercury platform, joint consensus, leadership transfer, compaction)
+    - guarantee: Five liveness properties of the Mercury production Raft with joint consensus (e.g. EventuallyConfigCommitted, EventuallyAllLogsConverge) were proved with TLAPS, Coq, Lean 4 and Apalache, removing 26 axioms in 17 active hours.
+    - assumes: not extracted; unbounded form depends on randomized election timeout
+    - size or effort: 26 axioms removed in 17 active hours of AI-agent time (author's claim)
+    - tool: TLAPS + Coq + Lean 4 + Apalache, PRISM for the randomized-timeout case; written by: unclear
+    - case `A:41`; source record `federated-fv-2026`
+- ReorderingQueue
+    - guarantee: Timer reduction and implicit rankings with Z3 prove that in a ReorderingQueue every sent message is eventually received, if each is polled infinitely often.
+    - assumes: 'each is polled infinitely often'; source [29]
+    - size or effort: Table 2: 2.3 s, 9, 2, 11, 220 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:316`; source record `timers-2026`
+- SAT-CDCL
+    - guarantee: Z3 with timers and implicit rankings proves that SAT-CDCL terminates with SAT or UNSAT.
+    - assumes: none
+    - size or effort: Table 2: 5.3 s, 8, 0, 8, 148 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:323`; source record `timers-2026`
+- Scheduler queue (MeQ)
+    - guarantee: In Rocq with the Ticl logic, an element x in a scheduler queue (MeQ) is shown to be eventually served.
+    - assumes: loop invariant and ranking function = index of x in queue
+    - size or effort: 137 lines definitions + 362 lines proof
+    - tool: Rocq with Ticl; written by: human
+    - case `A:31`; source record `ticl-2025`
+- Sliding window protocol (IronKV network layer)
+    - guarantee: LVR proves that the sliding window protocol from IronKV's network layer eventually delivers data despite drops and reordering, assuming a minimum guarantee on packet delivery.
+    - assumes: Minimum guarantee on packet delivery
+    - size or effort: 119 lines; manual effort 128 LoC vs 2,093 LoC in Dafny for IronFleet; 4 tiers
+    - tool: LVR (mypyvy), reimplementing the IronFleet Dafny spec; written by: automatic tool
+    - case `A:355`; Yao, PhD thesis 2024, Sec. 4.8.2
+- Spinlock, ticket lock, MCS lock clients (weak memory)
+    - guarantee: Clients of spinlock, ticket lock and MCS lock are proved in Coq to make progress under weak memory models (SC, TSO, RA, StrongCOH) when memory fairness and thread fairness hold.
+    - assumes: memory fairness in addition to thread fairness; SC, TSO, RA, StrongCOH
+    - size or effort: not extracted
+    - tool: Coq (declarative and operational memory fairness); written by: human
+    - case `A:35`; source record `making-weak-memory-models-2021`
+- Stellar SCP (row 2)
+    - guarantee: Stellar SCP liveness (under eventual synchrony) was shown with Ivy and Isabelle/HOL: a first-order model plus an interactive proof that the model is sound.
+    - assumes: not stated in the table ; SoK 2.2: 'safety and liveness under eventual synchrony'
+    - size or effort: not given in SoK; see cited paper [27] Losa, Dodds, FMBC 2020
+    - tool: Ivy, Isabelle/HOL; FO model + interactive proof of model soundness; written by: human
+    - case `A:272`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [27] Losa, Dodds, FMBC 2020
+- stoppable Paxos
+    - guarantee: Stoppable Paxos, a multi-Paxos extension allowing reconfiguration, is verified for liveness; 160 LoC.
+    - assumes: same Paxos assumptions
+    - size or effort: Table 4: 11 transitions, 160 LoC
+    - tool: LVR (ranking function synthesis, mypyvy, P-FOL-IC3, Z3/CVC4); written by: automatic tool
+    - case `A:338`; Yao, Tao, Gu, Nieh, Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions (POPL 2024), Table 3-5
+- Stoppable Paxos
+    - guarantee: Ivy with a manual liveness-to-safety reduction proves for Stoppable Paxos that for every log position i, either a value is eventually agreed or it stops with a final log shorter than i.
+    - assumes: same Paxos fairness assumptions
+    - size or effort: Fig. 10: 1 level; Cs=14, Ce=14, Cm=34; EPR; 9.9 s; 'first mechanically-checked liveness proof of Stoppable Paxos'; Lamport et al. 2008 informal proof about 3 pages
+    - tool: Ivy (Z3), manual liveness-to-safety reduction + inductive invariant; written by: automatic tool
+    - case `A:345`; Padon, Hoenicke, Losa, Podelski, Sagiv, Shoham, Reducing Liveness to Safety in First-Order Logic (POPL 2018), Sec 2, Sec 7, Fig. 10
+- Synchronous multiparty session types (global types, projection)
+    - guarantee: A Rocq proof (about 14K lines, using Paco coinduction) shows that in typed synchronous multiparty sessions every pending send or receive is eventually matched, on fair paths with balanced global types.
+    - assumes: fair paths; balanced global types
+    - size or effort: about 14K lines Rocq
+    - tool: Rocq (Paco coinduction); written by: human
+    - case `A:32`; Formally Verified Liveness with Multiparty Session Types in Rocq (ITP 2026) abstract, s.5
+- Tendermint (row 1)
+    - guarantee: The SoK lists a PAT/CSP# process-algebra analysis of Tendermint liveness (the label may be a mismatch with the cited proof-of-stake paper).
+    - assumes: not stated in the table ; SoK cites [30] which is titled 'Formal analysis of a proof-of-stake blockchain'; the row label 'Tendermint' may be a mismatch
+    - size or effort: not given in SoK; see cited paper [30] Maung Maung Thin et al., ICECCS 2018
+    - tool: PAT; CSP# process algebra; written by: human
+    - case `A:232`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [30] Maung Maung Thin et al., ICECCS 2018
+- Ticket lock
+    - guarantee: LVR proves that every waiting client of a ticket lock eventually enters, assuming every client is scheduled infinitely often.
+    - assumes: every client scheduled infinitely often; bounded critical-section steps
+    - tool: LVR; written by: automatic tool
+    - case `A:155`; Yao et al., LVR, POPL 2024
+- ticket lock
+    - guarantee: LVR proves for a ticket lock that any waiting client eventually enters the critical section, assuming every client is scheduled infinitely often and the critical section is left after finitely many steps.
+    - assumes: 'Every client is scheduled infinitely often.' (Eq. 2: ∀C: client. □(♢scheduled(C))); 'Any client in the critical section can only execute a finite number of steps before leaving.' (Eq. 3)
+    - size or effort: Table 4: 5 transitions, 68 LoC; Table 5 phases: static 0.02, bound 48.3, contradiction 127.5, delta 0.57 s, synthesis 0.21, validate 0.56, good-end 0.43 s, no-deadlock 117.4 (seconds unless marked)
+    - tool: LVR (ranking function synthesis, mypyvy, P-FOL-IC3, Z3/CVC4); written by: automatic tool
+    - case `A:332`; Yao, Tao, Gu, Nieh, Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions (POPL 2024), Table 3-5
+- Ticket lock
+    - guarantee: LVR proves in a ticket lock that any waiting client eventually enters the critical section, under fair scheduling.
+    - assumes: Fair scheduling; finite execution in the critical section
+    - size or effort: 68-line protocol, 5 transitions; hints: 1 declared and 1 derived-variable, 2 bound corrections, 0 contradictions, 0 deltas, 0 tiers (Table 4.4); invariants mostly automatic
+    - tool: LVR (mypyvy + Z3 + P-FOL-IC3); written by: automatic tool
+    - case `A:349`; Yao, PhD thesis 2024, Sec. 4.8, Tables 4.3-4.5
+- Ticket protocol
+    - guarantee: Ivy with a manual liveness-to-safety reduction proves every thread that requests the ticket protocol's critical section eventually enters, if all threads are scheduled infinitely often.
+    - assumes: 'all the threads are scheduled infinitely often': ∀x: thread. □♢scheduled(x); spec = fairness implies liveness
+    - size or effort: Fig. 10: 1 nesting level; conjectures Cs=15, Ce=3, Cm=19; EPR; 3.7 s
+    - tool: Ivy (Z3), manual liveness-to-safety reduction + inductive invariant; written by: human
+    - case `A:340`; Padon, Hoenicke, Losa, Podelski, Sagiv, Shoham, Reducing Liveness to Safety in First-Order Logic (POPL 2018), Sec 2, Sec 7, Fig. 10
+- Ticket protocol, Paxos, alternating bit protocol, Hybrid Reliable Broadcast, ring mutex, ring leader election, Dijkstra k-state, queues
+    - guarantee: Z3 with prophecy timers and implicit rankings proves eventual properties such as that, given a maximal round and a responsive quorum, a Paxos quorum eventually agrees on the proposed value, and that the alternating bit protocol delivers all data.
+    - assumes: Paxos: maximal round, responsive quorum; ABP: weak fairness of channels; HRB: eventual send/receive by non-faulty nodes; timer reduction needs no fairness
+    - size or effort: user-supplied rankings and invariants; proof size in tokens vs Ivy liveness-to-safety
+    - tool: SMT (Z3) with prophecy timers and implicit rankings (Python tool); written by: automatic tool
+    - case `A:207`; source record `timers-2026`
+- Ticket protocol (Sec 2)
+    - guarantee: Z3 with timers and implicit rankings proves that in the ticket protocol, if every thread is scheduled infinitely often, every waiting thread eventually enters the critical section.
+    - assumes: 'under fair scheduling, every thread that waits to enter the critical section, eventually does so'; fairness is the antecedent □♢scheduled(x) for each x
+    - size or effort: Table 2: 2 s, 6 constructors, 2 inductively-finite approx., 20 invariant conjuncts, 256 tokens (407 tokens for the Ivy liveness-to-safety proof)
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:307`; source record `timers-2026`
+- TimestampedQueue
+    - guarantee: TimestampedQueue: any sent message is eventually received, assuming the queue is polled infinitely often; checked in 0.5 s.
+    - assumes: 'a fairness assumption that the queue is polled infinitely often'; source [29] McMillan CAV 2024
+    - size or effort: Table 2: 0.5 s, 6, 1, 2, 73 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:314`; source record `timers-2026`
+- TLA+ specs from GitHub translated to Verus
+    - guarantee: An LLM prover/reviewer proved in Verus, using the Anvil temporal library, safety and liveness (P ~> Q) properties of TLA+ specs from GitHub, at about $1.7 to $2.1 per proof.
+    - assumes: fairness assumptions in the TLA+ spec; some properties need added assumptions; no refinement to code
+    - size or effort: 3,094 algorithmic + 492 agentic proofs; about $1.7 to $2.1 per proof
+    - tool: Verus (Anvil temporal library) + LLM prover/reviewer; written by: agent
+    - case `A:12`; source record `tla-verus-2026`
+- TLAPS SimpleEventually (x,y,flip)
+    - guarantee: TLAPS proves a simple spec with fairness (WF_vars(Next)) eventually sets x to TRUE; 73-line file.
+    - assumes: WF_vars(Next)
+    - size or effort: 73-line file
+    - tool: TLAPS; written by: human
+    - case `A:186`; tlapm/examples/SimpleEventually.tla
+- TLB shootdown
+    - guarantee: LVR proves that after a shared-memory write each processor eventually updates its TLB correctly, assuming scheduling and lock fairness.
+    - assumes: 'requires scheduling and lock fairness'
+    - size or effort: Table 4: 27 transitions, 361 LoC, 3 delta corrections, tier 4
+    - tool: LVR (ranking function synthesis, mypyvy, P-FOL-IC3, Z3/CVC4); written by: automatic tool
+    - case `A:335`; Yao, Tao, Gu, Nieh, Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions (POPL 2024), Table 3-5
+- TLB shootdown
+    - guarantee: LVR (mypyvy) proves that after a shared-memory write each processor eventually updates its TLB correctly, assuming scheduling and lock fairness.
+    - assumes: Scheduling and lock fairness
+    - size or effort: 361 lines, 27 transitions; hints include 3 contradictions and 4 tiers; one invariant found manually (took hours)
+    - tool: LVR (mypyvy); written by: automatic tool
+    - case `A:352`; Yao, PhD thesis 2024, Sec. 4.8, Table 4.4
+- TLB shootdown (Mach)
+    - guarantee: Mach TLB shootdown: each processor infinitely often runs the main or responder loop, so loop bodies terminate; proved in Ivy in 219 s, said to be the first mechanical liveness proof.
+    - assumes: 'strong fairness assumptions for the page table lock'; spin-locks used to expose deadlock; 24 program locations; sound for unbounded processors
+    - size or effort: Fig. 10: 3 nesting levels; Cs=22, Ce=9, Cm=60; general FO (not EPR); 219 s; 'first to mechanically prove its liveness'
+    - tool: Ivy (Z3), manual liveness-to-safety reduction + inductive invariant; written by: human
+    - case `A:342`; Padon, Hoenicke, Losa, Podelski, Sagiv, Shoham, Reducing Liveness to Safety in First-Order Logic (POPL 2018), Sec 2, Sec 7, Fig. 10
+- Toy Stabilization (Example 1)
+    - guarantee: Implicit rankings with Z3 verified within 10 minutes that in a toy stabilization ring machine bot is eventually scheduled, with no fairness assumption.
+    - assumes: no fairness assumption; ♦true used as fairness (totality of transition relation); ring, one privileged machine scheduled each step
+    - size or effort: implicit ranking structure given in Sec 6; no per-example numbers in the arXiv version text
+    - tool: implicit rankings + Z3 (all verified within 10 minutes); written by: automatic tool
+    - case `A:324`; source record `implicit-rankings-2025`
+- ToyStabilization
+    - guarantee: Z3 with timers and implicit rankings proves that in ToyStabilization any node is eventually scheduled.
+    - assumes: none stated; simplified Dijkstra k-state privilege movement
+    - size or effort: Table 2: 0.3 s, 5, 0, 3, 69 tokens
+    - tool: timer reduction + implicit rankings, Z3 (mypyvy-style tool); written by: automatic tool
+    - case `A:319`; source record `timers-2026`
+- Xen vchan inter-VM channel
+    - guarantee: Xen vchan: data reported sent is eventually received, in a TLA+ model checked with TLC and TLAPS, assuming weak fairness on the receiver read and clean shutdown.
+    - assumes: weak fairness on receiver read; clean shutdown; first version vacuously true when sender blocks forever
+    - size or effort: blog; not extracted
+    - tool: TLA+ / TLC / TLAPS; written by: human
+    - case `A:37`; T. Leonard, Proving liveness with TLA (2026)
+- yes-no program; non-deterministic Nat; Even-Odd counter
+    - guarantee: Coq with Fairis proves fair termination of a yes-no program and that a nondeterministic counter visits all naturals in order.
+    - assumes: fair scheduling over model roles
+    - size or effort: unknown
+    - tool: Coq, Fairis; written by: human
+    - case `A:181`; source record `trillium-2024`
+
+## checked by a model checker on a bounded or finite instance
+
+13 cases.
+
+- Azure Cosmos DB consistency levels
+    - guarantee: Azure Cosmos DB 4 consistency levels were specified in TLA+ with 10 liveness and 14 safety properties, checked with TLC on logs up to length 6 plus random simulation, in 2 person-months.
+    - assumes: bounded: logs up to length 6 plus random simulation
+    - size or effort: 2 person-months
+    - tool: TLA+; written by: human
+    - case `A:157`; Hackett et al., ICSE-SEIP 2023
+- ChonkyBFT
+    - guarantee: ChonkyBFT liveness was checked with Quint and Apalache symbolic bounded model checking, per SoK Table 1.
+    - assumes: not stated in the table
+    - size or effort: not given in SoK; see cited paper [17] Franca et al., 2025
+    - tool: Quint, Apalache; symbolic BMC; written by: human
+    - case `A:249`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [17] Franca et al., 2025
+- Consensus algorithms, over 30 (Paxos, Multi-Paxos, EPaxos, Zab, Raft, PBFT variants, Chubby)
+    - guarantee: Liveness properties of over 30 consensus algorithms were compared in one formal language and TLA+; the work found EPaxos's assumption too weak and Zab, Paxos-EPR and Chubby-Live too strong; TLC checked Paxos up to 4 proposers and 4 acceptors.
+    - assumes: hierarchy of assumptions (Alw-Q, PQ-Alw, Alw, Fair) and assertions
+    - size or effort: TLC on Paxos up to 4 proposers and 4 acceptors in a few hours
+    - tool: high-level specification language, TLA+/TLC; written by: human
+    - case `A:42`; source record `what-s-live-2021`
+- Datadog Courier message queue
+    - guarantee: TLC checks in the Datadog Courier message queue model that, under weak fairness, eventually no messages are lost: all are processed or in the dead-letter queue.
+    - assumes: weak fairness WF_vars on handlers, sequencer and healthcheck actions
+    - size or effort: first model: 5,515,710 distinct states, no violation; adding a sequencer produced a violation trace
+    - tool: TLA+ / TLC; written by: human
+    - case `A:139`; Datadog blog 'How We Use Formal Modeling...'
+- Fizzbee example status machine (idle/working/failed/shutdown)
+    - guarantee: FizzBee model checking of a toy status machine checks that status always eventually returns to shutdown and to working, and that a failed state is reachable, assuming weak fairness on some actions.
+    - assumes: Weak fairness on Start/Finish/Fix/Restart; Shutdown and Fail not fair
+    - size or effort: toy model, model checked
+    - tool: FizzBee; written by: human
+    - case `A:365`; source record `fizzbee-2024`
+- (paper's own) TLA+ liveness specs
+    - guarantee: The paper's own TLA+ liveness specs were model checked on single-value Paxos up to 4 proposers and 4 acceptors.
+    - assumes: stable duration start; leader election started at it
+    - size or effort: proof as stated by authors: model checking, up to 4 proposers and 4 acceptors in a few hours ; paper's verdict: not applicable (illustration)
+    - tool: TLA+/TLC; written by: human
+    - case `A:306`; source record `what-s-live-2021`
+- PGo CRDT
+    - guarantee: PGo CRDT was checked by TLC on a bounded instance for convergence and termination, plus compilation (10 person-days, 160 MPCal SLOC).
+    - assumes: paper checked configuration; compiler/glue/runtime/environment resources trusted; liveness scheduler assumptions need deployment justification
+    - size or effort: Table 2: 10 person-days; 160 MPCal SLOC; 185 glue Go SLOC
+    - tool: TLC bounded-instance model checking + compilation to Go; written by: human
+    - case `B:systems:48`; source record `pgo-2023`
+- PGo Lock service
+    - guarantee: TLC model checks the PGo lock service for mutual exclusion and liveness in the paper's checked configuration, with the compiled code not covered by that check.
+    - assumes: paper checked configuration; compiler/glue/runtime/environment resources trusted; liveness scheduler assumptions need deployment justification
+    - size or effort: Table 2: 2 person-days; 67 MPCal SLOC; 87 glue Go SLOC
+    - tool: TLC bounded-instance model checking + compilation to Go; written by: human
+    - case `B:systems:46`; source record `pgo-2023`
+- Raft election (mCRL2 model)
+    - guarantee: In an mCRL2 model of Raft election, weak liveness holds (a leader can be elected), but 'a leader must always eventually be elected' fails when messages are lost or nodes crash.
+    - assumes: message loss and crashes allowed
+    - tool: mCRL2; written by: human
+    - case `A:176`; search result mentioning arXiv 2403.18916 (not opened)
+- Red Belly
+    - guarantee: Red Belly liveness is checked with ByMC on parametric threshold automata, assuming a round-rigid adversary.
+    - assumes: not stated in the table ; SoK 2.2: 'round-rigid adversary assumption ... to guarantee fair scheduling of transitions and termination'
+    - size or effort: not given in SoK; see cited paper [37] Tholoniat, Gramoli, 2019
+    - tool: ByMC; parametric threshold automata; written by: human
+    - case `A:246`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [37] Tholoniat, Gramoli, 2019
+- Stellar SCP (row 1)
+    - guarantee: Stellar SCP liveness is checked in UPPAAL with timed automata.
+    - assumes: not stated in the table ; SoK 2.2: timer abstractions
+    - size or effort: not given in SoK; see cited paper [42] Yoo et al., IWBOSE 2019
+    - tool: UPPAAL; timed automata; written by: human
+    - case `A:270`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [42] Yoo et al., IWBOSE 2019
+- Two-thread mutex example (verus-tla export)
+    - guarantee: A two-thread mutex example written in Verus was exported to TLA+ and TLC checked that both threads eventually terminate under weak fairness, over 8 states (a model check, not a proof).
+    - assumes: weak fairness in Spec
+    - size or effort: 8 states checked
+    - tool: Verus code exported to TLA+ and checked by TLC (model check, not proof); written by: automatic tool
+    - case `A:40`; BasisResearch/verus PR #51
+- ZENITH SDN controller (microservices)
+    - guarantee: For the ZENITH SDN controller (8.6K-line spec), TLC and hand TLAPS proofs check that switch routing state eventually matches the intended DAG and apps eventually see consistent network state (P1-P8).
+    - assumes: modelled failures; switch behavior assumption; history variables used because TLAPS cannot prove some temporal properties directly
+    - size or effort: spec 8.6K lines
+    - tool: TLA+/PlusCal, TLC, TLAPS hand proof; code generated from spec; written by: human
+    - case `A:209`; source record `zenith-2025`
+
+## liveness bugs, failed attempts, and attacks
+
+8 cases.
+
+- MongoDB RaftMongo replication (commit point)
+    - guarantee: For MongoDB RaftMongo replication, the aim was no committed write lost and all servers eventually learning the newest commit point, but trace checking of the C++ server failed: 'Our traces never matched our specification'.
+    - size or effort: trace checking failed: 'Our traces never matched our specification'; one month to instrument state snapshots
+    - tool: TLA+ / TLC with trace checking of the C++ server; written by: human
+    - case `A:140`; MongoDB blog 'Conformance Checking at MongoDB'
+- Mysticeti (Sui, IOTA) DAG consensus
+    - guarantee: In Rocq under LiDO-DAG, Mysticeti (Sui, IOTA) was shown to commit leader vertices within bounded time; a counterexample was found with unrestricted round-jumping and fixed with a restriction.
+    - assumes: partial synchrony; Byzantine f of 3f+1
+    - size or effort: not extracted
+    - tool: Rocq under LiDO-DAG; written by: human
+    - case `A:212`; Mechanized Safety and Liveness Proofs for Mysticeti, Abstract and Sec 2
+- Paxos-Complex (Paxos Made Moderately Complex)
+    - guarantee: Paxos Made Moderately Complex: a client broadcasting a command eventually gets a response, but the survey says this fails because a command can be re-proposed on a new slot forever.
+    - assumes: 'the clock drift of a process ... is within some [bounded] factor of the rate of real time'; message time 'is [bounded]'; authors say it weakens to fair links. Paper: link Fair; no server assumption stated
+    - size or effort: proof as stated by authors: none ; paper's verdict: 'lacking assumptions, Not Resp (Prop 6)': Resp fails even with Alw, a command can be re-proposed on a new slot forever
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:298`; source record `what-s-live-2021`
+- Paxos for System Builders pseudocode
+    - guarantee: An executable DistAlgo spec of Paxos for System Builders found liveness bugs in the original pseudocode by testing, with no proof.
+    - tool: DistAlgo (testing, no proof); written by: human
+    - case `A:203`; source record `paxos-sb-in-distalgo-2026`
+- Paxos for System Builders pseudocode in DistAlgo
+    - guarantee: An executable DistAlgo spec of the Paxos for System Builders pseudocode found omissions and liveness bugs in the pseudocode; no proof was done.
+    - assumes: not applicable
+    - size or effort: no proof
+    - tool: DistAlgo; written by: human
+    - case `A:220`; source record `paxos-sb-in-distalgo-2026`
+- PBFT with read-only optimization; PBFT view change; Casper FFG; early Tendermint; FaB
+    - guarantee: Known liveness failures in PBFT with read-only optimization, PBFT view change, Casper FFG, early Tendermint and FaB are cited, such as clients isolated forever, a new leader never catching up, and bouncing and equivocation attacks.
+    - assumes: partial synchrony; malicious scheduler or Byzantine processes
+    - size or effort: n/a
+    - tool: informal attacks cited in testing paper; written by: human
+    - case `A:44`; source record `liveness-checking-of-the-2023`
+- Tendermint (fastsync, row 2)
+    - guarantee: TLC and Apalache checked Tendermint fastsync liveness, and the SoK says TLC found a counterexample.
+    - assumes: not stated in the table ; SoK 3.3: TLC found a counterexample violating termination; 'For complex liveness checks, the tool timed out after 24 hours'
+    - size or effort: not given in SoK; see cited paper [7] Braithwaite et al., FMBC 2020
+    - tool: TLA+/TLC, Apalache; explicit and symbolic MC; written by: human
+    - case `A:235`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [7] Braithwaite et al., FMBC 2020
+- Zab-FLE (fast leader election)
+    - guarantee: Zab fast leader election has no stated guarantee and was later shown to cause a liveness issue where the system gets caught in an infinite loop.
+    - assumes: none
+    - size or effort: proof as stated by authors: fix argued informally, no proof ; paper's verdict: liveness bug found by the Zab-FLE authors; no liveness stated (not in Table 3)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:295`; source record `what-s-live-2021`
+
+## everything else: paper proofs, tests, benchmark entries, unclear
+
+59 cases.
+
+- ACT (Aguilera-Chen-Toueg, crash-recovery)
+    - guarantee: The Aguilera-Chen-Toueg crash-recovery protocol is argued on paper to make every good process eventually decide, if a majority of processes are good.
+    - assumes: 'A majority of processes are good.' 'Every good process proposes a value.' good = always up or eventually always up. Paper: link Fair; server Q-Alw; Each-Learn
+    - size or effort: proof as stated by authors: Systematic ; paper's verdict: 'All from Q-Alw single (Prop 3)': fine (Theorem 5 of ACT proves Each-Learn)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:287`; source record `what-s-live-2021`
+- Bullshark
+    - guarantee: Bullshark DAG-based consensus is claimed safe and live under stated conditions.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:29`; source record `lido-dag-2025`
+- Chubby-Live (Paxos Made Live)
+    - guarantee: Paxos Made Live (Chubby) tests that the system is consistent and making progress, with no proof.
+    - assumes: Paper: link Sure; server Alw (eventually all servers always non-faulty); assertion Resp
+    - size or effort: proof as stated by authors: none (testing); Formalization 'None' ; paper's verdict: 'Weak from PQ-Alw (Cor 5.1), trivial from Alw': too strong, makes consensus trivial
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:291`; source record `what-s-live-2021`
+- CRDT eventual consistency
+    - guarantee: CRDT eventual consistency holds when communication is accounted for, under additional assumptions.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:17`; source record `trillium-2024`
+- CT (Chandra-Toueg, eventually strong failure detector)
+    - guarantee: Chandra-Toueg consensus with failure detector diamond-S: every correct process eventually decides (Lemma 6.2.2), assuming fewer than half the processes faulty; paper proof.
+    - assumes: 'If we assume that the maximum number of faulty processes is less than half then we can solve Consensus using ♦S'; 'Every nonfaulty process proposes some value.' Paper: link Fair; server Q-Alw; assertion Each-Learn
+    - size or effort: proof as stated by authors: Systematic (1 page); the Strong-detector algorithm has a sketch ; paper's verdict: 'All from Q-Alw single (Prop 3)': fine; strongest-per-assumption
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:286`; source record `what-s-live-2021`
+- Derecho
+    - guarantee: The Derecho paper claims 'progress' when no more than a minority of processes fail, with no proof given.
+    - assumes: 'Derecho will make progress if (1) no more than a minority of the current view fails and (2) the failure detector only reports a failure if the process in question has actually failed or has become unreachable.' Paper: link Fair; server P-Alw-Q
+    - size or effort: proof as stated by authors: none ; paper's verdict: lacking assertions (progress not defined)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:279`; source record `what-s-live-2021`
+- Dijkstra k-, 4-, and 3-state protocols
+    - guarantee: Dijkstra k-, 4- and 3-state protocols eventually give a unique privilege, which then recurs.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:45`; liveness abstract finite-but-unbounded models; Lotan–Shoham §6
+- EPaxos
+    - guarantee: The EPaxos paper argues on paper that liveness holds with high probability while a majority of replicas are non-faulty, because clients and replicas time out and retry.
+    - assumes: Paper: link Fair; server Alw-Q (eventually always some quorum non-faulty, quorum may change); Some-Exec
+    - size or effort: proof as stated by authors: none ; paper's verdict: 'None from Alw-Q (Prop 7)': too weak, each quorum may not stay non-faulty long enough; Prop 7: 'No quorum-based consensus algorithm that executes in rounds can satisfy Some-Learn under Fair and Alw-Q.'
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:296`; source record `what-s-live-2021`
+- Even/odd counter
+    - guarantee: An even/odd counter visits every natural number under stated schedule premises.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:16`; source record `trillium-2024`
+- Eventually Consistent Counter
+    - guarantee: TLA-Prover lists Eventually Consistent Counter as a benchmark case: A distributed grow-only counter (G-Counter CRDT) with N nodes. Each node increments its own slot. Merge takes element-wise max. All nodes eventually agree on the total.
+    - tool: TLA-Prover separate suite; written by: unclear
+    - case `B:TLA-Prover separate suite:20`; source record `tla-prover-2026`
+- EVS (Extended Virtual Synchrony)
+    - guarantee: Extended Virtual Synchrony: if server s performs an action and a set containing s and r later faces no communication or process failures, then r eventually performs it, shown on paper only.
+    - assumes: link Fair; server Q-Alw; assertion Each-Exec
+    - size or effort: proof as stated by authors: Systematic ; paper's verdict: 'All from Q-Alw (Prop 4)': fine, assumption weaker than most
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:277`; source record `what-s-live-2021`
+- FIFO queue
+    - guarantee: FIFO queue: each sent item eventually received if receives recur, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:22`; liveness Ivy abstract model; `1queuelive.ivy`
+- FluentBit controller
+    - guarantee: FluentBit controller eventually reaches a stable desired configuration, assuming a stable desired-state description and weak fairness.
+    - assumes: Stable desired-state description; weak fairness on controller/environment actions; modeled crashes and request failures eventually cease; built-in StatefulSet/DaemonSet updates eventually pause until the target updates again. Anvil §4.3.3 PDFp9: "eventually stop happening"; the competing-controller pause premise is stated in the same section. Trust TLA embedding, environment/API models, Verus/Z3, Rust compiler and OS (§4.1). DaemonSet competing updates use the corresponding pause assumption (§4.3.3 PDFp9). Gap: pinned ESR theorem predicates for permitted desired-state inputs and external interference unresolved
+    - tool: liveness; written by: human
+    - case `B:liveness:5`; source record `anvil-2024`
+- HotStuff, 2-Phase HotStuff, Sync HotStuff
+    - guarantee: The Twins test generator checks whether HotStuff, 2-Phase HotStuff and Sync HotStuff keep making progress under Byzantine twin replicas and partitions; 2-phase and Sync HotStuff are known to violate liveness in subtle fault scenarios.
+    - assumes: partial synchrony; Byzantine twin replicas and network partitions
+    - size or effort: testing; detects all known violations with fewer false positives than time-bounded checks
+    - tool: Twins test generator with temperature and lasso detection (testing); written by: automatic tool
+    - case `A:43`; source record `liveness-checking-of-the-2023`
+- Implicit-ranking binary counter
+    - guarantee: The implicit-ranking binary counter guarantees specified eventual progress.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:41`; liveness abstract model; Lotan–Shoham §6
+- Implicit-ranking toy stabilization
+    - guarantee: An implicit-ranking toy stabilization example eventually stabilizes.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:40`; liveness abstract model; Lotan–Shoham §6
+- Increment/decrement counter
+    - guarantee: An increment/decrement counter has strong convergence under stated conditions.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:20`; liveness Isabelle executable definitions; Gomes et al. §7
+- IronRSL replicated service
+    - guarantee: IronRSL guarantees safety and that repeated client requests eventually get replies, under timing and resource assumptions and a live quorum.
+    - assumes: Repeated client sends to all replicas; quorum Q exists; eventually Q scheduling frequency >= F with enough memory; eventually messages between Q/client arrive within Delta; eventually each Q replica receives <= B packets per 10B/F + 1 time units; clock error <= E whenever read; no Q replica halts at an overflow-prevention limit. Bounds can be unknown to code. IronFleet §5.1.4 PDFp10: "overflow-prevention limit" is a prohibited source of halted progress. Trusted packet integrity, I/O, Dafny/compiler/runtime/OS/hardware (§2.5). Gap: pinned theorem/parameter instantiation and deployment scheduler/clock validation unresolved
+    - tool: liveness; written by: human
+    - case `B:liveness:1`; source record `ironfleet-2015`
+- Jolteon, unpipelined
+    - guarantee: Jolteon, unpipelined: safety and eventual consensus commits under partial synchrony, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:26`; source record `refinement`
+- Lock-free CAS-retry counter (illustrative)
+    - guarantee: An illustrative CAS-retry counter is lock-free but not starvation-free, since a specific call may never finish even under some fair schedulers, while the fetch-and-add version is wait-free.
+    - assumes: fair scheduler still allows starvation
+    - tool: none (example used to define terms); written by: human
+    - case `A:168`; Verifying Wait-Freedom for Concurrent Higher-Order Programs (ECOOP 2026), s.1, Figure 1
+- LVR alternating bit
+    - guarantee: LVR alternating bit: sender data eventually arrives, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:34`; liveness abstract model, synthesized ranking; LVR Table 3
+- LVR hybrid reliable broadcast
+    - guarantee: LVR hybrid reliable broadcast guarantees correct nodes eventually accept a broadcast.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:33`; liveness abstract model, synthesized ranking; LVR Table 3
+- LVR multi-Paxos
+    - guarantee: LVR multi-Paxos guarantees progress of the consensus log.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:37`; liveness abstract model, synthesized ranking; LVR Table 3
+- LVR Paxos
+    - guarantee: LVR's Paxos: a decision is eventually reached.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:36`; liveness abstract model, synthesized ranking; LVR Table 3
+- LVR stoppable Paxos
+    - guarantee: LVR stoppable Paxos: reconfiguration-related consensus progress, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:38`; liveness abstract model, synthesized ranking; LVR Table 3
+- LVR ticket lock
+    - guarantee: LVR's ticket lock: a waiting client eventually enters the critical section.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:32`; liveness abstract model, synthesized ranking; LVR Table 3
+- Mencius
+    - guarantee: The Mencius paper claims "liveness" without explaining or proving it.
+    - assumes: 'Since P (Mencius is P combined with certain optimizations) only relies on the eventual delivery of messages for liveness'. Paper: link Fair; no server assumption
+    - size or effort: proof as stated by authors: none ; paper's verdict: lacking assumptions
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:293`; source record `what-s-live-2021`
+- MongoDB Realm Sync operational transformation
+    - guarantee: For MongoDB Realm Sync operational transformation, 4913 tests generated from a TLA+ model (100% branch coverage) check that clients and server resolve conflicts the same way so all participants eventually hold identical data.
+    - size or effort: 4913 generated tests, 100% branch coverage
+    - tool: TLA+ model-based test-case generation; written by: human
+    - case `A:141`; MongoDB blog (WebFetch summary, not re-checked)
+- Mutual exclusion protocols (Bar-David enhancement of deadlock-free mutex)
+    - guarantee: Paper proofs, checked with modal mu-calculus model checking, bound how often a process can be bypassed in Bar-David's enhancement of deadlock-free mutual exclusion (bounded bypass, quadratic bound in atomic registers).
+    - assumes: atomic, safe or regular registers
+    - size or effort: not extracted
+    - tool: paper proofs, checked by modal mu-calculus model checking; written by: human
+    - case `A:36`; source record `on-the-notions-of-2026`
+- Narwhal with Jolteon
+    - guarantee: Narwhal with Jolteon, a DAG-based consensus, is claimed safe and live under conditional fairness, timing and fault premises.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted; Jolteon BFT requests buffered until vertex locally available, not original Narwhal-HotStuff
+    - tool: liveness; written by: unclear
+    - case `B:liveness:28`; source record `lido-dag-2025`
+- Non-blocking counter and stack
+    - guarantee: Pen-and-paper Total-TaDA proofs show a non-blocking counter and stack terminate and are lock-free, wait-free and non-impeding, given constraints on the concurrent environment.
+    - assumes: constraints on concurrent environment
+    - size or effort: unknown
+    - tool: Total-TaDA (pen-and-paper); written by: human
+    - case `A:184`; da Rocha Pinto et al., ESOP 2016
+- Paxos-Basic (Paxos Made Simple)
+    - guarantee: Paxos Made Simple informally argues that Paxos is live if enough of the system works properly.
+    - assumes: link Raw
+    - size or effort: proof as stated by authors: none ; paper's verdict: no liveness stated precisely (not in Table 3)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:283`; source record `what-s-live-2021`
+- Paxos-Fast (Fast Paxos paper, covers basic Paxos liveness)
+    - guarantee: Fast Paxos paper states that a learner eventually learns a value if some proposer, coordinator and majority set stay good (nonfaulty) from some time on; paper-only, no machine proof.
+    - assumes: 'An agent is defined to be nonfaulty iff it eventually performs the actions that it should, such as responding to messages. Define a set G of agents to be good iff all the agents in G are nonfaulty and, if any one agent in G repeatedly sends a message to any other agent in G, then that message is eventually received'. Paper: link Fair; server PQ-Alw (generalized to a set of quorums); assertion Some-Learn
+    - size or effort: proof as stated by authors: Systematic ; paper's verdict: 'Weak from PQ-Alw (Cor 5.1)': fixed primary and quorum is stronger than needed
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:284`; source record `what-s-live-2021`
+- Paxos-High (Liu-Chand-Stoller, DistAlgo)
+    - guarantee: Paxos-High in DistAlgo states no liveness property but was used to find liveness violations in Paxos-Complex when messages can be lost.
+    - assumes: none
+    - size or effort: proof as stated by authors: none ; paper's verdict: no liveness stated (not in Table 3)
+    - tool: DistAlgo; written by: human
+    - case `A:305`; source record `what-s-live-2021`
+- Paxos-PVS (Kellomaki)
+    - guarantee: Kellomaki PVS Paxos has no liveness spec or proof: "Liveness is neither specified or proved."
+    - assumes: none
+    - size or effort: proof as stated by authors: none (safety only, PVS) ; paper's verdict: no liveness stated (not in Table 3)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:289`; source record `what-s-live-2021`
+- Paxos-SB (Paxos for System Builders)
+    - guarantee: Paxos for System Builders states on paper that if a stable majority exists and a member initiates an update, some member eventually executes it; the authors doubt any Paxos-like algorithm can meet the stronger version.
+    - assumes: Authors: 'We believe that no Paxos-like algorithm will be able to meet [Strong L1]'. Paper: link Fair; server Q-Alw (Weak L1) or Alw-Q (Strong L1); Some-Exec and Each-Exec
+    - size or effort: proof as stated by authors: none; Formalization 'None' ; paper's verdict: 'All from Q-Alw (Prop 4)': fine for Weak L1; but Resp fails if clients do not resend requests
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:292`; source record `what-s-live-2021`
+- Paxos-Synod (Part-time Parliament)
+    - guarantee: Paxos-Synod: if a majority stay in the Chamber for T + 99 minutes with a president, every priest has a decree in the ledger; prose argument, no machine proof.
+    - assumes: 'a messenger who did not leave the Chamber would always deliver a message within 4 minutes, and a priest who remained in the Chamber would always perform an action within 7 minutes'. Paper: link Sure; server PQ-Extra-Dur: some t with (no change to servers over [t,t+D1+D2]) and (some primary p nf during [t+D1,t+D1+D2]) and (some quorum q nf during [t,t+D1+D2]). Assertion Each-Learn + time bound
+    - size or effort: proof as stated by authors: Prose; Formalization 'None' ; paper's verdict: 'assuming primary': assumes a primary but gives no way to elect one
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:282`; source record `what-s-live-2021`
+- Paxos-Time (De Prisco-Lampson-Lynch)
+    - guarantee: The Paxos timing paper (De Prisco-Lampson-Lynch) proves on paper that in a stable execution with a majority alive the leader decides by time 21l + 8nl + 11d.
+    - assumes: nice = stable (no Lose/Duplicate, regular clock) and a majority alive. Paper: link Sure; server PQ-Dur; Each-Exec + time bound
+    - size or effort: proof as stated by authors: Systematic (IOA, informal) ; paper's verdict: 'assuming primary'
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:288`; source record `what-s-live-2021`
+- Paxos-TLA (Chand-Liu-Stoller)
+    - guarantee: Paxos-TLA (Chand-Liu-Stoller) proves safety in TLAPS and does not discuss liveness formally.
+    - assumes: none
+    - size or effort: proof as stated by authors: none (TLAPS safety only) ; paper's verdict: no liveness stated (not in Table 3)
+    - tool: TLA+/TLAPS, safety only; written by: human
+    - case `A:301`; source record `what-s-live-2021`
+- Paxos variants
+    - guarantee: SPIN and Isabelle/HOL are listed in the SoK for Paxos variants with a liveness property, using the Heard-Of model.
+    - assumes: not stated in the table ; SoK 3.3: SPIN verified LastVoting and Hybrid-1 agreement for up to 3 processes
+    - size or effort: not given in SoK; see cited paper [38] Tsuchiya, Schiper, DISC 2008; [11] Charron-Bost, Merz, 2009
+    - tool: SPIN, Isabelle/HOL; Heard-Of model; written by: human
+    - case `A:227`; Bondarev, Ziborov, Yanovich, SoK: Formal Verification of Consensus Protocols (arXiv 2608.21935), Table 1 p.7 ; cites [38] Tsuchiya, Schiper, DISC 2008; [11] Charron-Bost, Merz, 2009
+- Paxos-Vertical (Vertical Paxos)
+    - guarantee: The Vertical Paxos paper states no liveness guarantee: "A discussion of liveness is beyond the scope of this paper."
+    - assumes: none
+    - size or effort: proof as stated by authors: none ; paper's verdict: no liveness stated (not in Table 3)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:285`; source record `what-s-live-2021`
+- Paxos-VS (virtually synchronous Paxos)
+    - guarantee: Paxos-VS: every client request is eventually replied to, argued on paper only, assuming a correct majority per membership and eventual communication; no machine proof.
+    - assumes: 'Throughout the lifetime of a membership M, a majority of servers are correct'; 'messages may get lost, re-ordered, or duplicated'; 'correct members can eventually communicate any message'. Paper: link Fair; server P-Alw-Q
+    - size or effort: proof as stated by authors: none ('-') ; paper's verdict: 'Resp from P-Alw-Q (Prop 5)': claims Resp under weaker assumption than PQ-Alw, which makes PQ-Alw-based claims weak
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:278`; source record `what-s-live-2021`
+- PBFT single-entry prototype
+    - guarantee: PBFT single-entry prototype has partial safety and liveness machinery; the end-to-end proof is incomplete, assuming eventual network stabilization.
+    - assumes: Eventual network stabilization; thereafter bounded message/timeout delay; eventual message/timeout delivery and clock ticks (Shipwright §3.2 PDFp5-6); cyclic leaders and increasing timeouts (§4 PDFp9). Honest nodes run verified total Dafny callbacks over trusted Go runtime; peer/address/key configuration common knowledge; adversary lacks honest private keys (§3.1 PDFp4). Quorum conditions are abstracted; exact fault-threshold/quorum instantiation not recovered here. Scope: one entry, client replies excluded; end-to-end refinements incomplete: §5 PDFp12 "We have not yet proven correct all of the trace properties required for safety and liveness of the end-to-end specification". Not a completed liveness-task oracle
+    - tool: liveness; written by: human
+    - case `B:liveness:25`; source record `shipwright-2025`
+- RabbitMQ controller
+    - guarantee: The RabbitMQ controller is claimed to reach an eventual stable configuration and not scale down unsafely, under stable desired state, weak fairness and faults that eventually cease.
+    - assumes: Stable desired-state description; weak fairness on controller/environment actions; modeled crashes and request failures eventually cease; built-in StatefulSet/DaemonSet updates eventually pause until the target updates again. Anvil §4.3.3 PDFp9: "eventually stop happening"; the competing-controller pause premise is stated in the same section. Trust TLA embedding, environment/API models, Verus/Z3, Rust compiler and OS (§4.1). Safety additionally relies on replica-count validation and controller waiting for GC to remove orphan StatefulSets before updating (§6.2 PDFp13); desired descriptions alone are insufficient. Gap: pinned ESR/safety theorem predicates and allowed external interference unresolved
+    - tool: liveness; written by: unclear
+    - case `B:liveness:4`; source record `anvil-2024`
+- RabbitMQ with StatefulSet
+    - guarantee: RabbitMQ with StatefulSet composes to eventual stable reconciliation, assuming a stabilizing desired state and weak fairness.
+    - assumes: Desired-state description eventually stabilizes; weak fairness on model actions; message drops/controller crashes eventually cease; PodMonkey disturbances eventually cease. Welder §5 PDFp11: faults eventually stop (including PodMonkey as specified below). Additional retry-on-conflict fairness: each retry loop terminates, either succeeding or returning a non-version-conflict error; §4.2 PDFp9: "RoC loop terminates". Always-preserved request-centric rely restrictions on other controllers, with own guarantee satisfying compatible controllers; no finite delivery/computation bound required. RabbitMQ depends on StatefulSet reconciliation; composition must discharge that dependency and prove mutual rely/guarantee compatibility (§4.4, §6). StatefulSet naming restrictions hold throughout execution: §5 PDFp11 PodMonkey always respects the StatefulSet naming scheme. Gap: pinned pairwise request predicates and deployment fairness validation unresolved
+    - tool: liveness; written by: human
+    - case `B:liveness:9`; source record `welder-2026`
+- Raft
+    - guarantee: Raft claims it keeps making progress while broadcastTime << electionTimeout << MTBF, but "progress" is not defined and no proof is given.
+    - assumes: timing condition broadcastTime << electionTimeout << MTBF
+    - size or effort: proof as stated by authors: none ; paper's verdict: no liveness assertion stated precisely (not in Table 3); Fig. 4 shows Raft admits infinite runs where Each-Vote holds but Some-Learn never does
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:297`; source record `what-s-live-2021`
+- Sailfish, original and optimized
+    - guarantee: Sailfish, original and optimized: DAG-based consensus safety/liveness, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:30`; source record `lido-dag-2025`
+- SAT backtracking/backjumping
+    - guarantee: SAT backtracking/backjumping algorithms terminate.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:44`; liveness abstract models; Lotan–Shoham §6
+- StatefulSet controller
+    - guarantee: The StatefulSet controller is claimed to reach an eventual stable managed state, assuming the desired state stabilizes, weak fairness, and drops, crashes and disturbances eventually cease.
+    - assumes: Desired-state description eventually stabilizes; weak fairness on model actions; message drops/controller crashes eventually cease; PodMonkey disturbances eventually cease. Welder §5 PDFp11: faults eventually stop (including PodMonkey as specified below). Additional retry-on-conflict fairness: each retry loop terminates, either succeeding or returning a non-version-conflict error; §4.2 PDFp9: "RoC loop terminates". Always-preserved request-centric rely restrictions on other controllers, with own guarantee satisfying compatible controllers; no finite delivery/computation bound required. Stronger PodMonkey naming premise always holds, not only after faults stop: §5 PDFp11 "the PodMonkey always respects its naming scheme". Gap: exact reserved-name/ownership predicates and retry fairness deployment validation unresolved
+    - tool: liveness; written by: unclear
+    - case `B:liveness:8`; source record `welder-2026`
+- Stenning reliable transfer
+    - guarantee: Stenning reliable transfer eventually acknowledges every sequence number under network and scheduler fairness.
+    - assumes: Fair scheduling plus fair network: for every message, repeated infinite sends imply eventual delivery; continuously enabled threads eventually run. Fairneris §2.1 PDFp6: "if a message is sent infinitely often (always eventually), then it is eventually delivered"; §4.1 PDFp14 uses SchedFair and NetFair for every sequence-number acknowledgment. At-Most-One-Off sender/receiver state relation is established by refinement, not an extra trusted environmental premise (§4.2). Scope: AnerisLang over modeled UDP-like primitives; §1 PDFp5 "we instead give a paper proof" for model liveness. Gap: fully mechanized model liveness, pinned artifact and production runtime connection unresolved
+    - tool: liveness; written by: unclear
+    - case `B:liveness:24`; source record `refinement`
+- Ticket lock (n threads, weak memory)
+    - guarantee: A ticket lock with n threads under weak memory (Release-Acquire, StrongCoherence) is proved on paper to be starvation free, assuming weak and memory fairness.
+    - assumes: weak fairness plus memory fairness; models Release-Acquire and StrongCoherence
+    - size or effort: paper proof; Coq development exists for the fairness definitions (Lahav et al.)
+    - tool: Manna-Pnueli response rules in LTL with memory fairness and ranking over weak-memory state; paper proofs; written by: human
+    - case `A:34`; source record `towards-proving-liveness-on-2026`
+- Ticket locks, queue locks, lock-coupling list, optimistic list, lazy list
+    - guarantee: A pen-and-paper rely-guarantee logic (LiLi) proves starvation-freedom or deadlock-freedom plus linearizability of ticket locks, queue locks, lock-coupling and optimistic lists, under fair scheduling.
+    - assumes: fair scheduling
+    - size or effort: unknown
+    - tool: LiLi (pen-and-paper rely-guarantee logic); written by: human
+    - case `A:183`; Liang et al., POPL 2016, abstract
+- Ticket protocol
+    - guarantee: The ticket protocol guarantees eventual service under scheduling premises.
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: human
+    - case `B:liveness:21`; liveness Ivy abstract model; inspected ticket files
+- Token ring
+    - guarantee: Token ring: requesting machine eventually enters, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:42`; liveness abstract model; Lotan–Shoham §6
+- View synchronization for HotStuff, Tendermint, PBFT, SBFT (single-shot)
+    - guarantee: View synchronization for HotStuff, Tendermint and PBFT guarantees that all correct processes eventually overlap in a view with a correct leader long enough to decide, under partial synchrony and Byzantine faults, by paper proof.
+    - assumes: partial synchrony; Byzantine faults; bounded space despite message loss before GST
+    - size or effort: n/a
+    - tool: paper proofs (not mechanized); written by: human
+    - case `A:45`; source record `making-byzantine-consensus-live-2020`
+- VR-Revisit
+    - guarantee: Viewstamped Replication Revisited executes client requests provided at least f+1 non-failed replicas including the primary can communicate, argued in prose only.
+    - assumes: link Raw ('are able to communicate'); server P-Alw-Q
+    - size or effort: proof as stated by authors: Prose ; paper's verdict: 'None from Raw (Prop 2)': too weak, link assumption lets all messages be lost so no assertion can hold
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:281`; source record `what-s-live-2021`
+- VS-ISIS (ISIS group communication)
+    - guarantee: The VS-ISIS paper says it omits a formal proof that its protocols are free of deadlock and livelock.
+    - assumes: none stated
+    - size or effort: proof as stated by authors: none ; paper's verdict: no liveness stated (not in Table 3)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:275`; source record `what-s-live-2021`
+- Yes-no concurrent example
+    - guarantee: Yes-no concurrent example: fair termination, a conditional liveness guarantee (the row says fairness, timing and fault premises apply).
+    - assumes: conditional guarantee; see cited paper and liveness note for fairness, timing and fault premises; exact case-specific premises not fully extracted
+    - tool: liveness; written by: unclear
+    - case `B:liveness:14`; source record `trillium-2024`
+- Zab (ZooKeeper atomic broadcast)
+    - guarantee: Zab: a transaction proposed by leader l is eventually committed if a quorum is up, elects l, and messages are timely; paper sketch only.
+    - assumes: Paper: link Sure; server PQ-Alw; Each-Exec
+    - size or effort: proof as stated by authors: Sketch (about 2 paragraphs) ; paper's verdict: 'Weak from PQ-Alw (Cor 5.1)': assumption stronger than needed (PQ-Alw is stronger than P-Alw-Q, under which Paxos-VS solves consensus)
+    - tool: paper-only (no machine proof); written by: human
+    - case `A:294`; source record `what-s-live-2021`
