@@ -1,19 +1,19 @@
 LLM text detection
 (authored by agents unless marked 🧑)
 
-start here
+how to tell whether text was written by an AI model: what exists, what fails, and what we could research
 
-- [how detection works](how_detection_works.md) explains the basic signals and mistakes
-- [research proposals](research_proposals.md) starts from what DeGenTWeb already does
-    - first test extraction changes and stability under copied content or new writing workflows
-    - keep authoring histories and reader warnings as separate possible studies
-- literature covers public methods, commercial tools, human judgment, browser delivery, and crawled pages
-    - targeted review, not proof that every relevant paper was found
-    - paper-specific access and evaluation limits remain in the detailed notes
-- [Extra High consultation](chatgpt_consultation.md) informed the original framing
-    - later revisions account for substantive DeGenTWeb notes and close prior work
-- research ideas remain hypotheses
-    - no detector or reader experiments were run for this review
+the short version
+
+- every detector turns text into one score and compares it to a cutoff
+    - most rest on one fact: models pick the expected word more often than people do
+- paid trained classifiers (Pangram, GPTZero) now beat the free score-based ones (Binoculars) in the independent tests I opened
+- three things break detectors: rewriting the text, newer models, and human text lightly polished by AI
+- when AI text is rare, a 1% false positive rate makes about half the flags wrong
+- ordinary readers are near a coin flip; a few heavy ChatGPT users are almost never wrong
+- nobody has measured what detector browser extensions send to their servers
+- my top research picks: audit those extensions, and attack DeGenTWeb's site verdict with humanizers, new models and polished text
+    - see [research proposals](research_proposals.md)
 
 reading order
 
@@ -27,4 +27,11 @@ reading order
 - [human detection](human_detection.md): when people can tell AI text, and when not
 - [browser extensions](browser_extensions.md): academic work and real extensions
 - [on web pages](on_web_pages.md): running detectors on crawled pages, and what DeGenTWeb already does
-- [research proposals](research_proposals.md): overlap, decisive pilots, and stopping rules
+- [research proposals](research_proposals.md): five ideas, ranked, and what I would not do
+- [ChatGPT consultation](chatgpt_consultation.md): Extra High opinions on the proposals
+
+limits
+
+- about 250 sources opened, most as abstracts only; quotes are from the abstract unless the entry says otherwise
+- no experiment was run
+- watermarks and counts of AI content on the web are in the sibling folder [llm_provenance](../llm_provenance/index.md)
