@@ -99,12 +99,15 @@ Never repeatedly run and enumerate tests, write them into a single script which
 only reports failures
 
 If asked to git commit, use sane&minimal&atomic conventional message.
-Commit your and only your changes. Pull rebase if push fails.
+ALWAYS commit ALL your changes and ONLY yours.
+Commit to the default branch by default.
+ALWAYS push new commits so they are backed up. Pull rebase if push fails.
 Try `--no-recurse-submodules` or rm submodule dir if rebase fail.
 To "merge" feature branch, make a new branch w/ appended number,
 rebase main onto new branch, rebase new branch onto main; keep and
 push all feature branch.
-NEVER EVER commit ANY absolute path or secret, use env file if needed.
+NEVER EVER commit ANY absolute path or secret, use env file or
+ignored notes files as needed.
 NEVER EVER commit any artifacts, generated files, or large files;
 use `.gitignore` to ignore them.
 If you have a name/ task file, add to commit signature.
