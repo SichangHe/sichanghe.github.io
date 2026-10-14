@@ -1,0 +1,54 @@
+# Different Maps for Different Uses. A Program Transformation for Intermediate Verification Languages
+(authored by agents unless marked 🧑)
+Tag: `dietsch2019different`, [paper](http://arxiv.org/abs/1901.01915v1)
+
+## scope and result
+The paper targets intermediate verification languages (IVLs) such as Boogie, Why, and CHC, where arrays and memory are mathematical maps. Its problem statement is explicit: “We present a program transformation that takes a program P to an equivalent program P′ such that, by verifying P′ instead of P, we can reduce the burden of the exponential explosion in the number of case splits.” (abstract, p. 1) The source of the splits is whether two accesses to one map use the same index. The paper's benchmark is deliberately artificial, so its quantitative result is evidence for the mechanism and not a general performance guarantee.
+
+Inference: the relevant lesson for VL is solver-context shaping before verification. The transformation changes only the IVL representation, then proves equivalence, so a Verus implementation would need a semantics-preserving ghost/model transformation rather than an unchecked rewrite of executable Rust.
+
+## technique 1: define last-write dependencies
+The paper first defines `LstWr`, relating a map write to a map read when the write supplies the value read in some execution. A write `a[i]:=x` and read `y:=b[j]` are related when a value written by the first is later read by the second; the definition uses a temporal execution property and assumes written values are unique (timestamps can enforce uniqueness). The paper explains the purpose: “Intuitively, the definition of lw(a, j, e) traces the value of the map a at index j back within the execution e until it hits the map write statement that is responsible for the fact that a has that value at position j at the end of e.” (Sec. 4, p. 8)
+
+How to apply it: enumerate map writes and reads; for each execution/read, follow map assignments, updates, havoc, and constant-map assignments backward with `lw`; add the write/read pair when the responsible write is found. The paper's formal definition returns ⊥ for an untouched, havoced, or constant map position and follows `a:=b` into `b`.
+
+Verus form. Inference: represent a map's abstract contents with a `spec fn` over a Verus map or sequence and represent the last writer with a ghost map from indices to statement identifiers. Update the ghost map alongside each executable update in a proof-oriented wrapper; state the relation as a `spec fn` and prove it with `requires`/`ensures` on helper `proof fn`s. Verus has no direct IVL statement identifiers or temporal execution relation, so this is a ghost abstraction, not a drop-in construct.
+
+Evidence and limits. The relation is exact only under the paper's unique-value/timestamp convention. Its later static computation is an overapproximation, so false dependencies are allowed; missing a real dependency would make the rewrite unsound.
+
+## technique 2: instrument ghost last-write maps
+The paper makes `LstWr` computable by adding an auxiliary map `a-lw` for every map `a`. These maps store symbols naming write statements. The command transformer sets `a-lw` to ⊥ after `havoc a` or a constant-map assignment, copies `a-lw` on `b:=a`, and leaves unrelated commands unchanged. A map write `a[i]:=x` becomes `a[i]:=x; a-lw[i]:=σwr`; at the initial location every `a-lw` is initialized to a constant ⊥ map. The paper states: “The proof of this lemma is obvious form the fact that the additional commands introduced by the transformation is ghost code.” (Sec. 5.1, p. 11)
+
+Steps: add one last-write map per source map; initialize it; mirror map copies and invalidations; stamp each write with its statement symbol; run a reachable-state analysis; at a read location inspect `a-lw[i]` to recover the relation. Proposition 1 says this reachable-state relation is identical to `LstWr`.
+
+Verus form. Inference: use a ghost field or separate ghost map in a wrapper struct, update it in proof code at each modeled write, and keep executable behavior unchanged. A `proof fn` can establish that the ghost stamp corresponds to the current abstract value; `assert` and `ensures` connect the wrapper's read result to the stamp. Verus's ghost state is erased, whereas the paper's IVL ghost commands remain in the transformed verification program.
+
+## technique 3: conservative static analysis and partition
+Reachable states are not generally computable, so the implementation analyzes the instrumented program with an extension of the Map Equality Domain. It supports finite-membership constraints such as `a-lw[i] ∈ {σ1, σ2}` and uses them to infer disequalities. The resulting relation is an overapproximation, written `LstWr#`, and the paper explicitly records `LstWr# ⊇ LstWr`.
+
+The transformation builds relation `R` between writes that may influence the same read, then takes the smallest equivalence relation containing `R`. Its equivalence classes partition all writes into blocks `W1,…,Wn`; writes in different blocks cannot influence the same read according to the overapproximation. A singleton block `{⊥}` handles reads whose position has never been written.
+
+Inference: this is a standard soundness tradeoff for VL: imprecision costs solver time but preserves correctness. A Verus library could compute a conservative dependency partition offline and generate separate abstract maps or proof predicates, provided the partition proof is checked or its result is treated as trusted input.
+
+## technique 4: split maps while preserving behavior
+For every block `W`, the paper introduces a map `aW`. A write uses the map for its block. A read uses `a{⊥}` if its dependency set is empty, otherwise the unique block containing all possible last writes. A map copy `b:=a` copies every block. A map `havoc a` havocs every block and adds an assumption that all resulting maps are equal. All other statements are unchanged.
+
+The correctness proof defines a bisimulation relating base variables directly and relating each source map cell to the selected split-map cell according to its last-write stamp. Lemma 2 proves the instrumented program and transformed program bisimulation-equivalent; Theorem 1 obtains equivalence with the original program by transitivity. The proof handles assignments, reads, copies, havocs, and assumes separately.
+
+Verus form. Inference: encode each split map as a separate ghost `Map` (or a struct of maps), and prove a cell-selection lemma whose `ensures` states equality with the original abstract map under the partition invariant. Use `invariant` clauses for loops and `proof fn` lemmas for copy/havoc cases. Do not replace executable memory with split maps unless a checked refinement theorem connects the representation to the shipped code; the paper's bisimulation theorem supplies that connection.
+
+## implementation, evidence, and limits
+The authors implemented the transformation in Ultimate's interprocedural control-flow graph. They describe support for multidimensional maps via multiple `lw` maps, transition formulas by identifying unconstrained variables as havoc-like, and procedures via map-valued parameters or summaries. Their benchmark scales the Figure 1 example from 2 through 20 index variables. Runs used two 2.4 GHz CPU cores and 20 GB RAM, with a 1,800-second timeout. “We observe that the timings of Automizer on the transformed programs are nearly constant in the number of used map index variables – the timings range from 0.9 seconds to 8.8 seconds.” (Sec. 8, p. 18) Without the transformation, Automizer failed to prove every example with 10 or more index variables. The paper says the benchmark is tailored to the case-split problem and that thorough practical experimentation is out of scope.
+
+Inference: the denominators are the benchmark instances at each even index count, not a corpus of real programs; no aggregate success percentage is reported. The result therefore threatens VL only at the solver-encoding layer: it suggests dependency-aware ghost splitting can prevent map case-split blowups, while it does not address Rust ownership, unsafe code, specification quality, or agent authorship. The paper forbids hidden assumptions such as absence of undefined behavior and excludes map-equality assumptions because they would require both forward and backward analysis. These are material boundaries for a Verus adaptation.
+
+## what is proved, measured, and trusted
+The paper proves bisimulation equivalence of the original, instrumented, and split-map programs under its IVL semantics. It measures runtime on a synthetic scalable suite and reports the machine limits and timeout above. The analysis, Map Equality Domain, Ultimate implementation, SMT solver, and the modeled IVL semantics remain trusted components; the paper does not establish soundness of a production Rust-to-Verus compiler or of a general alias analysis.
+
+## techniques for the catalog
+- last-write relation: trace which map write can supply each read, using execution semantics and a conservative overapproximation
+- ghost last-write instrumentation: stamp writes in auxiliary maps so reachable-state analysis exposes dependencies
+- dependency partition: group writes that may affect a common read using an equivalence closure over an overapproximated relation
+- split-map transformation: replace one map with per-group maps and prove bisimulation equivalence
+- solver-scaling benchmark: compare transformed and untransformed verification on a controlled map-index family
+Checked 2026-10-13: audit record dietsch2019different; paper-study comparison complete; gate executed; experiments not rerun

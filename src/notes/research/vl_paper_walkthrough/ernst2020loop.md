@@ -1,0 +1,274 @@
+# A Complete Approach to Loop Verification with Invariants and Summaries
+(authored by agents unless marked 🧑)
+Tag: `ernst2020loop`, [paper](http://arxiv.org/abs/2010.05812v3)
+
+source: Gidon Ernst (LMU Munich), arXiv:2010.05812v3, 12 Oct 2021, 27 pages (text pp.1-23, references pp.24-27, no appendix). The first-page footnote: “This article extends a conference version at VMCAI’22 with an evaluation (Sec. 8).” Page numbers are the PDF's. Formulas below are transcribed into ASCII: `s0` is the state at loop entry, `s` a state at the loop head, `s'` the state after one body execution, `sn` the state at loop exit, `t` the loop test, `B` the body, `P` and `Q` the pre- and postcondition around the loop.
+
+## the idea in five lines
+
+A loop invariant `I(s)` talks about the work done so far and is pushed forwards over one iteration. A loop summary `R(s, sn)` talks about the work still to do, from any loop-head state to the exit state, and is pushed backwards over one iteration. A loop contract is a pair: a precondition (an invariant kept only strong enough to rule out runtime errors) and a summary (which carries functional correctness). The abstract's statement: “As an alternative, loop contracts, which make explicit the premise and conclusion of the underlying induction proof, can sometimes capture correctness conditions more naturally.” (Abstract, p.1)
+
+The paper proves that the two styles prove the same loops, gives formulas that turn one into the other, gives a Hoare rule for contracts, compares the two on seven textbook algorithms, and measures whether Horn-clause solvers can find contracts as well as they find invariants.
+
+Its own summary of the result for tool builders: “The key take-away is that contracts offer a particular and useful way to think about the correctness of loops, that is conceptually different from invariants, but at the same time, the technical requirements for supporting this approach turn out to be superficial, and tool support is straight-forward.” (Section 1, p.2)
+
+## technique 1: specify a loop by a precondition and a relational summary
+
+what it is: instead of one predicate over the current state, give (a) a safe invariant `I` and (b) a relation `R(s, sn)` between the current values and the final values (the paper primes the final ones: `l'`, `r'`). “The latter is a relation between current unprimed values and primed final values of the program variables.” (Section 2, p.3)
+
+when to use it: the paper's criteria, from the end of Section 7 (p.18) and the introduction (p.2):
+- the property is about the final result and the work done so far hardly matters to it (searches): “Contracts reason about complete results of a computation, whereas invariants reason about partial intermediate results.” (Section 7, p.18)
+- the specification function recurses in the opposite direction from the loop (technique 6)
+- the data is split into more than two logical parts and the invariant would have to describe all the discarded ones (binary search, maximum by elimination)
+- not when the loop writes to a data structure, unless frame conditions are added (technique 7)
+
+how it is done (Definition 6 and the text after it, Section 4, pp.7-8; proof sketch on the example, Section 2, pp.3-4):
+1. write the loop's own contract by generalizing the procedure's postcondition: replace the fixed bounds by the loop variables. For maximum by elimination (`l` rises, `r` falls, until `l == r`), procedure postcondition `a[res] = max(a[0..n])` becomes summary `a[l'] = max(a[l..r+1])`, with precondition `0 <= l <= r < n`
+2. prove the exit case: `!t(sn) ==> R(sn, sn)`. A loop that stops at once is summarized by `R` reflexively. In the example: when `l == r`, `a[l] = max(a[l..l+1])`
+3. prove the backward step: `t(s) && B(s, s') && R(s', sn) ==> R(s, sn)`. Assume the summary for the state after one iteration, prove it for the state before. In the example, branch `a[l] <= a[r]` gives `l' = l+1`; from `a[ln] = max(a[l+1..r+1])` prove `a[ln] = max(a[l..r+1])` by unfolding `max` at the front and using `a[l] <= a[r] <= a[ln]` (Section 2, p.4)
+4. if the body has `break`, prove for each one: `t(s) && B(s, sn↓) ==> R(s, sn)`, where `sn↓` is the state at the break (the condition marked ‡)
+5. prove the use: `P(s0) && R(s0, sn) ==> Q(sn)`. Apply the summary to the entry state. In the example `l0 = 0`, `r0 = n-1`, `res = l'`
+6. separately prove that `I` is an inductive invariant that excludes errors in the body: `P(s0) ==> I(s0)`; `I(s) && t(s) && B(s, s') ==> I(s')`; and the body cannot fail from a state with `I(s) && t(s)` (Definition 4, the condition marked †, Section 4, p.6)
+7. optional strengthenings the paper allows: if the body has no `break`, add `!t(sn)` to the summary; and assume known invariants in steps 2 to 4. “Of course, it is possible to strengthen the conditions of Def. 6 by known inductive invariants, occurring as additional assumptions.” (Section 4, p.8)
+
+Why the summary must be a relation and cannot check safety: “There is no safe counterpart for summaries, because they wrap up a loop execution after the fact when it would be too late to catch runtime errors.” (Section 4, p.8)
+
+The reading that makes the steps easy to remember: “Loop contracts implicitly translate a loop into a tail-recursive procedure.” (Section 4, p.8). The precondition is that procedure's `requires`, the summary its `ensures`, step 3 is the use of the recursive call's postcondition.
+
+Verus form (Inference: the paper is not about Verus; the code was not run). The constructs listed in the notes give a Verus `while` an `invariant` and a `decreases`, not a relational summary proved backwards. Two ways to get the same proof:
+
+(a) write the loop as the tail-recursive function it stands for. The contract is then an ordinary function contract, and Verus checks steps 2, 3 and 5 as the base case, the recursive case and the call site. With a specification function that recurses from the front:
+
+```rust
+spec fn has(s: Seq<i32>, x: i32, lo: int, hi: int) -> bool
+    decreases hi - lo
+{
+    if lo >= hi { false } else { s[lo] == x || has(s, x, lo + 1, hi) }
+}
+
+fn lsearch_from(x: i32, a: &Vec<i32>, i: usize) -> (r: bool)
+    requires i <= a.len(),
+    ensures r == has(a@, x, i as int, a.len() as int),
+    decreases a.len() - i,
+{
+    if i == a.len() { false }
+    else if a[i] == x { true }
+    else { lsearch_from(x, a, i + 1) }
+}
+```
+
+Here `requires` is the paper's loop precondition `0 <= i <= n` and `ensures` is its linear-search summary `r' <=> x in a[i..n]` (Section 7, p.13). What changes: Verus demands `decreases`, while the paper leaves termination out. What does not carry over: the paper's point that no syntactic rewriting into recursion is needed; in Verus, with these constructs, the rewriting is the price, and a recursive `fn` uses stack unless the compiler removes the tail call.
+
+(b) keep the `while` and use the invariant that technique 3 derives from the contract.
+
+evidence that it is sound and complete: Theorems 3 and 4 and Corollary 1 (Section 4, p.8), mechanized: “Proofs: A mechanization in Isabelle/HOL [53] of the theory presented in Sects. 4 and 5 is available at https://zenodo.org/record/5509953.” (Section 1, p.2)
+
+where it fails or what it assumes: partial correctness only (nontermination is outside the model, Section 3, p.5); `return` inside a loop is not formalized (technique 8); loops that write arrays need frame conditions.
+
+## technique 2: split a loop proof into safe and correct, and give each to one annotation
+
+what it is: validity of `{P} C {Q}` is split into two judgments (Definition 2, Section 3, p.5): safe means no execution from `P` ends in a runtime error; correct means every execution that ends in a regular state satisfies `Q`. Valid is equivalent to safe plus correct (the paper's equation 5).
+
+how to use it:
+1. put into the loop precondition only what is needed for the absence of runtime errors (index bounds, non-emptiness)
+2. put everything about the result into the summary
+3. rely on Theorem 4 (Section 4, p.8): if `{P} W {Q}` is correct in the sense above, a summary exists that proves it, with no invariant at all. Corollary 1 then says a loop is valid if and only if a contract (safe invariant plus correct summary) exists
+
+The paper's analogy from the contribution list: variants capture the difference between partial and total correctness, and loop preconditions capture the absence of runtime errors in the body (Section 1, p.2).
+
+Verus form (Inference): the same split is visible in which obligations a Verus loop annotation serves. Bounds facts such as `0 <= i <= a.len()` exist so that `a[i]` and `i + 1` pass the index and overflow checks; the remaining invariant lines exist for the `ensures`. Keeping the two groups apart tells a proof author, human or agent, which invariant line to repair for which error message. What does not carry over: Verus proves termination for loops with `decreases`, a third obligation outside this paper.
+
+## technique 3: turn a contract into an invariant (Proposition 1)
+
+what it is: a formula that builds, from a contract `J, R`, an ordinary invariant accepted by any invariant-based verifier (Section 5, p.9, the paper's equation 6):
+
+```
+I(s) := exists s0. P(s0) && J(s) && (forall sn. R(s, sn) ==> R(s0, sn))
+```
+
+In words: the entry state satisfied `P`; the safe invariant holds now; and any final state that the summary allows from here is also allowed from the entry state. The third conjunct “predicts that the loop summary wrt. the remaining iterations between current state s and an arbitrary final state sn can be lifted to a summary of the whole execution beginning at s0” (Section 5, p.9).
+
+when to use it: the verifier has only invariants (the case for the Verus constructs in the notes), and the contract is the specification that comes to mind.
+
+how it is done:
+1. write the contract as in technique 1
+2. instantiate equation 6, with ghost copies of the entry values standing for `s0`
+3. simplify. The paper says of the raw result: “While technically correct, the constructions (6) and (7) produce rather large and unwieldy formulas.” (Section 5, p.10). When the summary has the form `y' = f(x)`, Proposition 3 gives the simplified invariant directly: `f(x) = f(x0)`, the function on the remaining input equals the function on the whole input (Section 5, p.10)
+4. check the result on the examples the paper gives:
+   - maximum by elimination: `0 <= l <= r < n && max(a[l..r+1]) = max(a[0..n])` (equation 8, p.10)
+   - linear search: `x in a[i..n] <=> x in a[0..n]` (p.13)
+   - binary search: `x in a[l..u+1] <=> x in a[0..n]` (p.14)
+   - fast exponentiation: summary `r' = r * p^e`, invariant `r * p^e = x^n` (p.13)
+   - phone number comparison: equation 11 (technique 6)
+
+What the tool must add, according to the paper: “The only necessary extensions are adding contract annotations to loops and expressing relational predicates, e.g., with the widely-used old keyword or special naming conventions as in VeriFast [55].” (Section 5, p.9)
+
+Verus form (Inference; code not run). The simplified invariant of linear search, with `has` from technique 1:
+
+```rust
+fn lsearch(x: i32, a: &Vec<i32>) -> (r: bool)
+    ensures r == has(a@, x, 0, a.len() as int),
+{
+    let mut i: usize = 0;
+    while i < a.len()
+        invariant
+            0 <= i <= a.len(),
+            has(a@, x, i as int, a.len() as int) == has(a@, x, 0, a.len() as int),
+        decreases a.len() - i,
+    {
+        if a[i] == x { return true; }
+        i = i + 1;
+    }
+    false
+}
+```
+
+Each iteration needs `has` unfolded once at `(i, n)`, which is the direction in which `has` is defined, so no auxiliary `proof fn` is expected. The textbook invariant, that `x` is not in `a[0..i]`, would need `has` over a range growing at its upper end, against the definition, and so a recursive `proof fn` (technique 6). The `return` inside the loop is a deviation: the paper uses a flag and `break` because it did not formalize `return`.
+
+where it fails: the unsimplified formula. “One might furthermore worry that the introduction of the universal quantifiers into invariant (6) hampers proof automation when R is a complex formula, indeed, Dafny would typically fails to infer appropriate triggers for it.” (Section 5, p.10). Inference: the same holds for Verus, where a `forall` in an invariant needs a `#[trigger]` that the solver will meet; use the simplified, quantifier-free form whenever the summary is functional, and fall back to technique 1(a) otherwise.
+
+## technique 4: turn an invariant into a contract (Proposition 2)
+
+what it is: canonical summaries built from a safe and correct invariant `I` (Section 5, p.10, equation 7):
+
+```
+R(s, sn) := I(s) ==> !t(sn) && I(sn)     -- loops without break
+R(s, sn) := I(s) ==> Q(sn)               -- all loops, also with break
+```
+
+In words: if we enter the remaining iterations in a state satisfying the invariant, the final state has whatever the invariant proof gave for it.
+
+when to use it: a verifier or solver takes contracts and the user has an invariant; or one wants to show that supporting contracts loses nothing.
+
+how to simplify by hand, on the invariant of the KIV team for maximum by elimination, `exists k. 0 <= l <= k <= r < n && a[k] = max(a[0..n])` (Section 5, pp.10-11):
+1. choose the same witness `k` for both occurrences of `I` in equation 7
+2. use the lemma `0 <= l <= k <= r < n ==> max(a[0..n]) = max(a[l..r+1])` to replace the whole-array maximum by the range maximum
+3. use that the loop ends with `l' = k = r'`
+4. result (equation 9): `0 <= l' = r' < n && a[l'] = max(a[l..r+1])`
+
+The paper warns that this direction is the hard one and that the steps include heuristic weakening (Section 5, pp.10-11).
+
+Verus form (Inference): this direction is of use to someone building a contract-based front end over Verus, not to someone writing Verus proofs.
+
+## technique 5: a Hoare rule for contracts, using specification statements
+
+what it is: a syntactic proof rule that a verifier can implement directly (Section 6, pp.11-12). A specification statement `x : [P, Q]` asserts `P`, changes the variables `x` arbitrarily, and constrains the change by the relational `Q`. The rule `LoopContract` for `while t do B` with contract `I, R`, where `x` are the variables the body modifies and `xi`, `xn` are fresh logical variables, has three premises:
+
+```
+1.  { P } x : [I, R] { Q }
+2.  { I && !t && x = xn } skip { R[x, x' := xn, x] }
+3.  { I && t && x = xi } B ; x : [I, R] { R[x, x' := xi, x] }
+```
+
+how it is done:
+1. replace the whole loop by the specification statement and prove the surrounding code with it (premise 1). This is where the contract is used
+2. prove that a state with `I` and the test false satisfies `R` with both arguments equal to it (premise 2)
+3. take a state with `I` and the test true, record it in `xi`, run the body once, then run the specification statement in place of the remaining iterations, and prove `R` from the recorded state to the state now reached (premise 3). The statement itself forces `I` to hold after the body, so invariant preservation is part of this premise
+
+The paper on premise 3: “The third premise, in contrast to (10), embeds the inductive hypothesis directly into the program as specification statement x : [I, R] that summarizes the remaining iterations after executing B once.” (Section 6, p.12)
+
+Not in the paper: a rendering of the specification statement as assert, havoc, assume. Inference: in a verifier's intermediate language, `x : [I, R]` is `assert I; old := x; havoc x; assume R(old, x)`, so premise 3 is a straight-line program any verification-condition generator handles.
+
+where it stops: “We omit treatment of break for simplicity, see e.g. [37].” (Section 6, p.11). The rule is not among the results the paper lists as mechanized, which are Sections 4 and 5.
+
+Verus form (Inference): premise 3 is exactly what Verus checks for the body of the tail-recursive function in technique 1(a): body, then a call whose `requires` is asserted and whose `ensures` is assumed.
+
+## technique 6: when the specification folds from the right and the loop runs from the left, specify the remaining suffix
+
+what it is: a way to avoid a lemma about extending a recursive function at the wrong end.
+
+the paper's example (Section 7, pp.14-16): `compare` decides whether two phone numbers are equal after dropping non-digit characters. Indices `i` and `j` move forward over arrays `a` (length `m`) and `b` (length `n`). The specification uses `filter(p, list)`, defined by recursion on the head of an algebraic list.
+
+steps:
+1. the obvious invariant, about the prefixes: `filter(isdigit, a[0..i]) = filter(isdigit, b[0..j])`. The paper labels it problematic: “While correct, the approach has the significant drawback that we need a lemma that unfolds the recurrence of filter (p, a[0..k + 1]) at the end instead of the front like the definition, to accommodate the index increments, which in turn is provable by induction only after a further generalization of the lower index from 0 to a variable.” (Section 7, p.15)
+2. write instead the summary about the suffixes: `r' <=> filter(isdigit, a[i..m]) = filter(isdigit, b[j..n])`. Each increment of `i` or `j` now removes the head of a list, which is how `filter` is defined
+3. if the tool wants an invariant, take the one from Proposition 1 (equation 11, p.16): `filter(isdigit, a[0..m]) = filter(isdigit, b[0..n]) <=> filter(isdigit, a[i..m]) = filter(isdigit, b[j..n])`
+
+When the trick matters most, in the paper's words: “When such functions are specific to the case study, or simply when higher order functions are not supported by the tool, the ability to base the loop specification on right-fold loop summaries is certainly a useful trick in the bag that deserves to be treated first class.” (Section 7, p.16)
+
+Verus form (Inference): a recursive `spec fn` over a `Seq` unfolds in one direction, and the solver unfolds it a bounded number of times. Before writing a loop invariant over such a function, compare the end at which the function recurses with the end at which the loop index moves. If they differ, either state the invariant over the remaining range `subrange(i, n)` as in step 3, or accept writing a recursive `proof fn` with `decreases` for the wrong-end unfolding, generalized over the lower index as the quoted sentence says. Defining the `spec fn` over index bounds `(lo, hi)`, as `has` above, avoids reasoning about equality of `subrange` values.
+
+## technique 7: add frame equations to summaries of loops that write
+
+what it is: a summary relates the current state to the final state, so what earlier iterations wrote is not mentioned unless the summary says the remaining iterations leave it alone.
+
+the paper's example, array copy (Section 7, pp.16-17): invariant `b[0..i] = a[0..i]`. The natural summary `b'[i..n] = a[i..n]` is not enough: “Summarizing the remaining loop iterations from s to the final state sn by summary R(s, sn ) does not automatically reflect the array modifications applied to get from s0 to s.” (Section 7, p.16)
+
+steps:
+1. write the summary for the part still to be processed: `b'[i..n] = a[i..n]`
+2. add one equation per region already written, saying the final array equals the current one there: `b'[0..i] = b[0..i]`
+3. for nested loops do this at both levels. Bubble sort (p.17), inner loop summary: `a'[0..j] = a[0..j]`, `a'[j..i]` is a permutation of `a[j..i]`, `a'[i..n] = a[i..n]`, `a'[i-1] = max(a'[j..i])`. Outer loop summary: `a'[0..i]` is a permutation of `a[0..i]`, `a'[i..n] = a[i..n]`, `sorted(a'[0..i])`
+4. a gain the paper reports for bubble sort: with the contract there is no need to state that every prefix element is at most every suffix element; it follows from the outer loop's frame and the inner loop's summary (Section 7, p.18)
+
+The paper's general limit: “In general, if correctness of the loop depends on unbounded work done so far, the immediate constraints from executing the body once are insufficient.” (Section 7, p.18)
+
+Verus form (Inference): for loops that write through a `&mut Vec`, the invariant is the simpler tool, as the paper finds. In the tail-recursive form of technique 1(a), the frame equations are the `ensures` lines that relate the result to `old(b)` on the untouched range, for example `forall|k: int| 0 <= k < i ==> b[k] == old(b)[k]`.
+
+## technique 8: obligations for break, and what cannot be assumed at exit
+
+how it is done (Definitions 3, 4 and 6, Sections 3 and 4, pp.5-8):
+1. model `break` as a third kind of body outcome, next to a regular state and an error
+2. invariant style: prove `Q` at each break from `I(s) && t(s)`, in addition to proving it from `I(sn) && !t(sn)`
+3. contract style: prove `R(s, sn)` at each break
+4. do not use the negated test after a loop with breaks: “Note, Q(s) does not necessarily imply ¬t(s), i.e., we cannot take the negative loop test for granted if there are non-local exits of the loop by break.” (Section 4, p.6)
+5. encode an early `return` as a flag plus `break`: “To avoid using return inside the loop (which we have not formalized in Sec. 4) we maintain a variable r that becomes true once the element is found, in which case we break out of the loop.” (Section 7, p.13). The fact `!r` then belongs to the loop precondition, since the loop head is reached only with the flag false
+
+Verus form (Inference): the same care applies to a Verus `loop` or `while` with `break`; an invariant line that fails at the break point must be weakened or moved, and the post-loop code may not rely on the negated condition.
+
+## technique 9: let a Horn-clause solver find the contract
+
+what it is: the obligations of Definitions 4 and 6 are Horn clauses with unknown predicates `I` and `R`; a constrained-Horn-clause solver searches for interpretations (Section 4, p.6, and Section 8, pp.18-21).
+
+setup (Section 8, p.19): a prototype, Korn, translates C programs to Horn clauses in both styles. “We focus on four categories from the SV-COMP benchmark repository, Arrays, Loops, Recursive, and ControlFlow, where 459 of a total of 925 benchmarks are currently supported by our translator.” Backends Z3 4.8.9 and Eldarica 2.0.4. “The hardware configuration is Intel Xeon E3-1230 with 3.40 GHz and 8 cores, limited to 1 core, 15 min, and 15 GB memory per individual task.”
+
+numbers (Table 1, p.20; correct results out of the 459 supported tasks; all column sums checked and equal to the printed sums):
+- Eldarica: 237 with invariants, 232 with contracts (232/237 = 97.9%). Per category the only difference is Loops, 117 against 112 of 196
+- Z3: 234 with invariants, 201 with contracts (201/234 = 85.9%). Loops 105 against 75 of 196; Arrays 7 against 2 of 129; ControlFlow 31 against 33 of 39, the one cell where contracts solve more; Recursive 91 both, of 95
+- for reference, official SV-COMP 2020 results on the same 459 tasks: CPA-seq 200, Ultimate Automizer 227, VeriAbs 398
+- Arrays is where contracts were hoped to help; both solvers solve at most 7 of 129 there in either style, VeriAbs 122
+
+The paper's reading: “Eldarica can deal quite well with contracts, and instantiate these even if we force the proof with these, missing out on 5 tasks wrt. invariants only, whereas Z3 performs worse with contracts.” (Section 8, p.20). Its limit on that reading: “Nevertheless, it should be clear that this evaluation is not a conclusive assessment of the general utility of loop contracts for proof automation.” (Section 8, p.21)
+
+soundness of the prototype: “There are a few incorrect results per experimental setup (1 for Eldarica, and 2 resp. 3 for Z3), due to limitations of the implementation, such as assuming unbounded integers.” (Section 8, p.21)
+
+Verus form (Inference): none direct; Verus does not infer loop annotations. The transferable part is for an agent that proposes annotations: a summary-shaped candidate, obtained from the function's `ensures` by replacing constants with loop variables, is a second family of candidates next to prefix-shaped invariants, and technique 3 converts it to an invariant Verus accepts. The paper names the same direction as future work: “A clear path to future work is to develop algorithms that synthesize loop summaries from procedure postconditions, similarly to Furia and Meyer [24] for invariants, but potentially exploiting their close correspondence.” (Section 10, p.23)
+
+## proved, measured, trusted
+
+- proved and mechanized in Isabelle/HOL: Sections 4 and 5, that is soundness and completeness of invariants (Theorems 1, 2), of summaries (Theorems 3, 4), and the two translations (Propositions 1, 2)
+- stated without a mechanization claim: the Hoare rule of Section 6 and Proposition 3
+- the seven examples of Section 7 are specifications on paper; the paper does not say they were checked by a tool
+- measured: Table 1 and a quantile plot (Figure 4) of CPU time
+- Inference: trusted are the Korn translator, which the paper says gave some incorrect results, and the two solvers
+
+## numbers and listings that do not agree
+
+- the introduction says “The results, while promising, may reflect a bias towards invariants in existing tools: Performance of Eldarica 2.0.4 and Z3 4.8.9 with contracts is within 90% resp. 70% of that with invariants.” (Section 1, p.2). Table 1 gives 232/237 = 97.9% and 201/234 = 85.9%; both are well above the stated bounds, so the sentence understates its own table, unless it refers to something other than solved-task counts, which the paper does not say
+- memory limit: the caption of Table 1 says 15 MB, the setup paragraph says 15 GB
+- Z3 4.8.9 is cited as [42] in the setup paragraph and as [28] in the head of Table 1
+- binary search listing (p.14): the loop test is `while(i < n)` and the precondition is `0 <= i <= n && !r`, but the program has no variable `i`; its variables are `l`, `u`, `m`, `r`. Inference: both lines were carried over from the linear search listing
+- bubble sort (p.17): the outer loop is `for(int i = n; i > 1; i--)`, and its precondition is printed as `0 <= i < n`, which is false at entry where `i = n`. The outer invariant is printed as `max(a[0..i]) <= max(a[i..n])`. Inference: the second `max` was meant to be the minimum of the suffix, since the text speaks of prefix elements being smaller than those of the suffix
+- incorrect results are given as 1 for Eldarica and 2 resp. 3 for Z3, without saying which of the two Eldarica configurations, and the Table 1 caption counts only correct results
+
+## already done, which VL should not redo
+
+- the theory: soundness, completeness and the constructive translations are done and machine-checked; cite, do not re-derive
+- contract-style loop specification exists in tools: the paper names VeriFast (Section 1, p.1) and credits Hehner, Hehner and Gravel, and Tuerk for the idea (Sections 1, 6 and 9)
+- not done, by the paper's own account: synthesis of summaries from procedure postconditions; a treatment of framing; `return` in loops; any evaluation on programs with arrays that need quantified annotations
+
+## threat to agent-written verified Rust
+
+Inference: none as a competitor; the paper has no language model, no Rust, and a prototype that handles 459 of 925 selected C benchmarks. It is a source of method. For VL its worth is a second way to find a loop annotation when the prefix-style invariant needs a wrong-end lemma: write the suffix-style statement and convert it. The array results (at most 7 of 129) say that automatic solvers were not, in mid-2020, a substitute for written annotations on array programs, which is the kind of code VL agents write.
+
+## techniques for the catalog
+
+- loop contract: specify a loop by a safe precondition plus a relation from any loop-head state to the exit state, proved by an exit case, a backward step, a break case and a use at entry.
+- safe/correct split: keep in the loop precondition only what rules out runtime errors and put functional correctness in the summary; summaries alone are complete for correctness.
+- invariant from contract (Proposition 1): the invariant says every final state the summary allows from here is allowed from the entry state; for functional summaries it simplifies to remaining-work value equals whole-work value.
+- contract from invariant (Proposition 2): the canonical summary says that entering with the invariant yields the invariant and the negated test, or the postcondition, at exit.
+- LoopContract rule: verify body followed by a specification statement standing for the remaining iterations, which reduces a loop with a contract to straight-line code.
+- suffix specification for right-fold properties: when the specification function recurses from the front and the loop index moves forward, state the property over the remaining range to avoid an end-unfolding lemma.
+- frame equations in summaries: for loops that write, add to the summary that the remaining iterations leave the already written region unchanged.
+- break obligations: prove the postcondition or summary at each break and never assume the negated test after a loop that has one; model early return as flag plus break.
+- Horn-clause inference of contracts: encode both styles as constrained Horn clauses and let Eldarica or Z3 find the predicates; contracts solved 232 against 237 (Eldarica) and 201 against 234 (Z3) of 459 tasks.
+Checked 2026-10-13: audit record ernst2020loop; paper-study comparison complete; gate executed; experiments not rerun

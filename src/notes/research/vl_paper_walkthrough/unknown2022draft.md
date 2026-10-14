@@ -1,0 +1,52 @@
+# Draft, Sketch, and Prove: Guiding Formal Theorem Provers with Informal Proofs
+(authored by agents unless marked 🧑)
+Tag: `unknown2022draft`, [paper](https://doi.org/10.48550/arxiv.2210.12283)
+## method
+
+Draft, Sketch, and Prove (DSP) converts abundant informal mathematics into formally checked proofs. Its three stages are: draft an informal proof; map that proof to a formal sketch containing high-level intermediate conjectures and open holes; invoke an automated prover on every hole. The authors define the central artifact precisely: “Proof sketches consist of high-level reasoning steps that can be interpreted by formal systems such as interactive theorem provers” (section 1, p. 2). A completed proof is accepted only when Isabelle checks the formal statement and no `sorry` or `oops` keyword bypasses proof (section 4.1, p. 5).
+
+The evaluation uses 488 miniF2F high-school mathematics problems, split evenly into 244 validation and 244 test problems, with Isabelle as the target prover. Informal proofs come from MATH, Art of Problem Solving, or manual authoring. The baseline Sledgehammer solves 10.4% of test problems; adding 11 simple tactics raises this to 20.9% (Table 1, p. 6). DSP with human informal proofs solves 42.6% of validation and 39.3% of test problems, 200 of 488 overall. The denominator for every percentage is the relevant 244-problem split unless the paper explicitly gives 200/488.
+
+## technique: draft informal proofs
+
+Inference: Use a proof draft when a formal theorem has an available natural-language explanation or when a model can propose one. The draft need not itself be mechanically checked; it only needs to expose a useful reasoning structure for sketching. The paper considers human “ground-truth” proofs and model-generated candidates, so multiple alternatives can be sampled for each theorem (section 3.1, p. 3).
+
+Inference: Procedure: provide the informal statement to a human or language model; obtain a sequence of mathematical transformations and justifications; preserve the draft as input to sketch generation; let formal checking reject incorrect completions. Inference: for Verus, a draft can describe an algorithmic invariant, a case split, or a sequence of lemmas before generating Rust proof code. The draft is planning evidence, not a specification or proof. An agent-written draft must not be treated as a verified claim until Verus checks the generated contracts and lemmas.
+
+The experiment sampled 100 informal proofs per problem for model drafting. Codex used greedy decoding; Minerva used nucleus sampling with temperature 0.6 and top-p 0.95 (section 4.3, p. 6). Minerva 62B drafts yielded 43.9% validation and 37.7% test success; these are 244-problem denominators, and the test result is 1.6 percentage points below human drafts (Table 1, pp. 6–7).
+
+## technique: map drafts to formal sketches with aligned comments
+
+A formal sketch should state the main intermediate conjectures while leaving low-level proof details open. The paper states, “If the automated prover successfully closes all the gaps in the proof sketch, it returns the final formal proof which can be checked against the problem’s specification” (section 3.3, p. 4). The paper’s square-completion example introduces conjectures `c0` through `c5`, with each hole marked `<···>`, and copies relevant informal text as inline comments immediately before corresponding Isabelle blocks (section 3.1, Figure 2, p. 4). This preserves the proof’s high-level structure while delegating algebraic details to automation.
+
+Inference: Build a few-shot prompt from paired examples containing informal statement, informal proof, formal statement, and formal sketch. The authors manually prepared 20 examples, ten algebra and ten number theory. For each target, they randomly sample three examples of the matching type, append the target’s statement and draft, and ask the autoformalizer to emit a sketch with a 2,048-token limit (section 4.3, p. 6). They use 100 Codex queries per human solution and one query per model-generated solution.
+
+Inference: in Verus, map prose steps to `assert` milestones, `lemma`/`proof fn` declarations, and loop `invariant`s, leaving solver-dischargeable arithmetic or sequence facts for later. Verus syntax differs from Isabelle: use valid Verus constructs from the project’s verifier guidance, and mark this mapping as an engineering inference. Inline comments can preserve intent, but they do not contribute to the proof unless the generated assertion expresses that intent.
+
+The ablation supports aligned comments: removing inline comments lowers success by 4.9 percentage points on validation (42.6% to 37.7%) and 2.8 points on test (39.3% to 36.5%), with each percentage using the 244-problem split (Table 1 and section 5.1, p. 7). This is evidence for the prompt format on miniF2F, not a universal benefit for every code task.
+
+## technique: close holes with an automated prover
+
+After sketch generation, run an off-the-shelf prover on every open conjecture. If every hole is closed, the resulting formal proof is checked by Isabelle; a timeout or failed conjecture makes that attempt unsuccessful (section 3.3, p. 4). DSP uses Sledgehammer plus the 11-tactic heuristic prover described in section 4.2, with a ten-second per-tactic fallback and a 120-second Sledgehammer baseline timeout.
+
+The ablation replacing sketches with full model-generated proofs reduces success by 9.8 points on validation (42.6% to 32.8%) and 9.0 points on test (39.3% to 30.3%) (Table 1, p. 6). The authors write, “The drastic performance difference indicates the essential role of automated provers in our approach” (section 5.1, p. 7). They infer that automated completion is central because models are better at proposing structured conjectures than reliably filling every low-level detail. Inference: for Verus, ask a model for a decomposition and let Verus/Z3 discharge arithmetic and data-structure obligations; a failed hole should trigger a revised lemma or invariant, not a weakened postcondition.
+
+## evidence and limitations
+
+Removing informal proofs and their comments lowers success by 3.7 points on validation (42.6% to 38.9%) and 5.3 points on test (39.3% to 34.0%). The DSP pipeline therefore benefits from both a draft and an aligned sketch. The authors report that 62B Minerva solved 199 of 488 problems, one fewer than human drafts; 540B also solved 199 (section 4.4, pp. 6–7). Success means Isabelle verified the formal statement; it does not show that the informal statement, theorem selection, or generated formalization matches an external requirement.
+
+The study’s domain is school mathematics, not Rust systems. It trusts Isabelle’s kernel, the formal statements, the autoformalizer prompts, Sledgehammer and its external provers, and the mapping from informal proof to formal statement. Inference: a Verus adaptation would face additional trusted layers—Rust compiler behavior, specification erasure, libraries, unsafe code, and system models—that DSP does not evaluate. The threat to VL is therefore methodological: agents may produce persuasive proof plans whose intermediate assertions encode the wrong behavior. Requiring a machine-checked sketch, explicit contract review, and independent tests can transfer the useful decomposition pattern while preserving Verus’s soundness boundary.
+
+VL should reuse draft-to-sketch decomposition, aligned intent comments, multiple sampled drafts, and automatic hole closure. VL should not claim from this paper that language models can autonomously prove arbitrary Rust or that the 39.3% test rate predicts Verus success. The paper itself says that informal proofs can be erroneous and are hard to verify automatically; only the final formal proof receives the prover’s guarantee (section 2, p. 3).
+
+## techniques for the catalog
+
+- informal proof drafting — create one or many natural-language reasoning plans before formal generation
+- proof-sketch decomposition — represent high-level intermediate conjectures while leaving low-level holes open
+- aligned intent comments — copy relevant informal segments beside corresponding formal sketch blocks
+- few-shot autoformalization — prompt a language model with paired informal/formal examples to generate a sketch
+- hole-by-hole proving — run an automated prover on every open conjecture and accept only a fully checked result
+- multi-sample drafting — sample 100 candidate drafts or sketches per problem to increase discovery opportunities
+- ablation-guided pipeline design — measure the independent value of drafts, comments, sketches, and automation
+- machine-checked acceptance — reject outputs containing bypass keywords or any statement the formal kernel cannot verify
+Checked 2026-10-13: audit record unknown2022draft; paper-study comparison complete; gate executed; experiments not rerun

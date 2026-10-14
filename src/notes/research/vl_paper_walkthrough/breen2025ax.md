@@ -1,0 +1,118 @@
+# Ax-Prover: A Deep Reasoning Agentic Framework for Theorem Proving in Mathematics and Quantum Physics
+(authored by agents unless marked 🧑)
+Tag: `breen2025ax`, [paper](http://arxiv.org/abs/2510.12787v4)
+## scope and measured object
+
+Ax-Prover is a three-agent Lean system that gives general-purpose LLMs controlled access to Lean tools through MCP. The abstract says it “equipping Large Language Models (LLMs), which provide knowledge and reasoning, with custom Lean tools which ensure formal correctness.” (Abstract, p. 1). It evaluates public mathematics benchmarks plus two new domains: AbstractAlgebra and QuantumTheorems, and presents cryptography collaborations.
+
+Inference: The central transferable result is an interface and workflow for tool-using proof agents, not a new verifier. For VeruLaw, the corresponding boundary is an LLM orchestrator around Verus commands, Rust file edits, goal inspection, search, and diagnostics.
+
+## technique 1: role-separated multi-agent control loop
+
+What it is: separate scheduling, proof construction, and final checking. The paper implements “three agents, each of which is implemented as an LLM with specific prompts: the Orchestrator, the Prover, and the Verifier.” (Section 3, p. 4).
+
+How to apply:
+1. Give the Orchestrator an unproven theorem and have it assign the task to the Prover (Section 3.1.1, p. 4).
+2. Let the Prover reason, call formal tools, and edit the proof file (Section 3.1.2, pp. 4–5).
+3. Send the resulting file to the Verifier, which compiles it and parses diagnostics (Section 3.1.3, p. 5).
+4. Route structured errors back through the Orchestrator to the Prover; terminate only on a clean verdict or a configurable attempt limit (Section 3.1.1).
+
+The paper explains the separation: “The Verifier serves as the final gatekeeper of correctness in our workflow. It neither generates nor modifies proofs.” (Section 3.1.3, p. 5). It also says an independent verifier is needed because a Prover “sometimes terminates early despite remaining errors.” (Section 3.1.3, p. 5).
+
+Verus form: Inference: use an orchestrator process, a code-writing proof agent, and an independent Verus-check process. The verifier should read the produced Rust file, run `verus`, and reject `external_body` or other trust escapes according to VL policy. Agent roles are untrusted orchestration; only Verus's checked result supports a proof claim.
+
+Evidence and limits: On the New Benchmarks, Ax-Prover uses pass@1 but its one attempt contains many API/tool steps, while baselines attempt a whole proof in one shot (Section 5.1, p. 8). Inference: this distinction must be reported in any VL comparison because pass@1 does not mean equal interaction budgets.
+
+## technique 2: incremental sketch, formalize, and repair
+
+What it is: decompose a theorem into a coarse proof sketch, formalize each step as a local obligation, and replace placeholders one at a time. The paper says the Prover “writes a proof sketch, a coarse-grained natural language outline of the proof’s logical flow which breaks down a complex proof into more manageable steps.” (Section 3.1.2, p. 4).
+
+How to apply:
+1. Scan the Lean file for unfinished proofs marked `sorry` (Section 3.1.2).
+2. Write a natural-language sketch of the proof's logical flow (Section 3.1.2).
+3. Formalize each step as a Lean `have` statement ending in `sorry`, so the current and next goals are visible in context (Section 3.1.2).
+4. Propose tactics for one step, then call Lean diagnostics to validate it (Section 3.1.2).
+5. Fix critical errors or remaining `sorry`; finish only when every step is solved (Section 3.1.2).
+
+Verus form: Inference: write a Rust/Verus plan, introduce helper `proof fn`s or intermediate assertions, and verify each obligation incrementally. Verus does not use `sorry`; represent open obligations as unimplemented draft code outside the accepted artifact, then remove every placeholder before final checking. Keep the benchmark specification unchanged while editing proof code.
+
+Evidence: The paper's tool-enhanced reasoning loop includes “read file and edit file,” “lean goal,” “lean leansearch,” and “lean diagnostic messages” (Section 3.1.2, p. 5). Inference: a Verus agent should log analogous file edits, current verification goals, library searches, and diagnostics for reproducibility.
+
+## technique 3: MCP tool interface for environment grounding
+
+What it is: expose filesystem and Lean tools through a uniform Model Context Protocol interface. The paper states: “MCP is a standard interface that lets LLM agents invoke external services in a uniform, controlled way.” (Section 3.2, p. 5).
+
+How to apply:
+1. Provide file read/write/list operations for the project (Section 3.2).
+2. Provide build and diagnostic tools (`lean build`, `lean diagnostic messages`) (Table 1, p. 5).
+3. Provide state and symbol inspection (`lean goal`, `lean term goal`, `lean hover info`) (Table 1).
+4. Provide code assistance and search (`lean completions`, `lean multi attempt`, `lean run code`, `lean leansearch`, `lean loogle`, `lean state search`, `lean hammer premise`) (Table 1).
+5. Require the Prover to call tools while reasoning rather than rely on parametric memory (Sections 3.1.2 and 3.2).
+
+The authors emphasize version grounding: Loogle searches declarations in the newest Mathlib, while Leansearch uses a recent library version, “without relying on the LLM’s knowledge of the version (or multiple versions) of Mathlib on which it was trained.” (Section 3.2, p. 5).
+
+Verus form: Inference: expose a narrow tool API for reading Rust files, editing a worktree, running `verus`, inspecting diagnostics, searching Verus library notes, and building the crate. Pin the Verus toolchain and dependency versions; do not let the model silently change specifications or imports. MCP is an interface, not a proof of tool correctness.
+
+Evidence: On 100 NuminaMath-LEAN Unsolved problems, the Prover averages 100.76 tool calls per run; the most frequent are edit file 36.79, diagnostics 30.73, goal 8.17, Loogle 5.88, and Leansearch 4.32 (Table 4, p. 10). Tool success rates exceed 99%, except filesystem search at 80% (Section 5.3, p. 10). Inference: tool-call counts and failures should be first-class VL metrics.
+
+## technique 4: diagnostic verdict policy
+
+What it is: convert compiler diagnostics into a conservative final verdict. The paper defines diagnostic return codes: 0 means no errors or warnings; 1 means an explicit compilation error; 2 means compilation with warnings such as `sorry`. It says a proof is correct and complete only if code 0 is returned, or code 2 without `sorry` (Section 3.2, p. 5).
+
+How to apply:
+1. Compile the generated file with the diagnostic tool (Section 3.1.3).
+2. Parse diagnostics and identify level-1 errors (Section 3.1.3).
+3. Search the file for `sorry` or equivalent `admit` (Section 3.1.3).
+4. Return verified only when no level-1 error and no placeholder remain (Section 3.1.3).
+
+Verus form: Inference: run `verus` and reject any nonzero verification failure, unresolved proof obligation, or configured trust escape. Treat compiler warnings separately from proof status, and record the exact toolchain and command. A successful Rust build alone is insufficient evidence of Verus specifications.
+
+Evidence and limits: The Verifier only assesses the Prover's file and does not generate or repair it (Section 3.1.3). Inference: the policy catches incomplete artifacts but does not establish that the specification expresses the intended product property; specification review remains a separate obligation.
+
+## technique 5: domain-shifted benchmark construction
+
+What it is: test generalization with formalized datasets outside competition mathematics. AbstractAlgebra has 100 Lean problems, 50 easy and 50 intermediate (Section 4.1, p. 6). QuantumTheorems has 134 problems spanning quantum theory, with easy proofs of 1–10 Lean lines and intermediate proofs of 10–50 lines (Section 4.2, p. 7).
+
+How to apply:
+1. Choose a domain with definitions absent from the prover's training corpus (Section 4.2).
+2. Generate candidate statements through an iterative human-in-the-loop process and expert curate them (Section 4.2).
+3. Split by difficulty and publish formal files with all custom definitions (Sections 4.1–4.2).
+4. Evaluate with the same external compiler and no-placeholder rule as other datasets (Section 5.1, p. 8).
+
+Verus form: Inference: build VL datasets around ownership, concurrency, API contracts, unsafe boundaries, and custom domain libraries rather than only textbook arithmetic. Experts must verify the benchmark specifications before agent evaluation; otherwise a false specification can make an apparently successful proof meaningless.
+
+Evidence: Ax-Prover scores 64% on AbstractAlgebra versus 24% for DeepSeek-Prover-V2-671B, and 96% on QuantumTheorems versus 61% (Table 2, p. 9). These totals combine easy and intermediate subsets; the paper reports 50/50 AA and 134 QT denominators in Sections 4.1–4.2. Inference: the cross-domain result supports tool adaptability, but it is not evidence about Rust safety.
+
+## technique 6: researcher-in-the-loop formalization
+
+What it is: let a domain expert supply definitions and strategy while the agent handles tactics, search, diagnostics, and refactoring. In the classical cryptography case, the system found that “some minima were taken over sets that can be empty for certain parameters,” then made preconditions explicit (Section 6.1, p. 11).
+
+How to apply:
+1. Have the researcher state the domain claim and assumptions (Section 6, p. 11).
+2. Formalize definitions and lemmas interactively with the Prover (Sections 6.1–6.2).
+3. Use tool diagnostics to expose missing preconditions or type mismatches (Section 6.1).
+4. Export verified lemmas for later analyses (Sections 6.1–6.2).
+
+Verus form: Inference: have a systems expert define intended Rust behavior, invariants, and threat assumptions; let the agent fill proof details while the expert reviews specifications and counterexamples. Export only Verus-checked helper lemmas with their assumptions documented.
+
+Evidence: The branch-number formalization produced about 2,000 lines of Lean in two working days on a laptop (Section 6.1, p. 11). The quantum case formalized Lo-Chau's entropy bound and exported it as a reusable library lemma (Section 6.2, p. 12). Inference: these are case-study productivity claims, not benchmark success rates or proof-completeness guarantees.
+
+## what is proved, trusted, and left open
+
+Lean's external compiler and its kernel check the submitted proof files, and the independent Verifier applies the no-placeholder policy. The LLMs, prompts, MCP implementation, filesystem, search services, dataset formalizations, and specification choices remain outside that kernel. The paper itself notes that specialized provers may be brittle to Mathlib changes, while tool access can adapt to current libraries (Sections 1 and 3.2).
+
+Inference: threat to a product that emits agent-written verified Rust is high for workflow relevance and medium for assurance. The independent verifier, diagnostic policy, domain-shifted benchmarks, and human collaboration transfer well. The reported Lean accuracies do not measure Rust ownership, concurrency, unsafe code, malicious edits, or specification weakness. A Verus deployment must define a trusted base and reject unreviewed external bodies.
+
+Inference: VL should preserve the paper's denominator discipline. For example, the PutnamBench table's Ax-Prover result is 14% [92] at pass@1, while Ax-Prover solved 92 questions; the bracket is the absolute solved count and the percentage denominator is the full benchmark (Table 3, p. 9). New-benchmark totals and subset scores are separate denominators, and Kimina's NuminaMath numbers were obtained at average pass@68 (Table 2 caption, p. 9), unlike Ax-Prover's pass@1.
+
+Inference: prior systems already demonstrate verifier loops, external tool APIs, and human-facing proof repair. VL should not redo a tool-free one-shot baseline as its only comparison; it should measure tool-call budgets, diagnostic failures, specification edits, and independent verification.
+
+## techniques for the catalog
+
+- role-separated verifier loop — orchestrate a Prover and an independent final Verifier with bounded feedback
+- incremental formalization — turn a natural-language sketch into checked intermediate obligations one step at a time
+- MCP environment grounding — expose file, goal, search, and diagnostic tools through a controlled interface
+- conservative verdict policy — accept only compiled, placeholder-free artifacts under explicit diagnostic rules
+- domain-shifted benchmarks — test custom scientific or systems definitions absent from training data
+- researcher-in-the-loop verification — let experts set assumptions while agents handle formal proof engineering
+Checked 2026-10-13: audit record breen2025ax; paper-study comparison complete; gate executed; experiments not rerun

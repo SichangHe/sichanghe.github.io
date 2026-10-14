@@ -1,0 +1,32 @@
+# Hammer for Coq: Automation for Dependent Type Theory
+(authored by agents unless marked 🧑)
+Tag: `czajka2018hammer`, [paper](https://www.semanticscholar.org/paper/2bd53f62ed2fcde3425e521d24a41750de2a4176)
+
+## system and scope
+Czajka and Kaliszyk build a complete “hammer” for Coq's Calculus of Inductive Constructions (CIC). A hammer combines premise selection, translation to an automated theorem prover (ATP), and reconstruction in the interactive prover. The abstract says: “A key component of the hammer is a proposed translation from the Calculus of Inductive Constructions, with certain extensions introduced by Coq, to untyped first-order logic.” (Abstract, p. 423). The implementation targets general library goals rather than domain-specific lemmas. The paper's example is a list-membership theorem that E prover solves with six `Lists.List` lemmas although standard Coq tactics cannot solve it (Section 1, pp. 424–425).
+
+## technique 1: premise selection
+Use this before translation when a library exposes too many facts. Given the goal and all accessible lemmas, rank a small relevant subset using statements and prior proofs. The paper identifies recursive similarity filters (SInE and Meng–Paulson) and learned sparse naïve Bayes and k-nearest-neighbour methods (Section 2.1, p. 426). The selected premises, together with the conjecture, become the ATP input. The plugin can use lemmas proved earlier in the current development, not only a fixed standard library (Section 1, p. 425).
+
+Inference: In Verus, the analogue is selecting `lemma`/`spec fn` facts and trigger-friendly assertions before invoking the SMT-backed verifier. Inference: the selection model must respect Verus's module visibility and proof context; an ATP premise list cannot be copied directly because Verus formulas include Rust types, ownership and executable/spec boundaries.
+
+## technique 2: CIC-to-first-order encoding
+Use when the source logic is dependent type theory and the target ATP is strongest on untyped first-order logic with equality. The authors introduce CIC0, an approximation of CIC, then encode terms, types, dependent products, inductive types, universes, equality, and Coq extensions into first-order symbols and axioms (Sections 3 and 5, pp. 428–438). Translation is designed to preserve enough entailment for useful ATP search; the authors explicitly qualify it as “sufficiently sound and complete to be of practical use for automated theorem provers.” (Abstract, p. 423). The workflow is: reduce the Coq environment to the selected CIC0 declarations, translate conjecture and premises to TPTP first-order formulas, run one or more ATPs, and retain the ATP proof or its used-premise core.
+
+Inference: A Verus version would require a sound encoding of the subset of Rust/specification semantics that a target solver can handle, likely retaining Verus's existing SMT translation rather than replacing it. Inference: because the paper's translation is not a proof inside Coq, Verus should treat solver output as an untrusted search hint and require kernel/verifier replay.
+
+## technique 3: proof reconstruction
+Use after an ATP returns a proof, because an external proof is not itself a Coq proof. The reconstruction procedure is an `eauto`-type search extended with limited rewriting, congruence closure, and forward reasoning; it searches for a Coq proof using the ATP-selected dependencies. Section 1 states: “We also introduce a proof reconstruction mechanism based on an eauto-type algorithm combined with limited rewriting, congruence closure and some forward reasoning.” (p. 423). In the list example, six named lemmas are sufficient for reconstruction (Section 1, pp. 424–425). The implementation integrates premise selection, translation, ATP invocation, and reconstruction into a `hammer` Coq tactic (Section 1, p. 425).
+
+Inference: In Verus, reconstruction means emitting ordinary proof code—`assert`, `assert forall`, `have`, `lemma`, and `ensures`-compatible calls—that Verus can check. Inference: a proof-search service may propose this script, but a successful Verus verification run is the acceptance boundary; a runtime `proof fn` call or an `external_body` shortcut would not be reconstruction.
+
+## evidence, trust, and limits
+The paper reports three distinct denominators. Reconstruction alone re-proves 44.5% of Coq standard-library problems using ATP dependencies (Contributions, p. 425). The complete push-button hammer proves 40.8% of theorems in a bootstrapping simulation in about 40 seconds of real time on an 8-CPU system (Abstract, p. 423); each theorem may use only preceding theorems and proofs (Section 7, p. 443). The authors compare success with HOL/Mizar hammers and present Coq case studies (Sections 7–8). These percentages are not interchangeable: 44.5% is reconstruction over ATP-produced dependencies, whereas 40.8% is the end-to-end, chronological library experiment.
+
+What is proved: reconstructed Coq terms type-check in Coq's logic. What stays trusted: Coq's kernel, the translation's soundness assumptions, ATP implementation for search, premise-selection model, reconstruction code, and the formalized library statements. The paper notes that general hammers solve “40–50% of the top-level goals in various developments” (Section 2.1, p. 426), a broad comparison rather than this experiment's denominator. Inference: for VL, this work already establishes the architecture of learned premise selection plus external solving plus checked replay; VL should adapt the architecture to Verus's solver and contracts rather than reproduce a generic hammer. Inference: product threat is medium for proof-search labor, but the source logic and measured corpus are Coq, so transfer to Rust systems is unmeasured.
+
+## techniques for the catalog
+- learned premise selection — rank a small, goal-relevant fact set from statements and previous proofs
+- dependent-logic encoding — translate CIC declarations and goals into untyped first-order ATP input
+- checked reconstruction — replay ATP dependencies with proof-assistant search, rewriting, congruence, and forward reasoning
+Checked 2026-10-14: audit record czajka2018hammer; paper-study comparison complete; gate executed; experiments not rerun
