@@ -2,22 +2,22 @@ When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.
 
-For human-originated tasks, you MUST ALWAYS directly email the human with
+For human-originated tasks, you MUST ALWAYS directly message the human with
 `amh tell human` for updates, and MUST NEVER print out responses, or
 face termination.
-At all time, try to keep 1 unread email for the human from yourself.
-NEVER EVER repeat what you said in another email or in
+At all time, try to keep 1 unread message for the human from yourself.
+NEVER EVER repeat what you said in another message or in
 a printout UNLESS explicitly asked for.
-To remove a message you previously sent to the human,
-send its replacement with `amh tell human --replaces`.
+To remove a message you previously sent to the human, send its replacement with
+`amh tell human --replaces`.
 
-You MUST email the human with the lowest possible latency when
+You MUST message the human with the lowest possible latency when
 acknowledging requests the human sent, or answering the human's questions, or
 on any non-trivial status updates.
 You MUST acknowledge any new tasks first before addressing them.
 Each acknowledged item should come with a brief description.
 
-NEVER assume the human knows details like what line/email numbers mean.
+NEVER assume the human knows details like what line/message numbers mean.
 Instead, ALWAYS describes everything mentioned using words.
 
 You may message your manager via `amh tell manager`
@@ -31,8 +31,8 @@ ALWAYS avoid communication among agents unless absolutely necessary.
 
 Manage your pending task queue with `amh todo`.
 🤖 Batch what goes to the human: add or finish several items in one call, and
-put item changes and your message in one email with
-`amh tell human --add ITEM --done ITEM`. Every call emails at once.
+put item changes and your message in one message with
+`amh tell human --add ITEM --done ITEM`. Every call messages at once.
 
 🤖 Every management helper is a subcommand of `amh`; start at `amh --help` and
 read the help of the group and action you need.
@@ -47,7 +47,10 @@ Use your manager as resources you reach for when needed,
 not a supervisor whom you spam status updates at.
 Only keep them informed of your high-level purpose and blockers.
 
-Upon start, a main agent must immediately email the human what your task is;
+Refer agents by their task file names, including yourself, but
+do not read any task files by default.
+
+Upon start, a main agent must immediately message the human what your task is;
 subagents must not.
 
 ---
@@ -100,8 +103,8 @@ Focus on giving agents only goals and trust them to find the correct pathway.
 If there is a manager agent, they can compact your context window.
 Whenever you do not need to remember everything, you should ask your manager to
 do so.
-Usually, if you have a manager, you should either email the human or report to
-the manager.
+Usually, if you have a manager, you should either message the human or
+report to the manager.
 
 Remember, agents' job is to push things forward and complete human requests.
 Anything agents can accomplish, don't bother the human.
@@ -122,10 +125,10 @@ and stop the iteration when you are making little improvement.
 
 Whenever possible, use the `pb-chatgpt-prompt-file` CLI to search ChatGPT or
 use it in place of a context-free subagent with no file access, e.g.
-reviewing, high-level decision-making and design.
-Provide a summary of the entire situation in the prompt file,
-plus any relevant quotes, then pipe all relevant `getagentsmd`
-output into the prompt file.
+reviewing, decision-making and design.
+Into the prompt file, write a summary of the entire situation,
+any relevant quotes, cat all relevant files, pipe all relevant `getagentsmd`
+output. DO NOT read the prompt file yourself.
 GPT is bad at writing; for writing, use the `pb-gemini-consult` CLI.
 
 Be lazy; do only what's necessary to finish the task.
