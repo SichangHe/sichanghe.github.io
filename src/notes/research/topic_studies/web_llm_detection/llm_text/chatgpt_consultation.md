@@ -1,73 +1,63 @@
-ChatGPT consultation and resulting changes
+ChatGPT consultation
 (authored by agents unless marked 🧑)
 
-consultation status
+consultation on the research proposals, 13 Oct 2026
 
-- completed through `pb-chatgpt-prompt-file` with Extra High reasoning
-    - verified model: GPT-5.6 Sol
-    - answer returned on 6 October 2026
-- preserved answer and diagnostic were rechecked during the final review
-    - answer file: `rt_llm_text_cx/chatgpt_opinion_second.md` in the session's temporary research directory
-    - diagnostic: the adjacent `.private.json` file
-    - diagnostic verifies Extra High selection and successful completion
-    - private browser diagnostics are kept outside the public notes
-- supplied a self-contained description of DeGenTWeb, existing literature, and candidate experiments
-    - included relevant human writing and synthesis instructions
-    - ChatGPT could not access local notes
-- its recommendations are opinions
-    - its paper leads require primary verification
-    - primary verification found close web-measurement work missing from the initial review
+- asked GPT-5.6 Sol at Extra High, in a temporary chat, with web search
+    - it got the proposals as they stood before this consultation, a description of DeGenTWeb, and the human's writing rules
+    - it could not read the notes
+    - a first try timed out with no answer; the second, with a one-hour wait, finished
+- everything below is its opinion; I opened its two arXiv leads and say where I did not check
 
-advice that changed the proposal
+what it said, and what I did with it
 
-- ChatGPT: “combine directions 1 and 2 into the main paper”
-    - refers to extraction and site-level aggregation
-- ChatGPT: “Make 3 a deployment mechanism inside it”
-    - refers to assisted-writing uncertainty and abstention
-- ChatGPT: “Treat 4 as a separate HCI follow-up”
-    - refers to browser warnings
-- agent agreement
-    - one pipeline study can connect extraction to decisions and uncertainty
-    - user warnings require a separate experiment and different expertise
-- agent qualification
-    - a good framing does not establish research novelty
-    - final claims require measured effects and explicit population assumptions
+- its ranking: site robustness first, extension audit second, known-human pages third, people judging sites fourth, crowd list last
+    - "make #3 + the feasible part of #4 one serious robustness paper; pursue #1 separately only after a cheap pilot demonstrates nontrivial behavior"
+    - I had the extension audit first; I took its order
+- on the site robustness test
+    - "When page-level evidence shifts systematically or partially, when does multi-page aggregation actually save you?"
+    - pooling pages only helps "when page errors have enough independence"
+    - report "fraction of pages that must be transformed to flip a site"
+    - now the core of proposal 1
+- on DeGenTWeb's 99%
+    - "With 67 positives and 65 negatives, one extra error in one class moves balanced accuracy by roughly 0.75 percentage points"
+    - a reviewer will ask for tests on builders and models held out of training
+    - the DeGenTWeb notes already report held-out-builder predictions, which ChatGPT could not see
+- on the extension audit
+    - "'nobody measured extension traffic' is no longer defensible": Arcanum and Vekaria et al. did it for other extensions
+    - both were already in [browser extensions](browser_extensions.md); my proposal now says so
+    - plant "unique canary strings" in page regions and see which leave; now the first experiment
+    - "automatic versus user-triggered collection is the real distinction"
+- on known-human pages
+    - "Git history proves edit history, not authorship"
+    - "Label quality and target-population coverage dominate nominal N"
+    - accepted; noted in proposal 3
+- on people judging whole sites
+    - "I do not know a study where humans receive multiple pages belonging to one site and produce a site-level authorship verdict"
+    - control the amount of text, and show extracted text; both added to proposal 4
+- on the crowd blocklist
+    - "Drop this as a paper. Keep the list as a source of candidate sites"
+    - the list says it is for "cleaning image search engines", so being listed says nothing sure about the text
+    - accepted; now proposal 5 and no longer a paper idea
+- three new ideas: sites switching to AI, a crawler that stops when sure, detectors drifting over time
+    - written up, with overlap against DeGenTWeb, in [research proposals](research_proposals.md)
 
-closest new leads
+papers it named
 
-- Dolezal et al., [The Impact of AI-Generated Text on the Internet](https://ai-on-the-internet.github.io/)
-    - primary project page and PDF opened
-    - already tests archived websites, several detectors, and HTML/plain-text robustness
-    - generic HTML-versus-text comparison is weak novelty
-- Pew Research Center, [August 2026 methodology](https://www.pewresearch.org/data-labs/2026/08/20/methodology-ai-content/)
-    - primary methodology opened
-    - already samples Common Crawl WARC and WET and compares open/commercial Pangram outputs
-    - ordinary crawl-wide detector prevalence is weak novelty
-- additional leads were checked or retained explicitly as unverified
-    - label-design studies and logged CoAuthor interactions are covered in [browser notes](browser_extensions.md) and [research proposals](research_proposals.md)
-    - ICWSM publisher abstract and public corpus-detection patent text establish additional method overlap
-        - full ICWSM results remain unchecked
-- [web-page studies](on_web_pages.md) records evidence and overlap
+- opened by me on arXiv, real, and now cited in the proposals
+    - [Hitting a Moving Target: Test-Time Adaptation for AI Text Detection under Continual Distribution Shift](https://arxiv.org/abs/2606.25152), Ren et al., arXiv, 2026
+        - ChatGPT gives the venue as NeurIPS 2026; I did not check that
+    - [ARB: A Matched Authorship-Rewriting Benchmark Dataset for AI-Text Detector Evaluation](https://arxiv.org/abs/2607.29539), Perrone and Romano, arXiv, 2026
+- already in this tree: Arcanum, Vekaria et al., Hanley and Durumeric, Russell et al., Jakesch et al., Milička et al., APT-Eval, Jabarian and Imas, Dolezal et al., Pew
+- not checked by me
+    - CodeX: Contextual Flow Tracking for Browser Extensions, Ahmadpanah et al., CODASPY 2025
+    - ScholaWrite: A Dataset of End-to-End Scholarly Writing, Le et al., ACL 2026
+    - a NewsGuard and Pangram product that lists AI content farm sites, said to cover over 3,000 sites
 
-revised first experiments
+older consultations kept from other agents
 
-- agent recommendation: a historical extraction pilot
-    - 2,000–5,000 pre-2022 archived pages with independently checked dates and sources
-        - old dates support a negative control but do not prove human authorship
-        - known-origin samples remain necessary for measuring actual false positives
-    - compare WET and several article/visible-text extractors
-    - record threshold crossings and input text
-    - inspect suspicious cases manually
-- agent recommendation: follow with a crossed intervention
-    - keep source article constant while changing extractor/template
-    - keep extraction constant while changing drafting/editing history
-    - measure separate extraction, generation, and combined effects
-- agent recommendation: site-level negative controls
-    - compare earlier periods with earlier periods
-    - a detector that flags ordinary historical change as an AI transition fails this use
-- agent recommendation: stop if the effects are too small
-    - pipeline differences must materially alter errors or decisions
-    - correlation-aware aggregation must outperform simpler duplicate removal
+- the two sections below were written on 8 Oct 2026 by the agent that then held this folder
+    - they concern the sibling folders, not text detection
 
 reader-facing measurement consultation, 8 October 2026
 
