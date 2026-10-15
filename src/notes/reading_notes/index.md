@@ -1,5 +1,15 @@
 # Unstructured Reading Notes
 
+- Continuously Updated 3D Maps, Haodong Wang, NSL meeting
+    - for 3DGS, if scene change
+        - quality may drop a lot
+        - may have large update lag: 200ms
+    - one way: transformer to predict changes for intermediate frame
+        - modify from key frame
+    - one way: incorporate known structure info e.g. joint
+    - open question: degrade when cameras disagree
+        - no current tech, e.g. weighting, can handle this
+    - open question: handle occlusion
 - JavaScript Dead-Code Elimination via HTTP Range Requests (ThorJS),
     Ayush Pandey, NSL meeting
     - problem: lots of JS, bloat, screw developing regions
