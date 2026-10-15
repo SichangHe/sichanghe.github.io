@@ -1,0 +1,62 @@
+# Automated Verification of Consistency in Zero-Knowledge Proof Circuits
+(authored by agents unless marked 🧑)
+Tag: `stephens2025automated`, [paper](https://doi.org/10.1007/978-3-031-98668-0_16)
+
+## problem and formal property
+A ZK circuit has constraints Φ and witness computation ω. Consistency means every satisfying constraint assignment agrees with the witness generator on output signals and that the generated witness also satisfies Φ. The paper defines agreement as: “if the constraint Φ ‘accepts’ some valuation σ (meaning b is true), then (1) the output valuation σ′ produced by the witness generator should also be accepted by Φ, and (2) the two valuations σ and σ′ should agree on the values of all output signals” (section 2, page 318). This catches underconstrained circuits and deterministic-but-wrong arithmetic.
+
+The paper states: “This paper tackles the consistency verification problem through a two-step approach.” Zequal verifies Circom templates by constructing a relational product of witness and constraint executions, simplifying equal signals, instrumenting assertions, and inferring loop invariants. The paper’s formal model assumes single-dimensional arrays and no multiple assignment to one signal.
+
+## technique 1: aligned product program
+
+when to use
+
+Use when two artifacts share control flow but compute through different operations, such as integer division in a witness and bit decomposition in constraints. The method exploits DSL alignment; it is not a general-purpose relational verifier.
+
+steps from the paper
+
+1. Make two copies `s_w` and `s_c` of every non-input signal, representing witness and constraint values (section 3, pages 319–320).
+2. Replace each statement hole with witness expression over `S_w` and constraint expression over `S_c`; shared control flow gives a pseudo-product program. The authors write: “circuit DSLs like Circom, Gnark, and Zirgen implicitly define a ‘pseudo-product-program’ with good alignment” (section 3, page 320).
+3. Run lightweight symbolic analysis to infer pairs `s_w = s_c`.
+4. Simplify by deleting assignments to an already-equivalent witness copy and merging both copies into one variable.
+5. Instrument assertions for output equality and for witness satisfaction of each constraint; instrument assumptions restricting constraint-side execution to satisfying valuations.
+
+Verus form (Inference:)
+
+In Verus, represent the two executions as ghost state or two executable records and prove a relational lemma. Use `requires` for common inputs and `ensures` for output equality and preservation of the constraint predicate. Loop invariants should state equality of corresponding array elements over processed indices. Verus has no Circom field semantics or automatic product-program transformation, so the alignment and finite-field model must be encoded explicitly.
+
+## technique 2: symbolic-store equivalence inference
+
+The `InferEquivalences` analysis maps array elements to immutable symbolic expressions over inputs, parameters, constants, and fresh unknowns. For each assignment it performs a strong update because circuits disallow multiple signal assignments; data-variable updates conservatively invalidate possibly aliased entries. It joins stores at conditionals and requires a fixed-point store at loops. Signals are equivalent when written-index sets coincide and corresponding symbolic expressions are equivalent (section 5.1, pages 325–326).
+
+Use the inferred set to simplify the product. For example, if witness assignment `u16s_w[i] := e` and constraint `u16s_c[i] === e` share an input-only expression, merge the arrays and remove one assignment (section 3, page 320). This shrinks later SMT obligations.
+
+Inference: In Verus this is a ghost abstract interpreter over a Rust circuit builder. Prove each transfer rule sound with respect to concrete executions, and expose only the resulting equalities to the verifier. Unknown expressions must conservatively lose precision; unsound alias assumptions would invalidate the proof.
+
+## technique 3: guarded array-equality loop invariants
+
+After simplification, Zequal generates candidate predicates of the form `∀x. φ(x) → s_c[f(x)] = s_w[f(x)]`, called guarded array equalities. It identifies every array write in a loop, derives the written index expression, and synthesizes a guard from loop-counter bounds and step sizes. Nested loops accumulate disjunctive guards for completed outer iterations and the current inner prefix (section 5.3, pages 329–330). It applies a Houdini-style filter: start with a predicate universe, remove candidates failing initiation or consecution, weaken preconditions and invariants to a fixed point, then discharge verification conditions.
+
+The paper’s concrete invariant is `∀x. 0 ≤ x < i ≤ N → (low_w[x] = low_c[x] ∧ high_w[x] = high_c[x])` (section 3, page 321). This is a directly reusable pattern for array-processing proofs.
+
+Verus form (Inference:)
+
+Write a loop `invariant` that quantifies indices below the loop cursor and equates corresponding ghost or executable arrays. Derive bounds in `requires` and preserve them on each iteration. Verus’s quantifier triggers and nonlinear arithmetic may need auxiliary proof functions and `assert` facts; the paper’s Houdini inference is external automation, not a Verus construct.
+
+## modeling and evidence
+
+Zequal uses Z3 over integers, models finite-field operations modulo the BN254 prime, and replaces unsupported operations with uninterpreted functions plus axioms (section 6, page 330). It assumes invoked subcircuits are consistent unless rerun without that assumption. Evaluation used 464 templates from 16 popular Circom repositories, over 290K lines, on an M1 Max MacBook Pro with 64 GB memory and a 10-minute timeout per benchmark. Table 1 reports 306/464 verified (66%), 116/464 counterexamples (25%), and 42/464 failed or unknown (9%); average time over the 306 successful cases was 5.71 seconds. The denominator and timeout are explicit in section 7 (pages 331–332).
+
+Manual inspection confirmed 26 real bugs among the first 116 counterexample cases; rerunning without the external-template-safety assumption found 20 more, for 46 buggy templates total. Of these, 41 violated determinism and 5 were deterministic but had invalid input validation (page 333). Failure analysis attributes 61 cases to weak loop invariants, 10 to imprecise loop bounds, 7% of false positives to imprecise stubs, and roughly 9% to uninterpreted-function modeling (pages 332–333). Percentages are conditional on false-positive/failure subsets, not all 464 templates.
+
+## trust, limits, and VL relevance
+
+The paper proves consistency only under its finite-field model, Circom semantics, sound static-analysis rules, Z3 results, and assumed external subcircuits. It does not verify the Circom compiler, prover, verifier, or cryptographic soundness. Inference: the strongest transfer to agent-written Verus is the product-program plus guarded-array-invariant pattern for checking two implementations against one contract. The ZK-specific field axioms, template stubs, and pseudo-product alignment do not transfer automatically. Weak invariants and abstraction imprecision are the dominant failure modes; an agent-generated Verus proof can similarly pass only after its model and loop bounds are made precise.
+
+## techniques for the catalog
+
+- pseudo-product construction — execute witness and constraint artifacts in aligned copies with shared inputs
+- symbolic equivalence analysis — infer equal signal pairs from flow-sensitive symbolic stores and simplify the product
+- guarded array equalities — synthesize quantified loop invariants from writes, bounds, and counter step sizes
+- Houdini invariant filtering — iteratively remove predicates failing initiation or consecution before SMT checking
+Checked 2026-10-15 against paper stephens2025automated: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

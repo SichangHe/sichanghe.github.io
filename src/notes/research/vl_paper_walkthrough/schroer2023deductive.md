@@ -1,0 +1,53 @@
+# A Deductive Verification Infrastructure for Probabilistic Programs (Extended Version)
+(authored by agents unless marked 🧑)
+Tag: `schroer2023deductive`, [paper](http://arxiv.org/abs/2309.07781v3)
+
+This paper introduces HeyVL, a quantitative intermediate verification language, HeyLo, a real-valued logic, and Caesar, an SMT-backed verifier. The architecture is intended to play the role Boogie plays for ordinary deductive verification while supporting probabilities, expectations, and termination. The abstract says: “Our IVL provides quantitative generalizations of standard verification constructs such as assume- and assert-statements.” (Abstract, PDF p. 1). The key design is to make verification conditions inequalities over nonnegative extended reals rather than Boolean implications.
+
+## technique: quantitative weakest-preexpectation encoding
+
+What it is. A HeyVL statement is interpreted backward by a verification-preexpectation transformer `vp`, analogous to weakest preexpectation. A valid quantitative Hoare triple is `φ ⊑ vp⟦S⟧(ψ)` for lower bounds; coprocedures use the dual `⊒` for upper bounds. Random assignments form weighted sums, rewards add to the postexpectation, and nondeterministic branches take pointwise minima or maxima. The paper states: “We call vp⟦S⟧(φ) the verification preexpectation of S with respect to post φ.” (Section 3.3, PDF p. 14).
+
+How to apply it. (1) Choose a quantitative postcondition for the desired probability, reward, or expected value. (2) Translate assignments, sampling, sequencing, conditionals, and nondeterminism into HeyVL. (3) Use `assert` to cap a lower-bound postexpectation and `coassert` to raise an upper-bound one. (4) Use `assume`/`coassume` for quantitative thresholds. (5) Put the resulting inequality in a `proc` or `coproc` specification. For the lossy list traversal, the paper uses `coproc lossy`, pre `exp(0.5,len(l))`, post `1`, and a `coassert` on the recursive tail (Figure 7, PDF p. 5).
+
+Verus form. Inference: represent expected-value expressions as `spec fn`s over a ghost state and use executable Rust only for the probabilistic program model. Put lower or upper bounds in `requires`/`ensures`; prove arithmetic identities with `proof fn` lemmas and `assert`. Inference: Verus does not natively provide HeyLo's expectation lattice or probabilistic assignment semantics, so this is a modeling layer whose SMT obligations must be separately justified.
+
+Evidence and limits. HeyVL is proved monotone (Theorem 3.2, PDF p. 16) and conservative for an existing nonprobabilistic IVL (Theorem 3.3). These are semantic theorems about the transformer, not empirical evidence that a specification describes a real randomized system. The design omits loops and globals in the IVL; high-level encoders must provide them.
+
+## technique: dual assertions, assumptions, and validation
+
+Quantitative `assert` and `assume` generalize classical proof obligations; their co-forms reason about upper bounds. `validate` and `covalidate` collapse intermediate expectation values to qualitative success/failure, which is necessary when checking monotonicity. The paper's counterexample shows that the naive modular call encoding is unsound, then repairs it with `assert ρ; havoc outputs; validate; assume ψ` (Section 3.5, PDF pp. 17–18). It states: “To fix this issue, we add a validate statement that turns quantitative results into qualitative ones.” (Section 3.5, PDF p. 18).
+
+How to apply it. (1) Write a callee precondition `ρ` and postcondition `ψ`. (2) At a call site, assert `ρ`. (3) Havoc outputs to forget their old values. (4) Validate the qualitative condition that `ψ` bounds the actual post. (5) Assume `ψ` for subsequent reasoning. (6) For coprocedures, dualize every statement. This gives an underapproximation, so proving the modular inequality implies the inlined one by Theorem 3.4.
+
+Verus form. Inference: use a function's `requires` for `ρ`, `ensures` for `ψ`, and a `proof fn` lemma to establish that the callee postcondition is strong enough for the caller. Inference: `havoc` and `validate` have no direct Verus constructs; model forgotten outputs with unconstrained ghost values and prove a qualitative predicate before using the postcondition. Never treat an unproved external function as a verified call.
+
+Evidence and limits. Theorem 3.4 proves the underapproximation relation for all HeyLo formulas. The paper also demonstrates that omitting `validate` lets both `foo` and `bar` verify although inlining `foo` fails (Figure 16, PDF p. 18). This is a concrete soundness boundary rather than a performance result.
+
+## technique: conditional expected values
+
+Conditioning is encoded by combining wp and wlp. An `observe b` becomes `assert ?(b)`, and conditional expectation is `wp(C,φ)/wlp(C,1)` when the denominator is nonzero (Section 4.1, PDF p. 20). For a simulated six-sided die, the paper proves `wp(Cdie,r) ⊑ 2.625` and `0.75 ⊑ wlp(Cdie,1)`, yielding `cwp(Cdie,r) ⊑ 3.5` (Figures 19–21, denominator and setting explicit on PDF p. 20).
+
+Verus form. Inference: define numerator and denominator as ghost `spec fn`s, require a positive denominator, and prove the ratio bound with arithmetic lemmas. Inference: an executable Rust sampler can be tested, but the probability distribution and conditioning semantics must be axiomatized or modeled explicitly before a Verus proof has meaning.
+
+## technique: loop rules and martingale-based proof rules
+
+HeyVL encodes Park induction, ω-invariants, latticed k-induction, optional-stopping rules, expected-runtime calculi, parametric super-martingales for almost-sure termination, and martingale concentration rules for positive almost-sure termination. Park induction uses an inductive quantitative invariant `I`; the loop encoding havocs variables, validates the invariant check, and assumes the invariant before checking the body (Section 4.2, PDF pp. 21–22). The paper summarizes: “Park Induction generalizes the standard loop rule from Hoare logic to a quantitative setting.” (Section 4.3, PDF p. 22).
+
+How to apply it. (1) Choose a lower- or upper-bound invariant. (2) Prove initialization, preservation under the guard, and the exit postcondition. (3) Encode those checks with `assert`, `havoc`, `validate`, and `assume` (or co-forms). (4) For ω-invariants provide a family and a limit; for k-induction choose k; for expected runtime insert `reward`; for martingale rules provide the required drift, boundedness, and stopping conditions. (5) Let Caesar discharge the generated inequalities.
+
+Verus form. Inference: express the invariant as a `spec fn` and place it in a loop `invariant`; use `requires` for initial-state bounds and `ensures` for the exit result. Inference: martingale and stopping-time side conditions need ghost probability models and `proof fn` lemmas; Verus's ordinary arithmetic automation does not automatically provide stochastic-process semantics.
+
+## implementation, evidence, and trust
+
+Caesar is about 10k lines of Rust. It translates HeyVL verification conditions to Z3; domain declarations add user types, functions, and axioms, such as recursive harmonic-number equations (Section 5.1, PDF p. 24). The benchmark suite contains 19–270 HeyVL lines; 85% of benchmarks were verified through the front end and the remainder were handcrafted (Section 5.2, PDF p. 25). Average verification time is 0.2 seconds, maximum 2.3 seconds; `brp3` times out because k-induction with k=23 creates exponential branching (PDF p. 25). These denominators are benchmark programs, not probabilistic trials. Trusted elements include user axioms, the mathematical semantics of expectations, translation to SMT, Z3, and the correspondence between a modeled distribution and the deployed program. The paper already unifies the listed probabilistic calculi, so VL should reuse these proof-rule ideas rather than claim novelty for generic quantitative invariants. Inference: agent-written verified Rust faces a high threat when probability models or axioms silently mismatch runtime behavior; explicit contracts and a checked encoding are essential.
+
+## techniques for the catalog
+
+- quantitative weakest preexpectation — translate probabilistic commands backward into real-valued verification conditions
+- dual quantitative assertions — use assert/coassert, assume/coassume, and validate/covalidate for lower and upper bounds
+- sound modular procedure calls — assert pre, havoc outputs, validate, then assume post
+- conditional expectation encoding — combine wp numerator and wlp denominator for observe-conditioned values
+- Park and related loop rules — encode quantitative invariants, omega families, k-induction, and dual upper/lower bounds
+- martingale termination rules — encode super-martingale and optional-stopping side conditions as HeyVL obligations
+Checked 2026-10-15 against paper schroer2023deductive: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

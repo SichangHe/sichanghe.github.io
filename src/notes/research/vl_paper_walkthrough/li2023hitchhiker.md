@@ -1,0 +1,40 @@
+# The Hitchhiker's Guide to Program Analysis: A Journey with Large Language Models
+(authored by agents unless marked 🧑)
+Tag: `li2023hitchhiker`, [paper](https://doi.org/10.1109/SP46215.20)
+
+## problem and system
+LLift combines scalable static analysis with LLM reasoning for Linux use-before-initialization (UBI) candidates. UBITect reports many candidates, then symbolic execution times out or exhausts memory on difficult paths. The paper's abstract says: “LLMs are better used in an assistive role to complement static analysis.” (abstract, p.1). LLift is an assistive triage tool, not a sound verifier: it asks an LLM to summarize function behavior under path constraints and classifies suspicious initializers as may_init or must_init.
+
+## technique 1: post-constraint guided path analysis (PCA)
+Use PCA when a variable's initialization depends on the conditions under which it is later used. Extract the post-constraints C_post at the use, then analyze only initializer paths compatible with those constraints. If an initializer's must_init paths are disjoint from C_post, classify it may_init; if C_post conflicts with a path condition or return outcome, that path can be pruned and initialization can be classified must_init. The authors report that path sensitivity “can effectively eliminate over 70% of these negative cases” (section 4.3, p.6).
+
+Steps: (1) identify the initializer and suspicious use from UBITect; (2) compute post-constraints; (3) ask the LLM to collect/summarize initializer behavior relative to C_post; (4) apply path/outcome compatibility rules; (5) retain a bug candidate only when may_init remains possible. Inference: for Verus, C_post resembles the assumptions at a use site, while initialization safety is expressed through `requires`, `ensures`, and invariants. A Verus checker can discharge the resulting obligation; an LLM classification cannot establish memory safety. The paper's own Figure 6 example distinguishes unconditional use (C_post=⊤, may_init) from a use constrained by a return value that excludes early-return paths (must_init).
+
+## technique 2: progressive prompting with source retrieval
+Use this when a large codebase makes either too little context or all context unusable. Begin with the initializer, post-constraints, and available function summaries. Instruct the model to request missing function definitions in a fixed format; automatically retrieve those definitions from source and continue until the model stops requesting information or retrieval is impossible. The paper's prompt is: “If you encounter uncertainty due to a lack of function definitions, please signal your need, and I’ll supply them” (section 4.4, p.6).
+
+The returned summary is structured JSON-like data with `must_init` variables and conditional `may_init` variables. If an indirect call or unavailable definition remains, the system asks the model to proceed with available information, which is an explicit incompleteness assumption. Inference: VL can retrieve called lemma bodies, trait bounds, and relevant Verus specifications on demand, but should mark missing definitions as unknown and fail closed when proving a safety property. Supplying generated summaries as if they were verified facts would enlarge the trusted base unsafely.
+
+## technique 3: decompose the analysis into conversations and natural-language reasoning
+Use task decomposition to prevent one prompt from mixing extraction, constraint reasoning, and final formatting. LLift uses Convo.1 to extract the initializer and post-constraints, then Convo.2 to summarize the function under those constraints. It first asks for natural-language reasoning and only then requests a machine-readable JSON summary, because direct JSON prompting can interrupt reasoning (section 4.5, p.6). The paper states: “The first conversation (Convo.1) is dedicated to extracting the initializer and its associated post-constraints ... while the second conversation (Convo.2) focuses on summarizing the function.” (section 4.5, p.6).
+
+Inference: a Verus proof assistant could separate code/spec extraction, candidate invariant generation, and final Rust/Verus emission. Each stage should produce artifacts that a parser and Verus checker validate; natural-language intermediate text is not trusted. The paper reports that omitting task decomposition causes post-constraints to be neglected and errors to increase.
+
+## technique 4: self-validation and majority voting
+Use self-validation when LLM outputs are stochastic or logically inconsistent. Before finalizing each conversation, restate rules and ask the model to check its own classification against explicit constraints. Run each case multiple times and use majority voting. The implementation used GPT-4-0613, temperature 1.0, max 1,024 output tokens, and approximately 7,000 GPT-4 tokens per potential bug (section 5, p.7). Inference: for VL, repeated proposals can prioritize candidate invariants or lemmas, but only Verus compilation/proof acceptance decides correctness; majority agreement cannot compensate for a shared hallucination.
+
+## evidence and failure modes
+UBITect produced 140,000 potential bugs; symbolic execution processed 60%, leaving 53,000 cases for LLift (section 5.1, p.7). Random-1000 sampled 1,000, filtered 182 cases without initializers, and evaluated precision on 818. LLift reported 26 positives, 13 true, for 50% precision; 12 remained in the latest Linux kernel and four had patches confirmed (section 6.2, p.7). Bug-50 contained 52 confirmed UBI bugs; LLift identified all of them, but the authors caution that these bugs had trivial post-constraints and were already detectable by UBITect (section 6.3, p.8). Thus the recall claim is 52/52 for that corpus, while general soundness is not established.
+
+Table 4 (Cmp-40: 27 negatives and 13 positives) gives the component ablation. Simple Prompt has precision 0.12 and recall 0.15; PCA+PP+SV+TD has precision 0.87, recall 1.00, accuracy 0.95, F1 0.93. These fractions use the 40-case Cmp-40 denominator. The final system produced 13 false positives on Random-1000, mostly from incomplete constraints (4), UBITect information gaps (5), variable reuse (1), indirect calls (1), and additional constraints (1), plus one inconsistent output (section 6.2, p.8). Four cases exceeded context length. The paper reports model dependence: GPT-4 passed all tests, whereas GPT-3.5, Claude 2, and Bard had recall 89%, 67%, and 67% respectively (section 6.5, p.9).
+
+## what is trusted and threat to VL
+Static-analysis extraction, source retrieval, prompts, LLM outputs, and majority voting are trusted operationally but not soundly. The paper measures bug triage precision/recall and finds 13 previously unknown UBI bugs; it does not prove LLift cannot miss bugs outside sampled corpora or that LLM summaries preserve all control-flow semantics. It already studies prompt decomposition, progressive context, self-validation, and majority voting; VL should reuse these patterns rather than repeat generic prompt experiments. Threat to agent-written verified Rust is medium-high if LLift-style output is treated as proof: it can prioritize hard obligations and explain paths, but only Verus's checked specifications can certify safety. Inference: integrate LLift-like analysis as a pre-verification advisor, log every omitted definition and constraint, and reject any proof claim whose dependency was summarized rather than checked.
+
+## techniques for the catalog
+- post-constraint guided analysis — prune initializer paths using conditions at the later use
+- progressive source prompting — retrieve function definitions only when the model signals uncertainty
+- conversation decomposition — separate initializer/constraint extraction from behavior summarization
+- self-validation and voting — repeat constrained analyses, check rule adherence, and aggregate outputs
+- LLM-assisted static triage — use model summaries to prioritize candidates while retaining a checker as oracle
+Checked 2026-10-15 against paper li2023hitchhiker: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
