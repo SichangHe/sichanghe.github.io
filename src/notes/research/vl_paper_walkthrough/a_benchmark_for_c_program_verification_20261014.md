@@ -1,0 +1,61 @@
+# A benchmark for C program verification
+(authored by agents unless marked 🧑)
+Tag: `vaneekelen2019benchmark`, [paper](http://arxiv.org/abs/1904.01009v1)
+
+## scope and trust boundary
+
+van Eekelen and colleagues define CBench, a benchmark of 25 C programs for comparing practical verification systems. The abstract states: “We present twenty-five C programs, as a benchmark for C program verification using formal methods.” (Abstract, p. 1). The benchmark is intentionally a challenge: “Show us how to verify the correctness of the twenty-five programs in this paper.” (Section 1, p. 1). It covers five families, factorial, cat, malloc, qsort, and sqrt, each with variants from fragments to GNU implementations. The benchmark asks for both defined behavior and functional correctness, and exposes code scale and C features rather than prescribing one verifier.
+
+The benchmark leaves some judgments open. The authors write: “What it means to correctly verify defined behavior, whether a tool models C accurately ... and how much modification to the code is allowed for the program to still be ‘the same’, we intentionally leave open.” (Section 1, p. 2). Inference: a Verus adaptation must make these choices explicit, because Rust's defined behavior, integer overflow rules, unsafe code, and library model differ from C. The benchmark's score is evidence of verification effort under declared assumptions, not a proof that two tools share the same semantic model.
+
+## technique 1: use a feature- and scale-stratified program suite
+
+what it is and when to use it. Build a benchmark from several program families, each chosen to isolate a verification challenge, and provide variants that increase realism and scale. Use this when a verifier needs comparable workloads instead of one hand-picked example.
+
+steps from the paper. Select representative families: factorial tests arithmetic loops, recursion, and big integers; cat tests I/O and buffering; malloc tests linked data structures and memory; qsort tests arrays, recursion, and function pointers; sqrt tests floating point. For each family, create variants at four granularities: code fragment (`C`), one or more functions (`F`), one source file (`S`), and real-life multi-file code (`R`) (Section 1, pp. 1–3). Record approximate line count and exercised features in a matrix. The matrix includes recursion, standard and other library calls, input/output, threads, structs, unions, arrays/pointers, function pointers, labels/goto, floating point, and IEEE 754. Include real programs where practical: the largest entries are coreutils `cat.c` (about 800 lines) and glibc malloc (about 6,000 lines), while small factorial fragments have 3–9 lines (Table on p. 3).
+
+Verus form. Inference: create Rust/Verus counterparts grouped by arithmetic loops, recursive functions, heap ownership, slices and function traits, and floating-point wrappers. Preserve a small fragment, a function, a crate/module, and a multi-module implementation. Record Rust version, unsafe blocks, dependencies, and specification size beside each case. C's preprocessor and undefined behavior columns become Rust features and unsafe-boundary columns; the benchmark structure transfers, while exact source features do not.
+
+evidence and limits. The suite has 25 entries, with five factorial, four cat, five malloc, five qsort, and five sqrt variants (Table on p. 3). The table reports 3–6,000 lines depending on source granularity. The GNU entries' counts are rough and version dependent: the authors examined coreutils 8.27 and glibc 2.24.90 (Section 1, p. 4). These denominators are programs in the suite, not random samples of C. Inference: the staged sizes can reveal where a Verus workflow stops scaling, but cannot estimate prevalence of bugs or proof effort in production code.
+
+## technique 2: score both semantic obligations and code fidelity
+
+what it is and when to use it. Give each benchmark item four points: defined behavior, functional correctness, valid source language, and unmodified code. Subtract points when a result proves only a model or altered source. Use this when tool comparisons otherwise reward simplifying the program.
+
+steps from the paper. For each program, verify absence of undefined behavior and functional correctness. Award one point for each of those, one for verifying valid C, and one for verifying unmodified code. The maximum is explicitly “25 × 4 points = 100 points” (Section 1, p. 2). Deduct one point for missing defined-behavior verification, one for missing functional correctness, one for modified-but-valid C, and two for verifying only a model. The paper's example gives `4 − 1 − 2 = 1 point` for a model that proves functional behavior only (Section 1, p. 2). Permit specification comments such as ACSL annotations without counting the source as modified.
+
+Verus form. Inference: score each Rust case on memory safety/defined execution, functional postconditions, verification of the actual compilable Rust, and preservation of production code. A Verus model or extracted spec should receive a penalty if it omits the implementation. Treat `requires`/`ensures`, `invariant`, and proof functions as annotations, but count changing executable code or replacing unsafe code as a fidelity loss. Report the exact Verus commit, solver, timeout, and whether external bodies or axioms remain trusted.
+
+evidence and limits. The score has a fixed denominator of 100 possible points across 25 programs, but the authors intentionally leave what counts as “same” open (Section 1, p. 2). Scores therefore require a written rationale and are not fully objective. Inference: this is useful for VL's product comparisons only if the scoring rubric is frozen before results and every trust exception is disclosed.
+
+## technique 3: require an explicit implementation model, preconditions, and postconditions
+
+what it is and when to use it. Make every verification submission state environmental assumptions and the behavior being proved. Use this to prevent an impressive score from hiding unconstrained inputs, implementation-defined behavior, or underspecified I/O.
+
+steps from the paper. First declare restrictions on the C implementation, such as integer widths, struct layouts, or IEEE 754 support. Second state preconditions, for example input ranges that avoid overflow or stack exhaustion. Third specify behavior with suitable postconditions. The authors summarize the expected submission as: “Restrictions on the C implementation,” “Pre-conditions for the code, e.g., restrictions on the input,” and “Specification of the behavior of the code, e.g., appropriate post-conditions.” (Section 1, p. 2). For `fac1`, choose a precondition such as `n < 13` for 32-bit integers or `n! ≤ INT_MAX`; for recursive `fac4`, account for stack overflow on very large `n` (Section 2, pp. 4–5). For floating-point `sqrt` programs, require an IEEE 754-compliant implementation via `__STDC_IEC_559__` (Section 1, p. 2).
+
+Verus form. Inference: put input restrictions in `requires`, functional behavior in `ensures`, loop facts in `invariant`, and implementation assumptions in explicit spec types or axioms. Use checked arithmetic or prove bounds before multiplication. For floating point, model operations with the verified library available to the project and state rounding assumptions; do not silently replace executable floats with reals. Record whether an environment model is proved, axiomatized, or external.
+
+evidence and limits. These conditions make a proof reproducible, but the benchmark does not mandate one specification, so two tools can prove different contracts. `cat1` explicitly leaves its functional specification open (Section 3.1, p. 8), illustrating that I/O correctness needs a chosen trace or stream model. Inference: VL should not treat a passing proof of an underspecified contract as evidence of product correctness.
+
+## technique 4: use progression from toy code to real library code
+
+what it is and when to use it. Validate a verifier first on a small code fragment, then on functions, a source file, and finally multi-file production code with library and environment models. Use this to separate basic logic support from integration and scaling failures.
+
+steps from the paper. Start with `fac1`, a loop multiplying 1 through `n`; then `fac3`, which packages the loop in a function with pre/postconditions; then `fac4`, recursion; and finally GMP-backed `fac5` and hand-written big-number `fac6` (Sections 2.1–2.6, pp. 4–7). For I/O, progress from one-character `getchar`/`putchar` (`cat1`), to buffered `fread`/`fwrite` (`cat2`), to a simplified Unix `read`/`write` implementation (`cat3`), and then GNU `cat` (Sections 3.1–3.4, pp. 8–10). Apply the same progression to allocators, sorting, and square root, retaining the feature matrix and score.
+
+Verus form. Inference: mirror the progression in separate crates or modules so each stage can reuse verified lemmas while adding one semantic feature. Begin with pure arithmetic and slices, then add recursive specs, ownership-linked structures, external library contracts, and unsafe system interfaces. Keep the small cases as regression tests; a failure in a large case should identify the newly introduced feature rather than erase the baseline.
+
+evidence and limits. The paper provides source listings and exact feature motivations, but it does not report completed verification results for a particular tool; it is a benchmark proposal. Therefore no success percentage or time denominator can be attributed to an evaluated verifier. Inference: CBench's value for VL is experimental design and comparable reporting, not evidence that a Verus port has succeeded.
+
+## proved, measured, trusted, and product threat
+
+The paper defines a 25-program suite and a 100-point scoring rule; it does not prove the programs correct or benchmark a named verifier. Measured facts are program counts, approximate lines, feature coverage, and scoring weights. Trusted inputs include the chosen C implementation model, compiler/library semantics, floating-point assumptions, and each submission's specification. Existing work already supplies a concrete benchmark structure and should prevent VL from inventing an uncalibrated showcase suite. Inference: the product threat is evaluation theater: an agent may earn a high score by proving a model, modifying code, or choosing weak preconditions. Requiring all four points and publishing assumptions makes that failure visible.
+
+## techniques for the catalog
+
+- feature-stratified verification benchmark — organize programs by semantic feature, source granularity, and increasing real-world scale
+- four-part verification score — separately score defined behavior, functional correctness, valid source, and unchanged implementation
+- explicit assumptions and contracts — state implementation restrictions, input preconditions, and behavioral postconditions
+- staged toy-to-production evaluation — progress from fragments through functions and files to multi-file library code
+Checked 2026-10-14 against the paper by a Codex agent: audit record vaneekelen2019benchmark; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

@@ -1,0 +1,35 @@
+# DSpec2Test: Specification-Driven Test Generation in Dafny
+(authored by agents unless marked 🧑)
+Tag: `pinto2026dspec2test`, [paper](https://doi.org/10.5281/zenodo.21191158)
+
+## scope and result
+DSpec2Test generates black-box Dafny tests from formal `requires` and `ensures`, without using implementation structure. It extends `generate-tests` with Spec mode, using safe Disjunctive Normal Form (DNF) partitioning, optional Boundary Value Analysis (BVA), and Z3 to synthesize concrete inputs and expected outputs. The abstract states, “We present DSpec2Test, a specification-driven test generation tool for Dafny that automatically derives tests from formal specifications, without considering implementation details.” (Abstract, p. 1). This is complementary to Dafny’s implementation-driven Block mode: specification tests can be generated before an implementation is complete and can expose faults missed by path coverage.
+
+## technique 1: safe DNF equivalence-class partitioning
+Use this when contracts define alternative input/output behavior and you want one test goal per feasible behavioral class. Step 1: take the conjunction of all preconditions and postconditions. Step 2: convert each logical operator into mutually exclusive guarded branches. The paper’s Safe DNF rules are `A⇒B` → `{¬A, A∧B}`, `A∨B` → `{A, ¬A∧B}`, `A⇔B` → `{A∧B, ¬A∧¬B}`, and `if A then B else C` → `{A∧B, ¬A∧C}` (Table 1, p. 2). Step 3: cross-product branches with the precondition. Step 4: ask Z3 whether each conjunction is satisfiable; discard UNSAT classes. Step 5: instrument each feasible class as an `assume` followed by `assert false`, causing Dafny to emit a counterexample. Step 6: materialize the counterexample as a runnable test with concrete arguments and expected output.
+
+The paper also states, “DSpec2Test relies on an SMT solver (Z3) to find concrete test data that satisfy the target test conditions produced by ECP and BVA.” (Section 2, p. 2) It further says, “The Updater drives iteration when –repeat is higher than one and –bva is not selected.” (Section 2.4, p. 3)
+
+The ConditionalGet example requires `|s|>0` and specifies three guarded outcomes: negative x returns -1, x at or above sequence length returns 1, and in-range x returns `s[x]` (Listing 1, p. 2). Naively expanding implication can evaluate `s[x]` without its guard and crash. Safe DNF yields three feasible classes: below range, above range, and in range; five of eight cross-product classes are UNSAT (Section 2.1, p. 2). The generated instrumentation for the in-range class is `assume |s| > 0 && 0 <= x < |s| && r == s[x]; assert false;` (Listing 2, p. 2). Z3 can produce `s=[3], x=0, r=3`, materialized as `var r := ConditionalGet([3], 0); expect r == 3;` (Listing 3, p. 3).
+
+Verus form (Inference): translate each Dafny precondition into a Verus `requires` clause and each postcondition into `ensures`; write a test harness that chooses concrete values satisfying a ghost/spec predicate for each partition. Verus proof code can establish that a chosen input satisfies a partition, while executable Rust calls the function and checks the result. Verus does not provide Dafny’s `generate-tests` command or automatic Z3 counterexample-to-test materialization, so an external generator would be needed. Rust indexing requires proving bounds before indexing; the guarded partition should be reflected in the Rust control flow or an explicitly proved range condition.
+
+## technique 2: boundary value analysis
+Verus form (Inference): generate edge-focused Rust tests for each partition and prove any required index/range facts with `requires`/`ensures`; BVA itself is an external test generator, not a Verus proof.
+
+Use BVA (`--bva`) when defects may occur at partition edges. For each partition, first generate one unconstrained scenario. Then pin exactly one variable at a time to a boundary, leaving other variables free (Section 2.2, p. 2). For interval constraints, use exact valid edges; for unbounded numeric variables, use -100 and 100. For sequences, sets, and maps, use lengths 0, 1, and greater than 1. ConditionalGet’s in-range class receives x=0, x=|s|-1, |s|=1, and |s|>1 scenarios. This avoids simultaneously pinning conflicting boundaries.
+
+The implementation pipeline has three stages. The Verifier selects methods marked `{:testEntry}` or failing verification; the Modifier injects DNF classes and optional BVA pins; the Updater repeats generation when requested, appending an `assume` excluding the previous input so the next Z3 query is novel (Figure 1 and Section 2.4, pp. 3–4). Methods that fail verification are discarded from test generation. The evaluation used Dafny 4.11.0 and Z3 4.12.1, generated tests from original programs, checked that tests pass on unmutated code, then ran suites against mutants (Section 3.1, p. 3).
+
+## evidence and limits
+The corpus sampled 20 DafnyBench programs; 17 were supported by both strategies, giving 170 mutants. After excluding 22 non-compiling and 17 equivalent mutants, 131 were realistically killable. Spec_bva killed 123/131 (93.9%), including 106 explicit failures and 17 timeouts credited as kills; Block killed 108/131 (82.4%), and the union killed 125/131 (95.4%) (Table 2, p. 4). Spec_bva uniquely killed 17 mutants and Block 2. Spec_bva generated 860 tests across 131 files, 6.6 per file versus about 1.6 for Block; 52% of explicit-failure kills came from the first test and 73% from the first three. Runtime was 7,889 s versus 4,867 s, approximately 1.6× slower (Section 3.2, p. 4). Three programs crashed during generation for at least one strategy, so results are not 20/20.
+
+The paper reports limitations: mutable state such as arrays and class fields is unsupported, and specifications are not inlined. Mutation testing measures fault detection against generated mutants, not contract adequacy or semantic completeness. Inference: for VL, spec-derived tests can complement Verus proofs by checking executable behavior and generated Rust/Verus integration, but a passing test suite is not a proof of universal postconditions. Existing work already covers implementation-driven Dafny tests; VL should not redo the basic ECP/BVA idea without addressing Rust state, proof obligations, and trustworthy spec-to-test traceability.
+
+## techniques for the catalog
+- safe DNF partitioning: decompose guarded contracts into mutually exclusive feasible conjunctions before test synthesis
+- SMT counterexample materialization: encode each partition as `assume` plus `assert false`, then turn Z3 models into runnable tests
+- boundary value analysis: pin one variable at a time to exact interval edges and collection-size boundaries
+- novelty iteration: append an exclusion assumption after each generated input to obtain distinct tests
+- mutation adequacy comparison: compare specification-driven and implementation-driven suites on a denominator of realistically killable mutants
+Checked 2026-10-15 against paper pinto2026dspec2test: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -1,0 +1,60 @@
+# Developing a Practical Reactive Synthesis Tool: Experience and Lessons Learned
+(authored by agents unless marked 🧑)
+Tag: `ryzhyk2016developing`, [paper](https://www.semanticscholar.org/paper/7d823380355401e45c1c253cc8edd56c75718189)
+
+## scope
+
+Termite is a reactive synthesis toolkit for software developers. It compiles an imperative Termite Specification Language (TSL) model to a symbolic GR-1 game, solves for a controller strategy or an environment counterexample, and supports interactive debugging and code generation. The authors’ goal is practical use in device drivers and controllers, not a new synthesis algorithm. Their central design conclusion is that “a practical synthesis tool must include user input in the synthesis process in a way that combines the power automation with the flexibility of conventional development” (Lesson 4, Section 2.5, p. 91).
+
+## technique 1: programmer-facing, modular specifications
+
+What it is. TSL is imperative and C-like, with templates, typed ports, methods, processes, bit vectors, bit slices, and combinatorial logic (Section 2.2, p. 86). A specification has at least an environment template and a controller template. The environment is a test harness that generates requests and validates callbacks; the controller declares methods and GR-1 goals that must be met infinitely often (Section 2.3, p. 87).
+
+How to do it. Model each component as a template; instantiate templates statically; connect them through typed ports; encode environment choices with nondeterministic `*`; add assertions to callbacks to state when commands are safe; declare controller goals; and put `...` magic blocks where implementation is to be synthesized (Sections 2.2–2.3, pp. 86–88). The jukebox example models idle, spin, play, put, and lift states, nondeterministic record selection, and callbacks such as `cmd_rotate` guarded by `assert(state==idle && !arm_down)` (Figure 3, p. 88). A magic block may contain ordinary TSL statements, allowing a developer to impose a preferred structure before synthesis (Section 2.3, p. 87).
+
+When to use it. Use this style for a reactive module embedded in an imperative stack, where environment behavior and hardware state need explicit modeling. The environment model can be reused: the authors state, “Specification reuse is essential to achieving a productivity gain with reactive synthesis” (Lesson 1, p. 89).
+
+Verus form. Inference: represent the environment as a ghost state machine and its callbacks as Rust functions with `requires` preconditions; represent controller goals as invariants or postconditions over event handlers. Inference: TSL’s magic blocks correspond to partially implemented Rust functions whose contracts are fixed while proof code and executable branches are filled in. Inference: Verus has no GR-1 or template compiler, so this is a design pattern around Verus contracts, not a direct translation.
+
+## technique 2: counterexample-based source debugging
+
+What it is. If no compliant controller exists, Termite produces an environment counterexample strategy that can force an assertion violation or prevent a goal forever (Section 2.4, p. 89). The interactive debugger lets the user play the controller while automatically selecting environment processes and nondeterministic values according to that strategy. It presents source-level state and control flow, permits single-stepping, and visualizes the explored transition graph (Section 2.4, pp. 89–90).
+
+How to do it. Start from the counterexample strategy; let the debugger initialize and schedule environment processes; when execution reaches a magic block, choose a controller action by typing code or using the dialog; observe the resulting state; backtrack to an earlier state and try another action; and trace the first unexpected state or assertion violation to the faulty specification (Section 2.4, pp. 89–90). In the jukebox example, omitting `state = put` causes the environment loop never to invoke `evt_parked`; stepping into `cmd_put` exposes the missing assignment (Example 3, pp. 89–90).
+
+Verus form. Inference: use a failing Verus obligation, counterexample model, or bounded harness trace to drive a source-level debugger that displays ghost and concrete state. Inference: Verus’s SMT counterexamples do not automatically provide Termite’s game strategy, so a VL tool would need to map solver models back to Rust branches and precondition choices. Inference: the reusable lesson is interactive replay of a failure, not the specific TSL game semantics.
+
+Limits. The authors warn that debugging still requires domain expertise: “Synthesis does not replace human expertise, as synthesising a reactive module requires similar knowledge and skills as developing the module manually” (Lesson 2, p. 90). Incremental synthesis reduces effort: first enable only a subset of environment features or goals, then add features until the full controller is synthesized (Lesson 3, p. 90).
+
+## technique 3: two-phase user-guided code generation
+
+What it is. Termite separates automatic game solving from interactive extraction of one implementation. The winning strategy compactly represents all compliant controllers. The user edits magic blocks; the generator is invoked on demand and never changes user code. After every edit, the partial implementation is validated against the winning set (Section 2.5, pp. 91–92).
+
+How to do it. First edit a selected magic block. Second invoke generation, which symbolically simulates all partial executions and computes reachable states at that location. If any reachable state is outside the winning set, report a counterexample. Otherwise, check whether all reachable states share one winning action; if so emit a method call. If not, partition the reachable states so each subset has a common action, then emit conditional branches and return to editing (Section 2.5, p. 92). Example 4 shows manual insertion of `cmd_lift` followed by generation of later handlers while preserving the prior change (Section 2.5, p. 92).
+
+Verus form. Inference: keep human-authored Rust branches and generate only proof-preserving completions in marked regions; after each edit, run Verus on the complete function and present failing obligations as counterexamples. Inference: the winning-set check can become a contract-preservation check, while state partitioning can generate `if` branches whose guards discharge the relevant `requires` clauses. Verus does not support generated code mutating source during proof, so the tool should write ordinary Rust and rerun verification.
+
+Evidence and limits. In eight device-driver case studies, Table 1 reports input specification size, GR-1 variables and total bits, synthesis seconds, and generated-code lines. The cases are webcam (487 LOC, 128 variables/125,565 bits, 215 s, 113 LOC), 16550 UART (289, 81/407, 210 s, 74), exynos UART (380, 80/1,185, 645 s, 37), STM SPI (317, 68/389, 67 s, 24), exynos SPI (327, 83/933, 25 s, 40), exynos I2C (326, 65/303, 45 s, 79), RT clock (370, 92/810, 56 s, 84), and IDE (668, 114/1,333, 285 s, 94) (Table 1, p. 94). The authors report 60%–90% of code generated automatically; manual edits address suboptimal structure/performance and partially observable state (Section 4, p. 94). Inference: these percentages describe eight case studies, not a general success rate.
+
+## technique 4: symbolic abstraction for interactive performance
+
+Termite maintains TSL, a concrete symbolic game, and an abstract game (Section 3, p. 92). The compiler maps TSL to a GR-1 game; the solver uses exhaustive game solving plus predicate abstraction refinement. For debugging, it compiles a source state, abstracts it, selects an abstract counterexample action, concretizes that action, and executes the resulting process and nondeterministic choices (Figure 5a, Section 3, pp. 92–93). For code generation, it abstracts the partial transition relation, computes reachable states, partitions them by common winning actions, concretizes each partition/action pair, and emits conditional TSL code (Figure 5b, pp. 92–93).
+
+Verus form. Inference: use Verus to check concrete contracts after an external abstraction or invariant generator proposes candidates; keep abstraction soundness obligations explicit. Inference: BDDs and Z3 are implementation choices and do not become trusted Verus constructs.
+
+## what is proved, measured, and trusted
+
+The paper measures synthesis time, specification and generated-code size, bit-vector complexity, debugging effort, and automation fraction. It does not prove that the Termite implementation is sound; trust includes the Haskell compiler, CUDD BDD library, Z3, TSL compiler, GR-1 solver, abstraction refinement, and the environment models (Section 4, p. 93). The paper reports that DMA and pointer-based structures remain unsupported, and that hundreds of registers can exceed existing synthesis scalability (Section 4, p. 94). Inference: for VL, generated Rust must still be checked by Verus, and external-body or hardware-model assumptions must be listed as trusted.
+
+## implications for VL
+
+Inference: the strongest reusable ideas are source-level counterexample replay, incremental proof/synthesis, and preserving user edits while checking every generated increment. Inference: VL should not redo TSL syntax, GR-1 game solving, or the paper’s driver case studies. Inference: threat to agent-written verified Rust is high for usability and specification defects: a green proof can still encode the wrong environment or omit a requirement, while interactive counterexamples and incremental contracts can expose those errors.
+
+## techniques for the catalog
+
+- modular programmer-facing specifications — model environment and controller as reusable typed modules with explicit goals and guarded actions
+- counterexample source debugging — replay a failure interactively with concrete environment choices and source-level state
+- two-phase user-guided generation — preserve manual code, simulate it against a winning set, and generate only winning actions
+- incremental synthesis — enable a small feature/goal subset before adding the rest to localize specification defects
+- abstract symbolic interaction — abstract, select or partition actions, concretize them, and lift results back to source code
+Checked 2026-10-15 against paper ryzhyk2016developing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

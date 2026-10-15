@@ -1,0 +1,67 @@
+# Federated Formal Verification: Cross-Backend Citation, Cross-Axis Convergence, and AI-Orchestrated Proof Dispatch for Production Systems
+(authored by agents unless marked 🧑)
+Tag: `falda2026federated`, [paper](https://doi.org/10.1109/)
+
+## what the paper proves and measures
+
+The paper proposes a production verification architecture built from three mechanisms: a build-gated citation from a TLA+ obligation to a theorem checked by another kernel, a convergence matrix that records verdicts from multiple verification paradigms, and an AI coordinator that dispatches proof-search tasks in parallel. Its load-bearing chain is a TLA+ specification, a TLAPS proof (direct or cited), and generated runtime invariant checks. The paper explicitly separates this chain from an annotation-layer chorus of additional ports. “Verification authority resides at the kernel-directive and CI-gated-citation layer; the AI layer is untrusted proof-search labour inside a trusted CI envelope.” (abstract, PDF p. 1)
+
+The Raft validation covers joint consensus, leadership transfer, log compaction, linearizable reads, and dynamic reconfiguration. It reports a 26-to-zero `ASSUME *Axiom` census in 17 active hours, 18 cited apex axioms, and five-of-five liveness properties discharged across at least two axes (section 4.2, PDF pp. 23–24). Five financial canonicals each receive six-axis discharge (Coq, Lean 4, Why3, Apalache, CBMC, and standalone Z3; section 4.3, PDF p. 24). These are campaign measurements, not a general theorem about all projects.
+
+## technique: build-gated cross-backend citation
+
+What it is and when to use it. A TLA+ theorem can be discharged by an equivalent theorem in Coq, Lean 4, Why3, Apalache, SMT-LIB/Z3, or CBMC while the host specification remains in TLAPS. This is useful when the host backend cannot represent the proof shape, such as temporal composition or an unbounded recursive operator. The paper says, “The cross-backend citation primitive discharges a TLA+ proof obligation by citing an equivalent theorem in an external proof system, with the build system re-checking the cited theorem on every commit and failing loud on any drift.” (section 3.1, PDF p. 11)
+
+How to do it, following the paper.
+
+1. Write the TLA+ theorem and choose direct TLAPS, a sister-spec deduction, or citation. For citation, replace the proof with `PROOF OMITTED` and a structured `CITED:` tag (section 3.1.1, PDF p. 11)
+2. Put in the tag the external proof path, theorem identifier, and optional `||`-separated alternate-kernel references (section 3.1.1, PDF p. 11)
+3. Make the external theorem check under its own kernel and require closure output with no `Admitted`, `Axiom`, or unapproved `Parameter` declarations (section 3.1.1, PDF p. 11)
+4. Wire a Gradle task to the TLAPS task. Gate 1 greps the TLA+ file for the theorem and `CITED:` tag; Gate 2 parses the external log for `Print Assumptions`, `#print axioms`, or an analogous closure line; Gate 3 compares closure directives with confirmation lines and writes a citation report (section 3.1.2, PDF pp. 11–13)
+5. Make the citation task a transitive dependency of every TLAPS check so each commit rechecks it (section 3.1.2, PDF p. 13)
+6. For stronger evidence, cite the same obligation against two kernels (dual gate), or Coq, Lean, and Apalache at a fixed bound (triple gate); fail the build if any required axis regresses (section 3.1.3, PDF p. 14)
+
+Verus form. Inference: in Verus, keep the Rust `spec fn` and `proof fn` in the Verus crate and use `ensures`, `requires`, and `assert`/`assert forall` for the obligation. A sister proof in another Verus crate can be invoked only as a separately verified artifact; Verus has no paper-defined `CITED:` syntax or cross-kernel Gradle primitive. Inference: the practical analogue is a CI script that runs `verus` on each cited proof crate, checks the command's success and trusted declarations, and fails the build when a referenced theorem or source hash changes. The correspondence between a Rust `ensures` proposition and the external theorem remains a human-authored claim unless separately proved.
+
+Evidence and limits. The cited Raft tree has zero remaining `ASSUME *Axiom` declarations and no bare omitted obligations (section 5.1, PDF p. 27). In the apex benchmark, Coq ran 8/8 and passed 8/8 with a 34.4-second median and about 1,275 MB peak RSS; Apalache ran 3/3 and passed 0/3 because of dynamic integer-range encoding; PRISM passed 1/13; TLC's five launches failed because of concurrent Gradle edits, while its matrix `PASS@bound` verdicts were treated as authoritative (Table 2, PDF p. 31). The paper's trust base includes the kernels, solvers, model checkers, JVM, annotation processor, runtime registry, and build system (section 6.1, PDF p. 35). The major unresolved assumption is semantic correspondence: “The citation primitive’s trust regime includes a correspondence certificate — a human-authored claim that the cited external theorem is semantically equivalent to the TLAPS obligation it discharges.” (section 3.1.4, PDF p. 14)
+
+## technique: cross-axis convergence matrix
+
+What it is and when to use it. For every obligation, run each backend capable of its shape and record `PROVED`, `REFUTED`, `TIMEOUT`, `STRUCTURAL_GAP`, `VERDICT_DISAGREEMENT`, or `NOT_APPLICABLE`. This exposes scope mismatches and gives dual/triple gates a build-enforced conjunction. The paper states, “For each capable axis, the verdict is one of PROVED (the obligation closes under the axis’s standard verification regime), REFUTED (a counter-example is exhibited), TIMEOUT (the axis does not return within a budget), STRUCTURAL_GAP (the axis cannot represent the obligation despite being notionally capable), or VERDICT_DISAGREEMENT (the axis returns a verdict that contradicts another axis’s PROVED).” (section 3.2.1, PDF p. 15)
+
+Steps from the method are: enumerate citations; capability-filter each obligation; invoke each applicable backend's verdict extractor; regenerate the obligation-by-axis grid; and compose selected rows into dual/triple agreement gates (sections 3.2.1–3.2.3, PDF pp. 15–16). The paper's matrix had 18 axioms: all 18 proved by Coq and Lean, 10 passed TLC at a bound, 7 had PRISM execution-sweep passes, 7 had runtime assertions, 14 had dual gates, and 3 had triple gates. The convergence histogram was 4 three-axis, 5 four-axis, 5 five-axis, 3 six-axis, and 1 eight-axis rows, mean about 4.6 axes (section 5.3, PDF p. 33).
+
+Verus form. Inference: make a per-lemma record in CI keyed by Rust module, theorem name, and source revision. Run Verus plus any independent checker that can consume a bounded model or extracted transition relation; represent unsupported shapes as `NOT_APPLICABLE`, and preserve counterexamples and timeouts as first-class statuses. Verus's `#[verifier::external_body]` must not be placed on the function whose body is being verified; an external model, if needed, should be a separately marked specification boundary and listed in the trusted set. Inference: use `proof fn` lemmas with `ensures` and `requires`, and record `assert` results, while the matrix and conjunction remain CI policy rather than Verus logic.
+
+The paper's strongest negative result demonstrates why the matrix matters. Apalache found a six-step counterexample to an unconditional `LogPositionTermMatchAxiom`; investigation showed the Coq theorem was only a local pair property. The authors strengthened the TLA+ premise to `[]AllPairsShareCommonAncestor` rather than hiding the mismatch (section 5.5, PDF p. 34). This is evidence of detection, not a proof that agreement implies semantic correctness; the paper calls that implication “not a soundness theorem” (section 6.1, PDF p. 35).
+
+## technique: shape-routed, parallel proof dispatch with honest negatives
+
+The coordinator surveys open obligations, maps structural signals to backends, dispatches specialists in waves with disjoint file zones, and cross-routes a `NEGATIVE_RESULT` to a different axis. Recursive operators route to Coq `Fixpoint`; bounded quantifiers to Z3/Why3; high-arity clauses to SPASS/Vampire; randomized scheduling to PRISM (section 3.3.1, PDF pp. 17–18). When several backends are capable, they race from time zero and commit the first kernel-confirmed `PROVED`. Every specialist has a four-to-eight-hour budget and must return a structured negative rather than claim success (sections 3.3.1–3.3.3, PDF pp. 17–20). The paper's campaign used 20 specialists in four waves, with six-to-seven concurrent tasks before shared Gradle and version-control contention reduced throughput (Figure 4, PDF pp. 18–19).
+
+Inference: for VL, an agent may propose Verus proof text and classify the obstacle, but CI must accept only a successful Verus verification and should preserve a machine-readable failure. Route nonlinear arithmetic, quantifier triggers, and recursive invariants to different proof-search policies; do not let an agent self-certify. Inference: the useful unit is a disjoint Rust module or proof file per worker, merged only after `verus` checks the result.
+
+The measured campaign reduced its own five-to-seven-person-month serial estimate for 26 axioms to 17 active hours, about 50–60×, but the estimate was same-team and author-generated (section 5.2.1, PDF pp. 28–29). Against a 30–40-hour-per-axiom ghost-composition estimate, Coq's 34.4-second verifier median and roughly 30-minute port-authoring median yielded an approximately 60× headline, with the caveat that authoring dominated (section 5.2.2, PDF p. 29). The paper also reports 635× or 453× against IronFleet's 3.7 person-years under two hour conversions, explicitly warning that this is cross-protocol, cross-scope, and cross-rigour rather than like-for-like (section 5.2.3, PDF pp. 29–30).
+
+## technique: specification-to-runtime invariant code generation
+
+A Java `SpecMonitorProcessor` reads TLA+ paths from `@SpecModel`, extracts named invariants from `@SpecInvariants`, translates them, emits a `<ClassName>Invariants.java` companion, and embeds a `SPEC-HASH` so changes force regeneration. `TEST_ONLY`, `SAMPLED`, and `HOT_PATH` tiers select assertion, rate-limited warning, or counter-only behavior. Direct calls use `verifyAll`; registry-mediated calls attach verifiers to named states (section 4.4, PDF pp. 25–26). “The processor additionally embeds a // SPEC-HASH: <sha> header into the generated file, computed over the cited spec / config contents; editing a cited .tla or .cfg invalidates the hash and forces regeneration on the next compile.” (section 4.4, PDF p. 25)
+
+Inference: in Verus, generate or include Rust invariant predicates from a canonical spec, but have Verus verify the predicate and its callers with `requires`/`ensures` and `assert` statements. A build script can hash the source spec and reject stale generated Rust. This does not prove the generator's translation rules; it moves them into the trusted base, exactly as the paper acknowledges for `InvariantTranslator` (section 6.1, PDF p. 35).
+
+The runtime layer caught an AMM partial-fill pricing bug and a 10^12 perp-funding over-charge on real fixtures; CBMC found three native-library bugs that prior sanitizers and fuzz corpora had not observed (sections 4.3–4.4 and 5.4, PDF pp. 24–26, 33–34). These findings show implementation monitoring value, but they do not establish absence of other bugs.
+
+## what VL should reuse and what it should not redo
+
+Inference: VL should reuse the paper's separation of untrusted agent search from kernel authority, explicit negative-result routing, capability-aware verdicts, source-hash drift checks, and scope-qualified performance reporting. The paper already supplies a concrete pattern for CI evidence and correspondence-mismatch detection. VL should not claim that multiple agreeing backends prove semantic equivalence, or that an AI-generated proof is trusted. The unresolved correspondence certificate, larger runtime/build trusted base, bounded model-checking limits, and shared assumptions between Coq and Lean are material.
+
+Inference: threat to a product that emits agent-written verified Rust is high if correspondence, generated-code translation, or runtime/spec linkage is silently trusted; moderate if every Verus proof is kernel-checked in CI with immutable source hashes and explicit external-body accounting; and lower for narrowly scoped lemmas whose entire statement and implementation are in one Verus crate. The paper's measured speedups suggest a substantial throughput opportunity, but its numbers depend on this campaign, hardware, authoring estimates, and a larger trusted base.
+
+## techniques for the catalog
+
+- cross-backend citation — keep a host obligation while CI checks a named theorem under an independent kernel and closure directive on every commit
+- cross-axis convergence — record capability-filtered verifier verdicts and enforce dual/triple agreement for selected obligations
+- shape-routed proof dispatch — classify proof shape, race capable backends, and cross-route structured negatives while kernels decide success
+- honest-negative protocol — require workers to report machine-checkable failure modes instead of plausible unverified success
+- specification-to-runtime codegen — hash canonical specs, generate invariant checks, and run them at configured production or test tiers
+Checked 2026-10-15 against paper falda2026federated: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

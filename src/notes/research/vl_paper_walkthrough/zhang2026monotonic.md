@@ -1,0 +1,129 @@
+# Monotonic Reference-Free Refinement for Autoformalization
+(authored by agents unless marked 🧑)
+Tag: `zhang2026monotonic`, [paper](http://arxiv.org/abs/2601.23166v2)
+
+## scope and result
+
+This paper defines full-theorem autoformalization as producing both a formal statement and a fully checked proof from a natural-language theorem and proof. It optimizes four dimensions: Formal Validity (FV), Logical Preservation (LP), Mathematical Consistency (MC), and Formal Quality (FQ) (Section 2.1, pp. 2–3). FV is a hard theorem-prover result; the other three are soft scores from LLM judges. The central method is a reference-free test-time loop that samples candidates from role-specialized generators, repairs invalid candidates, scores them, and accepts only certified improvements.
+
+The authors’ reported final results use Lean 4 v4.19.0-rc3, miniF2F-Test, and ProofNet-Test. The ensemble reaches 100.00% FV, 90.27% overall score, and 49.18% perfect formalizations on miniF2F; on ProofNet it reaches 77.96% FV, 52.45% overall, and 17.74% perfect formalizations (Section 3.1, p. 7; Table 1, p. 9). Appendix E gives 244 validation and 244 test instances for miniF2F, and 185 validation and 186 test samples for ProofNet. Thus the FV and perfect-formalization percentages use denominators 244 and 186 in the reported test sets; for example, 49.18% is 120/244 and 17.74% is 33/186 after rounding. The overall J scores are averages of component scores, not counts of perfect items.
+
+## technique 1: masked multi-dimensional objective
+
+what it is and when to use it
+
+A candidate x is scored as π(x)=(πFV,πLP,πMC,πFQ), with FV binary and the other components in [0,1]. The paper defines
+JOA(x)=⅓ πFV(x)(πLP(x)+πMC(x)+πFQ(x))
+(Equation 2, Section 2.1, p. 3). The multiplication masks all soft quality when the theorem prover rejects the candidate. Use this when syntactic/proof validity must dominate subjective quality dimensions.
+
+how to do it
+
+1. run the theorem prover on the formal statement and proof; set πFV to 1 only when the proof entails the statement
+2. obtain LP, MC, and FQ scores from judge signals
+3. average the three soft dimensions and multiply by πFV
+4. use JOA for comparisons, while separately tracking perfect candidates with every component equal to one (Section 3, p. 6)
+
+Verus form
+
+Inference: model a Rust candidate’s contract as a `spec fn` and require executable functions to carry `requires` and `ensures`; use a proof function to establish the contract. The FV mask corresponds to accepting a candidate only after Verus verifies it. LP, MC, and FQ are review metadata, not Verus facts, unless each is translated into a separately proved predicate. Verus does not provide this paper’s scalar optimization or LLM judges.
+
+what it proves and assumes
+
+The mask prevents an invalid candidate with high soft scores from winning. It does not prove that an accepted statement preserves the natural-language theorem; LP and MC remain judged properties. The authors explicitly state: “FV, LP, MC are essential for a complete and correct formalization” (Section 2.1, p. 3). FQ is desirable for reuse but not necessary for correctness.
+
+## technique 2: fused LLM judges and lower confidence bounds
+
+what it is and when to use it
+
+For each soft dimension i, the method fuses Ki judge outputs with positive weights summing to one. Assumption 2.1 requires asymptotic stability and a one-sided uncertainty margin mi(δi) such that the fused estimate is below the true score with probability at least 1−δi (Equation 4, Section 2.2, p. 4). Assuming independence across LP, MC, and FQ, Theorem 2.2 defines an LCB by subtracting each margin and uses δ=1−(1−δLP)(1−δMC)(1−δFQ).
+
+how to do it
+
+1. select several LLM judges and calibrated weights wi,k
+2. collect each judge’s score for LP, MC, and FQ
+3. compute each weighted estimate π̂i and a margin mi(δi)
+4. calculate the lower confidence bound LCBδ(x)=⅓πFV(x)[π̂LP−mLP + π̂MC−mMC + π̂FQ−mFQ]
+5. compare candidates by this conservative bound when uncertainty matters (Section 2.2, pp. 4–5)
+
+Verus form
+
+Inference: a Verus proof can verify deterministic score aggregation over a finite ghost list, but cannot establish the statistical assumptions about LLM judges. Keep the confidence calculation outside the verified Rust core; record judge calibration, model identities, and δ denominators as trusted experimental inputs. A Verus contract should rely on FV and explicit human-approved semantic predicates rather than an LCB alone.
+
+Evidence and limits
+
+The proof in Appendix A establishes the bound only under judge independence and Assumption 2.1. Correlated judges, drift, or miscalibrated margins violate those premises. The paper calls its Appendix F.3 estimate “naive uncertainty estimation” (Section 2.2, p. 4), so the confidence margin is not an independently validated measurement of semantic correctness.
+
+## technique 3: role-specialized candidate generation
+
+what it is and when to use it
+
+The candidate set Ct is generated by three roles. One-Off Generators (OOGs) sample from the natural-language statement and proof. FV-Repairers (FVRs) receive invalid candidates and try to make πFV=1. Recurrent Generators (REGs) refine the previous best candidate xt−1 with feedback (Section 2.3.1, pp. 5–6). Use this decomposition when one model is unlikely to be strong at generation, proof repair, and semantic editing simultaneously.
+
+how to do it
+
+1. for each OOG, sample one formalization x from pG(x|snl,pnl)
+2. check x with the theorem prover
+3. if FV=0, send x to every FVR and add repaired outputs to Ct; otherwise add x directly
+4. after the first iteration, sample REG outputs conditioned on xt
+5. theorem-prover-check each REG output and route invalid results through FVRs (Algorithm 1, Appendix D, pp. 17–18)
+6. estimate each generator’s responsiveness ρi as expected score change under its feedback, and allocate more samples to generators with higher responsiveness (Definition 2.3, p. 6)
+
+The experiments use DeepSeek-Prover-V2-7B and Goedel-Prover-V2-8B as OOG/FVR roles; Seed-Coder-8B and Qwen2.5-7B as REG-LP; and DeepSeek-Prover-7B as REG-FQ (Section 3, p. 6).
+
+Verus form
+
+Inference: map OOG output to a draft Rust function plus contracts, FVR to a proof-repair pass, and REG to edits of the existing contract/proof. Run `verus` after every candidate and retain only compilable, verified candidates. The role split is an orchestration pattern; Verus constructs remain `spec fn`, `requires`, `ensures`, loop `invariant`, and proof functions. The paper’s Lean syntax and tactics do not carry over.
+
+Evidence and limits
+
+The responsiveness map is estimated from noisy judge differences and assumes judges are unbiased toward a generator. Its allocation policy is heuristic; the paper gives no universal optimality theorem for sample budgets. Theoretical claims concern the process under assumptions, not arbitrary LLM behavior.
+
+## technique 4: conservative acceptance and certified monotonicity
+
+what it is and when to use it
+
+The plug-in estimator is bJ(x)=⅓ max{πFV(x), ε(π̂LP+π̂MC+π̂FQ)}, with ε smaller than all judge margins and weights (Equation 7, p. 5). At iteration t, choose the candidate x⋆t+1 with maximal bJ in Ct. Accept it only if bJ(x⋆t+1)>bJ(xt) almost surely; otherwise retain xt (Equations 8–9, p. 5).
+
+how to do it
+
+1. build Ct with OOG, FVR, and REG candidates
+2. compute FV and fused soft estimates for every candidate
+3. select the arg-max plug-in estimate
+4. accept only a strict almost-sure increase; keep the previous candidate on a tie or decrease
+5. use Theorem 2.4’s case analysis: either the true objective is non-decreasing or the LCB increases
+6. stop when changes become incremental or when a candidate has bJ=1; Theorem 2.5 states almost-sure LCB convergence under its reachability condition (Sections 2.3.2–2.4, pp. 5–6)
+
+Verus form
+
+Inference: implement the acceptance invariant in a host orchestrator, then pass only the selected Rust artifact to Verus. A proof function can show that the selected version still satisfies its contract; the probabilistic “almost surely” claim is outside Verus. Do not encode `invariant(...)` as a call: in Verus it is a loop annotation. The paper’s theorem-prover check is Lean, so translating tactics directly to Verus is invalid.
+
+Evidence and limits
+
+Theorem 2.4 guarantees “for all t, we have JOA(xt+1) ≥ JOA(xt) or almost surely LCBδ(xt+1) > LCBδ(xt)” (Theorem 2.4, p. 6). This is conditional on the LCB assumptions and does not mean every accepted candidate improves the true semantic score. Theorem 2.5 additionally assumes an eventually reachable candidate with bJ=1. The paper’s proof uses independence and boundedness; those are not verified properties of deployed judge APIs.
+
+## technique 5: empirical role ensemble and ablations
+
+The authors run six iterations on both benchmarks and compare the ensemble against Best-of-ISR and Best-of-k. Table 1 reports percentages for each benchmark/model setting. On miniF2F-Test, the ensemble’s row is FV 100.00, LP 83.71, MC 96.72, FQ 90.37, J 90.27, and J=1 49.18. On ProofNet-Test, the same row is FV 77.96, LP 58.06, MC 78.32, FQ 82.80, J 52.45, and J=1 17.74 (Table 1, p. 9). These are percentages over the respective test sets; the table does not print their item denominators.
+
+The single GPT-5.4 configuration reaches miniF2F FV 60.66 and J 55.64, and ProofNet FV 21.51 and J 20.19 in the table’s separate columns; the apparent combination of a low FV with a high J reflects the paper’s reported soft-score aggregation and should not be interpreted as a proof-validity rate. The comparison shows role specialization can outperform one model, but costs more LLM calls (Section 3.3, p. 9). The experiments sample one instance per generator, use greedy decoding for open-source models, and run open-source models on two 24-GB NVIDIA Quadro RTX 6000 GPUs; GPT models use an API (Appendix F.1, pp. 17–20).
+
+## contradictions and measurement limits
+
+Algorithm 2 accepts a candidate when its plug-in estimate is greater than or equal to the current estimate, while Equation 9 states a strict almost-sure increase for the conservative acceptance policy (Appendix D, p. 15; Section 2.3.2, p. 5). The paper does not explain this equality-versus-strictness difference. The authors also acknowledge that the same LLM judges are used for optimization and reported soft metrics, and that uncertainty calibration uses one human annotator (Appendix I.1, p. 24).
+
+## what is proved, measured, and trusted; VL implications
+
+The paper proves the LCB, certified monotonicity, and convergence/terminability statements under explicit statistical assumptions. It measures Lean theorem-prover validity, LLM-judge soft scores, human evaluations, and candidate-call cost on two benchmarks. It does not prove LP, MC, or FQ; it does not establish that LLM judges are calibrated in deployment; and it does not report item denominators in the headline paragraphs. The trusted base includes Lean, benchmark translations, generator weights/prompts, judge models, margin calibration, and the natural-language theorem’s intended meaning.
+
+Inference: for VeruLaw, this is a useful control loop for drafting and repairing Verus specifications, with Verus FV as the hard gate and human or independently checked semantic tests for LP/MC. It threatens a product only if agent-written code is accepted because a prover passes a wrong contract: the paper’s own FV mask cannot detect a semantically wrong but formally valid statement. VL should not redo generic Lean autoformalization or LLM judge ensembles; the open engineering question is whether this loop reduces Verus proof repair time while preserving contracts across dependency changes.
+
+## techniques for the catalog
+
+- masked objective: multiply soft LP/MC/FQ scores by binary theorem-prover validity before ranking
+- lower-confidence judge fusion: aggregate weighted LLM judges and subtract calibrated one-sided margins
+- role-specialized generation: use OOG, FVR, and REG roles with responsiveness-based sampling
+- conservative acceptance: retain a candidate only when its plug-in score strictly improves
+- LCB monotonic loop: use theorem-prover checks and judge bounds to obtain conditional convergence
+- Verus adaptation: gate generated Rust contracts with Verus verification and keep semantic intent checks explicit
+
+Checked 2026-10-15 against the paper by a Codex agent for monotonic_reference_free_refinement_for__20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

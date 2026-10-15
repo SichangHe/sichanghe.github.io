@@ -1,0 +1,85 @@
+# Verified Software Units
+(authored by agents unless marked 🧑)
+Tag: `beringer2021verifiedunits`, [paper](https://doi.org/10.1007/978-3-030-72019-3_5)
+
+## scope and result
+
+Beringer extends the Verified Software Toolchain (VST) for CompCert Clight with a calculus for independently verified compilation units. The paper's abstract identifies three techniques: “abstract predicate declarations – existential packages that combine Parkinson & Bierman’s abstract predicates with their client-visible reasoning principles”; “residual predicates, which help enforcing data abstraction in callback-rich code”; and a two-level treatment of pure objects. (Abstract, p. 118). The examples are verified in Coq and compose into linked verified programs.
+
+The key modularity claim is that a unit exposes specifications for imported and exported functions while hiding private functions and representation predicates. VST verifies CompCert's Clight abstract syntax tree, the same representation later optimized and compiled by CompCert (§2, p. 120). The paper says, “VSU ensures existence of G during component linking without actually constructing G, maintaining representation hiding and non-exposure of private functions.” (§3, p. 122). Here `G` is an existentially hidden proof context containing specifications for internal functions.
+
+Inference: the direct Verus lesson is an interface-first proof architecture. A Rust module can expose contracts and abstract ghost predicates while keeping representation invariants private. Verus does not provide this exact VST/Coq calculus, so the linking theorem and abstraction boundaries would need Verus proof code or a separate build layer.
+
+## technique 1: the VSU component judgment and composition rule
+
+Use a Verified Software Unit (VSU) when a project contains separately compiled modules whose clients should rely only on API specifications. A unit has system-function specifications `S`, imported specifications `I`, program `p`, exports `E`, and a global-memory predicate `P`. The judgment existentially hides a proof context `G`: `∃G. G ⊢SP[I] p [E]` (§3.1, pp. 122–123). The context contains specifications for private and internal functions and proves each body using the imports.
+
+The definition checks five obligations (§3.1, p. 123): imports and system functions are disjoint and external; `G` covers internal and system functions; exports are subsumed by entries in `G`; every function body is proved against the context and imports; and initialized globals satisfy `P`. Private specifications are inaccessible once the unit is exposed. The consequence rule can strengthen imports, weaken exports, and weaken the initialization predicate (§3.2, p. 123).
+
+The `VSULink` rule composes two units. Its side conditions require compatible function bodies and signatures, disjoint system-function definitions, provider exports that subsume consumer imports, identical duplicate imports, a calculated residual import set, and disjoint global-variable definitions (§3.2, pp. 123–125). Export and system specifications are combined with specification intersection. The rule supports diamond composition in which a library is imported more than once; intersection creates an opaque witness for the shared function (§3.2, p. 125).
+
+Steps: (1) define a module's imports, exports, system calls, and global predicate; (2) prove each internal function against a hidden context; (3) expose only the export interface; (4) check the `VSULink` side conditions for two units; (5) remove imports implemented by the other unit; (6) intersect duplicate export or system specifications; and (7) repeat until only explicitly trusted system functions remain. The paper's construction links connection, pool, malloc/free, and client units in this way (§§4.3–4.5, pp. 128–130).
+
+Inference: in Verus, module APIs can use public `spec fn` predicates and `requires`/`ensures` contracts while keeping representation predicates in private modules. A build tool could check that every external call has a matching contract and that linked modules do not leave an unreviewed contract hole. This is an inference because Verus's proof language does not itself expose VST's existential component record or `VSULink` rule.
+
+## technique 2: abstract predicate declarations (APDs) with selective disclosure
+
+Use an APD when a module needs clients to reason about an abstract resource without revealing its layout. An APD is a Coq record that declares predicates and axioms about them but no concrete definition. The list example in §1 (pp. 119–120) can expose only that a list is ordered, selectively expose fold/unfold principles, or reveal the complete representation. The paper states, “APDs support such flexibility by combining zero or more abstract predicate declarations (no definitions, to maintain implementation-independence) with axioms that selectively expose the predicates’ reasoning principles.” (§1, p. 120).
+
+The connection-pool example (§4.1, pp. 125–127) declares `DatabaseAPD`, `ConnectionAPD`, and `PoolAPD`. Each record contains an abstract `mpred` and validation axioms, such as pointer-or-null or valid-pointer facts. An implementation substantiates the record with concrete predicates and proofs of those axioms; clients use only the abstract record. Abstract specification interfaces (ASIs) then parameterize function contracts by the APDs (§4.2, p. 127). For example, `consConn` requires an abstract database and memory-manager predicate and returns an abstract connection predicate, without exposing the struct fields.
+
+Steps: (1) choose the semantic resource a client may use; (2) declare its predicate type and only the client-visible axioms; (3) parameterize API preconditions and postconditions over the APD; (4) instantiate the APD privately with a concrete representation; (5) prove every declared axiom in the implementation unit; and (6) pass the abstract APD to clients and to `VSULink`. The paper's source development validates APDs for connection, pool, and malloc/free modules (§§4.3–4.5, pp. 128–130).
+
+Inference: the Verus analogue is a private ghost predicate plus public lemmas that expose only stable facts. Keep the concrete `struct` invariant private, and export functions whose contracts mention the abstract predicate. Use proof functions to establish public facts; do not expose an executable `spec fn` body when representation independence is required. A Verus APD layer would be a project convention rather than a built-in component calculus.
+
+## technique 3: residual predicates for callback protocols
+
+Use residual predicates when a callback temporarily violates a module invariant. In the subject-observer example, `update → notify → get` calls back into the subject while the subject's observer list is only partly updated (§5, pp. 130–131). Requiring the full subject invariant at `get` would make the callback unprovable or expose subject fields to the observer. The paper's alternative adds residual predicates alongside the main subject and observer predicates.
+
+`SubjectAPD` declares `Srep`, `RegPre`, `UpdPre`, `GetPre`, and `GetPost`; `ObserverAPD` declares `Orep`, `NtfPre`, and `ValPre` (§5, pp. 131–132). The axiom `SubjGetPrePost` splits the subject resource into a token for invoking `get` and a separating implication that rebuilds `Srep` from `GetPost`. The observer must return that postcondition after the callback. `NtfPre` hides the subject value and therefore cannot be affected by a subject-value change. The paper says, “The residual predicates sanction indirect invocations via callbacks without revealing the satisfaction status of module-internal invariants.” (§5, p. 132).
+
+Steps: (1) define a main representation predicate for stable client state; (2) identify each callback entry and the state that must remain untouched; (3) define a residual precondition for that entry; (4) define a residual postcondition or separating implication for the callback's return; (5) specify the caller to consume the residual resource and the callee to return it; and (6) prove that concrete residual predicates validate their APD axioms. The paper verifies subject and observer separately and then links them (§5, pp. 132–133).
+
+The authors test modularity by adding a subject freelist, replacing a direct callback with a function pointer, abstracting callback pre/postconditions, and letting an observer register with two subjects (§5.1, pp. 133–135). The freelist changes concrete predicates and Subject proofs while leaving model definitions, APDs, ASIs, Observer proofs, linking, and main unchanged. Replacing `get` with a function pointer requires fewer than ten lines of Coq proof repair (§5.1, p. 134).
+
+Inference: in Verus, model a callback token as a ghost resource that the caller transfers and the callee must return. A state-machine invariant or loop invariant can describe the stable portion; a separate predicate can describe the transient callback state. This supports representation hiding without pretending that the full invariant holds during every nested call.
+
+## technique 4: aggregate pattern specifications
+
+The paper also derives an aggregate subject-observer interface from the separate APDs. It introduces `AggAPD` with `Sub` and `Obs`, defines `SubObs` as a subject predicate conjoined with all observer predicates, and proves that aggregate specifications subsume the constituent exports (§5.2, pp. 135–136). At this level, `update → notify → get` is internal nesting and operations regain sequential atomicity. The aggregate interface can omit pattern-internal functions and can be narrowed with the consequence rule when function pointers are present (§5.2, p. 136).
+
+Inference: this suggests choosing a proof boundary at a stable design pattern when individual callback contracts are too cumbersome. In Verus, a ghost state machine could represent the aggregate protocol, while public methods expose only pattern-level transitions. This remains an inference because the paper's proof is in separation logic, not Verus.
+
+## technique 5: two-level object verification with hidden representations
+
+Use the object technique when C-style dynamic dispatch, multiple implementations, subtyping, self, and late binding must be verified without exposing layout. The paper encodes method tables as structs whose first field contains function pointers, and encodes subtyping by extending method tables (§6, pp. 136–137). `MTable` states that fields contain pointers to functions satisfying specified contracts. A generic object predicate `N` existentially quantifies a semantic representation predicate `I`, combines it with the method table, and hides `I` from clients (§6, pp. 137–138).
+
+The semantic level defines Coq records `PointM`, `BPointM`, and `CPointM` for base, bumpable, and colored points. Method specifications refer to semantic state transitions, such as `set` mapping an old representation to a new one (§6, pp. 137–138). Different concrete implementations instantiate the same interface with different layouts; clients reason about semantic objects and method contracts instead of fields. Wrappers such as `GET` hide method-table access behind an ADT-like API (§6, pp. 138–139).
+
+Self calls require a recursive predicate. The paper replaces `N` with a higher-order recursive functor `F`, protects recursive method-table access with VST's modality, proves contractiveness, and takes a fixed point `N*` (§6, p. 139). This permits a method such as `bump` to call `get` and `set` through self dispatch. Positive subtyping then lets overriding implementations be verified as new VSUs whose semantic behavior specializes the same constructor and method interfaces (§6, pp. 139–140).
+
+Steps: (1) define a semantic object type and method behavior; (2) define a method-table predicate tying function pointers to method specifications; (3) existentially quantify the concrete representation; (4) prove each implementation's constructor and methods against the semantic behavior; (5) expose wrappers or method-table contracts; (6) use a recursive predicate for self calls; and (7) compare overriding behaviors at the semantic level. These steps follow §6, pp. 136–140.
+
+Inference: Verus can encode the semantic object state as ghost state and method contracts as traits or function specifications. An enum or trait object can hide concrete representations, while `requires`/`ensures` state semantic behavior. Recursive object predicates may need a Verus state machine or carefully bounded ghost recursion; the paper's Coq fixed-point construction cannot be copied as Verus syntax.
+
+## what is proved, measured, and trusted
+
+The paper proves the VSU component calculus and applies it to verified C modules, APD/ASI abstraction, callback protocols, and object implementations. Its evidence is proof completion in Coq, not an empirical defect-rate study. The linked examples include connection pools, malloc/free, subject-observer variants, Composite, and point implementations (§1, pp. 119–120; §§4–6). The proof-reuse experiment reports unchanged model/APD/ASI files for a freelist representation change and fewer than ten lines of Coq repair for a function-pointer callback (§5.1, p. 134).
+
+Inference: the trusted base includes Coq's kernel, VST and CompCert soundness proofs, the CompCert Clight semantics and compiler, system-function specifications, and the correctness of each APD axiom and semantic model. The abstract interface itself is trusted as a specification choice: proving a body against an overly weak or irrelevant predicate does not establish the product requirement. In Verus, the corresponding trust boundary includes the verifier, SMT solver, erasure, Rust compiler, external libraries, and the semantic contract chosen by the author.
+
+The paper's limitations are architectural. VSU records system functions that are not expected to be verified; callbacks require specialized residual predicates; and the object treatment uses a restricted C encoding and a Coq semantic model. Inference: this is a high threat to an agent-written verified-Rust product when dependencies, callbacks, and dynamic dispatch are treated as ordinary function calls without explicit contracts. It is a lower threat when VL adopts abstract interfaces, residual callback resources, and a linked proof manifest that records unresolved system and external imports.
+
+Inference: VL should not redo VST's basic component linking, abstract predicates, or residual callback idea. The reusable gap is an ergonomic Verus implementation and measurement of how often agent-generated modules preserve these boundaries under dependency and representation changes.
+
+## techniques for the catalog
+
+- VSU component calculus: verify internal functions against hidden contexts and compose modules through import/export specifications
+- abstract predicate declarations: expose resource predicates and selected reasoning axioms while hiding concrete representations
+- abstract specification interfaces: parameterize API contracts by APDs and instantiate them only in implementation proofs
+- residual callback predicates: split stable invariants into callback pre/post resources that preserve representation hiding
+- aggregate pattern interfaces: recover sequentially atomic specifications for a callback-rich design pattern
+- two-level object verification: connect hidden C method tables to semantic object behavior, subtyping, self, and late binding
+- proof reuse under representation change: change concrete fields while retaining model definitions, APDs, ASIs, and client proofs
+
+Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

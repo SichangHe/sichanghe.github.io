@@ -1,0 +1,51 @@
+# Sage: Formalization with Semantic Correction
+(authored by agents unless marked 🧑)
+Tag: `hirtz2026semantic`, [paper](https://www.semanticscholar.org/paper/693e219a8682693cd7e72ec451de263764280429)
+
+Sage treats autoformalization as constrained translation. The paper requires three properties: Lean typing and one final `sorry`, preservation of mathematical meaning, and preservation of whether the source is an assertion or an open question (§3, p.3). It identifies a discovery/verification gap: Lean can check a supplied claim but does not itself discover an answer. The paper states, “A successful formalization must satisfy the following desiderata” (§3, p.3), and later, “The Autoformalizer as Translator, Not Solver” (§7, p.9).
+
+## technique: distinguish assertion and question statements
+
+Use this before generating a theorem. An assertion already gives a claim (“Show that…”); a question asks for a value, witness, or characterization (“Find…”, “Determine…”). The distinction determines whether an answer may be present. In the answer-aware regime, an informal proof supplies the answer; in answer-agnostic mode, the system must not guess it (§3, p.3; §B.1, p.17).
+
+The paper gives three encodings. Explicit answer injection writes the resolved value directly, for example `theorem target : P c := by sorry`; it is clean for tactics but requires an oracle and loses the source's open texture. A placeholder introduces an unresolved typed constant (`def x : α := sorry`; then `theorem target : P x := by sorry`); it preserves the question but violates a read-only proving contract. Existential encoding writes `theorem target : ∃ x : α, P x := by sorry`; it needs no oracle and asks the downstream prover to construct a witness, but can be logically weak (§3, pp.3–4). The paper summarizes the trade-off: “An answer-agnostic autoformalizer cannot map an open interrogative query into a single declarative proposition without assuming an oracle, breaking downstream prover immutability, or introducing logical vulnerabilities” (§A.2, p.13).
+
+Steps from the paper are: classify the source as assertion or question; choose answer-aware explicit injection only when a proof resolves the answer; otherwise use an existential, unique existential, or extremal formulation; retain a single terminating `:= by sorry` (§B.1, pp.17–18). Inference: in Verus, the analogous policy is to distinguish a supplied postcondition from an underspecified request before generating an `ensures` clause. A witness can be represented by a concrete executable value plus a proof obligation; do not invent a value merely to make verification pass. Verus has `requires`, `ensures`, `spec fn`, and proof functions, but the paper's Lean syntax does not carry over literally. Inference: if the intended result is a data-producing Rust function, an existential specification alone is insufficient unless the executable return value is tied to the witness by `ensures`.
+
+## technique: lock existential goals against trivial proofs
+
+Standard `Prop` existentials can admit shortcuts. For a yes/no query, the neutral proposition `(∃ n : Z, P n) ∨ ¬ (∃ n : Z, P n)` is closed by `exact Classical.em _`, without deciding which branch is true (§A.3, p.14). For characterization, `∃ S : Set α, ∀ x, x ∈ S ↔ P x` is proved by `use {x : α | P x}; intro x; rfl`, because `Set α` is a predicate (§A.3, p.14). The paper calls these the “Polarity Cheat” and “Triviality Trap” (§A.3, p.14).
+
+The defense changes the target from `Prop` to a computational type (`Type`) containing an explicit dependent pair `{x : α // P x}`; a proof in `Prop` cannot be eliminated to construct arbitrary data. For finite characterization, use `List α` or `Finset α` instead of intensional `Set α`; constructors force the prover to provide data (§A.4, p.14). Steps: identify a polar or characterization query; reject a law-of-excluded-middle disjunction or predicate-valued set; choose a subtype for one witness or an inductive finite container for a collection; require the accompanying property proof.
+
+Inference: in Verus, the closest lock is to return an executable witness (or finite collection) and state its property in `ensures`, with a separate proof function establishing completeness when needed. A pure `spec fn` returning a proposition does not force executable witness construction. Inference: this matters to VL because an agent could otherwise satisfy a weak specification while producing no useful artifact. The paper's lock is Lean-specific; Verus does not have Lean's `Prop`/`Type` elimination rule, so the exact mechanism cannot be transplanted.
+
+## technique: four-stage compositional generation
+
+Sage decomposes drafting into Distiller, Preprocessor, Formalizer, and Formatter (§4.1, p.4; §B.1, pp.16–18). The Distiller classifies the domain and statement kind, extracts an inferred goal from a supplied proof, or rewrites an open query without an answer oracle. The Preprocessor emits a Structured Declarative Normal Form (SDNF): supporting definitions, numbered hypotheses `h1…hn`, and target `G`. The Formalizer maps those blocks to typed Lean declarations, using Mathlib abstractions and avoiding trivialization. The Formatter inserts imports and namespaces, strips conversational text, and preserves mathematical declarations.
+
+Apply it as follows: (1) distill domain, polarity, and (if permitted) witness; (2) write SDNF with definitions, hypotheses, and one goal; (3) translate each block to idiomatic library types and a theorem signature ending in one `:= by sorry`; (4) assemble a standalone file and run Lean. The paper's contract says the output must have “strictly one terminating placeholder closing the primary target declaration” (§4.1, p.4). Inference: a VL pipeline can use the same role separation around Rust/Verus generation: one agent extracts contracts, one normalizes state and invariants, one emits Rust with Verus annotations, and one formats imports and modules. The role names and Lean `sorry` are paper-specific.
+
+## technique: dual-signal semantic correction
+
+Compilation alone catches typing but misses dropped hypotheses, altered bounds, and vacuous statements. Sage's Rater checks three axes: modular component matching (missing, wrong, extra), holistic semantic match/exactness, and code quality (naturality and descriptive precision) (§4.2, pp.5–6). A correction round runs until `Compile ∧ Sage-SM` or a budget `T` is exhausted (§4.3, p.6). The Corrector receives the first five compiler errors, semantic scores and rationales, localized mismatch snippets, and a Rater-proposed draft. The proposed draft is precompiled before being shown, so the Corrector sees both syntax status and semantic critique (§B.2, pp.18–19). The loop prioritizes the first compiler error, keeps prior failed attempts to prevent oscillation, and forbids solving or answer injection in answer-agnostic mode (§B.2, pp.18–19).
+
+Steps: compile the candidate; retain the first five diagnostics and first error; independently rate component omissions, wrong mappings, extras, whole-statement match, and idiomaticity; compile the Rater draft; give both reports plus failed-attempt history to a Corrector; regenerate a complete file; stop only when both gates pass or `T` is reached. Inference: Verus can implement the same pattern with `cargo verus` diagnostics plus a semantic checker over `requires`, `ensures`, invariants, and state-machine transitions. The semantic checker must be treated as an auxiliary judge; only Verus verification is proof evidence. Inference: retaining diagnostic history should reduce repair oscillation in VL agents.
+
+## evidence and limits
+
+On answer-aware Omni-MATH (N=300), Sage's decomposed dual loop achieved 96.0% compilation and 93.7% in-loop joint Compile∧Sage-SM; external Compile∧Goedel-SM was 77.3% (Table 2, p.7). On answer-agnostic IMO-FORMALIZED (N=223), pass@1 was 94.2% compile and 61.4% Compile∧Goedel-SM; on IMO-UNFORMALIZED (N=175), 83.4% and 60.0% respectively (Table 4, p.8). On answer-agnostic Omni-MATH, Sage pass@1 was 94.7% compile and 50.3% Compile∧Goedel-SM, with 2.7% answer leakage and 1.1% multiple-sorry rate (Tables 5–6, pp.8–9). The semantic gate agreed with three Lean annotators on 71.1% of 45 adversarial drafts (ρ=0.63), and had 85.7% accuracy on ConsistencyCheck (N=859) and 88.8% on ProofNetVerif (N=3752) (§6, p.7). Percentages are fractions of the dataset denominators shown in each table; the paper reports them as percentages and does not provide raw numerators.
+
+The paper reports that monolithic answer-agnostic variants guessed answers in 70.9% of signatures and that 80.6% of rejected monolithic drafts were mathematically false (Table 6 and §6.3, p.9). Sage reduced leakage to 2.7%. External judges rejected 76.8% of Sage's answer-agnostic drafts for preferring explicit numbers (§6.3, p.9), so the external score is a lower bound under that bias. The work measures statement formalization, not completed proofs, executable Rust, or Verus soundness. Trusted elements include Lean, Mathlib, the compiler, the Rater model, and the supplied informal proof in answer-aware mode. Inference: the product threat is high for VL if agents optimize only compiler success; Sage's measured leakage shows how easily plausible but semantically wrong contracts can enter a corpus. Inference: the dual gate and explicit answer policy are directly reusable, while the Lean-specific locks and percentages do not establish Verus performance.
+
+## techniques for the catalog
+
+- statement-kind and answer policy — classify assertion versus open question and choose explicit, placeholder, or existential encoding under a stated oracle policy
+
+- type-theoretic locks — force computational witnesses or finite containers to block polarity and intensional-set shortcuts
+
+- compositional drafting — distill, normalize into SDNF, formalize with library abstractions, then format a standalone file
+
+- dual-signal correction — combine verifier diagnostics with multidimensional semantic critique, precompiled repair drafts, and failed-attempt history
+
+Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

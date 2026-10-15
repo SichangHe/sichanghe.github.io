@@ -1,0 +1,83 @@
+# Generative Language Modeling for Automated Theorem Proving
+(authored by agents unless marked 🧑)
+Tag: `polu2020generative`, [paper](https://doi.org/10.48550/arxiv.2009.03393)
+
+## scope and trust boundary
+
+Polu and Sutskever train decoder-only Transformers to generate Metamath proof steps and search with a verifier. The paper's motivating claim is that “a major limitation of automated theorem provers compared to humans – the generation of original mathematical terms – might be addressable via generation from language models.” (Abstract, p. 1). Their system, GPT-f, generated proofs accepted into the main Metamath library: “GPT-f found new short proofs that were accepted into the main Metamath library, which is to our knowledge, the first time a deep learning based system has contributed proofs that were adopted by a formal mathematics community.” (Abstract, p. 1)
+
+The formal environment is Metamath set.mm, about 38,000 proofs. A proof step applies an existing theorem or axiom with substitutions; substituted hypotheses become subgoals. The paper's formal checker is a modified LR(0) parser plus Metamath substitution and proof-tree objects, and generated proofs can be exported to the official format and checked by an external Metamath kernel (Section 4.3.2, p. 6). Thus the model proposes terms, while the kernel decides validity. Inference: in Verus, a model can propose Rust proof code or lemma calls, but Verus's compiler and SMT-backed verifier must reject invalid proposals; the model is not part of the trusted proof result.
+
+## technique 1: serialize proof steps as conditional language modeling
+
+what it is and when to use it. Turn each goal and its next theorem-plus-substitution into a text sequence, then train a causal language model to generate the proof step. This is useful when proof actions have a compact grammar and a checker can validate each generated action.
+
+steps from the paper. First parse set.mm's binary compressed proofs into records containing a goal, proof step, and parent-goal reference. The paper says the dataset has “∼ 3m of such proof steps for ∼ 38k theorems” and two validation/test sets of about 1,000 proofs and 90,000 proof steps each (Section 3.2, p. 4). Format each record as `GOAL <GOAL> PROOFSTEP <PROOFSTEP><EOT>`. Train a decoder-only Transformer to generate `PROOFSTEP` conditioned on `GOAL`; mask the query portion of the loss, early-stop at minimum validation loss, and use weight decay 0.1 (Section 4.2, p. 5). The paper's example includes a goal followed by a theorem and substitutions such as `{{ ch : x e. K }}` (Section 4.2, p. 5).
+
+Verus form. Inference: serialize a Verus verification state as a goal plus a permitted proof action, for example a lemma invocation, `assert`, or `reveal`, and train on accepted proof traces. A generated action must be inserted into a temporary Rust/Verus file and checked by Verus. The Metamath text format and single substitution rule do not carry over; Rust syntax, ownership, triggers, and solver context do. Use actual Verus constructs (`requires`, `ensures`, `invariant`, `proof fn`, `assert`) in candidate traces, and keep run-time functions separate from proof functions.
+
+evidence and limits. The 160m-parameter model trained from scratch on raw data proved 29.22% of the validation set, versus 21.16% for MetaGen-IL; the 160m augmented model scored 28.96% (Table 5, p. 11). Increasing model size from 160m to 400m to 700m raised performance from 28.96% to 30.23% to 31.58%, each on the same 18B training tokens (Table 6, p. 11). These percentages are fractions of approximately 1,000 held-out validation theorems under the paper's search settings, not all set.mm theorems. The model only proposes steps; validity depends on the parser and verifier. Metamath's low-level steps also make proofs long: the paper reports a de Bruijn factor of approximately 10–20 for Metamath versus 1–3 for Coq, HOL Light, or Lean (Section 3, p. 3).
+
+## technique 2: best-first proof-tree expansion with verifier filtering
+
+what it is and when to use it. Search over multiple sampled model actions while maintaining a proof tree. Rank open goals by cumulative log probability, apply only syntactically and semantically valid tactics, and enqueue their subgoals. Use this when a model's top token sequence is unreliable but a formal checker can cheaply filter candidates.
+
+steps from the paper. Initialize a proof tree with the target statement and a queue containing its root goal. Sample `e = 32` tactics at temperature 1.0 for the selected goal, deduplicate them, and apply valid tactics. Add each successful tactic's subgoals to the tree with the shared cumulative log probability. Remove the expanded goal and continue with the minimal cumulative log-probability goal. Stop after `d = 128` expansions for ordinary evaluation; attempt each validation statement `a = 4` times, while final benchmarking uses `a = 32` attempts and `d = 256` (Section 4.3.1, p. 6–7). The authors explain the control rule directly: “The cumulative logprob of a goal is defined by the sum of the logprobs of the tactics that were used to reach that goal from the root goal.” (Section 4.3.1, p. 6)
+
+The verifier parses generated terms with a modified LR(0) parser, checks substitutions and goal closure, and stores the proof tree. Export to official set.mm format and re-check with `mmverify.py` or `metamath-exe` (Section 4.3.2, p. 6). Inference: a Verus implementation would run a candidate-edit loop, compile and verify each candidate, retain only candidates whose contracts and proof obligations pass, and rank remaining goals by model score. Verus's compiler and solver replace the Metamath kernel, while the search queue and checker-in-the-loop architecture transfer.
+
+evidence and limits. The reported best model closes 56.22% of the held-out test set, compared with 21.16% for MetaGen-IL (Contribution, p. 2); the denominator is the held-out test theorems, with the paper describing validation/test sets as approximately 1,000 proofs each (Section 3.2, p. 4). Evaluation of the 700m model requires on average approximately 1,000 V100 GPU-hours under the chosen expansion and sampling settings (Section 4.4, p. 7). Search is bounded by expansion depth and attempts, so a failed bounded search does not disprove theoremhood. Inference: Verus compilation and SMT calls are likely much slower and less deterministic than Metamath parsing, so a product needs caching and strict resource limits.
+
+## technique 3: generate synthetic formal proofs to cover sparse skills
+
+what it is and when to use it. Programmatically generate valid proofs for arithmetic and ring algebra, then mix them into the training set. Use this when the formal library lacks enough examples of routine low-level proof steps.
+
+steps from the paper. For n-digit arithmetic, sample operands uniformly in `[−10^ndigits, 10^ndigits]`, and construct proofs by repeatedly applying Metamath addition and multiplication theorems; translate division and subtraction into equivalent addition/multiplication theorems, and support modulo and exponentiation (Section 4.6.1, p. 8). For ring algebra, start from identities such as `A = A`, repeatedly apply a weighted list of commutativity, associativity, distributivity, square-definition, and product-of-sums theorems, and control complexity with the number of variables and transformation depth (Section 4.6.2, p. 9). Add the generated records to set.mm training data. The default augmentation is about 1% of training data; scaling it to 5% hurt performance for the studied model sizes (Section 4.6.3, p. 9).
+
+Verus form. Inference: generate small Rust/Verus lemmas from executable arithmetic templates, then run Verus to certify each proof before adding it to training. The generator can vary constants, expression depth, and lemma combinations, but should retain the exact verified source and compiler configuration. Metamath theorem names and substitutions become Verus lemma calls and `assert`/`calc` chains; the synthetic generator must account for Rust integer types, overflow specifications, and nonlinear solver behavior.
+
+evidence and limits. Table 2 reports average generated proof-step counts for 3, 9, and 18 digits: addition 19/48/94, division 13/93/292, modulo 25/82/206, exponentiation 7/27/68 (Table 2, p. 8). Table 4's default set contains 400 generated proofs totaling 22,808 proof steps across six generators (100+100+50+50+50+50 proofs; 4,541+10,047+4,438+910+1,373+1,499 steps, p. 10). These are generator outputs, not independent theorem-solving successes. Inference: synthetic data can teach syntax and local patterns but may bias Verus proof search toward templates and fail on specifications unlike the generator.
+
+## technique 4: learned provability value function and iterative data generation
+
+what it is and when to use it. Train the same language model to label search goals as provable (`P`) or not proved (`N`), then use the predicted probability to prioritize sibling goals. Use this when raw cumulative likelihood favors locally probable but globally unproductive branches.
+
+steps from the paper. During proof searches, collect intermediate goals and mark each `P` if the search eventually resolves it, otherwise `N`. Train an outcome objective formatted as `GOAL <GOAL> OUTCOME <P|N><EOT>`. Define `fPθ(g)` as the model's conditional probability of token `P`, and define a goal value as the product of `fPθ` over its sibling goals (Section 4.7, p. 10). Iteratively retrain: merge newly found full proofs with the original proof-step data; deduplicate proof steps; build the outcome dataset from annotated visited goals plus positively annotated original goals, prioritizing positive labels; then repeat search using the learned value function (Section 4.7.1, p. 10). The paper states, “This iterative training allows controlling for overfitting on both objectives by processing in the same way the data generated by proof searches on statements from the valid set and using the resulting datasets to track their associated valid loss.” (Section 4.7.1, p. 10)
+
+Verus form. Inference: label intermediate Verus obligations by whether a bounded candidate search eventually verified them, and use a value model to prioritize edits, lemma calls, or invariant choices. Keep labels tied to exact source, Verus version, solver, and timeout. A predicted `P` never replaces a Verus check; it only orders attempts. The paper's sibling-product value formula is a search heuristic, not a Verus logical construct.
+
+evidence and limits. The authors report that training a value function shifts search from breadth-first exploration to confidence-focused exploration (Section 4.7.1, p. 10). The paper gives the final 56.22% test result but does not isolate a separate percentage attributable only to the value function in the quoted contribution; comparisons therefore should not claim a standalone gain. Outcome labels are generated by bounded searches and can encode search bias. Inference: for agent-written verified Rust, this is a substantial engineering aid but a threat if a system treats high predicted provability as evidence without running Verus.
+
+## technique 5: pre-train on mathematical and code corpora
+
+what it is and when to use it. Initialize the proof model from general language-model training, then continue training on code, mathematical text, and proof traces. Use this when the formal corpus is too small for a Transformer to learn useful syntax and representations from scratch.
+
+steps from the paper. Train a CommonCrawl-pretrained model for 16B additional tokens on either GitHub or WebMath, where WebMath mixes GitHub, arXiv mathematics, and Math StackExchange (Section 4.5, p. 7; Section 5.3, pp. 11–12). Fine-tune on the Metamath proof-step objective and evaluate with the same search settings. Compare model size and corpus while holding the additional-token budget approximately fixed.
+
+Verus form. Inference: continue pretraining on Rust, Verus source, verified lemmas, and solver-friendly mathematical text, then fine-tune on checked Verus proof traces. Deduplicate projects and retain exact compiler/version metadata. Pretraining changes search proposals only; each candidate still requires Verus verification.
+
+evidence and limits. Table 7 reports validation performance for 160m models: 28.96% from scratch, 32.34% CommonCrawl, 33.61% GitHub, and 34.79% WebMath after 16B tokens; 700m models score 31.58%, 39.61%, 41.55%, and 42.56% respectively (Table 7, p. 12). These percentages use the paper's held-out validation set, not all Metamath statements. The authors hypothesize transfer of formal-reasoning features but do not isolate which features are causal. Inference: contaminated or weakly specified training traces could teach an agent invalid idioms, so checked proof provenance matters.
+
+## technique 6: use the checker-coupled assistant for interactive completion and proof shortening
+
+what it is and when to use it. Expose model suggestions inside a proof assistant, let a human repair substitutions, and search existing theorems for shorter verified proofs. Use this when fully automatic search fails but a human can cheaply select or correct candidates.
+
+steps from the paper. For shortening, sample proofs for existing set.mm statements, compare generated proof lengths with ground truth, verify that a shorter proof uses no additional axioms, and submit accepted proofs to the library (Section 6.1, p. 14). For interactive use, present generated low-level proof steps, theorem suggestions, and adapted library statements in an online assistant; the human accepts or fixes erroneous substitutions. The authors report 23 shortened proofs contributed to Metamath and more than 200 theorems and exercises formalized with the assistant (Sections 6.1–6.2, pp. 14–15).
+
+Verus form. Inference: build an editor loop that proposes lemma calls or `assert` blocks, runs Verus, and lets the developer repair syntax, triggers, or arguments. For proof shortening, compare verified proof-function size or solver cost, re-run verification, and ensure no new axioms or `external_body` assumptions were introduced.
+
+evidence and limits. The 23 shortened proofs are a count of accepted library contributions, while “more than 200” is a count of assistant-formalized theorems and exercises; neither is a success fraction because the attempted total is not given. The paper says models are often wrong in substitutions even when they suggest the right theorem (Section 6.2, p. 15). Inference: interactive correction is a productivity technique, not autonomous correctness.
+
+## proved, measured, trusted, and product threat
+
+Proved or checked: generated Metamath proofs accepted by the in-process and external kernels. Measured: proof-closure percentages, model sizes, token counts, generated proof-step counts, and GPU-hours, with denominators and settings given above. Trusted: the Metamath kernel and parser, data extraction, Transformer implementation, training data, and the Verus analogue's compiler/SMT stack. The paper does not prove that language-model probabilities correspond to mathematical validity; validity comes from the formal checker. Existing work already supplies checker-coupled neural proof search, synthetic formal-data generation, and iterative value-guided search. Inference: VL should reuse these patterns rather than build an unverified natural-language proof generator; its largest product threat is compute-heavy search producing plausible but unverifiable Rust, especially when candidate code can alter specifications or escape intended trust boundaries.
+
+## techniques for the catalog
+
+- conditional proof-step language modeling — serialize a formal goal and next proof action, then train a decoder-only model to generate the action
+- verifier-filtered proof-tree search — sample multiple tactics, rank open goals by cumulative score, and retain only checker-valid expansions
+- synthetic formal-proof generation — generate arithmetic and ring proofs with controlled parameters to fill sparse training regimes
+- iterative learned value guidance — label visited goals by eventual resolution, train a provability objective, and use it to prioritize subsequent search
+- mathematical pretraining — continue pretraining on code and mathematical corpora before proof-step fine-tuning
+- interactive proof assistance — combine checker-filtered suggestions, human correction, and verified proof shortening
+Checked 2026-10-15 against paper polu2020generative: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

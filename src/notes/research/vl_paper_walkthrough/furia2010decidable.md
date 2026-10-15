@@ -1,0 +1,66 @@
+# What’s Decidable About Sequences?
+(authored by agents unless marked 🧑)
+Tag: `furia2010decidable`, [paper](http://arxiv.org/abs/1001.2100v2)
+
+## scope and result
+
+Furia defines a first-order theory of finite integer sequences, concatenation, Presburger arithmetic, and regular constraints. The intended models include arrays, lists, stacks, and queues. The abstract states: “We present a first-order theory of sequences with integer elements, Presburger arithmetic, and regular constraints, which can model significant properties of data structures such as arrays and lists” (abstract, p. 1). The theory deliberately omits direct indexed reads, so its expressive power differs from array logics.
+
+The main algorithm, `Dseq(Z)`, rewrites a universal, quantifier-free matrix in the sequence theory into an equi-satisfiable formula in the theory of concatenation over a four-symbol alphabet. Makanin-style word-equation decision procedures then decide the result. The paper proves that the universal fragment is decidable in PSPACE. Its exact theorem is: “The universal fragment of Tseq(Z) is decidable in PSPACE with the decision procedure Dseq(Z)” (Theorem 4, Section 3.2.2, p. 12). The paper also identifies natural extensions that are undecidable, so the boundary is part of the technique.
+
+## technique: express sequence properties with concatenation and arithmetic
+
+A sequence over an alphabet `A` is a finite word, including the empty sequence. Concatenation forms a free monoid with empty sequence as identity. In `Tseq(Z)`, each element is an integer and the signature combines concatenation and regular constraints with Presburger operators `0,1,+,-,=,<` (Sections 2.1 and 3.1.1, pp. 4, 7–8). Integer interpretation uses the first element of a non-empty sequence; the empty sequence is interpreted as zero. Subsequence notation with constant indices is defined by rewriting into concatenation and length constraints.
+
+The universal fragment can express equality, bounded equality, boundedness, sortedness, injectivity, partitioning, constant membership, non-membership, periodicity, and arithmetic relationships between positions and values (Section 3.1.2, pp. 9–10). For example, sortedness is stated by universally decomposing a sequence as `h m t`, requiring `m` to have length one and `t` to be non-empty, and requiring the selected element `m` to be less than every element in `t`. Injectivity universally chooses two singleton pieces and requires their values to differ. These are formula patterns, not executable predicates.
+
+When to use it. Use this fragment for sequence invariants that can be written with concatenation, constant-index subsequences, regular membership, and Presburger relations. It is particularly suited to loop invariants that preserve a prefix/suffix decomposition. It cannot express arbitrary permutation of an input, variable-valued membership in the universal fragment, or direct variable-index reads. The paper notes that some properties expressible here, including strict sortedness, periodicity, and index/value comparisons, are inexpressible in several decidable array logics; conversely, permutation and subsequence properties are outside this universal fragment (Section 3.1.2, pp. 9–10).
+
+Verus form. Inference: represent a sequence model with Verus `Seq<int>` or a project-specific ghost sequence, and define sortedness, injectivity, and prefix/suffix relations as `spec fn`s. Use `requires` and `ensures` on executable Rust functions, with `old(...)` for the pre-state sequence. Verus's sequence model is a specification value, whereas the paper's free-monoid formulas are solver input; no formula can be pasted into Rust. Use `proof fn` lemmas for concatenation and slice facts and keep concrete indexing proofs separate from the abstract sequence invariant.
+
+## technique: reduce integer sequences to word equations
+
+`Dseq(Z)` accepts a universal formula `∀x1,...,xv • ψ` with quantifier-free `ψ` (Section 3.2.1, p. 10). It encodes integer sequences as words over `{a,b,c,d}`. A nonnegative integer `k` is represented by `a c b^k a`; a negative integer `k` by `a d b^{-k} a`. A sequence is a concatenation of such encoded elements. The algorithm then eliminates arithmetic by rewriting it into equations and regular constraints over this free monoid.
+
+The seven steps are as follows. (1) Introduce fresh variables so every sequence concatenation, arithmetic sum/difference, and comparison is expressed with variables. (2) For each quantified sequence variable, introduce fresh head, tail, sign, and modulus variables; constrain the sign to `c` or `d`, the modulus to `b*`, and the tail to a concatenation of encoded integers. Empty sequences are handled as the zero encoding. (3) Rewrite arithmetic equalities by equating the encoded heads. (4) Rewrite differences `xk = xi − xj` as sums `xi = xk + xj`. (5) Rewrite comparisons `xi < xj` as cases over signs and unary modulus lengths, using a fresh `b+` word for a non-zero difference. (6) Rewrite sums using cases for equal signs, opposite signs with equal modulus, and opposite signs with one larger modulus. (7) Replace integer constants and regular constraints with their encoded regular expressions (Section 3.2.1, pp. 10–11).
+
+The paper's correctness discussion explains why each case is complete. Equal signs concatenate the two unary moduli; opposite signs cancel equal prefixes or retain the larger sign and difference. Every rewrite preserves satisfiability. The transformations increase formula size by at most a quadratic factor, so PSPACE complexity of the concatenation decision procedure carries over (Section 3.2.2, p. 12).
+
+Verus form. Inference: a Verus integration should use this as a backend for generated `spec fn` obligations, not as runtime code. Encode a ghost integer sequence into a symbolic word only if the chosen solver supports the resulting constraints; otherwise prove the needed sequence lemmas directly. A `proof fn` can state that an encoding preserves addition or order, but implementing the full seven-step rewrite checker in verified Rust would be separate work. `requires`/`ensures` remain the public contract; the encoding is an internal proof artifact.
+
+Evidence and limits. The PSPACE claim is a theorem about the universal fragment and the reduction, not a benchmark. The paper says Makanin's algorithm is “reasonably efficient in practice” (Introduction, p. 3), but provides no runtime data for `Dseq(Z)` and says an implementation for larger examples was still underway (Section 4, p. 14). The algorithm's assumptions include finite words, the fixed integer encoding, and valid regular-language transformations.
+
+## technique: use decidability boundaries to reject unsupported specs
+
+The paper proves that adding one quantifier alternation (`∀*∃*` or `∃*∀*`) to concatenation is undecidable, and that several natural sequence extensions make the universal fragment undecidable. These include two variable-length counting functions, an equal-length predicate `|x|=|y|`, and a sum-over-all-elements function (Theorem 5, Section 3.3, pp. 13–14). The status of a pointwise “add one” function is left unknown. Equal-length and permutation are therefore not merely inconvenient for this decision procedure; they cross a known expressiveness boundary.
+
+Inference: a VL specification front end should classify sequence obligations before sending them to an SMT or Verus backend. Keep formulas in the decidable universal fragment when automatic proof is required; route quantifier alternation, variable-length counting, and permutation to a different abstraction or a user-supplied lemma. This is an inference from the paper's theorems, not a claim that Verus itself has the same exact complexity boundary.
+
+## technique: verify sequence programs by backward reasoning
+
+Section 4 uses universal `Tseq(Z)` formulas as loop invariants and verification conditions. The reverse example models a stack `s` as a sequence whose first element is the bottom, and maintains `s ◦ a = old a` while moving elements from list `a` to `s` and then to result. The invariant's preservation reduces to a concatenation/reversal identity; two update axioms for reversal suffice for programs that build a reverse one element at a time (Section 4, pp. 14–15).
+
+The mergesort example annotates a recursive array algorithm. Its invariant records that `Result`, `l`, and `r` are sorted and that the last output element is no greater than the first elements of the remaining halves. The split is over-approximated as an arbitrary non-empty continuous partition because the exact midpoint affects complexity but not the sortedness proof (Section 4, pp. 14–16). Backward substitution turns a loop branch into a universal formula. For the branch that appends `fst(r)`, the invariant hypothesis implies the substituted post-invariant; the resulting implication is decided by `Dseq(Z)`.
+
+How to apply it. (1) Choose a ghost sequence model for each list, array, stack, or queue. (2) State the loop invariant using concatenation and universal decompositions. (3) Substitute the post-state expressions backward through each assignment and branch. (4) Simplify updates with sequence/reversal axioms. (5) Encode each resulting implication in the universal fragment. (6) Run the decision procedure; if the formula is outside the fragment, add a separate abstraction or proof lemma. (7) Check procedure postconditions after the loop.
+
+Verus form. Inference: express the reverse invariant as a `spec fn` over ghost `Seq` values, with `ensures` relating the result to `old(a)`. Use loop `invariant` clauses for the preserved prefix/suffix relation and `proof fn` lemmas for `Seq` concatenation and reversal. The paper's Eiffel `old` and array slicing are not Verus syntax; Verus uses Rust values plus specification expressions. Mergesort's permutation condition remains a separate multiset or map proof because this theory cannot express it in the universal fragment. A nondeterministic split must be replaced by an executable split and a lemma that its two outputs concatenate to the input.
+
+Evidence and limits. These examples illustrate formulas, not completed tool runs. The paper says an implementation of `Dseq(Z)` was needed for more extensive examples and was “currently underway” (Section 4, p. 14). The mergesort proof therefore demonstrates that verification conditions fit the logic; it does not report a verified executable or time-to-proof. The paper also states: “It is impossible to express in Tseq(Z) another component of the full functional specification: the output is a permutation of the input” (Section 4, p. 15). That omission matters for any sorting implementation.
+
+## proof boundary and product impact
+
+The formal results are equi-satisfiability of the reduction, PSPACE decidability for the universal fragment, and undecidability for the named extensions. It demonstrates how reverse and mergesort annotations would generate decidable verification conditions. It does not prove a Rust implementation, evaluate solver throughput, or establish that all useful data-structure properties fit the fragment. Trusted elements include the concatenation decision procedure, the rewrite implementation, sequence encoding, background arithmetic assumptions, and the abstraction from executable arrays/lists to mathematical sequences.
+
+Inference: the product risk for agent-written verified Rust is medium. The fragment can provide useful, automatable lemmas for sequence invariants, but accepting a proof of the abstract sequence model does not prove ownership, bounds, allocation, aliasing, or permutation of concrete Rust data. The product should keep the encoding and abstraction boundary explicit, reject unsupported formulas instead of silently weakening them, and require Verus to connect the ghost sequence to executable state. VL should reuse the paper's sortedness, prefix/suffix, backward-substitution, and decidability-classification patterns. It should not redo the generic concatenation reduction; new work lies in verified Rust encodings, solver integration, and measurements of which generated sequence obligations fall inside the fragment.
+
+## techniques for the catalog
+
+- sequence free-monoid modeling — represent arrays, lists, stacks, and queues as finite sequences with concatenation and regular constraints
+- universal sequence invariants — express sortedness, injectivity, periodicity, bounds, and index/value relations by universal decompositions
+- integer-to-word encoding — encode integer sequence elements over `{a,b,c,d}` so arithmetic becomes word equations
+- Dseq(Z) decision procedure — normalize formulas and rewrite equality, order, sums, and regular constraints into concatenation theory
+- decidability boundary checking — reject quantifier alternation, equal-length, counting, and sum extensions known to be undecidable
+- backward sequence verification — generate loop verification conditions by substitution and discharge them with universal sequence formulas
+
+Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

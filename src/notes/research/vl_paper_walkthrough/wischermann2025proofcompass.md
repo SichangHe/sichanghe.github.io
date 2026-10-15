@@ -1,0 +1,37 @@
+# ProofCompass: Enhancing Specialized Provers with LLM Guidance
+(authored by agents unless marked 🧑)
+Tag: `wischermann2025proofcompass`, [paper](http://arxiv.org/abs/2507.14335v1)
+
+## method
+ProofCompass combines a general LLM with the specialized DeepSeek-Prover-v1.5-RL (DSP-v1.5) without additional model training. It uses two guidance channels: a natural-language proof supplied to DSP's chain-of-thought mode, and lemmas extracted from failed attempts and selected by the LLM. The abstract describes the aim as “strategically guiding existing specialized prover methods” (p. 1). It also reports: “The LLM provides natural language proof strategies and analyzes failed attempts to select intermediate lemmas, enabling effective problem decomposition.” (abstract, p. 1) The Lean REPL checks every generated proof; an attempt fails on errors, `sorry`, or a verification timeout (Section 4.1, p. 7).
+
+## technique: informal proof guidance
+Use this when the specialized prover accepts a natural-language chain-of-thought prefix. The paper's steps are: (1) prompt a guiding LLM with formal theorem `Tformal` and its informal counterpart `Tinformal` to produce a complete natural-language proof `pNL` (Section 3.2, p. 4); (2) summarize it with a second query into `psummary` because the full proof may exceed DSP's context (Section 3.2, p. 4); (3) put the summary in Lean block-comment syntax immediately after the theorem; (4) call DSP in CoT mode for up to N sequential proof attempts, verifying each with Lean and stopping on success (equations (1)–(3), pp. 4–5). The paper states: “This process continues until either a correct proof is found or the maximum of N initial attempts is reached.” (Section 3.2, p. 5) The paper's example uses positivity lemmas, `field_simp`, `div_le_div_iff₀`, `ring_nf`, and `nlinarith` for a real inequality (Figure 3, p. 5).
+
+Inference: for Verus, use an LLM-generated prose plan as a prompt-side hint, then translate it into explicit Rust `requires`, `ensures`, loop `invariant`, `assert`, and `proof fn` steps. Prose is not evidence; Verus must check the resulting code. The Lean comment-injection protocol has no direct Verus equivalent.
+
+## technique: extract and select lemmas from failures
+When the initial N attempts fail, ProofCompass aggregates all generated Lean proofs and extracts every `have` statement. Its steps are: (1) collect `Pinit^1 … Pinit^N`; (2) extract unique `have` statements into `Lextract` (equation (4), p. 5); (3) syntax-check candidates and retain `Lvalid` (equation (5), p. 5); (4) ask the LLM to assess logical soundness from global hypotheses and whether each lemma is justified by the natural-language proof, then select at most k lemmas in proof order as `Lselect` (equation (6), pp. 5–6). The authors explicitly choose lemmas from failed specialized-model attempts rather than asking the LLM to invent them directly (Section 3.3, p. 6).
+
+Inference: in Verus, mine failed verification drafts for repeated `assert` goals or candidate `proof fn` statements, parse them, and ask a model to rank only statements that are implied by current preconditions. Recheck each selected lemma with Verus before using it. Verus has no Lean `have` syntax requirement; the transferable idea is failure-derived intermediate obligations.
+
+## technique: prove selected lemmas before the main theorem
+For each selected lemma, the LLM generates concise informal proof text `pli` and also generates a main-theorem proof plan `pmain` assuming all selected lemmas (equations (7)–(8), p. 6). Existing `have` proofs that already establish a selected lemma from global hypotheses initialize `Lproven` (equation (9), p. 6). The procedure then: (1) formulate each unproven lemma as a separate Lean theorem with global hypotheses and earlier selected lemmas; (2) call DSP to prove it from its informal proof; (3) add verified lemmas to `Lproven`; (4) construct `Pfinal` from the theorem, proven `have`s, and `Pmain`; (5) submit the whole proof to Lean and accept only a valid proof (equations (10)–(11), pp. 6–7). Attempts for `Pmain` and each lemma consume the shared budget B (Section 3.4, p. 7).
+
+Inference: in Verus, make each selected fact a separately checked `proof fn` with a narrow contract, then call those lemmas from the target proof. A proof function is erased and cannot be called as runtime code; executable functions need their own contracts. The paper's ordering rule—later lemmas may use earlier ones—can be represented by Rust module dependencies.
+
+## evidence and resource accounting
+The evaluation uses 488 miniF2F problems, Lean 4.15, and pass@k where k counts calls to DSP, including lemma and main-proof calls (Section 4.1, p. 7). The baseline DSP-v1.5 obtains 50.0% ± 0.5% at 32 attempts, 51.6% ± 0.5% at 128, and 54.9% ± 0.7% at 3200. ProofCompass obtains 52.5% at 32 and 55.3% at 128 (Table 1, p. 7). Thus 55.3%/128 is compared with 54.9%/3200, a 25-fold attempt ratio; the denominator is attempts per theorem under the same miniF2F-test benchmark. The authors use Gemini 2.0 Flash Thinking for `pNL` and Gemini 2.0 Flash for summaries, selection, and elaboration, while DSP runs on an Nvidia RTX 4090 (Section 4.1, p. 7).
+
+Ablations isolate the channels: only lemma guidance gives 51.6% at 32 and 53.3% at 128; only informal proof gives 52.0% and 52.9% (Table 1, p. 7). The evidence supports both channels contributing in this model and budget. It does not show that LLM selection is correct without Lean checks, nor that the same gains hold for Verus or other specialized provers. Limitations include informal guidance tailored to DSP's CoT format and evaluation capped at 27 attempts per problem in the authors' discussion (Section 6, p. 8), which conflicts with the stated pass@128 setup; this is an internal reporting inconsistency that should be retained when interpreting the numbers.
+
+## what is proved, trusted, and relevant to VL
+Lean validates candidate lemmas and final proofs, but the guiding LLM's semantic judgments and the DSP generator remain untrusted search components. The theorem statement, Lean kernel, REPL, model prompts, and benchmark translations are trusted or assumed for the reported experiment. Inference: the product threat from agent-written verified Rust is moderate to high if candidate lemmas bypass independent checking; a Verus adaptation must enforce per-lemma verification, reject placeholders, and retain the exact preconditions used. Existing work already demonstrates lemma decomposition and failure-guided proof search for Lean, so VL should measure whether failure mining improves Rust verification repair rather than reimplementing the same Lean benchmark.
+
+## techniques for the catalog
+- natural-language proof seeding — summarize a capable model's proof strategy and inject it into a specialized prover's chain-of-thought input
+- failure-derived lemma mining — extract intermediate `have` statements from failed attempts, syntax-check them, and select justified candidates
+- lemma-first decomposition — prove selected intermediate theorems under ordered dependencies before assembling the main theorem
+- budgeted verified retries — count every specialized-prover call, verify with Lean, and stop on the first complete proof
+
+Checked 2026-10-15 against the paper by a Codex agent for proofcompass_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

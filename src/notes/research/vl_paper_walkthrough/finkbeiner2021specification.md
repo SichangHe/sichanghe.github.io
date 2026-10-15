@@ -1,0 +1,62 @@
+# Specification Decomposition for Reactive Synthesis
+(authored by agents unless marked 🧑)
+Tag: `finkbeiner2021specification`, [paper](http://arxiv.org/abs/2103.08459v3)
+
+## purpose and result
+
+This paper makes reactive synthesis modular: split one LTL or Büchi-automaton specification into subspecifications with disjoint output variables, synthesize each independently, then compose implementations. Its central criterion is language independence plus non-shared outputs, which preserves realizability. The authors report: “We have presented a modular synthesis algorithm that applies compositional techniques to reactive synthesis.” (Sect. 8, p. 15). They implement exact NBA decomposition, approximate LTL decomposition, and optimized assumption handling, integrating them with BoSy and Strix.
+
+The evaluation used 346 publicly available SYNTCOMP 2020 benchmarks; only 207 had more than one output and were candidates for decomposition. LTL decomposition terminated in less than 26 ms on every benchmark, decomposed 39 formulas, and usually made two or three subspecifications. In Table 7.1, the 346 specifications yielded 308 with one, 19 with two, 8 with three, 2 with four, 3 with five, 2 with six, 2 with eight, and one each with ten, eleven, and twelve subspecifications. NBA decomposition terminated within ten minutes for 235/346; 79 timed out at 60 minutes and 32 hit a 16 GB memory or Spot limit. On the 207 candidates, NBA produced decompositions for 36.75% and LTL for 33.33%. These percentages are fractions of 207, as the paper states, not of all 346.
+
+## technique: modular synthesis and counterstrategy extension
+
+What it is. Assign each subspecification a variable alphabet containing all inputs and a disjoint subset of outputs. Synthesize every subtask. If all are realizable, compose implementations by taking the union of their output choices. If one is unrealizable, lift its counterstrategy to the full variable set by retaining its input choices and assigning arbitrary values to inputs outside its alphabet. The paper’s Algorithm 1 is: decompose; map `synthesize`; on an unrealizable result call `extendCounterStrategy`; otherwise compose the implementations.
+
+The semantic condition is independent sublanguages: for languages L1 and L2, their non-contradictory composition consists of words whose shared variables agree. The paper gives the criterion in full: “The non-contradictory composition of L1 and L2 is given by L1 || L2 = {σ1 ∪σ2 | σ1 ∈ L1 ∧σ2 ∈ L2 ∧σ1 ∩Σ2 = σ2 ∩Σ1 }.” (Definition 3.2, p. 4). Outputs must be disjoint, while inputs may be shared. Theorem 3.1 establishes that the original specification is realizable exactly when all independent subspecifications are realizable.
+
+Steps to apply: choose a partition of outputs; give each subtask all inputs and one output subset; check the composition language is contained in the original language; synthesize each subtask; compose compatible implementations; or extend a failing counterstrategy to all inputs. The paper’s soundness conditions are “Equirealizability of the initial specification and the subspecifications, non-contradictory composability of the subresults, and satisfaction of the initial specification by the parallel composition of the subresults.” (Sect. 3, p. 4).
+
+Verus form. Inference: model each Rust component as a verified function from a history and current input to its output subset. Give each component `requires` clauses for its input assumptions and `ensures` clauses for its local postcondition; prove a composition lemma that output subsets are disjoint and shared inputs agree. A loop invariant can state that the composed prefix satisfies each local invariant. A counterstrategy is a separate function producing adversarial inputs; extending it with arbitrary outside inputs is an inference from the paper and must be stated as such in a Verus proof. Verus can prove the composition code, but it does not synthesize LTL strategies.
+
+## technique: exact decomposition of nondeterministic Büchi automata
+
+What it is. Given an NBA A over inputs and outputs, choose a proper subset X of outputs and project A onto X plus inputs; project again onto the complement Y plus inputs. Projection existentially abstracts variables outside the retained set. If the composed projected languages are contained in L(A), recurse on both projections; otherwise try another split. The paper defines projection as “πX (δ) = {(q, a, q ′) | ∃ b ∈ 2V \X . (q, a ∪ b, q ′) ∈ δ}.” (Sect. 4, p. 5).
+
+Algorithm 2 starts with the original automaton, enumerates output subsets without repeating complements, builds AX and AY, checks L(AX || AY) ⊆ L(A), recursively decomposes when the check succeeds, and returns the current automaton when no split works. Because each split removes output variables from a branch and only finitely many subsets exist, it terminates. Theorem 4.1 states that returned NBAs share only input variables, cover all variables, and preserve realizability. The paper calls the result “perfect decompositions” and warns that projection, composition, and language-containment checks become infeasible for large automata. (Sect. 4, pp. 6–7).
+
+Verus form. Inference: represent each finite NBA state and transition relation as Rust data, with `spec fn` for projection and composition. Prove a `proof fn` that every original run projects to a run in each subautomaton and another that accepted composed runs satisfy the containment condition. Encode recursive decomposition as an offline preprocessing algorithm; verify the generated component tables and then verify runtime transitions. Verus cannot directly discharge ω-language containment without a finite abstraction or an external theorem.
+
+Evidence and limits. NBA decomposition gave more fine-grained splits but failed to scale: 235/346 finished within ten minutes, 79 timed out at 60 minutes, and 32 reached the memory/internal limit; the paper also notes that plain DPA generation failed for 81 specifications (Sect. 7.2, p. 15). Thus exactness costs automaton operations and memory.
+
+## technique: approximate LTL decomposition by dependency graph
+
+What it is. Avoid automaton construction by rewriting an LTL formula into top-level conjuncts, making a graph whose vertices are output propositions and whose edges connect outputs occurring in the same conjunct. Each connected component receives the conjuncts mentioning it; an extra input component receives input-only conjuncts. Components then share no outputs.
+
+Algorithm 3 does the following: rewrite ϕ; remove top-level conjunctions; build the output dependency graph; compute connected components; create one specification per component plus an input-only specification initialized to true; assign each conjunct to the first component intersecting its propositions; return each formula with its input and output variables. The paper explains the reason: “outputs a and b that are contained in the same connected component of Dϕ depend on each other in the sense that they either occur in the same conjunct or that they occur in conjuncts that are connected by other output variables.” (Sect. 5, p. 8).
+
+Independent conjuncts have independent sublanguages, so Corollary 5.1 gives realizability equivalence when subspecifications share only inputs. The method is approximate: it may miss decompositions because rewriting determines which conjuncts expose dependencies. Inference: for Verus, use the graph only as a build-time partition of proof obligations; preserve a Rust composition proof that output fields are disjoint and each conjunct’s `ensures` is met.
+
+## technique: safely dropping assumptions
+
+A strict assume-guarantee formula can expose additional splits when an assumption is irrelevant to a guarantee. Lemma 5.2 allows dropping ϕ2 from (ϕ1 ∧ ϕ2) → ψ when ϕ1, ϕ2, and ψ have the specified disjoint proposition sets and ¬ϕ2 is unrealizable. The operational test is to synthesize the negated assumptions first. If they are realizable, the system can violate an assumption and the resulting strategy is extended as a counterstrategy; if unrealizable, Algorithm 4 may remove the assumption before building the dependency graph.
+
+Algorithm 4 separates assumptions and guarantees, computes decomposition-critical variables using an assumption-only graph, finds connected components, assigns bounded assumptions and guarantees to one component, and adds free assumptions where needed. Algorithm 5 first calls synthesis on `getNegAss`; if realizable it returns that strategy, otherwise decomposes and synthesizes components. The paper warns that naive per-conjunct dropping is unsound when other conjuncts create transitive dependencies. Inference: a Verus implementation should retain each dropped assumption as an explicit `requires` or prove its negation unreachable; silently deleting it weakens the verified contract.
+
+For several assume-guarantee conjuncts, the paper’s Algorithm 6 includes dependencies from the other conjuncts and retries each implication, because the selected implication can determine whether a split is found. The method applies only under its stated syntactic and unrealizability conditions; it does not generally handle arbitrary assumptions.
+
+## measurements, trust, and VL relevance
+
+BoSy and Strix were run in 2019 releases on a 3.6 GHz quad-core Intel Xeon with 32 GB RAM and a 60-minute timeout. On generalized buffer 3, both original tools timed out, while modular BoSy finished in 27.136 seconds and Strix in 319.988 seconds (Table 7.2). On Cockpitboard, BoSy fell from 1526.32 to 2.108 seconds, but gates rose from 11 to 25 and latches from 1 to 8 (Tables 7.2–7.4). The paper says modular solutions are usually the same size or smaller in gates, while latches vary; sequential synthesis was measured, so parallel execution was not included. The authors explicitly note: “Parallelization of the synthesis tasks may further reduce the runtime.” (Sect. 7, p. 13).
+
+The proofs establish language-level soundness and completeness of decomposition, assuming the synthesis black box and the dependency tests. Trusted artifacts include LTL rewriting, Spot 2.9.6, SyFCo 1.2.1.1, BoSy/Strix, and generated AIGER circuits. Inference: for agent-written verified Rust, this work threatens proof-obligation scale rather than memory safety: its graph partitioning and independent-component strategy could organize Verus lemmas, but no result verifies Rust or proves that a natural-language requirement was translated correctly. Existing modular synthesis covers the decomposition idea; VL should reuse that insight instead of redoing an equivalent literature search.
+
+## techniques for the catalog
+
+- modular synthesis — partition outputs, synthesize independent subspecifications, and compose compatible implementations
+- counterstrategy extension — lift a failing component’s strategy to the full variable set with arbitrary outside inputs
+- NBA projection decomposition — project an NBA onto complementary output subsets and recurse when language containment holds
+- LTL dependency decomposition — rewrite conjuncts, connect outputs that co-occur, and synthesize connected components
+- assumption dropping — prove negated assumptions unrealizable before removing irrelevant assumptions from guarantees
+- multi-conjunct dependency handling — include transitive dependencies from other assume-guarantee conjuncts when splitting
+
+Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

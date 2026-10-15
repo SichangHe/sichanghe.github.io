@@ -1,0 +1,37 @@
+# Pushing the envelope of Optimization Modulo Theories with Linear-Arithmetic Cost Functions
+(authored by agents unless marked 🧑)
+Tag: `sebastiani2014pushing`, [paper](http://arxiv.org/abs/1410.5568v2)
+
+## scope and result
+The paper extends optimization modulo theories (OMT) for formal-verification encodings in three directions: mixed integer/rational linear arithmetic, simultaneous and lexicographic objectives, and incremental solving. It implements the extensions in OptiMathSAT and evaluates them on OMT-encoded verification problems. The authors state: “In this paper we push the envelope of the OMT(LRA ∪ T ) approach of [23, 22] along three directions” (Introduction, p. 3). The claims concern solver algorithms and measured runtime, not a proof that a Rust program is safe.
+
+## technique: mixed-integer/rational OMT
+What it is. OMT(LRIA) minimizes a linear cost over formulas containing integer and rational variables. The implementation combines SMT, linear programming (LP), and integer linear programming (ILP). The paper says it “extend[s] it to work also with linear arithmetic on the mixed integer/rational domain, OMT(LRIA ∪ T ), by means of a combination of SMT, LP and ILP minimization techniques” (Introduction, p. 3).
+
+When to use it. Use it when a verification query has a linear objective and mixed integer/real constraints. The authors require an LRIA solver integrated with the minimizer: “it is advisable that LRIA-Minimize is embedded into the LRIA-Solver, so that it is called incrementally after the latter has checked the LRIA-consistency of the current assignment µ” (Sec. 3.1, p. 8).
+
+How it is done. First relax integer constraints to obtain an LRA problem. Run LRA-Minimize; if the relaxation is unbounded, return −∞, since a feasible MILP is unbounded exactly when its continuous relaxation is unbounded (Sec. 3.1, p. 8). Otherwise use the relaxed optimum as lower bound `lb` and the latest LRIA model's cost as upper bound `ub`. Branch on a fractional integer variable `xj`; create `xj ≤ floor(x*j)` and `xj ≥ ceil(x*j)`, recursively solve both, update `ub`, and prune branches whose LRA optimum is at least `ub` (Sec. 3.1, pp. 8–9). The advanced variant pushes `cost < ub`, invokes the solver's internal branch-and-bound, minimizes each node's LP relaxation, and restarts after each improved solution; unsatisfiability proves the final `ub` and learns `Cµ = (cost < ub)` (Sec. 3.1, p. 9). The truncated variant stops at the first solution or a branching limit and learns the same improving cut (Sec. 3.1, p. 10).
+
+Verus form. Inference: Verus can express the arithmetic constraints and a specification-level cost, and a proof function can establish that a candidate integer result satisfies bounds; Verus does not provide this paper's embedded LP/ILP optimizer or SMT branch-and-bound API. Inference: an implementation would keep optimization outside executable verified Rust, call a trusted solver, and prove a returned witness and a lower-bound certificate, or enumerate bounded integer candidates in a `proof fn` with `assert` and `ensures`; the paper's solver cuts do not carry over as Verus syntax.
+
+Evidence and limits. The experiment used two 8-core 2.20-GHz Xeon machines, 64 GB RAM, Linux kernel 3.8-0-29, and a 1200-second timeout (Sec. 4, p. 13). Every terminating result was cross-checked in Z3 by checking both `ϕ ∧ (cost < min)` inconsistency and `ϕ ∧ (cost = min)` consistency (Sec. 4, p. 13). Inference: this validates returned optima for the tested instances, but does not establish scalability beyond the reported benchmark set. The method assumes linear arithmetic and finite integer branching when bounded; unboundedness is detected through the relaxation.
+
+## technique: multiple objectives
+The input is a formula and a set `{cost1,…,costk}`. Initialize every upper bound to `+∞` and maintain active objectives `C*`. For each satisfying Boolean assignment, minimize every active cost, record improvements, drop objectives returning `−∞`, and learn the disjunction `∨(costi < ui)` (Sec. 3.2, pp. 10–11). The paper's example has `cost1 = −y`, `cost2 = −x−y`; after one assignment it learns `(cost1 < −3) ∨ (cost2 < −6)`, and after discovering `cost2 = −∞` it learns `(cost1 < −3)` (Fig. 2, p. 11). Stronger implementation keeps only the newest disjunction and can temporarily push `costi < ui` (Sec. 3.2, p. 12). Lexicographic optimization fixes `cost1` at its minimum, then minimizes `cost2` under that equality, repeating for all costs (Sec. 3.2, p. 12).
+
+Verus form. Inference: represent objectives as ghost/spec functions and prove each selected model meets an `ensures` bound; lexicographic order can be a tuple predicate. The learned disjunction is an SMT implementation detail, not a Verus construct. Evidence is the same Z3 cross-check and benchmark setting above; no denominator of instances is stated in the prose excerpt, so no success percentage can be inferred.
+
+## technique: incremental OMT
+An SMT stack pushes and pops subformulas while retaining clauses valid for remaining formulas. MathSAT5 rewrites each `φi` as `Ai → φi` and solves under assumptions `Ai`; learned `¬Ai ∨ C` becomes inactive when `φi` is popped (Sec. 3.3, p. 12). OMT's artificial progress clauses are the exception. The implementation uses a fresh `A(k)` per OMT call and learns `¬A(k) ∨ (cost < min)`, making old optimization cuts inactive in later calls while retaining ordinary search clauses (Sec. 3.3, p. 13). Learned implications can reactivate earlier search when a later minimum is smaller.
+
+Verus form. Inference: this corresponds to separate proof lemmas for changing assumptions, with each lemma's `requires` carrying the active context; Verus has no push/pop SMT-session interface exposed to a verified function. Trusted state therefore includes the external incremental solver and its clause-management correctness.
+
+## what is proved, measured, and trusted
+The paper proves algorithmic termination/correctness arguments for its minimizers and reports empirical runtime comparisons; it does not prove OptiMathSAT's implementation in a proof assistant. Z3 independently checks each terminating minimum using the two satisfiability checks quoted above. Inference: a product that lets an agent write verified Rust would face a moderate threat if it treats an external optimizer's answer as a proof; the safer integration is to require a machine-checkable witness and lower-bound certificate checked inside the trusted verifier. Existing OMT tools lacked incrementality, mixed integer/real optimization, or both multi-objective and integer support (Introduction, pp. 2–3), so VL should not redo those solver designs without a concrete integration need.
+
+## techniques for the catalog
+- mixed-integer OMT — relax integer constraints, minimize the LP relaxation, branch on fractional integers, prune by the incumbent upper bound, and learn an improving cost cut
+- multiple-cost OMT — minimize every active objective for each SMT assignment and learn a disjunction of strict upper-bound improvements; fix earlier objectives for lexicographic mode
+- incremental OMT — guard subformulas and optimization cuts with assumption literals so ordinary learned clauses survive push/pop while stale cuts deactivate
+
+Checked 2026-10-15 against the paper by a Codex agent for pushing_the_envelope_of_optimization_mod_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

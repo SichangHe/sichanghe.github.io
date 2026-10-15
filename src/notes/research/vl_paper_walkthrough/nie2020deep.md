@@ -1,0 +1,48 @@
+# Deep Generation of Coq Lemma Names Using Elaborated Terms
+(authored by agents unless marked 🧑)
+Tag: `nie2020deep`, [paper](https://doi.org/10.1007/978-3-)
+
+## scope and trust boundary
+
+This paper trains Roosterize to suggest names for Coq lemmas from their statements and elaborated representations. The target is naming assistance, not proof search: “Our models consider lemma name generation with an encoder-decoder mindset, i.e., we use neural architectures specifically designed for transduction tasks.” (Section 3, p. 5). The corpus contains four MathComp-family projects totaling 164k lines of code (Section 4, p. 8). Inference: VeruLaw can use the same signal to suggest names for Verus specs and lemmas, but names do not establish proof validity and every generated name remains untrusted text.
+
+The paper's pipeline obtains token, syntax-tree, and kernel-tree data through Coq/SerAPI. “Hence, a kernel tree can be much larger and contain more information than the corresponding syntax tree.” (Section 2, p. 5). Inference: a Verus implementation would need compiler or verifier internal representations, and those representations may change between versions; stable source-level fallback is safer for a product.
+
+## technique 1: multi-input encoding of elaborated terms
+
+what it is and when to use it. Encode the same lemma through three views—surface statement, parser syntax tree, and elaborated kernel tree—then decode a descriptive name. Use it when syntax sugar or implicit arguments hide semantic information useful for naming.
+
+steps from the paper. (1) Extract lemma statements and serialize syntax and kernel trees with SerAPI. (2) Flatten each tree by preorder traversal, using parentheses to mark child boundaries; the paper says, “We flatten the trees with pre-order traversal, and we use “(” and “)” as the boundaries of the children of a node.” (Section 3.1, p. 6). (3) Feed each sequence to its own bidirectional LSTM encoder. (4) Concatenate final hidden and cell states and transform them into the decoder's initial state; the paper gives `hd = Wh · concat([hi]) + bh` and `cd = Wc · concat([ci]) + bc` (Section 3.1, p. 6). (5) Decode the name left-to-right with an LSTM, attention over all encoder states, teacher forcing during training, and beam search at test time. (6) Train end-to-end by maximizing reference-name likelihood.
+
+Verus form. Inference: collect the function/spec statement, a parsed AST, and a verifier-elaborated AST if Verus exposes one; serialize each into tokens and feed separate encoders. Verus does not have Coq's SerAPI or kernel certification pipeline, so extraction tooling is a new trusted integration. The model can suggest `lemma_name`; Verus still checks the declaration and proof independently. The attention and beam-search machinery carries over unchanged as machine learning, while Rust macro expansion and inferred types change the input representation.
+
+Evidence and assumptions. Automatic evaluation repeats each experiment three times with different random initializations and reports averages (Section 6.2, p. 12). The best model, `Stmt+ChopKnlTree+attn+copy`, scores BLEU 47.2, fragment accuracy 24.9%, top-1 9.6%, and top-5 18.0% on the held-out test set (Table 3, p. 12). These percentages use the paper's test-set denominator; the table does not print the test-set size. Statistical comparisons use bootstrap tests at p < 0.05 (Section 6.2, p. 12). Inference: naming quality is a ranking aid, not evidence that a lemma is true.
+
+## technique 2: tree chopping to remove irrelevant structure
+
+what it is and when to use it. Large elaborated trees contain qualified names and source locations that add sequence length without naming value. Apply deterministic chopping before encoding. The paper lists three operations: “(1) replace the fully qualified name sub-trees with only the last component of the name; (2) remove the location information from sub-trees; (3) extract the singletons, i.e., non-leaf nodes that have only one child.” (Section 3.2, p. 7).
+
+steps. Parse each tree; identify qualified-name subtrees and retain the final component; delete location fields; collapse one-child nodes; serialize the resulting tree; train and evaluate with the chopped sequence. The authors report that kernel-tree average depth falls from 39.20 to 11.39 (Section 3.2, p. 7). Inference: for Verus, analogous filters could remove source spans, hygiene IDs, and module path prefixes while preserving types, function names, and trait projections. Each filter should be versioned with the parser because deleting a field that distinguishes overloads can make names ambiguous.
+
+Evidence. Upgrading `KnlTree+attn+copy` to `ChopKnlTree+attn+copy` raises BLEU from 37.0 to 42.9; `ChopSynTree+attn+copy` reaches 39.8 (Table 3, p. 12). The paper attributes this to irrelevant data overwhelming attention (Finding 3, p. 13). Inference: this is a measured correlation on the MathComp corpus, not a proof that every verifier tree benefits from the same filters.
+
+## technique 3: copy, sub-tokenization, and repetition control
+
+copy. Names often contain file-local tokens absent from the fixed training vocabulary. Add a pointer/copy layer over the concatenated encoder states so the decoder can emit an input token. The paper gives the example that “mg occurs in both the lemma name and lemma statement in Fig. 1, but not outside the file the lemma is in.” (Section 3.3, p. 8). Inference: a Verus name suggester should copy identifiers such as `VecDeque` fields and project-specific predicates, while sanitizing tokens before emitting Rust source.
+
+sub-tokenization. Split identifiers according to MathComp conventions, including snake case, CamelCase, prefixes, and suffixes; for example, `extprod mulgA` is split into `extprod`, `mul`, `g`, and `A` (Section 3.4, p. 8). This reduces the lemma-name vocabulary from 8,861 to 2,328 entries (Section 3.4, p. 8). Inference: Rust's underscores, lifetimes, and raw identifiers require a different tokenizer; the reduction cannot be assumed to transfer.
+
+repetition prevention. During beam search, forbid a sub-token from repeating (modulo underscore), motivated by only 1.37% repeated-subtoken names in the corpus (Section 3.5, p. 8). This is a heuristic and can reject a legitimate Verus name such as `eq_eq`; inference: make it a ranking penalty or configurable lint rather than a hard product rule.
+
+## evidence outside the benchmark and limitations
+
+The best model was applied to the PCM Coq library: 690 lemmas, BLEU 36.3, fragment accuracy 17%, and 36 exact matches (5% of 690) (Section 6.3, p. 14). A maintainer commented on 150 of the 654 non-exact suggestions and judged 20% of those inspected suggestions good quality (Section 6.3, p. 14). The denominator is the 150 commented suggestions, not all 690 lemmas. The authors note that some unsuitable names still contain useful parts (Table 4, p. 14). The toolchain depends on Coq 8.10.2 and uses one NVIDIA 1080-Ti GPU and an Intel Xeon E5-2620 v4 CPU (Section 6.1, p. 11). Trusted components include SerAPI extraction, parser compatibility, training code, and the human's naming judgment; no proof soundness claim is made.
+
+Inference: threat to agent-written verified Rust is low for semantic safety but moderate for maintainability. A misleading name can hide the lemma's purpose and increase review cost; generated names should be suggestions shown alongside the statement and proof status. Existing work already demonstrates multi-view AST encoding, chopping, copying, and sub-tokenization, so VL should reuse these ideas instead of inventing a naming model that sees only raw source text.
+
+## techniques for the catalog
+
+- multi-view elaborated-term encoding — encode statement, syntax tree, and kernel/elaborated tree with separate encoders and decode a lemma name
+- tree chopping — remove qualified-name prefixes, locations, and singleton nodes before encoding to reduce irrelevant sequence length
+- copy-aware sub-token decoding — copy file-local identifiers, split names into sub-tokens, and constrain repetition during beam search
+Checked 2026-10-15 against paper nie2020deep: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

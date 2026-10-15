@@ -1,0 +1,60 @@
+# ProofBridge: Auto-Formalization of Natural Language Proofs in Lean via Joint Embeddings
+(authored by agents unless marked 🧑)
+Tag: `jana2025proofbridge`, [paper](https://doi.org/10.48550/arxiv.2510.15681)
+
+## task and result
+
+ProofBridge translates a natural-language (NL) theorem plus proof into a Lean 4 theorem plus proof. It combines a joint NL/Lean embedding model, retrieval-augmented supervised fine-tuning, and iterative repair driven by Lean's type checker and a semantic-equivalence check. The output must satisfy two separate conditions: Lean type correctness (the proof closes the formal theorem without `sorry`) and semantic correctness (the formal theorem means the same thing as the NL theorem). The authors define the key pipeline precisely: “We first train a joint embedding model for NL and FL via contrastive learning, enabling cross-modal retrieval of semantically related FL theorem+proof pairs for a given NL input.” (Figure 1 caption, p. 2.)
+
+Inference: the method is relevant to VeruLaw because a Verus agent can retrieve related verified Rust proofs before generating a specification and can use verifier diagnostics for bounded repair. Lean, its kernel, and tactic proofs differ from Verus, so the mapping below is an inference.
+
+## technique: joint embedding of theorem and proof structure
+
+What it is. The database contains paired NL and Lean theorem+proof objects. The NL encoder is all-MiniLM-L6-v2 (22.7M parameters), producing 384 dimensions and projecting to a shared 512-dimensional space. The Lean encoder extracts a linearized DAG traversal of proof states and tactics through the Lean REPL. Each proof state is encoded with LeanDojo's ByT5 proof-state encoder (218M parameters, 1,472 dimensions); mean pooling over states and a trainable projection yields the 512-dimensional formal embedding. “A core component of our framework is the joint embedding model, which learns to represent NL theorem+proof pairs and their FL (Lean) counterparts in a shared semantic space.” (Joint Embedding, §4.1, p. 5.)
+
+How to build it. (1) Pair each NL theorem/proof with its type-checked Lean theorem/proof. (2) Encode the NL pair with the NL encoder. (3) Run the Lean proof in the REPL and record the ordered proof-state transitions induced by tactics. (4) Encode each state, mean-pool the sequence, and project it to the common dimension. (5) Train both directions with symmetric contrastive loss: the matching NL and Lean vectors are positives; other items in the minibatch are negatives. (6) Normalize all database vectors and retrieve top-K by cosine similarity for a new query. The paper precomputes normalized embeddings and uses K much smaller than the database size (Joint Embedding, §4.1, p. 5).
+
+Evidence. On the 3,895-instance held-out split (90% of 38,951 pairs used for training), ProofBridge's NL→FL recall is 52.83% at K=1 and 95.08% at K=50, with MRR 0.650; FL→NL is 51.23% and 94.83%, with MRR 0.635 (Table 1, p. 8). The median cosine similarity of retrieved pairs averages 0.64, versus −0.01 for non-retrieved pairs; the paper reports a 23% increase for retrieved similarity and a 104% decrease for non-retrieved similarity relative to its baseline (Results, §5.5, p. 9). These denominators are retrieval queries in the held-out 3,895-pair split, not the downstream 244-prompt test set.
+
+Verus form. Inference: build an embedding database of Verus functions, specifications, and proof-state traces, with labels linking natural-language requirements to verified Rust. A Verus proof-state encoder would be new; a simpler baseline can embed source text and verifier diagnostics. Retrieve top-K examples as context, but treat retrieval as guidance rather than evidence of correctness. The actual proof still needs Verus `requires`, `ensures`, `invariant`, `assert`, and `proof fn` obligations.
+
+## technique: retrieval-augmented fine-tuning
+
+For each training example, the prompt contains the NL theorem+proof and the top-K retrieved Lean theorem+proof pairs plus their relevance scores. “We fine-tune an LLM to translate NL theorem+proof pairs into FL (Lean), conditioned on retrieved FL demonstrations that provide rich contextual knowledge.” (Retrieval-Augmented Fine-Tuning, §4.2, p. 6.) The model is Kimina-Prover-RL-1.7B and the objective is ordinary autoregressive cross-entropy over the gold Lean theorem+proof tokens. Retrieval examples teach formalization patterns and proof strategies; relevance scores tell the model how strongly to weight each example.
+
+Steps. (1) Train the joint embedding model on paired data. (2) For each NL input, retrieve five formal examples from the training database. (3) Construct a prompt with NL input, retrieved Lean pairs, and scores. (4) Fine-tune on the gold Lean output. (5) At inference, repeat retrieval and generate one or more candidate theorem+proof pairs. The paper's dataset contains 38,951 NL–Lean pairs; 30% of the Lean proofs are human-written and the rest were generated by KiminaProver. All Lean outputs are version 4.15.0.
+
+Verus form. Inference: fine-tune or prompt a code model with retrieved Verus modules that use the same data structures, contracts, and proof idioms as the target. Retrieval should include complete proof context and verifier diagnostics, not only theorem text. The generated code remains subject to a real Verus run; retrieved code is not trusted merely because it previously verified.
+
+The ablation separates retrieval from repair. On MINI F2F-TEST-PF, retrieval-augmented SFT without repair reaches 55.33% semantic correctness and 89.75% type correctness at pass@32; SFT plus repair reaches 62.70% and 95.49%. Against the random-few-shot Kimina-Prover-RL-1.7B baseline (31.56% SC, 93.85% TC), the full system gains 31.14 percentage points SC and 1.64 points TC (Table 2, p. 10). The test denominator is 244 Olympiad-level instances, while pass@32 means the fraction with at least one success among 32 sampled candidates.
+
+## technique: iterative verifier-guided repair
+
+ProofBridge performs two checks on each generated pair. Syntactic verification compiles it with Lean and records diagnostic messages and locations. Semantic verification asks an LLM judge whether the generated formal theorem represents the NL theorem; for the benchmark's semantic metric, the judge must produce a Lean proof of bidirectional equivalence using restricted tactics. “During inference, we perform retrieval-augmented proof auto-formalization with the fine-tuned LLM.” (Inference and Repair, §4.3, p. 6.)
+
+Algorithm 1 is direct. (1) Generate an initial formal theorem+proof. (2) Run Lean type checking. (3) Run semantic equivalence checking. (4) If both pass, return the result. (5) Otherwise pass the failing status, error message, and location to the LLM repair prompt. (6) Generate a revised pair and repeat. (7) Stop after (R_{max}=5) attempts and return FAILURE if no candidate passes. “The procedure terminates once both checks succeed or the maximum number of repair attempts (Rmax = 5) is reached.” (Repair Process, §4.3, p. 7.)
+
+Verus form. Inference: use a bounded repair loop around `verus`, preserving the original natural-language requirement, generated Rust, and diagnostics in each iteration. A successful run discharges the Verus contracts; semantic equivalence requires a separate proof that the generated specification matches the requirement, because Verus checks only the formal specification. Prefer mechanically checkable equivalence lemmas over an LLM-only judge. Keep proof code in `proof fn`s and use `ensures`/`invariant` correctly; a `spec fn` is not executable and a proof function must not be called at runtime.
+
+## data preparation and formal metrics
+
+The authors construct NUMINAMATH-LEAN-PF from 104,155 competition problems. Of 38,951 instances with Lean proofs, about 6% (2,337) initially fail type checking due to syntax, library mismatches, or incomplete proofs. Gemini-2.5-Pro repairs them by consuming Lean error locations and rechecking for up to five iterations. NL proofs are generated by retrieving solution sketches from 896,000 NuminaMath problem–solution pairs (25,792 matches, 66%) and informalizing Lean proofs, yielding the 38,951 paired examples. MINI F2F-TEST-PF contains 244 instances in Lean v4.15.0.
+
+Type correctness (TC) counts outputs that pass Lean's type checker without `sorry`. Semantic correctness (SC) is measured only for type-correct outputs and requires a Lean proof of (T_{FL}^{generated}\leftrightarrow T_{FL}^{gold}), with a restricted tactic set; the LLM proposes the proof but Lean determines whether it works. This distinction catches a model that proves a syntactically valid but semantically wrong theorem. Inference: for Verus, an analogous metric should require both verifier success and a separately proved relation between generated and reference specifications.
+
+## what the evidence does and does not establish
+
+At pass@32, full ProofBridge reaches 62.70% SC and 95.49% TC on the 244-item benchmark. Number theory is easiest (over 85% SC in the domain plot), while contest problems reach about 35% SC. The strongest zero-shot baseline, Kimina-Prover-72B, reaches 43.03% SC and 79.51% TC; a two-step theorem translator plus prover reaches 43.44% SC and 59.43% TC. The paper attributes two-step failures to cascading errors when the first model formalizes the theorem incorrectly.
+
+Trusted components include Lean's kernel/type checker, the semantic-equivalence proof procedure, the dataset's NL proofs and gold theorems, the embedding model, the retrieval database, and the LLM-generated NL proofs used in training. The semantic judge is used to propose equivalence proofs, but the final metric relies on Lean proof checking. The paper's 6% repair statistic and 5-attempt cap concern its data preparation and inference setup; they are not guarantees for other Lean versions or for Verus. Retrieval gains and pass@k values are benchmark-specific.
+
+Inference: threat to agent-written verified Rust is medium. Joint retrieval can reduce repeated proof search and repair loops can turn concrete verifier diagnostics into useful next attempts. However, a Verus proof still establishes only its written contracts; an LLM semantic judge cannot replace proof of the requirement-to-specification relation. VL should not redo generic retrieval-augmented proof generation or bounded repair. A useful extension is a Verus-specific cross-modal encoder that represents contract dependencies and failed proof obligations, evaluated across library upgrades rather than a static benchmark.
+
+## techniques for the catalog
+
+- joint NL/formal proof embeddings: encode natural-language pairs and formal proof-state DAGs in one contrastively trained space for cross-modal retrieval
+- retrieval-augmented proof fine-tuning: condition formal theorem/proof generation on top-K verified examples and relevance scores
+- bounded verifier repair: run syntax and semantic checks, feed diagnostics back to the model, and retry up to a fixed budget
+- two-level correctness metrics: require type-checking first, then a mechanically proved equivalence between generated and reference theorems
+
+Checked 2026-10-15 against the paper by a Codex agent for proofbridge_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

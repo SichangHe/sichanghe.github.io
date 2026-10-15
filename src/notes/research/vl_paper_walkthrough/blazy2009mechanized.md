@@ -1,0 +1,58 @@
+# Mechanized Semantics for the Clight Subset of the C Language
+(authored by agents unless marked 🧑)
+Tag: `blazy2009mechanized`, [paper](https://www.semanticscholar.org/paper/fe25c06170a241622bf71f463eb02ee54a94597d)
+
+## scope and result
+Blazy and Leroy define Clight, a substantial C subset, and mechanize its dynamic semantics in Coq as part of CompCert. The paper states: “This article presents the formal semantics of a large subset of the C language called Clight.” (Abstract, p. 1). Clight includes pointer arithmetic, structs and unions, loops, structured switches, function pointers, and external calls, while omitting `goto`, side effects inside expressions, and several C features. The semantics is a deterministic big-step relation for terminating executions and a coinductive relation for divergence; both produce external-event traces. The authors report “about 800 lines of Coq for the core semantics, plus 1000 lines of Coq for dependencies such as the formalizations of machine integers, floating-point numbers, and the memory model” (Section 5.1, p. 18).
+
+## technique 1: deep syntax and a typed memory model
+What it is. Clight is represented as inductive abstract syntax in Coq. Expressions carry their static types; statements, functions, and programs are separate constructors. Memory is a map of allocated blocks, each with bounds and byte-offset contents. A location is a block and offset, and values include 32-bit integers, 64-bit floats, pointers, and `undef`.
+
+When to use it. Inference: use a deep embedding when proofs must quantify over syntax, define semantics by inference rules, and connect a compiler pass to a source-language program. Use block-based memory when pointer arithmetic and allocation must be reasoned about without equating raw machine addresses.
+
+How to apply it. (1) Define inductive types for types, expressions, statements, functions, and programs (Section 2, pp. 2–7). (2) Make every expression carry a type and define `sizeof`, field offsets, and type-dependent operators (Sections 2.1–2.2, pp. 2–5). (3) Define memory primitives `alloc`, `free`, `load`, and `store` over block identifiers and bounded offsets (Figure 5, p. 8). (4) Define access modes for each type: by value, by reference, or by nothing; implement `loadval` and `storeval` from those modes (Figure 7, p. 10). The paper gives the key design constraint: “The types carried by expressions are necessary to determine the semantics of type-dependent operators such as overloaded arithmetic operators.” (Section 2.2, p. 5).
+
+Verus form. Inference: model the AST with Rust enums and mathematical `spec fn`s, and represent the abstract memory with ghost maps or sequences indexed by block identifiers. Put local well-formedness facts in `requires` clauses and preservation facts in `ensures` clauses of `proof fn`s. Use `assert` and lemma proofs for bounds, field offsets, and `loadval`/`storeval` cases. The executable Rust can implement a concrete memory separately; a refinement lemma must connect it to the ghost model. The paper’s inductive Coq predicates and its memory model do not become Verus runtime APIs.
+
+Evidence and limits. Coq type-checking rules out ill-typed definitions, but the dynamic semantics deliberately does not assume a well-typed program (Section 3, p. 7). Incorrect type annotations can make execution go wrong. Clight also fixes sizes and a PowerPC-compatible layout, so portability requires another model.
+
+## technique 2: big-step semantics with explicit divergence and traces
+What it is. The paper defines ten evaluation judgements for l-values, r-values, statements, switch cases, function calls, whole programs, and divergence (Section 3.1, p. 7). Terminating rules are mutually inductive; diverging rules are mutually coinductive. A trace records external function name, arguments, and result. Pure expressions guarantee deterministic evaluation, while statements update memory and concatenate traces.
+
+When to use it. Inference: use a big-step relation when proofs need final outcomes and traces, and add a separate coinductive relation when nontermination must be represented rather than silently omitted.
+
+How to apply it. (1) Define l-value evaluation to locations, including variable lookup, dereference, and struct-field offsets (Figure 6, rules 1–4, p. 9). (2) Define r-value evaluation through `loadval`, typed arithmetic, conditionals, and casts (Figure 6, rules 5–14, pp. 9–11). (3) Define statement rules for assignment, sequencing, returns, loops, and function calls, threading memory and traces (Figures 8–10, pp. 11–14). (4) Define coinductive rules for a diverging sequence, loop, or call, preserving the finite or infinite trace prefix (Figure 11, p. 14). (5) Define whole-program behavior as termination with a finite trace or divergence with a possibly infinite trace (Section 3.5, pp. 15–16).
+
+Verus form. Inference: encode terminating execution as a ghost result enum containing trace, outcome, and memory, and encode a bounded interpreter as a recursive `spec fn` or proof-level function. State each transition with `requires`/`ensures`; preserve loop facts with loop `invariant` declarations. Verus does not provide Coq-style coinductive predicates in the referenced material, so an unbounded divergence theorem would require an explicit variant such as finite-prefix properties or a separate mathematical model. Do not claim a bounded interpreter proves nontermination without that relation.
+
+Evidence and limits. The semantics records both terminating and diverging executions, and the paper reports determinism as a corollary of CompCert verification (Section 5.2, p. 19). It omits a formal static type system, and traces complicate equivalence proofs for loops and divergence (Section 5.5, pp. 20–21).
+
+## technique 3: semantic-preservation validation of translations
+What it is. The CompCert front end translates Clight to C#minor and then Cminor. The first pass resolves overloaded operators and lowers loops; the second changes local-variable allocation. The authors prove semantic preservation. The second proof uses memory injections to relate many source blocks to one target stack block: “The proof requires about 2200 lines of Coq, plus 800 lines for the formalization of memory injections.” (Section 4.2, p. 18).
+
+When to use it. Inference: use a preservation theorem to validate both a compiler transformation and the source semantics when the target semantics is smaller or already trusted. This catches errors that a type-soundness proof can miss, provided the translation and target are independently plausible.
+
+How to apply it. (1) Specify the source and target languages and their memory models (Section 4.2, pp. 17–18). (2) Split the compiler into passes with simple intermediate invariants. (3) Prove a simulation or preservation relation for each pass, using memory injections where allocation patterns differ. (4) Compose the pass theorems into end-to-end semantic preservation. (5) Inspect the failure cases: the paper notes that a wrong interpretation of integer `+` would appear in preservation, while a missing source rule may not (Section 5.3, p. 19).
+
+Verus form. Inference: represent source and target states as ghost structs, define a relation `refines`, and prove each Rust translation function with a `proof fn` whose `ensures` states preservation of observable results and memory relation. Use `requires` for well-formed source states and `assert`/lemmas for block separation. A Verus proof can check a concrete translator, but it needs an explicit model of traces and target semantics; two independent postconditions are not a preservation proof.
+
+Evidence and limits. The paper reports 2,300 Coq lines for the first pair of transformations and 2,200 plus 800 lines for the allocation transformation (Section 4.2, p. 18). The guarantee is conditional on the source preconditions and the target semantics; shared memory-model mistakes can survive a proof.
+
+## technique 4: validating a formal semantics by independent evidence
+The paper presents four complementary checks. Manual review lets C experts inspect conventional inference rules, but the core and dependencies are large (Section 5.1, p. 18). Proving sanity properties, such as field-offset facts and determinism, exercises definitions (Section 5.2, p. 19). Executable testing uses a separately defined bounded interpreter `exec_stmt(W,n,G,E,M,s)` with results `Error`, `Result`, or `Bottom`; the authors require equivalence between interpreter results and inductive/coinductive semantics (Section 5.4, pp. 19–20). Finally, alternate big-step, small-step, reference-interpreter, and axiomatic semantics can be related by proved implications, although shared components weaken independence (Section 5.5, pp. 20–21). The paper says: “Proving the correctness of a semantics with respect to another is an effective way to find mistakes in both.” (Section 5.5, p. 21).
+
+Verus form. Inference: use a bounded ghost interpreter as an executable test oracle, prove its agreement with the Rust specification for terminating runs, and add property-based tests for undefined cases. Use separate ghost definitions for alternate semantics only when they are independently written. The trusted base still includes the specification, verifier, solver, erased code, compiler, and external environment.
+
+## what is proved, measured, and trusted
+The proved results are the Coq definitions and their type-correctness, compiler semantic-preservation theorems, determinism consequences, and partial validation arguments. The paper does not report a complete Clight type-soundness theorem, a finished executable interpreter, or complete equivalence with an independently implemented semantics. The main trusted assumptions are Coq and its libraries, the stated memory model, parser/type-checker invariants, target semantics, and the correctness of external calls. Inference: for agent-written verified Rust, this work lowers the threat from compiler-pass and language-model mismatch only when VL has an explicit language model and preservation proof; it does not address whether a generated contract captures the product requirement.
+
+## what VL should reuse
+Inference: VL should reuse the separation of syntax, pure expressions, stateful statements, traces, and explicit divergence; pass-specific refinement relations; block/memory invariants; and a bounded executable reference model. Inference: it should not redo the already established Clight/CompCert semantic-preservation pattern without a product-specific language or runtime gap. Inference: the highest product risk is an unmodeled unsafe/FFI behavior or a specification that proves the wrong trace, not the absence of another generic big-step semantics.
+
+## techniques for the catalog
+- deep typed syntax and block memory — define a proof-friendly language AST and explicit allocation, load, store, and field-offset operations
+- inductive plus coinductive execution — represent terminating outcomes, divergence, memory updates, and I/O traces in separate relations
+- pass-by-pass semantic preservation — validate compiler transformations with simulation relations and memory injections
+- cross-checking semantics — combine sanity lemmas, executable reference interpretation, manual review, and alternate-semantics equivalence
+
+Checked 2026-10-15 against the paper by a Codex agent for mechanized_semantics_for_the_clight_subs_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

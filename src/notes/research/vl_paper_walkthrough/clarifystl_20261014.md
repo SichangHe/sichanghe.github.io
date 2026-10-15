@@ -1,0 +1,77 @@
+# ClarifySTL: An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification
+(authored by agents unless marked 🧑)
+Tag: `fang2026clarifystl`, [paper](https://doi.org/XXXXXXX.XXXXXXX)
+
+## problem and result
+
+ClarifySTL addresses natural-language requirements that are too vague or admit multiple interpretations before translating them into Signal Temporal Logic (STL). The paper defines vagueness as underspecified or imprecisely bounded constraints and ambiguity as two or more plausible interpretations (Section 1, pp. 2–3). Its pipeline first detects and asks about vagueness, then detects and asks about ambiguity, and finally translates the clarified requirement. The paper states: “This interactive framework ensures that the resulting STL formulas faithfully capture user intent while reducing the burden on the user.” (abstract, p. 1)
+
+The result is a two-stage interactive architecture. The vagueness detector is a fine-tuned language model; the vagueness inquirer uses chain-of-thought prompts and demonstrations. The ambiguity detector uses a frozen LLaMA 3-8B encoder, a trainable projector and classifier, and triplet contrastive learning. The ambiguity inquirer samples multiple STL candidates, back-translates them to natural language, compares those descriptions with the original, and asks about the localized divergence (Sections 3.1–3.5, pp. 5–12). In the paper’s worked example, a missing numerical threshold is supplied first, then “next 30 seconds” is disambiguated, and the final formula is `F[10,150](x1 > 0.2) → G[0,30](x2 < 0.5)` (Section 3.1, pp. 6–7).
+
+## technique: classify STL-relevant vagueness
+
+Inference: use this when prose cannot instantiate an STL interval, predicate threshold, or logical connective. The paper’s taxonomy has three classes: temporal information (missing or qualitative duration/start/interval), numerical information (missing thresholds or qualitative values), and conditional-logic information (missing or underspecified logical relation) (Section 3.2, p. 7). The paper says: “Accordingly, for NL-to-STL transformation, we categorize vagueness into the following three types:” (Section 3.2, p. 7).
+
+Steps from the paper:
+
+1. Start with a requirement and its aligned STL formula in the source benchmark (Section 3.2, p. 8).
+2. For temporal mutation, delete or replace `[a,b]` in `G`, `F`, or `U` with a vague phrase such as “within the next period of time” (Section 3.2, p. 8).
+3. For numerical mutation, delete or replace a threshold `c` in `f(x1,…,xK) ~ c`, for example “speed exceeds 50” to “speed is high” (Section 3.2, p. 8).
+4. For conditional-logic mutation, delete or replace a connective from `{¬, ∧, ∨, →}`, for example changing “if speed > 50 then brake activates” to “speed > 50, brake activates” (Section 3.2, p. 8).
+5. Ask GPT-4o to generate grammatical, coherent mutants and run the rule-based syntactic validator; retain valid mutants (Section 3.2, p. 8).
+6. Fine-tune the detector on instruction/input/output triples whose output is Yes/No and the vagueness class (Section 3.2, p. 8).
+
+Verus form (Inference: the paper is about STL and LLMs, not Verus): represent each class as a separate `spec fn` predicate over a requirement model, and place the accepted completeness condition in an executable function’s `requires`/`ensures`. A VL front end can map an English interval or threshold to ghost mathematical values, then use `assert` or a proof function to establish that all values required by the generated contract are present. The model’s classification is a review hint; Verus must prove the resulting Rust contract and body. STL syntax, GPT-generated mutations, and the paper’s classifier do not carry over as Verus constructs.
+
+Evidence and limits: AmbiEval has 9,200 labeled instances: 6,000 vagueness and 3,200 ambiguity (Section 4.2, p. 14). Its Part A training/test split is 5,400/600, but the paper does not provide the total denominator behind every benchmark accuracy in the result tables. On AmbiEval, the Vagueness Detector reports 91.1% accuracy, 90.2% precision, 91.8% recall, and 91.0% F1 (Table 5, p. 19). Inference: these are classification scores, not proof that a generated Verus specification matches a real requirement. The taxonomy assumes that missing information is reducible to temporal, numerical, or conditional-logic STL elements; the authors identify domain-specific defects outside those categories as a threat (Section 6.5, pp. 27–28).
+
+## technique: targeted vagueness questions with iterative refinement
+
+Inference: use this after classification to obtain only the missing fact. The inquirer prompt contains an instruction, the requirement plus detected type, and demonstrations of `<reference requirement, incompleteness reason, reference query>` (Section 3.3, pp. 8–9). Its prescribed steps are: “First, refer to the examples below”; “Second, following the example, analyze the vague requirement based on its type to identify the missing information”; and “Third, formulate clear, specific queries that directly elicit the missing details.” (Figure 5, p. 9). The prompt constrains the model to the detected vague segment and lets a user reject a false positive; an ineffective answer triggers a request to restate intent (Section 3.3, p. 9).
+
+The system then concatenates the original requirement, query, and user answer, asks an LLM to produce a supplemented requirement, and runs the detector again. It repeats until no vagueness remains, preserving the original requirement as context across rounds (Sections 3.1 and 6.5, pp. 5–6, 28). In the paper’s example, “What specific value should signal x2 decrease?” elicits `0.5` (Section 3.1, p. 6).
+
+Verus form (Inference): generate a question from the failing `requires`/`ensures` obligation or missing ghost value, then require the user answer to be parsed into a typed Rust/Verus value. Re-run Verus after adding the value to a temporary contract. Keep the original code and contract in context, and reject answers that add an unrelated `requires` or weaken an existing `ensures`. A proof function can establish the new fact; no runtime proof call should be generated. The human interaction, CoT prompt, and STL formula are not Verus features.
+
+Evidence: on the AmbiEval query task, GPT-4o with the paper’s vagueness prompt scores ROUGE 0.591, BERTScore 0.875, correctness 92.6%, and clarity 89.3% (Table 7, p. 22). The human percentages are ratings by three annotators; the denominator is the evaluated query set, whose count is not stated in the table. The ablation on DeepSTL reports full ClarifySTL formula accuracy 67.12%, semantic robustness 82.7%, and 3.7 average rounds; removing the inquirer lowers formula accuracy to 54.82% and raises rounds to 6.5 when both stages are otherwise present (Table 9, p. 23). Inference: the result depends on user answers and an LLM rewriting step, so it does not guarantee that the supplemented prose expresses the user’s intended contract.
+
+## technique: synthesize ambiguity data and train a triplet detector
+
+Inference: use this when all values are present but a referent or temporal/logical scope has multiple readings. The paper distinguishes referential ambiguity (a pronoun or generic noun has an underdetermined signal) from semantic ambiguity (the same signals and predicates admit multiple STL interpretations) (Section 3.4, pp. 9–10). For referential mutation, replace one of at least two signal identifiers with a pronoun or generic noun. For semantic mutation, prompt GPT-4o with triples of original, ambiguous rewrite, and explanation; two experienced annotators independently validate that multiple interpretations remain (Section 3.4, pp. 9–10).
+
+For each sentence `x`, encode two dropout views of `x` as anchor and positive, and an opposite-class sentence as negative. Mean-pool the final LLaMA 3-8B hidden states, pass them through a 4096→1024→256 MLP projector with L2 normalization, and minimize `Lc = max(||Ex−Ex+|| − ||Ex−Ex−|| + ε, 0)` with margin `ε=1`; freeze the encoder and train the projector/classifier. Apply a 0.5 softmax threshold at inference (Section 3.4, pp. 10–11). The paper states: “The training objective is to minimize the distance between x and x+ while separating x and x−” (Section 3.4, p. 11).
+
+Verus form (Inference): classify ambiguity before committing to a contract. Represent alternate readings as separate ghost predicates or candidate `spec fn`s, then ask the user to select one. A proof function can show that the chosen predicate implies the executable postcondition; `requires`/`ensures` remain the acceptance boundary. Triplet loss, hidden-state dropout, softmax, and the LLaMA encoder are outside Verus. A detector error can still produce a valid proof of the wrong predicate, so selection must be explicit.
+
+Evidence: the Ambiguity Detector reaches 93.1% accuracy, 92.2% precision, 90.8% recall, and 91.5% F1 on AmbiEval; on DeepSTL it reaches 92.5% accuracy, 91.3% precision, 93.1% recall, and 92.2% F1 (Table 6, p. 19). The table reports percentages but no raw counts. Triple-wise contrastive learning has F1 91.5 on AmbiEval, versus 87.7 for pair-wise contrastive learning and 76.1 for SFT (Figure 10, p. 20). The synthetic mutation process and benchmark distribution limit external validity (Section 6.5, pp. 27–28).
+
+## technique: locate ambiguity by candidate sampling and natural-language back-translation
+
+Inference: use this after the ambiguity detector fires. The paper’s steps are:
+
+1. Sample the same requirement repeatedly at temperature 0.9 to obtain candidate formulas `φ1,…,φN` (Section 3.5, p. 11; Section 4.5, p. 16).
+2. Back-translate each formula using a fixed variable/symbol scheme to reduce lexical variation (Section 3.5, pp. 11–12).
+3. Give the original requirement and all descriptions to an LLM and ask it to report inconsistent segments (Figure 7 and Section 3.5, p. 12).
+4. Give that report and the original requirement to another prompt that asks for concise clarification queries restricted to the reported divergence (Section 3.5, p. 12).
+5. Incorporate the user’s answer, regenerate the requirement, and repeat until no ambiguity is detected; then run the final NL-to-STL transformation (Section 3.1, pp. 5–7).
+
+The paper’s example compares `F[10,150]` and `G[10,150]` readings and asks whether “next 30 seconds” starts at the first threshold crossing or the whole interval (Figure 7, p. 12). Verus form (Inference): generate several ghost candidate predicates or postconditions, normalize them into a fixed textual form, and compare the normalized text to identify scope differences. Ask the user to choose the intended predicate, then verify one executable function against it. Do not treat sampled candidates as proofs; only Verus’s checked `ensures` and proof functions provide evidence. The paper’s back-translation and semantic comparison are orchestration techniques, not Verus syntax.
+
+Evidence: GPT-4o back-translation fidelity is 95.6% for atomic propositions, 94.8% temporal operators, 94.1% numerical information, 93.9% Boolean structure, and 95.2% semantic consistency (Table 11, p. 25). In the ambiguity query task, GPT-4o’s natural-language analysis scores ROUGE 0.637, BERTScore 0.894, correctness 94.6%, and clarity 90.6%; this outperforms its STL-based analysis (Table 8, p. 22). Adding erroneous candidates changes GPT-4o query quality from ROUGE 0.641/ BERTScore 0.897/95.1% correctness/91.8% clarity to 0.635/0.891/94.3%/91.0% (Table 12, p. 25). On 50 unambiguous requirements, GPT-4o produces 48 no-ambiguity outputs, 0 clarification queries, and 2 uncertain/invalid outputs (Table 13, p. 26). Inference: these tests measure query behavior, not formal soundness.
+
+## what is proved, trusted, and left open
+
+The paper measures formula-string accuracy, template accuracy, BLEU, semantic robustness on generated traces, classifier metrics, and human ratings. On DeepSTL, ClarifySTL reports 67.12% formula accuracy, 70.03% template accuracy, BLEU 0.5736, and 82.7% semantic robustness; on STL-DivEn it reports 70.74%, 72.28%, 0.2612, and 84.9% (Table 3, p. 17). The denominators are the benchmark test sets; the table does not state their raw size. Semantic robustness samples traces and counts agreement of generated and reference formulas, so it is empirical agreement rather than a proof for all traces (Section 4.3, p. 14).
+
+Inference: a Verus product can reuse the staged interaction, typed clarification answers, candidate comparison, and iterative rechecking. It must replace STL generation with Rust/Verus code and explicit `requires`/`ensures`, and must reject `assume`, `admit`, or `#[verifier::external_body]` escapes around the target. Inference: the paper leaves trusted the LLMs, prompts, synthetic-data labels, user answers, benchmark representativeness, STL parser/checker, and its own implementation; it does not prove that natural-language intent was captured. Inference: threat to agent-written verified Rust is high at the specification boundary: a wrong but internally consistent contract can verify, while the interaction protocol can reduce omissions and scope errors before proof generation. Inference: the product should preserve the original requirement, show every clarification, and require human approval of the final contract.
+
+The authors explicitly list external-validity threats from limited industrial STL specifications and participant backgrounds, prompt/hyperparameter sensitivity, GPT-4o candidate errors, and construct-validity limits of string metrics (Section 6.5, pp. 27–28). They also report that removing detectors or inquirers lowers metrics or increases clarification rounds (Table 9, p. 23). Inference: VL should not redo the basic observation that vague and ambiguous prose harms formalization, or the generic use of iterative user questions; the paper already supplies those patterns and benchmark evidence. Inference: a remaining VL-specific question is whether typed clarification plus Verus checking catches wrong contracts that still satisfy all generated proof obligations.
+
+## techniques for the catalog
+
+- STL-relevant vagueness taxonomy — classify missing temporal bounds, numerical thresholds, and conditional logic before formalization
+- targeted vagueness inquiry — use type-specific demonstrations and constrained questions, then recheck after each answer
+- triplet ambiguity detection — train anchor/positive/negative representations to separate referential and semantic ambiguity
+- candidate back-translation — compare multiple sampled formulas through normalized natural-language descriptions to localize scope differences
+- iterative contract clarification — preserve the original requirement while repeatedly refining and verifying the current version
+Checked 2026-10-14 against the paper by a Codex agent: audit record fang2026clarifystl; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
