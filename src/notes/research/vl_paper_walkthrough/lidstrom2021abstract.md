@@ -1,0 +1,75 @@
+# An Abstract Contract Theory for Programs with Procedures
+(authored by agents unless marked 🧑)
+Tag: `lidstrom2021abstract`, [paper](http://arxiv.org/abs/2101.06087v2)
+
+## scope and contribution
+
+Lidström and Gurov define an abstract assume/guarantee contract theory whose basic composition units are procedures. The paper's motivation is that procedure-level contracts are central in ordinary software, while existing contract meta-theories are presented around larger components. Its stated contribution is “a first step towards a contract theory that takes procedures as the basic building block” (Section 1, p. 3). The theory is semantic: it models programs as relations over states, and it leaves syntax to a concrete language. The authors say, “The contract theory is abstract, in that it is not defined for a particular programming language, and may be instantiated with any procedural language” (Section 4.1, p. 12).
+
+This is a mathematical construction and proof, not an implementation benchmark. It proves that the proposed operations satisfy the axioms of Benveniste et al.'s contract meta-theory and that procedure-modular Hoare verification is represented by the construction. The paper's own boundary is explicit: “Our theoretical development should be seen as a proof-of-concept” and must later cover “object orientation, multi-threading, and exceptions” (Section 1, p. 3). No runtime, corpus, or defect-detection denominator is reported.
+
+## technique: model open procedures denotationally
+
+What it is. A state is a mapping from variables to integers in the toy language. A statement denotes a binary relation over initial and final states; a pair `(s,s')` belongs to the relation when execution can terminate in `s'`. Procedures are grouped into an interface `(P−, P+)`, where `P−` are required (called but undeclared) procedures and `P+` are provided (declared) procedures. A procedure environment maps each procedure name to a state relation. Recursive calls are interpreted by the least fixed point of a monotone function over the complete lattice of procedure environments (Sections 3.1, pp. 8–10).
+
+The paper gives an even/odd example. `even` decrements `n` and calls `odd`; `odd` decrements `n` and calls `even`; at zero each writes `r`. The least fixed point gives the expected parity relation for non-negative `n` (Section 3.1, pp. 9–10). This example is a semantic device, not an experimental result.
+
+How to apply it. (1) Choose the concrete program state and a relational denotation for each statement. (2) Separate names the module provides from names it calls. (3) Represent each external call by an environment relation. (4) Define the monotone transformer that maps assumed relations for provided procedures to the relations produced by their bodies. (5) Select its least fixed point to interpret recursion. (6) Use the resulting component relation as the semantic object on which contracts operate.
+
+Verus form. Inference: represent the abstract state and behavior with Verus `spec fn`s and mathematical `Seq`, `Map`, or set values where appropriate; make each executable Rust function expose a `requires`/`ensures` contract. A recursive Rust implementation still needs a termination argument and inductive proof; the paper's lattice fixed point is not a Verus keyword or a ready-made runtime abstraction. For mutually recursive procedures, use a ghost/spec model and `proof fn` lemmas relating each body to the model. The state relation is a specification, not executable Rust state, and external procedures need explicit contracts.
+
+What is trusted and what fails. The construction assumes monotonicity and complete lattices so Knaster–Tarski applies. The toy language omits exceptions, concurrency, object orientation, and language-specific memory behavior. Inference: a Verus instantiation must additionally model ownership, aliasing, integer overflow choices, and external effects; the paper's integer-state semantics does not establish those facts.
+
+## technique: use procedure contracts instead of inlining calls
+
+What it is. A Hoare triple `{P} S {Q}` is treated as a contract `(P,Q)`. Its denotation contains every initial/final state pair for which `P` implies `Q`; a program meets the contract when its denotation is contained in that contract relation (Section 3.2, pp. 10–11). For example, the even/odd contract uses a logical variable `n0` to relate the final `r` to the value of `n` before the call (equation (1), p. 10).
+
+Procedure-modular verification replaces a call's body with the denotation of the called procedure's contract. The paper states: “The key to this is to handle procedure calls by using the contract of the called procedure rather than its body (i.e., by contracting rather than by inlining)” (Section 3.2, p. 11). For a program whose procedures have contracts, build a contract environment `ρc`; evaluate each body under `ρc`; and check that each resulting relation is contained in its own contract. The authors prove that this contract-relative validity entails ordinary validity, so verifying procedures in isolation is sound with respect to the relational semantics (Section 3.2, p. 11).
+
+How to apply it. (1) Write a precondition and postcondition for every provided procedure. (2) Give each call the contract relation of its target procedure. (3) Verify the caller against its own postcondition without opening the callee body. (4) Repeat independently for every procedure. (5) At composition time, check that the caller's assumptions about required procedures match their guarantees. This is the paper's modularity boundary: implementation changes behind a preserved contract do not force callers to be reverified semantically.
+
+Verus form. Inference: put each Rust function's precondition and postcondition in `requires` and `ensures`; call sites use the callee's checked contract automatically. Keep a stable public contract and prove the body separately. Use `old(...)` in `ensures` when a postcondition relates output to pre-state values, and use `proof fn` lemmas for relations that are not discharged automatically. Do not inline an unverified helper or hide it behind an unreviewed assumption: a Verus proof of the caller is conditional on the helper's contract, just as the paper's proof is conditional on the contract environment.
+
+Evidence and limitation. The evidence is Theorem 5, which establishes equivalence between a procedure's contract-relative Hoare validity and implementation of its abstracted contract (Section 6, pp. 20–21). There is no measured time saving or number of procedures. The guarantee is partial correctness: the Hoare triple does not require termination (Section 3.2, p. 10). Inference: a VL workflow must separately prove termination or progress properties when they matter.
+
+## technique: abstract modules as monotone component functions
+
+What it is. A component with interface `(P−,P+)` maps an environment for required procedures to an environment for provided procedures. This makes an open module a function from assumptions about its dependencies to guarantees about its exports. Base components are required to be monotone. Two components are composable when they do not provide the same procedure name. Their composition feeds each component the other's provided relations where names overlap and takes a least fixed point of the resulting mutually recursive transformer (Definitions 1–3, pp. 12–14).
+
+How to apply it. (1) List provided and required procedure names for each module. (2) Define the module's state-transformer function under an arbitrary environment for its requirements. (3) Check monotonicity: weakening supplied relations must not invalidate the produced relation. (4) Compose modules only when provided-name sets are disjoint. (5) Build the combined interface by removing names satisfied internally. (6) Solve the combined monotone equations with the least fixed point. Theorem 1 proves that this composition is well-defined because the environment order is a complete lattice and the transformer is monotone (Section 4.1, pp. 13–14).
+
+Verus form. Inference: use Rust modules and traits as the executable boundary, with `requires` clauses describing required behavior and `ensures` clauses describing exported behavior. Keep the abstract module relation in `spec fn`s and prove composition lemmas in `proof fn`s. A Verus module does not automatically compute a least fixed point of arbitrary procedure environments; mutually recursive APIs need a concrete inductive model and termination proofs. Trait or module composition also does not itself prove that two implementations' contracts are compatible.
+
+## technique: define refinement, conjunction, and composition of contracts
+
+What it is. A denotational contract is a pair `(ρ−,ρ+)`: an assumption relation for required procedures and a guarantee relation for provided procedures (Definition 4, p. 14). An implementation satisfies it when its provided names and produced relations fit the contract under the contract's assumptions (Definition 5). An environment satisfies it when composing that environment with any implementation preserves the guarantee (Definition 6).
+
+Refinement reverses assumptions and orders guarantees: a contract `c` refines `c'` when `ρ−c'` is below `ρ−c` and `ρ+c` is below `ρ+c'` (Definition 7, p. 14). Thus a refining implementation can demand at least as much from its environment while promising at least as much behavior. Conjunction joins assumptions and meets guarantees using lattice least-upper-bound and greatest-lower-bound operations (Definition 8, p. 14). Contract composition is defined only when provided names are disjoint and each mutual guarantee satisfies the other's assumption; its assumption is the meet over externally required names and its guarantee is the join of the two guarantees (Definitions 9–10, pp. 14–15).
+
+How to apply it. (1) Write each module's assumptions and guarantees as relations. (2) For refinement, check the two lattice inequalities. (3) For conjunction, combine independent views of the same component with the assumption join and guarantee meet. (4) Before composition, check name disjointness and the two cross-contract inclusion conditions. (5) Construct the composed contract and prove that composed implementations satisfy it. Theorem 2 proves that the composed contract is the least one satisfying implementation and environment obligations (Section 4.2, pp. 15–16).
+
+Verus form. Inference: encode each assumption and guarantee as `spec fn` predicates over ghost state or abstract I/O traces; express refinement and compatibility as `proof fn` lemmas. Use `requires` for assumptions at an API boundary and `ensures` for guarantees. The lattice operations and relational inclusion are mathematical proofs, not executable combinators. A contract conjunction should preserve both reviewed predicates; weakening `requires` or strengthening `ensures` changes the proof obligation and must be visible in review.
+
+## technique: connect the abstract theory to the contract meta-theory
+
+The authors induce a meta-theory contract `C_c=(E_c,M_c)` from each denotational contract: `M_c` is the set of components implementing it, and `E_c` is the set of components that are environments for it (Definition 11, p. 17). Theorem 3 proves that denotational refinement, conjunction, and composition correspond to the meta-theory's operations, and that component composition is associative and commutative (Section 5, pp. 17–18). This is the paper's main formal evidence: the result is a proof over definitions and theorems, with no empirical denominator.
+
+The paper then abstracts a set of procedures into a component and proves that abstraction commutes with composition (Definition 12 and Theorem 4, pp. 18–20). Consequently, procedures can be grouped into modules without changing the denotation, or each procedure can first be made a component and later composed. The even/odd example instantiates this construction with mutually calling procedures (pp. 20–21).
+
+Inference: for VL, the reusable lesson is a contract algebra around module boundaries. Existing Verus proofs can supply implementation evidence for individual functions, while separate `proof fn` lemmas can establish that composed APIs satisfy the algebra's compatibility conditions. The paper does not show how to generate these predicates, infer them from Rust types, or check unsafe memory effects.
+
+## what is proved, what remains trusted, and product threat
+
+Proved claims are semantic: well-defined component composition, the contract operations' laws, instantiation of the earlier meta-theory, commutation of procedure abstraction with composition, and equivalence between procedure-modular Hoare validity and implementation of the abstracted contract. The assumptions include monotone component functions, complete lattices, the denotational semantics, sound Hoare reasoning, and the correctness of every supplied procedure contract. The paper's toy language and partial-correctness semantics leave termination, concurrency, exceptions, object state, hardware, libraries, and memory safety outside the result.
+
+Inference: the threat to an agent-written verified-Rust product is medium at the specification boundary and lower for the algebraic reasoning once the contracts are fixed and Verus checks the lemmas. A wrong or vacuous `requires`/`ensures` pair can make a caller proof pass while saying little about the intended behavior; contract composition can also hide an incompatible environment if the cross-contract checks are omitted. VL should reuse the paper's procedure-level contract and compatibility pattern, while adding explicit checks for non-vacuity, termination, ownership, unsafe code, and external implementations. It should not redo a generic contract meta-theory; the paper already proves the needed refinement, conjunction, and composition correspondence. The missing engineering work is a Verus-specific encoding and measurements of proof effort and contract-change impact.
+
+## techniques for the catalog
+
+- relational procedure semantics — model open procedures as state relations parameterized by required-call environments and least fixed points
+- contract-relative modular verification — verify a caller against callee contracts instead of inlining bodies
+- monotone component composition — compose module environment transformers through compatible interfaces and a least fixed point
+- contract refinement and conjunction — order assumptions and guarantees with lattice relations and combine contracts algebraically
+- assume-guarantee contract composition — check cross-module assumptions and derive a least composed contract
+- procedure-to-component abstraction — map procedure sets to components and prove abstraction commutes with composition
+Checked 2026-10-14 against the paper by a Codex agent: audit record lidstrom2021abstract; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

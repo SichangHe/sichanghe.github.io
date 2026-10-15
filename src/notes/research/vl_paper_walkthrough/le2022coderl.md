@@ -1,0 +1,30 @@
+# CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning
+(authored by agents unless marked 🧑)
+Tag: `le2022coderl`, [paper](https://arxiv.org/abs/2207.01780)
+
+## what the method does
+CodeRL trains a pretrained code language model as an actor with reinforcement learning and trains a critic to estimate functional correctness. During inference it uses compiler and example-unit-test feedback to regenerate or repair programs. The paper’s central description is: “during training, we treat the code-generating LM as an actor network, and introduce a critic network that is trained to predict the functional correctness of generated programs and provide dense feedback signals to the actor.” This is a synthesis and test-feedback method, not a formal proof system; its relevance to Verus is as a candidate proposal/search policy whose outputs still require the Verus verifier.
+
+## technique 1: token-level critic returns
+Use this when a whole-program pass/fail reward is too sparse for policy learning. Treat the language model as a stochastic policy, generated code as an action, and the compiler plus unit tests as the environment. Warm-start the actor with cross-entropy training. Generate programs, execute tests, and train a critic on whether a program passes. Convert the critic’s sequence score into relative token-level return estimates, then update the actor with the reinforcement-learning loss. The paper reports that “the actor network is then finetuned on these synthetic samples weighted by their critic scores” (Sec. 3.3, p. 7). Its ablation compares a baseline, no critic, a distance heuristic, and a trained critic; Model D (baseline plus critic) is best for CodeT5-770M on APPS, with 2.20% pass@1 and 3.10% pass@5 overall in the table’s `All` column (Table 2, p. 12; denominator is APPS problems under the paper’s APPS evaluation split).
+
+Inference: for Verus proof generation, replace unit-test pass/fail with verifier success, diagnostic quality, or a graded measure such as solved obligations. Keep token-level returns as a search heuristic; never treat critic probability as evidence that a proof is valid. A Verus run is the acceptance oracle, while the critic only ranks candidates.
+
+## technique 2: critic sampling and repair loop
+Use this at inference time to exploit partial successes and compiler diagnostics. Algorithm 1 gives a reproducible loop: (1) extract example input/output tests `I`; (2) if no repair candidates exist, sample `N` programs from actor `pθ`; otherwise upsample failed candidates and sample repair model `pω` conditioned on the problem, failed program, test outcome, and compiler error; (3) run tests and split programs into passed `P` and failed `F`; (4) if `P` is empty, rank `F` by critic probability and retain the top `M` in `R`; (5) if `P` is nonempty, sample a likely-correct subsequence from each passed program using the critic; (6) regenerate `N'` programs conditioned on each subsequence; (7) return the regenerated set for evaluation. The algorithm explicitly says: “Sort F by critic scores pφ (ui = PassedTest|Ŵi , D) ∀ Ŵi ∈ F” and then “subsequence Ŵisub ←− Sampling pφ (ui = PassedTest|Ŵi , D)” (Appendix A, Algorithm 1, p. 25).
+
+Inference: the direct Verus adaptation feeds failed proof text and Verus diagnostics to a repair model, ranks candidates by predicted verification, and seeds regeneration from proof subsequences that verified. The paper’s example tests are ordinary I/O tests, so replacing them with Verus checks is an extrapolation. Bound retries and preserve the original specification to prevent reward hacking.
+
+## technique 3: evaluate generated programs by pass@k and filtered n@k
+Use pass@k to measure the chance that at least one of k sampled programs solves a problem, and filtered n@k to measure success after the critic/test filtering stage. Table 1a evaluates CodeRL+CodeT5 (770M) on APPS by task difficulty and reports, over the `All` APPS column, 2.69% pass@1, 6.81% pass@5, and 20.98% pass@1000. Table 1b reports 8.48% 1@1000 and 12.62% 5@1000 on the filtered subset. These percentages are benchmark aggregates, not proof probabilities for individual programs. The paper also reports 63.0% pass@80 for zero-shot MBPP versus 61.4% for finetuned GPT-1 37B, but the denominator is MBPP problems and k=80, a different benchmark and setting.
+
+Inference: VL should report solved-verification-task fractions with the exact task set, model, sampling budget, and verifier version. A pass@k gain can increase compute and still leave most samples invalid; it is not a soundness claim.
+
+## what is trusted and what fails
+The method trusts the compiler, unit tests, benchmark labels, critic calibration, and the training/evaluation split. Hidden tests in APPS reduce direct overfitting; MBPP exposes tests in the prompt and has 974 instances split 374/90/500 for train/validation/test plus 10 few-shot instances (Sec. 4.2, p. 11). The paper’s limitations include failure on complex unseen tasks and the cost of repeated inference. Unit tests are incomplete specifications, and critic scores can reward superficial patterns. Inference: the threat to agent-written verified Rust is high for specification gaming and diagnostic overfitting, but low for verifier soundness if every emitted proof is independently checked by Verus. VL should use CodeRL-like ranking and repair only before the final verifier gate; it should not redo this benchmark work as if it established formal guarantees.
+
+## techniques for the catalog
+- token-level critic returns — train a correctness critic and use relative per-token returns to give dense RL feedback
+- critic sampling and repair — filter test outcomes, rank failures, condition repair on diagnostics, and regenerate from promising subsequences
+- pass@k and filtered n@k — report sampled-solution success with benchmark, denominator, model, and sampling budget explicitly
+Checked 2026-10-14 against the paper by a Codex agent: audit record le2022coderl; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

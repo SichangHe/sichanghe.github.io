@@ -1,0 +1,55 @@
+# Alias Types
+(authored by agents unless marked 🧑)
+Tag: `smith2000alias`, [paper](https://www.semanticscholar.org/paper/0c36460e328643f98c09c7175608f51f1df5ccdf)
+
+## problem and result
+The paper designs a type system for low-level code where pointers may alias, storage changes type during initialization, and memory can be reused or freed. Pure linear types prevent duplicated use of a resource, but that restriction is too strong for compiler-generated sharing. The authors summarize the goal: “Our type system is expressive enough to represent pointer aliasing and yet safely permit destructive operations” (abstract, p. 366).
+
+The system tracks a symbolic store with singleton pointer types and aliasing constraints. Linear constraints prohibit aliases of a location and therefore permit deallocation and type change. Pointer values themselves may still be copied. Non-linear constraints model shared locations but forbid deallocation or changing their type. The paper formalizes a small CPS language, proves preservation of the store-typing invariant and progress (no stuck well-typed state), and reports integration into Typed Assembly Language (TAL) and the Popcorn compiler (Section 1, p. 368).
+
+## technique: singleton locations and store constraints
+Use this when a verifier must distinguish pointers to the same allocation from pointers to different allocations. Reflect each concrete location ℓ into a singleton type `ptr(ℓ)`; the type contains exactly that pointer. Describe the store with constraints `{ℓ ↦ τ}` and combine independent descriptions with `⊕`. A block type `⟨τ1,…,τn⟩` records the type of each field. For a stack frame at ℓs pointing to an object at ℓo, the paper uses `{ℓs ↦ ⟨int,bool,ptr(ℓo)⟩} ⊕ {ℓo ↦ ⟨int⟩}` (Section 2, pp. 368–369).
+
+Location polymorphism replaces a concrete label with a location variable ρ. Store polymorphism adds a constraint variable ε so a function can require `ε ⊕ {ρ ↦ ⟨int⟩}` while ignoring unrelated heap objects. A function's precondition is the `(Δ; C; Γ)` context: type variables Δ, required store shape C, and variable types Γ (Sections 2 and 3.1, pp. 369–372).
+
+Inference: In Verus, model an allocation identity with a ghost integer or an inductive token, and expose an immutable `spec fn` describing the heap shape. Use `requires` to state ownership of a location token and `ensures` to return the updated shape. Verus's Rust borrow checker already prevents many aliasing errors, but raw-pointer or arena code needs explicit ghost identities and disjointness predicates. A singleton token is an inference from the paper's type, not a built-in Verus type.
+
+## technique: linear constraints for safe mutation and free
+A linear constraint `{ρ ↦ τ}` means no other location variable aliases ρ. This permits `free` and changing the stored type. The paper's seven-instruction example demonstrates the workflow (Section 2, p. 370): allocate `sp` as `{ρ1 ↦ ⟨junk,junk⟩}`, initialize field 1 to obtain `{ρ1 ↦ ⟨int,junk⟩}`, allocate `r1` at ρ2, store `ptr(ρ2)` in `sp[2]`, initialize `r1[1]`, then free `r1` and `sp`, ending with both locations typed `junk`. Updating through r1 updates the type seen through its alias in sp, and after free a dangling pointer cannot be dereferenced.
+
+The assignment typing rule checks that C decomposes as `C' ⊕ {η ↦ ⟨τ1,…,τn⟩}`, checks the new value at τ', and type-checks the continuation under `C' ⊕ {η ↦ ⟨τ1,…,τi−1,τ',τi+1,…,τn⟩}` (Section 3.3, p. 373). The key technical device is that `⊕` is associative and commutative but not idempotent. Therefore a constraint cannot be silently duplicated. The paper states, “Given these equality rules, we can prove that after an update of the store with a value with a new type, the store typing invariant is preserved” (Section 3.3, p. 374).
+
+Inference: A Verus proof should make mutation consume an exclusive ghost permission and return a permission whose heap predicate has the new field type. The proof obligation is a preservation lemma analogous to Lemma 1. Do not encode `⊕` as ordinary set union: duplicate permissions would make aliasing unsound. Verus's `seq` and `Set` can describe a shape, but exclusivity must be a separately proved predicate or represented by Rust ownership.
+
+## technique: function calls enforce non-aliasing preconditions
+A polymorphic function is instantiated with location variables and constraint variables. Before a call, the current constraints must equal the function's required constraints after substitution. This rejects a call that would free the same object twice. The paper's `foo` requires separate `{ρ1 ↦ ⟨int⟩}` and `{ρ2 ↦ ⟨int⟩}` constraints, frees x, reads and frees y, then calls a continuation. Instantiating both ρ1 and ρ2 with the same ℓ fails because `{ℓ ↦ ⟨int⟩}` does not equal `{ℓ ↦ ⟨int⟩, ℓ ↦ ⟨int⟩}` (Section 3.3, pp. 374–375).
+
+Theorem 1 gives the safety result: “If `⊢ S : C` and `·; C; · ⊢ι ι` and `(S, ι) ↦⋯↦ (S′, ι′)` then `(S′, ι′)` is not a stuck state” (Section 3.4, p. 375). The proof is syntactic, in the style of Wright and Felleisen, and is supplied in a companion report.
+
+Inference: In Verus, express a function's alias precondition with `requires disjoint(tok1, tok2)` and prove that the call preserves the permission invariant. A `proof fn` may establish that two location IDs differ before calling a mutating function. Runtime Rust functions must not call proof functions for their effect; proof functions only establish the pre/post conditions used by executable code.
+
+## technique: non-linear constraints and shared data
+Use a non-linear constraint `{η ↦ τ}ω` when a location may be aliased and reused without consuming the description. It obeys the duplication axiom `{η ↦ τ}ω = {η ↦ τ}ω ⊕ {η ↦ τ}ω` and a subtyping relation from linear to non-linear constraints. The paper explicitly limits the operations: “it is not sound to deallocate memory described by non-linear constraints or to use it at different types” (Section 4, p. 375). The `add` example allocates and initializes one integer, then passes the same pointer twice under a non-linear precondition (Section 4, p. 375).
+
+Inference: In Verus, this is a shared read-only permission. Use a predicate that can be duplicated only for operations proved not to mutate or deallocate the object. If an operation changes the type or lifetime, require an exclusive token instead. Verus does not have the paper's subtyping relation automatically, so each weakening lemma must be stated and proved.
+
+## technique: dynamic tests refine all aliases
+The paper extends the language with option types `?⟨τ1,…,τn⟩`, `null`, `mknull`, `tosum`, and `ifnull`. A null test splits the continuation: the then branch receives `{η ↦ null}φ`, while the else branch receives `{η ↦ ⟨τ1,…,τn⟩}φ`, where φ is linear or non-linear. Since aliases share the singleton location, one test refines the type of every alias. In the example, testing `r1` refines both r1 and `sp[1]` to integer references; future loads need no second null check (Section 4.1, p. 377).
+
+Inference: In Verus, represent an option with an enum or a discriminant predicate and prove branch-specific facts with `if` conditions. A `proof fn` can show that two handles with the same ghost location receive the same discriminant refinement. The refinement is valid only while the shared object remains unchanged.
+
+## evidence, trust, and limits
+The paper's formal evidence is its typing soundness theorem and the companion proof of the option extensions. Its engineering evidence is that TAL and Popcorn incorporated alias tracking and that the authors describe the integration as straightforward (Section 1, p. 368). No benchmark denominator or runtime comparison is reported. The formal language is a small CPS calculus; higher-level calls and returns require continuation-passing compilation (Section 3.1, p. 371).
+
+The theorem trusts the operational semantics, typing rules, and the companion-report proof. It does not prove the safety of an arbitrary compiler translation into this calculus, nor does it address concurrency, garbage collection, or a Rust memory model. The type system's safety guarantee is absence of stuck states, which covers invalid dereferences and use-after-free in this language but does not by itself prove functional correctness.
+
+Inference: VL should reuse the paper's explicit distinction between exclusive and shared permissions, its non-idempotent combination of linear resources, and its alias-wide refinement after a dynamic test. It should not redo the basic alias-type calculus. The threat to agent-written verified Rust is substantial when raw pointers are hidden behind an incorrect ghost location map: Verus can prove the map's stated invariant while the executable pointer arithmetic refers elsewhere. A small verified allocation wrapper that creates and consumes unique location tokens is a practical containment boundary.
+
+## techniques for the catalog
+- singleton location types: represent each allocation identity as `ptr(ℓ)` so aliases are syntactically detectable
+- linear alias constraints: use non-duplicable store descriptions to permit safe type change and deallocation
+- polymorphic store preconditions: abstract locations and unrelated heap regions while preserving alias relationships
+- non-linear constraints: duplicate shared read permissions while forbidding free and type-changing updates
+- alias-wide dynamic refinement: propagate a null or variant test to every handle sharing one singleton location
+- preservation and progress: prove store typing survives updates and well-typed execution never reaches a stuck state
+Checked 2026-10-14 against the paper by a Codex agent: audit record smith2000alias; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
