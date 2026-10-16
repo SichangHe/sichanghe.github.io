@@ -1,0 +1,49 @@
+# Correct by Construction Networks Using Stepwise Refinement
+(authored by agents unless marked 🧑)
+Tag: `ryzhyk2017construction`, [paper](https://www.usenix.org/conference/nsdi17/technical-sessions/presentation/ryzhyk)
+
+## problem and contribution
+Cocoon is a language, verifier, and compiler for software-defined network (SDN) designs. The paper's problem is that checking each deployed data-plane snapshot is late, hard to debug, and scales poorly. Its method is to state a high-level network behavior, refine it through intermediate implementations, and statically prove every refinement. Runtime-defined functions (RDFs) hold topology, host membership, address mapping, and policy values that change while the network runs; an assumption checker validates those values at runtime. The paper states: “Cocoon automatically verifies that each refinement preserves the behavior of the higher-level view of the network by reducing each refinement to a Boogie program and using the Corral verifier to check this program for refinement violations” (section 1, p. 684). The refinement relation is transitive, so the final implementation refines the top specification.
+
+## technique 1: hierarchical roles and stepwise refinement
+Use this when a system has clear abstraction levels (for example, end-host behavior, zones, routers, and switches), and whole-system verification is too large or gives poor fault localization.
+
+Steps from the paper:
+1. Write a top role for each kind of network entity. A role is parameterized and has a characteristic function selecting its instances. The enterprise example's `HostOut` computes source and destination subnet IDs, filters the source address and ACL, filters the destination host, then sends to `HostIn[pkt.dstIP]` (section 2, pp. 684–685).
+2. Leave implementation details and configuration functions abstract. The paper explicitly says a send may target an instance without a direct connection, thereby hiding network hops that later refinements introduce (section 2, p. 686).
+3. Add a `refine` block that replaces one role with a more detailed role and introduces helper roles. Refinement 1 inserts zone routers and splits the path into router ports; later blocks refine the core and zone fabrics (section 2, pp. 686–688).
+4. At each block, prove that the replacement role's packet behavior is a subset of the old role's behavior. The formal definition requires identical parameter lists and characteristic functions and, for every input packet in the original role's domain, `J R-hat K(p) ⊆ J R K(p)` (section 3, p. 687).
+5. Declare concrete hosts and switches only at the bottom, then compile the final roles to NetKAT and OpenFlow/P4 (section 2, p. 688; section 3, p. 689).
+
+Inference: In Verus, the analogous discipline is a sequence of Rust data types or modules with `spec fn` abstractions and `ensures` stating that an implementation result satisfies the abstract relation. A proof function can establish each refinement lemma, and `requires` can encode the role's characteristic-function precondition. Cocoon's packet-set inclusion and nondeterministic `havoc` have no direct executable Rust equivalent; represent them as pure specifications and quantified lemmas. These are proposed adaptations; this paper gives no Verus encoding.
+
+Evidence: In six realistic network case studies, Cocoon found three design bugs before deployment: an enterprise path skipped gateway ACL checks, a WAN refinement looped after a link failure, and virtualization allowed same-server multicast to bypass a blacklist (section 6.1, pp. 692–693). For each, Corral produced two witness traces, one abstract and one refined. The authors claim that the Boogie encoding has no false negatives modulo Corral defects; three reported false positives arose from Corral's incomplete Z3 quantifier-instantiation heuristic and were removed by splitting boolean equivalences into implications (section 6.1, p. 693).
+
+## technique 2: runtime-defined functions with assumptions
+Use this when static design is fixed but topology, membership, or policy changes dynamically. Declare an RDF by signature only, constrain it with a first-order assumption, and check concrete definitions when they arrive.
+
+Steps:
+1. Declare a pure function without a body, such as `cHost`, `cSubnet`, `ip2subnet`, or `acl` (section 2, p. 686).
+2. State universally quantified assumptions with quantifier-free bodies. The example requires `∀ addr. cHost(addr) ⇒ cSubnet(ip2subnet(addr))`; another refinement assumes `acl(p) == (aclSrc(p) and aclDst(p))` (section 2, pp. 686–687).
+3. Verify refinements while treating the RDF as any function satisfying its assumptions. When a later refinement gives a body, prove that body satisfies the assumptions; when runtime code updates it, run the assumption checker (section 2, p. 686).
+4. Keep runtime checks separate from static checks. Static verification proves all refinements for every admissible RDF; the runtime checker validates each new definition before compilation to flow tables (section 1, p. 684; section 3, p. 689).
+
+Inference: In Verus, model an RDF as an uninterpreted `spec fn` plus a `requires` predicate on the concrete update routine, and prove the predicate before storing a runtime value. The trusted boundary includes the runtime checker and the mechanism that installs a checked flow table; Verus cannot prove an external controller's future function values without a contract.
+
+Evidence and limits: The assumption fragment is `∀ x1 ... xi . F(x1 ... xi)` with quantifier-free `F`; the authors say it was expressive for their systems and efficient to verify (section 2, p. 686). They also report that defining assumptions was “by far the hardest part of programming in Cocoon” and may challenge engineers unfamiliar with formal logic (section 5.4, p. 692). Dynamic behavior is intentionally hidden behind RDFs, so Cocoon does not prove arbitrary controller code (section 7, p. 694).
+
+## technique 3: compositional path-property checking
+After refinement proofs, check reachability or safety properties on the small high-level specification, rather than every generated data-plane snapshot. The paper states that refinements preserve network paths while introducing intermediate hops and therefore preserve end-host reachability (section 3, p. 689). The evaluation combines Cocoon with Header Space Analysis (HSA), translating the high-level and low-level specifications to NetKAT/OpenFlow and checking all-pair reachability.
+
+Evidence: On a parameterized enterprise network with three zones and Waxman-graph topology, Table 2 scales from 8 hosts/11 switches to 122 hosts/163 switches, with 1,559 to 496,268 NetKAT policy units. Figure 13 reports that Cocoon scales beyond NetKAT equivalence checking; Figure 14 reports a “dramatic improvement” when HSA checks the high-level specification (section 6.2–6.3, pp. 693–694). The paper's abstract reports stepwise verification “over 200x faster than verifying the final implementation” (abstract, p. 683); Table 1 reports 16 seconds for compositional enterprise verification versus a monolithic run interrupted after 3,600 seconds; these are not results for all six cases.
+
+Inference: A VL product can use the same architecture for verified Rust services: prove local refinement contracts, then run expensive global checks over an abstract model. Threat to agent-written verified Rust is high when generated code crosses an unverified runtime or FFI boundary, and lower when each generated module has a checked abstraction relation; this is an inference from Cocoon's explicit trust split.
+
+## what is proved, measured, and trusted
+Cocoon checks behavioral inclusion of each refinement under assumptions. Section 3 bounds the hops introduced by each refinement, increments a counter at every send, and reports exceeding the bound as an error; the same bound controls Corral's exploration. The paper says this also prevents refinements from introducing forwarding loops (p. 689). It measures verifier time, policy/flow-table size, bug witnesses, and HSA throughput. Inference: the trusted components include Corral, Z3's soundness when it reports success, the Cocoon compiler, NetKAT/OpenFlow/P4 backends, runtime assumption checking, and the correctness of the high-level specification. The authors implemented 4,700 lines of Haskell and six case studies in Mininet (section 6, p. 692). The paper does not prove that the high-level policy is desirable, that runtime inputs satisfy assumptions before checking, or that the deployed switch/controller faithfully executes compiled tables. Inference: VL should reuse the refinement-plus-assumption split and avoid redoing whole-system model checking for every configuration; it must separately verify its compiler, runtime checker, and specification-to-Rust correspondence.
+
+## techniques for the catalog
+- stepwise role refinement — replace one parameterized role at a time and prove packet-behavior inclusion with Boogie/Corral
+- assumed runtime-defined functions — leave changing functions uninterpreted, constrain them with quantified assumptions, and check concrete definitions at runtime
+- abstract property checking — preserve reachability through refinement and run HSA or another property checker on the high-level specification
+Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This is a natural restriction in network verification, as any practical network design must bound the number of hops through the network."): I read the complete paper including the syntax/semantics appendix and checked quotations, numbers, references, metadata, and techniques; corrected publisher link, quantified-assumption wording, refinement domain, speedup denominator, and trust attribution, and added the hop-bound restriction; did not reproduce experiments or inspect compiler/verifier code.
