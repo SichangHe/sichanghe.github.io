@@ -125,4 +125,4 @@ VL should not repeat the paper’s generic advice to start verification early, s
 - false-positive and contract audit: preserve warnings, prove contracts themselves, inspect assumptions, and validate runtime models
 - units and criticality types: encode physical dimensions and isolate high-criticality tasks with deterministic scheduling
 - denominator-aware VC accounting: report proof fractions and solver time by component and obligation type
-Checked 2026-10-13: audit record becker2017development; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

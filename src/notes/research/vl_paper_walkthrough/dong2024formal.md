@@ -53,4 +53,4 @@ Inference: VL should not redo a generic claim that checker rewards can train pro
 - conditional proof trees: insert proposed lemmas as child goals, verify locally, and assemble globally correct trees child-first
 - verifier-shaped RL: reward locally and globally verified subtrees with value-weighted cross-entropy and replay
 - depth and proposal controls: force no-invoke leaves, filter trivial or unnecessary lemmas, and use direct-proof fallback under distribution shift
-Checked 2026-10-15 against paper dong2024formal: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -57,4 +57,4 @@ what is proved, trusted, and assumed
 - large-block interpolation model checking: summarize loop-free control flow, derive interpolants from unsatisfiable unrollings, and union them to an inductive reachable-state overapproximation
 - fixed-point interpolation loop: shift each interpolant to the initial-state variables, enlarge the image, and stop when the new interpolant implies the image
 - backward interpolant derivation: swap interpolation partitions and negate the result to bias invariants toward the safety-property side
-Checked 2026-10-13: audit record beyer2022interpolation; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -61,4 +61,4 @@ Inference: VL should not redo generic antichain canonicalization, recursive weak
 - recursive weakening: replace unsatisfied formulas with minimal subsumed formulas satisfied by a counterexample state
 - LSet indexed filters: use recursive maps and tries to filter unsatisfied or subsuming formulas without full scans
 - symbolic abstract fixpoint: iterate counterexample-guided joins to compute the strongest invariant expressible in the language
-Checked 2026-10-15 against paper frenkel2024efficient: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

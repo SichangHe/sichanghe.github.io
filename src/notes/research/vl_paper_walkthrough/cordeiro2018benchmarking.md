@@ -72,4 +72,4 @@ Inference: VL should already implement the reusable parts—versioned task manif
 - property and nondeterminism normalization — replace uncontrolled environment behavior with constrained benchmark stubs and explicit safety properties
 - reproducible BenchExec execution — integrate each verifier through a runner and manifest, fixed limits, logs, and comparable plots
 - correctness-weighted scoring — reward correct proofs and bug finds while heavily penalizing false alarms and missed bugs
-Checked 2026-10-14 against the paper by a Codex agent: audit record cordeiro2018benchmarking; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

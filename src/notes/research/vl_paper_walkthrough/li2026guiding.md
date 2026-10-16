@@ -91,4 +91,4 @@ Inference: the threat to an agent-written verified-Rust product is high for proo
 - implication auto-formalization: translate each step into annotated first-order implications and check premises and conclusions with an SMT solver
 - diagnostic refinement: feed exact invalid premises or implications back to the synthesizer and iterate
 - BMC conjunct accumulation: after feedback rounds, collect valid conjuncts with bounded model checking and combine them with the growing invariant set
-Checked 2026-10-15 against paper li2026guiding: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

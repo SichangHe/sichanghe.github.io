@@ -81,4 +81,4 @@ Inference: for VL, this creates a medium product threat to agent-authored verifi
 - Partial-KL RLVR: leave reasoning exploratory while regularizing mathematical-model and code tokens
 - staged verifiable rewards: train first on format/execution/accuracy, then reward advanced modeling features only after correctness
 - verifier-loop training: use independent execution or proof results as deterministic feedback for generated artifacts
-Checked 2026-10-15 against paper chen2025solver: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

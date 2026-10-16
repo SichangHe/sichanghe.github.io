@@ -51,4 +51,4 @@ The paper already supplies a complete decision procedure for this restricted sym
 - finite normal-form search: enforce group and definedness invariants so only finitely many goal shapes exist up to variable renaming
 - factor and strong-wand preparation: introduce a common root into disjuncts that lack it while preserving entailment validity
 - completeness by local completeness plus termination: choose locally complete branches, then combine the finite search argument with soundness to decide validity
-Checked 2026-10-15 against paper tatsuta2018cyclic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

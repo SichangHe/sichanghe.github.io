@@ -92,4 +92,4 @@ Inference: VL should not redo a generic claim that more generated data can impro
 - RL tactic tree search — combine LLM candidate tactics with policy/critic PUCT expansion and back-propagation
 - checker-centered validation — deduplicate, repair typed/incomplete candidates, discard logical errors, and retain only verifier-accepted proofs
 - iterative proof-data refinement — fine-tune on accepted generated theorems and repeat generation to enlarge the training corpus
-Checked 2026-10-14 against the paper by a Codex agent: audit record xiong2025combinatorial; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

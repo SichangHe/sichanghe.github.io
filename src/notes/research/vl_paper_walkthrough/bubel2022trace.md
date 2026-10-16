@@ -93,4 +93,4 @@ Inference: the technique threatens an agent-written verified Rust product when a
 - symbolic update calculus — reduce code to substitutions and event updates, splitting paths and unfolding contracts with sequent rules
 - recursive trace abstraction — prove procedure contracts by induction and replace recursive calls with their verified trace summaries
 - event-level abstraction — expose only selected interface events while keeping implementation states hidden unless a contract names them
-Checked 2026-10-13: audit record bubel2022trace; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

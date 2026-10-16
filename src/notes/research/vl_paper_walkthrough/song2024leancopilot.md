@@ -64,4 +64,4 @@ Inference: Lean Copilot threatens VL's proof-authoring cost because its tight ed
 - checked tactic suggestion — simulate every candidate in the proof assistant and display only error-free candidates with remaining goals
 - goal-dependent proof search — add generated tactics to a best-first search whose branches are accepted only when fully checked
 - premise retrieval and annotation — rank premises by goal embedding and show scope, type, documentation, or import source for human choice
-Checked 2026-10-15 against paper song2024leancopilot: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

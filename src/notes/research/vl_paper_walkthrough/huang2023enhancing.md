@@ -59,4 +59,4 @@ Inference: threat to agent-written verified Rust is medium-high if MPSC is used 
 - inter-consistency graph — weight cross-perspective edges by executable agreement
 - intra-consistency confidence — estimate output reliability from lexical or structural similarity
 - Laplacian reranking — optimize combined graph and confidence losses to choose a candidate
-Checked 2026-10-15 against paper huang2023enhancing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

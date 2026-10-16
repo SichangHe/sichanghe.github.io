@@ -38,4 +38,4 @@ The solver proves entailment, consistency, and satisfiability of the encoded for
 - interleaved solver/LLM RL — train structured natural-language plus formal-step outputs with GRPO and a frozen-policy KL penalty
 - trace ablation diagnostics — report solved/failed denominators, SAT-rate, parse and validity ratios, step counts, and contradictions per 100 steps
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -119,4 +119,4 @@ Inference: this is a direct specification gap for VL. Verus can prove a generate
 - goal-tree refinement — use AND/OR subgoals, with equivalence-strengthened decompositions for negative contexts
 - goal-tree expansion — add missing intermediate goals and elicit new domain rules when existing artefacts cannot refine a node
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

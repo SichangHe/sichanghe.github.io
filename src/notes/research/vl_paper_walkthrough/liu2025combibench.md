@@ -63,4 +63,4 @@ Inference: direct product threat is moderate. The work demonstrates a robust ver
 - paired formal benchmark: curate informal problems with Lean or Verus statements, metadata, and documented exclusions
 - staged answer verification: compile exact model output, then prove equality to a reference when syntax differs
 - strict one-call check: use definitional equality as a low-cost but deliberately incomplete fallback
-Checked 2026-10-15 against paper liu2025combibench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

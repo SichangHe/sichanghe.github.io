@@ -42,4 +42,4 @@ Inference: this is a high threat to agent-written verified Rust when a pipeline 
 - generative verification: distill oracle labels into a reference-free Yes/No vocabulary score
 - LoRA answer-only training: mask context loss and optimize only the final verification token
 - gradient/SAE diagnostics: localize verifier evidence with decision-projected gradients and sparse features
-Checked 2026-10-14 against the paper by a Codex agent: audit record singh2026solver; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

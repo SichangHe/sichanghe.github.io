@@ -139,4 +139,4 @@ Already done that VL should reuse: stepwise decomposition, hard-negative generat
 - independent candidate checking — use a separate verifier or checker rather than trusting the generator
 - structural proof metrics — score leaves, steps, intermediate conclusions, and overall correctness separately
 - multi-stage versus one-stage tradeoff — compare search and verifier cost against a single contrastive generator
-Checked 2026-10-15 against paper su2023condec: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

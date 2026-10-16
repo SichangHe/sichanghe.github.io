@@ -66,4 +66,4 @@ Lean checks generated proof terms against its environment; the benchmark therefo
 - auxiliary lemma discovery: generate subgoals, special cases, and hypothesis-derived facts, then formalize and prove them independently
 - lemma-guided synthesis: place verified lemmas in the parent context and search/refine a final proof under a fixed sample budget
 
-Checked 2026-10-15 against the paper by a Codex agent for prover_agent_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -81,4 +81,4 @@ The paper's claim is operational reproducibility: the same artefact can be rebui
 - dependency-triggered regression — rerun builds and tests when a third-party dependency changes
 - artefact traffic-light review — execute submitted artefacts in parallel with review and report reproducibility status
 - controlled performance replay — use frozen or otherwise controlled environments before comparing benchmark timings
-Checked 2026-10-15 against paper crick2015cav: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

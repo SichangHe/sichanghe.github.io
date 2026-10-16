@@ -79,4 +79,4 @@ Inference: the threat to agent-written verified Rust is a provable but incomplet
 - alignment selection: choose the highest-scoring formal candidate from a pool
 - threshold detection: classify pairs with a calibrated `V_align` threshold and report precision/recall
 - expert calibration: compare automated labels with a fixed, balanced human sample and publish denominators
-Checked 2026-10-15 against paper lu2024formalalign: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

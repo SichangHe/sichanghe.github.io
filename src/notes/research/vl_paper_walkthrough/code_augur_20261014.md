@@ -109,4 +109,4 @@ Code-Augur already combines threat modeling, source-level invariant recording, s
 - threat-model artifact — record attacker control, scope, trust boundaries, security state, and exclusions before local reasoning
 - falsifiable invariant loop — commit security assumptions as source assertions, target them with grey-box fuzzing, triage violations, and refine benign assumptions
 - boundary PoV validation — report only candidates reproducible from an attacker-controlled program boundary and allowed by the threat model
-Checked 2026-10-14 against the paper by a Codex agent: audit record luo2026codeaugur; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

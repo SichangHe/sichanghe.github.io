@@ -63,4 +63,4 @@ Inference: The paper already demonstrates specification-first corpus filtering, 
 - Inference: calibrated confidence: softmax answer-token log probabilities and separate confidence from verifier acceptance
 - Inference: generation-time SMT gate: check each partial artifact before committing it to the design
 - Inference: constraint-rich benchmark: publish executable oracles and explicit denominators for reproducible verification-aware evaluation
-Checked 2026-10-15 against paper song2026data: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

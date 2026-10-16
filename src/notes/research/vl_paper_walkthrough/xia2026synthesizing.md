@@ -93,4 +93,4 @@ Inference: VL should not redo opaque embedding-based feature engineering as its 
 - solver-aware feature engineering — add tightness, propagation, constraint-family, and domain metrics correlated with solver behavior
 - inspectable fixed-shape output — require exactly 50 named features and a methodology description for downstream selection
 - multi-run selector evaluation — compare baselines, all independent syntheses, and valid-run denominators with held-out accuracy and rank
-Checked 2026-10-15 against paper xia2026synthesizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

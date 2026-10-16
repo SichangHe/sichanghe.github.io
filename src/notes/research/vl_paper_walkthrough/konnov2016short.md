@@ -89,4 +89,4 @@ Inference: the threat to agent-written verified Rust is high for threshold-guard
 - representative schedule shortening: reorder threads and accelerate repeated rules while preserving intermediate formula conditions
 - parameter scaling: use a finite multiplier to handle conjunctions of disjunctions of nonzero-location tests
 - SMT lasso checking: encode bounded schedules, loop closure, guards, and acceleration factors as linear integer arithmetic
-Checked 2026-10-14: audit record konnov2016short; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

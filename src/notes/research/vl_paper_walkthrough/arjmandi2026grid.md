@@ -45,4 +45,4 @@ The paper measures parser and policy behavior, latency, serving, and execution a
 - byte-trie token bridge: walk canonical token bytes, prune dead subtrees, and split cacheable CI from live-stack CD tokens
 - configuration-keyed cache: content-address masks by parser/lexer/schema state and prove cache-on equals recomputation
 - hard policy and audit loop: enforce role/schema grammar projections, record hash-chained decisions, and repair post-parse residue
-Checked 2026-10-15 against paper arjmandi2026grid: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

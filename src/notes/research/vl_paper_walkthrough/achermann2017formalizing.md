@@ -86,4 +86,4 @@ Inference: the threat to VL is high for low-level Rust that configures MMUs, IOM
 - ranking termination — prove recursive resolution total with a natural-valued rank that decreases on every decode step
 - view-equivalent normalization — flatten or split a hardware graph while preserving every observer's resolved resources
 - concrete refinement — prove syntax-level transformations commute with parsing and preserve semantic views
-Checked 2026-10-15 against paper achermann2017formalizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

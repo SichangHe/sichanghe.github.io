@@ -27,4 +27,4 @@ The method trusts the compiler, unit tests, benchmark labels, critic calibration
 - token-level critic returns — train a correctness critic and use relative per-token returns to give dense RL feedback
 - critic sampling and repair — filter test outcomes, rank failures, condition repair on diagnostics, and regenerate from promising subsequences
 - pass@k and filtered n@k — report sampled-solution success with benchmark, denominator, model, and sampling budget explicitly
-Checked 2026-10-14 against the paper by a Codex agent: audit record le2022coderl; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

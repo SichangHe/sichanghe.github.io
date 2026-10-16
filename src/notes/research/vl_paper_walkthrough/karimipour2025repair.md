@@ -64,4 +64,4 @@ Trusted elements include NullAway, annotation inference, JavaParser, LLM classif
 - safe usage-region retrieval — index symbol contexts and prompt patches with project-consistent safe examples
 - triggered-error propagation — rerun the checker after each annotation and process newly exposed errors under a fixed budget
 - structured prompt validation — enforce XML schemas, benchmark prompt decisions, bounded retries, and syntax checks
-Checked 2026-10-15 against paper karimipour2025repair: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

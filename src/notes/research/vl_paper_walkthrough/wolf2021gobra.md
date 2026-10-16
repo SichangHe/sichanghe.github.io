@@ -62,4 +62,4 @@ Inference: For VL, Gobra's strongest lesson is modular ownership plus protocol p
 - permission-carrying concurrency predicates — encode channel, lock, goroutine, and wait-group protocols as resource-transfer invariants
 - modular intermediate encoding — hide representation through Viper-style abstractions, case-split interface predicates, and first-class predicate values
 - annotation and verification measurement — report annotation/code ratios, per-example verification times, and seeded specification/implementation failures
-Checked 2026-10-13: audit record wolf2021gobra; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

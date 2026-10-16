@@ -89,4 +89,4 @@ Inference: for agent-written verified Rust, the main threat is a model that is i
 - hardware/mid-layer abstraction — replace bus, registers, timer, and scheduler with explicit behavioral models and assumptions
 - invariant-plus-measure loops — prove scheduler safety and termination with a preserved state invariant and decreasing measure
 
-Checked 2026-10-15 against the paper by a Codex agent for openbsd_formal_driver_verification_with__20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

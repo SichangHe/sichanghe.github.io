@@ -40,4 +40,4 @@ Inference: SCD is useful for VL because it turns teacher disagreement into an ab
 - semantic equivalence clustering: use solver checks to group logically identical candidates before labeling
 - entropy-stratified selection: vote, judge, or abstain according to disagreement among equivalence classes
 - checker-gated distillation: fine-tune a small model on selected labels while retaining formal verification as the deployment gate
-Checked 2026-10-15 against paper hou2026stratified: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

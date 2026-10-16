@@ -87,4 +87,4 @@ Inference: The threat to VL is high for specification misunderstanding and false
 - expressibility-conditioned comparison — compare model and tool metrics only on matched expressible subsets and report coverage separately
 - evidence auditing — inspect whether counterexamples are executable and whether true answers include all necessary assumptions
 
-Checked 2026-10-15 against the paper by a Codex agent for llms_as_verification_oracles_for_solidit_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

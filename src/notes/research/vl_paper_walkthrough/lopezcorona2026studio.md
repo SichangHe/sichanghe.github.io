@@ -206,4 +206,4 @@ Inference: The paper presents a substantial governance threat and a conditional 
 - prospective understanding audit: test strategy, dependencies, reconstruction, diagnosis, transfer, significance, and authorization after assistance
 - conditional antifragility: retain, select, convert, and expose failures so perturbations improve defined utility
 - evidence contract and claim ledger: give each claim an ID, type, evidence basis, validation route, status, and uncertainty
-Checked 2026-10-15 against paper lopezcorona2026studio: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

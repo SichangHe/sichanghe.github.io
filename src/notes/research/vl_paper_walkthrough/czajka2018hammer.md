@@ -29,4 +29,4 @@ What is proved: reconstructed Coq terms type-check in Coq's logic. What stays tr
 - learned premise selection — rank a small, goal-relevant fact set from statements and previous proofs
 - dependent-logic encoding — translate CIC declarations and goals into untyped first-order ATP input
 - checked reconstruction — replay ATP dependencies with proof-assistant search, rewriting, congruence, and forward reasoning
-Checked 2026-10-14: audit record czajka2018hammer; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

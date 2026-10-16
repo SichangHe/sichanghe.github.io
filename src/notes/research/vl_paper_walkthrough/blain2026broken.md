@@ -62,4 +62,4 @@ Inference: threat to VL is high for agent-written unverified systems code becaus
 - secure-prompt ablation — compare identical prompt corpora with and without explicit security instructions
 - differential static-tool evaluation — measure each analyzer's recall against the Z3-proven denominator
 - generation–review asymmetry test — ask the generating model to review its own formally proven outputs and report false negatives
-Checked 2026-10-14 against the paper by a Codex agent: audit record blain2026broken; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -77,4 +77,4 @@ Inference: the main reusable idea is to compile reachability into one logical sa
 - regular-separator completeness — derive a finite monoid model when a regular set separates reachable and unsafe configurations
 - automata/transducer reduction — compile regular model checking into first-order predicates for one finite-model query
 - specialized encodings — simplify generic formulas using transition rules, automata, grammars, and sequence-specific schemas
-Checked 2026-10-15 against paper lisitsa2010finite: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

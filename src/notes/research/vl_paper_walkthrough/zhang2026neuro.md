@@ -124,4 +124,4 @@ Inference: For a product that asks an agent to write verified Rust, this method 
 - counterexample-guided refutation — negate a postcondition and use concrete Coq tests plus hammer to prove one violating case
 - anti-trivialization checks — reject missing input bindings and `admit`, `Parameter`, or `Axiom` declarations in refutation tests
 - overlap-aware benchmark construction — normalize C data types for QCP and report overlapping structure categories with denominators
-Checked 2026-10-13: audit record zhang2026neuro; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

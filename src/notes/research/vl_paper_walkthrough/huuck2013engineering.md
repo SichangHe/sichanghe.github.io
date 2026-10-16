@@ -70,4 +70,4 @@ Inference: VL should not redo a generic “one button” wrapper around verifica
 - SMT refinement loop — recheck abstract warnings with SMT constraints to separate spurious from feasible reports
 - engineering-scale caching — use incremental analysis, inter-function summaries and databases to handle millions of analysis tasks
 - workflow-integrated reporting — run at compile time and present severity, traces, trends and standards reports in existing tools
-Checked 2026-10-15 against paper huuck2013engineering: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

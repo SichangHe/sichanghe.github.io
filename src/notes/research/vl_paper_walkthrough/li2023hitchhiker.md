@@ -37,4 +37,4 @@ Static-analysis extraction, source retrieval, prompts, LLM outputs, and majority
 - conversation decomposition — separate initializer/constraint extraction from behavior summarization
 - self-validation and voting — repeat constrained analyses, check rule adherence, and aggregate outputs
 - LLM-assisted static triage — use model summaries to prioritize candidates while retaining a checker as oracle
-Checked 2026-10-15 against paper li2023hitchhiker: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

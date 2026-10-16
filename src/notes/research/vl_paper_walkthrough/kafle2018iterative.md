@@ -88,4 +88,4 @@ Inference: product risk from agent-written verified Rust is moderate. The method
 - trace elimination — remove selected feasible or infeasible error traces and add their initial-state exclusions
 
 - iterative precondition refinement — alternate PE, CS, and TE, then complement specialized initial constraints
-Checked 2026-10-14 against the paper by a Codex agent: audit record kafle2018iterative; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

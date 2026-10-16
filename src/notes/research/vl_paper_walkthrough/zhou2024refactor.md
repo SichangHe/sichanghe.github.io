@@ -47,4 +47,4 @@ The paper proves validity only for candidates accepted by its Metamath verificat
 - checker-gated lemma mining — reject disconnected or invalid predictions, canonicalize accepted components, and retain only verified theorems
 - proof refactoring — repeatedly match extracted lemmas and replace matching subtrees with calls
 - verified-library training — train proof search on checker-accepted, refactored proofs and measure held-out theorems proved
-Checked 2026-10-15 against paper zhou2024refactor: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -43,4 +43,4 @@ What is already done. Rule-based C2Rust conversion, retrieval prompting, semanti
 - structured semantic summary — expose input, output, and functionality before code generation
 - error-driven translation — compile generated Rust and iteratively repair from concrete diagnostics
 - safety-aware translation rules — encode pointer, I/O, integer-width, and array-index conventions as reusable hints
-Checked 2026-10-15 against paper luo2025integrating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

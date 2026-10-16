@@ -75,4 +75,4 @@ The only headline performance number for this system is the inherited 90.4% mini
 - AST subgoal extraction: traverse a proof AST to recover unproved propositions with complete context
 - recursive breadth-first proving: solve child obligations with depth limits and ancestor backtracking
 - proof reconstruction: substitute verified child proof bodies into parent sketches and re-verify the assembled artifact
-Checked 2026-10-15 against paper davis2025godelspoetry: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

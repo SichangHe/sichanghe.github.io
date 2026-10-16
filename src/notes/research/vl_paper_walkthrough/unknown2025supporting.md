@@ -45,4 +45,4 @@ Inference: the main threat to agent-written verified Rust is specification drift
 - bounded ESBMC triage — use finite-depth verification to expose safety errors while reporting state-space and timeout limits
 - floating-point semantic checking — verify with IEEE-754 behavior to detect errors hidden by rational-number abstractions
 - human review of ambiguity — inspect intermediate specifications and assumptions before trusting generated properties
-Checked 2026-10-13: audit record unknown2025supporting; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

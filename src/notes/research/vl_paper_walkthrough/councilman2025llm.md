@@ -131,4 +131,4 @@ Inference: the most reusable design is a user-readable intermediate specificatio
 - unification-based verification — match program and query state pairs while reporting extra assumptions and actions
 - module description compilation — specify DSL modules’ types and state effects, then compile source tasks into the common calculus
 - knowledge-base lowering — resolve high-level descriptions to system-specific package, file, and configuration facts
-Checked 2026-10-13: audit record councilman2025llm; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

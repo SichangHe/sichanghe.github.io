@@ -47,4 +47,4 @@ The TCB classification trusts the Rust toolchain; crates with unsafe code and th
 - safe policy injection: isolate complex policies behind verified mechanism contracts
 - KernMiri testing: interpret OS tests with physical-memory shims to detect undefined behavior
 - linked code size: measure TCB-relevant executable lines after link-time optimization
-Checked 2026-10-15 against paper zhang2025asterinas: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

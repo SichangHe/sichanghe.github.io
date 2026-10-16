@@ -93,4 +93,4 @@ Inference: For agent-written verified Rust, the threat is moderate and specific.
 - domain-specific definitions — introduce a new predicate when an imported name has a different mathematical meaning
 - theorem-backed tactic — turn a proved abstraction theorem into automation with explicit scope and performance limits
 - staged research formalization — prove a core theorem in a simple setting, then derive general corollaries and counterexamples
-Checked 2026-10-15 against paper munozlahoz2026banach: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

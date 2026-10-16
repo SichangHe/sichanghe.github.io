@@ -69,4 +69,4 @@ Inference: the threat to agent-written verified Rust is moderate for replicated 
 - parameterized trap query: prove every instance by unsatisfiability of marking, trap-invariant, and negated-safety formulas
 - structural one-invariant refinement: use initial and unique-intersection conditions to add linear invariants
 - combined trap/one-invariant checking: intersect both overapproximations before testing the safety property
-Checked 2026-10-14: audit record bozga2020structural; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

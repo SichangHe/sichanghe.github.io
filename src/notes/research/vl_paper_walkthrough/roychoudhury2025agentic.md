@@ -25,4 +25,4 @@ The paper's evidence is synthesis of prior systems (AutoCodeRover, SpecRover, SW
 - code-search intent inference — localize issue-relevant elements and infer behavior before patch generation
 - symbolic intent inference — use symbolic execution to generalize beyond tests and reduce repair overfitting
 - iterative proof-agent loop — parse proof states, propose lemmas or contracts, invoke a prover, and refine on failures
-Checked 2026-10-14 against the paper by a Codex agent: audit record roychoudhury2025agentic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -78,4 +78,4 @@ Inference: what the paper has already done that VL should not redo is the generi
 - generic-plus-generated proof infrastructure — reuse static semantics and tactics while generating model-specific transitions and lemmas
 - trusted-base separation — trust only the checker and model representation while treating proof hints and proof generation as untrusted inputs
 - non-arithmetic reachability lemmas — prove impossible guards prevent states or force a specific successor under system preconditions
-Checked 2026-10-14: audit record brunner2011tool; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -54,4 +54,4 @@ Inference: Trusted facts are Lean kernel compilation in pinned isolated environm
 - Inference: milestone and reusable library — anchor canonical lemma statements and index proved modules for later imports
 - Inference: asynchronous correction and reproducibility — share counterexamples in a discussion channel and pin toolchains so repaired proofs reproduce
 
-Checked 2026-10-15 against the paper by a Codex agent for prove2me_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

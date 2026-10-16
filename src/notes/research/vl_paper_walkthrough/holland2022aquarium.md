@@ -59,4 +59,4 @@ Proved or specified: Cassiopea expression/statement semantics, indexed typing ju
 - frame contracts — state modified locations and pre/postconditions for machine blocks
 - abstract-to-concrete lowering — translate Alewife specifications through machine-specific modules into typed Cassiopea
 - explicit failure semantics — make invalid pointers and runtime checks part of the semantics so evaluation does not get stuck
-Checked 2026-10-14 against the paper by a Codex agent: audit record holland2022aquarium; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -45,4 +45,4 @@ Inference: threat to a product that generates verified Rust is medium. Contract 
 - modular recursive contracts: prove generic-call contracts from body proofs, then reuse them as assumptions in later proofs
 - property-first decomposition: prove permutation or another auxiliary property before the stronger functional property
 - ranking-function termination: choose a nonnegative bound and prove every recursive call strictly decreases it
-Checked 2026-10-14: audit record apt2009modular; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

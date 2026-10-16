@@ -84,4 +84,4 @@ Inference: The threat to agent-written verified Rust is concentrated in erased e
 - address-refined list domain: protect selected heap locations from list folding
 - sorted-list refinement: combine interval sortedness with selected-value multiplicities
 - conditional progress/completeness: require exact forward transfer, precise backward transfer, and a sufficient selector for termination guarantees
-Checked 2026-10-14: audit record botincan2015refining; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

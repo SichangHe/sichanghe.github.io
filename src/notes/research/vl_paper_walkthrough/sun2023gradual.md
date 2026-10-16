@@ -28,4 +28,4 @@ Evidence is a prototype pipeline and one `sell` example; the paper reports no be
 - obligation weaving: collect obligations depending on `?` and insert runtime checks at their source locations
 - external-call guarding: check caller and callee pre/postconditions around unverified or re-entrant calls
 - incremental specification: replace runtime checks with static proofs as annotations become more complete
-Checked 2026-10-15 against paper sun2023gradual: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

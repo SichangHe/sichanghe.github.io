@@ -98,4 +98,4 @@ Inference: the threat to VeruLaw is a high risk of accepting plausible but inval
 - sequential compute scaling: spend more reasoning on each judgment and compare with parallel votes
 - self-verification audit: compare a generator’s human-judged solve rate with its own verification rate
 - disagreement audit: convert expert/model false positives into targeted verifier cases
-Checked 2026-10-15 against paper pandit2025hard2verify: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

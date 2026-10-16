@@ -54,4 +54,4 @@ The model assumes correct Pthread library abstractions and focuses on client pro
 - UW under-approximation — widen control-literal restrictions using unsatisfiable-core participation
 - partial-order reduction — remove invisible and access-independent interleavings under an aliasing assumption
 - deadlock-aware Pthread models — track mutex/condition waiters and assert that blocked threads cannot equal running threads
-Checked 2026-10-14 against the paper by a Codex agent: audit record cordeiro2010bounded; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

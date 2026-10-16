@@ -69,4 +69,4 @@ The paper has already explored generic symbolic theorem augmentation with `rw`/`
 - verifier-filtered corpus growth — compile every generated theorem and discard failures before training
 - state-tactic extraction — trace accepted variants into deduplicated proof-state/next-tactic pairs
 - tactic-balanced continual training — mix mutation families during pretraining and supervised proof-step finetuning
-Checked 2026-10-14 against the paper by a Codex agent: audit record wu2025alchemy; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -203,4 +203,4 @@ Inference: low and indirect. QCP is for C, needs a person fluent in Rocq for a q
 - heap entailment in four moves — normalise, apply an unfolding lemma, introduce and instantiate existentials, cancel the frame
 - refinement through an abstract program — prove the algorithm on a pure model and prove the code consumes that model, leaving only its result
 - checker soundness contract — for a decision procedure, prove only that a positive answer is correct, with one postcondition case per return code
-Checked 2026-10-13: audit record wu2025qcp; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

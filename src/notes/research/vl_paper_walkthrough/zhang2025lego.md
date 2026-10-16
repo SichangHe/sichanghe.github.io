@@ -76,4 +76,4 @@ The paper proves composability for its modeled language and reports executable-t
 - feedback-driven repair: retry failed assembly, runtime, or behavioral checks using diagnostic feedback
 - LEGO scaling pattern: translate independently sized control blocks and rebuild them into a larger program
 
-Checked 2026-10-15 against the paper by a Codex agent for lego_compiler_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

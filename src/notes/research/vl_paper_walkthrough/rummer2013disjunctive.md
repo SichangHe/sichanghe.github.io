@@ -71,4 +71,4 @@ Inference: a product that lets agents write verified Rust is moderately threaten
 - lazy and/or-dag expansion: expand only enough of shared counterexample structure to expose an unsatisfiable fragment
 - and/or restructuring: factor common sub-dags below disjunctions before interpolation
 - ARG-based recursive verification: maintain hyperedges over predicate sets and refine error edges with interpolant-generated predicates
-Checked 2026-10-14: audit record rummer2013disjunctive; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

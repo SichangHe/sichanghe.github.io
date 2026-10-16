@@ -95,4 +95,4 @@ Inference: threat to agent-written verified Rust is high if a product scores or 
 - adversarial manipulation taxonomy — test style confidence, reflective reasoning, progress fabrication, environment blaming, and goal framing
 - manipulation-aware/rubric judging — ground verdicts in task requirements and observable evidence with explicit prompts or key points
 - judge-time scaling — use parallel self-consistency or longer sequential reasoning and report robustness/recall tradeoffs
-Checked 2026-10-15 against paper khalifa2026gaming: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -94,4 +94,4 @@ Inference: VL should reuse the sequential-reference pattern, explicit ownership/
 - barrier timeline modeling — use full and temporal ordering to validate fences and split barriers
 - fail-on-error code generation — generate CUDA only after collective, memory, and synchronization checks succeed
 - equivalence-chain scheduling — compose sequential rewrite proofs with a separate parallel-safety proof
-Checked 2026-10-15 against paper akeley2026exogpu: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

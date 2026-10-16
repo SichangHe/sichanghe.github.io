@@ -70,4 +70,4 @@ Inference: because Verus has no Ltac analogue in the cited paper, the first VL i
 - held-out generalization testing — insert each candidate into many external proof states, retain only non-no-op applications above a measured threshold
 - theorem-indexed retrieval — retrieve source theorems with BM25 and use their associated tactics to overcome sparse tactic text
 - And-Or tactic search — alternate ATP solving with candidate tactic application, requiring every generated subgoal to close
-Checked 2026-10-13: audit record fang2026learning; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

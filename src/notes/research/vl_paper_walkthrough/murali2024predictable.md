@@ -144,4 +144,4 @@ Inference: VL should not redo the paper’s intrinsic definitions, broken-set di
 - fix-what-you-break: augment mutations with ghost-map repairs and a broken-location set that is empty at method boundaries
 - finite impact sets: derive bounded mutation neighborhoods and prove that all locations outside them preserve local conditions
 - decidable VC engineering: encode heaps, allocation, calls, and ghost updates with quantifier-free maps, sets, and parameterized updates
-Checked 2026-10-13: audit record murali2024predictable; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

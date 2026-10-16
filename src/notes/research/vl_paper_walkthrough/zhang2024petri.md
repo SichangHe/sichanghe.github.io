@@ -47,4 +47,4 @@ The paper already supplies a MIR-to-PPN formalization, three detectors, reductio
 - relaxed atomicity backtracking — trace predecessors from a branch after a relaxed load and collect unsynchronized relaxed stores
 - Petri-net reduction — compress linear chains, prune irrelevant calls, and abstract resource-free loops before exploration
 
-Checked 2026-10-15 against the paper by a Codex agent for petri_nets_based_methods_on_automaticall_2_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

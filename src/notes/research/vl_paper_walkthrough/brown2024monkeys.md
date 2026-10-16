@@ -70,4 +70,4 @@ Inference: For VeruLaw, repeated checker-backed generation is a practical way to
 - budget-aware sampling: compare model size and sample count at fixed FLOPs or dollars using fitted coverage curves
 - verifier precision audit: measure selection methods separately from oracle coverage and test for flaky, false-positive, and false-negative checkers
 - formal-proof candidate pipeline: use Lean/Verus compilation and proof checking as the selection oracle for generated proof artifacts
-Checked 2026-10-15 against paper brown2024monkeys: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

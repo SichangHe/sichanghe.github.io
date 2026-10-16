@@ -61,4 +61,4 @@ The benchmark proves only that its automatic filters and Lean checker label the 
 - five failure strategies: test minimal mutations, misleading explanations, foreign-language code, forced tactic mistakes, and verbose camouflage
 - position-consistent reward scoring: require the same correct preference under both proof orderings
 - verifier plus manual QA: combine deterministic Lean labels with a sampled human inspection for realism
-Checked 2026-10-15 against paper ulusan2026formalrewardbench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

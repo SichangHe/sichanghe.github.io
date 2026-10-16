@@ -76,4 +76,4 @@ Inference: for VL, the main threat is model mismatch. Agent-written verified Rus
 - LLVM cost semantics: charge each modeled instruction and prove Hoare triples with separation-logic time credits
 - heap nondeterminism refinement: connect abstract computations to heap implementations while preserving representations and amortized credits
 - phased introsort complexity proof: prove recursive partition/fallback and final insertion costs separately, then compose them into an (O(n\log n)) bound
-Checked 2026-10-15 against paper haslbeck2021dollars: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

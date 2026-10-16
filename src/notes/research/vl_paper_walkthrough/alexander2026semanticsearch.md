@@ -41,4 +41,4 @@ Inference: VL should reuse theorem-level indexing, sloganization with source lin
 - two-stage vector search: HNSW and quantized candidate retrieval followed by cosine or cross-encoder reranking
 - blind validation: evaluate Hit@k and MRR on queries written without corpus access
 - retrieval-augmented proving: supply retrieved lemmas to an agent while requiring the proof checker to accept use
-Checked 2026-10-15 against paper alexander2026semanticsearch: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

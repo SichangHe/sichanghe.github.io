@@ -45,4 +45,4 @@ Trusted components are the extracted facts, benchmark ground truth, Dafny compil
 - deterministic plus semantic extraction — parse structured evidence first and call an LLM only for residual semantic facts
 - layered Dafny/Z3 composition — compile facts, derived predicates, and safety predicates, then prove their composition
 - proof-guided refinement — feed formal violations back to the agent for repeated correction
-Checked 2026-10-15 against paper zhou2026formaljudge: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

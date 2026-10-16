@@ -80,4 +80,4 @@ Inference: threat to VeruLaw is medium for ZKP products and low for ordinary sys
 - model creation strategies — choose extraction, IR translation, hand-written models, or correctness by construction with their correspondence assumptions
 - proof-backend selection — match interactive theorem proving, SMT, or specialized tactics to algebraic scope and CI needs
 - trusted-base audit — report verified components, specifications, model gaps, extraction tools, kernels, axioms, and theorem fidelity
-Checked 2026-10-15 against paper kolozyan2026zkp: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

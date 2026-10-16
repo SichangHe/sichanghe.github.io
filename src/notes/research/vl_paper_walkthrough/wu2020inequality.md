@@ -97,4 +97,4 @@ Inference: the product threat is medium for evaluation quality rather than direc
 - six-axis OOD evaluation — vary initial condition, axiom order, combination, count, length, and IID distribution separately
 - axiom-space MCTS — search a small axiom branch space while a policy proposes concrete arguments
 - verifier-backed success accounting — count complete proofs and state denominators, step limits, and unsolved penalties
-Checked 2026-10-15 against paper wu2020inequality: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

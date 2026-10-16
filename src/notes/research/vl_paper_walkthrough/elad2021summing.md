@@ -98,4 +98,4 @@ The paper proves soundness of its encodings relative to transition definitions a
 - first-order transition encodings: compile local coin updates and aggregate effects into SMT or theorem-prover formulas
 - induction and lemma splitting: handle unbounded mint/transfer transitions by explicit coin induction and intermediate lemmas
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -81,4 +81,4 @@ The paper’s central claim is intentionally narrow: it does not replace Loom or
 - constrained LLM concretization: compile and structurally repair generated Rust while forbidding invented events and weakened assertions
 - conflict-first schedule shaping: allocate Loom or deterministic scheduler budget to high-conflict partial-order harnesses
 - layered semantic oracle: separate structural concretization errors from outcome, invariant, and liveness failures
-Checked 2026-10-15 against paper zhang2026resource: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

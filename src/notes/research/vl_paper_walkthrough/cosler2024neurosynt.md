@@ -54,4 +54,4 @@ Inference: for a product that emits agent-written verified Rust, this reduces th
 - checked neural portfolio: run neural and symbolic synthesis in parallel and accept only model-checked candidates
 - pattern-mined training: mine, filter, alternate, and augment specification patterns with realizability labels
 - counterexample loop: send candidate circuits to a checker, retain status/counterexamples, and cache repeated checks
-Checked 2026-10-15 against paper cosler2024neurosynt: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

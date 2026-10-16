@@ -74,4 +74,4 @@ Inference: the paper's LOCC restriction is a product boundary. Its conclusion sa
 - cq assertion expectations — express classical predicates and quantum observables as operator-valued assertions with expectation-based Hoare triples
 - partial-correctness distributed Hoare rule — verify initializers and every matched communication branch before concluding a `TERM`-guarded postcondition
 - ranking-based total correctness — combine a preserved invariant with a decreasing assertion sequence or integer rank and a deadlock-to-termination implication
-Checked 2026-10-14: audit record feng2021verification; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

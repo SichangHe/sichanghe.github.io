@@ -80,4 +80,4 @@ Inference: the threat to a product of agent-written verified Rust is high if the
 - rejection sampling audit — retain verified candidates while reporting failures, retention rates, and changed difficulty distribution
 - pass@k coverage — vary ATP attempts, report diminishing returns, and expose verifier capability limits
 - paired rewrite evaluation — compare original and proof-verified rewrites to diagnose memorization and reformulation sensitivity
-Checked 2026-10-15 against paper zhou2026repro: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

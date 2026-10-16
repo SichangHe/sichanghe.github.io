@@ -271,4 +271,4 @@ Inference: none as a competitor; the paper has no language model, no Rust, and a
 - frame equations in summaries: for loops that write, add to the summary that the remaining iterations leave the already written region unchanged.
 - break obligations: prove the postcondition or summary at each break and never assume the negated test after a loop that has one; model early return as flag plus break.
 - Horn-clause inference of contracts: encode both styles as constrained Horn clauses and let Eldarica or Z3 find the predicates; contracts solved 232 against 237 (Eldarica) and 201 against 234 (Z3) of 459 tasks.
-Checked 2026-10-13: audit record ernst2020loop; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

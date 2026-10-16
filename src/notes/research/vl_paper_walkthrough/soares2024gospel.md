@@ -113,4 +113,4 @@ The work already demonstrates a mature pattern VL should not redo as a generic n
 - automated VC discharge: translate contracts to WhyML and solve routine verification conditions with SMT
 - separation-logic fallback: define heap representation predicates and prove mutable pointer structures interactively
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

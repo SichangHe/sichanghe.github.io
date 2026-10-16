@@ -147,4 +147,4 @@ Inference: VL should reuse dynamic abstract state, explicit coupling predicates,
 - relational frame translation: encode heap effects with explicit two-state maps and postconditions for untouched locations
 - adequacy and encapsulation checks: project biprograms and generate boundary, disjointness, and framing obligations before proving the relation
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

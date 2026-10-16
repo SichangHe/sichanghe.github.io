@@ -69,4 +69,4 @@ T2 trusts LLVM/llvm2kittel translation, arithmetic abstraction, Z3 and safety-pr
 - recurrent-set nontermination: witness an infinite execution by finding a set that can return to itself
 - CTL precondition synthesis: compute location predicates bottom-up and verify the reduced formula
 - fairness and CTL-star reduction: use prophecy or prediction variables to reduce richer temporal logics
-Checked 2026-10-14: audit record brockschmidt2015t2; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

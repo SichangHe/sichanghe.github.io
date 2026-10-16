@@ -76,4 +76,4 @@ The abstract calls the corpus 338 cryptographic implementations, while the compi
 - fault-packing — batch basic-block insecurity predicates into one solver disjunction, trading fault precision for speed
 - bounded CT and bug finding — use the symbolic theorems to classify bounded paths as secure or produce concrete violating models
 - binary lifting and stubs — lift executables to DBA and specify external calls and inputs so the relational engine can run
-Checked 2026-10-14 against the paper by a Codex agent: audit record daniel2019binsec; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

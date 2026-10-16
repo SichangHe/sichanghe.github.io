@@ -75,4 +75,4 @@ Inference: IBEX interval arithmetic, ESBMC parsing and symbolic execution, the S
 - outer/inner decomposition — separate guaranteed failures, guaranteed successes, and an undecided boundary
 - monotonicity-aware instrumentation — insert `assume` only for safe tail regions of monotone loops
 - syntax and interval filtering — disable contraction when operators or interval precision are unsupported
-Checked 2026-10-15 against paper aldughaim2020incremental: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

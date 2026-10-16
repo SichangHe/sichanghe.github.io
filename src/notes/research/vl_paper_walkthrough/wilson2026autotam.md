@@ -126,4 +126,4 @@ Inference: the trusted base includes the AutoTam parser/interpreter, C implement
 - automatic security lemmas — generate weak-secrecy, injective-agreement, and reachability properties from event annotations
 - sources-lemma guidance — add a manual Tamarin invariant when generated WireGuard proofs need partial-deconstruction facts
 - KLEE symbolic execution — explore symbolic network inputs and cryptographic abstractions for bounded memory safety
-Checked 2026-10-14 against the paper by a Codex agent: audit record wilson2026autotam; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

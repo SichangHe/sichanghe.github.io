@@ -43,4 +43,4 @@ Inference: threat to VL is high for proof-search workflow engineering but low fo
 - evaluator portfolio — combine likelihood, reward, novelty, judge, tournament, and REPL signals for node ordering
 - verifier adapter and cache — standardize REPL calls and cache checked proof text while preserving toolchain identity
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

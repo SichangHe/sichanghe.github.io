@@ -64,4 +64,4 @@ Inference: threat to a product that emits agent-written verified Rust is high if
 - shape-routed proof dispatch — classify proof shape, race capable backends, and cross-route structured negatives while kernels decide success
 - honest-negative protocol — require workers to report machine-checkable failure modes instead of plausible unverified success
 - specification-to-runtime codegen — hash canonical specs, generate invariant checks, and run them at configured production or test tiers
-Checked 2026-10-15 against paper falda2026federated: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

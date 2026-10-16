@@ -109,4 +109,4 @@ Inference: Existing Verus infrastructure already checks concrete loop invariants
 - completeness audit: test pointwise transfer completeness before claiming abstract and concrete fixpoints coincide
 - co-inductive backward synthesis: compute a greatest fixpoint by repeatedly intersecting safety, predecessor, and abstract-avoidance facts
 - domain expressiveness diagnosis: report when no invariant exists in the selected abstract domain under its computability assumptions
-Checked 2026-10-14: audit record ranzato2020decidability; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

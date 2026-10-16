@@ -67,4 +67,4 @@ Inference: Threat to agent-written verified Rust is indirect and moderate. The r
 - Darboux invariant synthesis: polynomialize transcendental dynamics, search bounded-degree Darboux polynomials, and combine equal cofactors into invariant functions
 - differential-invariant safety: encode switched ODEs as hybrid programs and prove branch Lie-derivative conditions with a differential-invariant rule
 - staging-set reachability: chain invariant regions with strictly decreasing progress functions to prove eventual target entry
-Checked 2026-10-15 against paper martin2017station: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

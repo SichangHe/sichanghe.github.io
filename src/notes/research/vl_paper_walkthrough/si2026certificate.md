@@ -112,4 +112,4 @@ Already done. CertiBlock already combines fail-closed acceptance, certificate re
 - multi-family obligation registry: share well-formedness, lens, and structural checks while adding family-specific side conditions
 - certified sequence composition: check each rewrite against the actual intermediate produced by the previous rewrite
 - adversarial and differential validation: combine unit suites, cross-family perturbations, deterministic VM traces, and side-condition ablations
-Checked 2026-10-14 against the paper by a Codex agent: audit record si2026certificate; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

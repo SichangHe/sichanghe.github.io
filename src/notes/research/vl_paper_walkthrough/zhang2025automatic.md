@@ -72,4 +72,4 @@ Existing work already covers interval, real-arithmetic, interactive Flocq/Gappa,
 - SELTZO abstraction: track sign, exponent, and leading/trailing mantissa runs to reduce finite-precision reasoning to QF LIA
 - one-sided abstract counterexample reduction: prove a concrete property from unsatisfiability of an overapproximated abstract counterexample formula
 - solver-backed tight error proofs: combine SMT unsatisfiability with algebraic postprocessing to derive relative error bounds and compare solver cost
-Checked 2026-10-15 against paper zhang2025automatic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

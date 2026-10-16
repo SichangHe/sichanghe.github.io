@@ -50,4 +50,4 @@ Inference: the main threat to agent-written verified Rust is a false sense of co
 - downstream prompt context: provide successor declarations with natural-language proof context during generation
 - coverage-controlled evaluation: increase successor count and dependency depth to make semantic tests stricter
 - caller-slice Verus inference: re-run Verus over every dependent specification and executable caller after replacement
-Checked 2026-10-14 against the paper by a Codex agent: audit record kim2026testing; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

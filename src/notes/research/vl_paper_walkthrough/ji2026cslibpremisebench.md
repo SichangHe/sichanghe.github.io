@@ -60,4 +60,4 @@ Inference: for VL, the practical threat is moderate: a structure-biased retrieve
 - proxy-label audits: compare source-visible references with a stronger elaborated-expression probe and report the denominator
 - structure-guided reranking: combine BM25, symbol overlap, namespace/import/source-order and module-graph features with fixed weights
 - context-packet utility: evaluate finite top-k premise packets by coverage, token cost, density, and locality before claiming proof-assistance benefit
-Checked 2026-10-15 against paper ji2026cslibpremisebench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

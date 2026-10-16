@@ -147,4 +147,4 @@ Product relevance for xin2025bfs. Inference: the threat is material for proof-au
 ## evidence references
 
 The title and abstract are on PDF page 1. LeanDojo, the normalized score and branch outcomes are in Sections 2.1–2.2, PDF pages 2–3. Expert iteration and DPO construction are in Section 2.3, PDF page 3. Hardware, data, schedules, and BFS parameters are in Sections 3.1–3.2, PDF pages 4–5. MiniF2F comparisons and scaling are in Section 3.4, PDF pages 6–7 and Table 1. Conclusions and limitations are in Section 4, PDF page 7. The generated proof examples are in the appendix, PDF pages 9–11.
-Checked 2026-10-13: audit record xin2025bfs; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

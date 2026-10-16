@@ -150,4 +150,4 @@ Inference: The threat is moderate for agent-written Rust that uses higher-order 
 - predicate abstraction — replace integer predicates with Booleans and refine them from counterexamples
 - refinement typing — infer arithmetic refinements for νHFL formulas and solve the resulting generalized constrained clauses
 - unfold/fold simplification — unfold fixpoint definitions, normalize repeated patterns, and fold them into a simpler fixpoint
-Checked 2026-10-14 against the paper by a Codex agent: audit record kobayashi2021hfl; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

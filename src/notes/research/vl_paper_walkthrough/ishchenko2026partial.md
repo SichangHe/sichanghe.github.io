@@ -60,4 +60,4 @@ The paper already specifies a three-layer automation pattern—annotations, CFG-
 - layered SMT proof contexts — encode state updates and getters in SMT-LIB, select base/advanced/optional lemmas, and refine on `unknown`
 - per-VC fallback — classify solver results and defer unresolved obligations to an interactive theorem prover
 
-Checked 2026-10-15 against the paper by a Codex agent for partial_automation_of_verification_condi_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

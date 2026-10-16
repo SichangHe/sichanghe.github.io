@@ -75,4 +75,4 @@ MathArena's headline numbers include GPT-5.5 at 92.3% final-answer, 94.9% visual
 - formalization plus independent checker: manually validate generated Lean statements and block syntax-level cheating
 - multi-protocol proof grading: combine official grading, expert rubrics, jury scoring and manual review
 - cost and trace reporting: publish per-model scores, expected cost, outputs and benchmark context together
-Checked 2026-10-15 against paper dekoninck2026matharena: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -91,4 +91,4 @@ The paper supplies reusable proof patterns for agent-written verified Rust: filt
 - shrinking threshold-set convergence: combine robustness, epsilon recurrences, and a finite cardinality variant to prove asymptotic consensus
 - counterexample necessity: violate robustness by fixing two groups at distinct values and constructing bounded adversaries and weights
 - quantifier and trust audit: formalize quantifier scope explicitly and record classical axioms, real arithmetic, and implementation gaps
-Checked 2026-10-15 against paper tekriwal2024asymptotic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -54,4 +54,4 @@ Lean compilation verifies candidate proof terms, but data construction, preferen
 - difficulty-aware prefix heads — partition by verified success count, train independent PPO prefix embeddings, and allocate calls uniformly
 - prefix diversity coverage — measure distinct early proof n-grams as a proxy for redundant parallel exploration
 - token-level scaling accounting — sum generated tokens over passes and refinement to compare cost with verified accuracy
-Checked 2026-10-15 against paper li2025econprover: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

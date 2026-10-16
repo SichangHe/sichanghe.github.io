@@ -71,4 +71,4 @@ Trusted components are the semantic specification, operation contracts, CalcG ru
 - behavioral-class typing: reject invalid read/write transitions and require key evidence for re-graining
 - proof-carrying constraints: compose `(Pre, Intra, Post)` contracts and compile residual predicates to faithful queries
 - assurance spectrum: choose runtime, typed, or machine-checked evidence and require an agent certificate
-Checked 2026-10-15 against paper karayannidis2026pdd: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

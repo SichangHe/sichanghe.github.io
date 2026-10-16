@@ -57,4 +57,4 @@ Inference: VL can adopt the architecture as a proposal-and-check loop for Rust p
 - multi-reference curation: annotate multiple valid explanation sets and adjudicate variation
 - neuro-symbolic KB injection: generate relations, run a symbolic prover, and optionally revise after proof failure
 - intrinsic/extrinsic diagnostics: score explanations with EM/F1 while separately counting machine-constructed proofs
-Checked 2026-10-15 against paper dejong2026explaining: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

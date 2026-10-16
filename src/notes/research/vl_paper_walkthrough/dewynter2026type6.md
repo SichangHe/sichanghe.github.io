@@ -41,4 +41,4 @@ Inference: threat to a VeruLaw product is medium for orchestration and diagnosti
 - licensed revision test — require a structural revisit plus a targeting constraint before accepting a changed claim
 - multigraph route analysis — enumerate bounded edge-simple derivation paths and compare terminal states
 - provenance failure taxonomy — report hard, soft, residual, and quality failures with statement locations
-Checked 2026-10-15 against paper dewynter2026type6: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

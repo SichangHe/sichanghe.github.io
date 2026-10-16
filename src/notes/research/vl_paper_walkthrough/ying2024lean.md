@@ -36,4 +36,4 @@ Inference: reuse iterative error-driven labeling, persistent verifier workers, b
 - error-pattern diagnosis — convert recurring type, quantifier, extrema, and missing-assumption errors into training examples
 - sampled semantic audit — estimate correctness by tag while recording denominators and residual failure modes
 - proof/data separation — use placeholders for statement data, never as evidence of a completed proof
-Checked 2026-10-13: audit record ying2024lean; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

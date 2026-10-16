@@ -70,4 +70,4 @@ The already-done result VL should not redo is the four-agent wrapper-plus-KLEE a
 - KLEE harness construction — make every argument symbolic, bound it with `klee_assume`, and branch with `klee_range` before symbolic execution
 - typed error triage — prioritize pointer errors and interpret external errors according to whether they arise from CVE-specific or generic wrapper code
 - graph_klee aggregation — convert KLEE files into CVE, CWE, error-type, and symbolic-path nodes with labelled cross-CVE edges
-Checked 2026-10-15 against paper abdelrazek2026symbolic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -49,4 +49,4 @@ The verifier establishes that tested executions satisfy its twelve contracts. It
 - positive-control validation: require broken-kernel rejection and independently correct-kernel acceptance before auditing a corpus
 - differential benchmark audit: join the benchmark verdict with the stronger verifier in a 2x2 table and preserve denominators
 - oracle-backed systems verification: establish an independent high-precision oracle and run the same contract battery on native code
-Checked 2026-10-13: audit record shah2026contract; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -74,4 +74,4 @@ The paper’s own limitations include context truncation, no general-mathematics
 - focused proof search: separate inversion from branching/chaining, preserve failed branches, and backtrack to the latest valid state
 - checker-mediated greedy inference: emit one candidate action, obtain the next state from the proof assistant, and count checker calls as search cost
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

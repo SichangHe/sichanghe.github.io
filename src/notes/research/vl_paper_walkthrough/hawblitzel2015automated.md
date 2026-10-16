@@ -124,4 +124,4 @@ Inference: civl is a strong precedent for VL's concurrent refinement layer. It t
 - interference location invariants — attach predicates to yields and propagate procedure contracts across atomic specifications
 - linear permission typing — use non-duplicable thread IDs and permission tokens to establish disjointness for interference checks
 - modular ownership and hiding — assign globals to modules and hide representation variables so quadratic checks are local
-Checked 2026-10-14: audit record hawblitzel2015automated; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

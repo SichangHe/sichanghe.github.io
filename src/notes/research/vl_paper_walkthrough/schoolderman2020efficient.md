@@ -71,4 +71,4 @@ Inference: threat to VL is high for low-level crypto and unsafe/FFI boundaries, 
 - ghost address instrumentation: supply solver-visible address and intermediate-value facts without changing execution
 - cross-layer refinement: translate C and assembly through one primitive model and preserve alias and calling conventions
 - ladder and memory proof: combine projective-coordinate invariants, scalar preconditions, and explicit memory footprints
-Checked 2026-10-13: audit record schoolderman2020efficient; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

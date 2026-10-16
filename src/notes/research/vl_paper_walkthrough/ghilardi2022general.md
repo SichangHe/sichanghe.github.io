@@ -71,4 +71,4 @@ Inference: VL should reuse normalization of array equalities into read/diff obli
 - amalgamation construction: combine array models through functional embeddings and a disjoint index/element union
 - constant-array strong amalgamation: add fixed-length default arrays to prevent unwanted identifications and obtain general interpolation
 - hierarchical interpolation: preprocess, 0-instantiate, and reduce array interpolation to a polynomial-size TI ∪ EUF problem
-Checked 2026-10-15 against paper ghilardi2022general: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

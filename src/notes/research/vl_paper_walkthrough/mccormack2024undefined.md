@@ -87,4 +87,4 @@ Inference: FFI is a high threat to agent-written verified Rust because a Verus p
 - dual-mode initialization checking — separate LLVM undef propagation from genuine uninitialized Rust reads
 - alias-model differential testing — execute tests under Stacked and Tree Borrows and triage model differences
 - FFI bug deduplication and PoCs — normalize dynamic errors, construct safe-client reproducers, and validate concrete UB
-Checked 2026-10-14 against the paper by a Codex agent: audit record mccormack2024undefined; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

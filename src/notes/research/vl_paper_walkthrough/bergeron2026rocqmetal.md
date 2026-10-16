@@ -70,4 +70,4 @@ The paper’s own proposed closure is `rocq-of-rust`: translate `encore_vm` to R
 - typed host–VM interface — expose only typed calls and extern callbacks, with generated constructor tags and bindings
 - explicit trust-chain accounting — list kernels, compilers, runtimes, callbacks, and I/O as trusted components rather than silently including them in a proof claim
 - embedded resource benchmarking — compare flash, heap, and build time under named MCU, QEMU, and benchmark denominators
-Checked 2026-10-15 against paper bergeron2026rocqmetal: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

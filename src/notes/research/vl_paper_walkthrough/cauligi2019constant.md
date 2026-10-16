@@ -66,4 +66,4 @@ Inference: The threat to agent-written verified Rust is high when code relies on
 - forwarding-hazard analysis — Enumerate speculative store-to-load forwarding choices and roll back executions whose resolved addresses invalidate them
 - fence mitigation — Insert a speculation barrier so later instructions cannot execute until earlier instructions retire
 - worst-case schedule generation — Generate both branch outcomes and all bounded forwarding choices, then symbolically execute each schedule with Pitchfork
-Checked 2026-10-15 against paper cauligi2019constant: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

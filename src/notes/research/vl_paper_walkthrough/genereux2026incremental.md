@@ -69,4 +69,4 @@ The paper proves the data-structure invariant that states correspond to all part
 - shared-variable indices — intersect hypothesis and match buckets keyed by slot substitutions
 - lazy and phased insertion — defer index work until a preceding match or search phase makes it relevant
 - semantic match equivalence — retain one prefix when substitutions relevant to future slots and conclusions agree
-Checked 2026-10-15 against paper genereux2026incremental: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

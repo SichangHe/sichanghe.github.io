@@ -59,4 +59,4 @@ The paper's own conclusion lists four contributions: “training an accurate and
 - self-verifying generator — reward a generator for a correct proof and a faithful self-analysis, then iteratively refine its output
 
 - scaled automated labeling — sample independent analyses and majority-confirmed meta-analyses to label hard proofs or route them to experts
-Checked 2026-10-15 against paper shao2025selfverifiable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

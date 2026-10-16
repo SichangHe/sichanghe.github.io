@@ -57,4 +57,4 @@ Inference: threat to VeruLaw is medium. The architecture transfers well to proof
 - quantifier and consistency critiques: test scopes, syntax, and a `False` theorem before trusting entailment
 - logical-relation proof sketches: derive propositional implications and turn them into ATP-checked intermediate steps
 - detailed feedback repair: feed failed proof steps and unused axioms into bounded iterative explanation refinement
-Checked 2026-10-15 against paper quan2025faithful: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

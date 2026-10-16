@@ -58,4 +58,4 @@ Lean’s kernel/compiler, Mathlib, UnitSystem, PhysLib definitions, theorem hypo
 - qa-to-theorem formalization — transform natural-language answers into hypotheses, targets, and compiled proof statements
 - library-context proof retrieval — compare proof generation with and without domain definitions and lemmas in context
 - difficulty-matched proof decomposition — select unit normalization, algebra, or new lemmas according to problem class
-Checked 2026-10-15 against paper li2025lean4physics: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

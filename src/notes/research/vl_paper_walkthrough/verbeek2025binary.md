@@ -75,4 +75,4 @@ Inference: this is directly useful to VL as a reusable pattern for verified anal
 - explicit separation assumptions — distinguish necessary from desirable alias assumptions and expose them in the trust boundary
 - fixed-point binary analysis — revisit instruction addresses, join states, and stop when a stored abstract state subsumes the current one
 - context-sensitive summaries — derive pointer pre/postconditions per function and compose them across indirect calls
-Checked 2026-10-15 against paper verbeek2025binary: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

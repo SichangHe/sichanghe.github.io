@@ -138,4 +138,4 @@ Inference: VL can reuse the separation between (1) source-side effect analysis, 
 - bounded model checking: enumerate bounded envelope traces and check the runtime state-change biconditional
 - proof-carrying bundle: sign canonical evidence, rerun all methods at load, and abort on drift or signature failure
 - mechanizable classification lattice: enforce Bell-LaPadula dominance, least upper bounds, and scheme invariants over integer ranks and sets
-Checked 2026-10-15 against paper metere2026enclawed: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

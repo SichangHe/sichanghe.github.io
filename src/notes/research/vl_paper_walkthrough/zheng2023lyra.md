@@ -35,4 +35,4 @@ Inference: threat to VeruLaw is high for proof-agent reliability but low for the
 - conjecture correction — append verifier diagnostics and the prior proof to a fresh repair instruction
 - reset-round refinement — periodically regenerate from the original prompt to avoid compounding a bad proof
 - dual-correction ablation — measure tool and conjecture repair alone and together on fixed validation/test denominators
-Checked 2026-10-13: audit record zheng2023lyra; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

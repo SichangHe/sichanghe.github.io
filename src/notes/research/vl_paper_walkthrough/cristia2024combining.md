@@ -79,4 +79,4 @@ The paper proves type safety and solver safety relative to the type system, but 
 - four-phase typechecker — separate declarations, DNF structure, atomic constraints, and argument unification
 - finite-type solver feedback — convert finite type declarations into membership constraints visible to the solver
 - parametric polymorphism — declare relation operations with type variables that unify at each query
-Checked 2026-10-14 against the paper by a Codex agent: audit record cristia2024combining; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -60,4 +60,4 @@ The paper measures agreement with human ratings, F1, precision, recall, Kendall 
 - executable oracle catalog — generate code that composes typed visual checks, execute it, and emit feedback only above a probability threshold
 
 - trajectory feedback evaluation — label correctness, precision, guidance, completeness, and forgetfulness of feedback inside multi-step refinement
-Checked 2026-10-15 against paper reux2026imperfect: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

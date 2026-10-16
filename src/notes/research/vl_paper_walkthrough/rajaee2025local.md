@@ -164,4 +164,4 @@ Inference: low for a product of agent-written verified Rust. The system is a 202
 - accept/reject preference pairs — pair each rejected step with an accepted step ranked below it; raised step validity and lowered theorems proved
 - step-validity panel — Prec.@8, MAP, MRR, no-valid-step share and token length per state, to be read together with the proof rate, not instead of it
 - paired proof-length table — cross-tabulate per theorem the proof lengths and failures of two provers to see where a change helps
-Checked 2026-10-13: audit record rajaee2025local; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

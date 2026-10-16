@@ -65,4 +65,4 @@ Inference: for VeruLaw, the reusable idea is a three-layer contract witness: pre
 - infection predicate synthesis: locate universally covered program lines, synthesize state predicates, and reject predicates that are too strong or too weak
 - executable patch validation: run the symbolic PBT against a candidate patch and classify surviving failures
 - explanation-assisted repair: feed verified trigger/state/output evidence to a second coding agent for localization and patch generation
-Checked 2026-10-14 against the paper by a Codex agent: audit record kang2025symbolic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

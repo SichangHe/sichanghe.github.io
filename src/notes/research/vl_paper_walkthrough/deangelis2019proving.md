@@ -47,4 +47,4 @@ Inference: For a product that emits agent-written verified Rust, this technique 
 - difference-predicate lemma generation — add predicates relating mismatched intermediate outputs so folding preserves satisfiability
 - model-to-lemma extraction — interpret the solver’s LIA model as the arithmetic lemma needed by an inductive proof
 - branching-recursion decomposition — create separate difference predicates for each recursive branch and combine their folded relations
-Checked 2026-10-14: audit record deangelis2019proving; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

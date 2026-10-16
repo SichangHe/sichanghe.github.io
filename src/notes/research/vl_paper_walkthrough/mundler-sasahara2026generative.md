@@ -64,4 +64,4 @@ Inference: VL should not redo black-box constrained decoding or reimplement all 
 - selective soundness — retain stronger rejection guarantees at statement boundaries while keeping other rules lightweight
 - typed placeholders and scoped suppression — use divergent/value placeholders and suppress only errors that later tokens can resolve
 - bounded feedback harness — combine early restarts with a fixed post-generation repair budget and deterministic diagnostics
-Checked 2026-10-13: audit record mundler-sasahara2026generative; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

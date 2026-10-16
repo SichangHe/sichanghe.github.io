@@ -54,4 +54,4 @@ Validated claims are arithmetic theorems over reduced bitvector formulas, four d
 - layered containment — combine deployment scanning, pre-execution policy, output firewalling, and runtime observability
 - compiled invariant guards — turn offline Z3-derived bounds into constant-time runtime checks
 - dataflow escalation graphs — compose successive CWE predicates so one witness becomes the next stage's input
-Checked 2026-10-15 against paper blain2026mythos: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

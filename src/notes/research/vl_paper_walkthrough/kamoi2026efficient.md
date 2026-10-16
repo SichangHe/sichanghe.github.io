@@ -74,4 +74,4 @@ Inference: threat to VL is medium to high if an agent uses a learned verifier as
 - task-mixture ablation — compare single-domain and mixed formal datasets to measure transfer and specialization
 - verifier-label data ablation — test whether 10K or 20K verified instances approach the full 40K corpus
 - strictness audit — inspect accepted-but-imprecise intermediate steps to detect over-penalization by exact formal labels
-Checked 2026-10-15 against paper kamoi2026efficient: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

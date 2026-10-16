@@ -78,4 +78,4 @@ Inference: for agent-written verified Rust, the paper presents a high threat whe
 - consume-produce reasoning: implement assertion consumption and production with four soundness obligations and lift them to calls and predicates
 - bi-abduction: repair UX missing-resource errors with a model-dependent anti-heap and prove the concrete witness theorem
 - OX/UX frame design: require PCM composition and separate over-approximate and under-approximate frame properties for each memory action
-Checked 2026-10-15 against paper loow2025compositional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

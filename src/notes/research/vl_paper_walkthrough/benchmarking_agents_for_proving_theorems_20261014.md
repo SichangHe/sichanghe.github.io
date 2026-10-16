@@ -123,4 +123,4 @@ Trusted and untrusted parts. The measured proof acceptance is the Lean kernel's 
 - controlled library augmentation: compare a statement-only condition with the same task plus a verified reference library
 - weighted field scoring: freeze rubric-based difficulty, compute difficulty-normalized scores, and expose field denominators and task counts
 - cost-per-proof reporting: divide recorded monetary and invocation-time costs by verified score with explicit missing-value rules
-Checked 2026-10-14 against the paper by a Codex agent: audit record zhang2026benchmarking; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -90,4 +90,4 @@ The paper’s formal guarantees are conditional: a returned plan is sound relati
 - model/specification acquisition — use LLM suggestions with human curation to build the formal model and complete requirements
 - syntax-checked reformulation — translate candidates into verifier representations and validate syntax before semantic checking
 
-Checked 2026-10-15 against the paper by a Codex agent for llms_can_t_plan_but_can_help_planning_in_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

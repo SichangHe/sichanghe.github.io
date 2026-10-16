@@ -58,4 +58,4 @@ The study deliberately uses single-pass attempts with no compiler feedback, retr
 - structural ablation — compare tactic stems, natural-language hints, paraphrases, and irrelevant comments to isolate useful diversity
 - leave-one-out difficulty — stratify diversity gains by other-model solvability on the exact formalization
 - first-action entropy — measure distinct opening proof actions to detect inference-time mode collapse directly
-Checked 2026-10-15 against paper burton2026inferencediversity: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

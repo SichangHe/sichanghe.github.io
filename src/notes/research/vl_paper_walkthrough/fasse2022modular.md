@@ -103,4 +103,4 @@ Inference: the technique is a useful design for agent-written verified Rust when
 - lexicographic burn checker — combine permission multisets, unprotected-call counts, and pseudo-size into a well-founded measure preserved by a syntactic check
 - authoritative permission state — tie physical permission multisets to Iris weakest preconditions with an authoritative multiset camera and splittable fragments
 - compensation for helping — register concurrent observations and mint retry permissions for every thread invalidated by a successful atomic update
-Checked 2026-10-14: audit record fasse2022modular; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

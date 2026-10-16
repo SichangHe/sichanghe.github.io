@@ -96,4 +96,4 @@ The paper's correction addresses a specific counter decrement race. It does not 
 - architecture evolution for counterexamples — mutate topology and parameters to discover a finite instance that violates a temporal property
 - co-evolutionary repair — alternate refuting architectures with program mutations while retaining all discovered architectures
 - assertion-guided scenario search — add a local assertion and evolve architectures toward a concrete message trace that violates it
-Checked 2026-10-14 against the paper by a Codex agent: audit record katz2010mutation; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

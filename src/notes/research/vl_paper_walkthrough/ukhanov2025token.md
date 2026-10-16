@@ -44,4 +44,4 @@ The paper reports proofs of arithmetic, conversion, discounts, refund safety, wi
 - integer truncation lemmas — prove monotonicity and bounded loss for multiplication/division once, then instantiate them for asset and discount calculations
 - round-trip safety — bound conversion and discount reversal with explicit inequalities that compose into refund safety
 - lifecycle state-machine proof — guard transitions by status and prove mutual exclusion, temporal progress, and terminal states
-Checked 2026-10-15 against paper ukhanov2025token: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

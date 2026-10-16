@@ -64,4 +64,4 @@ Inference: for agent-written verified Rust, the paper's strongest lesson is to p
 - context sanitization — statically remove untrusted or unnecessary text before formalization
 - WASM sandboxing — run the policy and orchestrator with denied host network and filesystem capabilities
 - phased shadow-to-production rollout — compare shadow judgments, enforce a narrow policy, then scale the verified state machine
-Checked 2026-10-15 against paper rashie2026typechecked: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

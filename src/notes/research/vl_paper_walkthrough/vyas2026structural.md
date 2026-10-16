@@ -63,4 +63,4 @@ The structural argument proves non-forgeability relative to the implemented data
 - three-valued decline: treat impossible and unknown as explicit safe verdicts instead of forcing an answer
 - root-input correction: compute the minimal input change that crosses a violated threshold and feed it back to the next proposal
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

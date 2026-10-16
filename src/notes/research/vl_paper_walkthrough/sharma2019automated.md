@@ -49,4 +49,4 @@ Trusted components are the underlying entailment checker/verifier, the arithmeti
 - logical-infinity contracts — represent finite, intentional-overflow, and error cases with ∞/−∞ in separation-logic specifications
 - infinity normalization — rewrite infinity formulas to equisatisfiable finite formulas before invoking existing arithmetic solvers
 - checked-operator translation — replace primitive arithmetic with contract-bearing overflow methods so forward verification checks every operation
-Checked 2026-10-13: audit record sharma2019automated; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

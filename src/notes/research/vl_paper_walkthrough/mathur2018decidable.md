@@ -47,4 +47,4 @@ Inference: the direct threat to agent-written verified Rust is low for ordinary 
 - coherence checker: track recomputation table E and superterms to reject non-memoizing or late-equality executions
 - k-coherence: add bounded write-only ghost variables to retain dropped terms and recover decidability
 - recursive VPA verification: intersect execution and coherence visibly pushdown automata and test emptiness
-Checked 2026-10-15 against paper mathur2018decidable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

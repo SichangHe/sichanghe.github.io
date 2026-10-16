@@ -52,4 +52,4 @@ The lazy-set proof uses interval framework theorems 5.1 and 5.2, lemmas about mo
 - fractional permissions: enforce exclusive writes and model environment interference compositionally
 - apparent-state evaluation: allow nondeterministic field-read order for fine-grained expressions
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

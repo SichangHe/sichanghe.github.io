@@ -93,4 +93,4 @@ What has already been done that VL should not redo (Inference): the paper suppli
 - directed-rounding refinement — relate real values to lower/upper IEEE floats and prove bound-preserving operations
 - separation-based code refinement — synthesize LLVM from abstract programs while proving data and heap relations
 - end-to-end Hoare triple — compose abstract, numeric and data refinements into one executable correctness statement
-Checked 2026-10-14 against the paper by a Codex agent: audit record kohlen2025ieee; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

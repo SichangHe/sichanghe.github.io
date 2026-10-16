@@ -86,4 +86,4 @@ What VL should not redo: the paper already establishes a concrete multi-model ge
 - persistent repair context — retain the complete per-problem conversation and compare it with a matched stateless reset
 - denominator-aware feedback metrics — distinguish incremental and cumulative solves, total submission cost, repeated verdicts, and calibration
 - paired context ablation — hold models, problems, temperature, judge, and attempt budget fixed while varying only history retention
-Checked 2026-10-14 against the paper by a Codex agent: audit record tabassum2026pros; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

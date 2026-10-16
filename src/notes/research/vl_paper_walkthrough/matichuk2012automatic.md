@@ -88,4 +88,4 @@ Inference: For VL, this is a high-value proof-maintenance technique. Agent-writt
 - annotated-triple reuse — assume a verified annotation's intermediate predicates while proving a new property
 - annotation merging — conjoin independent annotation sets under a combined precondition
 - VCG annotation extraction — use weakest-precondition splitting and schematic lemmas to generate annotations automatically
-Checked 2026-10-14 against the paper by a Codex agent: audit record matichuk2012automatic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

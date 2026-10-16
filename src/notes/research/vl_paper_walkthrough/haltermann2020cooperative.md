@@ -56,4 +56,4 @@ For VL, the product threat is moderate but concrete: agents may produce mutually
 - source-aware invariant adaptation — map IR variables and blocks back to source locations before witness construction
 - parallel complementary portfolios — combine generators with different algorithms while measuring CPU sharing and timeout effects
 - timed restart and injection — choose when to request help and whether to restart or augment a running analysis
-Checked 2026-10-15 against paper haltermann2020cooperative: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

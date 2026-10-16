@@ -79,4 +79,4 @@ Inference: The threat is moderate for productivity and low for soundness when ev
 - online cache self-training: generate verified examples during training while sampling and aging a cache to prevent collapse
 - CA@N evaluation: count a task correct when any of the top N candidates passes all checker cases
 
-Checked 2026-10-15 against the paper by a Codex agent for leveraging_automated_unit_tests_for_unsu_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -89,4 +89,4 @@ Inference: for VeruLaw, finite model certificates suggest a useful external-cert
 - finite countermodel invariant: use a finite model of the negated reachable-unsafe formula as a safety certificate
 - monotonic tree abstraction: compute backward unsafe closure under embedding until a well-quasi-order fixed point
 - model-finder certificate checking: validate finite interpretations and disjointness before connecting them to implementation code
-Checked 2026-10-15 against paper lisitsa2011countermodels: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

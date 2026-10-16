@@ -71,4 +71,4 @@ The framework already provides declarative protocol specifications, runtime chec
 - post-hoc decoding monitor — parse state markers and validate every generated transition against the FSM
 - valid-state prefixing — repair an invalid transition by appending the longest common prefix of legal state prompts
 - PASS planning loop — execute independent actions in parallel, summarize results, and iterate under a monitored protocol
-Checked 2026-10-15 against paper crouse2023formallyspecifying: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

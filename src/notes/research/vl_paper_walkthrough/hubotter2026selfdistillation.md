@@ -79,4 +79,4 @@ Inference: The threat is medium for proof-generation throughput and low for form
 
 - feedback-backed test-time specialization — repeatedly apply the same self-distillation update to one hard question to compress successful context into model weights
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

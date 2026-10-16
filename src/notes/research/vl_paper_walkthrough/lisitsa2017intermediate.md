@@ -54,4 +54,4 @@ Proved or argued: semantics-preserving specialization for the considered interpr
 - residual safety checking — prove safety by showing the residual predicate cannot return `False`
 - interpreter meta-reasoning — prove regular big-step configuration properties to justify specialization
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

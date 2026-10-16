@@ -87,4 +87,4 @@ Inference: For VeruLaw, SafeFFI identifies a practical boundary strategy: concen
 - compositional nofree analysis: compute potentially deallocating functions with bottom-up SCC analysis and conservative unknown-callee handling
 - mixed-language validation: test allocation, deallocation, invalidation, and control-flow combinations across Rust and C
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

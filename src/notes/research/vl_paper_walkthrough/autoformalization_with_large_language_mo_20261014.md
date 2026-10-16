@@ -124,4 +124,4 @@ Inference: a VeruLaw pipeline should preserve the generated candidate, the exact
 - proof-oracle training — let the interactive prover, not model confidence, filter candidate proofs and expose timeout outcomes
 - informalization back-translation — translate formal statements back to natural language to create aligned data and reveal missing context
 - context-aware theory alignment — treat library definitions, hidden assumptions, and large-theory context as explicit failure boundaries
-Checked 2026-10-14 against the paper by a Codex agent: audit record wu2022autoformalization; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

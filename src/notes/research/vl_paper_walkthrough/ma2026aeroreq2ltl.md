@@ -75,4 +75,4 @@ Inference: the threat to VeruLaw is medium to high at the requirements boundary.
 - SpaceKG grounding: map domain terms, aliases, values, and empirical conditions to typed implementation atoms
 - SpaceRDL templating: force mode, condition, timing, component, and action fields into an explicit intermediate contract
 - deterministic formal synthesis: translate grounded TNL by fixed rules and feed the resulting LTL to a verification tool
-Checked 2026-10-14 against the paper by a Codex agent: audit record ma2026aeroreq2ltl; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -59,4 +59,4 @@ Inference: threat to VL is high for proof-search cost and reusable-lemma design,
 - semantic lemma abstraction — cluster descriptions and synthesize generalized lemmas with structural validation
 - bounded library maintenance — evict unused lemmas, deduplicate by tree distance, and formally verify survivors
 - two-stage inference — try direct proving, then sketch-and-prove subgoals with the library
-Checked 2026-10-15 against paper zhang2026dreamprover: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

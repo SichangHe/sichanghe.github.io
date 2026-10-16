@@ -75,4 +75,4 @@ Inference: the strongest lesson for agent-written verified Rust is to keep a typ
 - two-phase repair: compile first, then test acceptance and rejection behavior with bounded retries
 - hidden-case evaluation: score sketch and program correctness on withheld cases, reporting conditional denominators
 - component ablation: remove sketch, retrieval, and each repair phase to identify which reliability mechanisms matter
-Checked 2026-10-15 against paper xue2026evaluation: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -88,4 +88,4 @@ Inference: threat to VL is moderate. ADT reduction can improve solver portabilit
 - ADT interpolation — compute EUF+LIA interpolants and translate IDs, equalities, and depth facts back to ADT predicates
 - size-aware unfolding — add semilinear size constraints and incrementally unfold variables until a model is represented or contradiction appears
 - expanding-ADT criterion — classify when unfolding is complete using unary-cycle structure in the sort/constructor dependency graph
-Checked 2026-10-15 against paper hojjat2018deciding: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

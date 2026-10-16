@@ -58,4 +58,4 @@ The paper already supplies the abstract ingredients for compositional fine-grain
 - stable injection — frame independently verified commands into larger concurroid contexts
 - scoped hiding — install a resource locally and expose its evolution as private state
 - action contracts — specify atomic operations with enabled-state predicates and pre/post state relations
-Checked 2026-10-14 against the paper by a Codex agent: audit record nanevski2014communicating; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

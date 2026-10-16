@@ -152,4 +152,4 @@ Inference: VL should not redo the basic pattern of line-by-line Promela translat
 - task-class under-approximation — use Light and Heavy task automata and run fixed parameter sets separately to control state explosion
 - DFA runtime transition monitor — embed one deterministic task model per task and check every state-changing event in the Rust implementation
 - model-checked race repair — mark the intended task with `need_sched`, cancel stale preemption, and re-check the existing waiting-task behavior
-Checked 2026-10-14 against the paper by a Codex agent: audit record hasegawa2025awkernel; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

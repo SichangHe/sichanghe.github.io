@@ -25,4 +25,4 @@ Earlier work already provides ordinary bounded synthesis of finite-state machine
 - two-way universal run-graph synthesis — encode a program tree, universal automaton run graph, reachability, and bounded Büchi/co-Büchi/Streett annotations as SAT
 - two-wayless direct synthesis — simulate deterministic program fragments, compress them with ranked shortcut successors, then verify the compressed transition graph
 - annotation acceptance witnesses — express an infinite-path acceptance condition as bounded local comparisons on every reachable edge
-Checked 2026-10-14 against the paper by a Codex agent: audit record gerstacker2018bounded; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

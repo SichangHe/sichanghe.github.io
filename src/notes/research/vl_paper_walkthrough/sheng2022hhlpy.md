@@ -65,4 +65,4 @@ What is proved is soundness of the HCSP Hoare rules and VC-generation theorem, p
 - weakest-precondition VC generation — turn annotated loops and ODEs into separately solvable initialization, maintenance, branch, and boundary obligations
 - stable VC labels — retain solver choices across small edits by labeling conclusion assertions and branch paths
 - source highlighting — show the exact commands, assertions, and ODE domains that contributed to a VC
-Checked 2026-10-15 against paper sheng2022hhlpy: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

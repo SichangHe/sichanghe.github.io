@@ -96,4 +96,4 @@ The paper already covers fixed-point induction, contract summaries for recursive
 - fixed-point induction: use an invariant to prove inclusion for unknown recursive bounds
 - procedure contracts: summarize the state after non-tail recursive fixed points with pre/post conditions and old values
 - µ-formula synchronization: align recursive bodies by grammar-derived trace-language inclusion
-Checked 2026-10-15 against paper heidler2025sequent: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

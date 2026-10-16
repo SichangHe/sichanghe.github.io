@@ -43,4 +43,4 @@ The formal evidence is Isabelle theorem proofs over the inductive trace set, inc
 - insider framework: model colluding rational actors with explicit state predicates and economic assumptions
 - constructive predicate refinement: replace abstract keys and infinite existential choices with a finite key list and a computable winner function
 - proof-carrying code extraction: prove the executable checker refines the inductive specification before exporting Scala code
-Checked 2026-10-14: audit record kammuller2017insider; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

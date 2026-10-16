@@ -63,4 +63,4 @@ Trusted assumptions include the concrete interpreter, valid operation-map claims
 - symbolic execution — execute both programs on symbolic inputs and prove correspondence to concrete execution
 - sound rewrites — simplify symbolic states only with individually proved semantics-preserving rules
 - checker soundness — use recursive syntactic comparison as a sound but incomplete approximation to semantic equivalence
-Checked 2026-10-15 against paper albert2023evm: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

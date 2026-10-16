@@ -70,4 +70,4 @@ The paper's conclusion is explicit: “Machine-checking classical financial math
 - principle-based bridge library — derive many instruments from shared pricing, normal-form, and Brownian-grounding abstractions
 - staged continuous Itô construction — extend deterministic and simple adapted L2 integrals by isometry, density, and norm-preserving extension
 - derived risk-neutral measure — construct an Esscher/Girsanov measure and prove the pricing hypothesis instead of assuming it
-Checked 2026-10-15 against paper coelho2026formally: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

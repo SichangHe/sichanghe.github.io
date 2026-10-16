@@ -95,4 +95,4 @@ Trusted: the RISC-V hardware and its assumed correctness, RefinedRust/Rocq, comp
 - page-token abstraction: represent exclusive page ownership and bounds in a verified safe wrapper over unsafe memory
 - typed ABI validation: convert checked raw addresses into domain-specific types at entry points
 - modular Rust verification: generate and continuously check per-function specifications and composed invariants
-Checked 2026-10-15 against paper ozga2025ace: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

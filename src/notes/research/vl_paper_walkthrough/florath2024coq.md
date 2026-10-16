@@ -72,4 +72,4 @@ Inference: threat to VL is moderate for data quality and high for specification 
 - proof diversity sampling — collect multiple accepted tactic and induction strategies for one proposition
 - license-aware corpus construction — filter repositories by explicit redistributable licenses and preserve SPDX, URL, and commit metadata
 - false-specification detection — include invalid propositions and measure whether models report impossibility instead of fabricating proofs
-Checked 2026-10-15 against paper florath2024coq: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

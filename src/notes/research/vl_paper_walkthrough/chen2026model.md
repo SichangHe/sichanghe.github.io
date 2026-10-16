@@ -88,4 +88,4 @@ Inference: the threat to a product that generates agent-written verified Rust is
 - state-set similarity metric — compare oracle and generated execution states with a variable-value matching threshold θ = 1.0
 - deterministic specification post-processing — add built-in imports, null values, and unchanged-variable assignments before running TLC
 - complexity-stratified failure analysis — correlate runnability with cyclomatic complexity, loop depth, variable count, and classify checker failures by compilation, runtime, or assertion cause
-Checked 2026-10-15 against paper chen2026model: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

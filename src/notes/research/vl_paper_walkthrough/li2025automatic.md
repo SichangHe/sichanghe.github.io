@@ -114,4 +114,4 @@ Inference: the threat to a product that generates Verus Rust is high if an agent
 - progressive correction training: train separate translation, syntax-repair, and semantic-repair stages on filtered data
 - cloud–edge verification: keep generation and local repair on-device while delegating abstract alignment and critique
 - separate safety and fidelity metrics: report verified-violation rates, semantic consistency, repair rounds, and latency independently
-Checked 2026-10-14 against the paper by a Codex agent: audit record li2025automatic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

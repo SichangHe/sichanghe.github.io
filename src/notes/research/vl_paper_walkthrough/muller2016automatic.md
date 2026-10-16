@@ -103,4 +103,4 @@ Inference: the product threat for agent-written verified Rust is concentrated in
 - partial snapshots — frame heap-dependent functions with first-order partial value maps and defunctionalized apply/domain operations
 - trigger control — choose SMT quantifier triggers to avoid spurious failures, unpredictable search, and matching loops
 - predicate integration — fold and unfold predicate instances through the same inhale/exhale machinery used for ISCs
-Checked 2026-10-13: audit record muller2016automatic; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

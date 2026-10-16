@@ -92,4 +92,4 @@ Inference: the strongest threat to VL is specification drift at the boundary bet
 - staged multi-agent proof workflow — lock signatures, execute isolated waves, review bodies and axioms, integrate on a rebuilt trunk, and close only after audit
 - Scout gap reports and falsification triage — boundedly classify library support and route blocked goals through counterexample or confirmation checks
 - definition-layer drift control — pin authored structures and definitions so proof obligations cannot move silently from theorem signatures into ghost or concept fields
-Checked 2026-10-15 against paper wei2026hypothesis: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

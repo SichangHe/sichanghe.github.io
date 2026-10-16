@@ -82,4 +82,4 @@ The paper's contribution is already a complete PBA-plus-CEGAR architecture for u
 - automatic loop-counter transformation — add bounded counters while preserving safety equivalence
 - incremental SMT abstraction — use assumption literals, MUS/unsat-core extraction, and persistent solver contexts
 - combined PBA and CEGAR — alternate proof generalization and spurious-counterexample elimination until SAFE, UNSAFE, or resource exhaustion
-Checked 2026-10-14: audit record komuravelli2013automatic; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

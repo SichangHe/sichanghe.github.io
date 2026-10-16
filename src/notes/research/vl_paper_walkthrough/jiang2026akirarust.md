@@ -116,4 +116,4 @@ Inference: VL should not reimplement a generic finite-state controller, fast/slo
 - FSM orchestration: represent agents and modes as states and transition using runtime verification feedback
 - intent-guided test generation: infer behavioral constraints and accept candidates that pass generated tests
 - waveform rollback: aggregate runtime error signals, evaluate stable regions, and roll back on semantic drift
-Checked 2026-10-14 against the paper by a Codex agent: audit record jiang2026akirarust; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

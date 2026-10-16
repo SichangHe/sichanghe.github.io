@@ -115,4 +115,4 @@ Inference: a VL evaluation of a lemma library should measure persistent growth, 
 - request solving — turn pending decomposer subgoals into independently verified reusable lemmas
 - library ablation — compare equal-budget proving with and without persistent skill storage
 - dual informal-proof evaluation — hold formalization fixed while comparing model-generated and human-written plans
-Checked 2026-10-13: audit record wang2023lego; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -106,4 +106,4 @@ Inference: this paper is a moderate threat to a product that claims automatic lo
 - inside-out nested-loop analysis: derive inner-loop invariants before using them in outer-loop WLP calculations
 - well-quasi-order termination: prove generator termination from finite functors and homeomorphic embedding
 - failure diagnosis by shape: detect lost updated variables and adjust expression orientation or candidate generation
-Checked 2026-10-13: audit record hamilton2017generating; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

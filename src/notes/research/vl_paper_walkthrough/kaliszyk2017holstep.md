@@ -45,4 +45,4 @@ Inference: the threat to VL is wasted verification time or ranking bias, not dir
 - useful-step classification — rank candidate proof statements as useful or unused for a conjecture
 - siamese conjecture conditioning — encode candidate and conjecture in shared branches before classification
 - verifier-guided graph search — use learned scores for branch ordering while the prover checks every step
-Checked 2026-10-15 against paper kaliszyk2017holstep: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

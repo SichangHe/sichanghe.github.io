@@ -76,4 +76,4 @@ The paper already combines readable generated policies, staged static/interval/S
 - two-translation relational verification — compare two symbolic executions to prove monotonicity and emit counterexamples when the relation fails
 - staged Z3/property audit — prove translatable universal properties with SMT and explicitly defer unsupported properties to randomized edge-case testing
 - Luby universal restarts — use a fixed restart schedule to diversify LLM search without retrospective budget tuning
-Checked 2026-10-15 against paper siboni2026heuristic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

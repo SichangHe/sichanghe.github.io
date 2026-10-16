@@ -125,4 +125,4 @@ Inference: none as a competitor; the paper ships a 68-problem Lean benchmark and
 - draft-and-code JSON grading: require a plan field and a code field, and pass only the code to the proof checker
 - latency ANOVA: record response time per query and test it across noise levels as a second measure of difficulty
 - post-rename revalidation (not in the paper): rerun the checker on reference proofs after renaming, since solver-based proofs can break under renaming
-Checked 2026-10-13: audit record li2026evaluating; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

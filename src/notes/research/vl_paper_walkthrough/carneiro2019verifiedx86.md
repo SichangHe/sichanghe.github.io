@@ -91,4 +91,4 @@ VL should not reproduce the PA encoding, MM0 parser design, or x86 instruction f
 - predicate-based weak-logic specification: replace missing types and pattern matching with explicit relations and preservation theorems
 - stream-and-ELF abstraction: model IO as mathematical byte streams and simplify ELF to the headers needed by the endpoint
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

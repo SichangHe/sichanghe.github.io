@@ -65,4 +65,4 @@ Inference: threat to a product generating verified Rust is moderate and concentr
 - typed bidirectional DSL specification — declare external-to-prover equivalences and let prover types reject ill-typed foreign syntax
 - recursive translation with termination guards — match definitional patterns, recurse through nonterminals, and cap non-progressing translations
 - certificate versus oracle integration — check external certificates inside the prover when possible and mark uncertified solver answers as explicit trusted axioms
-Checked 2026-10-15 against paper rowney2026dslean: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

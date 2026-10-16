@@ -104,4 +104,4 @@ Inference: threat to a product emitting agent-written verified Rust is high for 
 - mutation completeness proxy — detect non-equivalent mutants to estimate whether specifications cover behavior
 - structured prompting — compare zero-shot, few-shot, chain-of-thought, and least-to-most prompt controls
 - diagnostic self-repair — classify verifier errors, provide targeted feedback, and iterate with bounded repair and mutation checks
-Checked 2026-10-13: audit record lecong2025can; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

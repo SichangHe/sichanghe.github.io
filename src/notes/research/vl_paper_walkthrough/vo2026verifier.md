@@ -73,4 +73,4 @@ Inference: the product should not optimize P3 alone. This paper’s own held-out
 - P1/P2/P3 group-relative RLVR — combine exact, dense, consistency, depth, and format rewards and normalize advantages within response groups
 - gold-free self-consistency — cluster one greedy plus sampled answers by equivalence and apply selective symbolic correction
 - separate correctness diagnostics — report answer, evidence/unit consistency, reasoning depth, format, and strict validity independently
-Checked 2026-10-14 against the paper by a Codex agent: audit record vo2026verifier; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

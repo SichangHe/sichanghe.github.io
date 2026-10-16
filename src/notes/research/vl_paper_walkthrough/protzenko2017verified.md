@@ -116,4 +116,4 @@ Inference: VL's product threat is high at compiler, FFI, unsafe-code, and specif
 - idealization flags — verify real and ideal cryptographic paths together, then erase ideal code
 - trace reinterpretation — preserve side-channel traces across memory-layout transformations
 - proof erasure and verified lowering — erase ghost code and prove a sequence of semantics-preserving translations
-Checked 2026-10-13: audit record protzenko2017verified; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

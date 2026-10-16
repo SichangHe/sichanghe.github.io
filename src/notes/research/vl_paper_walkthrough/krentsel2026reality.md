@@ -48,4 +48,4 @@ The paper proves a conceptual decomposition, not a theorem about Verus or a stat
 - assurance-revision loop — use deployment evidence and authorized human decisions to revise requirements, models, evaluators, and then rerun verification
 - risk-calibrated evaluation — allocate human review and evaluator fidelity by consequence and uncertainty, using cascaded checks and exposure controls
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

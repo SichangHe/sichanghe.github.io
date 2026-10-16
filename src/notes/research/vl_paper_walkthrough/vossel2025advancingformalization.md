@@ -73,4 +73,4 @@ Inference: threat to agent-written verified Rust is high at symbol binding and s
 - staged predicate curriculum — predict names first or train gold-to-noisy-to-free-form stages
 - multilingual predicate abstraction — vary source language while keeping formal predicates fixed
 - semantic equivalence evaluation — parse formulas and prove negated bi-implication unsatisfiable with Z3
-Checked 2026-10-14 against the paper by a Codex agent: audit record vossel2025advancingformalization; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

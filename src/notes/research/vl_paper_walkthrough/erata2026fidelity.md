@@ -73,4 +73,4 @@ Inference: the threat to agent-written verified Rust is moderate to high for spe
 - observable-behavior filtering: retain questions about outputs, stored data, and external interactions in modernization scope
 - fresh curriculum with frozen test: revise from newly sampled failures while scoring every version on an unseen fixed set
 - repair–regression accounting: model gains and losses with repair and regression rates and report their denominators
-Checked 2026-10-15 against paper erata2026fidelity: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

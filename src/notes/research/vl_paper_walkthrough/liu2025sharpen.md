@@ -100,4 +100,4 @@ The paper already develops structured Hoare-style contracts, rely-guarantee modu
 - two-phase concurrency generation — synthesize sequential behavior first, then instrument and validate locking behavior
 - DAG specification patches — evolve leaves through dependency nodes to roots whose unchanged guarantees permit atomic replacement
 - compiler-validator-assistant loop — generate code, review it with a separate model, retry with feedback, and run regression tests
-Checked 2026-10-13: audit record liu2025sharpen; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

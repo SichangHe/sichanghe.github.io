@@ -78,4 +78,4 @@ The paper finds that omission is harder to expose than over-inclusion: a reviewe
 - known-correct-probe gate: trust a generated verifier only after it accepts independently known-correct behavior
 - execution-based expectation repair: replace wrong expected outputs with outputs from a trusted reference and re-gate
 - omission-focused review: search for missing acceptable behavior, since written over-inclusions are easier to detect
-Checked 2026-10-15 against paper chen2026judging: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

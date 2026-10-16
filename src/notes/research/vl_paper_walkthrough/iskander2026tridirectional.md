@@ -76,4 +76,4 @@ Threat is limited but concrete. The work shows that a carefully scoped formal mo
 - minimal-diff mutation boundary — distinguish a production-safe function from a structurally adjacent mutant under one predicate
 - no-retrofit theorem composition — seal component proofs before direct-conjunction capstone composition
 - axiom-record CI gating — recheck theorem types, dependencies, and expected axiom footprints on every push
-Checked 2026-10-15 against paper iskander2026tridirectional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

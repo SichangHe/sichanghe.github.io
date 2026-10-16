@@ -76,4 +76,4 @@ Inference: for VL, the reusable pattern is execution-grounded repair around a ty
 - two-phase generation: explore to the vulnerable function first, then refine near-target inputs toward the triggering effect
 - hybrid execution feedback: always provide coarse source-level coverage and query fine-grained coverage when stalled
 - validated versus variant outcomes: distinguish matching sanitizer type/location from other crashes and report both denominators
-Checked 2026-10-15 against paper li2026execution: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

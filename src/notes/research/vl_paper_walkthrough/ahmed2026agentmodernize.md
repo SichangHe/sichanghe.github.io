@@ -67,4 +67,4 @@ Inference: VL can adopt the BSG's trust boundary, source-traceable rule inventor
 - contract-directed transformation — generate endpoints, data models, validation, and orchestration from BSG contracts
 - BSG-derived validation — test contracts and boundaries, compare differential traces, and report per-node causes
 - targeted feedback loop — send failed cases to the transformer for at most three correction iterations while checking regressions
-Checked 2026-10-15 against paper ahmed2026agentmodernize: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

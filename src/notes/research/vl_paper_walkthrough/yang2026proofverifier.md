@@ -61,4 +61,4 @@ The paper proves no soundness theorem. Trusted components include LLM labels, hu
 - balanced token weighting — interpolate per-response and global normalization to avoid short-trace and long-trace collapse
 - fluency reward filter — suppress binary rewards for repetitive, looping, malformed, or unsupported reasoning traces
 - best-of-k verifier reranking — sample candidate proofs and select the one with the highest verifier score
-Checked 2026-10-15 against paper yang2026proofverifier: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

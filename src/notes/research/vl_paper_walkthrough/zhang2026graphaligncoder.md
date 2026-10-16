@@ -82,4 +82,4 @@ Inference: the residual risk to VL-generated verified Rust is material but bound
 - graph-role alignment — retain implementation roles supported by overlapping proof roles and generate region obligations
 - multi-target injection — train one model on code, concept, and obligation targets with a summed loss
 - verification-to-code consolidation — remove auxiliary outputs through a second code-only training phase before deployment
-Checked 2026-10-15 against paper zhang2026graphaligncoder: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

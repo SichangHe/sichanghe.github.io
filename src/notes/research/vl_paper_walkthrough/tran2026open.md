@@ -48,4 +48,4 @@ Inference: the threat to agent-written verified Rust is high when agents can rep
 - counterexample-guided repair: analyze formal traces, make a localized code edit, review it, and re-prove
 - prove-plus-cover acceptance: require k-inductive safety and reachable cover properties before PASS
 - multi-run feasibility evaluation: run each benchmark independently several times and report pass denominators and API exclusions
-Checked 2026-10-13: audit record tran2026open; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

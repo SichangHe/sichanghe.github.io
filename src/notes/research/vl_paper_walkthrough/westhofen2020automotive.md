@@ -82,4 +82,4 @@ VL should not redo the generic SV-COMP tool inventory or claim the 20%, 63%, and
 - tailored k-induction: transform a one-loop bounded model-checking task into base and nondeterministic induction programs
 - witness validation: independently check True/False witnesses and classify Unknown, timeout, bug, and resource outcomes
 - verifier-boundary diagnosis: compare tools while recording unsupported features, floating-point models, versions, and contradictory results
-Checked 2026-10-14 against the paper by a Codex agent: audit record westhofen2020automotive; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

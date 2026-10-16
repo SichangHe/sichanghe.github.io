@@ -97,4 +97,4 @@ Inference: the threat to VeruLaw is moderate and concentrated in nonlinear proof
 - OMT distance guidance: minimize summed distance outside artificial intervals before extending bounds
 - lexicographic Max-SMT: solve artificial-bound consistency before minimizing original soft-clause cost
 - Motzkin certificate reduction: eliminate restricted existential-universal polynomial arithmetic with nonnegative multiplier witnesses
-Checked 2026-10-14: audit record dejan2020incomplete; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -45,4 +45,4 @@ Inference: the threat to agent-written verified Rust is substantial when a contr
 - propose-then-accept refinement — retain a current-best proof and accept a repair only after compiler checking and pairwise comparison
 
 - stagnation-triggered resampling — restart exploration after a rejection threshold and select a fresh starting proof
-Checked 2026-10-14 against the paper by a Codex agent: audit record liu2026compiler; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

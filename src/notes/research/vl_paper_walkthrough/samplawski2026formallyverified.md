@@ -103,4 +103,4 @@ PVS proves the stated schema theorem for the PVS `transform`; experiments measur
 - multi-island verifier-gated evolution — mutate candidates with LLMs, score them by theorem checking, and retain verified programs in a search database
 - Thompson-sampling model selection — adaptively choose LLMs from observed proof success while separately tracking cost
 - verified-theorem operationalization — deterministically translate a proven specification into deployment code and identify the translation as a trust boundary
-Checked 2026-10-15 against paper samplawski2026formallyverified: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

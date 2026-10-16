@@ -75,4 +75,4 @@ The paper already covers local counterexample messages, minimal-property splitti
 - proof-frame disclosure: explain unrolling, contract abstraction, and unavailable recursive definitions when they affect proof
 - VC inspection: expose a proof tree, source-mapped goal, and commands for searching the logical encoding
 - initialization invariants: state and prove that every progressively written element is initialized before it is read
-Checked 2026-10-14: audit record moy2021how; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

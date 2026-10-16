@@ -50,4 +50,4 @@ Inference: Product threat is moderate to high for agent-written verified Rust ma
 - theory-specific encoding — choose bit-vectors, integers/reals, pointers, and solvers according to program operators and precision needs
 - dynamic-object validity encoding — track object identifiers and liveness to detect invalid allocation, free, and dereference operations
 - verus translation (inference) — use contracts, loop invariants, and dependency fingerprints for sound proof-cache invalidation around changed Rust code
-Checked 2026-10-15 against paper cordeiro2009continuous: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

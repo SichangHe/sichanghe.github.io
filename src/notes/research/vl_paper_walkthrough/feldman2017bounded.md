@@ -124,4 +124,4 @@ Inference: the threat to agent-written verified Rust is medium for solver-contro
 - local witness instantiation — add havoced witnesses for selected program variables and iterate to simulate deeper terms
 - partial-model diagnosis — compare finite bounded models to infer an infinite counterexample or missing induction axiom
 - guarded bound-1 encoding — restrict quantified variables to existing constants and rely on terminating model-based instantiation
-Checked 2026-10-13: audit record feldman2017bounded; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

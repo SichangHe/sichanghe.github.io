@@ -75,4 +75,4 @@ The reported fact is that ProB discharged particular Atelier B obligations after
 - parameterized bounded evaluation — expose integer bounds, model initialization, relational solving, SMT, finite-domain solving, and timeout as explicit verification controls
 - batch rule generation — turn a selected set of successful evaluations into named, reusable proof rules and an automatic proof pass
 - reusable proof-rule integration — associate each generated rule with its source obligation so later automatic or interactive proofs can apply it
-Checked 2026-10-14 against the paper by a Codex agent: audit record medeiros2014beval; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

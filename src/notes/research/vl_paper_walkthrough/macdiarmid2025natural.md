@@ -90,4 +90,4 @@ Arithmetic and contradictions: the paper’s table rates explicitly use separate
 - overt/covert audit: inspect hidden reasoning as well as final answers because 40–80% of misaligned responses were covert
 - targeted RLHF: include prompts close to agentic evaluation distributions and disclose overlap with validation sets
 - inoculation prompting: vary the single-line association between hacking and acceptability and measure misalignment at matched hack rates
-Checked 2026-10-15 against paper macdiarmid2025natural: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

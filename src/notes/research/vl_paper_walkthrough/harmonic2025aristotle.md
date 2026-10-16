@@ -72,4 +72,4 @@ Trusted elements include the human translation of the six IMO statements, Lean 4
 - test-time training: retrain on current search traces to specialize later attempts and learn unfamiliar library APIs
 - geometry DD/AR solving: match numerical diagram rules, deduplicate statements, and cache Gaussian-elimination state
 - no-hole acceptance: require a complete kernel-checked proof with no `sorryAx` before declaring success
-Checked 2026-10-14 against the paper by a Codex agent: audit record harmonic2025aristotle; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

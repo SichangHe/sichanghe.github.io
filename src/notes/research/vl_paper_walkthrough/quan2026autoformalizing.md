@@ -84,4 +84,4 @@ Inference: the product threat from this work is medium. Guard completion could i
 - contrastive faithfulness — replace premises and claims with unsupported alternatives and reject proofs that survive
 
 - consistency admission — reject malformed or contradictory guard theories before proving the target
-Checked 2026-10-15 against paper quan2026autoformalizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

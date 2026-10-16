@@ -88,4 +88,4 @@ The paper’s abstract says the optimization gives a 75% speed-up in total time,
 - sort-partitioned arrangements — use Nelson–Oppen shared variables on stably-infinite sorts and polite witness variables on the rest
 - selective datatype term sharing — restrict CVC4’s shared terms to the sorts justified by the refined combination theorem
 
-Checked 2026-10-15 against the paper by a Codex agent for politeness_and_stable_infiniteness_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

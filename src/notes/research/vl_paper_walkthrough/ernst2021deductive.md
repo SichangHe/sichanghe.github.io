@@ -48,4 +48,4 @@ The formal model, SecC symbolic executor, DAP/LSP implementations, SMT solver, a
 - DAP proof navigation: map launch, thread, variable, step, continue, back, and evaluate requests to symbolic transitions
 - verifier retrofit: add a DAP server and LSP/IDE extension around an existing symbolic verifier
 - branch-aware inspection: show path, heap, security labels, and solver-backed expression evaluations at proof states
-Checked 2026-10-13: audit record ernst2021deductive; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

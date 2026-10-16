@@ -79,4 +79,4 @@ Lean's kernel, Python execution, and the trace verifier are trusted for accepted
 - surgical dual-system repair — locate the first failed step, infill only its bridge, splice it back, and reverify
 - bounded milestone scan — select the first later step that passes the verifier, with suffix-regeneration fallback
 - verifier-token budgeting — charge regenerated bridge tokens against a fixed budget and stop after bounded iterations
-Checked 2026-10-15 against paper cheng2026imbuing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

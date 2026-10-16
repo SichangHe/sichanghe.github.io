@@ -48,4 +48,4 @@ Measured evidence is numerical differential agreement under the stated test sets
 - layered differential verification: combine static audit, workflows, historical tests, and generated boundary tests
 - foreign-runtime reconstruction: implement only the API symbols actually referenced at the compiled boundary
 - FFI root-cause instrumentation: log intermediate values to localize semantic divergence before changing code
-Checked 2026-10-15 against paper cai2026r2py: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

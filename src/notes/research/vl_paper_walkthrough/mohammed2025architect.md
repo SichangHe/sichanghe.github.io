@@ -65,4 +65,4 @@ Inference: The paper already demonstrates blueprint-driven decomposition, depend
 - Inference: golden-model checking: compare cycle-level DUT state with an executable architectural model
 - Inference: failure taxonomy: convert recurring integration failures into shared schemas, prompts, and regression checks
 - Inference: architect-in-the-loop: retain human approval for specification, repairs, synthesis, and physical validation
-Checked 2026-10-15 against paper mohammed2025architect: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

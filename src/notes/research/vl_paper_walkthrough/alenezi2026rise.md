@@ -37,4 +37,4 @@ What VL should not redo: broad surveys of Copilot productivity, novice education
 - verification pillar — specify intent, inspect AI output, test and security-review it, and calibrate trust before accepting it
 - role-based orchestration — assign bounded specification, implementation, and review roles and pass checkable artifacts between them
 - AI-resilient assessment — evaluate specifications, tests, rationales, reflective logs, and defenses rather than generated code alone
-Checked 2026-10-15 against paper alenezi2026rise: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -48,4 +48,4 @@ Inference: Inference: VL should reuse constrained output, a strict parser/type c
 - constrained repair generation — request machine-parseable candidate skills in a fixed DSL and reject malformed output
 - syntax plus realizability checking — type-check ASTs before testing the updated formal specification
 - counterstrategy feedback — analyze sink safety states and sinking SCCs to produce targeted repair prompts
-Checked 2026-10-15 against paper meng2025inprovf: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

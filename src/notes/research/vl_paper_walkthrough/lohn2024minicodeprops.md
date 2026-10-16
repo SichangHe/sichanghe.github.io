@@ -177,4 +177,4 @@ Inference: for VL this is a low threat and a useful warning. The paper builds no
 - four-property sort specification — ordered, per-element count preserved, permutation, and equality with a reference insertion sort
 - many-to-one refinement — show the model all failed candidate proofs at once and sample a new batch, for two rounds
 - pass@k with a checker — count a property solved when any of k sampled whole proofs is accepted
-Checked 2026-10-13: audit record lohn2024minicodeprops; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

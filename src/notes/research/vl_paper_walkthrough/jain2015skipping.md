@@ -69,4 +69,4 @@ The paper calls skipping refinement “the first notion” that supports faster 
 - reduced WFSK: use a rank-decrease or positive-length path rule equivalent to full skipping simulation
 - buffered-system refinement: verify stack machines and memory controllers whose batch steps skip abstract operations
 - translation validation: check scalar-to-SIMD compiler outputs by a bounded skipping relation
-Checked 2026-10-14: audit record jain2015skipping; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

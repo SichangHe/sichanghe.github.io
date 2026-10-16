@@ -121,4 +121,4 @@ VL should not claim predicate-to-contract rewriting or strict intermediate range
 - composable subtype logic: combine reusable predicates with conjunction, disjunction, implication, and negation
 - strict arithmetic subtypes: require every intermediate expression to remain within machine bounds
 - verifier rewrite pipeline: parse subtype AST nodes, normalize nested predicates, generate checks, and send ordinary contracts to the backend
-Checked 2026-10-13: audit record dubbeling2026predicate; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

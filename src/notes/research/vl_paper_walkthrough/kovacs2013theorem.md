@@ -30,4 +30,4 @@ The paper's evidence is a worked group-theory proof and implementation statistic
 - tptp refutation encoding: express axioms, assumptions, and a conjecture in TPTP and prove the negated conjecture unsatisfiable
 - fair saturation with superposition: generate equality consequences while simplifying redundant clauses until refutation or saturation
 - bounded proof search: impose time and memory limits and retain statistics and proof DAGs for audit
-Checked 2026-10-15 against paper kovacs2013theorem: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -85,4 +85,4 @@ The paper’s related-work comparison means VL need not redo basic recurrence cl
 - convex-hull recurrence inequalities — derive bounds on difference variables when exact recurrences are unavailable
 - guard projection — recover pre/post loop conditions by existentially projecting a body formula
 - SMT-guided linearization — replace nonlinear terms with affine equalities and concrete/symbolic interval bounds
-Checked 2026-10-15 against paper farzan2015compositional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

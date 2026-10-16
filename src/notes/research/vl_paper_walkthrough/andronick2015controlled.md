@@ -111,4 +111,4 @@ Existing work already supplies a precise pattern for scheduler and nested-interr
 - nested-interrupt stacks — save active task and interrupt masks on stacks, enforce enablement and priority policy, and restore on return
 - SVC transition modelling — represent synchronous and asynchronous supervisor calls as guarded atomic state transitions with request bits
 - obligation reduction — remove guard-implied redundant OG conditions before automated Isabelle discharge
-Checked 2026-10-15 against paper andronick2015controlled: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

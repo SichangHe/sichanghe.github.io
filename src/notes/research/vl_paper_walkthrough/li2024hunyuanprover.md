@@ -70,4 +70,4 @@ Inference: VL should not redo generic tree-search results as new science; it can
 - ηMCTS with UCB — revisit states and allocate expansion by critic importance while balancing exploration and exploitation
 - policy-confidence and process critics — rank tactics or states using token likelihood and +1/−1 reachability labels
 - coarse-to-fine distance critic — predict remaining proof length as a balanced-tree path and use it to guide search
-Checked 2026-10-15 against paper li2024hunyuanprover: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

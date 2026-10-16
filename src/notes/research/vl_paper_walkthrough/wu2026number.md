@@ -60,4 +60,4 @@ Trust is moved to template authors, entity dictionaries, compiler code, the gove
 - deterministic intermediate compilation — map confirmed requests through a typed tree to a fixed query/function
 - structural abstention — refuse requests outside the enumerable answer space instead of estimating confidence
 - confirmation perimeter — require the user to read and assent to the exact grounded question before execution
-Checked 2026-10-15 against paper wu2026number: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

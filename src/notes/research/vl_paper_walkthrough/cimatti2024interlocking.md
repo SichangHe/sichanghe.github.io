@@ -140,4 +140,4 @@ Inference: a useful new VL experiment would compare proofs with manually selecte
 - external invariant synthesis: use a parameterized model checker to discover a quantified invariant for a reduced abstraction
 - invariant import and refinement: translate the discovered invariant into Dafny or Verus and prove concrete transitions preserve it
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

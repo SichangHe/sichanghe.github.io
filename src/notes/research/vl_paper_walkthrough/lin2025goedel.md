@@ -93,4 +93,4 @@ The paper’s own comparisons have explicit settings: MiniF2F values are under L
 - expert iteration — alternate large-scale proof inference, collection of verified traces, and SFT on the collected data
 - hybrid RL for generation and repair — train whole-proof and correction tasks with verifier rewards and difficulty-aware sampling
 - model averaging for diversity — interpolate base and fine-tuned parameters after SFT and RL to improve pass@N diversity
-Checked 2026-10-15 against paper lin2025goedel: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

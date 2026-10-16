@@ -184,4 +184,4 @@ Inference: low. The tool is a proof of concept on 71 cases from 16 small program
 - explain-first preamble — ask for a prose diagnosis before the answer; measured as no gain over a prompt that already asks for step-by-step solving
 - removal-schema benchmark — strip chosen annotation kinds from verified programs, keep only cases the verifier now rejects, and report per schema
 - post-cutoff contamination control — include a source published after the model's training cutoff and report its solve rate separately
-Checked 2026-10-13: audit record cramer2025llm; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -97,4 +97,4 @@ Inference: HaliVer’s strongest lesson for VeruLaw is specification reuse acros
 - front-end translation — encode Halide functions and reductions as verifier-friendly pure functions and recursive forms
 - schedule-aware annotation transformation — generate permissions and loop invariants through split, fuse, parallel, reorder, unroll, store_at, and compute_at
 - trigger-aware quantified reasoning — choose index forms and triggers that SMT instantiation can use without matching loops
-Checked 2026-10-15 against paper vandenhaak2024haliver: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -101,4 +101,4 @@ This paper already provides a practical sequence for requirement filtering, vari
 - assumption/assertion harnesses — call an IP interface under explicit preconditions and check postconditions
 - multi-verifier checking — combine bounded model checking, configurable reachability analysis, and trace-based verification
 - coverage by precondition union — use separate harnesses for distinct assumptions and inspect their union for requirement coverage
-Checked 2026-10-15 against paper ma2024requirementanalysis: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -60,4 +60,4 @@ Trusted components include Yosys, OpenSTA, SkyWater PDK models, benchmark labels
 - threshold tuning from failures — learn stage thresholds from verifier failure counts on a 500-example calibration set with 20 candidates each
 - PPA-aware objective — substitute synthesis area or other downstream metrics into the controller objective while retaining formal checks
 - diagnostic feedback routing — feed synthesis and verification logs into the next workflow decision
-Checked 2026-10-15 against paper bhattaram2025verimaas: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

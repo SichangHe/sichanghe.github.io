@@ -96,4 +96,4 @@ The verifier transition and proof checker are assumed correct; teacher traces, c
 - memoized proof DAGs — solve reusable proof blocks once and reuse compatible certificates
 - latent-graph posterior training — infer soft DAG labels from inlined traces and train graph and local policies jointly
 - sharing-aware sample comparison — compare flat inlining and hierarchical representations under explicit duplication and no-rescue assumptions
-Checked 2026-10-15 against paper sonoda2026exponential: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -53,4 +53,4 @@ Cogentic's headline evidence is five open-problem results, each independently ve
 - verified ledger — extract, rewrite, and reverify useful lemmas while recording dead ends
 - process-level adaptation — use log trends to tune instructions and allocation without mathematical opinions
 - final consolidation audit — expand the accepted proof and verify the final manuscript against it
-Checked 2026-10-14 against the paper by a Codex agent: audit record cai2026cogentic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

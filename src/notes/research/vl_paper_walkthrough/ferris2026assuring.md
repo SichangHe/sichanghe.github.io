@@ -56,4 +56,4 @@ Inference: threat to agent-written verified Rust is high in the assurance layer.
 - incident regression loop: seed failures, require detection, fix analogous defects, and preserve lessons
 - external coverage mapping: compare accumulated checks with independent security/property catalogs
 - auditor audit: verify check execution, outcome validity, missing-result visibility, and remediation authority
-Checked 2026-10-15 against paper ferris2026assuring: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

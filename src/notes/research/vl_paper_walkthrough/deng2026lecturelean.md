@@ -81,4 +81,4 @@ Inference: The threat to agent-written verified Rust is high for specification d
 - three-artifact provenance — keep source, checked mathematics, and process history as separate reviewable records
 - build-plus-fidelity gate — require compilation and axiom checks, then independently compare the formal statement with its source
 - stale-review invalidation — rerun review when source, statements, helpers, or dependencies change
-Checked 2026-10-15 against paper deng2026lecturelean: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

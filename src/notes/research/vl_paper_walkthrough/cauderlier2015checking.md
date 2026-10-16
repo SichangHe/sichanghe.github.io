@@ -55,4 +55,4 @@ The paper proves translation correctness properties for typed terms and formulas
 - deduction modulo — turn computational axioms into rewrite rules and remove computation from proof search
 - certificate translation — translate typed LLproof trees into λΠ-calculus modulo terms and check them with Dedukti
 - trust minimisation — treat ATP search as untrusted while trusting only obligation translation and a small proof checker
-Checked 2026-10-14 against the paper by a Codex agent: audit record cauderlier2015checking; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

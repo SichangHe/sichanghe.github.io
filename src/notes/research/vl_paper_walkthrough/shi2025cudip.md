@@ -54,4 +54,4 @@ What is proved: Lean accepts the counted candidate proofs under the stated 300-s
 - thresholded pairing — create DPO winner/loser pairs only when their measured scores differ by a threshold
 - iterative DPO — apply preference optimization per curriculum band, using the prior prover as reference
 - verifier-gated prompting — require structured proof actions and accept only artifacts checked by the formal verifier
-Checked 2026-10-15 against paper shi2025cudip: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

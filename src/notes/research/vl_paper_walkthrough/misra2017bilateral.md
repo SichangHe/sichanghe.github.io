@@ -72,4 +72,4 @@ Inference: the product threat is medium to high for concurrent VL code. The comp
 - leads-to closure — derive eventual properties by basis, transitivity, disjunction, and well-founded induction
 - bilateral component composition — use terminal facts to derive perpetual properties and perpetual contracts to compose opaque components
 - derived progress rules — reuse PSP, well-founded induction, completion, and interference lifting without re-proving action code
-Checked 2026-10-14 against the paper by a Codex agent: audit record misra2017bilateral; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

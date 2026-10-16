@@ -27,4 +27,4 @@ What is proved is Checked C compiler acceptance and manually checked annotation 
 - analyzer-guided inference — use sound but incomplete static facts to constrain LLM annotation or contract generation
 - sequential transformation phases — refactor first, infer types second, infer bounds or contracts third, checking each phase
 - compiler-gated acceptance — treat compiler or verifier rejection as the safety gate for every generated annotation
-Checked 2026-10-15 against paper mohammed2024enabling: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

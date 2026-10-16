@@ -75,4 +75,4 @@ What is proved is the semantic soundness of the Isabelle rules, lens/frame laws,
 - shallow expression translation — preserve readable specifications while translating program variables to semantic store operations
 - framed differential induction — calculate derivatives only over mutable continuous variables and combine cuts, frames, and ghosts
 - automated flow and invariant tactics — use weakest-precondition, differential-induction, and certified-flow methods to discharge routine obligations
-Checked 2026-10-15 against paper foster2021hybrid: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

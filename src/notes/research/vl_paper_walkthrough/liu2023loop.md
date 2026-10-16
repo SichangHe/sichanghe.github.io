@@ -76,4 +76,4 @@ The paper measures pass/fail after entailment checking, but the LLM, symbolic ex
 - entailment-guided recursive inference — partition assertions by solver entailment and recursively infer separating conjuncts
 - SAT-based invariant picking — select a minimal covering set of candidate assertions before final verification
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

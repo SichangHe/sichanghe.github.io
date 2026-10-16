@@ -86,4 +86,4 @@ Inference: for VeruLaw, the transferable design is a staged proof pipeline: norm
 - symbolic trace splitting: split aligned barrier intervals into independently checkable traces with quantified thread and loop variables
 - SMT DRF reduction: translate traces to quantified index/mode constraints and require distinct indices whenever a write is present
 - front-end well-formedness: infer protocols from SSA-sliced CUDA, normalize loops, and reject unsupported synchronization forms
-Checked 2026-10-14: audit record cogumbreiro2021checking; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

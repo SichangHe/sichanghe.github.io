@@ -105,4 +105,4 @@ Threat to a product of agent-written verified Rust. Inference: the paper present
 - unfold/define/fold linearization (LIN) — replace nonlinear goals by named predicates so the resulting linear CHCs expose interactions to LA-solvers
 - staged solver evaluation — compare RI-only and RI-plus-LIN verification on a fixed benchmark set with explicit solver, timeout, and denominator reporting
 
-Checked 2026-10-15 against the paper by a Codex agent for proving_correctness_of_imperative_progra_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

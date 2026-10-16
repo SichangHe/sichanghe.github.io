@@ -65,4 +65,4 @@ Inference: Threat to VeruLaw is moderate and focused on recursive data summaries
 - counterexample-guided refinement: reconstruct spurious abstract resolution proofs, test their ADT counterexamples, and add negated obligations
 - template CEGIS: synthesize bounded linear fold parameters from ground counterexamples, increasing degree and parameter ranges as needed
 - model lifting: substitute the catamorphism into an abstract CHC model to construct a model of the original ADT clauses
-Checked 2026-10-14 against the paper by a Codex agent: audit record katsura2025automated; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

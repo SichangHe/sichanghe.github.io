@@ -29,4 +29,4 @@ The paper reports experiments for seven defect types but does not provide a comp
 - detector-to-proof triage — use static patterns to select candidates and require executable or symbolic confirmation
 - paired exploit harness — test normal behavior and an adversarial callback, interpreting both outcomes together
 - symbolic resource bound — turn gas or another finite resource into an explicit budget and check failure under that budget
-Checked 2026-10-15 against paper susan2025validating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

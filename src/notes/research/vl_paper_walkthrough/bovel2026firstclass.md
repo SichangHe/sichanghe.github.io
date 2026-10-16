@@ -134,4 +134,4 @@ Inference: the threat to agent-written verified Rust is greatest at the solver b
 - runtime refinement checks — fall back to predicate evaluation at explicit pattern or checked-call boundaries
 - semantic soundness mechanization — prove typing and subtyping adequacy with a fuel-bounded interpreter and semantic types
 - e-graph entailment — normalize collected equality, branch, and qualifier facts to discharge predicate implications
-Checked 2026-10-15 against paper bovel2026firstclass: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

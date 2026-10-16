@@ -97,4 +97,4 @@ Inference: for VeruLaw, this work reduces monolithic-proof threat by providing a
 - L* assumption learning: infer finite assumptions from membership queries, conjecture checks, and counterexamples
 - interleaved refinement: classify traces by concrete simulation and refine either predicates or assumptions
 - interface generation: combine may safety and must permissiveness checks for infinite-state components
-Checked 2026-10-14 against the paper by a Codex agent: audit record giannakopoulou2013abstraction; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

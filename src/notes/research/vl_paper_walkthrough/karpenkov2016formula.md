@@ -45,4 +45,4 @@ The method assumes quantifier-free formulas can be represented in RCNF and that 
 - abstract postcondition weakening: compute strongest postconditions within a lattice of formula weakenings
 - ART formula slicing: propagate and cover weakened candidates over CFA nodes until a fixpoint
 - invariant-engineering optimizations: use live-variable filtering, caching, CFA reduction, and syntactic weakening
-Checked 2026-10-13: audit record karpenkov2016formula; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -148,4 +148,4 @@ Inference: the product threat is substantial for agent-written verified Rust. A 
 - frozen-context compilation repair — translate one block at a time against an immutable verified prefix and use compiler diagnostics for bounded local fixes
 - semantic review with rejection control — re-review compilable artifacts, preserve repair history, and reject changes that alter assumptions, quantifiers, domains, or conclusions
 - strict execution-based evaluation — count success only after complete project verification with original statements preserved and proof shortcuts rejected
-Checked 2026-10-15 against paper long2026cam: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

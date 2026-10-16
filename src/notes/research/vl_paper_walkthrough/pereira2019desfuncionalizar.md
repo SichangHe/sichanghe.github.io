@@ -64,4 +64,4 @@ Inference: for VeruLaw, the product threat is moderate for closure-heavy Rust AP
 - state-indexed effect contracts: represent pre-state and post-state explicitly when closures mutate shared state
 - continuation termination measures: prove transformed mutual recursion terminates with measures over data and continuation datatypes
 - context defunctionalization: encode evaluation contexts as a datatype and prove composition properties by structural induction
-Checked 2026-10-14: audit record pereira2019desfuncionalizar; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -23,4 +23,4 @@ The paper cautions: “Settlement does not eliminate trust; it relocates it.” 
 - soundness-under-pressure — evaluate verifier-selected candidates against an independent gold executor as best-of-N grows
 - claim ledger — emit typed, versioned claims and settle them later against immutable outcomes
 - drift-controlled reward — reduce proxy reward and increase settlement when prediction error exceeds a threshold
-Checked 2026-10-15 against paper reddy2026proofcarrying: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

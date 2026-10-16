@@ -52,4 +52,4 @@ Inference: for VL (VeruLaw), the most reusable practice is the explicit separati
 - lightweight formal analysis — scan or monitor bytecode, source, configurations, or traces against explicit rules
 - counterexample-guided repair — revise the model or design after a checker counterexample and rerun verification
 - abstraction taxonomy — choose domain, abstraction level, and FM class before selecting tools
-Checked 2026-10-14 against the paper by a Codex agent: audit record kulik2021practical; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

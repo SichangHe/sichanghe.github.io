@@ -108,4 +108,4 @@ Inference: VL should not redo fixed-benchmark-only workflow evolution or claim t
 - anchor recalibration — preserve cross-generation selection scores with champion re-evaluation and a difficulty coefficient
 - verifier-feedback evolution — evolve bounded repair, lemma-name checking, and optional self-contained subgoal workflows under Lean checks
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -84,4 +84,4 @@ Inference: the threat to agent-written verified Rust is medium to high. The tree
 - entailment-preserving atoms — split sentences into atoms only when each is entailed by its source, using a 0.9 NLI filter
 - θ-substitution formalisation — instantiate entity, event, and semantic-role placeholders in separate, auditable steps
 - diagnostic-guided local repair — use failed prover goals to refine only implicated nodes and recheck the same subtree
-Checked 2026-10-15 against paper liu2026decompose: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

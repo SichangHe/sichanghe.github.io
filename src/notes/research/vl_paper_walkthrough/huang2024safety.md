@@ -242,4 +242,4 @@ Already done that VL should reuse: red-team falsification, oracle and coverage d
 - runtime OoD monitoring — classify inputs with density, embedding, or calibrated-confidence thresholds
 - runtime attack monitoring — detect backdoors or adversarial inputs from activations, uncertainty, density, or disagreement
 - formal output monitoring — compile and verify generated code or theorem-prove generated mathematical outputs
-Checked 2026-10-15 against paper huang2024safety: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

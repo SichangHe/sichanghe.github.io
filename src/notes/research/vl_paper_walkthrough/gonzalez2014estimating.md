@@ -42,4 +42,4 @@ Inference: For agent-written verified Rust, the threat is indirect and operation
 - white-box/black-box cost analysis — vary identifiable factors while measuring end-to-end verifier time after transformations and solver heuristics
 - experimental-design data collection — design characterization runs that isolate factors while minimizing solver executions
 - held-out accuracy assessment — fit on one experiment set and estimate error and confidence intervals on a separate set
-Checked 2026-10-15 against paper gonzalez2014estimating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

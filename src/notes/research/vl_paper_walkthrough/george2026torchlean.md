@@ -54,4 +54,4 @@ Already done: shared graph semantics, derivative theorems, IBP/CROWN checker arc
 - IBP/CROWN transfer: propagate sound interval or affine enclosures by topological induction
 - certificate checking: replay external bounds and prove the target property about the Lean graph
 - explicit numerical boundary: separate real, interval, IEEE32, and hardware semantics with named assumptions
-Checked 2026-10-15 against paper george2026torchlean: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

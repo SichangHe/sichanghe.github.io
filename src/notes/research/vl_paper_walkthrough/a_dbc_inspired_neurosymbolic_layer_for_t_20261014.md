@@ -52,4 +52,4 @@ The layer checks programmer-specified runtime predicates and types; it does not 
 - error-history remediation — feed predicate errors into bounded corrective prompts and retry with backoff
 - graceful verified/best-effort fallback — preserve operation after failure while explicitly degrading the guarantee
 - empirical probabilistic contract score — estimate joint predicate success over independent invocations and state any independence approximation
-Checked 2026-10-14 against the paper by a Codex agent: audit record leoveanucondrei2025dbc; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -39,4 +39,4 @@ Across module designs, the authors report accuracy improving from 13% to 70% ove
 - test-point cross-reference: require every planned point to map to a case and checking mechanism
 - generate–verify–correct loop: gate workflow transitions on automated and human consistency checks
 - RAG with constrained templates: retrieve relevant source fragments and constrain outputs with fixed schemas and topology
-Checked 2026-10-15 against paper liu2025multiagent: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

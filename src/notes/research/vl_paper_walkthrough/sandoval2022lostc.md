@@ -77,4 +77,4 @@ Inference: VL should not redo a generic claim that LLMs can emit vulnerable code
 - non-inferiority metric — preselect a tolerance and test bug incidence per line or function with explicit denominators
 - provenance matching — align final code with timestamped suggestions to classify how defects entered and spread
 
-Checked 2026-10-15 against the paper by a Codex agent for lost_at_c_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

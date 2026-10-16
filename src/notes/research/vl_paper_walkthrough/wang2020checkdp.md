@@ -53,4 +53,4 @@ The paper positions CheckDP against sampling detectors and language-based verifi
 - exact witness validation — send a candidate neighboring-input/output witness to an exact probabilistic solver
 - alignment-sensitive cost accounting — charge only branches whose noise alignment changes, preserving the mechanism's tight bound
 - benchmark-denominator discipline — report correct and incorrect mechanism counts, hardware, iteration limits, and per-row seconds
-Checked 2026-10-14 against the paper by a Codex agent: audit record wang2020checkdp; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

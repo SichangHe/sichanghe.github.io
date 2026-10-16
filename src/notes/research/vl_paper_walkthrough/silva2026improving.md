@@ -120,4 +120,4 @@ Inference: the threat to a product that emits agent-written verified Rust is med
 - structure-aware counterexample ranking — augment traced lines with enclosing control nodes and rank by frequency, depth, and node type
 - iterative multi-trace localization — block each discovered failing path, collect independent counterexamples, and rank their aggregate line evidence
 - verifier-native versus LLM diagnostics — compare deterministic counterexample rankings with strict-output LLM line rankings under identical localization metrics
-Checked 2026-10-13: audit record silva2026improving; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

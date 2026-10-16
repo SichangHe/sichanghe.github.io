@@ -120,4 +120,4 @@ Inference: for agent-written verified Rust, gradual verification could reduce in
 - branch-conditioned checks: version branch predicates at their origin and guard each generated runtime assertion with the relevant path condition
 - source-level ownership encoding: implement recursive predicates, accessibility, and separation with object IDs and hash-table ownership sets
 - specification performance lattice: sample paths from `?` to full precision and measure static discharge, runtime overhead, and element-level effects
-Checked 2026-10-15 against paper divincenzo2022gradual: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -139,4 +139,4 @@ Inference: Threat to a product that generates agent-written verified Rust is sub
 - gated admission and recertification — run challenge/full checks before commit and re-execute them on the selected completion
 - risk/dependence stopping — choose verifier thresholds using selective risk and conditional false-accept dependence at stated coverage
 - conformance failure injection — exercise replay, mutation, malformed action, rollback, and recertification cases with auditable receipts
-Checked 2026-10-15 against paper gao2026looping: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

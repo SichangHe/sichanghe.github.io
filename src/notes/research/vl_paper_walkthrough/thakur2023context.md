@@ -221,4 +221,4 @@ Inference: low as a competitor, high as a commodity. COPRA targets Lean 3 and Co
 - cheap-first staged ensemble: run the shortest-prompt configuration first and spend the remaining shared budget on retrieval and hints only for unsolved goals
 - pass@k-with-n-queries: report attempts times model queries with the time limit beside each success rate
 - proof-overlap leakage audit: compare each found proof with the published one by exact match, first step and shape, and report the share that is not a copy
-Checked 2026-10-13: audit record thakur2023context; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -97,4 +97,4 @@ Inference: for agent-written verified Rust, the direct threat is medium at the i
 - type-guard translation — preserve typing by adding result-type axioms and guards to quantified formulas
 - explicit type-argument translation — pass type terms as function arguments so SMT triggers remain type-specific
 - trigger-preserving evaluation — compare typed translations and an unsound type-erasing baseline with fixed solver, timeout, and denominator
-Checked 2026-10-14 against the paper by a Codex agent: audit record leino2010polymorphic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

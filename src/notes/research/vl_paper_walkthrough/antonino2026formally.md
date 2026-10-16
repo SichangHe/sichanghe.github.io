@@ -96,4 +96,4 @@ The paper emphasizes a central failure mode: unconstrained code “does not cont
 - stable-IR verification — verify ACIR instead of a fast-changing source DSL to reuse semantics across front ends
 - backend portfolio — run finite-field split, finite-field gb, and integer encodings because solver performance varies by constraint shape
 - range-check stress testing — track range-opcode count and maximum bit width because bitsum constraints can cause long runs or timeouts
-Checked 2026-10-15 against paper antonino2026formally: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

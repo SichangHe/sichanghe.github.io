@@ -85,4 +85,4 @@ The paper’s hardening and answer-generation pipeline is new work that VL need 
 - coverage and restriction audit — test missing source claims and unjustified constraints with concrete worlds
 - tool-condition evaluation — compare direct answers, sandbox agents, and sandbox agents with a modeling library
 - possibility-space error taxonomy — separate under-enumeration, over-enumeration, and semantic modeling failures
-Checked 2026-10-15 against paper zhang2026hyperlogic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -66,4 +66,4 @@ What is checked: Lean accepts the original proof terms used to construct labels,
 - Cover metrics — measure exact and relaxed top-ranked premise coverage on held-out modules
 - interactive probing — asynchronously try candidate applications and insert the first verifier-advancing proof action
 
-Checked 2026-10-15 against the paper by a Codex agent for machine_learned_premise_selection_for_le_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

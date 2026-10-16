@@ -111,4 +111,4 @@ The report proves or reports HOL consistency, kernel verification, an end-to-end
 - proof-producing premise selection — rank a bounded set of relevant library facts and replay the generated proof in the assistant
 - SMT case reduction — reduce symmetric finite cases to quantifier-free constraints and transcribe solver results into checked proofs
 - reflective algebra automation — certify polynomial, linear-program, and nonlinear-inequality reasoning with proof-producing decision procedures
-Checked 2026-10-13: audit record hales2014developments; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -50,4 +50,4 @@ Inference: SV-COMP is directly useful to VeruLaw as a benchmark design rather th
 - indexed verification benchmark: organize tasks by language, property, feature, and category with explicit expected results
 - independent witness validation: require a separate validator to confirm correctness or violation certificates after verifier execution
 - reproducible scoring and budgets: fix hardware limits, penalize wrong proofs heavily, and normalize category scores by declared denominators
-Checked 2026-10-15 against paper beyer2025improvements: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

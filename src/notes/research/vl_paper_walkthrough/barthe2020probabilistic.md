@@ -66,4 +66,4 @@ The paper's limits include incomplete conditional rules, non-complete atomic axi
 - PSL randomized rules: verify sampling, randomized assignment, conditioning, and framing with independence side conditions
 - security by distributional postconditions: prove cryptographic uniformity or input independence and derive information-theoretic security
 - supported assertions: restrict randomized conditional postconditions to SP formulas so conditioning remains sound
-Checked 2026-10-14 against the paper by a Codex agent: audit record barthe2020probabilistic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

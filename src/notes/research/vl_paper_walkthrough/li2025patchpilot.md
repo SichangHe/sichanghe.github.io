@@ -49,4 +49,4 @@ CrossHair’s counterexample search and Z3 checks provide evidence only for the 
 - contract synthesis: ask an LLM for preconditions and postconditions, then filter with counterexamples
 - formal patch checking: rerun symbolic verification on patched functions and reject any counterexample
 - validation-guided refinement: repair the best partial patch using failed tests and rerun localization when needed
-Checked 2026-10-15 against paper li2025patchpilot: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

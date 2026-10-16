@@ -71,4 +71,4 @@ Inference: this is a strong pattern for VL’s verified Rust analyses. Agent-wri
 - stable-value caching — skip reevaluation when an unknown depends only on unchanged stable values
 - influence-map destabilization — invalidate transitive dependants precisely after a value changes
 - executable refinement — extract option-based executable code from a proof-friendly recursive specification
-Checked 2026-10-15 against paper stade2024topdown: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

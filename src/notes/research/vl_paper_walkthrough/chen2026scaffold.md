@@ -69,4 +69,4 @@ The paper reports an internal inconsistency in scope that a reader should preser
 - four-layer gated verification — accept only candidates passing tests, non-increasing safety metrics, diff budgets, and anchor integrity, with retry or rollback
 - CEGIS failure assimilation — turn structured gate failures into reusable repair knowledge and feed it into subsequent candidate generation
 - latent-security evaluation — use an independent semantic reviewer to detect defensive-logic loss that SAST misses, while reporting the reviewer and benchmark limits
-Checked 2026-10-13: audit record chen2026scaffold; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

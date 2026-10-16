@@ -73,4 +73,4 @@ The reusable ideas are AST-based slicing, FIM training on real contracts, explic
 - Compile/test/exploit validation — accept a synthesized guard only after compilation, regression tests, and exploit replay all succeed
 
 - Incident replay hardening — fork pre-incident state, inject a guard, and run the published attack transaction to validate mitigation
-Checked 2026-10-15 against paper eshghie2025flames: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

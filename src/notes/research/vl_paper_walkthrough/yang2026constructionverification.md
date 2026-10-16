@@ -94,4 +94,4 @@ Inference: VL should separate construction of executable Rust from proof of its 
 - representation transformation proof — construct target domains and maps, then prove relaxation or equivalence
 - semantic dependency density — measure non-trivial typed declaration dependencies to stratify formal tasks
 - structural prompt and failure audit — enforce construction-first output and classify compile/proof failures with denominators
-Checked 2026-10-15 against paper yang2026constructionverification: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

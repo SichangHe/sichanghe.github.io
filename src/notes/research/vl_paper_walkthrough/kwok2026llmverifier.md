@@ -61,4 +61,4 @@ The paper's limitations include requiring scoring-token logits for the main meth
 - probabilistic pivot tournament — use a ring pass and k pivots to reduce N-candidate comparisons from quadratic to O(Nk)
 - checker-gated ranking — use model scores for triage but require the formal checker for acceptance
 
-Checked 2026-10-15 against the paper by a Codex agent for llm_as_a_verifier_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

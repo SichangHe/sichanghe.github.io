@@ -66,4 +66,4 @@ Earlier work to avoid repeating: the paper already supplies lifted cross-domain 
 - in-order T5 parsing — fine-tune a pretrained text-to-text model on operator words and lifted formulas
 - AP recognition decomposition — detect predicates separately, parse the lifted formula, then restore predicate names
 
-Checked 2026-10-15 against the paper by a Codex agent for nl2tl_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

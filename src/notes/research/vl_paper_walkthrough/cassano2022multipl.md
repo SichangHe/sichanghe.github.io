@@ -59,4 +59,4 @@ The paper proves that its translators and sandbox produce a scalable multilingua
 - pass@k evaluation — sample 200 completions at declared temperatures and report the estimator's denominator
 - prompt ablation — compare test-only, doctest, terminology, and original prompts under fixed model settings
 
-Checked 2026-10-15 against the paper by a Codex agent for multipl_e_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

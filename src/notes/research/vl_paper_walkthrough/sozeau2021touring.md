@@ -146,4 +146,4 @@ Inference: VL should not redo MetaCoq's general metatheory, bidirectional type-c
 - verified erasure — erase types/proofs to untyped lambda calculus and prove observational preservation
 - trust-base inventory — record strong normalization, guard checking, omitted features, extraction, and compiler assumptions explicitly
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

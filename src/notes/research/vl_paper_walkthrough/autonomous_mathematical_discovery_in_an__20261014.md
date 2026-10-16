@@ -136,4 +136,4 @@ Inference: VL should reuse exact executable evaluators, persistent reviewed arti
 - reviewed persistent proof literature — store agent papers behind a review threshold so later agents can cite reusable theorems and obstructions
 - theory-guided search and certification — turn numerical near-misses into parameterized mathematical families and prove their invariants
 - exploration and stagnation recovery — use scheduled reflection, diverse strategy lanes, and multistart branches to escape local search
-Checked 2026-10-14 against the paper by a Codex agent: audit record chung2026autonomous; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

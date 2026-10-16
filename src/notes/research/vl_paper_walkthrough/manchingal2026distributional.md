@@ -90,4 +90,4 @@ The checker, parser, frozen encoder, labels, candidate generators, and human-aut
 - heterogeneous adapter ensemble — use structurally diverse low-rank heads whose mean ranks and disagreement estimates uncertainty
 - contrastive verifier training — train pairwise energies on problem-level positive/negative candidates without leakage
 - sigma-triage loop — accept low-uncertainty valid candidates, regenerate with structured feedback, and abstain at extreme uncertainty
-Checked 2026-10-15 against paper manchingal2026distributional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

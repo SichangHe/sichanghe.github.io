@@ -54,4 +54,4 @@ The evaluation used 53 safe HWMCC instances successfully proved by nuXmv within 
 - RL temporal rule — prove liveness from cumulative-shoal induction, descent, and a final invariant
 - PVS certificate replay — regenerate a theory and discharge rule leaves with a theorem prover and SAT solver
 - untrusted-search trusted-checker split — accept model-checker artifacts only after independent proof replay
-Checked 2026-10-14 against the paper by a Codex agent: audit record sindoni2025certifying; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

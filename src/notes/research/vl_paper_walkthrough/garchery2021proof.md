@@ -36,4 +36,4 @@ The formal result is the soundness of certificate semantics and the machine-chec
 - skeptical transformation certificates — instrument every logical transformation to emit a certificate whose leaves are its output tasks, then check it independently
 - certificates with holes and composition — leave output obligations as holes and substitute certificates when composing transformations
 - interpreted-theory rules — add explicit certificate rules for equality rewriting and arithmetic induction while keeping interpretations fixed
-Checked 2026-10-14 against the paper by a Codex agent: audit record garchery2021proof; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

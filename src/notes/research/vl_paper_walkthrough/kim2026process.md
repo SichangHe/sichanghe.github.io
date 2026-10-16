@@ -64,4 +64,4 @@ Inference: threat to agent-written verified Rust is medium. A Verus-aware proces
 - first-token credit — attach process advantage to the first token that chooses each tactic's strategy
 - combined outcome/process GRPO — optimize global proof success together with dense verifier-grounded local feedback
 - verifier as process oracle — use the proof assistant during training, not only for final evaluation
-Checked 2026-10-13: audit record kim2026process; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

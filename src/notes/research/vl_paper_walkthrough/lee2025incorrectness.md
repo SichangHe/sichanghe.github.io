@@ -87,4 +87,4 @@ The paper proves semantic soundness, expressiveness of `wpo`, and relative compl
 - boundary-sensitive heap rules — handle alloc/free/load/store by splitting arrays and updating block endpoints
 
 - weakest-postcondition completeness — generate exact under-approximate postconditions and use entailment to derive all valid triples
-Checked 2026-10-15 against paper lee2025incorrectness: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

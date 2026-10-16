@@ -101,4 +101,4 @@ Inference: threat to a product of agent-written verified Rust is high at the epi
 - F-G-R ceilings — cap reliability by formality, scope congruence, and epistemic layer
 - evidence decay — attach validity windows, lower expired evidence to 0.1, and alert for re-validation, waiver, or deprecation
 - SMT and property checks — validate quantitative constraints with SMT and test calculator invariants with generated inputs
-Checked 2026-10-15 against paper gilda2026epistemic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

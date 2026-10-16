@@ -84,4 +84,4 @@ Inference: VL should not present finite test-point abstraction, Horn-to-Datalog 
 - Horn Datalog hammer: preserve Horn rules, add theory facts over test points, and use a Datalog engine for complete entailment in HBS(SLR)
 - stratified-negation query encoding: represent missing expected groundings with `expected` and `missing` facts to check universal claims efficiently
 - supervisor rule verification: encode cross-variant safety, lane, and actuator conditions as Horn clauses and classify existential or universal conjectures
-Checked 2026-10-14 against the paper by a Codex agent: audit record bromberger2021dataloghammer; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

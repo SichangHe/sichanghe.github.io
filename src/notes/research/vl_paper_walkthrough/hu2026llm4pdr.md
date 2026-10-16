@@ -122,4 +122,4 @@ LLM4PDR already demonstrates restricted helper interfaces, COI-aware prompting, 
 - clause side-loading — inject only initiation- and consecution-checked lemmas into the first PDR frame
 - assertion refinement — strengthen a property temporarily and remove only assertions falsified by counterexamples
 - soundness separation — keep the LLM as a hint generator while the model checker makes every proof decision
-Checked 2026-10-15 against paper hu2026llm4pdr: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

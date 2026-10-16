@@ -80,4 +80,4 @@ The reusable design is to separate policy evolution from release checks, make ev
 - separate flows-to and release-to — distinguish future-safe label flow from current-point output permission
 - trace-indexed unwinding proof — prove dynamic noninterference by matching executions and projected output traces
 - Rust trait enforcement — encode label relations in phantom types and trait bounds for compile-time checking
-Checked 2026-10-15 against paper ching2026sound: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

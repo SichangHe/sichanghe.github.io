@@ -55,4 +55,4 @@ Inference: the paper’s main value for VL is an agent loop that proposes specif
 - reviewer-gated generation: use similarity or oracle execution to accept only validated mutations before code or tests are generated
 - selective MR control: measure each relation independently and retain relations that improve correctness without semantic distortion
 
-Checked 2026-10-15 against the paper by a Codex agent for llm_assisted_coding_with_metamorphic_spe_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

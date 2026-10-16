@@ -143,4 +143,4 @@ Inference: for VeruLaw, τΓ maps naturally to generation-time checking of decla
 - offline fragment induction: anti-unify corpus examples, mine ghost substitutions, and gate executable fragments before deployment
 - dynamic-support necessity: synthesize exact prefix-dependent reference support online because finite fixed-support families cannot be both sound and non-blocking
 - engine correspondence testing: differentially test rendered slot grammars and token masks, then extend Γ queries to immutable sort and shape attributes
-Checked 2026-10-15 against paper zhang2026decode: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

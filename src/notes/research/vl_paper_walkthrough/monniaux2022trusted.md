@@ -113,4 +113,4 @@ CompCert’s theorem is conditional on defined source behavior, formal language 
 
 - back-end case audit — test printers, pseudo-instruction expansions, clobbers, ABI conventions, and runtime assumptions separately
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

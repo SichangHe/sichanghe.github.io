@@ -97,4 +97,4 @@ Inference: The threat to VL is architectural misuse rather than direct algorithm
 - model-checking backend — compile a HeyVL subset to JANI MDPs and calculate expected values with Storm
 - semantic slicing — query minimal source statement sets that preserve a proof or counterexample and map them to diagnostics
 - semantic guardrails — reject combinations of procedure kinds and approximation rules that could be unsound
-Checked 2026-10-15 against paper schroer2026caesar: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

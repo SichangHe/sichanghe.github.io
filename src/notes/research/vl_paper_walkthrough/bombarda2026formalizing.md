@@ -46,4 +46,4 @@ Inference: The direct product threat is specification drift. An agent can produc
 - checker-feedback formalization — regenerate LTL/CTL formulas using exact model-checker diagnostics until syntax and model references are valid
 - temporal explanation — translate formulas into natural language while retaining the formula as the authoritative artifact
 - witness/counterexample narration — explain Avalla traces state by state to help diagnose failed properties
-Checked 2026-10-15 against paper bombarda2026formalizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

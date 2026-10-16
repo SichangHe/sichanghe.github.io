@@ -67,4 +67,4 @@ Inference: the threat to agent-written verified Rust is high at specification an
 - black-box timing reconstruction — simulate proprietary functions, record cycle traces, generate assertions, model transparently, and verify iteratively
 - cycle-bounded checking — choose loop unwinding as the maximum of timer-trigger cycles and timing-diagram length
 - assume-guarantee boundaries — constrain shared-module inputs with producer guarantees and conditional consumer requirements
-Checked 2026-10-15 against paper lopezmiguel2025formal: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

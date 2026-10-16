@@ -79,4 +79,4 @@ The work demonstrates three applications: Monarch architecture synthesis, Pol pa
 - ORM tradeoff exploration — enumerate schema mappings, classify six quality metrics, and present Pareto frontiers
 - assertion-based validation — state intended mapping properties as Alloy assertions and search for counterexamples
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

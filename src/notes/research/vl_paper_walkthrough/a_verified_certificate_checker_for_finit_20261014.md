@@ -77,4 +77,4 @@ VL should not claim novelty for modular certificate checking, validator composit
 - machine-safety validation — reject overflow, NaN, infinity, and possible division by zero under finite-precision execution
 - verified extraction — compile a proved HOL4 checker to a CakeML binary while distinguishing the unverified Coq/OCaml path
 - analyzer/checker separation — treat Daisy as an untrusted certificate producer and accept only certificates passing the verified checker
-Checked 2026-10-14 against the paper by a Codex agent: audit record becker2017verified; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

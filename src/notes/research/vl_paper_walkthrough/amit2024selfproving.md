@@ -54,4 +54,4 @@ Inference: VeruLaw should treat the paper as a design pattern for verifier-media
 - annotated transcript learning — expose intermediate proof steps during training and strip them before verifier-facing inference
 - verifier-mediated convergence analysis — relate proof-token length, parameter norm, Lipschitzness, and target error to TL sample complexity
 
-Checked 2026-10-15 against the paper by a Codex agent for models_that_prove_their_own_correctness_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

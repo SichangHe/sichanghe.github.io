@@ -69,4 +69,4 @@ The reusable ideas are representation-independent ADT specifications, generic hi
 - temporary locations: allocate and free intermediate results for sequential function composition
 - constant points-to: prevent synthesis from mutating read-only input cells
 - sound translation: prove every well-typed Pika execution satisfies its translated SSL proposition
-Checked 2026-10-15 against paper young2024higher: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

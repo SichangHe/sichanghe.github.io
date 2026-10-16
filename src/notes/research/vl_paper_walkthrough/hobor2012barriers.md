@@ -113,4 +113,4 @@ The paper already supplies a soundness pattern for stateful rendezvous: explicit
 - fractional-share decision procedure — solve share joins, bounds, existential elimination, unsatisfiability, and implication with a sound overapproximation
 - inductive fractional entailment — combine predicate fold/unfold with full and split permission matching
 - automated HIP/SLEEK integration — compile barrier diagrams to entailment obligations and discharge calls through structured specifications
-Checked 2026-10-14 against the paper by a Codex agent: audit record hobor2012barriers; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -70,4 +70,4 @@ Inference: the paper shows that VL should not build an agent-only checker or rep
 - witness validation tiers — classify counterexamples by reachability, callee feasibility, dynamic replay, and realism before reporting
 - specification-level CEGAR — tighten contracts for spurious witnesses, guard the refinement, persist it, and recheck callers
 - persistent compositional knowledge — reuse approved contracts and witness patterns across parallel call-graph sweeps
-Checked 2026-10-13: audit record sun2026agentic; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -72,4 +72,4 @@ The paper already implements and evaluates the basic loop of localization with f
 - strict output prompting: assign a formal-methods role, provide full marked context, cap output length, and require only the replacement line
 - mutation-based verification evaluation: filter verified benchmark programs, inject arithmetic operator/coefficient/variable mutations, and score localization and verified repair by explicit denominators
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

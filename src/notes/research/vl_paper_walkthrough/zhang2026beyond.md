@@ -43,4 +43,4 @@ Inference: this is a direct warning for agent-written verified Rust. A Verus pro
 - factorial verifier ablation: toggle drafting, search, and feedback across all tool combinations while holding prompts fixed
 - validity-faithfulness split: report compile/verify rates separately from semantic faithfulness and their gap
 - trajectory churn analysis: log per-item transitions and repair length to expose regressions hidden by aggregate averages
-Checked 2026-10-14 against the paper by a Codex agent: audit record zhang2026beyond; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

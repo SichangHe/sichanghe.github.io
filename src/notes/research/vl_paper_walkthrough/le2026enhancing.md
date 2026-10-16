@@ -67,4 +67,4 @@ The paper proves no universal correctness theorem for LLM-generated conditions o
 - alpha consistency filter — retain conditions satisfied on a threshold fraction of passing executions that reach the checkpoint
 - beta discriminative filter — retain conditions violated by a threshold fraction of failing executions
 - dual-signal repair guidance — pass conditions satisfying α≥θ and β<γ to the patch generator
-Checked 2026-10-15 against paper le2026enhancing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -56,4 +56,4 @@ Inference: threat to a product that lets agents write verified Rust is moderate.
 - failure-matched verification surface — choose a checker whose observable signal reaches the product failure, and include a negative-control task where it cannot
 - boot-probe-first ladder — measure a one-bit startup check before paying for a full shell, preserving within-model comparisons and token denominators
 - intention-to-treat tool evaluation — score assigned capabilities while logging actual use, feedback, repair, and cost separately
-Checked 2026-10-15 against paper mehta2026reach: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

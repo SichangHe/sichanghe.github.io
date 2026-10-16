@@ -84,4 +84,4 @@ Reuse the StatementGroup idea, dependency-first summaries, hybrid ranking, and M
 - hybrid ranking: combine embedding similarity, BM25+, and PageRank after local normalization
 - MCP premise retrieval: expose declaration search and dependencies to theorem-proving agents
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

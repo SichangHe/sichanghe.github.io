@@ -49,4 +49,4 @@ What remains trusted includes the Coq kernel, extraction/compiler, formal semant
 - verified translation validation — prove an independent checker that relates source IR and generated machine code
 - symbolic execution with shared E-graphs — execute both programs into canonical expressions and compare representatives
 - bounded assembly semantics — restrict syntax, pointers, and control flow so the equivalence theorem remains tractable
-Checked 2026-10-14: audit record kuepper2022cryptopt; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -75,4 +75,4 @@ Inference: the residual risk for VL-generated verified Rust is substantial but b
 - large-block corrector — replace one failed subgoal with a mask and fill it from both prefix and suffix context
 - verifier-gated repair loop — invoke correction only after the checker confirms a repairable skeleton failure and re-check every fill
 - proof-length curriculum — sort training examples by proof length to stabilize whole-proof model training
-Checked 2026-10-15 against paper wang2026diffusionproof: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

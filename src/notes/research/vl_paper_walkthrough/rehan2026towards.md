@@ -73,4 +73,4 @@ Inference: threat to agent-written verified Rust is moderate. The verify-before-
 - grammar-bound translation: map causes to machine-checkable predicates under an explicit symbol grammar
 - minimal-set search: enumerate and cache minimal necessary and sufficient cause combinations
 - verify-before-admit: gate new rules on syntax, consistency, safety, and invariant checks before committing them
-Checked 2026-10-15 against paper rehan2026towards: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

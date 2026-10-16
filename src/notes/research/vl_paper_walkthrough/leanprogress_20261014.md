@@ -58,4 +58,4 @@ VL should reuse theorem/project-level data splits, explicit denominators, progre
 - mixed progress search — rank frontier states with normalized progress and tactic log probability
 - interactive progress feedback — expose a tactic that combines suggestions with predicted remaining steps
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

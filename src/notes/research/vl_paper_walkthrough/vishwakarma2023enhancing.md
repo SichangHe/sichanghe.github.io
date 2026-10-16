@@ -72,4 +72,4 @@ Inference: The threat to agent-written verified Rust is medium for search cost a
 - best-first verifier search — prioritize open goals by cumulative model log probability and let the proof assistant reject inapplicable actions
 - validation checkpointing — periodically run the verifier on validation theorems and keep the model checkpoint with highest Pass@1
 - tool-path optimization — remove unnecessary environment-version queries and set a measured tactic timeout before comparing prover rates
-Checked 2026-10-15 against paper vishwakarma2023enhancing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

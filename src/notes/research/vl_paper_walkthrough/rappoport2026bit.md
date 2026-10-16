@@ -86,4 +86,4 @@ Inference: threat to a product that asks agents to write Verus-verified Rust is 
 - theory-modular CHC encoding: partition arithmetic and bit-wise clauses, duplicate predicates, and connect copies with translated interface inclusions
 - bidirectional MosaicSolve: alternate single-theory oracle calls, under-approximation counterexamples, over-approximation blocking lemmas, and cross-fragment proof obligations
 - overflow-aware optimization: omit modular arithmetic only after proving that the relevant execution cannot overflow
-Checked 2026-10-15 against paper rappoport2026bit: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

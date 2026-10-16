@@ -48,4 +48,4 @@ The study measures model-generated proof text, not Verus proof success, and it d
 - distractor robustness testing — add 0, 5 or 10 irrelevant rules and classify invalid proofs by refutation, rule or fact hallucination
 - order-preserving R-GSM rewrite — construct original/reordered word-problem pairs whose verified answer is unchanged
 - conditional accuracy analysis — report reordered accuracy only on instances solved in the original condition to isolate order failures
-Checked 2026-10-15 against paper chen2024premiseorder: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

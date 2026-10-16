@@ -117,4 +117,4 @@ The paper proves no new program property. Its trusted base includes KeY's calcul
 - synchronized proof visualization: inspect script, goal, source program, and explicit proof tree together
 - persistent interactive repair: manipulate open goals point-and-click and append the recorded commands to the script
 - layered debugger architecture: separate interface, execution control, interpreter, matcher, and prover integration
-Checked 2026-10-13: audit record beckert2018debugging; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

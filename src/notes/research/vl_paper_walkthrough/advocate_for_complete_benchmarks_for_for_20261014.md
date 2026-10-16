@@ -73,4 +73,4 @@ Inference: for VeruLaw, the largest threat is evaluation overclaim: an agent can
 - proof-effort reporting: publish proof lengths, automatic-solver-only counts, settings, and per-item outcomes
 - evaluator audit: validate automated autoformalization judges against expert labels before deployment
 - open reproducibility: release code, data, search procedures, training sources, and ablations
-Checked 2026-10-14 against the paper by a Codex agent: audit record yousefzadeh2025advocate; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

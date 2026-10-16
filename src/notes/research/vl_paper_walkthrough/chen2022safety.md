@@ -97,4 +97,4 @@ Inference: the threat to VL is moderate for agent-written verified Rust that has
 - predicate extraction: derive candidate invariant atoms and matching conjunctions from rule bodies
 - Houdini elimination: generate template candidates and remove those refuted by base or induction checks
 - compiler boundary accounting: separate proof of the abstract contract from trust in generated Solidity
-Checked 2026-10-13: audit record chen2022safety; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

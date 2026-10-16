@@ -71,4 +71,4 @@ What VL should not redo (Inference): derive generic rely-guarantee composition f
 - shuffle trace semantics — model parallel execution as interleaving languages with consistency and closure operations
 - assignment rely conditions — express unchanged and preservation assumptions for shared-memory assignments
 - compositional parallel proof — verify each worker against the other's guarantee and combine results
-Checked 2026-10-14 against the paper by a Codex agent: audit record armstrong2013algebraic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

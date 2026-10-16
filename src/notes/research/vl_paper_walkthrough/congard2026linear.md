@@ -136,4 +136,4 @@ Inference: the threat to agent-written verified Rust is moderate at the ownershi
 - effectful move — represent ownership reordering as an explicit stateful operation
 - presheaf semantics — model ordered resource lists to validate admissible rules and sound reduction
 
-Checked 2026-10-15 against the paper by a Codex agent for linear_effects_exceptions_and_resource_s_2_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

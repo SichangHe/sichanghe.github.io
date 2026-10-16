@@ -75,4 +75,4 @@ These are concrete-parameter proofs, not universal proofs over symbolic dimensio
 - VC generation with Z3: discharge loop-free verification conditions over arrays, bitvectors, and uninterpreted functions
 - concrete-parameter verification: replace symbolic dimensions and flatten bounded quantifiers when SMT cannot solve nonlinear formulas
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

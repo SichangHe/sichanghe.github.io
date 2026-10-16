@@ -143,4 +143,4 @@ The paper already evaluates single versus dual agents, no/generic/auto feedback,
 - graduated feedback levels — compare failure-only, templated, and LLM-generated feedback under a fixed repair loop
 - protocol and fallback guards — enforce tool JSON, detect repeated candidates, and parse or reject malformed responses
 - defect-stratified evaluation — report Correct@k, denominators, iterations, token cost, defect classes, and solver formula size separately
-Checked 2026-10-14 against the paper by a Codex agent: audit record alhanahnah2024empirical; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

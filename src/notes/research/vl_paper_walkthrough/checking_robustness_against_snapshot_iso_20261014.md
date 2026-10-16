@@ -53,4 +53,4 @@ Inference: For VL, this work supplies a reusable concurrency proof pattern rathe
 - single delayed transaction instrumentation: encode SI anomalies as sequentially consistent reachability by ghost auxiliary writes, an attacker, happens-before helpers, and an error state
 - commutativity dependency graph: prove robustness when mover-derived dependency edges contain no non-mover cycle
 - snapshot-isolation robustness benchmark: use fixed clients, Civl reachability, obligation counts, and CDG checks while labeling bounded absence of errors correctly
-Checked 2026-10-14 against the paper by a Codex agent: audit record beillahi2019robustness; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

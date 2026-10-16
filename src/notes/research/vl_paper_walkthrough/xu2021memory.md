@@ -55,4 +55,4 @@ Inference: threat to a product that generates agent-written verified Rust is hig
 - API and FFI contract audit — expose unsafe preconditions, mutability, lifetimes, FFI behavior, alignment, and layout in contracts
 - generic-bound adversarial testing — instantiate generic and trait APIs with `Rc`, unusual alignment, pinning, and lifetime cases to test missing bounds
 
-Checked 2026-10-15 against the paper by a Codex agent for memory_safety_challenge_considered_solve_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

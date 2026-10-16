@@ -52,4 +52,4 @@ Limitations include a small domain (three topology notions), one model family (G
 - Lean novelty filtering — use `exact?` against Mathlib and the generated library before proof search
 - verifier-feedback retries — return Lean diagnostics to the prover for up to a fixed attempt limit
 - stratified hard-theorem sampling — use multiple proof attempts so acceptance is less biased toward statements with easy proofs
-Checked 2026-10-15 against paper kasaura2025discovering: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -50,4 +50,4 @@ Inference: For VL, the paper's strongest reusable idea is a staged generate–ch
 - SMT gap completion: discharge implicit diagram or state facts with restricted non-construction rules
 - Lean/Verus checker loop: generate proof steps, run the kernel verifier, and repair only rejected obligations
 - few-shot repair measurement: report as-is success and repaired-proof similarity with dataset denominators
-Checked 2026-10-15 against paper murphy2024autoformalizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

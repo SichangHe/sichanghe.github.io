@@ -76,4 +76,4 @@ Inference: the threat to agent-written verified Rust is high for candidate-gener
 - symbolic term exploration — enumerate candidates by size, test concretely, and validate symbolically with SMT
 - counterexample-guided test growth — add solver counterexamples to a prioritized concrete test base
 - specification-driven repair — synthesize or repair code only when the resulting candidate satisfies formal contracts
-Checked 2026-10-14: audit record koukoutos2016update; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

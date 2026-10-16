@@ -63,4 +63,4 @@ Inference: the product risk for agent-written verified Rust is medium. The fragm
 - decidability boundary checking — reject quantifier alternation, equal-length, counting, and sum extensions known to be undecidable
 - backward sequence verification — generate loop verification conditions by substitution and discharge them with universal sequence formulas
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

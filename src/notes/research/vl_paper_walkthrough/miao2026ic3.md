@@ -51,4 +51,4 @@ Inference: Threat to agent-written verified Rust is high if VL lets an LLM chang
 - Compass&Jump search — rank evaluator moves by confidence, risk, and cost, then explore one or a few slots adaptively
 - instrument–gate–adapt heuristic design — measure progress, skip stalled work, and allocate budgets by observed yield
 - regression-aware champion loop — benchmark under fixed timeouts, promote only improvements, and revert all failures with provenance
-Checked 2026-10-13: audit record miao2026ic3; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

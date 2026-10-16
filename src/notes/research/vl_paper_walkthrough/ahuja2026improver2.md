@@ -94,4 +94,4 @@ Already done. ImProver 2 already combines candidate generation, formal verificat
 - replay-buffer IRPO: mix old and new candidates, form winner–winner and winner–loser pairs, and train iteratively
 - dual accuracy reporting: separate compilation accuracy from the fraction of outputs that compile and improve the metric
 - structural proof metrics: score tactic length, explicit dependencies, and effective spawned subgoals with stated proxy limits
-Checked 2026-10-15 against paper ahuja2026improver2: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -87,4 +87,4 @@ What VL should not redo (Inference): a generic shared-state patch contract, path
 - footprint restriction and union — narrow delegated actors and compose peer/sub-workflow interfaces by path-set algebra
 - commutation certificate — reorder same-phase steps only when prefix-disjoint writes and cross-read conditions hold
 - compromised-source stress test — submit fixed hidden-source patches to isolate patch-source enforcement from model behavior
-Checked 2026-10-15 against paper bai2026patchoptic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

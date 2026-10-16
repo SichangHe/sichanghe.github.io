@@ -137,4 +137,4 @@ What VL should not redo is a monolithic checker-in-the-loop agent that receives 
 - binding analysis — fill mechanically determined arguments while leaving semantic premises as explicit goals
 - multi-agent tree search — backtrack, spawn parallel branches, prune stalled paths, and retain negative memory
 - checker-gated proof assembly — accept only tactic paths and final scripts that the proof assistant verifies
-Checked 2026-10-13: audit record ma2026shannonprover; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

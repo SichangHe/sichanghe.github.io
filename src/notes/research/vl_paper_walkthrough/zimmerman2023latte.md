@@ -75,4 +75,4 @@ Inference: the threat to agent-written verified Rust is moderate. Verus already 
 - framing: invalidate aliases to fields that a method may mutate
 - branch unification: conservatively join per-branch alias environments, using bottom when no safe common fact exists
 - borrowed traversal: use `owned` recursive parameters and isolation to mutate linked structures without explicit destructive-read syntax
-Checked 2026-10-15 against paper zimmerman2023latte: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

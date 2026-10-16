@@ -80,4 +80,4 @@ Inference: the strongest reusable idea for VL is a verifier-feedback controller 
 - solver-in-the-loop repair: submit generated assertions to the solver and apply localized fixes from errors or counterexamples
 - vacuity checking: test proven or undetermined assertions for unreachable antecedents before accepting them
 - ablation accounting: measure retrieval, structural analysis, and verification feedback separately on a fixed design subset
-Checked 2026-10-15 against paper mashnoor2026language: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

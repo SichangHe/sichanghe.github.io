@@ -187,4 +187,4 @@ Inference: for agent-authored Verus code, the paper creates an indirect but conc
 - fair cyclic reasoning — require infinitely repeated loop-left progress and prove soundness with finite unrolling plus a decreasing measure
 - syntax-tree regularity — represent leftmost cedents by unique syntax tails to obtain finite-state cyclic proofs
 - staged bounded proof search — search in left, right, loop-empty, and closure phases while caching one finite-state obligation
-Checked 2026-10-15 against paper rooduijn2024cyclic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

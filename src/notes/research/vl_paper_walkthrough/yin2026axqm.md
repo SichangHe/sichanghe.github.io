@@ -127,4 +127,4 @@ Inference: VL should borrow AxQM's deterministic grading, private reference proo
 - deterministic proof grading — require compilation, dependency-closure cleanliness, and no newly introduced axioms
 - semantic failure audit — search for definitions, hypotheses, or missing algorithms that make a wrong claim provable
 - documented library fork — pin, explain, publish, and upstream-review domain-specific foundational changes
-Checked 2026-10-14 against the paper by a Codex agent: audit record yin2026axqm; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

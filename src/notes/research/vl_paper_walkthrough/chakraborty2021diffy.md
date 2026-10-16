@@ -40,4 +40,4 @@ Inference: For VL, Diffy is a direct design pattern for array-heavy verified Rus
 - cross-product difference invariants — relate corresponding variables of two synchronized executions with dataflow equalities
 - inductive strengthening — prove base cases, eliminate old-state variables, and iterate weakest-precondition strengthening
 - parametric array verification — evaluate the transformed proof on symbolic-size safe and unsafe benchmark suites
-Checked 2026-10-14: audit record chakraborty2021diffy; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

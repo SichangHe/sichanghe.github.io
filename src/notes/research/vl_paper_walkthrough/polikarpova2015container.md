@@ -41,4 +41,4 @@ The measured setup is AutoProof translating Eiffel to Boogie and then Z3 (Sect. 
 - closed/open ownership: mutate owned objects only while open and re-establish invariants before closing
 - collaborative iterator invariants: track subjects and observers to permit safe concurrent readers and exclusive writers
 - ghost-state abstraction: maintain explicit ghost relations, with optional invariant-driven updates before closure
-Checked 2026-10-14 against the paper by a Codex agent: audit record polikarpova2015container; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

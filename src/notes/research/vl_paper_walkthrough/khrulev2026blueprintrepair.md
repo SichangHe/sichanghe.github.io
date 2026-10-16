@@ -76,4 +76,4 @@ Inference: For a product that lets agents write verified Rust, the threat is mod
 - post-run dependency audit — repeat compiled-proof dependency extraction on stored endpoints and record unused edges separately
 - typed-versus-free-form evaluation — compare typed edits, atomic patches, and rewrites under matched source, feedback, model, and token/cost budgets
 - trajectory artifact — retain accepted and rejected actions, diagnostics, graphs, tokens, costs, and final certificates for reproducibility
-Checked 2026-10-13: audit record khrulev2026blueprintrepair; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

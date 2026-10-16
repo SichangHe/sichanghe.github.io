@@ -70,4 +70,4 @@ Inference: the threat to agent-written verified Rust is medium to high if VL nee
 - shared-array invariant: prove free/used list disjointness, bounds, no duplicates, and capacity conservation over one backing array
 - theorem-prover contracts: state `good-statep` preconditions and functional postconditions as ACL2 theorems
 - bounded scalability comparison: compare model checking, symbolic execution, and ACL2 with explicit array-size limits
-Checked 2026-10-15 against paper hardin2022hardware: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

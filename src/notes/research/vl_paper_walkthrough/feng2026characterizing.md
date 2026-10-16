@@ -71,4 +71,4 @@ Inference: for VL, the direct threat is substantial whenever user wording or age
 - deterministic paraphrase suite — apply guarded, reference-backed single-axis rewrites outside protected math/specification spans and compare paired formalizations
 - layered robustness measurement — separate compilation, equivalence checking, and structural similarity, then classify compiler failures
 - dataset-specific repair targeting — map dominant diagnostics to retrieval for unknown identifiers or compiler-feedback training for syntax/elaboration failures
-Checked 2026-10-15 against paper feng2026characterizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

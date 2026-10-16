@@ -48,4 +48,4 @@ Inference: threat to VL is medium to high for equivalence and information-flow p
 - bounded product construction: under-approximate paired executions by bounding recursion and enumerate proof paths
 - invariant-guided synchronization: synthesize invariants and use them to choose synchronization points, then generalize
 - CHC relational synthesis: encode all path obligations as constrained Horn clauses and solve for relational predicates
-Checked 2026-10-14: audit record zhou2019relational; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -63,4 +63,4 @@ Inference: For VL (Verus), the direct product threat is moderate. The paper show
 - language-server separation: route editor events through LSP to isolated verifier workers and return diagnostics asynchronously
 - live verification feedback: parse or type-check in the background and render source-located errors, completion, and hover information
 - proof navigation: expose theories, declarations, theorem actions, and proof trees as clickable IDE views
-Checked 2026-10-14 against the paper by a Codex agent: audit record masci2019integrated; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

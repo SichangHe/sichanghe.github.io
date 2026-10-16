@@ -54,4 +54,4 @@ VL should reuse one-check-per-rollout-group scheduling, explicit inconclusive ha
 - ResZero fallback — penalize unverified consensus and redistribute a zero-mean signal over residual answers
 - cascaded autoformalization verifier — translate, consistency-check, and prove before granting reward
 - proof-result caching — reuse exact verifier outcomes with configuration-aware keys
-Checked 2026-10-15 against paper chen2026juryrl: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

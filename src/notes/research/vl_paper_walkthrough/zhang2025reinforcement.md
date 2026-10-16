@@ -121,4 +121,4 @@ The paper already specifies selector encodings, relocation scoring, canonical bu
 - preview-first guarded mutation — preview edits, enforce jail and conflict policies, then apply only after explicit approval
 - RLCSF reward shaping — convert diagnostic, safety, confidence, and error deltas into a replayable transition reward
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

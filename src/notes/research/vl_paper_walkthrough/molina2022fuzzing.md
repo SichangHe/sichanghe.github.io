@@ -98,4 +98,4 @@ The paper measures precision, recall, F1, candidate reduction, and expression co
 - weak-assertion mutation filtering — discard candidates that kill no enabled synthetic mutant
 - mutation-equivalence clustering — group candidates by identical killed-mutant sets and choose representatives
 - mutation-failure ranking — rank each cluster by the number of mutant/test failures to prioritize stronger-looking candidates
-Checked 2026-10-14: audit record molina2022fuzzing; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

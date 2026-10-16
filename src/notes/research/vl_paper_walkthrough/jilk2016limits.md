@@ -70,4 +70,4 @@ Inference: The trusted base for a Verus product therefore includes the specifica
 - regular partial-history specification — encode relevant context with finite-state or regular-language rules to keep the deontology decidable
 - intention/action boundary audit — enumerate semantic links from logical intentions to sensors, plans, actuators, and consequences and mark unproved links as assumptions
 
-Checked 2026-10-15 against the paper by a Codex agent for limits_to_verification_and_validation_of_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

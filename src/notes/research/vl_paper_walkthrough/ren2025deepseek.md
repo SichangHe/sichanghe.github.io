@@ -78,4 +78,4 @@ Lean's kernel and elaborator, Lean libraries, benchmark formalizations, hardware
 - cold-start proof synthesis — compose checked subproofs and append them to informal reasoning traces for supervised initialization
 - consistency-reward RL — reward kernel-verified proofs and temporarily penalize omission of decomposed intermediate lemmas
 - expert iteration and distillation — retain successful checker-verified attempts, train a stronger model, and distill long-context rollouts into a smaller prover
-Checked 2026-10-15 against paper ren2025deepseek: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -111,4 +111,4 @@ The measurements support a systems optimisation for memory-intensive reasoners; 
 - patched glibc activation — hide allocation changes in glibc and enable them per process with `GLIBC_THP_ALWAYS=1`
 - paired benchmark accounting — compare identical solved-instance denominators and report runtime, TLB counts, memory footprint, and timeout settings
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

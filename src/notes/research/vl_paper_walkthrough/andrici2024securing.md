@@ -32,4 +32,4 @@ The main case study is a statically verified web server linked with adversarial 
 - reference monitoring: check every untrusted IO operation against a trace-based policy before execution
 - monitored effect discipline: restrict access to IO and monitor state with indexed effects or capabilities
 - secure compilation proof: establish trace safety and relational preservation for verified code linked with hostile contexts
-Checked 2026-10-15 against paper andrici2024securing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

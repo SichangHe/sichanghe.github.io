@@ -78,4 +78,4 @@ Inference: threat to VL is direct if agent-written Rust can duplicate a capabili
 - compile-fail ownership tests — use targeted trybuild cases and rustc diagnostics to mechanically demonstrate forbidden clone, double-spend, and post-split use
 - specification cross-checking — combine TLA+/TLAPS/TLC, Coq or Dafny encodings, Verus obligations, and bounded Loom schedules as consistency evidence while keeping binary refinement open
 - delegation race experiment — compare racy, locked, affine-split, and shared-mutex conditions with explicit trial denominators and cap settings
-Checked 2026-10-15 against paper khan2026tokenbudgets: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

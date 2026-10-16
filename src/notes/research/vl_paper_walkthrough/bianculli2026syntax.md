@@ -80,4 +80,4 @@ What VL should reuse. Inference: VL should reuse the paper's edit-local invalida
 - delayed and summarized verification — defer tasks missing rules and collapse verified fragments into summary transitions
 - parallel incremental evaluation — evaluate independent syntax subtrees and solver queries concurrently
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

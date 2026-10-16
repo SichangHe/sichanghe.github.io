@@ -73,4 +73,4 @@ Inference: threat to a product that generates agent-written verified Rust is hig
 - generalized regression harness: replace selected test inputs with nondeterministic values while preserving assertions
 - local compositional BMC: model-check only changed components from test-described initial states
 - CI proof feedback: return formal counterexamples through the developer's normal commit workflow
-Checked 2026-10-14 against the paper by a Codex agent: audit record monteiro2019boost; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

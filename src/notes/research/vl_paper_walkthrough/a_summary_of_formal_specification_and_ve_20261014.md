@@ -82,4 +82,4 @@ The survey’s measured facts are corpus summaries and tool-use trends, not clai
 - challenge decomposition: separate environmental/certification obligations from agent, multi-robot, and adaptive implementation issues
 - formalism-property matching: pair state-transition models with suitable logics and choose model checking or theorem proving by property needs
 - integrated verification boundary: combine tools and formalize translation from abstract model to program code
-Checked 2026-10-14 against the paper by a Codex agent: audit record luckcuck2019autonomous; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

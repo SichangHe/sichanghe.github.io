@@ -48,4 +48,4 @@ The trusted base includes the canonicalization, positivity-theorem translations,
 - positivity elimination: use Farkas, Handelman, or Putinar translations to remove universal quantifiers under stated assumptions
 - Assume-SAT: keep only satisfiable-antecedent obligations for smaller but incomplete systems
 - UNSAT-core search: constrain fresh coefficients to zero and relax only constraints implicated by unsat cores
-Checked 2026-10-15 against paper chatterjee2024polyqent: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

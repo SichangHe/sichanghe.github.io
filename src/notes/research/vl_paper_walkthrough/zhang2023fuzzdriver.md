@@ -68,4 +68,4 @@ RULF+ already provides generic API graph construction, fixed-point reachability,
 - rustdoc normalization — extract APIs and apply explicit borrow, pointer, and wrapper type transformations
 - bounded fuzz-driver synthesis — generate at most 300 reachable sequences and fuzz each selected generic instance
 - generic differential bug triggering — exercise multiple trait implementations of one API to expose implementation-specific failures
-Checked 2026-10-15 against paper zhang2023fuzzdriver: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

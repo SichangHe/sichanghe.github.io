@@ -87,4 +87,4 @@ Inference: threat to agent-written verified Rust is high for memory-manipulating
 - normalized closure pipelines: reduce repeated closure applications to a fixed order and reuse the same core rules across approximation directions
 - local forward and backward systems: instantiate the method as SL+, ISL+, SIL+, and NC+ with explicit approximation meaning
 - error-safe incorrectness framing: prevent false under-approximation triples by rejecting frames that change exact semantics
-Checked 2026-10-15 against paper bruni2026systematic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

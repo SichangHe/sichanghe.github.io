@@ -72,4 +72,4 @@ Inference: VL should not spend its first effort building a tactic-by-tactic pred
 - staged proof pipeline — separate extraction, first proof, error repair, and fresh-session style polishing while kernel-checking every accepted edit
 
 - bounded session reuse — preserve retry history and nearby-lemma context for a small window, then reset to prevent context dilution
-Checked 2026-10-13: audit record kan2026harnessing; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

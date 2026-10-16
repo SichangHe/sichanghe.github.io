@@ -57,4 +57,4 @@ Existing formal model checking already proves properties when engineers provide 
 - self-critique validation — review the full reasoning chain to filter false positives
 - recall-first context collection — prefer retrieving extra relevant code over missing a function needed to establish a property
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

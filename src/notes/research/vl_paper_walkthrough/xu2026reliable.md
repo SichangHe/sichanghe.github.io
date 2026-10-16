@@ -81,4 +81,4 @@ Inference: the threat to a product that lets agents write verified Rust is moder
 - applicability-breaking perturbations — minimally edit statements to invalidate lemma assumptions while preserving mathematical coherence
 - staged proof-search feedback — use verifier or checker diagnostics to regenerate only the failed proof section (Inference: transfer to Verus)
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

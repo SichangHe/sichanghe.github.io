@@ -53,4 +53,4 @@ Inference: for VL, math-PVS is a useful specification-writing precedent but a we
 - abstraction before proving — reduce complex statements to explicit set-theoretic concepts while recording omitted assumptions
 - llm-generated pvs with checker — generate theories and lemmas, parse/typecheck them, and finish proofs interactively
 - human repair loop — manually correct syntax and theorem meaning, add lemmas, and accept only proof-assistant-checked results
-Checked 2026-10-15 against paper saidi2023mathpvs: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

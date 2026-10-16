@@ -72,4 +72,4 @@ The paper's realistic deliverable is a “disciplined frontier” rather than a 
 - composed verification gates — combine self-discipline, adversarial, numerical, and reviewer gates before a claim enters a paper
 - open-obligations ledger — record every unresolved step, transition reason, and negative result
 - reproducibility trail — attach prompts, transcripts, scripts, seeds, outputs, and reviewer decisions to each load-bearing claim
-Checked 2026-10-15 against paper koren2026theorist: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

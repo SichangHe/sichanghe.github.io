@@ -64,4 +64,4 @@ Inference: The threat to agent-written verified Rust is a false assurance chain:
 - layered verifiers: combine policy, trace-derived, and prompt-derived checks
 - feedback intervention: attach verifier diagnostics at the rollback prefix and regenerate
 - completeness auditing: test extraction and verifier coverage because formal checker soundness alone is insufficient
-Checked 2026-10-15 against paper bhat2026interwhen: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

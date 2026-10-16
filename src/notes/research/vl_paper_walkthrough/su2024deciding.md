@@ -59,4 +59,4 @@ Inference: Threat to VeruLaw is moderate for unsafe memory-manipulating Rust. SL
 - ordered entailment decomposition: enumerate compatible address preorders and reduce entailment to sorted spatial matches
 - effective upper bounds: compute realizable chunk-size bounds to decide heap-list entailments with arithmetic constraints
 - spatial atom splitting: partition block or heap-list atoms at consequent boundaries and recurse on the resulting regions
-Checked 2026-10-15 against paper su2024deciding: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

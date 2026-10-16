@@ -72,4 +72,4 @@ The abstract calls the approach “completely new,” but Section VI cites earli
 - po/co/hb observation ordering: encode program, coherent, and happens-before constraints on memory observations
 - litmus refinement and model checking: generate fixed-thread Event-B instances and exhaustively check register outcomes
 - coverage-guided test generation: track legal register combinations and use ProB to emit regression sequences
-Checked 2026-10-14: audit record darbari2016formal; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

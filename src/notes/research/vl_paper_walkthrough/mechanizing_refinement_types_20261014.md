@@ -139,4 +139,4 @@ Inference: VL should not redo this paper’s exact λRF calculus or its already 
 - refined data propositions: encode judgments and derivation evidence as refined data constructors for constructive proofs
 - intrinsic SMT invariants: map executable measures such as free variables into solver-supported logic and attach postconditions
 
-Checked 2026-10-15 against the paper by a Codex agent for mechanizing_refinement_types_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

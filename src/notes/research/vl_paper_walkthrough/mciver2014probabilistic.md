@@ -152,4 +152,4 @@ Contradictions and numerical checks. The text's general bound subtracts (√n-2)
 
 - faulty-sieve invariant refinement — improve generic probability bounds with atomicity, commutation, and “never remove primes” invariants
 
-Checked 2026-10-15 against the paper by a Codex agent for probabilistic_rely_guarantee_calculus_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

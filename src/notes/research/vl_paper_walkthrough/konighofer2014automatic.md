@@ -56,4 +56,4 @@ what is proved, trusted, and assumed
 - quantified expression repairability: replace each candidate with a placeholder and prove `∀ inputs : ∃ replacement : contract` to rank likely error locations
 - causality-safe quantifier ordering: quantify inputs before candidate values and keep later program-point auxiliaries universally quantified
 - verifier instrumentation: protect placeholders from simplification and map normalized temporary expressions back to source lines
-Checked 2026-10-13: audit record konighofer2014automatic; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

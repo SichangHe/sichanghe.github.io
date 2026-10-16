@@ -30,4 +30,4 @@ The Lean compiler was trusted for syntactic acceptance, but the harness, extract
 - isolated elaboration — compare the resolved theorem or Verus contract with an independent target in a clean environment
 - provenance quarantine — withhold shared-library publication until verifier, specification, and revision evidence are recorded
 - incident governance — freeze, audit, revoke, and reopen artifacts through explicit enforcement tools
-Checked 2026-10-14 against the paper by a Codex agent: audit record paglieri2026cheating; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

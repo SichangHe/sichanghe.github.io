@@ -133,4 +133,4 @@ Inference: the safest VL adaptation is a staged gate: generate Rust, run visible
 - oracle qualification — validate secure implementations, vulnerable mutants, stability, partition separation, and human review
 - test-feedback overfitting rate — measure hidden joint failures among visible-joint passes with explicit counts
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

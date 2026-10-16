@@ -93,4 +93,4 @@ Inference: threat to VL is high for verifier-feedback integration and moderate f
 - correction-round budgeting — express prover samples and repair rounds explicitly and compare both equal-sample and equal-compute settings
 - role-specialization ablation — compare a dedicated corrector with a prover reused as corrector to measure diagnostic-repair specialization
 
-Checked 2026-10-15 against the paper by a Codex agent for ma_lot_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

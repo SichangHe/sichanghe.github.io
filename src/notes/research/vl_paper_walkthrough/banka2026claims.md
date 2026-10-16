@@ -81,4 +81,4 @@ Inference: for VeruLaw, the direct threat is calibration failure: a verified Rus
 - evidentiary-dilution proof: prove that fixed-budget, fixed-error audits become weaker as artifact size grows, then derive a budget that preserves a target PVP
 
 - benchmark bounded-audit experiment: construct labeled objects, vary size, error count, and audit budget, and compare empirical bad-pass rate and PVP with the exact model
-Checked 2026-10-15 against paper banka2026claims: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

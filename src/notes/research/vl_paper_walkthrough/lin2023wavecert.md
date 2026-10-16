@@ -93,4 +93,4 @@ Inference: WaveCert supplies a concrete pattern for VL’s optimized Rust: valid
 - confluence lifting — use cut-point coverage and permission consistency to generalize canonical equivalence to all schedules
 - bounded-channel liveness — derive a capacity bound from symbolic execution and prove progress for channels at least that large
 - proof-failure diagnostics — use unequal states and unsatisfiable permission cores to locate compiler bugs
-Checked 2026-10-15 against paper lin2023wavecert: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

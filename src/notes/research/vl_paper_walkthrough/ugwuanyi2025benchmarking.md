@@ -66,4 +66,4 @@ The setup is Lean 4.16.0-rc2, Mathlib commit e1a3d4c, and VS Code 1.96 (§2, p.4
 - analytic-to-closed-form proof — prove a long-range integral equals its executable formula
 - recursive pair-count invariant — enumerate interaction pairs and prove the exact `n(n−1)/2` cardinality
 - polymorphic proof/execution bridge — share generic numeric code while separately proving Real behavior and executing Float instances
-Checked 2026-10-14 against the paper by a Codex agent: audit record ugwuanyi2025benchmarking; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -56,4 +56,4 @@ Inference: Lean checks the proofs of the emitted theorem statements and of the L
 - kernel-gated lemma reuse — propose intermediate lemmas from context and diagnostics, retain only Lean-accepted terms, and reuse them
 - explicit reachability induction — fold `step` over finite input sequences and prove one-step closure before higher-level invariants
 - Verus adaptation — map state/step and layer lemmas to `spec fn`, `proof fn`, `requires`, `ensures`, and invariant proofs, with translation fidelity as a separate obligation
-Checked 2026-10-13: audit record lyu2026rtl2lean; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -29,4 +29,4 @@ Inference: The product threat is high for annotation UX and moderate for proof s
 - tool feature triage: classify bounded, SMT, interactive, and embedded-prover tools by specification needs
 - iterative annotation repair: inspect source-linked obligations and add invariants, preconditions, or frame facts
 - abductive diagnosis: propose assumptions that make a failed obligation provable, then review them
-Checked 2026-10-14 against the paper by a Codex agent: audit record brizhinev2018case; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -71,4 +71,4 @@ Inference: Reuse minimal failing slices to localize failed `requires`, `ensures`
 - verification-witnessing certificates: retain a reduced program whose successful verification implies the full program verifies
 - verification-preserving hints: minimize a verified program to statements sufficient to preserve its specification
 - core/MUS/SMT slice search: compute minimal or fast slices with unsatisfiable cores, MUS enumeration, or direct SMT encoding
-Checked 2026-10-15 against paper schroer2025error: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

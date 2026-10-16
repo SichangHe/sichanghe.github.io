@@ -83,4 +83,4 @@ Inference: VL should not redo generic mutation auditing, bounded-proof kill-rate
 - mutation-guided refinement: inject faults, compute effective kill rate excluding invalid mutants, and refine weak harnesses
 - architecture-aware solver selection: choose verification resources from normalized structural metrics before proof construction
 - causal narrative synthesis: summarize counterexamples using extracted traces and score cycle, signal, mechanism, and unsupported claims
-Checked 2026-10-14 against the paper by a Codex agent: audit record krishnamurthy2026closing; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

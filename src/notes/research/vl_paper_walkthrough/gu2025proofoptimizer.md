@@ -48,4 +48,4 @@ Inference: VL should reuse verifier-gated candidate search, proof-sketch obligat
 - verifier-rewarded online RL — reward valid reductions with a normalized metric and verifier feedback
 - iterative shortest-candidate search — repeatedly sample, verify, and continue from the shortest candidate
 - cost-aware simplification — optimize heartbeat or execution cost when token length is not the product objective
-Checked 2026-10-13: audit record gu2025proofoptimizer; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

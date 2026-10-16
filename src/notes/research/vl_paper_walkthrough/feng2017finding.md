@@ -84,4 +84,4 @@ Inference: VL should reuse the boundary/invariant split, SOS certificates as can
 - Stengle-to-SOS synthesis: reduce polynomial implication obligations to semialgebraic emptiness, SOS multipliers and SDP feasibility
 - candidate refinement and degree backtracking: round and validate coefficients, refine failed constraints, then increase template degree by two
 - nested-loop composition: couple outer and inner polynomial templates through a verified inner pre-expectation
-Checked 2026-10-15 against paper feng2017finding: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

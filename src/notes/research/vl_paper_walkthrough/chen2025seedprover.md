@@ -98,4 +98,4 @@ Inference: the threat to agent-written verified Rust is moderate for proof searc
 - heavy broad search — verify thousands of conjectures, rank useful lemmas, and use them in a final deep search
 - symbolic domain engine — combine a neural proposal model, explicit rule closure, and beam search for a restricted domain
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

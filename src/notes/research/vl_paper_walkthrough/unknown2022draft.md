@@ -49,4 +49,4 @@ VL should reuse draft-to-sketch decomposition, aligned intent comments, multiple
 - multi-sample drafting — sample 100 candidate drafts or sketches per problem to increase discovery opportunities
 - ablation-guided pipeline design — measure the independent value of drafts, comments, sketches, and automation
 - machine-checked acceptance — reject outputs containing bypass keywords or any statement the formal kernel cannot verify
-Checked 2026-10-13: audit record unknown2022draft; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

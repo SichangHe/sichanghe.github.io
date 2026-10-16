@@ -47,4 +47,4 @@ Inference: for agent-written verified Rust, FVEL suggests a useful product desig
 - step-wise proof-state dataset: store each command with Isabelle's resulting state and split by lemma
 - verifier-aware fine-tuning: fine-tune on complete formal proofs, then accept only proofs checked by the theorem prover
 - statement-versus-proof error audit: classify failures by incorrect specification versus failed proof generation
-Checked 2026-10-15 against paper lin2024fvel: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

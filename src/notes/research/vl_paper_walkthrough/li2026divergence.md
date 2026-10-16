@@ -47,4 +47,4 @@ Evidence spans SQL (Bird and Spider) and mathematics, using Llama 3.1 and Qwen f
 - verifier-based data partition: split queries into near-perfect and exploration sets using repeated checked samples
 - mass-covering rehearsal: use forward-KL or JS against a frozen reference, estimated from pre-sampled responses
 - conditional policy guarantee: disable regularization for exploration states and prove an assumption-dependent improvement bound
-Checked 2026-10-15 against paper li2026divergence: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

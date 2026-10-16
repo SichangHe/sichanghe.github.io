@@ -109,4 +109,4 @@ The abstract calls the framework an automated path, while the case study discuss
 - continuation defunctionalization — represent one-shot continuations with an abstract validity record and `pre`/`post` predicates
 - local effect protocols — scope a protocol to the function whose mutable or forest state it must describe
 - automated VC evaluation — report VC counts, code/spec/ghost LOC, solver versions, machine, and ten-run replay averages
-Checked 2026-10-14 against the paper by a Codex agent: audit record soares2023automated; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

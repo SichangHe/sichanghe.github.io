@@ -60,4 +60,4 @@ Inference: for VeruLaw, the useful lesson is to keep generated Rust restricted t
 - answer-clause saturation: carry a conditional program term through first-order clauses and extract it from an empty answer clause
 - SUPRA dual rules: combine equality branching (`SupC`) with computable answer unification (`SupU`) under partitioned orderings
 - abstraction rule: replace computable subterms inside uncomputable literals with variables and retain equality conditions for complete saturation
-Checked 2026-10-15 against paper hajdu2026completeness: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -128,4 +128,4 @@ Inference: VL should reuse the separation between executable semantics, state pr
 - circularity invariants — justify loops and recursion by allowing a post-step invariant assumption
 - narrowing symbolic execution — unify symbolic configurations with operational rules and accumulate SMT-checked path constraints
 - mechanized generic foundations — establish language-independent soundness in Coq and relative completeness under a first-order oracle
-Checked 2026-10-14 against the paper by a Codex agent: audit record stefanescu2014allpath; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

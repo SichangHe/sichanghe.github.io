@@ -165,4 +165,4 @@ Inference: threat to a product of agent-written verified Rust is medium, unchang
 - executable-projection check: accept an annotated artifact only if erasing annotations, comments and whitespace gives back the input program and no bypass construct was added
 - evolution memory: log every accepted, rejected and skipped revision with its pattern and outcome, and consult the log before attributing or writing again
 - unchanged-skill transfer test: give the final guidance to other models without further tuning to check that it is knowledge and not a model-specific prompt
-Checked 2026-10-13: audit record jia2026veriskill; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

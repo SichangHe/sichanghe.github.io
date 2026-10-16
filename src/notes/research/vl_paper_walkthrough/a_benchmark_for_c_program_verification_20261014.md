@@ -58,4 +58,4 @@ The paper defines a 25-program suite and a 100-point scoring rule; it does not p
 - four-part verification score — separately score defined behavior, functional correctness, valid source, and unchanged implementation
 - explicit assumptions and contracts — state implementation restrictions, input preconditions, and behavioral postconditions
 - staged toy-to-production evaluation — progress from fragments through functions and files to multi-file library code
-Checked 2026-10-14 against the paper by a Codex agent: audit record vaneekelen2019benchmark; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

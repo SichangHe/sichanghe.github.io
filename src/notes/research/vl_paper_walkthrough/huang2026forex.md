@@ -87,4 +87,4 @@ The paper already supplies the basic pattern of translating model explanations i
 - semantic-drift-controlled repair: use bounded compiler-feedback iterations while forbidding new logical content
 - argument verification matrix: report formal proof status independently from agreement with a reference label
 - consensus-guided augmentation: filter verified model interpretations by confidence and Jaccard consensus before proposing new labels
-Checked 2026-10-15 against paper huang2026forex: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

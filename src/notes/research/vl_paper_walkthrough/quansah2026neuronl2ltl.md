@@ -85,4 +85,4 @@ The trusted symbolic boundary includes the ITL parser and Spot’s decision proc
 - bounded two-layer repair — try ranked local edits, then learned AST edits, rechecking after each repair
 - verifier-in-the-loop reward — optimize neural generation with parser, verifier, and repair-cost feedback
 
-Checked 2026-10-15 against the paper by a Codex agent for neuronl2ltl_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

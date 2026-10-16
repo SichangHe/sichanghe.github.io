@@ -27,4 +27,4 @@ What is proved or measured: critic acceptance and held-out syntactic repair accu
 - critic-filtered self-training — retain fixer outputs only when an external critic accepts them, then fine-tune on those pairs
 - breaker-fixer cycle — train a bad-example generator and a repair model in alternating critic-checked rounds
 - critic-guided ablation — measure separate value of real bad data, generated bad data, and acceptance filtering
-Checked 2026-10-14: audit record yue2021break; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

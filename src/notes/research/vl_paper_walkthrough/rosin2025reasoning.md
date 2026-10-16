@@ -79,4 +79,4 @@ The paper explicitly says, “All of the successful strategies are randomized, a
 - randomized local search: generate simulated annealing, tabu, genetic, greedy, or depth-first heuristics and score them with the verifier
 - phased constraint decomposition: construct a base object first, then search a second layer such as signs or nested pairs
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

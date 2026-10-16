@@ -71,4 +71,4 @@ The paper already supplies a pattern for finite domination certificates, partial
 - kernel-checked witness chains: cover a bounded universal claim with gapless intervals whose witnesses are checked by a small kernel-level predicate
 - maximal smooth-part bounds: certify divisor lower bounds from maximal prime powers and double for a coprime residual cofactor
 - untrusted generation with independent replay: keep search scripts outside the trusted base and cross-check their output with independent implementations and reproducible builds
-Checked 2026-10-15 against paper mian2026kernel: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

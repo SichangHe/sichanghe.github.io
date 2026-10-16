@@ -77,4 +77,4 @@ The workflow already covers SAT encoding, symmetry breaking, model-assisted conj
 - computation-to-conjecture pipeline — use finite SAT/code searches, canonicalize isomorphic structures, and extract a symbolic family before proving it
 - LLM proof proposal with Lean checking — require a detailed informal proof, autoformalize it, and iterate on verifier diagnostics until the kernel accepts the theorem
 - modular saturation lower bound — import a degree theorem, rule out universal vertices, and compose complement and graph degree inequalities
-Checked 2026-10-15 against paper przybocki2026doubly: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

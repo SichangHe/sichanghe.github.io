@@ -117,4 +117,4 @@ Inference: for agent-written verified Rust, this pipeline is a high threat reduc
 - monadic bound decomposition — prove bind inversion and conditional-bound helpers before composing extracted-control-flow theorems
 - extraction-gap repair — fix tools upstream or verify a monomorphic extraction-friendly model, with a separate relation to production
 - layered unsafe verification — verify the safe core with extraction and use complementary tooling for unsafe Rust
-Checked 2026-10-14 against the paper by a Codex agent: audit record klaus2026rust; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

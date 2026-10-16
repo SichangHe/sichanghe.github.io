@@ -33,4 +33,4 @@ What is proved is only the generated Lean proof or arithmetic answer for the tes
 - verifier-backed intermediate-state scoring — validate tactics and every generated state in Lean rather than checking text
 - order ablation — compare sequential, partially reversed, and fully reversed serialized proofs under matched data
 - masked and curriculum controls — remove error snowballing and test whether bad order creates persistent spurious dependencies
-Checked 2026-10-13: audit record an2024next; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

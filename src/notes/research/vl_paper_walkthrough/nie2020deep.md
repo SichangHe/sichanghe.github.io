@@ -45,4 +45,4 @@ Inference: threat to agent-written verified Rust is low for semantic safety but 
 - multi-view elaborated-term encoding — encode statement, syntax tree, and kernel/elaborated tree with separate encoders and decode a lemma name
 - tree chopping — remove qualified-name prefixes, locations, and singleton nodes before encoding to reduce irrelevant sequence length
 - copy-aware sub-token decoding — copy file-local identifiers, split names into sub-tokens, and constrain repetition during beam search
-Checked 2026-10-15 against paper nie2020deep: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

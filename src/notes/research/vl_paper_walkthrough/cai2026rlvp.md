@@ -68,4 +68,4 @@ The study measures code execution, numerical error, residual consistency, and tr
 - GRPO with hidden cases: update a policy from grouped verifier rewards on varied meshes, parameters, and boundaries
 - selective transfer evaluation: test unseen PDE families with pass@k and best-of-k physical error while reporting failures
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

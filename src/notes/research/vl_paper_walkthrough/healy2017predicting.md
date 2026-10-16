@@ -86,4 +86,4 @@ Inference: the threat to agent-written verified Rust is indirect but practical. 
 - pre-solving — try a strong default backend briefly to discharge easy obligations before feature extraction and ranking
 - timeout cost threshold — suppress predicted-expensive retries to balance proof coverage against cumulative latency
 - reproducible evaluation split — separate files, not individual goals, into training and held-out test data
-Checked 2026-10-13: audit record healy2017predicting; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

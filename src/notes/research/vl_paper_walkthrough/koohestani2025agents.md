@@ -61,4 +61,4 @@ Inference: this paper gives VL a direct design rule: choose the weakest memory i
 - pushdown controller model — enforce LIFO memory, construct a PDA, and use probabilistic pushdown analysis
 - bounded TC fallback — impose execution or storage bounds and check the resulting finite abstraction when unrestricted memory is unavoidable
 - architecture right-sizing — select the weakest memory class consistent with required interaction traces
-Checked 2026-10-14 against the paper by a Codex agent: audit record koohestani2025agents; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

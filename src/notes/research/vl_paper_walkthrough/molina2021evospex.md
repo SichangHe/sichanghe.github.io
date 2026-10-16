@@ -40,4 +40,4 @@ Trusted and unproved: the Java execution engine, builders, scope bounds, mutatio
 - chromosome contract synthesis: represent a postcondition as a conjunction of navigational, quantified, and relational genes
 - asymmetric evolutionary fitness: prioritize candidates consistent with every valid execution before penalizing complexity and using mutated negatives
 - state matching: canonicalize generated objects and discard traces that duplicate an existing state
-Checked 2026-10-15 against paper molina2021evospex: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

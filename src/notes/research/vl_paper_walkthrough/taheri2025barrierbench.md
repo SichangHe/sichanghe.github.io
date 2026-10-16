@@ -53,4 +53,4 @@ The paper proves safety only conditionally: a valid barrier implies safety, and 
 - staged verification: reject sampled counterexamples before invoking formal SMT checks
 - feedback refinement: adjust coefficients first, then alter structure using solver counterexamples within bounded iterations
 - barrier-controller co-synthesis: generate a feedback law and substitute it into the dynamics before checking safety
-Checked 2026-10-15 against paper taheri2025barrierbench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

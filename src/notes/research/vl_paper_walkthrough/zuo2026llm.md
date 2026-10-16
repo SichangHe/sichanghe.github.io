@@ -67,4 +67,4 @@ Inference: NSPI’s separation of heuristic generation from exact checking match
 - neural SOS conjecture: train an LLM to propose and rank Gram-matrix structures
 - symbolic correction: refine numerical candidates and recover exact rational coefficients
 - template formalization: instantiate a fixed Lean proof template and let the kernel check equality and nonnegativity
-Checked 2026-10-15 against paper zuo2026llm: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

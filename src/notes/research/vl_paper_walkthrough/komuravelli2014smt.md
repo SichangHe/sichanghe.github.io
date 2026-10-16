@@ -77,4 +77,4 @@ The paper’s strongest theoretical claims are relative to decidable background 
 - model-based projection — replace existential quantification with finite model-selected quantifier-free under-approximations
 - inductive summary checking — test bounded summaries against every procedure body and promote inductive facts to an unbounded safety proof
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

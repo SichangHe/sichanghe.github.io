@@ -40,4 +40,4 @@ ChipMEM proves no theorem about memory correctness. It measures tool-accepted ha
 - recovery-action ranking — rank error-specific recovery strategies by smoothed historical success
 - agent-agnostic verification adapter — standardize task, tool, trajectory, and final-artifact interfaces across domains
 - frozen transfer evaluation — test memory reuse on unseen tasks with read-only libraries and matched controls
-Checked 2026-10-15 against paper alrabah2026chipmem: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

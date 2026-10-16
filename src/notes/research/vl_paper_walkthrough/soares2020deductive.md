@@ -59,4 +59,4 @@ The trusted base includes the OCaml parser choice, translation implementation, W
 - post-relation specification — describe potentially effectful function values with pre/post predicates instead of executing them in logic
 - typed translation pipeline — carry free variables and types through expression translation and choose apply functions by type
 - semantic recursion lemmas — connect generated reductions and contexts to a logical evaluator, adding congruence lemmas when automation needs them
-Checked 2026-10-14 against the paper by a Codex agent: audit record soares2020deductive; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

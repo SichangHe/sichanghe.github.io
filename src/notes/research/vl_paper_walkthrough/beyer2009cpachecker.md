@@ -57,4 +57,4 @@ Inference: CPAchecker’s most reusable lesson is an experiment architecture tha
 - two-step analysis integration — register a component and implement every CPA operation interface
 - composite explicit-value and predicate abstraction — combine cheap value tracking with predicate refinement and tune the value threshold
 - reproducible precision tuning — report runtime, predicate/refinement counts, machine, memory, timeout, and benchmark denominator
-Checked 2026-10-15 against paper beyer2009cpachecker: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

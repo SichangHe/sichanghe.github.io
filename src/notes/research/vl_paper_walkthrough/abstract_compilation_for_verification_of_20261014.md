@@ -86,4 +86,4 @@ Inference: for Verus and VL, the reusable idea is to separate executable behavio
 - zonotope-plus-interval propagation: carry shared-noise affine forms, error domains, and intervals through overloaded numeric operations
 - dependency-derived save and merge lists: use may-def/may-ref/data analysis to reset and join only variables that cross a split-merge boundary
 - bounded runtime path exploration: enumerate feasible branch/cast outcomes with saved memory and nested explorer contexts
-Checked 2026-10-14 against the paper by a Codex agent: audit record jacquemin2019abstract; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

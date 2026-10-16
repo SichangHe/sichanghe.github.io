@@ -50,4 +50,4 @@ Inference: The report assumes well-typed programs, an array predicate with the s
 - VC slicing/elimination — isolate the subformula affected by an input and reuse its threshold for the full VC
 - iterative extraction — repeatedly refine thresholds variable by variable until no further reduction occurs
 - bounded array-access lemma — collapse array-size checks to any representative above the proven cutoff
-Checked 2026-10-15 against paper reinhard2022completeness: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

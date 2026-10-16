@@ -60,4 +60,4 @@ Inference: the method threatens a verified-Rust product mainly through false con
 - dynamic invariant preconditions — mine test traces with Daikon and encode likely ranges and relations as harness assumptions
 - bounded fragment harness — call a selected function with symbolic inputs, inferred assumptions, and an asserted property
 - small-model bug finding — use finite unwinding and small inputs to expose safety faults or likely worst-case paths
-Checked 2026-10-15 against paper alipour2016finding: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

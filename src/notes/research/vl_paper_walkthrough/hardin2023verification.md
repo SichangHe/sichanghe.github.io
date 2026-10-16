@@ -62,4 +62,4 @@ Existing work the paper says is already done includes Creusot, Prusti, RustHorn,
 - index-backed cyclic representation — represent circular links with fixed-array indices and explicit bounds to avoid cyclic ownership issues
 - invariant-first data-structure proofs — define a complete well-formedness predicate, require operation-specific hypotheses, and prove functional theorems such as restore-after-remove
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

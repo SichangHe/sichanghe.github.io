@@ -71,4 +71,4 @@ Inference: VL should reuse location-conditional predicates as a method for struc
 - soft invariants: preserve a location-specific property with a conditional instrumentation predicate
 - over-defined soft-invariant search: try a broad predicate family, accepting analysis overhead while non-invariants become unknown
 - concurrent linearizability abstraction: apply collapsed threads and soft predicates to stack and queue models and compare canonical-state reductions
-Checked 2026-10-14 against the paper by a Codex agent: audit record friggens2015collapsing; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

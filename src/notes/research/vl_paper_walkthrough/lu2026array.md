@@ -45,4 +45,4 @@ Frama-C WP, ACSL semantics, LLVM front-end, invariant plugins, and the generated
 - contiguous segment summaries — represent base/offset/length/content and carry quantified array facts across statements
 - segment split and merge — split on writes and merge adjacent equal summaries to preserve precision compactly
 - external invariant generation — feed affine and idiom-specific loop invariants into symbolic execution, then check ACSL with Frama-C WP
-Checked 2026-10-14 against the paper by a Codex agent: audit record lu2026array; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

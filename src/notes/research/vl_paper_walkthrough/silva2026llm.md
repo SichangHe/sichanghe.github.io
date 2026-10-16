@@ -41,4 +41,4 @@ Inference: the threat to agent-written verified Rust is moderate. The architectu
 - symbolic back-end gate — let the SMT/verifier, not the LLM, decide constraint satisfaction
 - UNSAT adaptation cycle — analyze conflicts, propose a targeted model edit, obtain approval, apply, and retry
 - shared-state traceability — pass machine-readable intermediate results among narrowly scoped agents
-Checked 2026-10-15 against paper silva2026llm: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

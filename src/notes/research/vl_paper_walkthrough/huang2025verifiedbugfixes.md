@@ -76,4 +76,4 @@ The study's strongest reusable result is methodological: formal verification mak
 - contract-backed repair loop — seed a bug, submit each edit to the verifier, and accept only a compiled proof of the stated contracts
 - collaborator prompting — provide code and diagnostics, request a focused diff, review it, and iterate with fresh verifier output
 - behavior and hallucination taxonomy — record full sessions to detect copy-paste, unranked advice, and repeated failed repair loops
-Checked 2026-10-15 against paper huang2025verifiedbugfixes: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

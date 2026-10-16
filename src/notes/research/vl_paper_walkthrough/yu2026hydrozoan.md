@@ -71,4 +71,4 @@ Inference: VL should reuse certificate-carrying decisions, explicit fault-budget
 - machine-checked liveness — prove eventual decision under explicit synchrony, fairness, and validity assumptions
 - generated-proof workflow — separate audited definitions and theorem statements from kernel-checked generated proof scripts
 - topology-driven provisioning — choose fast-path budget from slow-region size and simultaneous-fault targets
-Checked 2026-10-15 against paper yu2026hydrozoan: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -45,4 +45,4 @@ Inference: threat to an agent-written verified-Rust product is high at the speci
 - few-shot pure-function synthesis: an LLM fills each semantic stub from source context, descriptions, examples, and demonstrations
 - bounded ordered repair: static, runtime, and semantic checks feed diagnostics back in separate finite repair budgets
 - differential trace adapter: generated Rust tests replay model traces and compare queried implementation state after each step
-Checked 2026-10-14 against the paper by a Codex agent: audit record corazza2025accessible; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

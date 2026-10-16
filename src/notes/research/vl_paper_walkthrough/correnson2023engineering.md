@@ -39,4 +39,4 @@ Proved: IMP operational semantics, symbolic semantics, reachability equivalence,
 - stuck-state oracle: define bugs as reachable stuck states and separate reachability, satisfiability, and oracle checks
 - BFS lazy executor: explore symbolic states with FIFO expansion and prove relative soundness, completeness, and termination signaling
 - solver-filtered decision: turn a stream of bug reports into a T-sound/T-complete binary result with satisfiable path conditions
-Checked 2026-10-15 against paper correnson2023engineering: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

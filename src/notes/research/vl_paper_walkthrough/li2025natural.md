@@ -45,4 +45,4 @@ The formal evidence is the BRL/LMI certificate and stability checks under the mo
 - certificate-bearing synthesis — formulate a solver problem whose feasibility yields an explicit mathematical performance certificate
 - verification-feedback loop — combine formal certificates with bounded simulation, classify violations, and refine through guarded iterations
 - guardrail adaptation — adjust optimization floors using severity and iteration history while keeping changes explicit and reviewable
-Checked 2026-10-15 against paper li2025natural: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

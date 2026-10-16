@@ -96,4 +96,4 @@ Inference: VL should not redo generic claims that weak-memory proofs can be made
 - lifted construct rules: replace repeated weakest-precondition calculations with sound fence, read, write, and general Hoare rules
 - axiom-audited WRC proof: annotate a litmus-test proof outline and record the exact axioms required by each triple
 - portability checking: transfer a proof only when the target memory model satisfies the collected axiom set
-Checked 2026-10-15 against paper bargmann2023lifting: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

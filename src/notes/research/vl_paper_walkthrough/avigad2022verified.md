@@ -95,4 +95,4 @@ What VL should not redo (Inference): the polynomial fingerprint pattern for prov
 - polynomial permutation fingerprints — reduce sequence permutation claims to random evaluations outside bounded bad sets
 - range-check encoding — prove integer intervals with sorted adjacency and permutation constraints
 - memory-consistency encoding — reconstruct a read-only memory map from permuted address/value pairs
-Checked 2026-10-14 against the paper by a Codex agent: audit record avigad2022verified; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -110,4 +110,4 @@ What VL should not redo: basic WP/SP calculus, assignment passivation, hash-cons
 - hash-consed SMT backend — share terms, sort-check encodings, and unshare only with validity-preserving rewrites
 - incremental VC pruning — simplify a new obligation using common structure with an old valid obligation
 - semantic reachability — use satisfiable preconditions, dominators, and adaptive queries to detect dead, doomed, inconsistent, or unsound code
-Checked 2026-10-13: audit record grigore2012design; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

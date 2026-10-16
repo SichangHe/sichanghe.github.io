@@ -89,4 +89,4 @@ BoSSL formally proves validity and read-only preservation under its heap model, 
 - permission-aware synthesis rules — require mutable permissions for Write, Alloc, and Free while preserving ordinary read and call rules
 - fail-fast branch pruning — reject substitutions that would write a read-only heaplet, forcing synthesis toward a semantically intended derivation
 - borrow-and-return call accounting — substitute caller permissions into callee borrows and recover them through the postcondition
-Checked 2026-10-15 against paper costea2020readonly: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

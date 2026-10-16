@@ -112,4 +112,4 @@ Inference: the threat to VL is moderate. Agents could benefit from a front-end t
 - acyclic elimination: remove refinement variables exactly in dependency order
 - cyclic cut solving: leave a feedback set for qualifier-based predicate abstraction
 - higher-order lifting: propagate inferred refinements through polymorphic functions and collections
-Checked 2026-10-13: audit record cosman2017local; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

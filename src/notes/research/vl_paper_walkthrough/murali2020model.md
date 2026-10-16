@@ -55,4 +55,4 @@ Inference: for VL, the strongest reusable idea is the separation of relevance, v
 - fossil synthesis loop — alternate target proof, grammar-bounded lemma synthesis, PFP checking, and countermodel accumulation
 - least-fixpoint rank models — encode exact recursive predicate semantics in bounded SMT counterexamples
 - ground Boolean synthesis — turn finite grammar production choices and model constraints into a quantifier-free solver query
-Checked 2026-10-14: audit record murali2020model; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

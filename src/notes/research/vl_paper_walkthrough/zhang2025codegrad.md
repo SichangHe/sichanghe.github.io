@@ -91,4 +91,4 @@ Inference: VL should reuse the paper's separation between a flexible critic and 
 - hard invariant gate — accept an update only when its declared invariants and accompanying proof pass a formal verifier
 - execution-enabled criticism — let a sandboxed backward model probe code and feed observations into the textual gradient
 - stratified verification evaluation — compare verified-generation outcomes by algorithmic category and difficulty, with explicit denominators
-Checked 2026-10-14 against the paper by a Codex agent: audit record zhang2025codegrad; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

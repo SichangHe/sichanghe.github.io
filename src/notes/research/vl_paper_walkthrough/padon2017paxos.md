@@ -97,4 +97,4 @@ Inference: the threat to VL is high for distributed Rust agents that jump direct
 - semi-bounded debugging: bound selected sorts to obtain finite counterexamples while preserving other unbounded domains
 - EPR invariant checking: finish with decidable, finite-model verification conditions and finite counterexamples
 - safe overapproximation: alter difficult protocol rules, then prove the expanded model still preserves safety
-Checked 2026-10-13: audit record padon2017paxos; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

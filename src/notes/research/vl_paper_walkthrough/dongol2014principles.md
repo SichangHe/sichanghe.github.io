@@ -91,4 +91,4 @@ The strongest evidence is mechanised soundness in Isabelle and the linked-list r
 - layered correct-by-construction tools: connect abstract algebra, intermediate semantics, and concrete heaps with soundness theorems
 - concrete mutation laws: discharge assignment and heap-update obligations through verified substitution and frame rules
 - refinement-based construction: refine specification statements into loops and pointer updates while preserving resource frames
-Checked 2026-10-13: audit record dongol2014principles; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

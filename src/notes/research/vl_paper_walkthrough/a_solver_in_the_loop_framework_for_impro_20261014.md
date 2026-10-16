@@ -43,4 +43,4 @@ Inference: for agent-written verified Rust, the threat is medium. A solver loop 
 - solver-labelled trajectory data: generate partial formal programs, run a solver after each step, and fine-tune on solver-chosen versus rejected continuations
 - greedy best-of-N verifier search: sample alternatives, rank partial programs by verifier feedback, and recover with regeneration and backtracking
 - staged formalization pipeline: decompose natural-language requirements into typed declarations, relations, choice/invariant structure, and final constraints
-Checked 2026-10-14 against the paper by a Codex agent: audit record schrader2025solver; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

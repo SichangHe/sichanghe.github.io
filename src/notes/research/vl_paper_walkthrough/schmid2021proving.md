@@ -65,4 +65,4 @@ Inference: the threat to agent-written verified Rust is high for APIs that manip
 - quantifier-free heap encoding — translate mutable references to pure heap maps and Z3 array combinators
 - modular frame checking — use wrappers and map-merge equations to enforce caller/callee footprint inclusion
 - disjoint-task specification — require cross-read/write disjointness before replacing sequential fork-join models with parallel execution
-Checked 2026-10-14: audit record schmid2021proving; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

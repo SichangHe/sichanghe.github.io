@@ -50,4 +50,4 @@ Inference: The threat to agent-written verified Rust is moderate. SGS is a usefu
 - entropy-safe Solver training — choose an objective such as REINFORCE1/2 that preserves intermediate solve rates and avoids reward starvation
 - collapse diagnostics — monitor disjunction frequency, conclusion length, entropy, and solve-rate histograms to detect generator or Solver collapse
 - scaling-law audit — fit cumulative solve-rate curves, stress-test fits by data removal/dropout, and treat asymptotes as estimates rather than proof
-Checked 2026-10-13: audit record bailey2026scaling; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

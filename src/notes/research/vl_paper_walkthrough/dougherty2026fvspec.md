@@ -71,4 +71,4 @@ What has already been done. FVSpec already provides the real-PBT-to-Lean pipelin
 - side-effect abstraction — model relevant state while threading infrastructure as explicit opaque parameters
 - structural faithfulness scoring — measure parameter, type, strategy, assertion, and dependency preservation
 - proved and partial metrics — score complete builds separately from fractions of discharged obligations
-Checked 2026-10-15 against paper dougherty2026fvspec: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

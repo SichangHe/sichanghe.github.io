@@ -67,4 +67,4 @@ Inference: threat to a product producing agent-written verified Rust is indirect
 - BASE sequence calculus — saturate sequence/arithmetic constraints with normal forms, propagation, splitting, and reductions
 - EXT array-style calculus — add read/update distribution, bounds, and matching rules for vector operations
 - solver integration and evaluation — schedule rules in cvc5 CDCL(T) and compare solved counts and common-instance time
-Checked 2026-10-14: audit record sheng2022reasoning; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

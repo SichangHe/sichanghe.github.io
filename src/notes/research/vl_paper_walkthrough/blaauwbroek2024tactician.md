@@ -125,4 +125,4 @@ Inference: VL should not redo semantic-state extraction, dependency-aware contex
 - parallel benchmark — reproduce exact package environments and distribute theorem evaluation at scale
 - Verus adaptation — Inference: apply context-keyed retrieval and checker-clean artifact storage to verified Rust
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -45,4 +45,4 @@ Measured outcomes are VAL pass rates, exact-plan accuracy, and convergence as N 
 - instance verbalized refinement — have an optimizer LLM critique one candidate and a learner LLM rewrite it for several iterations
 - validator-gated symbolic abstraction — validate a generated formal model, then delegate state-space search to A*/a classical planner
 - exploration–exploitation scheduling — combine stochastic candidate exploration before iterative self-critique to avoid poor cold starts
-Checked 2026-10-15 against paper yu2025generating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

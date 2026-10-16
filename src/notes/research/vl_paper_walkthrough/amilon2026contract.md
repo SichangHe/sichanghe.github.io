@@ -69,4 +69,4 @@ Inference: VL should reuse the decomposition of interface policy, functional con
 - critic pipeline — compile first, then run functional proof, coding checks, and interface checks with one aggregated verdict
 - initialized-before-read analysis — use predecessor order and abstract input/output locations to reject reads without explicit initialization
 - untrusted-agent workflow — treat generated implementation as untrusted while specifications and critics remain trusted
-Checked 2026-10-15 against paper amilon2026contract: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

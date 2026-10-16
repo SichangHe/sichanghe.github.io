@@ -87,4 +87,4 @@ Inference: VL should reuse the translator-to-normalized-frame boundary, explicit
 - normalized-frame translation — have an LLM emit a constrained task frame while deterministic code performs domain reasoning
 
 - mismatch-driven rule repair — classify each disagreement by semantic scope, applicability, heuristic, or arithmetic failure and repair the reusable rule
-Checked 2026-10-15 against paper abduchaborov2026taskcentric: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

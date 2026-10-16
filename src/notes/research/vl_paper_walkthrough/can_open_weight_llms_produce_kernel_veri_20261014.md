@@ -95,4 +95,4 @@ The paper proves only that accepted candidates pass Coq's checks for the selecte
 - one-shot constrained generation — use one shared proof-body prompt, temperature zero, output cap, and no repair or retrieval
 - kernel acceptance pipeline — compile in the original environment, close all goals, audit assumptions, run `coqchk`, and reverify cleanly
 - denominator-aware reporting — report successes out of 100 per model, project and proof-length groups, with confidence intervals and resource denominators
-Checked 2026-10-14 against the paper by a Codex agent: audit record ryan2026kernel; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

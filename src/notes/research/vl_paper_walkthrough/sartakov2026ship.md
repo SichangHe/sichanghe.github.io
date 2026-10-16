@@ -87,4 +87,4 @@ The paper already covers agentic per-function translation, explicit safety crite
 - leaf-first dependency ordering — port call-graph leaves and expose callers only after their callees pass
 - two-gate differential validation — require compilation plus sustained runtime testing, with trace comparison on divergence
 - phased global-state conversion — complete function and buffer cleanup before wrapping globals from atomic scalars through complex mutexes
-Checked 2026-10-15 against paper sartakov2026ship: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

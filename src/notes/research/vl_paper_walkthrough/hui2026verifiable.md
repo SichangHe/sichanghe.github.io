@@ -136,4 +136,4 @@ Inference: threat to a product producing agent-written verified Rust is moderate
 - semantic scope elaboration — annotate implicit variable scopes, check free-variable coverage, and insert explicit quantifiers
 - proof-gap generation and discharge — turn Core proof trees into verification conditions and close them with layered tactics, libraries, and solvers
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -93,4 +93,4 @@ Inference: The strongest product threat is reward contamination: if an agent-wri
 - domain solver verification — translate candidate logical claims into SMT-LIB2 constraints and use a solver such as Z3 as external evidence before reward assignment
 - soft verifier weighting — use finite `ω>1` because noisy verifiers make hard filtering brittle; retain unit mass for unverified candidates
 - verifier-capacity evaluation — measure verifier accuracy and run ablations with self, external, and undersized verifiers before trusting verification-shaped updates
-Checked 2026-10-15 against paper liao2026tool: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

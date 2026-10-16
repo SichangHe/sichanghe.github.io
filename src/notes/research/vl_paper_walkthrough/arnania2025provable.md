@@ -126,4 +126,4 @@ What remains trusted varies: deductive systems trust the specification and proof
 - neural-guided symbolic search — use learned component scores to prioritize a sound symbolic search
 - wake-sleep library learning — solve tasks, compress recurring subprograms into a library, and retrain search on replays and generated tasks
 - constrained neural generation — enforce grammar/type constraints during decoding and semantic verification after generation
-Checked 2026-10-15 against paper arnania2025provable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

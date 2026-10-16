@@ -46,4 +46,4 @@ Existing VL workflows already run tools in terminals, write studies and logs, an
 - exit-aware evidence — retain command status and reverify or mark unconfirmed whenever status is nonzero
 - provenance confidence tiers — carry artifact, process, and assertion provenance across session and model handoffs
 - compaction reproduction — reproduce timeout, resume, and artifact inspection to test whether summaries fabricate completion
-Checked 2026-10-14 against the paper by a Codex agent: audit record tamba2026compaction; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

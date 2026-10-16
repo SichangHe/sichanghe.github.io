@@ -67,4 +67,4 @@ Inference: The threat to agent-written verified Rust is requirement omission. A 
 - completion baselines — compare half-completion and fill-in-middle with exact context proportions and textual metrics
 - hallucination taxonomy and repair — classify lexical, cross-language, reasoning-leakage, length, and structural errors, then apply grammar constraints and deterministic cleanup
 - model-selection by proof outcome — compare model families and sizes using per-strategy semantic pass denominators rather than parameter count
-Checked 2026-10-13: audit record bisharat2026can; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

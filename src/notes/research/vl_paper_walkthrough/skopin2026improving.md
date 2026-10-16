@@ -45,4 +45,4 @@ Inference: reward hacking remains a direct threat to agent-written verified Rust
 - normalized static-analysis shaping — sum severity penalties, divide by line count, and clip to a bounded range
 - pass-gated reward combination — weight style penalties more after functional success and add an anti-empty penalty
 - group-relative GRPO/GSPO — optimize token-level or sequence-level clipped objectives from within-prompt reward advantages
-Checked 2026-10-15 against paper skopin2026improving: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

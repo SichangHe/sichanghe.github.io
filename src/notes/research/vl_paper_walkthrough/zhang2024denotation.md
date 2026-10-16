@@ -48,4 +48,4 @@ The Rocq development includes denotational semantics, linking, refinement algebr
 - open-module fixed-point linking — parameterize module semantics by external-call oracles and link by union plus a least fixed point
 - state-matching behavior refinement — prove target behaviors correspond to source behaviors through a representation relation and compose those relations
 - Kripke interface composition — index query/reply relations by worlds and compose interfaces horizontally and vertically
-Checked 2026-10-15 against paper zhang2024denotation: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

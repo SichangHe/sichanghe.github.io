@@ -58,4 +58,4 @@ Inference: For agent-written verified Rust, AutoProof is a high threat to any cl
 - mathematical model library — specify abstract sets, sequences, bags, maps, and relations separately from implementation
 - two-step diagnostics — use bounded under-approximation after failure to suggest missing inductive invariants
 - translation pipeline — lower an annotated object language through an intermediate verification language to SMT conditions
-Checked 2026-10-14: audit record tschannen2015autoproof; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -90,4 +90,4 @@ Inference: for agent-written verified Rust, the threat is medium. A typed proper
 - YAML safety properties: express mutual exclusion, invariants, absence, bounded response, and reachability with explicit timing justification
 - BMC and k-induction: use incremental bounded search for counterexamples and induction for unbounded invariant proofs
 - source-level counterexamples: report original LD names, scan cycles, and violated properties so fixes are actionable
-Checked 2026-10-15 against paper dantas2026esbmcplc: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

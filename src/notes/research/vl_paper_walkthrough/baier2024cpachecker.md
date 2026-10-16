@@ -123,4 +123,4 @@ Inference: the threat to agent-written verified Rust is operational rather than 
 - overflow reachability — encode signed/unsigned overflow as error locations and check with a standard analysis
 - witness validation — export correctness/violation evidence and replay it with a restricted, property-specific analysis
 - coverage test generation — generate vectors or harnesses for branch, statement, function-call, or error-call goals
-Checked 2026-10-15 against paper baier2024cpachecker: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

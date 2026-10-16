@@ -112,4 +112,4 @@ Inference: VL should not redo exact premise ranking, proof-dependency labels, ke
 - Gaussian-kernel MOR — learn regularized nonlinear premise scores with a shared kernel matrix, cross-validated `λ` and `σ`, and multi-output ranking
 - retrieve-then-ATP evaluation — measure both label recall and solved-problem counts after giving selected premises to an automated prover
 
-Checked 2026-10-15 against the paper by a Codex agent for premise_selection_for_mathematics_by_cor_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

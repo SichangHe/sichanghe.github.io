@@ -105,4 +105,4 @@ Inference: the main threat to a product of agent-written verified Rust is an inc
 - pointer-disjoint products — require separated footprints before composing pointer-using calls and carry separation into the logical lemma
 - recursive relational induction — control inlining depth so a wrapper proves base and smaller-argument induction cases
 - dynamic relation checking — feed generated wrapper assertions to runtime instrumentation and testing-based counterexample search
-Checked 2026-10-13: audit record blatter2018static; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

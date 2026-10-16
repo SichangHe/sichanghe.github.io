@@ -38,4 +38,4 @@ The thesis reports mechanized Coq proofs for the realistic unbounded implementat
 - linearization-point proof — connect each concurrent operation's commit event to an abstract deque transition
 - snapshot ghost state — use monotonic indices and persistent element maps to prove values survive concurrent reads
 - era and hazard-pointer extension — track generations and protection resources when arrays resize or are reclaimed
-Checked 2026-10-15 against paper choi2023chaselev: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

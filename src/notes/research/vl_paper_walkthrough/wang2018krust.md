@@ -96,4 +96,4 @@ KRust already provides an executable subset semantics, cell-based ownership/move
 - contract instrumentation: add a resource or time cell and prove a Hoare-style bound with pre- and postconditions
 - differential conformance testing: compare the generated interpreter with compiled Rust over counted official and hand-crafted tests
 - semantic-state debugging: step rewrite rules and inspect configuration cells to explain program behavior
-Checked 2026-10-14: audit record wang2018krust; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

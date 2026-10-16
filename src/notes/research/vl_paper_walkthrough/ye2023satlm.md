@@ -43,4 +43,4 @@ The paper’s guarantee is conditional: parser errors, wrong domains, omitted co
 - solver feedback and abstention: classify ERROR, UNSAT, and AMBIG outcomes and repair or abstain rather than guess
 - selective evaluation: report coverage and accuracy conditional on answered instances to expose unsafe overconfidence
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

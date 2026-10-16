@@ -36,4 +36,4 @@ Table 7.5 reports input/output lines. Transpose uses 9 C-code, 9 annotation, and
 - thread-for lowering — convert serial loops to collective thread loops with barrier obligations
 - memory refinement — convert generic allocations to global/shared/register memory through checked transformations
 - proof-carrying CUDA generation — print host and device code only after the intermediate proof certificate passes
-Checked 2026-10-13: audit record castelnau2026source; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

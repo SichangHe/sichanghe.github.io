@@ -37,4 +37,4 @@ Applications include indexed vectors and safe arithmetic. For vectors, e-matchin
 - proof-producing union-find: maintain equivalence classes and proof forests while generating equality terms
 - congruence indexing: hash and index applications so unions propagate efficiently
 - subsingleton propagation: equate proof arguments when their proposition types are subsingletons
-Checked 2026-10-15 against paper selsam2017congruence: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

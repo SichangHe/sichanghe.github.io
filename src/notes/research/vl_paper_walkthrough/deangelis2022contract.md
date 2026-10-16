@@ -81,4 +81,4 @@ The paper already demonstrates the four-step CHC pipeline, ADT elimination for c
 - partial model strengthening: keep only a sufficient subset of model facts to reduce proof time while documenting the precision tradeoff
 - cross-verifier contract repair: use CHC/SPACER to derive contracts that a primary verifier such as Stainless can prove
 - soundness-conditional extraction: require valid original contracts, sound transformation, and a satisfiable model before accepting strengthened contracts
-Checked 2026-10-14: audit record deangelis2022contract; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -107,4 +107,4 @@ Proved, in the paper's framework, is that a satisfying interpretation of the gen
 - relational self-composition: prove information flow by relating paired executions without source duplication
 - quantified reactive synthesis: solve an adversarial environment game for an invariant-preserving system transition relation
 - abstraction-based Horn solving: exploit recursion and Horn structure for iterative solver and invariant inference
-Checked 2026-10-13: audit record rybalchenko2014quantified; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

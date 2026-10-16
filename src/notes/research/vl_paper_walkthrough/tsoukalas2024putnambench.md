@@ -72,4 +72,4 @@ PutnamBench already establishes multi-language formalization, factored-solution 
 - pass@n protocol: count success only when the formal environment accepts one of the stated number of attempts
 - proof-search trace: retain candidate choices, backtracking, checker feedback, and solver settings
 - second-person verification: independently recheck every formalization before release
-Checked 2026-10-15 against paper tsoukalas2024putnambench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -47,4 +47,4 @@ Inference: reuse the separation between search optimisation and proof checking, 
 - three mutation families — compare order-only, general rule-weight, and goal-specific rule-weight mutations
 - timeout-and-effort fitness — score solved tasks within 2.5 seconds and break ties by rule applications
 - elitist population update — keep 20 winners, with extra mutated offspring for the champion
-Checked 2026-10-15 against paper nagashima2022genetic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

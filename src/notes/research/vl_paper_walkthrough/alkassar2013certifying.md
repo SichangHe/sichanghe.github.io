@@ -47,4 +47,4 @@ Inference: threat to agent-written verified Rust is moderate when a small certif
 - two-level proof interface — verify concrete code with contracts and prove abstract mathematics in a theorem prover
 - representation linking — connect concrete arrays and records to abstract graphs, sets, paths, or labelings
 - local graph certificates — use spanning trees, distance labels, or matching covers whose global meaning is proved separately
-Checked 2026-10-14 against the paper by a Codex agent: audit record alkassar2013certifying; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

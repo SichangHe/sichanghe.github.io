@@ -45,4 +45,4 @@ What is proved or measured: nothing experimentally; there is no implementation, 
 - sealed observation tokens — bind observations to request and state versions, then consume tokens under a commit lock
 - outcome-closed transitions — enumerate every primitive outcome and its abstract-state transition
 - mediability envelope — screen effect vocabularies for legibility, observability, correlatability, completeness, outcome closure, and durability
-Checked 2026-10-15 against paper hu2026effects: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

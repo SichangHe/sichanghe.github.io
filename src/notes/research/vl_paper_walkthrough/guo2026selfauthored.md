@@ -71,4 +71,4 @@ Inference: threat to a product generating agent-written verified Rust is high wh
 - conservative non-regression gate: use relative and absolute slack to reject clear regressions while permitting neutral edits
 - leakage and retention ablations: test internal test constraints, score disclosure, proposal-matched runs, and peak-to-final loss
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

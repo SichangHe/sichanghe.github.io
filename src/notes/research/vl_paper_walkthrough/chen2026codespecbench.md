@@ -50,4 +50,4 @@ Inference: this is a direct threat to agent-written verified Rust because a mode
 - repository contract injection: evaluate specifications in fixed and buggy multi-file repositories with trigger/regression tests
 - specification-guided reranking: use generated contracts to filter and rank candidate implementations
 - VL contract calibration: compare sampled Rust behavior with Verus proofs to detect weak and over-restrictive specifications
-Checked 2026-10-14 against the paper by a Codex agent: audit record chen2026codespecbench; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

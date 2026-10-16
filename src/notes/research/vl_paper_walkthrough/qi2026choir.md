@@ -59,4 +59,4 @@ Inference: For VL, the direct product threat is workflow integrity: an agent can
 - lease and salvage workflow: use expiring claims and preserve partial failed proofs for follow-up tasks
 - proof golfing: optimize a proved declaration while keeping its statement fixed
 - auditable history visualization: reconstruct proof-tree growth from repository events
-Checked 2026-10-14 against the paper by a Codex agent: audit record qi2026choir; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

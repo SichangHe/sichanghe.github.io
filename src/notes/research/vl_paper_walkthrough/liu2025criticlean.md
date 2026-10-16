@@ -71,4 +71,4 @@ The paper already establishes compiler-plus-critic iteration, a paired semantic 
 - taxonomy-guided negatives — mutate correct formalizations using a reviewed list of realistic error types
 - mixed SFT and rule-based RL — combine critic, code, and math data with format and label rewards
 - retry-budget evaluation — report cumulative accepted formalizations at explicit attempt limits
-Checked 2026-10-15 against paper liu2025criticlean: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

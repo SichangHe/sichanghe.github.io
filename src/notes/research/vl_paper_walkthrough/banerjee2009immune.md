@@ -52,4 +52,4 @@ The paper tested the AIS on two nontrivial benchmark programs: a gcd/lcm program
 - shape-space similarity — encode fragments and invariants as vectors and use distance for retrieval
 - linear invariant assembly — combine fragment invariants into a whole-program polynomial shape
 - quantifier-elimination completion — solve a predicted shape into an exact invariant and check the resulting program
-Checked 2026-10-14 against the paper by a Codex agent: audit record banerjee2009immune; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

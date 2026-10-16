@@ -54,4 +54,4 @@ Theorems establish read-over-write, allocation correctness, and model correspond
 - allocation refinement — map FAT entries to a Boolean allocation vector to reuse bounded-disk proofs
 - FTY typed definitions — reduce type hypotheses and helper lemmas with ACL2's typed record discipline
 - executable co-simulation — compare generated disk images and file operations with Linux implementations
-Checked 2026-10-15 against paper mehta2018formalising: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

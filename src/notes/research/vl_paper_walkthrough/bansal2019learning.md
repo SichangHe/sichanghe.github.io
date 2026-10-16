@@ -82,4 +82,4 @@ What is proved is checked HOL Light proof success under the benchmark's premise-
 - greedy pruning — remove unnecessary premises and learn from them as hard negatives
 - dropout retrieval — randomly mask goal-token features to diversify repeated exploration
 
-Checked 2026-10-15 against the paper by a Codex agent for learning_to_reason_in_large_theories_wit_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

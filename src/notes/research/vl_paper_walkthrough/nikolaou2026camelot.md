@@ -95,4 +95,4 @@ Inference: Threat to agent-written verified Rust is medium to high for temporal 
 - CTL temporal policies: express safety, ordering, next-step, until, and liveness requirements over plan states
 - counterexample-guided plan repair: feed model-checker traces back to the planner and repeat verification
 - typed obligation grounding: compile constrained LLM proposals to CTL through trusted vocabulary checks
-Checked 2026-10-13: audit record nikolaou2026camelot; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

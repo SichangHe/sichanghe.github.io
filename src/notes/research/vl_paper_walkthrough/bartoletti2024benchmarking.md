@@ -55,4 +55,4 @@ Inference: VL should reuse the benchmark design, explicit soundness weighting, a
 - soundness-weighted scoring: score strong and weak claims separately, make false positives more costly, and give unsupported or non-expressible tasks zero
 - semantic boundary probes: isolate external calls, reentrancy, asynchronous balance changes, caller identity, temporal sequences, and liveness in minimal contracts
 - reproducible toolchain: automate task generation, verifier execution, and result aggregation across every benchmark task
-Checked 2026-10-15 against paper bartoletti2024benchmarking: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

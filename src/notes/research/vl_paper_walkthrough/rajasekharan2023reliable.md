@@ -76,4 +76,4 @@ Inference: the threat is medium to high at the specification-extraction boundary
 - fixed predicate grammar — constrain model output to typed domain relations before reasoning
 - proof-tree explanations — return the facts and rules that justify each answer
 - state-machine conversation — store predicates as state, ask for missing fields, and query trusted data
-Checked 2026-10-15 against paper rajasekharan2023reliable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

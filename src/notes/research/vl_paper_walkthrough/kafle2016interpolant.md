@@ -67,4 +67,4 @@ The controlled comparison supports a tradeoff: RAHIT solves more tasks and uses 
 - tree Craig interpolation — label an infeasible derivation tree with shared-variable interpolants bottom-up
 - interpolant automaton generalization — turn one interpolant-labeled trace into an automaton recognizing many spurious traces
 - polyhedral CEGAR — combine convex-polyhedron invariants, trace feasibility, automata difference, and clause refinement
-Checked 2026-10-13: audit record kafle2016interpolant; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

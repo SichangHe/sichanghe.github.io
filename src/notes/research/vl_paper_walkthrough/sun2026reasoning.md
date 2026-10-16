@@ -54,4 +54,4 @@ The paper shows a concrete workflow VL should reuse: maintain per-goal failure r
 - validation with reflection — execute generated proof steps, selectively ask an LLM to detect misapplied branching tactics, roll back, and preserve a structured failure record
 - retrieval with planning — generate a natural-language proof plan, embed plan steps and semantic lemma descriptions, and retrieve strategy-aligned lemmas and proof examples
 - per-goal failure history — feed the full failed tactic sequence and reason back into the next proof-generation prompt
-Checked 2026-10-13: audit record sun2026reasoning; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

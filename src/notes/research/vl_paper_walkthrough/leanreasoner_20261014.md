@@ -42,4 +42,4 @@ Lean checks syntax and every accepted proof path; the result interpreter checks 
 - search probabilistic tactic trees with priority queues, cumulative log scores, timeout, and prefix-state pruning
 - train on theorem-proving proofs with intuitive and concise annotations to improve premise selection and proof search
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

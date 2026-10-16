@@ -33,4 +33,4 @@ The paper's deterministic verifier reduces reliance on model judgment, but the d
 - verifier-guided refinement: pass failed candidates and deterministic diagnostics into the next specification attempt
 - mutation completeness feedback: mutate programs or contracts to expose missing behavioral distinctions
 - proof-anchored maintenance: gate refactors and migrations with existing specifications, tests, and reproducible verification receipts
-Checked 2026-10-15 against paper ayon2026trustworthy: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

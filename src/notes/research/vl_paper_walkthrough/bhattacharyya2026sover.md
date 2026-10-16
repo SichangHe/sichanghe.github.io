@@ -41,4 +41,4 @@ The paper’s results supersede a VL attempt to use sampled executions or equal 
 - shared-coordinate SMT equivalence: map both formulations into one symbolic environment and prove feasibility equivalence plus weak-order preservation by UNSAT counterexample queries
 - δ-complete ε-argmin checking: use dReal with a margin larger than δ and accept only UNSAT for nonlinear feasibility and optimization-mismatch formulas
 - refined LLM mapping: obtain variable and parameter correspondences, then run a targeted uniqueness and consistency correction pass before verification
-Checked 2026-10-15 against paper bhattacharyya2026sover: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

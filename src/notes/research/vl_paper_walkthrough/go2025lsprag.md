@@ -44,4 +44,4 @@ Inference: for agent-written verified Rust, LSP-guided retrieval is a useful con
 - diagnostic-context repair — classify diagnostics, retrieve symbol/workspace context, and iterate fixes under a retry budget
 - concise structured prompting — combine focal source, retrieved dependencies, and a lightweight scaffold
 - verifier-aware evaluation — report coverage, valid rate, latency, token cost, and component ablations with explicit denominators
-Checked 2026-10-15 against paper go2025lsprag: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

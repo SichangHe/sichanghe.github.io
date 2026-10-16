@@ -42,4 +42,4 @@ On ten authors' shape/content benchmarks, 2LS verified 9/10; the tenth timed out
 - shape/content product domains — conjoin points-to and zones/interval templates for heap invariants
 - symbolic-path guards — associate separate invariants with loop-execution path predicates
 - memory-safety materialization — insert null, freed-object, and end-of-program leak assertions
-Checked 2026-10-15 against paper hruska2019heap: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

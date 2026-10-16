@@ -110,4 +110,4 @@ Inference: VL should reuse the paper's three-level evidence model, fresh-context
 - three-level evidence — combine mechanical proof or replayable computation with agent judgment and selected human judgment
 - statistical review audit — sample accepted claims, publish error rates and denominators, and repeat after model changes
 - formal library building — encode established results and assumptions in a checker so later work composes trusted lemmas
-Checked 2026-10-14 against the paper by a Codex agent: audit record gusev2026swarms; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

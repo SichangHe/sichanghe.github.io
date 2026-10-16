@@ -60,4 +60,4 @@ Inference: The product threat to agent-written verified Rust is moderate and ind
 - randomized usability evaluation — randomize users across abstraction and baseline, reserve exploratory data, then test completion and time with denominator-aware corrected statistics
 
 - verus boundary modeling — inference: represent shared identities and mutation permissions with Verus ghost state and invariants, while treating collector and stack-map behavior as explicitly trusted unless verified
-Checked 2026-10-15 against paper coblenz2022garbage: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

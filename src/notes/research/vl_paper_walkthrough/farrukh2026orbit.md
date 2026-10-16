@@ -48,4 +48,4 @@ What is already done. ORBIT already provides dependency-guided orchestration, in
 - two-tier mapping — exact static lookup first, semantic agent fallback second, with path validation
 - independent completion checks — reject stubs/TODOs and independently rerun toolchain checks
 - per-unit verified orchestration — translate, compile, refactor, and test each mapped unit before advancing
-Checked 2026-10-15 against paper farrukh2026orbit: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

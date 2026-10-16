@@ -81,4 +81,4 @@ Inference: for VeruLaw, the market could increase parallel proof throughput and 
 - dependency-closed checking — permit a final proof status only when all recursive dependencies are checked, while labeling incomplete work admitted
 
 - compositional lemma ownership — divide theorem regions by theme and expose intermediate lemmas so later proofs avoid expanding definitions
-Checked 2026-10-14 against the paper by a Codex agent: audit record brown2026agenthunt; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

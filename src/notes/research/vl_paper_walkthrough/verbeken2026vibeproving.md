@@ -93,4 +93,4 @@ Inference: VL should reuse the obligation-oriented generate–referee–repair l
 - parallel patch search — compare independent fixes for one obligation and retain only checkable patches
 - versioned dependency control — keep drafts and transcript anchors, expose dependencies, and recheck downstream claims
 - mechanized bottleneck checking — delegate algebra and inequality-domain obligations to CAS or certified checkers while retaining human boundary review
-Checked 2026-10-15 against paper verbeken2026vibeproving: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

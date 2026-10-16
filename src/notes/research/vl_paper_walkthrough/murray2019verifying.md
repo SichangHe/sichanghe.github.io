@@ -85,4 +85,4 @@ Inference: for VeruLaw, the highest product risk is relational proof burden arou
 - secure-refinement decomposition: replace a cube-shaped relational proof with paced square refinement plus termination, timing, and coupling side conditions
 - lock-based stability tracking: cache shared expressions only when the variable and every policy-control variable are protected, rejecting unstable accesses
 - compiler pacing and coupling: classify target instructions with an abstract-step function and relate paired concrete runs at equal program counters
-Checked 2026-10-14: audit record murray2019verifying; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

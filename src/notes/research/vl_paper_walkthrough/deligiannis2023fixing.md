@@ -64,4 +64,4 @@ Inference: For VL, the useful technique is checker-driven repair of compilation 
 - compiler feedback iteration — re-run the checker after each patch so propagated type/signature errors become new repair inputs
 - semantic acceptance tests — require build plus independent unit tests for benchmarks because compilation alone does not preserve intent
 - prompt ablation discipline — measure each formatting/localization feature against a fixed benchmark and report denominators for commits versus errors
-Checked 2026-10-15 against paper deligiannis2023fixing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

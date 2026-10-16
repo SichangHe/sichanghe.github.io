@@ -105,4 +105,4 @@ Inference: threat to VL is high at unsafe boundaries and moderate for safe verif
 - editor-integrated safety prompts — serialize structured obligations and show them at the unsafe call site through hover
 - CVE coverage audit — classify historical vulnerabilities by violated safety property and double-check the code review
 - ecosystem exposure mining — count unsafe API names in crates.io source to prioritize common operations and risks
-Checked 2026-10-15 against paper cui2024fearless: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

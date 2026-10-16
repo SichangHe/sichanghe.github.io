@@ -67,4 +67,4 @@ Inference: For VL, the strongest reusable idea is the certificate-first loop: cl
 - graded verifier reward ladder — ordered type, completeness, semantic-equivalence, and length checks with diagnostic certificates
 - HarnessEvolve — UCB-guided evolutionary mutation of the agent harness while retaining rejected designs and their verifier certificates
 - Agentic RLSF — multi-turn GRPO post-training from symbolic verifier rewards inside a frozen harness
-Checked 2026-10-13: audit record jana2026aiprover; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -44,4 +44,4 @@ Rocq’s kernel or SerAPI accepts the proof term, which is strong evidence for t
 - structural proof patterns: use induction, simplification, rewriting, constructors, and existing contrapositives
 - reflection-based reasoning: case-analyze inductive propositions that connect executable predicates to equality
 - proof-size stratification: report success by tactic-count interval and test whether exact scripts are memorized
-Checked 2026-10-13: audit record bayazit2025effectiveness; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

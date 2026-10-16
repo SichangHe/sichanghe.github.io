@@ -50,4 +50,4 @@ The proof establishes relational correctness of the synthesized rewrite algorith
 - cascading auxiliaries — synthesize `min`, `trim`, `split`, `insert`, and `merge` as subordinate conjectures when the main proof needs them
 - split-goal merge — decompose a multiset union into independently solvable equations before reconstructing a sorted output
 
-Checked 2026-10-15 against the paper by a Codex agent for proof_based_synthesis_of_sorting_algorit_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

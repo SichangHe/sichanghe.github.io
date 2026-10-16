@@ -55,4 +55,4 @@ what is proved, trusted, and assumed
 - abstraction-based predicate pairing: unfold CHCs, abstract constraints, create paired predicates, fold, then solve the equisatisfiable result
 - abstract-domain selection: use Bounded Differences or Octagons for cross-variable relations; Boxes are weaker and Convex Polyhedra costlier
 - specialization composition: instantiate the same APP framework with one-atom partitions to propagate abstract constraints through CHCs
-Checked 2026-10-13: audit record deangelis2017enhancing; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

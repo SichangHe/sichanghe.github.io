@@ -86,4 +86,4 @@ Existing work already demonstrates proof-as-terminating-program, automatic equal
 - equivalence-guided termination — check a hard implementation through an equivalent terminating surrogate
 - internal totality proofs — expose value witnesses needed for call-by-value equational reduction
 
-Checked 2026-10-15 against the paper by a Codex agent for pml_2_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

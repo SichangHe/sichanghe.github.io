@@ -92,4 +92,4 @@ Inference: The checker, parser, model code, training corpus, and specification r
 - top-k naming assistance — return several ranked names and compare them with existing declarations
 - LSP verification-editor integration — surface model suggestions beside source names through command line and editor tooling
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

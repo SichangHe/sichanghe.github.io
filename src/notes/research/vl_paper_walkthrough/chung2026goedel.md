@@ -57,4 +57,4 @@ What remains trusted includes the Lean compiler, Mathlib, the blueprint validato
 - diagnosis-driven refinement — repair false statements from checked counterexamples and split hard lemmas into helpers
 - proof reuse — preserve solved nodes across revisions when signatures and parents remain unchanged
 - natural-language structural seeding — use an informal proof to guide initial decomposition while requiring formal proof afterward
-Checked 2026-10-13: audit record chung2026goedel; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

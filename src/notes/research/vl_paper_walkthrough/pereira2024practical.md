@@ -106,4 +106,4 @@ What VL should not redo: generic contract syntax, VC splitting, solver orchestra
 - exceptional postconditions — specify normal and exceptional outcomes separately and verify both
 - prefix loop invariants — reason about scanned array prefixes with exact strict bounds
 - counting-function invariants — use recursive range counts, arithmetic-friendly inequalities, and decomposition lemmas for majority proofs
-Checked 2026-10-13: audit record pereira2024practical; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

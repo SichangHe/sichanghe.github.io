@@ -65,4 +65,4 @@ Inference: this paper is a moderate threat to agent-written verified Rust becaus
 - verified maintenance — prove insertion and deletion preserve well-structured, sound, complete, and minimal storage and specify their abstract set effect
 
 - retrieval soundness/completeness — prove recursive path retrieval returns exactly the stored terms satisfying the chosen linear relation
-Checked 2026-10-15 against paper chaabani2025verified: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

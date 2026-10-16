@@ -78,4 +78,4 @@ Inference: threat to agent-written verified Rust is high where an LLM can choose
 - guess–verify–refine: propose specifications, verify them, then delete or repair failed candidates using verifier feedback
 - construct-bounded prompting: compare basic, verifiable-lemma, axiom, and full construct sets under explicit prompt constraints
 - stability-aware evaluation: count repeated-run verified programs and verifier calls in addition to one-pass success
-Checked 2026-10-14 against the paper by a Codex agent: audit record chen2026beyond; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

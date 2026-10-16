@@ -58,4 +58,4 @@ Inference: the threat to a Verus-writing product is moderate and operational: re
 - context-preserving RAG corpus — OCR authoritative sources, chunk complete problem–solution units, embed them, and retrieve top semantic matches
 - enhanced query generation — ask the model for theorem and lemma keywords before vector retrieval
 - iterative proof augmentation — regenerate queries and proofs from the current draft for a fixed iteration budget, then verify once
-Checked 2026-10-15 against paper yang2025lemmahead: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

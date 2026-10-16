@@ -65,4 +65,4 @@ Inference: the threat to agent-written verified Rust is high at the specificatio
 - local proof debugging — split proofs with assertions and control triggers, ordering, and preserved facts
 - annotation refactoring — package recurring specifications and reduce annotation volume without hiding requirements
 - evolution and regression — choose a change policy and rerun proof harnesses as production code evolves
-Checked 2026-10-13: audit record unknown2012lessons; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

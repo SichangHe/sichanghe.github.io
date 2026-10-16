@@ -59,4 +59,4 @@ Inference: for an agent-written verified-Rust product, the main threat is contra
 - EVA alarm prompting — append abstract-interpretation alarms to elicit runtime-safety preconditions
 - safety/function separation — inspect whether analyzer context improves safety while displacing functional postconditions
 - contract-count caution — treat annotation quantity as a measurement, not as proof of specification quality
-Checked 2026-10-13: audit record granberry2025seeking; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

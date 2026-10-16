@@ -157,4 +157,4 @@ Inference: VL should not redo generic assume/guarantee composition, RCL parsing,
 - heterogeneous verification guidance — reuse one high-level contract across model checking, testing, neural-network analysis, and formal proofs
 - RCL-to-RML monitor synthesis — translate guarantees into event predicates and deploy ROS topic monitors
 - guarantee-only monitoring — avoid duplicate checks for internally entailed assumptions and add environmental assumption monitors when diagnosis needs them
-Checked 2026-10-14 against the paper by a Codex agent: audit record luckcuck2022compositional; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

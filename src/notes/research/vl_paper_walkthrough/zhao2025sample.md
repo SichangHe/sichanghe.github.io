@@ -61,4 +61,4 @@ Inference: the direct product threat is that an agent may generate a plausible b
 - verification rewriting: rewrite a candidate into theorem–lemma–proof form before judging correctness
 - preliminary scoring: cheaply filter low-scoring candidates before expensive repeated verification
 - verification benchmark: evaluate scoring of correct, wrong, and correct-by-coincidence flawed responses separately from pairwise comparison
-Checked 2026-10-15 against paper zhao2025sample: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

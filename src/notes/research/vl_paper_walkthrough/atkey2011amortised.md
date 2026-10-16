@@ -45,4 +45,4 @@ The small-example table reports one-core times on an 8-core Intel Core i7 860 ru
 - proof-search inference: generate heap/resource matching constraints and solve their linear inequalities automatically
 - amortised queue specification: deposit credits on tail nodes so reversal cost is paid without exposing list lengths
 - cyclic-phase termination: use disjunctive phase invariants and per-iteration consumption to infer bounds for cyclic traversal
-Checked 2026-10-14 against the paper by a Codex agent: audit record atkey2011amortised; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

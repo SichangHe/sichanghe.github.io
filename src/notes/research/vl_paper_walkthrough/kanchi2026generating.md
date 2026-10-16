@@ -54,4 +54,4 @@ The paper measures executable exploit evidence; it does not prove that all reach
 - exemplar-guided generation: adapt a known exploit payload to each application entry point
 - execution feedback loop: compile, run, self-critique, and revise tests for bounded trials
 - log-grounded LLM assessment: summarize build/runtime evidence and classify trigger status with strict JSON
-Checked 2026-10-15 against paper kanchi2026generating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

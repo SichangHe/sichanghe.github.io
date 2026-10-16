@@ -101,4 +101,4 @@ Inference: VL should not redo the generic idea of solver-backed generation, type
 - leakage-free core repair — return only constraints from the model's own program, never the ground-truth answer
 - generic-error ablation — compare core feedback with identical repair using only the raw solver message
 - verifier-pattern triage — transfer domain-specific failure categories to Rust/Verus specification repair (Inference)
-Checked 2026-10-15 against paper sarkar2026errors: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

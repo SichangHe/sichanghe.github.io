@@ -84,4 +84,4 @@ What VL should not redo: the paper has already articulated the adoption checklis
 - usefulness evidence: compare faults, requirements, or economic outcomes with a conventional alternative
 - ease-of-use evidence: measure user gain/effort separately from tool runtime
 - credible evaluation: publish representative, runnable artifacts, limits, barriers, and complete denominators
-Checked 2026-10-15 against paper gleirscher2023applicable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

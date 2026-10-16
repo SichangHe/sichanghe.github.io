@@ -77,4 +77,4 @@ Trusted components include Lean's kernel, the supplied premises, the front-end t
 - explicit substitutions: reduce partial terms and reject incompatible heads early
 - entropy-guided DFS: iteratively deepen exhaustive search while prioritizing constrained branches
 - front-end translation: encode source-language binders, definitions, recursors, and arity into the search format
-Checked 2026-10-14 against the paper by a Codex agent: audit record norman2025canonical; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

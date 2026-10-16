@@ -40,4 +40,4 @@ Trusted components include Lean's kernel, the generated formalization, the class
 - marginal-value routing — attempt iff predicted quality minus lambda times predicted cost is positive
 - action-space extension — add model switching, self-correction, or decomposition as scored actions
 
-Checked 2026-10-15 against the paper by a Codex agent for optimizing_the_cost_quality_tradeoff_of__20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -31,4 +31,4 @@ The study's conclusions depend on fixed model architectures, hyperparameters, da
 - maximum-BLEU duplication audit: score each test source against training sources and recompute accuracy after overlap filtering
 - input-output copying audit: compare generated code with inputs and perturb inputs by controlled token deletion
 - gradient-SHAP attribution: estimate token importance with baseline-sampled gradients and test it by targeted removals
-Checked 2026-10-15 against paper liu2023reliability: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -107,4 +107,4 @@ Inference: this is a direct design pattern for VL's proof search around verified
 - incremental resource CEGIS — solve guarded coefficient inequalities by SMT counterexamples and update only clauses invalidated by each example
 - potential-based termination — use finite potential consumed by recursive calls as both a resource bound and a termination argument
 - constant-resource synthesis — place potential on public inputs only to constrain generated code's resource use independently of secret input size
-Checked 2026-10-14: audit record knoth2019resource; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

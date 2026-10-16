@@ -89,4 +89,4 @@ Inference: VL should reuse the phase separation, explicit error/UB modeling, pro
 - undef and cast concretization — relate symbolic bytes, `undef`, and pointer/integer values to finite concrete executions
 - executable reference interpreter — implement deterministic operations and prove each result belongs to the nondeterministic specification
 - block-level optimization proofs — prove dead-allocation, cast-removal, and allocation-addition refinements before composing passes
-Checked 2026-10-14 against the paper by a Codex agent: audit record beck2024twophase; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

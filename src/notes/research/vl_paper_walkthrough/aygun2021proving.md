@@ -59,4 +59,4 @@ Inference: reuse the bootstrapping idea when there are few verified examples: ev
 - incremental budget scheduling: retry conjectures with increasing time budgets while learners update from a shared replay buffer
 - graph spectral clause encoding: encode clause graphs with typed nodes and Laplacian features for Transformer scoring
 
-Checked 2026-10-15 against the paper by a Codex agent for proving_theorems_using_incremental_learn_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

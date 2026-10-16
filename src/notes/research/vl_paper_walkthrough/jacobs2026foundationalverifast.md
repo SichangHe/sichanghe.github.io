@@ -64,4 +64,4 @@ Inference: agent-written verified Rust is threatened by wrong specifications, om
 - hinted mirroring: record symbolic-execution decisions and replay them in a small Rocq checker with `ConsumeChunk` and `Done` hints
 - foundational soundness model: prove symbolic-heap operations sound against an Iris-based axiomatic semantics
 - certificate trust analysis: enumerate source representation, specifications, semantics, replay kernel, and unsupported Rust features that remain trusted
-Checked 2026-10-15 against paper jacobs2026foundationalverifast: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

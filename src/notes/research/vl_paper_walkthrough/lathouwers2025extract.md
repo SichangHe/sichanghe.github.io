@@ -74,4 +74,4 @@ Inference: this work is directly useful for VL as an inventory and gap detector,
 - ontology enrichment: connect tools to repositories, articles, concepts, and people
 - API refresh workflows: update commits and metadata automatically with reviewable changes
 - coverage accounting: report counts with source and enrichment denominators
-Checked 2026-10-15 against paper lathouwers2025extract: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

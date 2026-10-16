@@ -80,4 +80,4 @@ Inference: For agent-written verified Rust, the threat is indirect but substanti
 - predicate splitting: separate mutually exclusive clauses so each case gets a precise abstract polyhedron
 - thresholded polyhedral analysis: compute widening thresholds from three concrete iterations and exclude `false` from the over-approximation
 - compositional CHC tool chain: order transformations and analysis, reporting safe versus unknown with explicit numerical limits
-Checked 2026-10-14 against the paper by a Codex agent: audit record gallagher2014analysis; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

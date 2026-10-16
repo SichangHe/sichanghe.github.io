@@ -137,4 +137,4 @@ Inference: the threat to VL is high if agents are allowed to treat compiling cod
 - premise retrieval — retrieve definitions and lemmas, including unseen premises at test time
 - synthetic formal data — generate and retain checker-accepted conjecture/proof pairs
 - verified code generation — generate code with contracts and proofs, then check the artifact
-Checked 2026-10-15 against paper yang2024formalreasoning: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

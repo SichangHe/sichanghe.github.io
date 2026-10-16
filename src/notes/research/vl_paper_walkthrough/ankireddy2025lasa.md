@@ -109,4 +109,4 @@ The paper's work that VL should not redo is the general architecture: hierarchic
 - few-shot assertion translation: convert retained properties to SVA and repair with syntax, semantic, and counterexample feedback
 - coverage-driven refinement: rerun FPV and add targeted properties until configured coverage thresholds are met
 - counterexample bug finding: use model-checker traces plus threat context to identify concrete design flaws
-Checked 2026-10-15 against paper ankireddy2025lasa: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

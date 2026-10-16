@@ -80,4 +80,4 @@ The authors identify a key failure mode: a false-positive predicate can halt a t
 - two-tier runtime verification — use reversible soft predicate checks and blocking hard rule checks for critical actions
 - structured feedback — generate roadmap, predicate, and rule feedback from unmet logical conditions
 - majority verification — repeat stochastic encoding or decisions and return the majority result
-Checked 2026-10-15 against paper lee2025verisafe: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

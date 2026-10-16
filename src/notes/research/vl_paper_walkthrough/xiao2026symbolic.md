@@ -81,4 +81,4 @@ Inference: For VeruLaw, this is a high-value runtime complement to verified Rust
 - dual-mode supervision — gate calls online and replay identical checkers offline for reproducible verdicts
 - contract-library analysis — test consistency, compatibility, and unsatisfiable cores before deployment
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

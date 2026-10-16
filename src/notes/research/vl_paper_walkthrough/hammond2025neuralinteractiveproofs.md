@@ -65,4 +65,4 @@ Inference: neural interactive proofs offer VL a useful adversarial review archit
 - multi-prover cross-examination — use non-communicating provers and correlated-equilibrium training for stronger soundness
 - zero-knowledge simulator — train a simulator to match interaction distributions so the verifier learns only the answer
 - stabilised expert iteration — replace verifier guesses with true labels on an annealed training partition to prevent rejection collapse
-Checked 2026-10-15 against paper hammond2025neuralinteractiveproofs: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

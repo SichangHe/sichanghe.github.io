@@ -41,4 +41,4 @@ Inference: for agent-written verified Rust, this is a moderate product threat an
 - model-guided counterexample generation — turn a failed SMT model into source-location values for replay
 - giant-step assertion checking — replace calls and loops with oracle-supplied writes while checking contracts and invariants
 - two-stage failure classification — use ordinary RAC for non-conformance, then giant-step RAC for weak contracts or invalid models
-Checked 2026-10-14: audit record becker2021explaining; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

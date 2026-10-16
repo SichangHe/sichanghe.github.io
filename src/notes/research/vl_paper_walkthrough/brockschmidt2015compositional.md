@@ -135,4 +135,4 @@ Inference: VeruLaw could use this as an external invariant-summary synthesizer f
 - compositional CheckSafe — return `Safe` only after recursively proving all component-entry obligations
 - proof-search memoization — cache failed and successful local calls to avoid repeated analysis
 - parallel and incremental analysis — try template sizes and independent SCC obligations concurrently and reuse summaries after changes
-Checked 2026-10-13: audit record brockschmidt2015compositional; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

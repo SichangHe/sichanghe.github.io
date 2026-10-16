@@ -55,4 +55,4 @@ Inference: for agent-written verified Rust, the threat is medium. The architectu
 - symbolic auto-proof synthesis — inspect definitions and emit `OBVIOUS` or `BY ... DEF ...` before asking an LLM
 - normalized claim prompting — constrain LLM output to assumptions plus one goal and translate it into `ASSUME-PROVE`
 - verifier-feedback retries — pass TLAPS errors to later candidate generations under bounded retries
-Checked 2026-10-13: audit record zhou2025language; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

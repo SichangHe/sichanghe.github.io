@@ -118,4 +118,4 @@ Inference: VL can turn the method into checks: every API that returns an interna
 - borrowable recursive substructures — lift lists and trees so elements, tails, and subtrees can be independently exposed and transferred
 - non-separating overlapping views — use a shared logical precondition for repeated lookups whose subtrees may overlap
 - offered ownership for sharing and rotation — let one container retain ownership while another treats the same pinned subpart as borrowed
-Checked 2026-10-13: audit record guan2025precise; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -48,4 +48,4 @@ The case studies are qualitative examples; the paper gives no denominator for a 
 - generated vulnerability scanners: compile feature predicates into reusable static-analysis functions that report candidate code segments
 - hybrid Hoare verification: combine symbolic/concolic execution of the formal interpreter with Coq proofs that final state satisfies a user postcondition
 - non-aftereffect trust boundary: let untrusted generators propose specifications while requiring the Coq kernel to certify every resulting theorem
-Checked 2026-10-14 against the paper by a Codex agent: audit record yang2020hybrid; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -71,4 +71,4 @@ Inference: For VeruLaw, the product threat is moderate and architectural. An age
 - IR heap and type reconstruction: infer expected expression types and encode fields, arrays, calls, control flow, and frames in a Boogie heap model
 - conservative frame inference: mark a method empty-frame only when static analysis finds no heap writes, otherwise use a whole-heap frame
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

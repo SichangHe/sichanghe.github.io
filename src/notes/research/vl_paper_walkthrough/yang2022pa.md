@@ -38,4 +38,4 @@ What is proved is the Isabelle model’s functional and security properties unde
 - abstraction refinement: prove concrete low-level traces refine a small high-level transition system before proving security properties
 - trace-property induction: decompose normal, tampered, and man-in-the-middle guarantees into lemmas over all concrete runs
 - model-to-code validation: extract executable model code and compare it with a reviewed implementation on matching attack scenarios
-Checked 2026-10-14: audit record yang2022pa; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -63,4 +63,4 @@ Inference: VL can reuse the taxonomy, category-specific prompting, parseable ass
 - category decomposition — run type-specific prompts and union their extracted assertions
 - mutation completeness — generate failing mutants and report per-problem all-bug coverage and per-mutant detection
 - denominator-separated metrics — keep C@k/CPC, BCR over problems, and BDR over mutants distinct
-Checked 2026-10-14 against the paper by a Codex agent: audit record he2024beyond; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

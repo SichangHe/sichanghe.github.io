@@ -89,4 +89,4 @@ Inference: the direct threat is moderate but bounded. This paper demonstrates th
 - side-condition verification — formalize weight bounds, Jacobians, integration-by-parts conditions and convergence obligations
 - finite-to-infinite approximation — prove polynomial cases, establish norm convergence, and pass to the entire-function limit
 - kernel and axiom audit — pin Lean/Mathlib versions, reject `sorry`/`admit`, and inspect reported axioms
-Checked 2026-10-15 against paper bortolotto2026complex: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

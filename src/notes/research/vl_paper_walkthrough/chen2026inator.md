@@ -58,4 +58,4 @@ The paper already provides constraint families for type parity, recursive layout
 - semantic preservation constraints — prevent C-to-Rust copy, move, and pointer transformations from invalidating live paths
 - NLL loan analysis — solve lifetimes, subtyping, reborrowing, in-scope loans, and conflict conditions by data flow
 - precision optimization — minimize cell qualifiers and pointer/runtime costs after satisfying correctness
-Checked 2026-10-15 against paper chen2026inator: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

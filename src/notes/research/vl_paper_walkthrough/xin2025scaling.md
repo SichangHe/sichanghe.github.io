@@ -79,4 +79,4 @@ Lean's compiler and kernel validate tactic transitions and final proof terms. Le
 - periodic soft-reset retraining — re-solve, aggressively curate, and retrain from a base checkpoint after plateaus
 - planner-prover replanning — decompose a theorem into verified subgoals and revise the plan after stuck subgoals
 - focused parallelism with cache — run parallel agents on one subgoal and commit the first valid proof in a shared status cache
-Checked 2026-10-13: audit record xin2025scaling; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

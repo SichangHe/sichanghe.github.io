@@ -69,4 +69,4 @@ Inference: for agent-written verified Rust, the direct threat is false confidenc
 - self-managed proof memory — summarize durable lessons from prior attempts instead of replaying an unbounded transcript
 - bounded library retrieval — search theorem libraries and documentation within a fixed tool budget before proposing proof code
 - model–scaffold separation — compare foundation models inside the same agent loop so architecture and model gains are measurable separately
-Checked 2026-10-13: audit record unknown2026aminimalagentforautomatedtheorempr; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

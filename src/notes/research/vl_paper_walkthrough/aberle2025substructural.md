@@ -84,4 +84,4 @@ Inference: Inference: the principal threat to agent-written verified Rust is tha
 - ordered free theorems: use a free noncommutative monoid to force identity, reversal, folds, and tree traversals
 - linear free theorem: use a free commutative monoid to prove that list transforms are permutations
 - algebra-to-Verus encoding: model resources as ghost sequences or multisets and prove contracts with `spec fn`, `ensures`, and proof lemmas
-Checked 2026-10-15 against paper aberle2025substructural: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

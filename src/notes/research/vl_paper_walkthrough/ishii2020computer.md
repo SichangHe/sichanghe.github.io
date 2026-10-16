@@ -52,4 +52,4 @@ Inference: The threat to agent-written verified Rust is focused: branch-heavy nu
 - NaN-aware extrema — define min/max operators and case predicates that make all-NaN behavior explicit
 - VC splitting — compare unsplit, exhaustive, and cost-optimal decomposition of generated proof obligations
 - proof extraction boundary — separate verified WhyML logic from trusted runtime rounding and extraction code
-Checked 2026-10-14: audit record ishii2020computer; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -74,4 +74,4 @@ The authors explicitly list external-validity threats from limited industrial ST
 - triplet ambiguity detection — train anchor/positive/negative representations to separate referential and semantic ambiguity
 - candidate back-translation — compare multiple sampled formulas through normalized natural-language descriptions to localize scope differences
 - iterative contract clarification — preserve the original requirement while repeatedly refining and verifying the current version
-Checked 2026-10-14 against the paper by a Codex agent: audit record fang2026clarifystl; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

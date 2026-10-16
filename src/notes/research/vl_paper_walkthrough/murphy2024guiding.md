@@ -74,4 +74,4 @@ The paper already contributes a reusable prompt decomposition, a data/control ab
 - validity/correctness metrics — measure parseability, semantic correctness, and correctness conditioned on validity
 - abstraction ablation — remove interfaces or descriptions to isolate which prompt information helps
 - interface semantic audit — check that generated use of each symbol matches its declared meaning
-Checked 2026-10-15 against paper murphy2024guiding: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

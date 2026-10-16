@@ -57,4 +57,4 @@ The paper says it only covers “long multiplication and Wallace-tree multiplica
 - long-multiplier matching with backtracking: group aligned partial products, reconstruct operand blocks, and backtrack ambiguous assignments
 - Wallace-tree carry matching: traverse XOR/adders by bit, consume carry evidence, and collect one-bit partial products before reconstructing operands
 
-Checked 2026-10-15 against the paper by a Codex agent for matching_multiplications_in_bit_vector_f_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

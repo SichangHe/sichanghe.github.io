@@ -128,4 +128,4 @@ Inference: in a Verus pipeline, the generator and all sampled facts should remai
 - transition minimization and local simplification — collapse cut-point-free paths and eliminate redundant or scoped existential constraints
 - incomplete small-domain case analysis — enumerate likely 0/1 implication variables and solve the resulting linear systems
 - incremental error-path solving — synthesize one error path at a time and reuse each invariant to strengthen later paths
-Checked 2026-10-15 against paper gupta2009invgen: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

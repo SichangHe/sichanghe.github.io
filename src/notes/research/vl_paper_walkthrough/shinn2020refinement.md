@@ -70,4 +70,4 @@ Inference: for VeruLaw, the useful lesson is to write domain predicates at API b
 - relational contracts: state cross-argument, input/output, and prior-call hyperproperties in Python predicates
 - reservoir-sampled hyperproperty monitoring: retain a uniform sample of calls to bound memory while checking relational behavior
 - refinement-driven test generation: generate valid inputs from type predicates and run each function's contracts
-Checked 2026-10-14: audit record shinn2020refinement; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

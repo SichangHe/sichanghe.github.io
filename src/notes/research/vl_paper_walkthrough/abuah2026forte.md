@@ -67,4 +67,4 @@ The paper’s threat model assumes an honest but fallible mechanism author and e
 - relational metric preservation: prove two-run store/value relatedness by induction over evaluation
 - inferred loop invariants: couple sensitivity bounds to public counters and expose qualifier hints only when inference needs them
 - verified trusted signatures: back every deterministic primitive’s refinement contract with a Verus two-run theorem
-Checked 2026-10-15 against paper abuah2026forte: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

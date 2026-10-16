@@ -74,4 +74,4 @@ The authors deliberately omit a fixed minimum separation ε between interfering 
 - verified executable checker — prove `check-plan` accepts exactly the plans satisfying the abstract validity definition
 - efficient verified representation — replace sets and lists with AVL trees while proving equivalence
 - explicit trust boundary — record unverified parser and code-generation components instead of implying the theorem covers them
-Checked 2026-10-15 against paper abdulaziz2022formal: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

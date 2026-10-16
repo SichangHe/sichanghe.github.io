@@ -40,4 +40,4 @@ Trusted elements include F⋆/Z3, generated runtime and transport, the `assume` 
 - callback linearity: hide channels behind generated state callbacks so the runtime owns exactly-once communication
 - erased latent facts: preserve unknown third-party values as proof-only refinements while preventing their computational use
 - generated CFSM executor: generate hidden per-state runners that perform labels, payloads, callbacks, state updates, and termination
-Checked 2026-10-14: audit record zhou2020statically; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

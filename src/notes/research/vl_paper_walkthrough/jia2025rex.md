@@ -88,4 +88,4 @@ Rex already demonstrates safe-Rust kernel wrappers, typed helper interfaces, sea
 - safe transmutation — seal a trait and permit byte-to-struct casts only for recursively safe target types
 - panic resource cleanup — record helper-acquired resources per CPU and release them in a trusted panic handler
 - hybrid stack and watchdog checks — combine static call-graph sizing with runtime stack checks and per-CPU timer termination
-Checked 2026-10-15 against paper jia2025rex: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

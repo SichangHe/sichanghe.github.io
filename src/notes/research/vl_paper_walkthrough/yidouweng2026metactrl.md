@@ -54,4 +54,4 @@ Meta-Ctrl’s contribution is the exact granularity split and by-construction fi
 - canonical parser alignment — require a deterministic token-to-action bijection so the joint constraint factors exactly
 - specification-relative guarantee — treat every guarantee as conditional on the completeness and correctness of the encoded automata
 
-Checked 2026-10-15 against the paper by a Codex agent for meta_ctrl_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -67,4 +67,4 @@ Inference: an agent-written verified-Rust product faces a direct threat from wea
 - authored calibration controls — use known contracts to expose metric blind spots before evaluating models
 - joint-measurability comparison — rank agents on task intersections with comparable evaluator evidence
 - extraction and harness audit — inspect selected declarations and treat evaluator errors or placeholders as unresolved
-Checked 2026-10-13: audit record nair2026beyond; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

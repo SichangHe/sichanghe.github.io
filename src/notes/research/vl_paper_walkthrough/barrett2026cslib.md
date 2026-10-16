@@ -100,4 +100,4 @@ Inference: CSLib is relevant to VL as ecosystem infrastructure, not as a drop-in
 - kernel-replayed SMT: translate Lean goals to SMT, obtain certificates, and replay them in the Lean kernel
 - TCB-minimizing translation: embed the IVL and translation machinery in Lean and keep generated goals source-linked
 - reviewed AI assistance: use AI for formalization and proof suggestions while requiring verifier checks and manual code review
-Checked 2026-10-15 against paper barrett2026cslib: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

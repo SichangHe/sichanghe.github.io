@@ -69,4 +69,4 @@ Inference: threat to agent-written verified Rust is moderate for closure-heavy A
 - biabductive normalization: compact staged flows by merging compatible stages and inferring missing frames across requirements
 - forward staged verification: summarize each expression with sound rules and prove summary subsumption by entailment
 - recursive staged summarization: unfold recursion and re-summarize at call sites to recover compact client contracts
-Checked 2026-10-13: audit record foo2024staged; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

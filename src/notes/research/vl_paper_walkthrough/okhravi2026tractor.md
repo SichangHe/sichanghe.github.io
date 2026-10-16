@@ -72,4 +72,4 @@ TRACTOR already defines the four metric families, JSON and filesystem test-vecto
 - rubric-based idiomaticity — combine rustc/Clippy/Lizard measurements with six-dimensional manual Likert review
 - reproducible performance measurement — randomize cloud jobs, warm up, and measure throughput, perf-stat runtime, and Massif memory
 - staged C-to-Rust batteries — escalate from affine-safe B01 features to aliasing, ownership, type erasure, cleanup, and large B02/P02 projects
-Checked 2026-10-15 against paper okhravi2026tractor: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -77,4 +77,4 @@ For VL, the threat is substantial for agent-written privacy-sensitive Rust if an
 - dependent inference with MaxSMT — infer distance annotations from typing constraints and minimize the resulting privacy-cost expression
 - alignment for categorical randomness — map uniform samples across executions and charge `−log(d+1)` while proving branch agreement
 
-Checked 2026-10-15 against the paper by a Codex agent for lightdp_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

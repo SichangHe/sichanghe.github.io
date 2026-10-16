@@ -141,4 +141,4 @@ Inference: threat to VeruLaw is medium to high at proof-generation and maintenan
 - temporal generalization test — evaluate on later-added theorems and report passed/total separately from random held-out rates
 - kernel-filtered feedback — use only proof attempts accepted by the trusted checker as training examples for expert iteration
 
-Checked 2026-10-15 against the paper by a Codex agent for proof_artifact_co_training_for_theorem_p_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -85,4 +85,4 @@ Inference: Product risk is medium to high for agent-written verified Rust when c
 - special-hypothesis closure — add bounded experiment instances to support strong and non-linear induction
 - subsort hypothesis compression — store generic frozen lemmas by source subsort and instantiate generated variables
 - induction/coinduction composition — save a coinductive proof state, discharge an inductive lemma, then resume coinduction
-Checked 2026-10-15 against paper lucanu2026circular: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

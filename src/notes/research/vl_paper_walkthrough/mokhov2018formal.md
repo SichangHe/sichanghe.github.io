@@ -71,4 +71,4 @@ The paper already demonstrates the basic single-source pattern, bounded symbolic
 - counterexample-guided contract refinement — quantify inputs, prove an SMT postcondition, then strengthen assumptions from a counterexample
 - equivalence checking — prove optimized low-level code returns the same result as a typed reference on all constrained inputs
 - timing optimization — add clock costs and use SMT minimization/maximization to obtain best and worst execution witnesses
-Checked 2026-10-14: audit record mokhov2018formal; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -103,4 +103,4 @@ Threat to agent-written verified Rust: Inference: medium for pointer-heavy, stru
 - focused backtracking search — combine invertible rules, unfolding/flat phases, symmetry reduction, and early-failure rules to prune derivations
 - branch abduction — infer a pure guard when a candidate branch cannot entail its postcondition
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

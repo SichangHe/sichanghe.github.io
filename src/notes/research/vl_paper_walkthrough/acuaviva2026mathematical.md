@@ -63,4 +63,4 @@ Inference: the strongest reusable design for VL is the separation of determinist
 - source-signal harvesting: scan TeX for question markers and rank targets before agent work
 - outcome taxonomy: classify full, counterexample, partial, conditional, literature, gap, and attempt outcomes
 - persistent packets: store source, claim, proof idea, references, code, and review status in shared run memory
-Checked 2026-10-15 against paper acuaviva2026mathematical: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

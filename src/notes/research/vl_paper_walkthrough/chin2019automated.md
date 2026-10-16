@@ -68,4 +68,4 @@ The paper proves soundness of predicate interpretations and error rules only rel
 - thread-local counter abstraction — reason on per-thread lower bounds and normalize them into a precise shared count
 - inconsistency-lemma race checking — flag remaining input resources or invalid zero-count operations as race errors
 - wait-for graph deadlock checking — add latch ordering edges and reject cycles as deadlocks
-Checked 2026-10-13: audit record chin2019automated; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

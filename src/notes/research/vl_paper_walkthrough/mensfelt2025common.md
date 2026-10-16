@@ -95,4 +95,4 @@ Inference: the threat to an agent-written verified-Rust product is high at the r
 - matched semantic validation — choose checks that exercise the target’s behavior, such as entailment, payoff enumeration, plan cross-validation, or ontology reasoning
 - interactive formalization — ask clarifying questions about ambiguity and assumptions before committing to formal code
 - target-language selection — balance expressiveness, verification tractability, available tools, and workflow needs
-Checked 2026-10-15 against paper mensfelt2025common: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

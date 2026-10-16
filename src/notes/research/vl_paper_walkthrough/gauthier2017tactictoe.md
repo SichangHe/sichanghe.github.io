@@ -32,4 +32,4 @@ The paper also reports theory-dependent rates, e.g. SH 60.1% arithmetic and 55.5
 - feature-based k-NN prediction — rank tactics from TF-IDF similarity of goal features
 - A*-guided tactic search — explore tactic proof trees with learned costs and reconstruct with `THENL`
 - small-hammer integration — combine tactic prediction with premise selection and Metis
-Checked 2026-10-14: audit record gauthier2017tactictoe; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -77,4 +77,4 @@ Threat to agent-written verified Rust: Inference: low to medium for soundness, h
 - tactic and premise ranking — jointly predict a proof tactic and rank its eligible lemma arguments during search
 - proof-search integration — evaluate learned predictions by running the prover and counting closed validation theorems
 - representation ablation — compare AST, leaf sharing, variable blinding, random edges, and directional graphs to identify useful context
-Checked 2026-10-15 against paper paliwal2019graph: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -92,4 +92,4 @@ Inference: the threat to agent-written verified Rust is high when agents select 
 - call-success analysis — tabulate abstract call and success constraints in a finite analysis graph
 - cegar refinement — add interpolated predicates when an abstract counterexample is spurious
 - pdr — refine a sequence of over-approximations until a fixpoint proves the goal or a derivation refutes it
-Checked 2026-10-14 against the paper by a Codex agent: audit record deangelis2021analysis; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

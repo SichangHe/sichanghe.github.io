@@ -115,4 +115,4 @@ Inference: prior systems already demonstrate verifier loops, external tool APIs,
 - conservative verdict policy — accept only compiled, placeholder-free artifacts under explicit diagnostic rules
 - domain-shifted benchmarks — test custom scientific or systems definitions absent from training data
 - researcher-in-the-loop verification — let experts set assumptions while agents handle formal proof engineering
-Checked 2026-10-13: audit record breen2025ax; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

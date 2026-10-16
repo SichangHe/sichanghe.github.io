@@ -115,4 +115,4 @@ Inference: The trusted objects are the term-algebra semantics, the sound superpo
 - superposition saturation: prove quantified datatype goals by fair clause saturation with redundancy deletion
 - datatype simplification rules: use constructor distinctness, injectivity, and acyclicity rules to shrink proof search
 - benchmarked solver configuration: compare datatype proof strategies on fixed corpora with explicit denominators and time limits
-Checked 2026-10-14 against the paper by a Codex agent: audit record kovacs2016quantified; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

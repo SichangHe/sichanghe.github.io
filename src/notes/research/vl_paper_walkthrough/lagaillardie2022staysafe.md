@@ -58,4 +58,4 @@ Trusted or assumed: Rust's compiler and destructor semantics, crossbeam channels
 - top-down/bottom-up protocol checking: generate local types from Scribble or check local CFSMs with k-MC compatibility and progress bounds
 - cancellation termination proof: model errors and drops in an affine π-calculus and prove that all processes in a cancelled session terminate
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

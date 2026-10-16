@@ -106,4 +106,4 @@ Inference: VL should not redo a generic claim that solver failures can guide inv
 - houdini conjunction learning — compute the strongest conjunction consistent with propagated ICE examples and stop in at most n + 1 rounds when one exists
 - natural-proof heap templates — instantiate shape, key, size, and heaplet predicates over program variables before learning heap invariants
 - bounded-quantifier invariant learning — reduce quantified obligations to finite ground instances, then feed failed models into the same CD-NPI learner
-Checked 2026-10-13: audit record neider2017invariant; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

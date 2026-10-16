@@ -72,4 +72,4 @@ The proof establishes safety only when the supplied candidate satisfies initiali
 - generalized bridge decomposition: cover an inductive invariant with input regions and NN-output postconditions, then prove each environment case separately
 - compositional falsification: combine a state witness, NN output over-approximation, and environment transition to prove a candidate invariant is not inductive
 - queue-based splitting: repeatedly split unresolved state predicates until every bridge case is proved or a falsifying case is found
-Checked 2026-10-15 against paper zhou2024compositional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

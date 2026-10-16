@@ -142,4 +142,4 @@ Inference: for agent-written verified Rust, the strongest reusable idea is the p
 - proof-style dataset separation — train high-level and low-level models on cleaned Isar and apply proof corpora
 - verification-guided reinforcement learning — use theorem-prover outcomes as rewards and penalize placeholders
 - sampled component composition — combine diverse candidates, sketch refinement, and backtracking under final checker acceptance
-Checked 2026-10-13: audit record hu2025hybridprover; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

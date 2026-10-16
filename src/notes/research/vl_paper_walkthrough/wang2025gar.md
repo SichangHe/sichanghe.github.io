@@ -50,4 +50,4 @@ Table 1 reports GAR’s relative MiniF2F gains and the ProofNet increase. The pa
 - verifier-rewarded co-training — train a statement fuser to lower prover pass rate while training the prover to raise it, filtering by verifier outcomes
 
 - soft statement-modification penalty — penalize but do not ban model changes to a formal statement, balancing self-correction against reward hacking
-Checked 2026-10-15 against paper wang2025gar: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -26,4 +26,4 @@ Inference: This directly threatens a product that only supports self-composition
 - direct relational VCGen: compose weakest-condition generation over separate memory states for multiple runs
 - three-part obligations: prove procedure contracts, relational auxiliary conditions, and the composed main condition
 - aliasing by state separation: give each execution an independent memory state instead of renaming and separating heaps
-Checked 2026-10-14 against the paper by a Codex agent: audit record goubault2022certified; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

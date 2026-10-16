@@ -105,4 +105,4 @@ The most serious scope limits are the reduced WireGuard implementation, the perf
 - parametric verification library — verify trace, attacker, and cryptographic lemmas once and instantiate protocol-specific invariants
 - custom mathematical theories — encode events, traces, terms, labels, and cryptographic equations for SMT reasoning
 - wrapper-enforced modularity — route every protocol-relevant I/O/crypto operation through contracts that append trace events
-Checked 2026-10-14: audit record arquint2022generic; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

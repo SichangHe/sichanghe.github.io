@@ -41,4 +41,4 @@ What is proved is the solver’s deterministic answer/certificate and the correc
 - metamorphic counterfactual records: transform a root world, solve both versions, and label relation plus answer/support/status/attack differences from solver traces
 - staged diagnostic supervision: train answer, proof, falsification, and change-record interfaces so failures are attributable by competence level
 - class-conditioned MR-GRPO: give invariant and change relations different partial-credit geometry while retaining exact relation and family checks
-Checked 2026-10-15 against paper zhang2026normworlds: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

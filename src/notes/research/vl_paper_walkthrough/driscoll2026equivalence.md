@@ -58,4 +58,4 @@ Inference: Threat to agent-written verified Rust is medium for tensor kernels an
 - Inference: symbolic race/deadlock execution — schedule threads symbolically, track accesses, and use barriers to detect races and stuck states
 - Inference: canonical symbolic equivalence — normalize output expressions and decide equality element by element
 - Inference: Agda-backed guarantees — prove confluence, race true positives, and equivalence soundness/completeness under explicit assumptions
-Checked 2026-10-15 against paper driscoll2026equivalence: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

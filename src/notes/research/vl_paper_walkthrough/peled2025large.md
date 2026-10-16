@@ -150,4 +150,4 @@ Product relevance for peled2025large. Inference: the threat is substantial to pr
 ## evidence references
 
 Definitions and the round-robin motivating example are Sections 3–4.1, PDF pages 3–5. Prompting and Algorithms 1–2 are Section 5.1, PDF pages 5–6. Subset search and Algorithm 4 are Section 5.2, PDF pages 6–7. Configuration and dataset details are Section 6, PDF pages 7–8. Aggregate results and Table 1 are Section 7, PDF pages 8–9. Challenging benchmarks and ablations are Sections 7.4–7.5, PDF pages 9–11. Limitations and threats are Section 8, PDF pages 11–12.
-Checked 2026-10-13: audit record peled2025large; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

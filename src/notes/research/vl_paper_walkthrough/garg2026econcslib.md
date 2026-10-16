@@ -58,4 +58,4 @@ The paper already supplies a concrete pattern for source inventory, dependency t
 - translation audit: compare a context-free Lean-to-text rendering with the source and log human verdicts
 - dependency DAG: track every named result and its formalization status
 - validation report: record proof-route deviations, extra assumptions, provenance, and unresolved boundaries
-Checked 2026-10-15 against paper garg2026econcslib: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

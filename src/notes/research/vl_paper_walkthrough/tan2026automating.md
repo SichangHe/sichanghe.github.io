@@ -118,4 +118,4 @@ Inference: the threat to agent-written verified Rust is reduced when contracts a
 - recursive proof decomposition — turn failed Lean obligations into named subgoals solved and checked independently
 - controlled verifier tools — expose diagnostics, proof states, retrieval, and candidate checks through bounded interfaces
 - progress and proof revision — decide whether to repair, decompose, promote, or stop using deterministic guardrails
-Checked 2026-10-14 against the paper by a Codex agent: audit record tan2026automating; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

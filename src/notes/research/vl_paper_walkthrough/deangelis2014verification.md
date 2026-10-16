@@ -55,4 +55,4 @@ The proved claim is safety of the encoded CLP problem; the measured claim is imp
 - widening specialization: unfold, generalize with a widening-stable operator, and fold to obtain terminating verification clauses
 - interpolating Horn solving: derive interpolants from failed derivations and use them to subsume recursive descendants
 - CLP reversal: swap initial/error roles and reverse transitions when forward propagation times out
-Checked 2026-10-13: audit record deangelis2014verification; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

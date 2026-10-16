@@ -76,4 +76,4 @@ The paper already addresses query sharing, recursive ADT summaries, and sound/co
 - Tmq fixpoint transformation — compute stable definitions with Skip, Extend, Project, widening, then transform all clauses
 - mutual-query solving — let a CHC solver reuse summaries across mutually recursive functions and multiple contracts
 
-Checked 2026-10-15 against the paper by a Codex agent for multiple_query_satisfiability_of_constra_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

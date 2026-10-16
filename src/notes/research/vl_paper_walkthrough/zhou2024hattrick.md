@@ -53,4 +53,4 @@ Inference: For VL, this is a direct threat model for agent-written verified Rust
 - compositional effect typing: sequence API HATs and use intersection branches for context-dependent results
 - minterm alphabet transfer: partition symbolic event alphabets into satisfiable classes and reduce SFA inclusion to FA inclusion
 - bidirectional ghost abduction: infer ghost qualifiers needed for deterministic inclusion checks
-Checked 2026-10-14 against the paper by a Codex agent: audit record zhou2024hattrick; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

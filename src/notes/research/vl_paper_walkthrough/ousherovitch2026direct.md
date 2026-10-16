@@ -85,4 +85,4 @@ Inference: The product threat is objective mismatch: an agent can become better 
 - strategy-specific recurrences: derive separate objectives for Pass@N, best-first, and other frontier policies
 - off-trace error analysis: account for alternative proofs and the recovery cost of exploratory branches
 - paired proof-search evaluation: report proof-found rates with theorem, expansion-budget, and paired-cohort denominators
-Checked 2026-10-15 against paper ousherovitch2026direct: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

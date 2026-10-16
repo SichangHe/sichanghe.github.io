@@ -38,4 +38,4 @@ Trusted elements are the MDP operational semantics, expectation algebra, resourc
 - quantitative frame and share — split local heap resources and enrich or discharge the resource invariant
 - precise-invariant side conditions — require at most one nonzero heap for min and convex expectation rules
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

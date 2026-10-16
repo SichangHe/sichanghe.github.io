@@ -75,4 +75,4 @@ Inference: threat to a product of agent-written verified Rust is medium. DRIFT c
 - context assembly — provide declarations, examples, and the original statement to a formalizer
 - adaptive retrieval — vary context size or skip retrieval when dependencies are unlikely to help
 - compiler feedback loop — use failed type or semantic checks to trigger revised context and generation
-Checked 2026-10-15 against paper zhang2025drift: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

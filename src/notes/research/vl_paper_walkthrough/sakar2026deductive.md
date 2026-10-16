@@ -62,4 +62,4 @@ The paper deliberately limits itself to relaxed ordering; release/acquire assert
 - thread-local views with pi and tau: track each thread's observations and modification order to enforce coherence and permit speculation
 - SLR-to-protocol encoding: represent permission histories and relaxed reads/writes through protocol transitions and view updates
 - consistency filtering: execute threads in order, then enforce final-state and reachability conditions CC1 and CC2
-Checked 2026-10-15 against paper sakar2026deductive: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -62,4 +62,4 @@ Inference: the threat to agent-written verified Rust is moderate for specificati
 - compilation-gated archive: retain unique verifier-passing candidates and reuse them as parents and context under a fixed call budget
 - bounded repair and AST fallback: use compiler/judge feedback for capped edits, then apply call-free structural rewrites when mutation stalls
 - repertoire evaluation: measure semantic coverage and concentration, then test deduplicated candidates under a fixed downstream prover-attempt budget
-Checked 2026-10-15 against paper lu2026formalevolve: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

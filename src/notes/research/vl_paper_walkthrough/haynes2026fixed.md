@@ -92,4 +92,4 @@ The paper says the fixed-point scaffold is “a real object in the middle end”
 - tiered solver obligations — place constraints in progressively stronger tiers and discharge typed mode shifts with the existing solver path
 - parametricity preservation — obtain dimension-blind preservation from relational typing and use explicit proofs for value-dependent facts
 - pairing-carrying types — carry negative/fractional duality as type-level PSG codata and MLIR attributes, with edge re-checks when construction is uncertified
-Checked 2026-10-15 against paper haynes2026fixed: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

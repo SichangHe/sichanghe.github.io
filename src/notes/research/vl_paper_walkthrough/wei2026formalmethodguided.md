@@ -96,4 +96,4 @@ Inference: VL should reuse the closed-loop discriminator, trace records, complem
 - structured correction loop — preserve raw diagnostics, trace them to requirements and source lines, and feed actionable fix directives to the next iteration
 - vacuity and coverage audits — reject obligations that prove `true` without behavior and require bidirectional requirement-to-code attribution
 - cold and compile-only controls — measure verifier feedback's causal contribution by withholding it while holding generation and extraction fixed
-Checked 2026-10-15 against paper wei2026formalmethodguided: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

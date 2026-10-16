@@ -78,4 +78,4 @@ No earlier study in the walkthrough notes covers Primrose’s property-directed 
 - non-vacuous SMT selection: check every operation for property preservation and require a satisfiable precondition/property state
 - property-based contract validation: test concrete implementations against model specifications with generated inputs
 - verified-then-benchmarked generation: generate one program per valid implementation and rank only after semantic filtering
-Checked 2026-10-14: audit record qina2022primrose; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -89,4 +89,4 @@ Pest's theorem is relative to its operational/static semantics, entailment relat
 - verified `for` expansion — synthesize a bounded loop invariant and decreasing variant from the iteration postcondition
 - declarative map iteration — generate array prefix/suffix invariants for independent element updates
 - parallel verification conditions — split obligations and combine early-failing results from multiple SMT solvers
-Checked 2026-10-13: audit record decaso2010reducing; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

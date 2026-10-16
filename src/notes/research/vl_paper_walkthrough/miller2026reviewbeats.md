@@ -62,4 +62,4 @@ Inference: the threat to a product that writes agent-generated verified Rust is 
 - verifier/test feedback loop — compile and test visible examples, then perform bounded repairs from diagnostics
 - adversarial dual-generation — generate independent candidates, select passing outputs, and synthesize after both fail
 - specification-richness measurement — compare review gains across explicit and lean contracts with fixed denominators
-Checked 2026-10-15 against paper miller2026reviewbeats: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

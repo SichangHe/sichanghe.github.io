@@ -54,4 +54,4 @@ Inference: the threat to a product producing agent-written verified Rust is mode
 - editable intermediate state — expose prompts and outputs so users can inspect, revise, and rerun local steps
 - verifier-backed unit testing — treat each generated proof fragment as a unit whose acceptance comes from Verus diagnostics
 - matched baseline evaluation — compare chained and monolithic workflows with fixed model, tasks, timing, raters, and denominators
-Checked 2026-10-14 against the paper by a Codex agent: audit record wu2021aichains; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

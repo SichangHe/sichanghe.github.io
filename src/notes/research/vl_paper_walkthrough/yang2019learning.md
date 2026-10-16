@@ -56,4 +56,4 @@ The abstract says 71K proofs, while the dataset statistics give 70,856 human-wri
 - AST tactic generation: decode grammar-constrained tactic trees with semantic argument selection
 - verifier-in-loop search: execute candidates, backtrack on failures, and replay successful proof scripts
 - portfolio proof automation: combine learned tactic proposals with external automated tactics
-Checked 2026-10-14: audit record yang2019learning; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

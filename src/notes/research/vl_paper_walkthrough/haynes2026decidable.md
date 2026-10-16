@@ -129,4 +129,4 @@ Inference: VL should not redo a generic claim that dimensional inference, owners
 - four-tier verification: route structural, arithmetic, reusable-system, and relational obligations to progressively richer mechanisms
 - verified distributed reduction: compose capacity, ownership, partition freshness, boundary correspondence, and final rounding laws
 - explicit probabilistic budgets: combine worker, boundary, and output errors with a declared union bound and completion model
-Checked 2026-10-15 against paper haynes2026decidable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

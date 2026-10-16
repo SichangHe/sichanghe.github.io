@@ -58,4 +58,4 @@ Inference: product risk for agent-written verified Rust is moderate. Automatic a
 
 - polyhedral invariant inference — compute affine constraints with abstract interpretation and use them to strengthen induction
 
-Checked 2026-10-15 against the paper by a Codex agent for model_checking_c_programs_with_loops_via_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -70,4 +70,4 @@ The paper proves no theorem and presents no new implementation; it is a survey a
 - active and hybrid testing — synthesize an adaptive tester from observations, using conservative discrete environment models
 - fault-targeted tours — target boundary and condition-impact faults and combine multiple coverage goals in one sequence
 - verification-testing integration — use tests to refute proof goals, expose assumptions, reduce static-analysis alarms, and divide verification work
-Checked 2026-10-14 against the paper by a Codex agent: audit record rushby2008automated; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

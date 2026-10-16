@@ -184,4 +184,4 @@ Inference: LAGC poses a high design threat to any VL concurrency feature that re
 - declarative channel models — obtain asynchronous, FIFO, bounded, causal, and synchronous semantics by adding trace predicates
 - actor isolation and futures — preserve owner-local state, match asynchronous calls, and gate future reads on completion
 - guarded language instantiation — express ProMeLa guards, channel visibility, blocking, and consumption through events and well-formedness
-Checked 2026-10-15 against paper din2022lagc: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

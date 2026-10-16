@@ -61,4 +61,4 @@ The trusted base includes Checkov parser/scanner behavior, baseline selection, p
 - patch minimality metric — report changed lines/original lines without conflating size with correctness
 - reproducible repair evaluation — fix model settings, benchmark strata, retry count, seed, and statistical tests
 
-Checked 2026-10-14 against the paper by a Codex agent: checked quotations, framework gates, repair-loop steps, benchmark composition, metrics, tables, statistics, and limitations; corrected nothing; did not independently verify external references or reproduce experiments.
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

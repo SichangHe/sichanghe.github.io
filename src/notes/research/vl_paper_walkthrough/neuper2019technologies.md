@@ -112,4 +112,4 @@ Threat to agent-written verified Rust. Inference: medium to high for user-facing
 - Lucas-Interpretation next-step guidance — execute a method to suggest the next step and prove user-entered terms against the current context
 - transparent proof provenance — preserve links from each displayed step to the prover derivation and trusted kernel
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -93,4 +93,4 @@ Inference: LAC2R trusts C2Rust's initial translation, the static dependency anal
 - heterogeneous LLM generation — diversify root and intermediate candidates with GPT-4o and DeepSeek V3
 - context-rich prompting — provide call sites, globals, imports, and conversation history to each refinement
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

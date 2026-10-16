@@ -66,4 +66,4 @@ Agda's type checker supplies type safety for extracted records; QUILL's scores a
 - structure-aware efficient attention — combine linear attention with binary-tree positional bias for dependent-type ASTs
 - premise ranking with InfoNCE — train relevance scores and use top-ranked lemmas to shrink proof search
 
-Checked 2026-10-15 against the paper by a Codex agent for learning_structure_aware_representations_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

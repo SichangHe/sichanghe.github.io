@@ -76,4 +76,4 @@ The paper explicitly notes limitations: “our purely text-based agent remains s
 - Γ/Σ/T dependency ledger — separate local context, external non-trivial theorems, and routine background rules, and close every used dependency
 - state-driven verification loop — move steps OPEN→VERIFIED or OPEN→FLAWED with explicit witnesses, confirmation, decomposition, and bounded exhaustion
 - auditable theorem retrieval — record exact as-used statements, proof or citation, and applicability before accepting an external dependency
-Checked 2026-10-15 against paper sun2026evaluating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

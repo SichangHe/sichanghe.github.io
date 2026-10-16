@@ -55,4 +55,4 @@ Inference: threat to a product that generates Verus Rust is moderate. The reusab
 - rule-based abstraction: combine case splitting, infeasibility pruning, substitution, simplification, consequence, transfer, and sequence
 - binary contract lifting: prove BIR contracts and transfer them back to the source ISA through a lifting theorem
 - interval timing: merge symbolic cycle counts into sound BCET/WCET intervals for timing verification
-Checked 2026-10-15 against paper lindner2023symbolic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

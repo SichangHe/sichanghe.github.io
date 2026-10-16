@@ -58,4 +58,4 @@ Inference: For VL, the strongest reusable ideas are counterexample-driven specif
 - Inference: pure-functional autoformalization — expose state, recursion, abstraction levels, and unknown behavior in a checkable model
 - Inference: interaction counterexamples and numeric invariants — verify feature interactions and exact conservation, then repair assumptions exposed by witnesses
 - Inference: dependency-aware incremental formalization — formalize in import order and recompute only affected modules
-Checked 2026-10-15 against paper lin2026codelogician: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

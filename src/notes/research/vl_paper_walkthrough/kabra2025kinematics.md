@@ -51,4 +51,4 @@ Inference: for VL, the product threat is high when agents can produce a vacuous 
 - parser-feedback repair: store failed formalizations and concise parser diagnostics, then retry under a fixed repair cap
 - symbolic reference checking: execute the formal model and compare its result with an expected symbolic solution
 - anti-stasis validation: require benchmark-specific state mutations so a model cannot pass by encoding only the desired answer
-Checked 2026-10-15 against paper kabra2025kinematics: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

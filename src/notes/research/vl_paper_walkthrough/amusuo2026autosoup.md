@@ -214,4 +214,4 @@ Inference: moderate on one axis, none on the other. It is not a competitor for f
 - caller validation with three outcomes — check an inferred precondition at real call sites: weaken it, record it, or report the caller path as a bug
 - verified-count with coverage — never read a verified-property count without the covered-line count beside it
 - fix-reversion benchmark — re-inject known bugs by reverting their fixes and score a method by whether its proofs fail at the recorded sink
-Checked 2026-10-13: audit record amusuo2026autosoup; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

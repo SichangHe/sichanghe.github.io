@@ -56,4 +56,4 @@ The paper proves the stated graph specifications in a Coq separation-logic devel
 - schorr-waite invariants: verify pointer reversal with stack, mark, restoration, and frontier reachability invariants
 - union-find reuse: apply the same algebraic graph vocabulary to parent forests and path operations
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

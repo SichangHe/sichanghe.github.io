@@ -68,4 +68,4 @@ The paper already supplies ground-truth-free contract completeness checking, a l
 - staged autoformalization — generate first-order contracts, repair syntax in bounded rounds, then verify code and tests
 - tag-composition synthesis — combine domain, data-structure, and algorithm tags and filter generated tasks by executable and formal checks
 - specification-to-language audit — translate a formal contract to natural language and compare it with the user's query
-Checked 2026-10-13: audit record zeng2025veriequivbench; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

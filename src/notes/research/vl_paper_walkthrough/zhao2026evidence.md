@@ -61,4 +61,4 @@ The benchmark is one Vitis version and one four-stage pipeline; control-heavy ca
 - prompt/artifact isolation — admit only bounded failure evidence while keeping reference implementations and labels audit-only
 - Progressive Mismatch Localization Chain — normalize logs, backward-slice the AST, and align selective dual traces
 - typed self-evolving MoE RAG — hard-route exact repair cards by stage, family, and symbols after human audit
-Checked 2026-10-15 against paper zhao2026evidence: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

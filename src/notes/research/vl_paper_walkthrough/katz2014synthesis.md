@@ -107,4 +107,4 @@ Inference: VL should not claim novelty for the basic generate–verify–mutate 
 - architecture-guided repair: mutate process architectures to expose protocol failures, then evolve repairs against accumulated bad architectures
 - loop-free SMT synthesis: translate straight-line candidates and Hoare-style contracts into solver formulas, using satisfiability and counterexamples as fitness
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

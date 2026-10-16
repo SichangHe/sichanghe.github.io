@@ -39,4 +39,4 @@ The paper proves two optimization convergence theorems in Lean and reports numer
 - candidate labeling — mark model formulas as candidates until independently checked
 - two-check formal gate — run the proof assistant, an independent comparator, and final human statement review
 - evidence-status reporting — distinguish formal, human, LLM, numerical, and conjectural claims
-Checked 2026-10-14 against the paper by a Codex agent: audit record kim2026domain; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

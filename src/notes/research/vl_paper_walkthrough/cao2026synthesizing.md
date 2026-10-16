@@ -48,4 +48,4 @@ Inference: Product threat is medium to high for distributed-state specifications
 - exact aggregate fallback: negate all accumulated bad states when LLM proposals fail, preserving finite-instance completeness
 - unbounded induction handoff: prove the extracted invariant with TLAPS after finite-state search
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

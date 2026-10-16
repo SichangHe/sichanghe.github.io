@@ -58,4 +58,4 @@ The evidence ledger, graph bounds, surrogate predictions, observable schema, ext
 - bounded citable analysis — constrain graph queries and require node, path, and source-span evidence for every claim
 - blinded surrogate execution — generate branch-targeting typed inputs and independently predict source and target observables
 - selective reconciliation — gate evidence into equivalent, inequivalent, or unclear without forcing uncertain judgments
-Checked 2026-10-15 against paper kachroo2026functionally: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

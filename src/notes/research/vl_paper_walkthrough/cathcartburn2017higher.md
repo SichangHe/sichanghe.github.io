@@ -82,4 +82,4 @@ Inference: the threat to agent-written verified Rust is moderate. Higher-order s
 - refinement-type invariant synthesis: infer first-order refinements for higher-order relation variables and check a false goal
 - CHC automation via SMT: reduce type unknowns to first-order constrained Horn clauses solved by Z3
 - higher-type complement goals: recursively construct a goal term for the complement of a refinement type
-Checked 2026-10-14: audit record cathcartburn2017higher; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

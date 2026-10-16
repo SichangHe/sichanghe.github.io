@@ -142,4 +142,4 @@ The paper's trusted boundary includes the normative documents, closure parser, m
 - staged taxonomy mining: ask bounded typed questions in local and temporal passes, then iterate and deduplicate
 - deterministic impact triage: compare model completions by decision, state, and output and derive a discriminator
 - differential implementation testing: run generated deterministic tests against independent implementations to expose observable divergence
-Checked 2026-10-14 against the paper by a Codex agent: audit record dang2026ambiguities; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

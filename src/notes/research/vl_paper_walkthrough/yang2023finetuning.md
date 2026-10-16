@@ -110,4 +110,4 @@ Inference: DPO-AF suggests a verifier-as-reward loop for VeruLaw: generate Rust/
 - product-automaton model checking — compose controller and model and check LTL properties, retaining counterexample traces
 - empirical specification feedback — run controllers, check traces, and compute satisfying-sequence percentages when no complete model exists
 - verifier-ranked DPO — rank sampled responses by satisfied specifications and fine-tune on preferred/unpreferred pairs
-Checked 2026-10-15 against paper yang2023finetuning: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

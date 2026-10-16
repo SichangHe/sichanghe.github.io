@@ -72,4 +72,4 @@ The paper proves safety and liveness obligations in Ivy's logic, plus soundness 
 - liveness-to-safety — encode fair-cycle exclusion with saved state and dynamic abstraction, then prove a safety invariant
 - explicit quantifier instantiation — remove problematic alternation by manually specializing an explicit axiom
 - compositional specification testing — generate assumption-respecting randomized tests and check guarantees before proof
-Checked 2026-10-13: audit record mcmillan2020ivy; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

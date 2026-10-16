@@ -122,4 +122,4 @@ Threat to a product of agent-written verified Rust. Inference: the threat is mat
 ## evidence references
 
 The workflow and prompt examples are in Sections 2–2.2, PDF pages 3–7. Online proving and implementation are Sections 2.3–2.4, PDF pages 7–8. Dataset and extraction counts are Section 3 and Table 1, PDF pages 8–10. CoqHammer results and case studies are Section 3.2 and Table 2, PDF pages 11–12. Backend and ablation results are Sections 3.3–3.4 and Table 3, PDF pages 12–13. LLM-agent results are Section 3.5 and Table 4, PDF pages 13–15.
-Checked 2026-10-13: audit record fang2025proof; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

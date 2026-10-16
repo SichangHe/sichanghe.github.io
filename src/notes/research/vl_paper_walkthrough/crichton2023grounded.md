@@ -53,4 +53,4 @@ Inference: The paper's product relevance is pedagogical and diagnostic. It teach
 - permissions abstraction: track flow-sensitive read/write permissions on memory paths
 - semantic visualization: render dynamic traces and static permission states beside source code
 - temporal A/B evaluation: compare baseline and intervention quiz scores with denominators and effect sizes
-Checked 2026-10-15 against paper crichton2023grounded: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

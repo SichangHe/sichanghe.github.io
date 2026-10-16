@@ -52,4 +52,4 @@ Inference: for agent-written verified Rust, the threat is specification incomple
 - predicate-based contracts — define reusable partition/count/result predicates and state validity, initialization, modified region, and postcondition explicitly
 - loop proof structure — combine variants, invariants, ghost pre-state, and boundary assertions for nested loops
 - prover escalation and cross-checking — use multiple SMT provers, then Coq to diagnose missing or incorrect annotations and guard against a faulty prover
-Checked 2026-10-13: audit record unknown2026formalproofofschurconjugatefunction; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

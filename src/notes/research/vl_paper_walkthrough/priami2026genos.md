@@ -71,4 +71,4 @@ Inference: VeruLaw can use this as an assurance architecture. Define an observer
 - compatible-kernel composition: prove or measure local class-mass preservation and compose the bounds across workflow layers
 - guarded commitment: require a sound validator before commit and model repair success conditionally on failure history
 - finite robustness certificate: estimate quotient total variation with frozen settings, confidence bounds, and a summed layer-defect budget
-Checked 2026-10-15 against paper priami2026genos: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

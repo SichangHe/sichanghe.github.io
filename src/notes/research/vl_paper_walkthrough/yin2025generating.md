@@ -50,4 +50,4 @@ Already done: state-graph theorem synthesis, template normalization, embedding r
 - tactic-template retrieval — normalize identifiers, embed templates, retrieve nearest candidates, and instantiate bounded substitutions
 - bounded graph exploration — use priority-queue search with time and transition caps, then emit states within a fixed distance of completion
 - verified-corpus training — train a tactic predictor on checker-accepted state/proof pairs and evaluate with bounded retries
-Checked 2026-10-15 against paper yin2025generating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

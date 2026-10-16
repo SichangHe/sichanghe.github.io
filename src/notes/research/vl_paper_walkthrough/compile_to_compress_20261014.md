@@ -94,4 +94,4 @@ Inference: VL should not repeat the paper's basic discovery that compiler feedba
 - cold-start repair training: synthesize failed/correct proof pairs with verifier-checked labels and fine-tune a repair-capable prover
 - expert iteration: retrain on successful repairs from the prover's current error distribution
 - value-guided tree search: mix fresh proof generation with error-conditioned refinement and rank nodes by learned repair potential
-Checked 2026-10-14 against the paper by a Codex agent: audit record li2026compilecompress; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

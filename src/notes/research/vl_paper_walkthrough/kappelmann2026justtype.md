@@ -69,4 +69,4 @@ Inference: VL should reuse the coverage-test pattern for annotation or proof-obl
 - sandwich uniqueness proof — prove a completion is unique by bounding it between current annotations and a fixed most-general completion
 - Isabelle agent workflow — iterate LLM-generated specifications through human review, Isabelle proof checking, and statement-alignment audits
 - human-hinted autogeneralization — reduce an ad hoc algorithm to an independence-system greedy theorem and mechanize the reduction
-Checked 2026-10-15 against paper kappelmann2026justtype: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

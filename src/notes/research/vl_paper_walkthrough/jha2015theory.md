@@ -64,4 +64,4 @@ The oracle is trusted to return sound counterexamples. The concept class and tem
 - memory-aware convergence — analyze how finite versus unbounded example storage changes synthesis power
 - teaching-dimension planning — lower-bound the number of distinguishing examples needed for finite candidate classes
 - set-cover query minimization — reduce smallest distinguishing-query selection to an NP-hard set-cover problem
-Checked 2026-10-14 against the paper by a Codex agent: audit record jha2015theory; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

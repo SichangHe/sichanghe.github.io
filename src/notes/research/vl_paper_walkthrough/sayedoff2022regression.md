@@ -49,4 +49,4 @@ Inference: threat to VL is high for refactoring-heavy verified code because rela
 - bottom-up summary abstraction: replace already-equivalent callees with shared uninterpreted summaries
 - synchronized path equivalence: unroll recursive calls until paired paths satisfy equal-output conditions
 - bounded synchronization search: instrument calls, increase unwinding, and validate a candidate with model checking
-Checked 2026-10-14: audit record sayedoff2022regression; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -78,4 +78,4 @@ The paper proves rule soundness mathematically and checks concrete proof trees w
 - prophecy verification conditions — use `Proph-Fwd` or `Proph-Select` side conditions to avoid searching arbitrary soundness proofs
 - invariant reconstruction — translate an incremental proof into one safe inductive invariant with bounded Boolean and quantifier complexity
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

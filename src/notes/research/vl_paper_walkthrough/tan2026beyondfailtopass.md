@@ -62,4 +62,4 @@ Trusted components include LLM mutation operators, test execution, benchmark har
 - temporal-matrix hardening: compare each new test with the previous test and reject high-laxity regressions
 - bounded mutant sampling: generate admissible variants with targeted semantic operators and record the denominator
 - phase ablation: measure each workflow phase separately for causal contribution
-Checked 2026-10-15 against paper tan2026beyondfailtopass: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

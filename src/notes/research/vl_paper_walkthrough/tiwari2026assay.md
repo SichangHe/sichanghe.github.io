@@ -97,4 +97,4 @@ Already done that VL should not redo. The paper already supplies dependency-cone
 - signed append-only evidence ledger — record claims, failures, signatures, and review transitions without mutable history
 - model-free merge gate — require fresh, independently reviewed, plausible evidence and mechanically reject stale or forged claims
 - compact indexed orientation brief — summarize repository structure, changed radius, and evidence state in a bounded token artifact
-Checked 2026-10-14 against the paper by a Codex agent: audit record tiwari2026assay; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

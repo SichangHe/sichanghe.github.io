@@ -80,4 +80,4 @@ Inference: Product threat from agent-written verified Rust is indirect but mater
 - bounded-span recursion — solve binary disjunctive constraints by certificates, bounded-span cases, and recursive splits
 - treewidth dynamic programming — exploit incidence-tree decompositions with `(n k)^{O(w)}` tables when numeric values are bounded
 - hardness triage — use ETH and W[1]/pNP results to detect VC fragments that cannot have the desired fast automation
-Checked 2026-10-15 against paper dabrowski2024difference: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

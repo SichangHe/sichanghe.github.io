@@ -54,4 +54,4 @@ Measured: participant counts, percentages, ordinal adequacy ratings, and qualita
 - dependency-guided reasoning — navigate rule dependencies and unresolved constraints with helper lemmas
 - explicit-state modeling — encode state, algebra, and equivalence assumptions explicitly and measure their proof cost
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

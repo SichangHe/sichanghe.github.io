@@ -111,4 +111,4 @@ Threat to a product of agent-written verified Rust. Inference: high productivity
 - policy transfer — save successful weights and initialize related program variants from them after a 90/10 training/test split
 - checker-independent CHC extension — reuse the policy with a minimal node representation and a different checker, including non-linear grammars
 - naturalness-aware output — simplify trivial expressions or penalize overfitting to instance constants while retaining checker validation
-Checked 2026-10-13: audit record si2020code2inv; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

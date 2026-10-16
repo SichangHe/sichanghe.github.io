@@ -56,4 +56,4 @@ The paper does not measure Rust behavior, contract review effort, solver soundne
 - two-stage locked formalization — validate and freeze the formal statement before proof generation, diffing any later changes
 - directional divergence test — run incompatible target answers and flag simultaneous successful proofs as inconsistent formalizations
 - contract-faithfulness gate — require verifier success plus an independent check that contracts and assumptions preserve intended behavior
-Checked 2026-10-15 against paper poiroux2026llmsgame: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -84,4 +84,4 @@ What VL should not redo. Inference: VL should not reproduce the paper's Coq soun
 - sequence lifting — recursively conjoin VC obligations for multiple commands
 - guarded call predicates — apply a relational contract only after proving all required calls occurred
 - Coq soundness proof — mechanize the VCGen and recursive relational theorem for a language with aliasing
-Checked 2026-10-14 against the paper by a Codex agent: audit record blatter2024vcgen; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

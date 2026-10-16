@@ -36,4 +36,4 @@ The paper benchmarks exported Standard ML against handwritten C++ using wide and
 - forest/LCA explanation: annotate parent edges and recurse only over paths needed for a query
 - dual UF representations: retain an uncompressed proof forest alongside a compressed executable forest
 - refinement with heap assertions: relate imperative arrays to an abstract functional data structure
-Checked 2026-10-15 against paper stevens2025simplified: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

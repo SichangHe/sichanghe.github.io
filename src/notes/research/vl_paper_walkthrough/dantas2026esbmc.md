@@ -45,4 +45,4 @@ The survey reports 43 competition awards, 35 at SV-COMP and 8 at Test-Comp, sinc
 - incremental solving — reuse solver state while increasing bounds or exploring interleavings
 - context-bounded concurrency — combine switch bounds, partial-order reduction, and symbolic scheduling
 - verifier-guided LLM repair — prompt repairs or invariants from counterexamples and accept only SMT-validated results
-Checked 2026-10-15 against paper dantas2026esbmc: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

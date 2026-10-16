@@ -101,4 +101,4 @@ The paper warns that verifier combinations need instruction coverage, automatic 
 - training-based feedback: turn verified responses, preferences, or rewards into parameter updates
 - inference-based feedback: use verifier-guided selection or interactive repair without changing model parameters
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

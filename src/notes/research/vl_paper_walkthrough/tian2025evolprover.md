@@ -87,4 +87,4 @@ Inference: For VeruLaw, the threat is medium to high for proof-generation data a
 - AST equivalence augmentation — recursively apply seven type-aware logical-equivalence rewrite rules to a formal AST to create syntactic variants
 - verifier-gated data funnel — compile generated statements, permit one repair attempt, judge NL/formal consistency, retain compiler-verified proofs, and deduplicate the resulting dataset
 - pass@1 curriculum filtering — for RL, retain problems whose SFT checkpoint has 0 < pass@1 < 1/2 so examples are difficult but solvable
-Checked 2026-10-15 against paper tian2025evolprover: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

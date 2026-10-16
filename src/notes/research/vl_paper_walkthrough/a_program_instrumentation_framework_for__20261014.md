@@ -74,4 +74,4 @@ Inference: VL should reuse the separation between a reusable instrumentation lem
 
 - ghost instrumentation: rewrite quantifiers and aggregates into ghost updates plus a proved instrumentation invariant
 - counterexample-guided instrumentation search: eliminate candidate rewrites using failed instrumented assertions and retain soundness through the operator theorem
-Checked 2026-10-14 against the paper by a Codex agent: audit record amilon2024program; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -49,4 +49,4 @@ Inference: threat to VeruLaw is high for workflow design and moderate for demons
 - verifier-feedback loop — compile generated code, return diagnostics and targeted hints, and patch locally
 - induction and extensionality guidance — supply recurring hints for recursive definitions, set equalities, and cardinality facts
 - specification gate — manually validate generated definitions and contracts before treating proof success as evidence
-Checked 2026-10-15 against paper wang2025scientific: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

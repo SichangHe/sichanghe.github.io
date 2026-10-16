@@ -87,4 +87,4 @@ Inference: threat to VL is high for specification and environment drift, and mod
 - format-collapse filtering — require tactic-block coverage and discard unstable negative-gradient samples during RL
 - cached parallel checking — reuse import environments with LRU caching and parallel Lean workers to raise verification throughput
 - test-time scaling — sample independently at increasing pass@k budgets and measure the fraction of benchmark problems solved
-Checked 2026-10-15 against paper azerbayev2025kiminaprover: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

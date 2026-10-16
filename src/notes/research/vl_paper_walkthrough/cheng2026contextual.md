@@ -46,4 +46,4 @@ Inference: the threat to VL is high for iterative agent workflows that retain fa
 - independent error-signal test — distinguish external warnings from model self-verification with separate conditions
 - context denoising — revise or filter drafts before reuse, measuring cost and residual degradation
 - conditional fallback training — train incorrect-draft verification followed by clean-slate regeneration and correct-draft reuse
-Checked 2026-10-15 against paper cheng2026contextual: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

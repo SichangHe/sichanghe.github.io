@@ -91,4 +91,4 @@ Inference: The threat to a product that asks agents to write verified Rust is hi
 - abstraction-to-code mapping: compute maximal correspondences and apply recorded renaming, type, parameter, and structure transformations
 - test mining: find JUnit tests, transform and prune them against the edited abstraction, then deduplicate the suite
 - interactive checkable specification: combine the edited interface with mined tests, while treating tests as examples rather than universal proofs
-Checked 2026-10-14 against the paper by a Codex agent: audit record reiss2022assisted; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

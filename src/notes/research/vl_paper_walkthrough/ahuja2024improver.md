@@ -133,4 +133,4 @@ Product relevance for ahuja2024improver. Inference: ImProver creates a material 
 ## evidence references
 
 The task definition and metrics are in Sections 1 and 3.1, PDF pages 1–3. CoS, output, sampling, and retrieval are in Sections 3.2.1–3.2.4, PDF pages 4–5. Setup and metric definitions are in Section 4.1, PDF pages 6–7. Aggregate results and denominators are in Tables 1–5, PDF pages 7–9. Ablations are in Tables 6–8, PDF pages 9–10. Neural theorem-proving results are in Table 9 and Section 4.2.2, PDF page 10. The conclusion and cost limitation are in Section 5, PDF page 10.
-Checked 2026-10-13: audit record ahuja2024improver; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

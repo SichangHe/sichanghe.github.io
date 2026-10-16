@@ -50,4 +50,4 @@ Already done that VL should not redo: typed MPST/AMS transformations and a sound
 - widening-based final checking — verify complete session trees with coinductive derivatives and recursion widening
 - variance and reordering refinement — apply covariance, contravariance, and independent send/receive anticipation
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

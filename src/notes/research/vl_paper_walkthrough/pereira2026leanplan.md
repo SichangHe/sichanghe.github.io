@@ -38,4 +38,4 @@ Inference: reuse the compile-and-recheck controller, explicit input certificates
 - max-combined relaxations — combine overlapping lower bounds with `max` to preserve admissibility
 - checked distance tables — use BFS tables only after verifying the distance properties the proof consumes
 - automated candidate acceptance — rebuild code, proofs, certificates, and performance before accepting an agent artifact
-Checked 2026-10-13: audit record pereira2026leanplan; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

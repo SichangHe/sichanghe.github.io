@@ -77,4 +77,4 @@ The paper formalizes constraint-generation rules, proves termination and integer
 - modular summaries: solve and cache compact function signatures at module boundaries, including trusted stubs for unavailable libraries
 - HNF constraint solving: reduce unit equations to linear Diophantine form and solve with a modified Hermite Normal Form algorithm
 - scalability evaluation: compare single-file and separate-module solving using five-trial means and standard errors
-Checked 2026-10-15 against paper danish2024incremental: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

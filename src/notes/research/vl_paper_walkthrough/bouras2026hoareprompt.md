@@ -85,4 +85,4 @@ The paper already covers natural-language state decomposition, branch/loop summa
 - branch and exception merging — compute path-specific postconditions and merge them at control-flow joins
 - few-shot-driven k-induction — unroll loops, use iteration triples as examples, and infer a whole-loop summary
 - state-annotation classification — classify or refine code after annotating key points with reachable states
-Checked 2026-10-15 against paper bouras2026hoareprompt: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

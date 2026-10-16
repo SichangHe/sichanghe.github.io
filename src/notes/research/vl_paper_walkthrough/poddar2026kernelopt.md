@@ -68,4 +68,4 @@ Inference: VL should not repeat isolated-kernel acceptance without dispatch-awar
 - end-to-end performance gate — accept only re-stitched model time within a 3% margin of baseline
 - fail-closed baseline fallback — ship the compiler baseline whenever no candidate passes every gate
 - composition-gap testing — re-stitch and test whole models because sub-kernel speedups can regress end-to-end execution
-Checked 2026-10-15 against paper poddar2026kernelopt: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

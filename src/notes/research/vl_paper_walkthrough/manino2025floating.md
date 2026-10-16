@@ -82,4 +82,4 @@ Inference: the direct threat to agent-written verified Rust is false confidence 
 - complexity-stratified benchmark: combine scalar functions, layers, synthetic networks, and large real-world models
 - verdict taxonomy: report correct, incorrect, and inconclusive results with per-category denominators
 - operational-library comparison: rerun with explicit math-library implementations to expose modeling effects
-Checked 2026-10-15 against paper manino2025floating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

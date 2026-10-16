@@ -94,4 +94,4 @@ Inference: for VL, gradual checking suggests a way to stage verification of agen
 - guard-based dynamic checking — compute path-specific checks and exclusion frames before each concrete operation, then execute only after checks pass
 - valuation correspondence proof — relate symbolic terms and heaps to concrete states and prove progress plus preservation
 - exclusion-frame repair — prevent permissions represented by imprecise caller state from escaping to callees when recursive predicates and allocation can overlap
-Checked 2026-10-13: audit record zimmerman2023sound; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -38,4 +38,4 @@ What is proved is soundness and termination of the bounded subtype algorithm plu
 - Rust linear session API: encode states, labels, continuations, and `End` in affine Rust types so process code cannot reuse or discard a session
 - k-MC bottom-up verification: serialize developer APIs to FSMs and globally check compatibility when no global type is supplied
 - hybrid protocol workflow: combine global projection with developer-written APIs and local subtype checks
-Checked 2026-10-14: audit record cutner2021deadlock; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

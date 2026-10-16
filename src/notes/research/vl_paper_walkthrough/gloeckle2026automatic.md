@@ -57,4 +57,4 @@ All 340 designated targets were present and proved, but the authors only manuall
 - issue escalation — record blockers as files and use maintainer and triage roles for cross-file fixes
 
 - coherence steering — audit duplicates, dependencies, rabbit holes, and global contracts while tightening orchestration near release
-Checked 2026-10-14 against the paper by a Codex agent: audit record gloeckle2026automatic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

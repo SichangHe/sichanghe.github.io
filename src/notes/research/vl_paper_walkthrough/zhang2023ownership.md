@@ -68,4 +68,4 @@ Crown already provides an ownership-analysis-to-retyping workflow, SAT constrain
 - ownership-guided pointer retyping — map owning paths to `Option<Box<T>>`, output parameters to mutable references, and preserve unsupported arrays or lifetimes as raw pointers
 - context-sensitive use rewriting — rewrite moves, borrows, raw conversions, and dereferences with `take`, `as_deref_mut`, `as_ref`, `as_mut`, and `Box::from_raw`
 - loop and null ownership handling — analyze loop bodies once with entry/exit equalities and make null branches explicit so ownership constraints remain consistent
-Checked 2026-10-15 against paper zhang2023ownership: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

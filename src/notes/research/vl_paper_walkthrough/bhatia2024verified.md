@@ -142,4 +142,4 @@ Inference: VL should reuse the semantic IR boundary, parser filtering, separate 
 - few-shot invariant synthesis — prompt the model with operator semantics, source specification, and an invariant example
 - two-phase summary/invariant generation — generate PS first and use it to guide loop-invariant synthesis
 - prover-gated lowering — translate candidates to an automated prover and rewrite only verified summaries into executable target syntax
-Checked 2026-10-13: audit record bhatia2024verified; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

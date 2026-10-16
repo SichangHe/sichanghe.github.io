@@ -70,4 +70,4 @@ Trusted components include Jasper's causal explanations and formal semantics, RT
 - agentic hypothesis exploration — maintain competing narratives, select informative frontier nodes, and rank evidence-backed explanations
 - ensemble fix generation — generate patches from diverse context strategies, validate application, deduplicate, and rank by consensus
 - structured debug report — emit hypotheses, evidence, causal timeline, validated fixes, and specification cross-references
-Checked 2026-10-15 against paper bai2025fvdebug: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

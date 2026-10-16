@@ -73,4 +73,4 @@ The proofs trust the Lean-mechanized soundness theorems, the P parser and semant
 - actor-causality reduction: retain predecessor events that can produce the current obligation
 - message-segment summarization: compress cyclic message histories with affine-bounded symbolic lengths
 - entailment pruning: subsume repeated symbolic states to force convergence
-Checked 2026-10-15 against paper fontenot2026dissprove: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -39,4 +39,4 @@ The paper measures repository-level associations under a quasi-experimental desi
 - repository provenance recovery: infer agent adoption and prior IDE exposure from ordered branch, author, bot, and configuration signals
 - matched staggered DiD: estimate heterogeneous adoption effects after propensity matching and event-study checks
 - maintainability quality gate: pair throughput with static warnings, complexity, duplication, and comment-density monitoring
-Checked 2026-10-15 against paper agarwal2026autonomous: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

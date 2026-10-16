@@ -100,4 +100,4 @@ Inference: For VL, this technique lowers the threat of representation changes by
 - loop re-indexing: use a finite-domain bijection to reverse iteration direction while preserving results and termination
 - cached-record refinement: add derived fields, constrain them with an invariant, and incrementally maintain them in transformed mutators
 - proof-hint fallback: try transformed hints, then instantiate old theorems through inverse conversions, with user hints as a final fallback
-Checked 2026-10-14: audit record coglio2020isomorphic; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

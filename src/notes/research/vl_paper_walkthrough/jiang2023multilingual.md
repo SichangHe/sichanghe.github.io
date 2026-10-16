@@ -35,4 +35,4 @@ The authors caution that autoformalization quality is hard to assess automatical
 - distilled reverse translation: generate informal descriptions from formal libraries, then train formalization on the resulting pairs
 - multilingual transfer: jointly fine-tune on multiple formal languages and compare against equal-budget monolingual models
 - correction-effort evaluation: rate human repair cost separately from compilation and exact correctness
-Checked 2026-10-15 against paper jiang2023multilingual: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

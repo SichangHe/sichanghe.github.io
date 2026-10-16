@@ -31,4 +31,4 @@ What is proved/measured is operation of one methodology and its gates on one sys
 - deterministic gate stack: block on specification, tests, structural traceability, architecture, and machine-review rules with no LLM verdict path
 - bounded repair loop: batch findings, re-run previous gates, freeze context, and escalate after three stagnant rounds
 - human legislative boundary: let the builder repair generated artifacts while humans approve changes to rules, templates, and gates
-Checked 2026-10-14 against the paper by a Codex agent: audit record chen2026design; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

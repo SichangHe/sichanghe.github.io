@@ -58,4 +58,4 @@ The paper reports no arithmetic contradiction in its tables, but the rounded 98%
 - unifier-guided inference: instantiate each rule with the prover's most-general unifier and check the ground consequence
 - avatar certificate: split clauses into Boolean-labelled components and check the final SAT refutation in the proof assistant
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

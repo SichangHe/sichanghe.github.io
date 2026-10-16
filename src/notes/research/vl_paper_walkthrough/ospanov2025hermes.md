@@ -54,4 +54,4 @@ Already done: checker-in-the-loop intermediate validation, goal/negation prover 
 - goal and counter-proof search — attempt both a formal goal and its negation and feed proof, counter-proof, or failure status back to the model
 - verified proof memory — embed validated steps, retrieve top-k context, and reuse it as explicit hypotheses
 - modular verifier pipeline — keep formalizer, prover, checker, scheduler, and feedback modules replaceable while retaining checker acceptance
-Checked 2026-10-15 against paper ospanov2025hermes: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

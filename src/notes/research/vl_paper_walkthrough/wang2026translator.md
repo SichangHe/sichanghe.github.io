@@ -52,4 +52,4 @@ The paper measures compilation, tests, unsafe-block absence, clippy, and idiomat
 - single-insight adversarial refinement — generate executable boundary challenges and accept field updates only after replayed compiler/test evidence
 - compositional insight refinement — select compatible insight sets, jointly challenge them, and learn precedence or coordination constraints
 - execution-guided project migration — combine dependency ordering, retrieval, compiler/test repair, and trace reflection into a continual loop
-Checked 2026-10-15 against paper wang2026translator: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

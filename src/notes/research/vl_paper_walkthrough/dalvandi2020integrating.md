@@ -93,4 +93,4 @@ No numerical contradiction appears in the paper; “over half” of 258 being di
 - weak-memory Owicki-Gries embedding — encode C11 state as a special variable and translate annotated reads/writes into atomic transitions while reusing compound-command rules
 - high-level C11 assertions — express viewfront observations, release/acquire transfer, write order, value occurrence, and covered writes as reusable predicates and lemmas
 - staged proof automation — run `oghoare`, simplify predicate representations, then discharge residual weak-memory goals with solver automation
-Checked 2026-10-15 against paper dalvandi2020integrating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

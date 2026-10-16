@@ -97,4 +97,4 @@ Inference: for VeruLaw, the reusable architecture is contract-first workflow che
 - trajectory verification — replay actual states with Lean, external validators, and judges to test step postconditions
 - failure localization — return the precise step and predicate that violated a trajectory contract
 - formal-guided evolution — revise a localized workflow step, rerun it, and retain only a successful repair
-Checked 2026-10-15 against paper wang2026lean4agent: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

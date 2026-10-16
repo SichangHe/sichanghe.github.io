@@ -43,4 +43,4 @@ Inference: threat to agent-written verified Rust is medium for compiler and seri
 - define AOT compilation as normalization of cross-language redexes under translation contexts
 - model JIT by nondeterministically choosing source execution or translation then target execution
 - derive type preservation, compiler correctness, and full abstraction from subject reduction and confluence
-Checked 2026-10-14 against the paper by a Codex agent: audit record bowman2025compilation; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

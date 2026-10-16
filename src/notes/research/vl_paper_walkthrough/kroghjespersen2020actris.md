@@ -82,4 +82,4 @@ No earlier study in the walkthrough notes covers Actris 2.0’s protocol and sub
 - asynchronous subprotocols: prove safe send-before-receive reorderings and extensional protocol composition
 - protocol-indexed invariants: index a fine-grained protocol by sent and received histories to preserve sortedness and permutation facts
 - lock and ghost accounting: share endpoint protocols with lock invariants and authoritative contribution tokens
-Checked 2026-10-14: audit record kroghjespersen2020actris; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

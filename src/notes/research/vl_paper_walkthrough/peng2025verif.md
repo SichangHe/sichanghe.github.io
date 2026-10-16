@@ -57,4 +57,4 @@ Trusted elements include generated Python scripts, QwQ judgments, model and data
 - hard/soft verifier split — route exact predicates to generated code and semantic constraints to a reasoning judge, then aggregate explicit binary scores
 - verifier-bearing RL data — generate constraints and a checker alongside each instruction so online rewards are reproducible
 - verifier ablation and distillation — remove each reward component to expose dependence and distill a smaller judge only after measuring agreement and cost
-Checked 2026-10-15 against paper peng2025verif: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

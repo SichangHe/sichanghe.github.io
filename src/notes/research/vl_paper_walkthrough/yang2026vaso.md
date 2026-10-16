@@ -40,4 +40,4 @@ What is proved is model-checker satisfaction of the encoded automaton and specif
 - plan-to-automaton compilation — map ordered executable steps to labeled states and transitions for model checking
 - textual-gradient refinement — convert violated formulas and traces into contract updates without changing model weights
 - proposition-alignment auditing — measure and verify the mapping from concrete API behavior to symbolic propositions
-Checked 2026-10-13: audit record yang2026vaso; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

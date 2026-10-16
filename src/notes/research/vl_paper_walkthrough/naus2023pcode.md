@@ -72,4 +72,4 @@ Inference: prior work already covers the core idea of formalizing P-Code, so VL 
 - predecessor-keyed phi: attach predecessor addresses to phi alternatives and select using tracked previous-block state
 - call-frame semantics: model ABI argument registers, fresh locals, cleanup, and return values explicitly in the transition system
 - executable validation: implement the semantics as an interpreter and report its assumptions and nondeterministic cases
-Checked 2026-10-15 against paper naus2023pcode: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -73,4 +73,4 @@ Contradictions or arithmetic checks: the paper reports no experimental rates, so
 - Hoare quadruples: prove both terminal postconditions and intermediate external-state conditions
 - adaptation and deep satisfaction: translate assertions across call frames and require them from a selected stack frame onward
 - module adherence: combine method proofs and invariant rules to obtain a whole-module effect guarantee
-Checked 2026-10-15 against paper drossopoulou2025external: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -70,4 +70,4 @@ Inference: VL should reuse dependency-aware extraction, explicit premise ablatio
 - token-efficiency analysis — compare accepted generated proof length with checked reference proofs and report selective-solve bias
 - premise ablation — compare identical theorem units with and without explicit context to diagnose proof-agent use of dependencies
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

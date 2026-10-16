@@ -77,4 +77,4 @@ Inference: Threat to VeruLaw is medium to high at the agent-interface layer. Evo
 - budget-driven information density — use fixed time/call budgets and measure tokens and calls so useful diagnostics reduce interaction cost
 - anti-cheating proof harness — protect statements/imports, reject unsound commands, rebuild cleanly, and audit assumptions before counting success
 - cross-prover interface transfer — port an evolved tool set to another proof assistant and report accuracy, cost, and time with contamination caveats
-Checked 2026-10-15 against paper viennot2026growinginterface: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

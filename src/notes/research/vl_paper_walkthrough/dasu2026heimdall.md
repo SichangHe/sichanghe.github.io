@@ -45,4 +45,4 @@ Inference: threat to VL is high for direct LLM C-to-Rust migration without equiv
 - verifier-guided LLM repair — feed compiler, kernel, and equivalence failures back into an inner translation loop
 - safe API bug elimination — use typed wrappers, ownership, initialization, and hook-specific constants to block verifier-accepted C defects
 - bytecode relational checking — compare symbolic return and side-effect formulas on compiled objects rather than trusting source similarity
-Checked 2026-10-15 against paper dasu2026heimdall: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

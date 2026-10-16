@@ -111,4 +111,4 @@ Inference: quantified separation and PDR's counterexample loop suggest a VL exte
 - multi-block generalization — accumulate same-frame blocking states so one lemma generalizes across several PDR preventers
 - EPR edge control — preselect acyclic sort/function edges and reject prefixes whose Skolemization would leave the decidable fragment
 - incremental SMT portfolio — assert lemmas incrementally while running solver instances in parallel with restarts
-Checked 2026-10-14: audit record koenig2021inferring; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -81,4 +81,4 @@ Inference: the threat to a product of agent-written verified Rust is material wh
 - APBA — allocate entailment queries by expected information gain across drift classes
 
 - FGD — rerank sampled formalizations by the spectrum and re-prompt with witness probes to repair drift
-Checked 2026-10-13: audit record mohammad2026faithfulness; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -95,4 +95,4 @@ Inference: For agent-written verified Rust, the threat is moderate. A verifier g
 - independent zero-tolerance feasibility checking — recompute bounds, pairwise non-overlap, objective, and numerical shrink outside the solver
 - plateau-window stopping — stop after a configurable window has no champion or has improvement below a threshold
 - complete replacement isolation — evaluate self-contained candidate programs so architectural changes do not accumulate patch conflicts
-Checked 2026-10-15 against paper sander2026program: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

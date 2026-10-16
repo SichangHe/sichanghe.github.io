@@ -60,4 +60,4 @@ Inference: threat to a product of agent-written verified Rust is moderate. Inter
 - insight SFT: backpropagate only on verifier-derived insight tokens to internalize reusable rules
 - SFTL;DR: train on task–insight pairs without rollout-token supervision
 - insight evaluation: measure advantage, too-easy/too-hard ratios, and unaided held-out Pass@1
-Checked 2026-10-15 against paper kirchhof2026rltldr: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

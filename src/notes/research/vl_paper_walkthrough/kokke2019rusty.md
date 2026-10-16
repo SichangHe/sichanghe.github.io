@@ -90,4 +90,4 @@ Inference: the threat to a product of agent-written verified Rust is concentrate
 - typed branching: encode choices as enum-labelled continuation sessions and cancel the consumed continuation after asynchronous selection
 - homogeneous selection: select among same-typed receiving endpoints while removing the chosen continuation from the vector
 - one-shot channel implementation: send each continuation endpoint with its payload and emulate synchronous close with two unit channels
-Checked 2026-10-14: audit record kokke2019rusty; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

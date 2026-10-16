@@ -70,4 +70,4 @@ This paper already establishes the lock-only baseline: modular component semanti
 - Owicki-Gries stability — combine local Hoare reasoning with interference-freedom checks
 - contextual trace refinement — compare stutter-free concrete client traces with abstract traces by observation inclusion
 - forward simulation — classify concrete steps as stuttering or matching abstract operations
-Checked 2026-10-14: audit record dalvandi2020verifying; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

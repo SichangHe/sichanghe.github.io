@@ -80,4 +80,4 @@ Inference: in a Verus pipeline, the fixed-point or CHC engine is an untrusted in
 - fixed-point strongest postcondition — solve `vc({ϕ}p{X})` to obtain the exact reachable post-state predicate
 - fixed-point weakest precondition — solve the dual `vc({X}p{ψ})` equation to obtain the exact safe pre-state predicate
 - abstract-domain fixed point — lift the monotone operator through a Galois connection, noting the paper's result is conjectural
-Checked 2026-10-14 against the paper by a Codex agent: audit record hetzl2021fixed; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

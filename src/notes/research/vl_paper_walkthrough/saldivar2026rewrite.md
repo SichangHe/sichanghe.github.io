@@ -57,4 +57,4 @@ The paper reports one denominator caveat: 200 were requested, but 185 ran after 
 - pedantry filter and convention lift — distinguish cosmetic rejection from a single explicit domain convention
 - certify-or-decline repair — bound correction attempts and abstain when a witness cannot be certified
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

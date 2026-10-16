@@ -80,4 +80,4 @@ This paper already evaluates retrieval, structured subgoal delegation, trace-der
 - trace-derived proving skills — mine failed and successful proof traces into reviewed, reusable tactics guidance
 - stagnation detection — compare proof states and block repeated attempts that add no evidence
 - independent proof audit — compile in a clean process, restrict proof commands, and compare theorem source outside the proof body
-Checked 2026-10-13: audit record liu2026prosabuddy; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

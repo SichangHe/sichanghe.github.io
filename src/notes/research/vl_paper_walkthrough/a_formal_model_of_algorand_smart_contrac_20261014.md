@@ -133,4 +133,4 @@ Inference: for VeruLaw, the paper’s biggest threat is semantic mismatch betwee
 - pure script and witness semantics: evaluate transaction-group expressions and define multisignature/script authorization predicates
 - attacker-strategy contract proofs: prove timeout, escrow, lottery, and finite-state payout properties over adversarially scheduled runs
 - declarative-to-TEAL compilation: compile supported expression constructs and establish source/bytecode semantic correspondence
-Checked 2026-10-14 against the paper by a Codex agent: audit record bartoletti2021algorand; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

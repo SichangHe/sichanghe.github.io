@@ -65,4 +65,4 @@ Inference: VL should preserve causal metadata with proof-review messages and req
 - knowledge-vector monitor — propagate vector clocks, latest subformula values, and selected fields on every message
 - coherence invariant — relate each clock row and cached value to the exact latest visible event
 - structural monitor proof — prove evaluator correctness by formula induction and state invariants by causal-order induction
-Checked 2026-10-14 against the paper by a Codex agent: audit record bollig2026causalpast; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

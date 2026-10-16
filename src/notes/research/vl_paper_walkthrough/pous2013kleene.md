@@ -99,4 +99,4 @@ Inference: this work should not be redone inside VL as a generic KAT prover unle
 - reflexive Coq tactic — reify algebraic goals and run a proved decision procedure inside Coq
 - hypothesis elimination — normalize Hoare-style and guarded assumptions before calling the base tactic
 - KAT Hoare encoding — express `{A} p {B}` as `[A]p[¬B]=0` and automate standard rules
-Checked 2026-10-15 against paper pous2013kleene: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

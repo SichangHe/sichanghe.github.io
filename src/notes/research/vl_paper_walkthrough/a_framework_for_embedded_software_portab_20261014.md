@@ -63,4 +63,4 @@ The formal result covers the Event-B models, their refinement obligations, selec
 - LTL progress checking — model-check eventual completion, non-deadlock, enabled-event uniqueness, and ordering
 - proof-guided code generation — derive LLVM control flow and instructions from verified Event-B events, then compile per target
 - reusable hardware instantiation — preserve generic proofs while adding target register/context mappings
-Checked 2026-10-14 against the paper by a Codex agent: audit record gomes2024framework; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

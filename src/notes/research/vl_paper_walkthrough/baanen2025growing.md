@@ -89,4 +89,4 @@ The paper documents deprecation markers, syntax/environment linters, import and 
 - hierarchy and elaboration design: reduce instance/coercion search and avoid unnecessary definitional unfolding
 - technical-debt report: publish machine-readable debt counts and deltas in CI and pull-request summaries
 - review triage dashboard: cache change history, compute actionable metadata, and provide sortable review queues
-Checked 2026-10-15 against paper baanen2025growing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

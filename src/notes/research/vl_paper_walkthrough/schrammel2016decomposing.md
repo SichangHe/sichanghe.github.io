@@ -73,4 +73,4 @@ The paper already identifies the main decomposition failure modes and the expans
 - dependency-aware partitioning: map cycles among invariants, summaries, and ranking arguments before choosing solver subproblems
 - sound composition: require sound subproblem analyses, sound result combination, and induction over the decomposition hierarchy
 - dynamic precision control: partition only when capacity is exceeded, and expand loops or recursive calls when abstraction loses needed precision
-Checked 2026-10-14 against the paper by a Codex agent: audit record schrammel2016decomposing; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

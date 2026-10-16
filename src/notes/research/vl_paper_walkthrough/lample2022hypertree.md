@@ -73,4 +73,4 @@ The paper already establishes the value of hypergraph search over path-only sear
 - soft critic targets: train internal nodes on their final search value `W/N` rather than hard zero/one labels
 - stochastic search parameters: sample decoding and HTPS budgets per goal to balance depth, breadth, and model drift
 - dependency-aware environment setup: use exact token formats, theorem DAGs, forbidden dependencies, and fixed evaluation versions before online search
-Checked 2026-10-14: audit record lample2022hypertree; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -69,4 +69,4 @@ Inference: threat to agent-written verified Rust is moderate for pointer-heavy t
 - staged memory-safety queries: test error and overflow exit statuses, increasing bounds until a sound terminating result
 - SDTA cross-product: constrain accepted input-tree shapes and data values through bottom-up automaton states
 - frame-bounded termination: infer termination when no execution reaches the log-overflow frame
-Checked 2026-10-14 against the paper by a Codex agent: audit record faella2024automated; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -54,4 +54,4 @@ The manual audit is a single reader without independent agreement; the judge and
 - citation verification — extract citations, search top arXiv hits, and label matches or inconclusive cases
 - premise audit — regex-flag rhetorical claims, then judge load-bearing unsupported premises with context
 - four-mode review — check citation truth, premise support, problem identity, and local-to-global compatibility
-Checked 2026-10-15 against paper banerjee2026failure: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

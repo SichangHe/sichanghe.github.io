@@ -45,4 +45,4 @@ The proved claim is contract consistency: if annotated assumptions hold, the cod
 - misuse detection for meta-analysis: use method-specific specifications to expose missing publication-bias and p-hacking requirements
 - scalability measurement: report solver, hardware, program size, group/study denominator, and verification times
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

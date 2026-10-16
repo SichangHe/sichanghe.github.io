@@ -105,4 +105,4 @@ The paper already compares expert iteration against sample-only scaling, proofsi
 - deduplicated expert iteration: aggregate verified traces across rounds, retain minimum proof sizes, and retrain on accumulated data
 - synthetic difficulty curriculum: generate statements with independent depth and obfuscation controls, then train from easy to hard
 - curated transfer curriculum: add manually formalized statements that match the target distribution while checking split disjointness
-Checked 2026-10-14: audit record polu2022formal; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

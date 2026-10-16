@@ -95,4 +95,4 @@ The paper’s claims concern soundness theorems and examples, not percentages. N
 - aligned deterministic steps — skip silent deterministic transitions without unsoundly ignoring nondeterministic branches
 - multi-trace HyCo — generalize the calculus to `∀*∃*` safety relations
 - imperative I/O tactics — specialize coinductive rules for input, output, havoc and loops
-Checked 2026-10-14 against the paper by a Codex agent: audit record correnson2025coinductive; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

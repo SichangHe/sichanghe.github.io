@@ -64,4 +64,4 @@ The formal result trusts sound conflict certification, complete candidate enumer
 - core minimization — delete core members and replay certification, retaining only reductions that remain sound
 - exhaustion cores — combine certified explanations for every legal alternative before declaring a decision level exhausted
 - tiered verifier interface — separate exact, replay-certified, and heuristic explanations so only sound cores receive hard pruning
-Checked 2026-10-15 against paper song2026core: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

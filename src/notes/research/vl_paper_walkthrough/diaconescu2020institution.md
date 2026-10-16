@@ -61,4 +61,4 @@ Inference: H proves source properties only under the correctness and conservativ
 - conservative comorphism encoding — translate hybrid specifications to FOL and recover source validity through conservativity
 - heterogeneous Hets structuring — compose logics, signature translations, unions, and colimits through a graph of institutions
 - two-level quantification — separate base data quantifiers from hybrid/world quantifiers in one specification
-Checked 2026-10-15 against paper diaconescu2020institution: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

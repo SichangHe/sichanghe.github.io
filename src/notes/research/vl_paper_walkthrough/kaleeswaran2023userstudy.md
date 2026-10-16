@@ -72,4 +72,4 @@ The main methodological limitation is explicit: the one-group pretest/posttest d
 - comprehension tasks — score localization, cause, repair, and expected behavior separately
 - explanation evaluation — compare raw diagnostics and structured explanations with per-question denominators
 - human-centered evidence — preserve exact formal predicates and trace links while presenting domain-language summaries
-Checked 2026-10-14 against the paper by a Codex agent: audit record kaleeswaran2023userstudy; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

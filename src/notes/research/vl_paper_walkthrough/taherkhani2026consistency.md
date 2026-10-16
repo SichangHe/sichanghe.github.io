@@ -54,4 +54,4 @@ The consensus proxy assumes independently generated candidates and tests; shared
 - dual execution agreement — cluster candidate solutions by pass/fail test signatures
 - consensus scoring — rank clusters by passed-test coverage and number of agreeing solutions
 - verification metrics — report validity, precision, recall, F1, line coverage and mutation score with dataset/model denominators
-Checked 2026-10-15 against paper taherkhani2026consistency: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -31,4 +31,4 @@ Measured: benchmark syntax, verifiability, pass rates, attempt counts, ablations
 - property generation: derive verifier-format properties from requirements when absent, subject to human/specification trust
 - translation-based model checking: map ST to SMV/CBMC and run model checking or BMC while tracking translation and state-explosion risks
 - thresholded repair: iterate diagnostics-driven fixes until success or loop threshold, then select another plan or escalate
-Checked 2026-10-14 against the paper by a Codex agent: audit record liu2024agents4plc; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

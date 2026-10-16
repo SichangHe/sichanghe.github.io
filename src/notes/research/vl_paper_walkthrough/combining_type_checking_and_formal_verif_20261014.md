@@ -42,4 +42,4 @@ Inference: the main threat to agent-written verified Rust is false confidence fr
 - intralingual specifications — enforce trait, visibility, mutation, and call restrictions with compile-time assertions
 - typed hardware abstraction layers — encode register layout and operation order as types and proof-of-work tokens
 - selective hybrid verification — use SMT proofs for unexpressible invariants and prose only for explicitly trusted composition
-Checked 2026-10-14 against the paper by a Codex agent: audit record ijaz2024combining; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

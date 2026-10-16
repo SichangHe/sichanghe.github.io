@@ -77,4 +77,4 @@ Inference: the main threat to VeruLaw is representation drift. If an agent chang
 - compatible composition — compose conversions through commuting middle relations while preserving domains
 - proof-assistant transport automation — register base equivalences and generate transported terms plus domain and similarity obligations
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -138,4 +138,4 @@ Inference: the threat to agent-written verified Rust is medium. Solver instabili
 - DAG pattern compression — hash-cons repeated subterms so formula patterns retain sharing instead of expanding trees
 - indexed super-pattern computation — index each symbol's assertion occurrences and compute roles only where the symbol appears
 - sparse super-pattern compression — store nonzero roles and zero-run counts to reduce memory and lookup cost on large formulas
-Checked 2026-10-13: audit record amrollahi2024smt; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -46,4 +46,4 @@ What is proved is correspondence to the encoded logics, conditional on Viper, SM
 - multiple-heap modalities — encode relaxed accesses and fences as transitions among ghost heap views
 - CAS branch encoding — combine acquire, release, and failure rules with explicit success-state bookkeeping
 - logic-to-Viper soundness map — prove each encoded statement corresponds to a source-logic Hoare step
-Checked 2026-10-14 against the paper by a Codex agent: audit record summers2017automating; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -52,4 +52,4 @@ The evaluation covers 17 protocols: 7 cache-coherence and 10 distributed, with 4
 - heuristic Generalize — intersect known and candidate equation terms, enumerate small differences, simplify with increasing/decreasing strategies, and feed accepted invariants back to the solver
 - type-saturation quantifier inference — classify parameter types with γ and recheck N+1 extensions to choose Forall, Exists, or a disjunction of groups
 - invariant merging and symmetry reduction — merge equivalent or implied clauses and block permutation duplicates by adding generated symmetric assertions
-Checked 2026-10-15 against paper xiu2025parameterized: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

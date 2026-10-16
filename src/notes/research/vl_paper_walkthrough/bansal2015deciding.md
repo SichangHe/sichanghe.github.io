@@ -50,4 +50,4 @@ The procedure assumes the extension is local (or Psi-local with supplied extra t
 - hierarchical extensions — compose local theory layers for arrays, reachability, framing, and program facts
 - staged instantiation — delay auxiliary terms and prioritize cheap equality cases to reduce blowup
 - EPR hybrid solving — reduce a local theory to EPR with E-matching, then use complete model-based instantiation
-Checked 2026-10-14: audit record bansal2015deciding; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

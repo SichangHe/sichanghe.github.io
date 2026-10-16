@@ -90,4 +90,4 @@ Inference: VL should reuse state-boundary extraction, complete-context records, 
 - premise retrieval evaluation: vary mixed local and global candidate sets and report proof success by retrieval size
 - efficiency-weighted proving: divide verified success by response length to expose costly overthinking
 - verified expert iteration: train on candidates that the proof kernel accepted and evaluate on held-out subgoals
-Checked 2026-10-15 against paper yang2025formalml: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

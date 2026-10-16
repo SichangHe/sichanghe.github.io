@@ -59,4 +59,4 @@ The paper proves consistency only under its finite-field model, Circom semantics
 - symbolic equivalence analysis — infer equal signal pairs from flow-sensitive symbolic stores and simplify the product
 - guarded array equalities — synthesize quantified loop invariants from writes, bounds, and counter step sizes
 - Houdini invariant filtering — iteratively remove predicates failing initiation or consecution before SMT checking
-Checked 2026-10-15 against paper stephens2025automated: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

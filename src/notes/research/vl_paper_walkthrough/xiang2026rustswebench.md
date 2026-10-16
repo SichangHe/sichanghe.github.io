@@ -59,4 +59,4 @@ The paper reports that “the remaining 44.5% of tasks fail at the reproduction 
 - ReAct repair loop: alternate repository actions and observations to localize and patch issues
 - isolated reproduction workspace: decouple tests from complex project build configurations
 - AST Trace command: inject selective macros, capture cross-project calls, and restore source after diagnosis
-Checked 2026-10-15 against paper xiang2026rustswebench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -71,4 +71,4 @@ Inference: the threat to agent-written verified Rust is specification and encodi
 - layered security proof — establish reachable state sequences, intermediate facts, and the final security property as separate obligations
 - countermodel-driven checking — submit negated implications to the solver and inspect satisfying assignments as counterexamples
 - verified model oracle — execute a proved prototype for scenarios, differential tests, and runtime monitoring
-Checked 2026-10-14 against the paper by a Codex agent: audit record cristia2021tokeneer; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

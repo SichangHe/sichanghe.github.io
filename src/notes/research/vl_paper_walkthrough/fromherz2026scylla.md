@@ -98,4 +98,4 @@ Trusted components are Clang parsing, Scylla's unproved compiler and analyses, r
 - split-tree pointer arithmetic — compile disjoint C offsets into deterministic `split_at`/`split_at_mut` chains
 - backward mutability inference — propagate update requirements from uses to Rust bindings and function signatures
 - trait fixed-point derivation — derive `Copy`, `Clone`, and `PartialEq` only when recursive field constraints permit
-Checked 2026-10-15 against paper fromherz2026scylla: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

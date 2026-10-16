@@ -141,4 +141,4 @@ Inference: The threat to an agent-written verified-Rust product is material at t
 - selective verification by fusion: combine uncertainty signals, calibrate a predictor, and abstain at a threshold chosen for error reduction
 - qualitative formalization diagnostics: inspect low-probability parse structures for aliasing, decomposition variance, semantic drift, and unstable facts
 - temperature-aware sampling analysis: measure how sampling temperature changes recursive structure and uncertainty before setting a generation policy
-Checked 2026-10-15 against paper ganguly2025grammars: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

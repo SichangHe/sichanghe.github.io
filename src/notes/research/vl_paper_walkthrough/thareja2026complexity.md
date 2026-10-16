@@ -50,4 +50,4 @@ Inference: for VeruLaw, the transferable pattern is a persistent spec artifact t
 - skill-grounded construction — package API knowledge, examples, templates, and checklists as reusable per-step skills
 - dual validation loop — combine runtime failure repair with static conformance and regeneration checks
 - orchestration choice and scale test — surface alternative DAG structures and measure controlled round/client tradeoffs
-Checked 2026-10-15 against paper thareja2026complexity: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

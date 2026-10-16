@@ -55,4 +55,4 @@ The paper proves ACL2 theorems and reports clustering and synthesis behavior, no
 - analogy mapping — map non-background source symbols to same-cluster target symbols while preserving shared symbols
 - three-level term mutation — try reconstruction, bounded node expansion, then top-level tree expansion with counterexample checks
 - staged JVM correctness decomposition — separate algorithm specification, program-implementation correspondence, and total bytecode correctness
-Checked 2026-10-14: audit record heras2013proof; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

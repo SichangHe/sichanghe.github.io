@@ -79,4 +79,4 @@ Inference: VL should reuse the three-stage decomposition—closed state proof, e
 - runtime revert modeling — check caller conditions, return a tagged success/error result, and prove state is unchanged on error
 - gas-bounded callback abstraction — model unknown and re-entrant calls with havoced inputs and mutually recursive transitions decreasing gas
 - invariant-before-callback discipline — update state until the invariant holds before an external call, then require and re-establish it across the abstraction
-Checked 2026-10-15 against paper cassez2022deductive: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

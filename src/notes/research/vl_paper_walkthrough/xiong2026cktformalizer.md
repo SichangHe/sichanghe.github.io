@@ -71,4 +71,4 @@ Inference: VL should not redo the paper's generic insight that interactive verif
 - stepwise proof-state-guided equivalence — iterate proof steps against residual goals until the kernel accepts a no-placeholder theorem
 - independent artifact checking — combine source proofs with RTL equivalence, finite simulation, and physical-design checks while recording each scope
 - synthesis-feedback optimization with proof preservation — accept measured improvements only after recompilation/evaluation and preserve behavior with an equivalence proof
-Checked 2026-10-14 against the paper by a Codex agent: audit record xiong2026cktformalizer; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

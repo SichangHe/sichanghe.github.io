@@ -154,4 +154,4 @@ Inference: VL should report detection precision/recall and repair success by def
 - verifier-feedback repair — feed localized static-analysis reports and category-specific context to an FM repairer
 - iterative rechecking — rerun the analyzer after every repair to catch both unresolved and newly introduced defects
 - path-feasibility support — add dynamic execution or SMT solving when static dataflow cannot decide runtime reachability
-Checked 2026-10-15 against paper masoumzadeh2026towards: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

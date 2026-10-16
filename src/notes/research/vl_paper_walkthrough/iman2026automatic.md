@@ -82,4 +82,4 @@ Inference: threat to agent-written verified Rust is high when a miner turns obse
 - parallel hint mining: search template permutations in parallel, rank with context-aware metrics, filter, and cluster
 - association-rule mining: discover temporal rules in traces, tune corner-case thresholds, and convert rules to assertions
 - coverage hygiene: treat traces, fault coverage, thresholds, and model checking as separate evidence with explicit blind spots
-Checked 2026-10-15 against paper iman2026automatic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

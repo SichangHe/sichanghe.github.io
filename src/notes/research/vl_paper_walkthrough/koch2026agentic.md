@@ -93,4 +93,4 @@ Inference: VL should not re-invent the paper's separation of exploratory dialogu
 - feature workflow — implement the smallest planned slice, test alongside it, and record evidence before review
 - bug-fix workflow — diagnose causally, reproduce, add a regression test, patch minimally, and explain residual scope
 - hardware/firmware gate — require simulation, formal properties where applicable, HIL, timing/protocol evidence, and traceability
-Checked 2026-10-15 against paper koch2026agentic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

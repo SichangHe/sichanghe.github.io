@@ -74,4 +74,4 @@ Inference: VL should not redo the paper's basic unsafe-call propagation or its d
 - dependency closure analysis: distinguish locally safe crates from crates whose dependencies contain Unsafe Rust
 - operation taxonomy: measure unsafe function calls, pointer dereferences, globals, and intrinsics with explicit denominators
 - developer confidence survey: collect reasons for unsafe and static, dynamic, testing, and proof practices
-Checked 2026-10-15 against paper evans2020rustsafe: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

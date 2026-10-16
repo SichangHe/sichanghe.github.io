@@ -64,4 +64,4 @@ Inference: The threat is moderate for proof-search quality: a model can suggest 
 - theorem-prover validation: accept alternatives only when both upstream-to-candidate and candidate-to-goal implications are proved
 - leakage-resistant split: remove duplicate targets and examples from the same theorem as held-out data
 - reasoning diagnostics: inspect embeddings, attention, and multi-step examples alongside proof success
-Checked 2026-10-15 against paper li2021isarstep: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

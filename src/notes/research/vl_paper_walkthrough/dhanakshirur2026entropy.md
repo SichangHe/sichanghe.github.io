@@ -49,4 +49,4 @@ The theorem trusts the finite support class, η floor, and realizability assumpt
 - support-mismatch diagnosis — compare CE’s observed-label objective with verifier risk over rejected support
 - entropy-regularized CE — add λ times differentiable support proxy and schedule λ upward, α downward
 - verifier-based evaluation — execute or symbolically check outputs and report Pass@1 with model, seeds, and denominators
-Checked 2026-10-15 against paper dhanakshirur2026entropy: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

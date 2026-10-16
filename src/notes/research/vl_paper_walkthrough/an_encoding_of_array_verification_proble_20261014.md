@@ -73,4 +73,4 @@ Inference: VL should not redo the scalar abstraction's soundness theorems. The g
 - two-cell relational abstraction: track two arbitrary cells to prove sortedness, reversal, and pairwise array properties
 - multiset-count instrumentation: maintain a value-count map through writes to prove permutation preservation
 - counterexample reconstruction: turn an abstract Horn unfolding into an arithmetic-plus-array SMT check and refine when it is spurious
-Checked 2026-10-14 against the paper by a Codex agent: audit record monniaux2015encoding; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

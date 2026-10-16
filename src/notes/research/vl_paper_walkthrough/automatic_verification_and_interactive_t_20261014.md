@@ -123,4 +123,4 @@ Inference: VL should reuse the certificate/checker split, explicit intermediate 
 - proof reconstruction and fact selection — select relevant lemmas, search externally, then rebuild and check the proof internally
 - small-scale reflection — replace repeated logical reasoning with a proved-correct decision procedure and computation
 - foundational kernel and Curry–Howard extraction — use a trusted kernel/type checker and extract executable programs from constructive proofs
-Checked 2026-10-14 against the paper by a Codex agent: audit record asperti2017automatic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

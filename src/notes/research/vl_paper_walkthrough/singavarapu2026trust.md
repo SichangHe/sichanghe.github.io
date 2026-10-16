@@ -47,4 +47,4 @@ Inference: the threat to agent-written verified Rust is high when evaluation rep
 - three-tier trust ledger: report hole-free, call-closed, and dynamic-hole-risk populations with construct-level causes
 - differential execution oracle: compare generated semantics with a real implementation on isolating fixtures and retain negative controls
 - denominator audit: attach every percentage to its exact exported population and distinguish metric movement from behavior movement
-Checked 2026-10-14 against the paper by a Codex agent: audit record singavarapu2026trust; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

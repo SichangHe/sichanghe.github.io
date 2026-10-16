@@ -50,4 +50,4 @@ The paper measures a small Dafny case study, not Verus and not systems software.
 - failure taxonomy: classify contract errors such as weak postconditions and use the dominant class to guide prompt or preprocessing changes
 - structured requirement preprocessing: mark natural-language preconditions and postconditions before formalization to reduce compositional omissions
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

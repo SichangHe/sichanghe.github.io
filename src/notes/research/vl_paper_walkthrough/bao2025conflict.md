@@ -60,4 +60,4 @@ Inference: the paper’s strongest transferable idea is a circuit-breaker contra
 - verification-before-deduction training — use SFT and DPO traces that require checking premises and halting before rule application
 - LIRE — apply symmetric token-level KL to teacher-forced traces for logically equivalent inputs
 - RLVF — train with deterministic symbolic or Lean rewards parsed from complete reasoning traces
-Checked 2026-10-15 against paper bao2025conflict: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -79,4 +79,4 @@ The main product threat is inference: QED demonstrates that agent systems can pr
 - decomposition DAG and retry hierarchy — revise proof, plan, or strategy according to classified verification failures
 
 - staged structural/detailed verification — reject statement, citation, completeness, or subgoal-tree errors before expensive step checking
-Checked 2026-10-15 against paper an2026qed: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

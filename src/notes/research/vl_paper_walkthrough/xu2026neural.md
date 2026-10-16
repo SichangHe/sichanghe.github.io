@@ -114,4 +114,4 @@ The benchmark trusts Why3/Frama-C VCGs, expert translation rules, target ITP ker
 - kernel-backed scoring — count only proofs accepted by the target prover without holes
 - failure taxonomy — separate syntax, semantic confusion, and hallucinated constants or tactics
 
-Checked 2026-10-15 against the paper by a Codex agent for neural_theorem_proving_for_verification__20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

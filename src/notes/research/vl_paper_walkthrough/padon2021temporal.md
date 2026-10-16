@@ -37,4 +37,4 @@ The formal theorem proves soundness of the liveness-to-safety transformation und
 - abstract-lasso reduction: freeze a finite footprint and prove no fair repeated projection exists
 - temporal prophecy tableau: add future-sensitive FO-LTL formulas to refine the product state space
 - prophecy witnesses: add immutable ghost constants witnessing existential temporal formulas
-Checked 2026-10-13: audit record padon2021temporal; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

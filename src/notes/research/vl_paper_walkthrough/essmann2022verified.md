@@ -46,4 +46,4 @@ Inference: The threat to agent-written verified Rust is high for proof completen
 - lower-bound decomposition — prove average, maximum-item, and structural lower bounds separately before deriving the approximation ratio
 - verus translation (inference) — map contracts and ghost invariants to Verus `requires`, `ensures`, loop `invariant`, and erased `proof fn` lemmas
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -47,4 +47,4 @@ The completed proof establishes that BilbyFs `fsync()` formally refines AFS. The
 - pending-update state separation — keep medium state and ordered in-memory transformations distinct
 - nondeterministic fsync faults — apply an arbitrary update prefix and specify success, error, and read-only outcomes
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -59,4 +59,4 @@ Inference: reuse proof-producing architecture, explicit benchmark denominators, 
 - proof reconstruction — emit detailed proofs in LFSC, Alethe, Lean 4, Isabelle/HOL, or Coq for independent checking
 - specialized theory solvers — use nonlinear arithmetic, bit-blasting, strings, arrays, and quantifier modules per logic
 - SyGuS-assisted reasoning — synthesize invariants, abductions, interpolants, and quantified terms from grammars
-Checked 2026-10-15 against paper barbosa2022cvc5: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

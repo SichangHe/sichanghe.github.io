@@ -51,4 +51,4 @@ Inference: VL should retain the executed-gate floor, durable state, explicit sta
 - A3 coverage auditing — statically and optionally semantically check that compiled gates mention every concrete goal requirement
 - executed-gate completion floor — allow DONE only after every path gate actually ran and passed; otherwise record an honest stall
 - paired fabrication evaluation — compare true success, stall, underclaim, and fabrication against an independent held-out oracle
-Checked 2026-10-15 against paper deng2026goalautopilot: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

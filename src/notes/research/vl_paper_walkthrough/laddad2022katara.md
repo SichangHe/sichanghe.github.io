@@ -114,4 +114,4 @@ The paper reports a novel map-based Two-Phase Set using an `OrBool` map and defa
 - bounded-log pruning — reject candidates with finite operation logs before unbounded invariant synthesis
 - typed SMT grammars — constrain generated expressions by specialized types and lower supported APIs to solver theories
 - node-owned non-idempotent state — use node-keyed maps and reductions to synthesize counters and related operations
-Checked 2026-10-14: audit record laddad2022katara; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

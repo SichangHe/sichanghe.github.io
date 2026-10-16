@@ -41,4 +41,4 @@ Inference: threat to agent-written verified Rust is high for protocol architectu
 - twin-language adequacy: compile Sync to interleaved Async and prove every Async output is in Sync's denotation
 - channel alignment and erasure: reorder traces by communication rounds, extract folds, and remove finished channels
 - unified fault network: model crashes and Byzantine sends as nondeterministic network behaviors under explicit assumptions
-Checked 2026-10-15 against paper ni2025functional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

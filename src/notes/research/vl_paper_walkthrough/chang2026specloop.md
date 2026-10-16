@@ -97,4 +97,4 @@ Inference: In VeruLaw, SpecLoop's transferable idea is a contract-reconstruction
 - incremental feedback loop — revise only affected specification fields until equivalence passes or retry budgets end
 - pass/fail versus rich diagnostics — compare binary feedback with counterexamples and mismatch reports
 - bounded equivalence setup — use Yosys EQY SAT checking with an explicit depth bound and report its limits
-Checked 2026-10-13: audit record chang2026specloop; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

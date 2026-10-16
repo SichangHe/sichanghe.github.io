@@ -50,4 +50,4 @@ Caesar is about 10k lines of Rust. It translates HeyVL verification conditions t
 - conditional expectation encoding — combine wp numerator and wlp denominator for observe-conditioned values
 - Park and related loop rules — encode quantitative invariants, omega families, k-induction, and dual upper/lower bounds
 - martingale termination rules — encode super-martingale and optional-stopping side conditions as HeyVL obligations
-Checked 2026-10-15 against paper schroer2023deductive: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

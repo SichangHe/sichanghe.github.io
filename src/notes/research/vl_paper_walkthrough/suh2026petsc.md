@@ -63,4 +63,4 @@ Inference: threat to agent-written verified Rust is high for specification error
 - aliasing-case derivation — generate same-handle and distinct-handle drivers from profile rules
 - contract-only oracle checking — use a certified postcondition when no reference model exists
 - profile evolution — extend parser and compiler when unsupported recurring semantics are identified
-Checked 2026-10-13: audit record suh2026petsc; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

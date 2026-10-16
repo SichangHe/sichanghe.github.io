@@ -105,4 +105,4 @@ Inference: a Verus adaptation would require a ghost separation-logic model, recu
 - unfold-and-match subtraction — unfold inductive predicates and subtract overlapping heap segments
 - integrated ordering inference — infer sorted-list and search-tree inequalities during shape matching
 - controlled anti-frame/frame search — apply specialized inference rules with satisfiability and search restrictions
-Checked 2026-10-14 against the paper by a Codex agent: audit record curry2020biabduction; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

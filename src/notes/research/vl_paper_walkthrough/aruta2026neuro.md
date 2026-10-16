@@ -70,4 +70,4 @@ Inference: every accepted positive is backed by a checker proof of the encoded N
 - verifier-feedback retry — translate checker diagnostics into a bounded second synthesis attempt
 - coverage-controlled benchmark augmentation — mutate expert seeds while preserving family-level splits and checker-balanced outcomes
 - compact model serialization — convert verbose JSON game descriptions to structured Markdown to improve LLM synthesis
-Checked 2026-10-14 against the paper by a Codex agent: audit record aruta2026neuro; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

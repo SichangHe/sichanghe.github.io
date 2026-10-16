@@ -57,4 +57,4 @@ The system measures recall, hold-rate, rule counts, and runtime on the stated da
 - residual-derived tolerance — infer a per-candidate soft tolerance from residuals
 - calibrated confidence acceptance — accept only when held-out hold-rate clears a proxy-calibrated bound
 - monotone completeness claim — use an accepted invariant as a threshold for candidates with at least its coverage
-Checked 2026-10-15 against paper he2026invariant: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

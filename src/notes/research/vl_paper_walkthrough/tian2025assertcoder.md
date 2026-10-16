@@ -68,4 +68,4 @@ The formal evidence is bounded by the three DUTs, their specifications, generate
 - retrieval-augmented prompting — add curated domain passages while generating formal properties
 - mutation-guided refinement — inject faults, model-check, feed undetected mutations back, and regenerate
 - mutation metrics — report syntax correctness, functional correctness, mutation score, MDR, and FPR with denominators
-Checked 2026-10-14 against the paper by a Codex agent: audit record tian2025assertcoder; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

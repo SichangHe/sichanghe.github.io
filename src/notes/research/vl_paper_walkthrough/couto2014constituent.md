@@ -49,4 +49,4 @@ What is proved is conditional: each discharged PO is checked by Isabelle's kerne
 - versioned proof sessions — snapshot the model, regenerate obligations, discharge them, and retain proofs with the exact source version
 - constituent invariant verification — prove each operation's postcondition and subtype/invariant obligations for a stateful system model
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

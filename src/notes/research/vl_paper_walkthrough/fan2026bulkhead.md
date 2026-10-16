@@ -78,4 +78,4 @@ Inference: threat to agent-written verified Rust is high for filesystem and boun
 - PoC confirmation: instantiate exploitation steps and execute them in isolation to validate reachability
 - counterexample-guided repair: compile-filter patches, model-check invariants, and feed counterexamples into the next synthesis round
 - conditioned patch metrics: report success and vulnerability rates with their denominators and conditioning
-Checked 2026-10-15 against paper fan2026bulkhead: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

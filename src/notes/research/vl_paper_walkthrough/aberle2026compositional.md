@@ -88,4 +88,4 @@ Inference: The paper already supplies a generic typed account of interface sums,
 - Inference: Mealy operational semantics: run interaction programs by threading stateful interface machines
 - Inference: dependent free-monad verification: carry precondition evidence and postcondition proofs through every call and composition
 - Inference: dependent Mealy invariant: prove stateful executions preserve relational and state predicates at each transition
-Checked 2026-10-15 against paper aberle2026compositional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

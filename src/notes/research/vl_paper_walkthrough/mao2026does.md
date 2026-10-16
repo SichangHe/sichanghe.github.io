@@ -81,4 +81,4 @@ Inference: the threat to agent-written verified Rust is high for proofs whose re
 - assumption-gap detection — materialize assumptions and discharge them with a fixed tactic sequence, marking unclosed obligations
 - citation-gap detection — enforce backward-only proposition dependencies and flag unavailable or incorrect cited results
 - immutable proof structure — lock approved map objects and prevent agents from skipping ahead or rewriting prior steps
-Checked 2026-10-13: audit record mao2026does; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

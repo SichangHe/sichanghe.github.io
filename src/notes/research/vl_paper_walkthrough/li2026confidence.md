@@ -82,4 +82,4 @@ Inference: threat to agent-written verified Rust is high if a passing proof is t
 - repair boundary — automate syntax repair but require renewed review for semantic changes
 - structural and causal comparison — compare generated models with references while inspecting role order and input provenance
 - counterexample classification — compare traces with expected attacks instead of assuming every failed lemma is a modeling error
-Checked 2026-10-15 against paper li2026confidence: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

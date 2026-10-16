@@ -32,4 +32,4 @@ The paper already supplies a reusable decomposition for checking generated speci
 - OAP ensemble scoring: independently judge atomic properties, aggregate by aspect, and combine with prover validity
 - prover-plus-judge protocol: pair theorem-prover validity with binary aspect judgments and five-point overall quality
 - temperature and bias audits: repeat judgments across temperatures and judge/autoformalizer model pairs to measure instability
-Checked 2026-10-14 against the paper by a Codex agent: audit record zhang2025gold; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -38,4 +38,4 @@ The study assumes complete executable tests, one-shot templated prompts, tempera
 - executable repair tree: generate, check, explain diagnostics, and sample repairs as a branching search
 - equal-budget evaluation: compare repair trees with iid samples using the same program count or token cost
 - boosted feedback: substitute a stronger critic or human explanation and measure repaired-program pass rates
-Checked 2026-10-15 against paper o2023selfrepair: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

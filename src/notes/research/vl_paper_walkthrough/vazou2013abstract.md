@@ -96,4 +96,4 @@ Trusted elements include GHC's desugaring, supplied specifications for imported 
 - measure strengthening: add terminating measure equations to datatype constructors
 - inductive fold type: quantify over the relation a fold preserves and instantiate it for clients
 - liquid refinement inference: synthesize predicate instantiations from qualifiers with SMT and abstract interpretation
-Checked 2026-10-14: audit record vazou2013abstract; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

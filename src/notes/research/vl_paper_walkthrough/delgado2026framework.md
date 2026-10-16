@@ -93,4 +93,4 @@ Inference: The threat to a verified-Rust product is primarily workflow and evalu
 - validator-feedback repair — send faulty code and diagnostics through one bounded repair round
 - multiple-attempt generation — sample k candidates and measure pass@k and first-attempt accuracy
 - judge calibration — compare automatic parser or LLM judgments with manual labels using precision and recall
-Checked 2026-10-14 against the paper by a Codex agent: audit record delgado2026framework; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -41,4 +41,4 @@ Inference: this paper presents a high-value static precheck for agent-written ac
 - happens-before graph: combine program, FIFO synchronization, and hardware barrier edges, then compute reachability
 - barrier sufficiency: reject every cross-unit same-buffer write-read pair lacking a happens-before path
 - parameterized hardware model: port the checker by changing stages, queues, and directional coverage rules
-Checked 2026-10-14 against the paper by a Codex agent: audit record an2026accelsync; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

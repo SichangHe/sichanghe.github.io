@@ -58,4 +58,4 @@ Inference: threat to agent-written verified Rust is high at the specification bo
 - independent oracle extraction: derive verification conditions and test commands without using the recovered spec
 - three-tier regeneration test: score flexible tests, VCs, and intent alignment with weighted evidence
 - iterative strengthening: rewrite weak specs from failed conditions and retain the best-of-K candidate
-Checked 2026-10-15 against paper paltenghi2026aftervibe: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

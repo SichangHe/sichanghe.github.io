@@ -75,4 +75,4 @@ The survey itself lists open gaps: predicates may require manual fold/unfold, pr
 - abstract shape and alias analysis — propagate conservative graph shapes and alias classes through transfer functions
 - pointer-rotation primitives — encapsulate list mutations in specified rotation operations with explicit corner-case preconditions
 - separation-logic framing — describe disjoint heap predicates and preserve untouched resources with the frame rule
-Checked 2026-10-13: audit record haberland2019review; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

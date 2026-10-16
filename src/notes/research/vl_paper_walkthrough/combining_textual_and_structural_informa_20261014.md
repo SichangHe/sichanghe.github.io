@@ -59,4 +59,4 @@ The paper already establishes the retrieval architecture and benchmark compariso
 - contrastive premise training — train with InfoNCE against valid premises and all other candidates as negatives
 - ensemble retrieval — average six independently trained retrievers and apply exponential moving averaging
 - leakage-aware evaluation — restrict candidates by imports and prior source position, then test on temporal or novel splits
-Checked 2026-10-14 against the paper by a Codex agent: audit record petrovčič2025combining; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

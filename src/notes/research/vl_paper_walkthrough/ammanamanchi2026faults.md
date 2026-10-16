@@ -66,4 +66,4 @@ The Lean kernel gives certainty about a proof of a given formal statement. It do
 - semantic-guard static checking — detect arithmetic and soundness hazards, then prove required guards with deterministic tactics
 - high-recall semantic audit — use LLM classification only after static screening and send findings to human adjudication
 - release hardening — use `proof wanted`, disable auto-implicit, ban user axioms, pin versions, and audit score denominators
-Checked 2026-10-15 against paper ammanamanchi2026faults: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

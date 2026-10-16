@@ -60,4 +60,4 @@ What remains trusted includes Boogie, Z3, the Boogie-to-x86 translator, the abst
 - trigger-directed SMT automation — choose and assert quantifier triggers to control useful instantiation
 - verified subset translation — verify an x86-like source subset, then translate while rejecting unsupported ghost behavior
 - specification testing — test the ghost model with smoke proofs and runtime assertions to expose specification bugs
-Checked 2026-10-14: audit record podelski2009automated; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

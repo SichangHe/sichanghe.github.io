@@ -60,4 +60,4 @@ The paper measures benchmark pass rates, corpus sizes, and counts of AI contribu
 - theorem retrieval with proof memory — retrieve typed lemmas and retain verified subproofs for later goals
 - search-in-the-loop proving — use MCTS, best-first, graph, or critic-guided search to collect validated trajectories
 - multi-agent proof orchestration — specialize formalization, planning, proving, criticism, and verification around a shared subgoal cache
-Checked 2026-10-15 against paper jiang2026solvers: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -38,4 +38,4 @@ The authors rely on Dafny's verifier and compiler, the target-language backend, 
 - verifier-feedback loop — feed errors, warnings, invariants, and assertions back into bounded regeneration
 - generated contract tests — use `generate-tests` and inlined block coverage to exercise verified methods
 - opaque proof backend — filter Dafny artifacts while retaining verifier-backed internal state and diagnostics
-Checked 2026-10-13: audit record li2025dafny; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

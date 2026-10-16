@@ -104,4 +104,4 @@ Inference: the evaluation's 10/10 success statement is a program-level count, wh
 - disjointness-preserving distribution — split and rejoin weak/strong conjunctions while retaining pure heap-separation constraints
 - residual-frame inference — search entailment proof forests to infer unused heap resources and variable instantiations
 - predicate-transformer concurrency — compute procedure/thread post-states compositionally and check each against its contract
-Checked 2026-10-15 against paper le2025compositional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

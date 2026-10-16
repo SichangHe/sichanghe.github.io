@@ -113,4 +113,4 @@ The paper already supplies a reusable methodology for parameterized distributed 
 - liveness-to-safety reduction — add auxiliary state so eventual accuracy/completeness become inductive safety invariants
 - counterexample-guided invariant discovery — use fixed-parameter TLC/APALACHE/FAST traces to shape generalized IVy invariants
 - parametric inductive proof — prove quantified, nonlinear invariants for arbitrary Δ and Φ in IVy
-Checked 2026-10-14: audit record konnov2021case; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

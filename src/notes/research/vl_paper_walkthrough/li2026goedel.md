@@ -49,4 +49,4 @@ Inference: The threat to VL is substantial for proof automation, but not an end-
 - structural decomposition ranking — use operator footprints to reward smaller proof obligations
 - hybrid proof policy training — reinforce decomposition while replaying verified completion trajectories
 - hierarchical bounded search — decompose difficult goals, then refine leaf proofs with compiler diagnostics
-Checked 2026-10-13: audit record li2026goedel; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

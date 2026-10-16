@@ -54,4 +54,4 @@ Threat to VeruLaw (Inference): FOASL’s useful idea is modular heap reasoning b
 - labelled separation calculus — reason about worlds, splits, magic wand, quantifiers, and modalities with sequents
 - Hintikka countermodel construction — fairly saturate unprovable sequents and build a falsifying quotient model
 - model theories as assumptions — approximate concrete points-to behavior by formulas instead of new proof rules
-Checked 2026-10-15 against paper hou2016completeness: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

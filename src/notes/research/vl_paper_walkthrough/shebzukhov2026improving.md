@@ -51,4 +51,4 @@ Inference: the paper already covers cycle-consistency rewards, LoRA-only adaptat
 - curriculum ablation: compare difficulty-ordered SFT with identical shuffled data and budget
 - GRPO semantic tuning: sample groups of completions, normalize rewards, and optimize a KL-constrained clipped objective
 - proof-aware reward design: combine semantic round-trip quality with a hard formal-check result to avoid proxy reward hacking
-Checked 2026-10-15 against paper shebzukhov2026improving: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

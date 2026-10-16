@@ -84,4 +84,4 @@ Inference: For agent-written verified Rust, this paper threatens the cost model 
 - diffDP witness alignment: align modified and original paths while propagating variables changed by data dependencies
 - affected-variable propagation: add written variables after changes, propagate through reads, and remove overwritten variables when safe
 - conditional-verifier evaluation: compare full and incremental verification by solved counts, CPU time, condition size, and extractor overhead
-Checked 2026-10-15 against paper jakobs2023incorporating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
