@@ -40,4 +40,3 @@ Inference: a Verus implementation could verify a commitment-opening or proof-ver
 - proof-memory certificates: retain history and compose obligation-specific witnesses into a certificate stack
 - boundary metrics: measure unsafe certification, missed certification, and executable yield over generated traces
 - zero-knowledge trace certification: prove policy properties while withholding sensitive trace contents
-Checked 2026-10-15 against paper liu2026certificate: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

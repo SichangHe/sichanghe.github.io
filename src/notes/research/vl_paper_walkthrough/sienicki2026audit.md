@@ -29,4 +29,3 @@ The audit recommends a standardized report header and immutable manifest contain
 - source-fidelity audit — verify objections against immutable source artifacts and record withdrawals
 - evidence decomposition — report certificates, human review, independent derivation, extensions, uptake, and references separately
 - immutable provenance — preserve versions, checksums, tool commits, reviewer scope, AI use, and unresolved dependencies
-Checked 2026-10-14 against the paper by a Codex agent: audit record sienicki2026audit; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

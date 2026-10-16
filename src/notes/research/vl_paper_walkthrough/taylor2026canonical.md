@@ -40,5 +40,3 @@ The ranges use separate denominators: training tokens to a fixed accepted-change
 - proof-carrying change: attach intent, obligations, receipts, rollback, and provenance to every accepted change
 - graded preservation dossier: promote artifacts from syntactic through trace, fuzz, differential, and proof-backed evidence tiers
 - paired cost ledger: compare raw and canonical repositories by amortized cost per verified correct change
-
-Checked 2026-10-15 against the paper by a Codex agent for no_accidental_software_agent_first_canon_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

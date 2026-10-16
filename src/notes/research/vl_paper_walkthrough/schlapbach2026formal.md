@@ -60,4 +60,3 @@ MCP+ removes Resource and Prompt from the equivalence fragment and adds metadata
 - failure-mode typing — enumerate errors and recovery strategies as machine-readable metadata
 - dependency declarations — encode required tool ordering and prove predecessor traces
 - MCP+ round trips — extend metadata until forward and reverse mappings are identities
-Checked 2026-10-15 against paper schlapbach2026formal: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

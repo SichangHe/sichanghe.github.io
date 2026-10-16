@@ -79,5 +79,3 @@ The proxy trajectory follows the external oracle qualitatively, but the paper re
 - audit-sufficient proxy: treat a weighted property score as evidence over named checks, not full semantic correctness
 - per-axis feedback: use decomposed verdicts when scalar feedback cannot identify the repair
 - drift convergence model: bound expected unresolved gap by contraction plus judge-noise residual
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

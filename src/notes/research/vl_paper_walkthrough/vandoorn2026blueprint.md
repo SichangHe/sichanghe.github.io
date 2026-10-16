@@ -90,4 +90,3 @@ The paper claims successful Lean 4/mathlib formalization of the stated theorems 
 - explicit dependencies and constants — expose theorem parameters and recursively named inequality constants so automation can audit them
 - staged LLM formalization — keep human control of statements and structure while models generate routine proof text checked by the prover
 - real-to-ergodic reduction — combine endpoint permutation, multilinear interpolation, Calderón transference, and jump-to-variation conversion
-Checked 2026-10-15 against paper vandoorn2026blueprint: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -65,4 +65,3 @@ The implementation delays insertion until a hypothesis can complete a preceding 
 - shared-variable indices — intersect hypothesis and match buckets keyed by slot substitutions
 - lazy and phased insertion — defer index work until a preceding match or search phase makes it relevant
 - semantic match equivalence — retain one prefix when substitutions relevant to future slots and conclusions agree
-Checked 2026-10-15 against paper genereux2026incremental: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

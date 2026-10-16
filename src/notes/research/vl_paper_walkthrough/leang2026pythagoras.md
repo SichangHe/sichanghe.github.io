@@ -69,5 +69,3 @@ The threat to agent-written verified Rust is data contamination and specificatio
 - restart pass@N — compare independent proof sampling with self-correction under explicit denominators
 - perturbation benchmark — test transfer and contamination sensitivity on controlled statement mutations
 - tactic-level diffusion — mask and denoise complete proof tactics rather than arbitrary tokens
-
-Checked 2026-10-15 against the paper by a Codex agent for pythagoras_prover_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

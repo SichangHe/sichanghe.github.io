@@ -49,4 +49,3 @@ The RL stage estimates each goal's pass rate using rollouts, downsamples redunda
 - queue-based proof assembly: deduplicate obligations, prove each fragment, and assemble only verifier-accepted fragments
 - verifier-filtered expert iteration: expand training data with repaired proofs that pass the Lean kernel, retaining denominator counts
 - difficulty-smoothed DAPO: curate rollout data by pass-rate bins before reinforcement refinement
-Checked 2026-10-14 against the paper by a Codex agent: audit record xiong2026automatedformalproofs; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

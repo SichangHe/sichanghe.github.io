@@ -37,4 +37,3 @@ The system measures exact output agreement, repair convergence, coverage, and sa
 - repair/test split: tune on human-written cases and evaluate once on independent held-out cases
 - equivalence checking: prove sampled implementations equivalent or produce concrete divergence inputs
 - coverage/depth diagnostics: measure cell and branch coverage and prioritize long dependency chains
-Checked 2026-10-15 against paper han2026law: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

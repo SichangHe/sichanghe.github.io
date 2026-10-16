@@ -91,4 +91,3 @@ Evidence. Table I reports brief sizes 592–635 tokens on five external reposito
 - signed append-only evidence ledger — record claims, failures, signatures, and review transitions without mutable history
 - model-free merge gate — require fresh, independently reviewed, plausible evidence and mechanically reject stale or forged claims
 - compact indexed orientation brief — summarize repository structure, changed radius, and evidence state in a bounded token artifact
-Checked 2026-10-14 against the paper by a Codex agent: audit record tiwari2026assay; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

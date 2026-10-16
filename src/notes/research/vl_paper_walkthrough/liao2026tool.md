@@ -87,4 +87,3 @@ The paper reports that T3 RL@16 reaches AIME 20.0 versus TTRL@64 15.8 while usin
 - domain solver verification — translate candidate logical claims into SMT-LIB2 constraints and use a solver such as Z3 as external evidence before reward assignment
 - soft verifier weighting — use finite `ω>1` because noisy verifiers make hard filtering brittle; retain unit mass for unverified candidates
 - verifier-capacity evaluation — measure verifier accuracy and run ablations with self, external, and undersized verifiers before trusting verification-shaped updates
-Checked 2026-10-15 against paper liao2026tool: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

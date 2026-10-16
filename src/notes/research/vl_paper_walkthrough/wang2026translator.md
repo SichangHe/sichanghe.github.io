@@ -48,4 +48,3 @@ The measured cost is 21.43M tokens (214.3K/project) versus 19.51M (195.1K/projec
 - single-insight adversarial refinement — generate executable boundary challenges and accept field updates only after replayed compiler/test evidence
 - compositional insight refinement — select compatible insight sets, jointly challenge them, and learn precedence or coordination constraints
 - execution-guided project migration — combine dependency ordering, retrieval, compiler/test repair, and trace reflection into a continual loop
-Checked 2026-10-15 against paper wang2026translator: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

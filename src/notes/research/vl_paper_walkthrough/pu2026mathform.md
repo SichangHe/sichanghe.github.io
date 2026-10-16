@@ -78,5 +78,3 @@ Table 3 compares models trained on 100K examples sampled from each dataset under
 - trajectory reconstruction: synthesize a clean formalization explanation from each verified statement and its source
 - n-gram decontamination: remove training examples sharing a 13-gram with held-out evaluation examples
 - joint binary reward: reward a candidate only when compilation and semantic checks both pass
-
-Checked 2026-10-15 against the paper by a Codex agent for mathform_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

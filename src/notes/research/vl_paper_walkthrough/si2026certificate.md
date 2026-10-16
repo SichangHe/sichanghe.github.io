@@ -100,4 +100,3 @@ The paper's RQ1 validation has five complementary methods: per-family unit suite
 - multi-family obligation registry: share well-formedness, lens, and structural checks while adding family-specific side conditions
 - certified sequence composition: check each rewrite against the actual intermediate produced by the previous rewrite
 - adversarial and differential validation: combine unit suites, cross-family perturbations, deterministic VM traces, and side-condition ablations
-Checked 2026-10-14 against the paper by a Codex agent: audit record si2026certificate; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

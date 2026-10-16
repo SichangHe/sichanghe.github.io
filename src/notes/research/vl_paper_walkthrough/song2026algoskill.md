@@ -66,4 +66,3 @@ Represent an algorithm as an operation graph and compose rules such as `C(sort)=
 - local skill credit: update a skill's value from the reward change after its transition
 - symbolic plus empirical complexity: compare operation-graph estimates with fitted runtime exponents
 - counterexample repair: feed failed tests, verifier messages and stress failures into later typed skills
-Checked 2026-10-15 against paper song2026algoskill: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

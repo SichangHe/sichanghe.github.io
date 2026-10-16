@@ -53,5 +53,3 @@ Measured: participant counts, percentages, ordinal adequacy ratings, and qualita
 - trace-guided refinement — classify counterexamples, repair model or attacker assumptions, and rerun
 - dependency-guided reasoning — navigate rule dependencies and unresolved constraints with helper lemmas
 - explicit-state modeling — encode state, algebra, and equivalence assumptions explicitly and measure their proof cost
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

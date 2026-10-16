@@ -94,4 +94,3 @@ Inference: the headline fractions are arithmetically consistent: 174/322 = 54.0%
 - state-isolated native checking — run each artifact with reset, environment-keyed prover state and record provenance
 - bidirectional semantic equivalence — prove generated and reference statements entail each other after native checking
 - formal–natural-language round trip — re-formalize an intermediate natural-language description and compare executable verification rates
-Checked 2026-10-15 against paper wu2026itpeval: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

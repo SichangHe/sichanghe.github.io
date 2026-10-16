@@ -43,4 +43,3 @@ Trusted components include SymPy evaluation, regex extraction, manually chosen t
 - logical-flow verification — track named intermediate values and flag large unexplained changes across separated steps
 - constraint satisfaction filter — enforce domain properties such as non-negativity, integrality, and conservation
 - verifier-derived DPO — prefer fully checked traces over correct-answer traces that fail intermediate checks
-Checked 2026-10-15 against paper zhang2026reliable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

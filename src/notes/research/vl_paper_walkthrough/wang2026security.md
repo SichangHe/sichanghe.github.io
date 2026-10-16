@@ -38,4 +38,3 @@ Trusted elements include the paired patch as a specification oracle, CVE descrip
 - contract judging — classify code by strict compliance with an explicit behavioral contract
 - structured multi-agent prompting — enforce XML schemas, role separation, and bounded reasoning
 - contract completeness auditing — target omitted conditions and vacuous checks as first-class failures
-Checked 2026-10-15 against paper wang2026security: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

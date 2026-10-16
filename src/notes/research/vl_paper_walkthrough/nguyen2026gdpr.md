@@ -40,4 +40,3 @@ The study measures scores, curated-sample counts, and qualitative failure catego
 - role-separated verifier agents — independently score scenario, representation, logic, and legal fidelity
 - bounded feedback refinement — regenerate below a score threshold using verifier feedback
 - human meta-review — inspect abstraction and scope failures that executable checks cannot detect
-Checked 2026-10-15 against paper nguyen2026gdpr: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

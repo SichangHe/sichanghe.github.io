@@ -45,4 +45,3 @@ Verus form (inference): specify the recurrence transition and backward equations
 - positive-control validation: require broken-kernel rejection and independently correct-kernel acceptance before auditing a corpus
 - differential benchmark audit: join the benchmark verdict with the stronger verifier in a 2x2 table and preserve denominators
 - oracle-backed systems verification: establish an independent high-precision oracle and run the same contract battery on native code
-Checked 2026-10-13: audit record shah2026contract; paper-study comparison complete; gate executed; experiments not rerun

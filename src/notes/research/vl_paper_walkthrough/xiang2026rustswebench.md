@@ -54,4 +54,3 @@ RustForger with Claude resolves 143/500 tasks (28.6%), compared with 106/500 (21
 - ReAct repair loop: alternate repository actions and observations to localize and patch issues
 - isolated reproduction workspace: decouple tests from complex project build configurations
 - AST Trace command: inject selective macros, capture cross-project calls, and restore source after diagnosis
-Checked 2026-10-15 against paper xiang2026rustswebench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

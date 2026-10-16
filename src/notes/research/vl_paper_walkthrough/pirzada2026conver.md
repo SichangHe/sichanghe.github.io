@@ -110,4 +110,3 @@ ConVer’s soundness depends on ESBMC’s system and function checks and the con
 - inductive loop invariants — prove base, preservation, and exit obligations instead of unrolling loops
 - complexity-scored pre-abstraction — route high-risk functions through conservative summaries before refinement
 - property-preserving preprocessing — translate a richer model to a verifier language while retaining assertions
-Checked 2026-10-13: audit record pirzada2026conver; paper-study comparison complete; gate executed; experiments not rerun

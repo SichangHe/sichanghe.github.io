@@ -84,4 +84,3 @@ Inference: threat to agent-written verified Rust is substantial for completion a
 - plan contract: freeze goal, acceptance tests, boundaries, and task ownership before coding, then human-check the plan
 - alternating review: route each builder round through a fresh independent reviewer whose parsed verdict controls completion
 - mechanical gate protocol: validate state, round artifacts, review format, and explicit stop conditions in deterministic hooks
-Checked 2026-10-15 against paper liu2026humanize: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

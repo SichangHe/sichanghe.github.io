@@ -74,4 +74,3 @@ The paper demonstrates that Onion generated a BibTeX CLI with no direct producti
 - staged Onion workflow — progress from YAML requirements to structure, tests, class implementations, and acceptance execution
 - bounded repair loop — repair tests or structure after failed generation, then retry up to a fixed limit
 - model variability audit — repeat generations per model and report intervention, failures, and output differences
-Checked 2026-10-15 against paper melegati2026testoriented: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -24,4 +24,3 @@ Use the same graph across changing requirements. Keep old evidence, add the newl
 - independent closure validation: reject optimizer supports unless forward chaining under original AND/OR rules derives every root
 - requirement-evolution recomputation: add new roots and recompute support, reporting infeasibility explicitly when no derivation exists
 - conjunction-preserving graph model: retain multi-premise rules so pairwise projections cannot create false coverage
-Checked 2026-10-14 against the paper by a Codex agent: audit record goswami2026assurance; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

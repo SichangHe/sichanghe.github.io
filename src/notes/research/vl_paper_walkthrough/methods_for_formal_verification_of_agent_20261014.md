@@ -56,5 +56,3 @@ The four artefacts are `evidence/static.json`, `evidence/types.proof`, `evidence
 - refinement-typed dispatch — admit only envelopes whose capability is in the manifest set
 - SMT-bounded biconditional checking — search finite transaction horizons for an audit/world-state mismatch and retain a witness or unsat result
 - proof-carrying bootstrap — ship signed static, type, and SMT evidence and independently re-run all checks
-
-Checked 2026-10-15 against the paper by a Codex agent for methods_for_formal_verification_of_agent_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

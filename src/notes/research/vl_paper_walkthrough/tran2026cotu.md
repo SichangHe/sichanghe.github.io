@@ -57,4 +57,3 @@ Error analysis gives denominators: Round 1 has 36/50 fully correct, with 10 prem
 - verifier self-correction — regenerate after parse or execution failure within a bounded retry budget
 - latency fallback — switch to majority-voted fast samples before a hard timeout
 - verifier-filtered distillation — train task adapters only on teacher traces whose generated programs pass the symbolic verifier
-Checked 2026-10-15 against paper tran2026cotu: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

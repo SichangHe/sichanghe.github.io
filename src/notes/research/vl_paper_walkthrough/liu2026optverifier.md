@@ -89,5 +89,3 @@ The paper defines the two consistency/validity scores and measures solving accur
 - back-translation consistency: interpret a generated artifact back into structure and compare it with the requirement-derived structure
 - solution interpretation check: translate computed outputs into context and critique them for logical violations
 - dual-feedback refinement: regenerate the artifact from both structural and solution-side comments, then rerun both checks
-
-Checked 2026-10-15 against the paper by a Codex agent for opt_verifier_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -49,4 +49,3 @@ Verus form (Inference): log prompts, proof edits, solver output, and test comman
 - failure taxonomy: classify spans into implementation, debugging, infrastructure, verification, optimization, and cosmetic work
 - strategy-text audit: inspect comments, test choices, and cross-language prototyping for recurring agent behaviors
 - mixed-effects cost model: estimate language penalties with problem identity as a random effect
-Checked 2026-10-15 against paper wu2026tokenmaxxing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

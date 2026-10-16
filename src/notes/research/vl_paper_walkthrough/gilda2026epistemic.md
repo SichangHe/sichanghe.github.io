@@ -93,4 +93,3 @@ Verus form (Inference): encode arithmetic claim predicates as `spec fn`s and cal
 - F-G-R ceilings — cap reliability by formality, scope congruence, and epistemic layer
 - evidence decay — attach validity windows, lower expired evidence to 0.1, and alert for re-validation, waiver, or deprecation
 - SMT and property checks — validate quantitative constraints with SMT and test calculator invariants with generated inputs
-Checked 2026-10-15 against paper gilda2026epistemic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

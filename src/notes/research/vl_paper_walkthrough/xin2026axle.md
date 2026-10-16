@@ -57,4 +57,3 @@ Verus form. Inference: Turn an unsolved Verus assertion or loop obligation into 
 - declaration extraction and merge: emit dependency-closed declarations and recombine fragments by equivalence, topological order, and conflict renaming
 - sublemma extraction: generalize an unresolved proof state into a standalone lemma that an agent can solve and call back
 - deterministic proof repair: iterate semantics-preserving simplification and localized repair with rollback on compilation errors
-Checked 2026-10-14 against the paper by a Codex agent: audit record xin2026axle; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

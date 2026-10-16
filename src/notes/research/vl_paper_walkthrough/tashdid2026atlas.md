@@ -72,4 +72,3 @@ The key failure condition is underspecification. The paper reports missed detect
 - three-context prompting: combine design documents, RTL AST, and a security-centric summary before generating assertions
 - non-vacuity and proof loop: add covers, run JasperGold, refine assumptions, and escalate inconclusive results
 - CWE-to-assertion mapping: bind each detected weakness to signal-level properties and inspect proof or counterexample outcomes
-Checked 2026-10-14 against the paper by a Codex agent: audit record tashdid2026atlas; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

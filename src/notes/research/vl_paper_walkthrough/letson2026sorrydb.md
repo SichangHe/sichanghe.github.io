@@ -73,5 +73,3 @@ The paper leaves trusted the Lean kernel, LeanInteract, repository build environ
 - compiler-feedback self-correction — iterate proposal, verifier diagnostics, and repair under a fixed attempt budget
 - agentic repository search — combine a proposer, search tool, and deterministic reviewer while allowing direct local-definition proofs
 - contamination and longitudinal governance — use time cutoffs, goal hashes, allowlists, and Bradley–Terry/Elo tracking
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

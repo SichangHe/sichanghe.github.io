@@ -129,4 +129,3 @@ The paper evaluates proof quality by expert judgments of concision, maintainabil
 - binding analysis — fill mechanically determined arguments while leaving semantic premises as explicit goals
 - multi-agent tree search — backtrack, spawn parallel branches, prune stalled paths, and retain negative memory
 - checker-gated proof assembly — accept only tactic paths and final scripts that the proof assistant verifies
-Checked 2026-10-13: audit record ma2026shannonprover; paper-study comparison complete; gate executed; experiments not rerun

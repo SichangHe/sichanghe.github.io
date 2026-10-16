@@ -108,5 +108,3 @@ The Lean kernel checks the formal declarations and proof terms, and the reported
 - review–repair cycle: compare literature, blueprint, and code, then patch and repeat with a bounded reviewer loop
 - finite canonical proof decomposition: reduce to canonical form, separate blocks at finite lengths, and combine gauge results
 - local library replacements: prove missing mathematical prerequisites from available primitives and record their assumptions
-
-Checked 2026-10-15 against the paper by a Codex agent for multi_agent_autoformalization_of_tensor__20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

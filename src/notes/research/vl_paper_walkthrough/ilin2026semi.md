@@ -116,5 +116,3 @@ evidence and limits: Coulomb analysis added about 4,000 lines and was the hardes
 - adversarial babysit loop — repeatedly critique, prove, check, clean, and log agent changes
 - automated lemma falsification — submit small lemmas and use disprovals to repair statements
 - singularity decomposition and definition audit — split local/complement estimates and expert-check overloaded definitions
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

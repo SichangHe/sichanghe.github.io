@@ -73,4 +73,3 @@ Lean proves declarations from their stated assumptions and imported axioms; it d
 - hybrid theorem retrieval: combine concept, syntax-pattern, and goal-directed search over indexed declarations
 - dependency statement audit: compare every formal node with its intended claim and scan transitive proof dependencies
 - feedback memory: retain accepted, failed, and downgraded runs and promote generic proved lemmas for later reuse
-Checked 2026-10-14 against the paper by a Codex agent: audit record tan2026causalsmith; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

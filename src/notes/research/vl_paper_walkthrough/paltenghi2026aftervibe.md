@@ -50,4 +50,3 @@ The three graders are autonomous LLM agents, so their judgments are fallible. Gr
 - independent oracle extraction: derive verification conditions and test commands without using the recovered spec
 - three-tier regeneration test: score flexible tests, VCs, and intent alignment with weighted evidence
 - iterative strengthening: rewrite weak specs from failed conditions and retain the best-of-K candidate
-Checked 2026-10-15 against paper paltenghi2026aftervibe: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

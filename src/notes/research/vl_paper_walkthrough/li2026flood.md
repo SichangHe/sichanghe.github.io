@@ -80,4 +80,3 @@ Verus form (Inference:): model dictionary expansion and wrapped length as pure/s
 - sparse sweep — reserve infinitely many density-zero rounds to eventually claim every unenumerated valuable item
 - race-plus-sweep generator — combine intersection racing with union sweeping to attain 1−α/2 on the tight family
 - compression-model instantiation — realize density interfaces with macro dictionaries and count precision of exhaustive generation
-Checked 2026-10-15 against paper li2026flood: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

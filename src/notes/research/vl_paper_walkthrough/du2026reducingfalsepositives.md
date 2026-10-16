@@ -55,5 +55,3 @@ The authors measure average per-alarm latency and API price. Table 4 reports 2.1
 - domain prompting: add chain-of-thought, few-shot examples, or structured bug-type knowledge
 - static-analysis hybrid triage: feed sink context or path constraints to an LLM for reachability decisions
 - cost/category evaluation: report per-alarm latency and price, then stratify performance by bug category
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

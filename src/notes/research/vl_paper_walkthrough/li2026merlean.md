@@ -62,5 +62,3 @@ evidence and limits. The harness closes all 10/23 FormalQualBench problems witho
 - anchored proof-plan decomposition — externalize a topological proof DAG and invalidate downstream work whenever a plan statement changes
 - independent mathematical, decomposition, and faithfulness checks — route compiler-clean, false, oversized, or weakened statements through separate read-only decisions
 - recursive repair with controlled authority — give planning, code-writing, and checking agents disjoint powers and stop only after anchor and axiom audits pass
-
-Checked 2026-10-15 against the paper by a Codex agent for merlean_prover_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

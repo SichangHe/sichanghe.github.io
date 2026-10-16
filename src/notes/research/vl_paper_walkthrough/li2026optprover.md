@@ -121,5 +121,3 @@ Evidence. On ProofNet, OptProver improves from 21 to 31 solved problems at Pass@
 - perplexity-weighted DPO: clip inverse token perplexity weights before computing preference loss
 - combined PW-UAPO: apply perplexity weighting to utility-aware preference pairs
 - domain and retention benchmark: measure in-domain Pass@k with correct regime denominators and test out-of-domain forgetting
-
-Checked 2026-10-15 against the paper by a Codex agent for optprover_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

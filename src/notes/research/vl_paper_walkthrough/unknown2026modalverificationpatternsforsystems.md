@@ -61,4 +61,4 @@ The paper leaves the soundness and engineering cost of a new modality to each un
 - nominalization choice — explicitly name contexts for cross-context proofs or inherit them implicitly for concise single-context proofs
 - context-indexed taxonomy — map virtualization, fences, actors, reference counts, and crashes to dedicated context modalities and steps
 - shallow modal embedding — lift separation-logic predicates pointwise so modal assertions can compose ownership and interactive proof rules
-Checked 2026-10-13: audit record unknown2026modalverificationpatternsforsystems; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

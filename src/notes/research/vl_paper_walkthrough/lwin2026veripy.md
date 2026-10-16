@@ -112,5 +112,3 @@ evidence and limits: Reuse proves 14/24 trials (58.3%) and Rebuild 10/24 (41.7%)
 - guarded differential execution — compare native and translated behavior while treating tests as auxiliary evidence
 - relational compatibility product — prove old-domain inclusion and equality of declared observations
 - frozen agent maintenance trial — compare proof reuse and rebuild under identical budgets with repeated denominators
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

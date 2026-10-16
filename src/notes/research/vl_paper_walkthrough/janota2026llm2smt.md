@@ -90,5 +90,3 @@ The benchmark measures solved-instance counts and timeout-bounded runtime, not a
 - model certification: re-encode SAT models and validate them with an independent solver
 - proof-certificate export: split theory lemmas from propositional closure and check each in a proof assistant
 - regression discipline: commit each fix with a reproducing test and bisect later changes
-
-Checked 2026-10-15 against the paper by a Codex agent for llm2smt_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -104,4 +104,3 @@ evidence and limits: The paper argues that formal verification can extend to eng
 - three-level evidence — combine mechanical proof or replayable computation with agent judgment and selected human judgment
 - statistical review audit — sample accepted claims, publish error rates and denominators, and repeat after model changes
 - formal library building — encode established results and assumptions in a checker so later work composes trusted lemmas
-Checked 2026-10-14 against the paper by a Codex agent: audit record gusev2026swarms; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

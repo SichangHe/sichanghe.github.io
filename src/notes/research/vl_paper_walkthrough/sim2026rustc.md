@@ -150,5 +150,3 @@ The study's strongest evidence is 30 manually verified issue records, release-by
 - trait differential oracle — compare rustc with Chalk on trait overlap, orphan, and dyn-compatibility cases
 - executable type-model oracle — translate supported snippets to a-mir-formality and compare accept/reject decisions
 - semantics documentation audit — cross-check Reference, FLS, and RFC rules and test cross-feature interactions before mechanization
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -78,5 +78,3 @@ Selection error is separate. Proposition 8.2 says that for at most M adaptive se
 - uniform self-modification closure: quantify bounded candidate/history inside a fixed verification envelope with common contracts
 - adaptive selection budget: sum conditional false-selection probabilities across every candidate-selection call
 - finite reproducible audit: separate exact task correctness, discovery probability, language counts, and interface changes
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

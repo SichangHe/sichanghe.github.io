@@ -41,5 +41,3 @@ Limits and product implications. The paper says formal methods “shift the gaps
 - two-gap diagnosis — compare formal requirements with stakeholder intent and environment models with real deployment conditions before trusting a proof
 - assurance-revision loop — use deployment evidence and authorized human decisions to revise requirements, models, evaluators, and then rerun verification
 - risk-calibrated evaluation — allocate human review and evaluator fidelity by consequence and uncertainty, using cascaded checks and exposure controls
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

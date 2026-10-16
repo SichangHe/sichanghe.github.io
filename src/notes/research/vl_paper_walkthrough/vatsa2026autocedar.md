@@ -61,4 +61,3 @@ evidence and limits. AUTO CEDAR’s formal property checks passed 100% for its 2
 - reviewed intent atoms and fixed semantic boundary — decompose prose into source-linked, reviewer-approved schema and behavior atoms, then freeze floors, ceilings, and liveness before synthesis
 - verifier-guided CEGIS with typed repair signals — classify verifier failures by target admission, semantic direction, local diagnostics, or history and send target-preserving repair packets
 - symbolic set checking and request witnesses — use SMT policy-denotation inclusion and concrete set-difference requests, with request tests as supplementary evidence
-Checked 2026-10-14 against the paper by a Codex agent: audit record vatsa2026autocedar; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

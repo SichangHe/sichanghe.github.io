@@ -81,4 +81,3 @@ Evidence and limits. The pipeline's return guarantee is only that L1 passed; L2 
 - CPT/OPT behavioral testing: perturb parameters and classify objective-response ratios to detect missing constraints or objective terms
 - diagnosis-guided repair: target WARNING components while treating ambiguous signals as logged INFO
 - regression-guarded verification loop: enforce safety checks, rerun the blocking verifier, and roll back objective/status regressions
-Checked 2026-10-15 against paper lian2026reloop: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

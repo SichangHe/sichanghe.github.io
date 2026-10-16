@@ -123,4 +123,3 @@ Inference: the trusted base is broad: Clef's type and effect interpretation, eac
 - four-tier verification: route structural, arithmetic, reusable-system, and relational obligations to progressively richer mechanisms
 - verified distributed reduction: compose capacity, ownership, partition freshness, boundary correspondence, and final rounding laws
 - explicit probabilistic budgets: combine worker, boundary, and output errors with a declared union bound and completion model
-Checked 2026-10-15 against paper haynes2026decidable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

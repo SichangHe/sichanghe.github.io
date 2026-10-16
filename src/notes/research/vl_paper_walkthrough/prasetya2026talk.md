@@ -84,5 +84,3 @@ Inference: threat to agent-written verified Rust is high for specification gener
 - two-stage contract prompting: extract an English condition, then emit a fixed-signature Boolean function from prose and examples
 - mutation-guided negative tests: mutate the reference implementation so wrong outputs become postcondition counterexamples
 - graded contract metrics: report full-test acceptance, test fraction, execution errors, and FP/FN rates by task difficulty
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

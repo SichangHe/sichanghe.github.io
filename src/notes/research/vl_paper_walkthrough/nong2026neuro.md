@@ -40,4 +40,3 @@ Proved or mechanically checked: the study’s SMT satisfiability checks, path ex
 - anchored random walks: bias ICFG exploration by backward-BFS distances while preserving path diversity and call-stack validity
 - solver-backed PoV synthesis: use CEM/CSM to produce an executable input generator and SMT as a validated fallback
 - patch differential validation: execute a generated PoV on vulnerable and patched revisions to expose incomplete fixes
-Checked 2026-10-15 against paper nong2026neuro: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

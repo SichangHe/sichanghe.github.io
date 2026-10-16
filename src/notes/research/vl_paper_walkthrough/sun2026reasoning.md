@@ -52,4 +52,3 @@ Inference: threat to an agent-written verified-Rust product is moderate. The app
 - validation with reflection — execute generated proof steps, selectively ask an LLM to detect misapplied branching tactics, roll back, and preserve a structured failure record
 - retrieval with planning — generate a natural-language proof plan, embed plan steps and semantic lemma descriptions, and retrieve strategy-aligned lemmas and proof examples
 - per-goal failure history — feed the full failed tactic sequence and reason back into the next proof-generation prompt
-Checked 2026-10-13: audit record sun2026reasoning; paper-study comparison complete; gate executed; experiments not rerun

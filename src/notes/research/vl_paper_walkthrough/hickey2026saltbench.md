@@ -104,5 +104,3 @@ The machine referee decides acceptance for the benchmark's frozen artifacts. The
 - pre-registered freeze — commit population, arms, predictions, and adverse outcomes before execution
 - budget censoring — treat caps as halts and report lower bounds rather than failures
 - separated estimands — report cost and correctness with distinct cells and denominators
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

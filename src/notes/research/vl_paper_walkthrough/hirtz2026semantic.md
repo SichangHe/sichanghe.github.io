@@ -45,5 +45,3 @@ The paper reports that monolithic answer-agnostic variants guessed answers in 70
 - compositional drafting — distill, normalize into SDNF, formalize with library abstractions, then format a standalone file
 
 - dual-signal correction — combine verifier diagnostics with multidimensional semantic critique, precompiled repair drafts, and failed-attempt history
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

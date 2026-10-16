@@ -102,5 +102,3 @@ The ROCQ kernel/compiler, PROSA library, imported MathComp libraries, retrieval 
 - deferred-proof skeletons — generate type-correct declarations and contexts first while deferring proof bodies to a separate stage
 - integrity-checked proof repair — replace only the intended proof block, compile, feed exact diagnostics back, and reject axioms or target edits
 - corpus and denominator design — validate extracted graphs and report full-sketch success separately from local section compilation
-
-Checked 2026-10-15 against the paper by a Codex agent for prove_rt_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

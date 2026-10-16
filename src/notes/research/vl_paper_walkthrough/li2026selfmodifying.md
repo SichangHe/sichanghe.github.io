@@ -105,5 +105,3 @@ The abstract’s 45.1% is a held-out solve rate on 244 miniF2F-test problems, wh
 - mastery-throttled curriculum — replace mastered tasks laterally or with harder tasks only after level-specific mastery
 - anchor recalibration — preserve cross-generation selection scores with champion re-evaluation and a difficulty coefficient
 - verifier-feedback evolution — evolve bounded repair, lemma-name checking, and optional self-contained subgoal workflows under Lean checks
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

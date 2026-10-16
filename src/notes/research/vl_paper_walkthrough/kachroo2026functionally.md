@@ -52,4 +52,3 @@ Evidence. On 1,200 EquiBench pairs, 230 disagreements were challenged and 216 we
 - bounded citable analysis — constrain graph queries and require node, path, and source-span evidence for every claim
 - blinded surrogate execution — generate branch-targeting typed inputs and independently predict source and target observables
 - selective reconciliation — gate evidence into equivalent, inequivalent, or unclear without forcing uncertain judgments
-Checked 2026-10-15 against paper kachroo2026functionally: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

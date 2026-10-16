@@ -83,5 +83,3 @@ The 86.9% solved rate includes 47 timeouts; it measures definite results within 
 - bag-closure lifting — use multiplicity equality only after proving every relevant ordering is admitted
 - certified lemma-guided synthesis — let an LLM assemble query-specific proofs while a Rocq kernel checks each certificate
 - proof-producing countermodels — certify non-equivalence with a fixed typed database against complete outcome relations
-
-Checked 2026-10-15 against the paper by a Codex agent for logos_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

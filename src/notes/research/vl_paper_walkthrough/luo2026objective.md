@@ -35,4 +35,3 @@ The verifier proves only the tested instances and perturbation families; it does
 - one-constraint perturbation testing — mutate route structure or resource parameters so each witness isolates one constraint family
 - verifier-driven SFT filtering — retain generated code only when build, objective, and injection checks pass
 - verifier reward for RL — use build, objective, and injection indicators as weighted GRPO rewards
-Checked 2026-10-14 against the paper by a Codex agent: audit record luo2026objective; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

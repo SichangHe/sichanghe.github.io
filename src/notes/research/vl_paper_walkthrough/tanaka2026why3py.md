@@ -41,5 +41,3 @@ Verus form (Inference): encode each method's admissibility conditions as reusabl
 - library contract abstraction: verify calls against logical contracts while trusting separately implemented numerical libraries
 - misuse detection for meta-analysis: use method-specific specifications to expose missing publication-bias and p-hacking requirements
 - scalability measurement: report solver, hardware, program size, group/study denominator, and verification times
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

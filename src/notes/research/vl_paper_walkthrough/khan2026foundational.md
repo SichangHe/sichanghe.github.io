@@ -158,4 +158,3 @@ The paper's success is conditional on Lean's kernel, the soundness of the oracle
 - Imp VC generation — synthesize loop-invariant obligations from entry, body, and exit conditions
 - refinement CHC generation — derive universal subtype implications from dependent refinement types
 - quantified memory invariant — define non-SMT invariants such as initialized ring-buffer indices in Lean
-Checked 2026-10-13: audit record khan2026foundational; paper-study comparison complete; gate executed; experiments not rerun

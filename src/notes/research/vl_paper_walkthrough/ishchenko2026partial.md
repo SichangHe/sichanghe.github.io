@@ -55,5 +55,3 @@ What is proved is conditional validity of generated VCs under the supplied annot
 - structural invariant generation — derive reachable-state, state-variable, and transition-condition invariants by CFG and path analysis
 - layered SMT proof contexts — encode state updates and getters in SMT-LIB, select base/advanced/optional lemmas, and refine on `unknown`
 - per-VC fallback — classify solver results and defer unresolved obligations to an interactive theorem prover
-
-Checked 2026-10-15 against the paper by a Codex agent for partial_automation_of_verification_condi_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -53,4 +53,3 @@ Inference: Verus form: use Rust parsing and Verus compilation as the final verif
 - structured fine-tuning — train small models on natural language, predicates, and FOL as one structured target
 - incremental inference — generate predicates first and formulas second to limit error propagation
 - arity verification — check predicate signatures between generation stages before solver execution
-Checked 2026-10-15 against paper thatikonda2026symbolic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

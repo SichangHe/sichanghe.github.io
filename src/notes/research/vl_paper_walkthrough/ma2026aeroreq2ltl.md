@@ -69,4 +69,3 @@ In the end-to-end TRACE run, 67 correctly translated properties were supplied wi
 - SpaceKG grounding: map domain terms, aliases, values, and empirical conditions to typed implementation atoms
 - SpaceRDL templating: force mode, condition, timing, component, and action fields into an explicit intermediate contract
 - deterministic formal synthesis: translate grounded TNL by fixed rules and feed the resulting LTL to a verification tool
-Checked 2026-10-14 against the paper by a Codex agent: audit record ma2026aeroreq2ltl; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

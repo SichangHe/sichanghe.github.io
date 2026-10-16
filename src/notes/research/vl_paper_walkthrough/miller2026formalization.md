@@ -117,4 +117,3 @@ evidence and limits: the paper reports well-posedness at arbitrary Lipschitz con
 - reusable-layer extraction — isolate general declarations, standalone-build them, lint them, and audit dependencies
 - dual/primal metric bridge — maintain equivalent distance representations and choose the form the proof supports
 - coupling and regularity steering — use source-compatible estimates and add regularity only where a theorem needs it
-Checked 2026-10-14 against the paper by a Codex agent: audit record miller2026formalization; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

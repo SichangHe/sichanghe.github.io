@@ -59,4 +59,4 @@ Inference: agent-written verified Rust faces the same invariant-design bottlenec
 - background-theory abstraction — prove reusable array, permutation, and swap lemmas and feed them to SMT endgames
 - corner-case proof repair — use failed obligations to add missing branches and strengthen invariants
 - explicit proof escape hatches — choose interactive proofs, assertions, helper lemmas, or consciously trusted assumptions
-Checked 2026-10-14 against the paper by a Codex agent: audit record back2012invariant; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

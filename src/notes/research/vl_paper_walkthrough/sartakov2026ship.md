@@ -81,4 +81,3 @@ The final code is approximately 10.3 kSLOC of Rust in 16 files, from approximate
 - leaf-first dependency ordering — port call-graph leaves and expose callers only after their callees pass
 - two-gate differential validation — require compilation plus sustained runtime testing, with trace comparison on divergence
 - phased global-state conversion — complete function and buffer cleanup before wrapping globals from atomic scalars through complex mutexes
-Checked 2026-10-15 against paper sartakov2026ship: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

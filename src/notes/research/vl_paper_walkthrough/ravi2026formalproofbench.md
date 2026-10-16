@@ -43,4 +43,3 @@ The result measures end-to-end agent success under the given tools and 40-turn c
 - kernel-only acceptance: accept a proof only when the exact Lean kernel compiles it and reject escape-hatch declarations
 - execution-guided search: run candidate code early and use concrete diagnostics to focus subsequent lemma searches
 - contamination-resistant private benchmark: keep formalizations private while reporting deterministic kernel-checked accuracy, cost, and latency
-Checked 2026-10-15 against paper ravi2026formalproofbench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

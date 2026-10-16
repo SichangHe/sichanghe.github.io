@@ -96,4 +96,4 @@ The paper does not establish completeness, and its future work includes more gen
 - step and axiom proof rules: use symbolic one-step rewriting, subsumption, and trusted lemmas to prove all-path reachability
 - constructor unification automation: combine finitary matching with satisfiability checks to generate proof branches
 - invariant corollary: reduce an invariant to initial inclusion and an inductive renamed-pattern reachability obligation
-Checked 2026-10-14: audit record skeirik2017constructor; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

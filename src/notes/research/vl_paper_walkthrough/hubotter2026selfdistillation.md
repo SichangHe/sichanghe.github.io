@@ -74,5 +74,3 @@ Inference: The threat is medium for proof-generation throughput and low for form
 - dense SDPO advantages — replace rollout-level reward advantages with the teacher/student log-probability ratio for each token
 
 - feedback-backed test-time specialization — repeatedly apply the same self-distillation update to one hard question to compress successful context into model weights
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

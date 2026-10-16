@@ -61,4 +61,3 @@ The paper's authored controls establish the blind spot of postcondition-only eva
 - authored calibration controls — use known contracts to expose metric blind spots before evaluating models
 - joint-measurability comparison — rank agents on task intersections with comparable evaluator evidence
 - extraction and harness audit — inspect selected declarations and treat evaluator errors or placeholders as unresolved
-Checked 2026-10-13: audit record nair2026beyond; paper-study comparison complete; gate executed; experiments not rerun

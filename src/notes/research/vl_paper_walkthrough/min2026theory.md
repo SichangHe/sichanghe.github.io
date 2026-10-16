@@ -53,5 +53,3 @@ The paper proves no new theorem and reports no new end-to-end theory autoformali
 - recursive decomposition and abstraction learning: split propositions to atomic leaves, compose proofs, and extract reusable definitions into a dependency graph
 - restricted equivalence checking: evaluate semantic alignment with deterministic, context-restricted normalization and precision/recall against expert judgments
 - common intermediate representation: use an expressive, verifiable, embeddable IR to connect heterogeneous DSLs and verified transpilation
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

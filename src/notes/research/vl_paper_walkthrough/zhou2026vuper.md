@@ -70,4 +70,3 @@ The paper proves parser/serializer properties in Rocq and relies on OCaml runtim
 - weak-injection round trip: use strict injection for same-version messages and validity-preserving re-encoding for unknown extensions
 - verified combinator compiler: compose proved primitive and structural ASN.1 combinators, then generate parsers and serializers
 - verified-oracle fuzzing: compare real implementations against a formally verified parser and classify minimized discrepancies
-Checked 2026-10-15 against paper zhou2026vuper: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

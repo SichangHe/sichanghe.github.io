@@ -128,5 +128,3 @@ The paper measures observed dynamic outcomes, paired repair/regression transitio
 - structured failure selection — prioritize security and novel failures with typed bounded diagnostics
 - oracle qualification — validate secure implementations, vulnerable mutants, stability, partition separation, and human review
 - test-feedback overfitting rate — measure hidden joint failures among visible-joint passes with explicit counts
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

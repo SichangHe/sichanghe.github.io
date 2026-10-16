@@ -82,5 +82,3 @@ Measured artifacts include code volume, graph counts, test outcomes, feature-tes
 - six-layer harness: combine issue, compile, unit, round-trip, fresh-user, and human checks
 - staged skills pipeline: move contributions through proposal, validation, implementation, review, merge, and expert verification
 - symbolic path routing: compose and compare overhead expressions before selecting a solver path
-
-Checked 2026-10-15 against the paper by a Codex agent for problem_reductions_at_scale_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

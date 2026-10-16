@@ -69,4 +69,3 @@ The paper measures generated Lean compilation, BEq+ equivalence, GTED similarity
 - deterministic paraphrase suite — apply guarded, reference-backed single-axis rewrites outside protected math/specification spans and compare paired formalizations
 - layered robustness measurement — separate compilation, equivalence checking, and structural similarity, then classify compiler failures
 - dataset-specific repair targeting — map dominant diagnostics to retrieval for unknown identifiers or compiler-feedback training for syntax/elaboration failures
-Checked 2026-10-15 against paper feng2026characterizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

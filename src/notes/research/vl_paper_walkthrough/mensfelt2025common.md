@@ -91,4 +91,3 @@ The survey reports that current systems are domain-specific and calls cross-doma
 - matched semantic validation — choose checks that exercise the target’s behavior, such as entailment, payoff enumeration, plan cross-validation, or ontology reasoning
 - interactive formalization — ask clarifying questions about ambiguity and assumptions before committing to formal code
 - target-language selection — balance expressiveness, verification tractability, available tools, and workflow needs
-Checked 2026-10-15 against paper mensfelt2025common: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

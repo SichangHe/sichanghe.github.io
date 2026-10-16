@@ -57,4 +57,3 @@ The paper's Table 3 lists ten domains with three problems each, although nearby 
 - repair-based GRPO — train on failed specifications with dense tier-transition rewards and verifier feedback
 - reward-variance monitoring — detect GRPO collapse when all sampled repairs receive the same score
 - best-of-k verifier sampling — use repeated checked candidates to raise usable-specification yield while preserving a greedy benchmark
-Checked 2026-10-13: audit record spencer2026tla; paper-study comparison complete; gate executed; experiments not rerun

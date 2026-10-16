@@ -59,4 +59,3 @@ Inference: The threat to agent-written verified Rust is moderate at generation a
 - verifier-grounded instruction design — derive rules from discrete solver failures and keep each rule narrow
 - in-domain and OOD evaluation — compare average@8 and pass4 with explicit sample and dataset denominators
 - privilege transfer testing — train on one logical dataset and evaluate on another to expose brittle gold-answer behavior
-Checked 2026-10-15 against paper yu2026instruct: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -49,4 +49,3 @@ evidence: GPT-5.1 labeled 103 tests triggering, 35 non-triggering, and 14 unknow
 - exemplar-guided generation: adapt a known exploit payload to each application entry point
 - execution feedback loop: compile, run, self-critique, and revise tests for bounded trials
 - log-grounded LLM assessment: summarize build/runtime evidence and classify trigger status with strict JSON
-Checked 2026-10-15 against paper kanchi2026generating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

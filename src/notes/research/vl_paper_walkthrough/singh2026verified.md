@@ -92,5 +92,3 @@ Fine-tuning versus the non-finetuned baseline is normalized in Table 3 (p.12): r
 - verifier-gated generation — accept an LLM transformation only after an independent equivalence or contract checker succeeds
 - diagnostic regeneration — feed checker diagnostics into repeated candidate generation until a bounded, verified result is obtained
 - conservative transformation policy — use verification outcomes and held-out measurements to detect under-transformation and performance regressions
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

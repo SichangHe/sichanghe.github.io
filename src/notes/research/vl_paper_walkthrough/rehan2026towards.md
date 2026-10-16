@@ -69,4 +69,3 @@ The trusted base includes the curated German traffic regulations, physics and sa
 - grammar-bound translation: map causes to machine-checkable predicates under an explicit symbol grammar
 - minimal-set search: enumerate and cache minimal necessary and sufficient cause combinations
 - verify-before-admit: gate new rules on syntax, consistency, safety, and invariant checks before committing them
-Checked 2026-10-15 against paper rehan2026towards: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

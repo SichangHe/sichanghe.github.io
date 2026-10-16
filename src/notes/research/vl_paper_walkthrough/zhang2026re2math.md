@@ -72,5 +72,3 @@ The paper measures policy diagnostics and judge-labelled source–tool validity.
 - staged retrieval diagnostics — separate proof-need planning, query generation, source selection, grounding, and sufficiency metrics
 - frozen leakage-controlled evaluation — freeze search artifacts and split by citing paper for reproducible assessment
 - assumption accounting — check objects, domains, hypotheses, parameters, quantifiers, and conclusion strength at the proof state
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

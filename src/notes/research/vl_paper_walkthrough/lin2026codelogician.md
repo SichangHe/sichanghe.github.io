@@ -54,4 +54,3 @@ Inference: ImandraX proves stated VGs and computes symbolic regions under the ad
 - Inference: pure-functional autoformalization — expose state, recursion, abstraction levels, and unknown behavior in a checkable model
 - Inference: interaction counterexamples and numeric invariants — verify feature interactions and exact conservation, then repair assumptions exposed by witnesses
 - Inference: dependency-aware incremental formalization — formalize in import order and recompute only affected modules
-Checked 2026-10-15 against paper lin2026codelogician: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

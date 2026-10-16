@@ -55,4 +55,3 @@ Measured: runtime-valid and post-hoc-valid counts, average trace coverage, and q
 - structured vulnerability prompt — force a concrete exploit goal, validation check, repository constraints, and trace context
 - ranked taint traces — score CodeQL source-to-sink paths against LLM-extracted vulnerability components and retain the top five
 - feedback loop and taxonomy — regenerate with execution/coverage feedback and classify hardcoding, simulation, bad validation, benign use, and brute-force failures
-Checked 2026-10-15 against paper gezgin2026pocgym: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -56,4 +56,3 @@ Inference: a Verus evaluation should report verified-contract coverage, semantic
 - compilation-gated archive: retain unique verifier-passing candidates and reuse them as parents and context under a fixed call budget
 - bounded repair and AST fallback: use compiler/judge feedback for capped edits, then apply call-free structural rewrites when mutation stalls
 - repertoire evaluation: measure semantic coverage and concentration, then test deduplicated candidates under a fixed downstream prover-attempt budget
-Checked 2026-10-15 against paper lu2026formalevolve: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

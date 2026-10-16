@@ -41,5 +41,3 @@ The only numeric outcomes are up to 30% document-discovery time gain and up to 2
 - prover selection aid: use ML to rank automatic B provers while retaining the formal checker and traceability
 - certified safety controller: let ML propose perception outputs and let a formally verified controller accept or reject them
 - diagram-to-logic translation: convert relay diagrams to propositional specifications with multimodal prompting and expert validation
-
-Checked 2026-10-15 against the paper by a Codex agent for pragmatic_uses_of_ai_in_formal_methods_b_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

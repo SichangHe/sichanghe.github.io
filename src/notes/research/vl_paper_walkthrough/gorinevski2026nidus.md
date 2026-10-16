@@ -107,5 +107,3 @@ The paper's threat assumptions are explicit: kernel uncompromised, test runners 
 - recursive guidebook constraints — inherit organizational predicates and govern changes to the constraint surface itself
 - evidence provenance gate — require registered witnesses, server hashes, and fused test execution before accepting evidence
 - gate-sequence and lesson obligations — encode SOP prerequisites and past failure causes as machine-checked DAG and negative constraints
-
-Checked 2026-10-15 against the paper by a Codex agent for nidus_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

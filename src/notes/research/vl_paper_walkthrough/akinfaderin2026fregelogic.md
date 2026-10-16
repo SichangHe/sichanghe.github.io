@@ -67,4 +67,4 @@ The full run made 18,722 API calls. Each syllogism used five ensemble calls, one
 - Aristotelian FOL encoding: encode A/E/I/O propositions with explicit existence axioms
 - consistency-then-entailment checking: reject inconsistent premises before testing premises plus negated conclusion
 - nested evaluation: select models, prompts, and thresholds inside inner folds and report outer-fold results
-Checked 2026-10-15 against paper akinfaderin2026fregelogic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

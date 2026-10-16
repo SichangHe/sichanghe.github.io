@@ -122,4 +122,4 @@ The paper proves the fixed-structure translation theorem, soundness of symbolic 
 - template-based symbolic search — encode choices of bounds and interpretations with Boolean and integer auxiliaries, then extract a model
 - OSC completeness boundary — use a syntactic fragment with a small symbolic model property to obtain a decision procedure
 - finite diagnostic explanations — attach FEST's compact model to a timeout or unknown result to expose missing induction assumptions
-Checked 2026-10-13: audit record elad2023infinite; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

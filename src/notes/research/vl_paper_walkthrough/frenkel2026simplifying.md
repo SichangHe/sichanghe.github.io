@@ -73,5 +73,3 @@ Forward-backward proofs generally replace mixed conjunction/disjunction formulas
 - prophecy witnesses — add a sound ghost witness for an existential property and reconstruct a witness-free safe invariant
 - prophecy verification conditions — use `Proph-Fwd` or `Proph-Select` side conditions to avoid searching arbitrary soundness proofs
 - invariant reconstruction — translate an incremental proof into one safe inductive invariant with bounded Boolean and quantifier complexity
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

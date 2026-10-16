@@ -49,4 +49,3 @@ The main experiment covers one GPU model, FP16, seven kernel types, and 34 confi
 - fixed evaluation firewall: keep benchmark and reference semantics outside agent control
 - dual backend interface: expose Triton and CUDA implementations through one tested kernel interface
 - experiment provenance: commit, log, and revert every candidate so performance claims are auditable
-Checked 2026-10-15 against paper jaber2026autokernel: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

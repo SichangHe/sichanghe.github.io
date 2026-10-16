@@ -115,4 +115,3 @@ Verus form (Inference): for a Verus agent the comparable cheap signals are outpu
 - draft-and-code JSON grading: require a plan field and a code field, and pass only the code to the proof checker
 - latency ANOVA: record response time per query and test it across noise levels as a second measure of difficulty
 - post-rename revalidation (not in the paper): rerun the checker on reference proofs after renaming, since solver-based proofs can break under renaming
-Checked 2026-10-13: audit record li2026evaluating; paper-study comparison complete; gate executed; experiments not rerun

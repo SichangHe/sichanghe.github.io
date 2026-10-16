@@ -112,5 +112,3 @@ The paper measures correlations, benchmark scores, reward-hacking rates, and dow
 - user-feedback reward extraction — annotate implicit human judgments with evidence, fairness, and conservative labels
 - evaluator-agent filtering — score long-horizon outputs with checklist and holistic metrics matched to the training objective
 - verifier–generator co-evolution — rebuild verification signals as policy capability and exploitation strategies change
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

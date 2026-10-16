@@ -59,4 +59,3 @@ Inference: in Verus, prefer a certificate-producing external tool whose certific
 - typed bidirectional DSL specification — declare external-to-prover equivalences and let prover types reject ill-typed foreign syntax
 - recursive translation with termination guards — match definitional patterns, recurse through nonterminals, and cap non-progressing translations
 - certificate versus oracle integration — check external certificates inside the prover when possible and mark uncertified solver answers as explicit trusted axioms
-Checked 2026-10-15 against paper rowney2026dslean: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

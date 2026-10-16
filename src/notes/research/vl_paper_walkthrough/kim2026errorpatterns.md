@@ -88,4 +88,3 @@ Trusted components include each domain oracle (compiler, RDKit, leak detector, o
 - distributionally sound prefix filters: synthesize `str -> bool` predicates and validate false-trigger rates on model and external valid distributions
 - CARS rejection sampling: reject a generation as soon as any filter matches and rebalance the token trie
 - shifted-distribution rounds: relearn filters after earlier filters expose different recurring failures
-Checked 2026-10-15 against paper kim2026errorpatterns: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

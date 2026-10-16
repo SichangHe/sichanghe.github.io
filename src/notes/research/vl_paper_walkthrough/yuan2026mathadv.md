@@ -30,5 +30,3 @@ MathAdv evaluates proof-step systems that query verifier states and search, and 
 - verifier-in-the-loop formalization — compile candidate statements, return errors, and separate syntax correction from semantic review
 - staged semantic review — use independent model review, human review, and final expert validation
 - protocol-separated evaluation — report search-based, whole-proof, and general-purpose models under explicit budgets
-
-Checked 2026-10-15 against the paper by a Codex agent for mathadv_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

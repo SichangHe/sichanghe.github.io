@@ -65,4 +65,3 @@ The stated boundary is that explicit words “parameter” and “result” are 
 - TSI typed synthesis: match syntax and argument data types before recursively generating contract fragments
 
 - OpenJML and mutation evaluation: check generated contracts and measure killed mutants with explicit correct/incorrect/no-output denominators
-Checked 2026-10-14 against the paper by a Codex agent: audit record jansen2026automated; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

@@ -48,5 +48,3 @@ Inference: In Verus, retain verifier diagnostics keyed to generated proof-node i
 - obligation extraction: deterministically expand each node into sequent-shaped goals with provenance
 - certificate-gated automation: accept external solver results only after trusted certificate checking
 - localized incremental repair: edit the first failing node and reuse cached proofs for unchanged nodes
-
-Checked 2026-10-15 against the paper by a Codex agent for proofsketcher_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

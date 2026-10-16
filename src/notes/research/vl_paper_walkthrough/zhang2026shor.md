@@ -92,4 +92,3 @@ Inference: A Verus encoding would use datatype invariants for canonical field el
 - certificate-separated resource claims — keep probability, circuit correctness, resource counts, and classical recovery as explicit linked premises
 - layered elliptic-curve verification — prove field arithmetic, point formulas, controlled additions, scalar schedules, and recovery separately
 - assumption-boundary reporting — distinguish machine-checked propositions from imported source numbers and unconstructed end-to-end executions
-Checked 2026-10-14 against the paper by a Codex agent: audit record zhang2026shor; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

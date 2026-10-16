@@ -83,5 +83,3 @@ The verifier, public tests, and final benchmark labels determine acceptance; the
 - three-role VRR generation: repair the winner, repair the runner-up, and solve from a new approach
 - candidate screening: require complete, compiling, public-test-passing, nonduplicate artifacts before reselection
 - verify-repair-reselect: reverify screened alternatives with the original criteria and choose from the expanded set
-
-Checked 2026-10-15 against the paper by a Codex agent for llm_as_an_improver_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

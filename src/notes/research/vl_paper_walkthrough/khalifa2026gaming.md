@@ -87,4 +87,3 @@ The causal manipulation setup establishes a controlled experimental contrast, no
 - adversarial manipulation taxonomy — test style confidence, reflective reasoning, progress fabrication, environment blaming, and goal framing
 - manipulation-aware/rubric judging — ground verdicts in task requirements and observable evidence with explicit prompts or key points
 - judge-time scaling — use parallel self-consistency or longer sequential reasoning and report robustness/recall tradeoffs
-Checked 2026-10-15 against paper khalifa2026gaming: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

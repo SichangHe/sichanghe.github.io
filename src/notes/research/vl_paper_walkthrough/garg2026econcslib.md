@@ -54,4 +54,3 @@ Inference: the direct product threat for agent-written verified Rust is semantic
 - translation audit: compare a context-free Lean-to-text rendering with the source and log human verdicts
 - dependency DAG: track every named result and its formalization status
 - validation report: record proof-route deviations, extra assumptions, provenance, and unresolved boundaries
-Checked 2026-10-15 against paper garg2026econcslib: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

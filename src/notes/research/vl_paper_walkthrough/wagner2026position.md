@@ -66,4 +66,3 @@ Inference: the trusted core for a Verus product remains the chosen specification
 - specificity measure: model acceptable outputs as a constrained set and estimate the information needed to reach it with a chosen error tolerance
 - translation-gap accounting: add domain-to-language KL divergence to the information cost of a natural-language specification
 - crossover hybridization: route low-specificity intent through natural language and high-specificity behavior through formal notation or direct artifacts
-Checked 2026-10-13: audit record wagner2026position; paper-study comparison complete; gate executed; experiments not rerun

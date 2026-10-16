@@ -57,4 +57,3 @@ For pointwise scoring, submit theorem T and each proof independently to reward m
 - five failure strategies: test minimal mutations, misleading explanations, foreign-language code, forced tactic mistakes, and verbose camouflage
 - position-consistent reward scoring: require the same correct preference under both proof orderings
 - verifier plus manual QA: combine deterministic Lean labels with a sampled human inspection for realism
-Checked 2026-10-15 against paper ulusan2026formalrewardbench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -87,5 +87,3 @@ Measured results are benchmark scores and acceptance counts, not formal soundnes
 - localized global verification — map defects to affected sections, revise or re-explore, and reverify the whole artifact
 - persistent research memory — retain drafts, caveats, failed approaches, references, and evidence for later rounds
 - execution feedback loop — compile and run implementations, then feed checker and resource results into local revision
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -71,4 +71,4 @@ The authors report substantial limits. Rust changes rapidly, so RustSEM omits fe
 - semantics-based runtime checking: detect invalid reads, frees, races, borrow errors, and overflows through memory semantics instrumentation
 - symbolic reachability verification: specify pre/postconditions and loop invariants, then use K symbolic execution and SMT queries
 - bounded concurrent/data-structure verification: explore interleavings and use explicit finite capacity bounds when infinite heaps are unsupported
-Checked 2026-10-14 against the paper by a Codex agent: audit record kan2018executable; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

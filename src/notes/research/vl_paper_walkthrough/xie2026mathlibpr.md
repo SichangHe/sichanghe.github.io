@@ -36,5 +36,3 @@ On the full benchmark, Stage 3 DeepSeek balanced accuracy is 36.0% and Qwen 24.1
 - history-derived review labels: recover build-passing snapshots and label acceptance from real pull-request trajectories
 - staged review evaluation: add code context, diagnostics, then stated intent while holding the review contract fixed
 - structured and class-balanced judging: validate JSON reviews and report both class recalls, balanced accuracy, validity, and AUROC
-
-Checked 2026-10-15 against the paper by a Codex agent for mathlibpr_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -91,4 +91,3 @@ The paper's agent contribution estimate is 50–60% for porting, shape enumerati
 - batched Freivalds checking — batch randomized matmul checks into three skinny matmuls and report overhead and detection denominators with their hardware settings
 - held-out-shape adversarial testing — test the declared shape class outside benchmarked inputs to expose hardcoded or reward-hacked kernels
 - explicit exceptional policies — declare and test NaN/Inf and out-of-bounds behavior as RAISE, CLAMP, ZERO, masking, propagation, or documented undefined behavior
-Checked 2026-10-15 against paper veit2026kernel: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

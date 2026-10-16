@@ -65,5 +65,3 @@ Inference: Iterate Verus proof simplification to a fixed point, then optionally 
 - leakage-resistant ranking — evaluate against complete pools and compare with menu-order controls
 - fixed-point compression — rerun symbolic edits until no verified file change remains
 - jointly verified hybrids — verify each neural edit and the combined file before counting savings
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.

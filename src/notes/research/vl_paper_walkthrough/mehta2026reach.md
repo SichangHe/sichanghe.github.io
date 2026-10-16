@@ -52,4 +52,3 @@ The evidence supports these controlled comparisons: execution versus no_verifica
 - failure-matched verification surface — choose a checker whose observable signal reaches the product failure, and include a negative-control task where it cannot
 - boot-probe-first ladder — measure a one-bit startup check before paying for a full shell, preserving within-model comparisons and token denominators
 - intention-to-treat tool evaluation — score assigned capabilities while logging actual use, feedback, repair, and cost separately
-Checked 2026-10-15 against paper mehta2026reach: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

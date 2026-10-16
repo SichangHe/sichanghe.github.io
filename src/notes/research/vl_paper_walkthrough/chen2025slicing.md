@@ -76,4 +76,4 @@ Frama-C, ACSL semantics, C compiler and libraries, slicing analysis, LLM outputs
 - logical deletion — exclude irrelevant candidates, comprehend and reason about each, then retain logically correct-looking clauses
 - delayed integrated verification — aggregate slice clauses, verify the whole function, delete failing clauses, and repeat
 - checker-gated evaluation — run five independent trials and report verification passes, relevance, assertions, and runtime with explicit denominators
-Checked 2026-10-15 against paper chen2025slicing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

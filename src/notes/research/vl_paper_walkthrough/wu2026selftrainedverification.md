@@ -82,5 +82,3 @@ Verus form (Inference). Train a Rust generator on episodes where each proposed p
 - verifier-guided refinement: iterate generator and verifier for up to a fixed round budget, using actionable feedback
 - weak-to-strong verifier: train a smaller verifier on a larger generator's rollouts to reduce inference cost
 - verifier-in-the-loop training: train the generator inside frozen-verifier episodes so diagnostic feedback improves first attempts
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

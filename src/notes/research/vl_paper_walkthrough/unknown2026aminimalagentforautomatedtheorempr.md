@@ -67,4 +67,3 @@ The Lean kernel checks each accepted proof relative to the theorem statement, im
 - self-managed proof memory — summarize durable lessons from prior attempts instead of replaying an unbounded transcript
 - bounded library retrieval — search theorem libraries and documentation within a fixed tool budget before proposing proof code
 - model–scaffold separation — compare foundation models inside the same agent loop so architecture and model gains are measurable separately
-Checked 2026-10-13: audit record unknown2026aminimalagentforautomatedtheorempr; paper-study comparison complete; gate executed; experiments not rerun

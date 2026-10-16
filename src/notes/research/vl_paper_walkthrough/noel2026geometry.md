@@ -62,4 +62,3 @@ Facts established by the reported experiments: seven models, four architectural 
 - spectral diagnostics: use Laplacian eigenvalues, HFER, entropy, energy, and smoothness as training-free features
 - threshold validity classifier: calibrate one held-out threshold and report nested cross-validation separately
 - logical-validity controls: compare technically rejected valid proofs and deliberately corrupted proofs to test what the signal tracks
-Checked 2026-10-15 against paper noel2026geometry: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

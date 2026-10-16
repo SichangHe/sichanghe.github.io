@@ -57,4 +57,3 @@ The paper proves no new mathematical theorem. It presents an open-source protoco
 - lease and salvage workflow: use expiring claims and preserve partial failed proofs for follow-up tasks
 - proof golfing: optimize a proved declaration while keeping its statement fixed
 - auditable history visualization: reconstruct proof-tree growth from repository events
-Checked 2026-10-14 against the paper by a Codex agent: audit record qi2026choir; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

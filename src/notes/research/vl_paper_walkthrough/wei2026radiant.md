@@ -138,5 +138,3 @@ The paper measures artefact validity, semantic similarity to hand-authored refer
 - executable traceability: emit element-level versioned links that support automated cross-model impact analysis
 - counterexample-guided formal repair: feed checker traces to a repair agent and repeat verification until pass or cap
 - model-dependent evaluation: measure syntax, execution, semantics, traces, and effort over repeated runs with denominators
-
-Checked 2026-10-15 against the paper by a Codex agent for model_driven_discipline_for_multi_agent__20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

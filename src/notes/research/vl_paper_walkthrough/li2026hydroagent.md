@@ -43,4 +43,3 @@ The paper measures simulator scores, tool-use behavior, and ablations; it does n
 - simulator-grounded verifier loop: expose bounded edits, executable checking, diagnostics, and iterative repair
 - trajectory SFT: preserve complete tool-call and repair trajectories, then filter and quality-weight them
 - GRPO with checker reward: group-normalize multiple attempts using executable outcomes and shaped interaction signals
-Checked 2026-10-15 against paper li2026hydroagent: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

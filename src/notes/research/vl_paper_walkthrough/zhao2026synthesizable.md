@@ -70,4 +70,3 @@ The paper identifies no prior combination of one shared HDL/SMT/Lean IR, a wide 
 - sticky-fold refinement — replace a timing-hostile wide arithmetic reference with a bounded guard/round/sticky implementation and prove bit identity by a rounding-collapse lemma
 
 - trust-base accounting — publish solver domains, denominators, certificate/native bridges, renderer checks, and unverified semantic boundaries alongside the theorem
-Checked 2026-10-15 against paper zhao2026synthesizable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

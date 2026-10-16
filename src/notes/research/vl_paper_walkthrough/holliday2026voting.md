@@ -39,5 +39,3 @@ The proved object is a mathematical voting method, not a Rust program. SMT estab
 - infinite-domain synthesis by CHCs: encode rule constraints as linear formulas whose models denote polyhedra
 - Horn fixpoint propagation: iterate backward and forward consequences until denoted exclusion sets stabilize
 - certificate checked synthesis: let SMT and polyhedral tools search, then replay arithmetic and axioms in Lean
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

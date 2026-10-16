@@ -53,5 +53,3 @@ The Compton optimization reuses a previously computed squared sine instead of re
 - layered harness validation: combine differential numerical, physics, statistical, sanitizer, and profiling checks
 - withheld-input evaluation: reserve new sizes, random sequences, and boundary cases outside the search feedback loop
 - certificate ablation: compare proposal pass fractions and performance gains with and without stored restrictions
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

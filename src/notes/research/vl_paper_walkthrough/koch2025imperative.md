@@ -84,4 +84,4 @@ Inference: the threat to agent-written verified Rust is medium for API misuse an
 - linear and affine leak checking: require owned resources to be consumed or transferred while borrowed resources return to their owner
 - field-wise dataflow: track ownership through branches, loops, structs, and arrays
 - imperative-to-functional translation: replace unique borrowed side effects with explicit value threading into a functional IR
-Checked 2026-10-15 against paper koch2025imperative: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

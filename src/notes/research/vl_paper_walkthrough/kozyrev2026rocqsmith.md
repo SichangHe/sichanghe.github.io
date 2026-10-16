@@ -110,5 +110,3 @@ Inference: the main product threat is false confidence from benchmark gains. Eve
 - top-k memory retrieval — inject only the most similar contextual memories instead of the full bank
 - executable topology search — generate and evaluate alternative agent control-flow programs
 - fixed-budget optimizer evaluation — compare success by proof difficulty under a common tool-call limit
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

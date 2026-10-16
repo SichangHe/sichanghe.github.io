@@ -73,4 +73,3 @@ Inference: the survey's covered percentages are perceptions, not measured detect
 - model creation strategies — choose extraction, IR translation, hand-written models, or correctness by construction with their correspondence assumptions
 - proof-backend selection — match interactive theorem proving, SMT, or specialized tactics to algebraic scope and CI needs
 - trusted-base audit — report verified components, specifications, model gaps, extraction tools, kernels, axioms, and theorem fidelity
-Checked 2026-10-15 against paper kolozyan2026zkp: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

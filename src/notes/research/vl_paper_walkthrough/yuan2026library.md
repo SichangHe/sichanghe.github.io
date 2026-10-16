@@ -56,5 +56,3 @@ With GPT-5.6 Luna on 120 Putnam 2015–2025 problems, self-advertisement reaches
 - self-advertisement with commitment gate — ask every method how it applies, then demote proposals lacking concrete targets, actions, or evidence
 - pairwise runoff — compare the leading proposals directly when rank one matters more than shortlist coverage
 - applicability metrics — evaluate retrieval with hit@k and recall@k against fixed, human-checked method labels and separate this from proof completion
-
-Checked 2026-10-15 against the paper by a Codex agent for let_the_library_speak_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

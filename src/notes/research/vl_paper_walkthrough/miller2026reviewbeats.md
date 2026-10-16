@@ -60,4 +60,3 @@ The paper’s evidence is empirical pass@1 measurement with deterministic greedy
 - verifier/test feedback loop — compile and test visible examples, then perform bounded repairs from diagnostics
 - adversarial dual-generation — generate independent candidates, select passing outputs, and synthesize after both fail
 - specification-richness measurement — compare review gains across explicit and lean contracts with fixed denominators
-Checked 2026-10-15 against paper miller2026reviewbeats: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

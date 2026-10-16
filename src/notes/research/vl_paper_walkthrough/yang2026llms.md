@@ -138,4 +138,3 @@ The strongest no-context success is 26.47% (GPT 5.2, 34-task denominator), while
 - context ablation — compare no context, source lemmas, posterior target, and both under a fixed task
 - three-axis proof grading — score answer, reasoning, and relevance separately with multi-label logical and hallucination errors
 - first-error diagnostics — normalize the earliest proof error to expose long-horizon error propagation
-Checked 2026-10-15 against paper yang2026llms: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

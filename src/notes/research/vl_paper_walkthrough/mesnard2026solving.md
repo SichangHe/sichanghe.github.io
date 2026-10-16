@@ -59,4 +59,3 @@ The proof checker establishes only the properties encoded in LPTP and the soundn
 - property portfolio — test edge cases and prove type, groundness, termination, uniqueness, existence, and functional correctness separately
 - strengthened induction — prove an auxiliary stronger invariant when the direct induction hypothesis cannot close the recursive case
 - verifier-native MCP loop — expose grammar, tactic, lemma, and whole-file checking tools and iterate until the proof checker certifies the file
-Checked 2026-10-13: audit record mesnard2026solving; paper-study comparison complete; gate executed; experiments not rerun

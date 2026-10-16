@@ -64,5 +64,3 @@ Evidence. The paper’s 400-item design reports the feedback effect as dominant,
 - symbol and expert retrieval — query library definitions and use specialized drafts without allowing invented axioms or declarations
 - compiler feedback as repair signal — use whole-program elaboration errors to drive faithful iterative correction
 - factorial tool ablation — toggle independent capabilities across all configurations and report main, conditional, and interaction effects
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

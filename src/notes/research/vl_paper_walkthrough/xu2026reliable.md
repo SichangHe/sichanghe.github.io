@@ -74,5 +74,3 @@ The measured claims are model accuracy/F1 on the named datasets, robustness on c
 - section-aware reinforcement — mask GRPO loss to the section responsible for a wrong judgment
 - applicability-breaking perturbations — minimally edit statements to invalidate lemma assumptions while preserving mathematical coherence
 - staged proof-search feedback — use verifier or checker diagnostics to regenerate only the failed proof section (Inference: transfer to Verus)
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -89,4 +89,4 @@ Inference: for agent-written verified Rust, the paper suggests a useful product 
 - invariant-based Hoare verification: prove loop invariants and variants, then discharge generated conditions with automation
 - verified animation: refine partial functions to finite lists, generate code, and interactively explore enabled events
 - Z-Machines: package state invariants and guarded operations into an executable and verifiable abstract machine
-Checked 2026-10-15 against paper foster2024unifying: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

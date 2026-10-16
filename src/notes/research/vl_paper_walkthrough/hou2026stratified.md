@@ -35,4 +35,3 @@ Verus form: Inference: fine-tune a smaller model on accepted Verus specification
 - semantic equivalence clustering: use solver checks to group logically identical candidates before labeling
 - entropy-stratified selection: vote, judge, or abstain according to disagreement among equivalence classes
 - checker-gated distillation: fine-tune a small model on selected labels while retaining formal verification as the deployment gate
-Checked 2026-10-15 against paper hou2026stratified: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

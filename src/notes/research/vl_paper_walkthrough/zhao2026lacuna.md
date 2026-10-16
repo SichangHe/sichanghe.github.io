@@ -74,4 +74,3 @@ Proved by the prototype: host compiler rejection of undefined names, type mismat
 - capability-scoped generation — expose only lexical capabilities and prevent capability-bearing results from escaping
 - classified information flow — keep sensitive data inside pure wrappers and use local nested agents under the same scope
 - recursive typed control flow — express skills, ReAct, sub-agents, and parallel decomposition as typed nested calls with depth caps
-Checked 2026-10-15 against paper zhao2026lacuna: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -91,4 +91,3 @@ LeanEvolve's Table 2 reports an average 7.47 percentage-point increase on the SW
 - trajectory verification — replay actual states with Lean, external validators, and judges to test step postconditions
 - failure localization — return the precise step and predicate that violated a trajectory contract
 - formal-guided evolution — revise a localized workflow step, rerun it, and retain only a successful repair
-Checked 2026-10-15 against paper wang2026lean4agent: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

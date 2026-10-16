@@ -69,4 +69,3 @@ The paper records several corrections: a prior GPT-5.3 result of 3/11 was inflat
 - exception-chain material implication — compile nested UNLESS/override logic to a closed Boolean formula
 - SME test-driven gating — validate golden, edge, and corner cases with branch diagnostics and persistent regression suites
 - deterministic execution boundary — treat SMT evaluation as guaranteed only after retrieval and formalization quality checks
-Checked 2026-10-15 against paper simpson2026confidently: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

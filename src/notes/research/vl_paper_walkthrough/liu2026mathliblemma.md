@@ -61,5 +61,3 @@ What remains trusted includes Lean’s kernel, imported Mathlib declarations, th
 - closed-book evaluation: benchmark models with only the self-contained context and statement to measure internal formalization ability
 - model-union proving: combine diverse prover outputs because union coverage can substantially exceed the best single model
 - residual human audit: sample model-unsolved statements to distinguish false claims from current prover limitations
-
-Checked 2026-10-15 against the paper by a Codex agent for mathliblemma_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

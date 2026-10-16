@@ -35,4 +35,3 @@ Inference: this is counterexample-guided contract repair for Verus. A failed pro
 - plan-to-automaton compilation — map ordered executable steps to labeled states and transitions for model checking
 - textual-gradient refinement — convert violated formulas and traces into contract updates without changing model weights
 - proposition-alignment auditing — measure and verify the mapping from concrete API behavior to symbolic propositions
-Checked 2026-10-13: audit record yang2026vaso; paper-study comparison complete; gate executed; experiments not rerun

@@ -72,4 +72,3 @@ The paper proves properties of CRoST under its finite-footprint and random-overl
 - few-shot property generation: prompt LLMs with protocol rules and example lemmas, then parse and autoprove outputs
 - mutation-based metric validation: inject controlled protocol flaws and correlate proof-coverage scores with verification flips
 - cost and saturation analysis: measure syntax yield, coverage by security family, repeated-sampling gains, and verification time
-Checked 2026-10-13: audit record liu2026llm; paper-study comparison complete; gate executed; experiments not rerun

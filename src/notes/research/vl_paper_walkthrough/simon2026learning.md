@@ -112,5 +112,3 @@ Proved in the paper: the abstract definitions of hierarchies, verifier-guided co
 - verifier-guided hierarchy selection — sample candidate plans, score them with repeated verified solves, penalize poor compression, and retain only scores above a threshold
 - anti-hindsight seed generation — ask a teacher to infer forward-usable plans while withholding later proof states and forbidding tactic replay
 - balanced multi-role training — jointly train solver, foresight, and hindsight prompts with fixed per-role batch fractions
-
-Checked 2026-10-15 against the paper by a Codex agent for learning_to_plan_by_looking_back_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

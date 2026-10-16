@@ -79,5 +79,3 @@ Verus form: Inference: define a reward from successful Verus verification, reduc
 - satisfiability and non-triviality filtering — use a symbolic backend to reject contradictory, vacuous, or malformed specifications
 - bounded two-layer repair — try ranked local edits, then learned AST edits, rechecking after each repair
 - verifier-in-the-loop reward — optimize neural generation with parser, verifier, and repair-cost feedback
-
-Checked 2026-10-15 against the paper by a Codex agent for neuronl2ltl_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

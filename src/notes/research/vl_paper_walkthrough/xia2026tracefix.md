@@ -51,5 +51,3 @@ These are bounded-model and benchmark results, not a general proof of task corre
 - bounded exhaustive checking — enumerate all interleavings under stated queue and counter bounds
 - counterexample repair — feed concrete TLC traces to targeted PlusCal edits and rerun verification
 - runtime topology enforcement — reject undeclared coordination events while preserving domain-tool autonomy
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

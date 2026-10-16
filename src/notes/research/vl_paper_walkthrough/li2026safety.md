@@ -101,5 +101,3 @@ The paper proves Hoare-rule soundness in Lean 4, extracts a self-certifying chec
 - stable type predicates: define recursive indexed invariants for lists, trees, bounds, and owned mutable footprints
 - explicit error hierarchy: distinguish tolerated `Err`, tracked exceptions, and unreachable compile-time `Abrt`
 - reflective soundness: prove Hoare rules once in Lean and derive a checker whose verdicts are certified by the proof
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

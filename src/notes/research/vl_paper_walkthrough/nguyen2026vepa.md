@@ -91,5 +91,3 @@ Trusted or assumed components include the LLM event parser, LLM patch generator,
 - conflict and regression checks — reject overlapping opposite rules and candidates that change known-correct decisions
 - Pareto policy evolution — archive feasible patches and search non-dominated repair/non-regression trade-offs
 - evidence-aware authority — activate verified rules only when an upper posterior error bound meets a deployment threshold
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

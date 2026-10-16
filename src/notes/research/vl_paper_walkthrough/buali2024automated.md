@@ -89,4 +89,4 @@ The trusted boundary is Lean’s checker accepting the final proof. Inference: p
 - failure-aware backtracking — record bad actions per proof state, clear queues, and regenerate
 - solver fallback — invoke the theorem prover’s arithmetic tactic after model output
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -46,4 +46,3 @@ The pipeline proves only the generated SVA properties over the modeled RTL and r
 - counterexample-guided repair: analyze formal traces, make a localized code edit, review it, and re-prove
 - prove-plus-cover acceptance: require k-inductive safety and reachable cover properties before PASS
 - multi-run feasibility evaluation: run each benchmark independently several times and report pass denominators and API exclusions
-Checked 2026-10-13: audit record tran2026open; paper-study comparison complete; gate executed; experiments not rerun

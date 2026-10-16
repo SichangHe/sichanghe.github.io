@@ -114,4 +114,3 @@ Inference: threat to a product that emits agent-written verified Rust is high fo
 - decomposition review — have an LLM reject subgoals that are irrelevant, cyclic, or no simpler than their parent
 - compiler-feedback refinement — repair one proof for a bounded number of turns using exact diagnostics
 - verified benchmark construction — balance difficulty and categories, and expert-check every formal statement before evaluation
-Checked 2026-10-13: audit record kung2026leap; paper-study comparison complete; gate executed; experiments not rerun

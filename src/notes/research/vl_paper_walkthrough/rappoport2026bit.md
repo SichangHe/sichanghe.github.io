@@ -78,4 +78,3 @@ The optimization that omits modulo in translated arithmetic is valid only when o
 - theory-modular CHC encoding: partition arithmetic and bit-wise clauses, duplicate predicates, and connect copies with translated interface inclusions
 - bidirectional MosaicSolve: alternate single-theory oracle calls, under-approximation counterexamples, over-approximation blocking lemmas, and cross-fragment proof obligations
 - overflow-aware optimization: omit modular arithmetic only after proving that the relevant execution cannot overflow
-Checked 2026-10-15 against paper rappoport2026bit: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

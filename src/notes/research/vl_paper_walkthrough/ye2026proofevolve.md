@@ -133,4 +133,3 @@ Inference: the threat to agent-written verified Rust is medium-to-high. ProofEvo
 - residual-premise recombination — instantiate a schema only when its conclusion matches and expose missing premises as new subgoals
 - verifier-guided repair — feed rejected proposals and Lean errors back to the model while leaving the trusted state unchanged
 - frozen-contract Verus port — map reusable schemas to `proof fn`s and let agents edit proof bodies while preserving `requires` and `ensures`
-Checked 2026-10-13: audit record ye2026proofevolve; paper-study comparison complete; gate executed; experiments not rerun

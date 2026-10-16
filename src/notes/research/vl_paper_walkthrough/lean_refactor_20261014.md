@@ -82,5 +82,3 @@ Trusted elements include Lean's kernel, Mathlib and project dependencies, the fr
 - dependency-grounded rewriting: annotate invoked declarations and anchor extracted strategies to source locations
 - version compatibility sets: intersect toolchains on which all strategy instances compile
 - multi-metric evaluation: report length, compile time, dependency counts, and cross-version survival with explicit denominators
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -76,4 +76,3 @@ evidence and what remains trusted: Table 2 gives five transformation categories 
 - certificate-producing autoformalization — have an LLM write Lean definitions and proofs, then accept only compiled no-`sorry`, no-new-axiom certificates
 - explicit-assumption screening — use a structured LLM proxy with definitions and assumptions, followed by formal verification
 - formulation-level benchmark auditing — test unseen-instance failures with TP/FP/TN/FN, costs, and ATP-failure analysis
-Checked 2026-10-15 against paper robbins2026flare: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

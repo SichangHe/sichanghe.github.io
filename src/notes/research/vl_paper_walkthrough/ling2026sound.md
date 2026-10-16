@@ -47,5 +47,3 @@ The proved result is a meta-level soundness theorem for the specified framework 
 - backward satisfiability — require every usable IVL assertion witness to have a source-state witness
 - spurious-split audit — test inhale/exhale and framing for IVL states outside the encoding image
 - mechanized front-end soundness — discharge encoding, assertion, statement, and control-flow obligations in Isabelle/HOL
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

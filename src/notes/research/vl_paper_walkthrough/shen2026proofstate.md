@@ -57,4 +57,3 @@ The paper proves no new theorem about proof correctness; it measures equivalent 
 - transparent fallback — use ordinary per-branch builds when native snapshot support is unavailable
 - elaboration cost model — separate one-time elaboration from branch tactic CPU and report denominators
 - layered caching — combine inter-theorem import caching with intra-theorem proof-state snapshots
-Checked 2026-10-15 against paper shen2026proofstate: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -47,4 +47,3 @@ The study measures classification performance, stability, confidence calibration
 - type-aware protocol obfuscation — rename identifiers while preserving declared types to reduce lexical memorization
 - structured zero-shot verdicts — require one parseable attack/no-attack result, confidence, and justification per security goal
 - protocol-cluster evaluation — run stochastic models repeatedly and bootstrap complete protocols to obtain honest uncertainty
-Checked 2026-10-15 against paper modesti2026evaluating: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

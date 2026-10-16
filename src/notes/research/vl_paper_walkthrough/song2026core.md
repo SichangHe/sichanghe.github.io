@@ -60,4 +60,3 @@ Ablations in Table 3 use Qwen2.5-7B-Instruct. Removing core memory lowers mean s
 - core minimization — delete core members and replay certification, retaining only reductions that remain sound
 - exhaustion cores — combine certified explanations for every legal alternative before declaring a decision level exhausted
 - tiered verifier interface — separate exact, replay-certified, and heuristic explanations so only sound cores receive hard pruning
-Checked 2026-10-15 against paper song2026core: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -32,4 +32,3 @@ The paper reports limitations: mutable state such as arrays and class fields is 
 - boundary value analysis: pin one variable at a time to exact interval edges and collection-size boundaries
 - novelty iteration: append an exclusion assumption after each generated input to obtain distinct tests
 - mutation adequacy comparison: compare specification-driven and implementation-driven suites on a denominator of realistically killable mutants
-Checked 2026-10-15 against paper pinto2026dspec2test: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

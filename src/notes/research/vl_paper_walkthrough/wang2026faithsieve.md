@@ -66,4 +66,3 @@ Evidence and limits. On 350 Olympiad problems, GPT-5.4 FaithSieve scored 81.43% 
 - faithfulness scoring gate: compare formal premises and conclusions with the source claim before accepting Lean evidence
 - hybrid formal evaluation: use SymPy for pure numerics and Lean for other faithful obligations, with explicit inconclusive outcomes
 - evidence fusion: aggregate local artifacts back to benchmark steps and return the earliest step with reliable negative evidence
-Checked 2026-10-15 against paper wang2026faithsieve: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -68,5 +68,3 @@ The authors restrict the main experiments to non-reasoning provers and leave the
 - invariance diagnostics: compare PASS@k across verified equivalent statements to measure representation sensitivity
 - rewriting ensemble: split a fixed proof-generation budget across equivalent variants and verify every candidate before transporting it
 - online rewrite selection: sample category-generated variants, rank them with a model-based proxy, and check the highest-ranked variants
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

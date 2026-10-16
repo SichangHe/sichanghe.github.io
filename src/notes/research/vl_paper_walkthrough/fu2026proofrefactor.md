@@ -58,5 +58,3 @@ Evidence. Removing external assistance on Putnam2025 and a 48-problem PutnamBenc
 - scaffold extraction — turn a tactic block into a standalone theorem with only used variables and an implication when the post-goal differs
 - reasoning–interaction separation — use an independent model context for fragment and signature design while a verifier agent edits and checks code
 - rubric-plus-ablation evaluation — require compiler validity, score structure and reuse separately from length, and measure the effect of removing design assistance
-
-Checked 2026-10-15 against the paper by a Codex agent for proof_refactor_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

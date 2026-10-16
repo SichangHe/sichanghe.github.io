@@ -67,5 +67,3 @@ The paper proves representation-relative theorems in Appendix G: reconstruction 
 - contract-guided refinement — feed deterministic violations to a generator for bounded, regression-guarded repair
 - structural plus parameter checks — pair a structural score with a conditional coefficient/material consistency diagnostic
 - executable-versus-intent audit — report GoodExec and FalseExec separately so runnable code is not mistaken for correct code
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

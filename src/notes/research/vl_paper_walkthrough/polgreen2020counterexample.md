@@ -55,4 +55,4 @@ The SMT verifier, Z3's bit-vector semantics, generated training labels, neural a
 - CounterExample-Guided Neural Synthesis — add verifier counterexamples as new labeled examples in a CEGIS loop
 - candidate pre-verification — filter beam candidates against known examples before invoking the full verifier
 - bounded counterexample memory — discard duplicates and old examples to control non-monotonic neural refinement
-Checked 2026-10-13: audit record polgreen2020counterexample; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

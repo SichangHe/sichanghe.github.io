@@ -63,4 +63,3 @@ Trusted components include LLM extraction, human gold labels, regex and parser t
 - staged grammar induction: split rules into atoms, infer predicates and sorts, then build a fixed EBNF vocabulary
 - parser-constrained formalization: fill extracted logical structure with typed arguments and reject invalid DSL syntax
 - ghost-instrumented symbolic execution: add state observations and assertions before checking real API implementations
-Checked 2026-10-15 against paper xia2026doc2spec: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

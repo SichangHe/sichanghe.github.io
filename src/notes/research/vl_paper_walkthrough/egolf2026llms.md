@@ -39,4 +39,3 @@ The paper’s conclusion is: “There are generally benchmarks that are solved b
 - ILST synthesis loop: generate, verify, retry until success or a fixed timeout, with optional duplicate caching
 - checker-specific gates: enforce grammar and semantics with separate parsers, model checkers, SMT solvers, or proof engines
 - portfolio baseline: compare LLM sampling with symbolic enumeration under explicit timeout, hardware, and denominator accounting
-Checked 2026-10-15 against paper egolf2026llms: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

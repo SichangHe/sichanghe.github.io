@@ -78,4 +78,4 @@ The experiments establish only that the selected FreeRTOS unit proofs, run with 
 - proof-fault validation and repair — recreate defects, classify missed detections, repair harnesses or properties, and rerun
 
 - proof evolution — track code/proof dependencies, update affected models and contracts, and compare re-verification evidence
-Checked 2026-10-14 against the paper by a Codex agent: audit record amusuo2025unit; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

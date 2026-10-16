@@ -97,4 +97,4 @@ No earlier study in the walkthrough notes covers this Event-B run-to-completion 
 - invariant-at-earliest-level proof: place safety predicates at the first refinement where they are expressible and preserve them afterward
 - lexicographic convergence variants: combine state, queue, and trigger measures to prove termination under fairness
 - unless plus temporal response: prove a precondition persists until a response and combine it with eventual trigger dequeue
-Checked 2026-10-14: audit record morris2022formal; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

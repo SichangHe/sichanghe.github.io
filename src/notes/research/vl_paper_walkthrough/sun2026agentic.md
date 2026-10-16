@@ -62,4 +62,3 @@ Trusted components include CBMC/Kani, their encodings and unwinding bounds, the 
 - witness validation tiers — classify counterexamples by reachability, callee feasibility, dynamic replay, and realism before reporting
 - specification-level CEGAR — tighten contracts for spurious witnesses, guard the refinement, persist it, and recheck callers
 - persistent compositional knowledge — reuse approved contracts and witness patterns across parallel call-graph sweeps
-Checked 2026-10-13: audit record sun2026agentic; paper-study comparison complete; gate executed; experiments not rerun

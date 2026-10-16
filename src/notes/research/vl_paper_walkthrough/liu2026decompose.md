@@ -82,4 +82,3 @@ The theorem prover checks induced Isabelle/HOL formulas and produces solver-chec
 - entailment-preserving atoms — split sentences into atoms only when each is entailed by its source, using a 0.9 NLI filter
 - θ-substitution formalisation — instantiate entity, event, and semantic-role placeholders in separate, auditable steps
 - diagnostic-guided local repair — use failed prover goals to refine only implicated nodes and recheck the same subtree
-Checked 2026-10-15 against paper liu2026decompose: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

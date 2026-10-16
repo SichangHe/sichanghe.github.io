@@ -56,4 +56,3 @@ The roadmap has three phases. Phase 1 is a stateless minimum viable product: tra
 - context sanitization — statically remove untrusted or unnecessary text before formalization
 - WASM sandboxing — run the policy and orchestrator with denied host network and filesystem capabilities
 - phased shadow-to-production rollout — compare shadow judgments, enforce a narrow policy, then scale the verified state machine
-Checked 2026-10-15 against paper rashie2026typechecked: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

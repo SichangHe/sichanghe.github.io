@@ -65,5 +65,3 @@ The paper measures reports against Contexto ranks, intervention outcomes, and pe
 - inherited-rationale replay: hold search state fixed and replace only the rationale to test causal influence
 - selection audit: test selection differentials and parent–offspring transmission before claiming optimization improves report quality
 - independent report-off control: compare matched runs with reporting enabled and disabled; the paper found no detectable behavior change (25 runs per condition, §3, p. 4)
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

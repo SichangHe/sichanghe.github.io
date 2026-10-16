@@ -105,5 +105,3 @@ The paper's limitations include the United States student and software-company s
 - logic walk-through — trace data and control flow through the assertion against expected behavior
 - positive and negative examples — test concrete satisfying and violating input/output pairs to expose errors
 - intuition risk signal — require machine-checkable evidence when acceptance rests on an unsupported impression
-
-Checked 2026-10-15 against the paper by a Codex agent for programmers_are_poor_and_overconfident_j_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

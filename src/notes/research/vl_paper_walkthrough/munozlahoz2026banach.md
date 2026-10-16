@@ -71,4 +71,3 @@ The `llarith` tactic is not a heuristic checker. It rests on the proved normaliz
 - domain-specific definitions — introduce a new predicate when an imported name has a different mathematical meaning
 - theorem-backed tactic — turn a proved abstraction theorem into automation with explicit scope and performance limits
 - staged research formalization — prove a core theorem in a simple setting, then derive general corollaries and counterexamples
-Checked 2026-10-15 against paper munozlahoz2026banach: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -42,5 +42,3 @@ Evidence: removing MCS causes measurable drops in the paper's ablation (Table 3,
 - consensus autoformalization — generate three SMT formulas and accept only a solver-proven majority equivalence
 - MCS repair — compute a minimal clause-removal set from UNSAT feedback and feed the named claims back into iterative generation
 - variance-aware acceptance — combine claim scores, joint satisfiability, and a standard-deviation penalty before stopping
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -57,5 +57,3 @@ The benchmark is a proof-of-concept, not a bug-finding study. The authors develo
 - trace-based non-linearizability — emit calls and returns, then decide that no sequential history explains the trace
 - separation-based race proof — expose conflicting accesses with thread and heap ownership assertions
 - proof-carrying LLM reports — require Rocq or Verus to check the bug witness before accepting an agent report
-
-Checked 2026-10-15 against the paper by a Codex agent for mizzle_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

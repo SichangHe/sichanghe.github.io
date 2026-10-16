@@ -108,5 +108,3 @@ The SAT solver proves only propositional consistency or non-entailment of the en
 - schema-constrained generation — generate executable statecharts from corrected facts under an explicit grammar
 - translated-model checking — validate deadlock and reachability on a manually mapped timed model
 - element-level correctness score — average expert binary checks for required transitions, guards, actions, messages, and timing
-
-Checked 2026-10-15 against the paper by a Codex agent for llm_based_framework_for_generating_and_v_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

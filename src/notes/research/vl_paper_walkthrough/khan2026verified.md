@@ -52,5 +52,3 @@ Costs are measured, not assumed: snapshot isolation adds about 8% tokens on one 
 - detector equivalence — prove executable Rust detectors sound and complete against TLA+ predicates with prefix loop invariants
 - concrete-to-abstract refinement — map deployed state and transitions through an abstraction function to a verified safety machine
 - mechanism-matched prevention — use locking, SSI, causal tracking, commit ordering, and registry snapshots for distinct anomalies
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -108,4 +108,3 @@ The paper measures Miri pass rate, TestGenAgent exec rate, agent invocations, an
 - FSM orchestration: represent agents and modes as states and transition using runtime verification feedback
 - intent-guided test generation: infer behavioral constraints and accept candidates that pass generated tests
 - waveform rollback: aggregate runtime error signals, evaluate stable regions, and roll back on semantic drift
-Checked 2026-10-14 against the paper by a Codex agent: audit record jiang2026akirarust; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

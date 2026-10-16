@@ -98,4 +98,3 @@ The 3B model improves from 42.9% to 49.3% EX after 2,000 GRPO steps for the 0.5B
 - atomic operation reward — AST-decompose SQL and use shaped maximum Jaccard overlap against equivalent references
 - reference enrichment — sample candidates, execute them, and retain denotationally matching SQL as structural references
 - candidate selection — tune candidate count and temperature, then select by majority vote under measured latency/accuracy trade-offs
-Checked 2026-10-15 against paper hoang2026finer: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

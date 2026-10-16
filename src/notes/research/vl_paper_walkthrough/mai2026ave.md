@@ -45,4 +45,3 @@ Evidence and scope: on AMD MI300X, Ave reports normalized throughput of 0.89–0
 - tile-layout algebra: model memory as shape/stride tiles and require size-preserving views for reinterpretation
 - path-insensitive SMT validation: merge tags in a bottom/concrete/top lattice and solve compile-time assertion constraints
 - invariant-guided optimization loop: retrieve recipes, lower transformations with instantiated contracts, validate, profile, and feed witnesses back to the planner
-Checked 2026-10-13: audit record mai2026ave; paper-study comparison complete; gate executed; experiments not rerun

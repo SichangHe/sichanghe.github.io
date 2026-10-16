@@ -38,4 +38,3 @@ Verus form. Inference: treat `cargo verus` success as validity and a separately 
 - factorial verifier ablation: toggle drafting, search, and feedback across all tool combinations while holding prompts fixed
 - validity-faithfulness split: report compile/verify rates separately from semantic faithfulness and their gap
 - trajectory churn analysis: log per-item transitions and repair length to expose regressions hidden by aggregate averages
-Checked 2026-10-14 against the paper by a Codex agent: audit record zhang2026beyond; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

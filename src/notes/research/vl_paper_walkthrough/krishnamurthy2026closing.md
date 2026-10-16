@@ -75,4 +75,3 @@ The formal tool proves each generated harness against the RTL and each mutant un
 - mutation-guided refinement: inject faults, compute effective kill rate excluding invalid mutants, and refine weak harnesses
 - architecture-aware solver selection: choose verification resources from normalized structural metrics before proof construction
 - causal narrative synthesis: summarize counterexamples using extracted traces and score cycle, signal, mechanism, and unsupported claims
-Checked 2026-10-14 against the paper by a Codex agent: audit record krishnamurthy2026closing; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

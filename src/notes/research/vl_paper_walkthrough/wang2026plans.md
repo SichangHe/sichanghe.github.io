@@ -61,4 +61,3 @@ Verus form (Inference): prove each transition preserves previously satisfied led
 - verifier-centered DPO: sample repairs, score with verifier/rubric, and train on high-margin pairs
 - closed-loop Apply/Verify: bound repairs, reject invalid patches, and recompute obligations after every step
 - component failure accounting: report hard-pass, recall, duration, no-regression, and execution metrics separately
-Checked 2026-10-15 against paper wang2026plans: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

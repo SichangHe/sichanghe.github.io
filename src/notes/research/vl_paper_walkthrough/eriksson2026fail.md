@@ -97,5 +97,3 @@ Inference: the method’s trusted inputs are the domain definitions, interest as
 - dependency-driven explanation trees: recursively unfold defined predicates into branching domain-level explanations
 - syntactic interest assignment: derive relevance from undefined predicates and definition dependencies
 - iterative counterexamples: exclude a diagnosed failure and rerun verification to expose additional faults
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -87,4 +87,3 @@ The paper notes a numerical interpretation issue: ProGS's RF 0.903 is below Even
 - sketch cleaning and cost selection: normalize trees, score structural quality, and repair the best of three candidates
 - subtree-based repair: map failed leaf obligations to a common subtree and repair related events together
 - joint evaluation: measure proof discharge, requirement fulfillment, runtime coverage, trace conformance, runtime, and LLM calls
-Checked 2026-10-15 against paper wang2026formal: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

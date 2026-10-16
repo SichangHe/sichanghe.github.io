@@ -57,4 +57,4 @@ Trusted or assumed pieces include Isabelle/HOL and its libraries, Cogent's compi
 - array abstraction proof: relate pointer-indexed C arrays to list models with bounds and frame cases
 - verified higher-order loop: prove callback contracts, loop invariants, and fuel-based termination
 - FFI composition: instantiate library refinements in system code and keep platform assumptions explicit
-Checked 2026-10-13: audit record cheung2021overcoming; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

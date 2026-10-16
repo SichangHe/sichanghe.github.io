@@ -74,4 +74,3 @@ For the five-trial Design2SVA comparison, Qwen3.5-35B obtains `Func@1` 0.412 on 
 - solver-in-the-loop repair: submit generated assertions to the solver and apply localized fixes from errors or counterexamples
 - vacuity checking: test proven or undetermined assertions for unreachable antecedents before accepting them
 - ablation accounting: measure retrieval, structural analysis, and verification feedback separately on a fixed design subset
-Checked 2026-10-15 against paper mashnoor2026language: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

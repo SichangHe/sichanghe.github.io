@@ -41,4 +41,3 @@ Verus form (Inference): prove only parameter-range and structural invariants aro
 - checker-in-the-loop repair: iterate generation using rule violations as feedback
 - template-constrained fallback: choose and minimally edit curated component templates
 - staged integration and simulation: connect components, size parameters, simulate, and debug until execution succeeds
-Checked 2026-10-15 against paper kochar2026reliable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

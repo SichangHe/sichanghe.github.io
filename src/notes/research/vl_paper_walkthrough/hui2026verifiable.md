@@ -129,5 +129,3 @@ Trusted or outside scope: the LLM's relaxed translation, scope and notation choi
 - bidirectional problem-solving specification — require candidate answers to satisfy explicit necessary-and-sufficient conditions when exactness is claimed
 - semantic scope elaboration — annotate implicit variable scopes, check free-variable coverage, and insert explicit quantifiers
 - proof-gap generation and discharge — turn Core proof trees into verification conditions and close them with layered tactics, libraries, and solvers
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

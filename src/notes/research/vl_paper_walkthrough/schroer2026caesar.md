@@ -83,4 +83,3 @@ Inference: What is proved is conditional validity of generated HeyLo verificatio
 - model-checking backend — compile a HeyVL subset to JANI MDPs and calculate expected values with Storm
 - semantic slicing — query minimal source statement sets that preserve a proof or counterexample and map them to diagnostics
 - semantic guardrails — reject combinations of procedure kinds and approximation rules that could be unsound
-Checked 2026-10-15 against paper schroer2026caesar: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

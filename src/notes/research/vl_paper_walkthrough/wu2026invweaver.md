@@ -44,4 +44,3 @@ The method checks establishment, preservation, and provability for each accepted
 - obligation-guided inference: prompt each loop with predecessor and successor proof obligations
 - WP failure diagnosis: reconstruct failed targets and classify repair scope and direction
 - dependency-propagating refinement: repair failed and dependent invariants, filter doomed candidates, and iterate validation
-Checked 2026-10-15 against paper wu2026invweaver: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

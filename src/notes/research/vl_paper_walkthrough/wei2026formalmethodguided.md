@@ -84,4 +84,3 @@ Inference: The compile-only ablation runs five times per study (15 total), expos
 - structured correction loop — preserve raw diagnostics, trace them to requirements and source lines, and feed actionable fix directives to the next iteration
 - vacuity and coverage audits — reject obligations that prove `true` without behavior and require bidirectional requirement-to-code attribution
 - cold and compile-only controls — measure verifier feedback's causal contribution by withholding it while holding generation and extraction fixed
-Checked 2026-10-15 against paper wei2026formalmethodguided: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -41,5 +41,3 @@ On 900 test tasks (90 per domain), direct heuristics with HC solved an average 6
 - bounded acceptance accounting — record time and memory limits and treat timeout-based acceptance as incomplete evidence
 
 - domain-level amortization — synthesize one reusable program per domain and evaluate it across in-distribution and unseen tasks
-
-Checked 2026-10-15 against the paper by a Codex agent for property_guided_llm_program_synthesis_fo_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

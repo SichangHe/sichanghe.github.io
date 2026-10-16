@@ -41,5 +41,3 @@ Inference: the PGTS structure transfers as a checker-in-the-loop search policy, 
 - pattern-guided tactic ranking — reorder neural top-k candidates by parent-tactic transition frequencies, then fall back to model probability
 - checker-in-the-loop DFS — apply candidates in the ITP, skip errors and repeated goals, and backtrack when a branch exhausts
 - bounded synthesis evaluation — enforce explicit tactic and time budgets and report added-value fractions against the same DFS denominator
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

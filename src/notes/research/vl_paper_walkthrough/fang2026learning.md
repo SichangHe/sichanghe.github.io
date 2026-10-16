@@ -60,4 +60,3 @@ Without generalization filtering, CoqHammer plus all mined tactics proves 1,708/
 - held-out generalization testing — insert each candidate into many external proof states, retain only non-no-op applications above a measured threshold
 - theorem-indexed retrieval — retrieve source theorems with BM25 and use their associated tactics to overcome sparse tactic text
 - And-Or tactic search — alternate ATP solving with candidate tactic application, requiring every generated subgoal to close
-Checked 2026-10-13: audit record fang2026learning; paper-study comparison complete; gate executed; experiments not rerun

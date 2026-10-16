@@ -70,5 +70,3 @@ Inference: trusted components include the theorem statement supplied by humans, 
 - principled proof API construction — replace repeated unfolding with a small set of reusable properties and lemmas
 - proof decomposition under resource limits — split expensive proofs and cache instances instead of raising global budgets
 - bounded external lemma assistance — use external provers for local suggestions while retaining the main kernel as oracle
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

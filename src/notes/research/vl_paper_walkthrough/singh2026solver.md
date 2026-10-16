@@ -40,4 +40,3 @@ Proposition 1 proves only the information limit of verdict-only scoring. Z3 supp
 - generative verification: distill oracle labels into a reference-free Yes/No vocabulary score
 - LoRA answer-only training: mask context loss and optimize only the final verification token
 - gradient/SAE diagnostics: localize verifier evidence with decision-projected gradients and sparse features
-Checked 2026-10-14 against the paper by a Codex agent: audit record singh2026solver; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

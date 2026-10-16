@@ -37,4 +37,3 @@ Table I counts success only when every criterion is fully satisfied across all r
 - symbolic back-end gate — let the SMT/verifier, not the LLM, decide constraint satisfaction
 - UNSAT adaptation cycle — analyze conflicts, propose a targeted model edit, obtain approval, apply, and retry
 - shared-state traceability — pass machine-readable intermediate results among narrowly scoped agents
-Checked 2026-10-15 against paper silva2026llm: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

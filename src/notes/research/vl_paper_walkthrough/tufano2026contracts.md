@@ -72,4 +72,3 @@ Evidence and limits. The judge's self-agreement is at least 90% with tie rate at
 - greenfield evaluation — remove tests and hide the fix to measure code understanding rather than test copying
 - ContractCoverage metric — score whether a generated contract captures the exact defect behavior and separate spec failure from test failure
 - paired multi-run evaluation — compare identical agents with and without contracts using explicit denominators, bootstraps, and paired tests
-Checked 2026-10-15 against paper tufano2026contracts: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

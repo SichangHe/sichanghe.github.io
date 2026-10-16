@@ -88,4 +88,3 @@ Inference: threat to a product that emits agent-written verified Rust is medium.
 - verifier-safe extraction — reject bypass tokens and compile an extracted body against an immutable theorem statement
 - pass@k — estimate at least one verifier-clean proof among k independent generations
 - refine@k — iteratively repair a failed proof using exact verifier diagnostics, with a fixed turn cap
-Checked 2026-10-13: audit record klingner2026evaluation; paper-study comparison complete; gate executed; experiments not rerun

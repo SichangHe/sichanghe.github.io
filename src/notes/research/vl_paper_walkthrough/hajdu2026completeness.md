@@ -58,4 +58,3 @@ The proved property is soundness and completeness under realizability, not termi
 - answer-clause saturation: carry a conditional program term through first-order clauses and extract it from an empty answer clause
 - SUPRA dual rules: combine equality branching (`SupC`) with computable answer unification (`SupU`) under partitioned orderings
 - abstraction rule: replace computable subterms inside uncomputable literals with variables and retain equality conditions for complete saturation
-Checked 2026-10-15 against paper hajdu2026completeness: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

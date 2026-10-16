@@ -63,4 +63,3 @@ Ablation (Table V, p.10) reports that removing α alone drops Pass@1 by 2.45 per
 - alpha consistency filter — retain conditions satisfied on a threshold fraction of passing executions that reach the checkpoint
 - beta discriminative filter — retain conditions violated by a threshold fraction of failing executions
 - dual-signal repair guidance — pass conditions satisfying α≥θ and β<γ to the patch generator
-Checked 2026-10-15 against paper le2026enhancing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

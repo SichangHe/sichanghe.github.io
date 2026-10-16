@@ -39,5 +39,3 @@ Trusted components include Lean's kernel, the generated formalization, the class
 - logistic success estimator — predict the next-attempt success probability from prior trajectory features
 - marginal-value routing — attempt iff predicted quality minus lambda times predicted cost is positive
 - action-space extension — add model switching, self-correction, or decomposition as scored actions
-
-Checked 2026-10-15 against the paper by a Codex agent for optimizing_the_cost_quality_tradeoff_of__20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -29,5 +29,3 @@ What is proved is that Lean’s kernel accepted complete proof terms for the rep
 - transactional future preview — explore bounded verified futures, restore state, and replay only the chosen transition
 - continuous local synthesis — enumerate typed inhabitants and partial applications alongside ordinary tactic transitions
 - verified Atlas interface — expose states and failures to an optional agent while the proof assistant validates every proposal
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

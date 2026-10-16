@@ -60,5 +60,3 @@ Inference: prove resolver totality and composition lemmas in Verus; use `ensures
 - three-valued verdicts — separate support, contradiction and unknown with explicit abstention
 - fixed composition — combine typed sub-verdicts deterministically and retain contributing evidence
 - verdict-to-generation feedback — use auditable critic outcomes to alter later generation
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

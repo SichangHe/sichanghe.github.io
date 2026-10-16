@@ -92,5 +92,3 @@ The paper measures test pass counts, module-level LLM-judged semantic equivalenc
 - dependency-aware SpecModules — bound context and propagate changed rely–guarantee contracts through affected dependents
 - implement–verify OS loop — combine contract checks with build, boot, QEMU, tests, and compact runtime diagnostics
 - independent review and refinement — turn general and OS-specific findings into scoped contract updates before regeneration
-
-Checked 2026-10-15 against the paper by a Codex agent for osfoundry_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -52,5 +52,3 @@ Trusted components include Terraform, provider behavior, OPA semantics, generate
 - certificate-driven repair: feed each oracle's error certificate back to an LLM for bounded multi-turn correction
 - policy unit tests: express natural-language intent as Rego rules evaluated over an execution DAG
 - verifier-guided GRPO: reward partial and complete verifier outcomes after SFT warm-start training
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

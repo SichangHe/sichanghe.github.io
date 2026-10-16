@@ -41,4 +41,3 @@ How to apply it. Give the agent the C/Rust projects, target mapping, and explici
 - two-tier mapping — exact static lookup first, semantic agent fallback second, with path validation
 - independent completion checks — reject stubs/TODOs and independently rerun toolchain checks
 - per-unit verified orchestration — translate, compile, refactor, and test each mapped unit before advancing
-Checked 2026-10-15 against paper farrukh2026orbit: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

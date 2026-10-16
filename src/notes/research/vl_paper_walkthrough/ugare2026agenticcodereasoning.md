@@ -47,4 +47,3 @@ Inference: for Verus code review, use the same table with specification signatur
 - premise-to-claim fault localization: connect test premises through traced calls and divergence claims to ranked suspicious regions
 - function-trace QA: require signatures, data flow, semantic evidence, and alternative-hypothesis checks before answering
 - structured exploration: record hypothesis, evidence, and confidence for each file request and observation
-Checked 2026-10-14 against the paper by a Codex agent: audit record ugare2026agenticcodereasoning; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

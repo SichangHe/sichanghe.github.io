@@ -68,4 +68,3 @@ Inference: The threat to agent-written verified Rust is that a generated invaria
 - local proof — prove each assertion under the others as constraints to share pruning without a large opaque conjunction
 - trace minimization and MCP inspection — extract UNSAT-core-relevant signals and query only needed waveforms
 - invariant migration — seed related properties with mapped helpers, then revalidate and refine them
-Checked 2026-10-13: audit record su2026cill; paper-study comparison complete; gate executed; experiments not rerun

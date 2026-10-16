@@ -102,5 +102,3 @@ Trusted components include the hidden-test oracle, canonical solutions, sandbox 
 - M1 expression recovery — robustly extract a single function, align its name to public assertions, and retry only when standard extraction found no public passer
 - ACE consensus early stop — stop sampling once fingerprint-cluster thresholds decide the modal candidate and report saving against full-budget consensus
 - coverage-wall diagnostic — increase k on held-out hard tasks and distinguish missing correct candidates from selector failures before claiming post-hoc improvement
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

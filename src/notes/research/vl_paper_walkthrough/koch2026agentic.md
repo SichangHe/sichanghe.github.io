@@ -87,4 +87,3 @@ The paper's threats to validity are explicit: the field changes quickly; product
 - feature workflow — implement the smallest planned slice, test alongside it, and record evidence before review
 - bug-fix workflow — diagnose causally, reproduce, add a regression test, patch minimally, and explain residual scope
 - hardware/firmware gate — require simulation, formal properties where applicable, HIL, timing/protocol evidence, and traceability
-Checked 2026-10-15 against paper koch2026agentic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

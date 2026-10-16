@@ -144,4 +144,3 @@ The headline percentages use different denominators and settings. The 19.67% Dee
 - frozen-context compilation repair — translate one block at a time against an immutable verified prefix and use compiler diagnostics for bounded local fixes
 - semantic review with rejection control — re-review compilable artifacts, preserve repair history, and reject changes that alter assumptions, quantifiers, domains, or conclusions
 - strict execution-based evaluation — count success only after complete project verification with original statements preserved and proof shortcuts rejected
-Checked 2026-10-15 against paper long2026cam: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

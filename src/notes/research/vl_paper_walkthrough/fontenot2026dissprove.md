@@ -65,4 +65,3 @@ DissProve checks whether a newly generated symbolic state is entailed by an exis
 - actor-causality reduction: retain predecessor events that can produce the current obligation
 - message-segment summarization: compress cyclic message histories with affine-bounded symbolic lengths
 - entailment pruning: subsume repeated symbolic states to force convergence
-Checked 2026-10-15 against paper fontenot2026dissprove: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

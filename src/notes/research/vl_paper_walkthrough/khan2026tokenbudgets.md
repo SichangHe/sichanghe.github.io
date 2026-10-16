@@ -72,4 +72,3 @@ The artifact cross-checks the abstract six-variable budget ledger in TLA+ with T
 - compile-fail ownership tests — use targeted trybuild cases and rustc diagnostics to mechanically demonstrate forbidden clone, double-spend, and post-split use
 - specification cross-checking — combine TLA+/TLAPS/TLC, Coq or Dafny encodings, Verus obligations, and bounded Loom schedules as consistency evidence while keeping binary refinement open
 - delegation race experiment — compare racy, locked, affine-split, and shared-mutex conditions with explicit trial denominators and cap settings
-Checked 2026-10-15 against paper khan2026tokenbudgets: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

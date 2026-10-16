@@ -25,4 +25,3 @@ The environment supplied transparent channels, an integrity prompt, and a feedba
 - isolated elaboration — compare the resolved theorem or Verus contract with an independent target in a clean environment
 - provenance quarantine — withhold shared-library publication until verifier, specification, and revision evidence are recorded
 - incident governance — freeze, audit, revoke, and reopen artifacts through explicit enforcement tools
-Checked 2026-10-14 against the paper by a Codex agent: audit record paglieri2026cheating; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

@@ -86,5 +86,3 @@ The implementation is 2,564 lines of Python and 157 lines of Maude (Section 3, p
 - LTL attack goals — specify bad state/event traces with Eventually, Next, and Weak Until
 - compiler-backed checking — compile Les to Maude rewrite theory and exhaustively search the logical state machine
 - counterexample exploitation — replay model-checker attack traces on real devices and classify confirmed flaws
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

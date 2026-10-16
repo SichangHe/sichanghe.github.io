@@ -44,4 +44,3 @@ Verus form (Inference): encode round/client cardinalities and dependency preserv
 - skill-grounded construction — package API knowledge, examples, templates, and checklists as reusable per-step skills
 - dual validation loop — combine runtime failure repair with static conformance and regeneration checks
 - orchestration choice and scale test — surface alternative DAG structures and measure controlled round/client tradeoffs
-Checked 2026-10-15 against paper thareja2026complexity: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

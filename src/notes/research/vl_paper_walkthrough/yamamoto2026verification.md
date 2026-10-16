@@ -47,5 +47,3 @@ Failures are concentrated where maliciousness depends on server state or respons
 - semantic intermediate specification: have an LLM identify a vulnerable parameter and emit a predicate before target-language code
 - CEGIS with diagnosed counterexamples: test candidates, return failed checks and diagnoses, and iterate with a hard limit
 - deterministic verified compilation: compile a passed specification into syntax-sensitive rules and reject overly broad matches
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

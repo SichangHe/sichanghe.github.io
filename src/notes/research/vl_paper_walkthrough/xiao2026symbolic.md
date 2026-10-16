@@ -74,5 +74,3 @@ These numbers measure this Python implementation, these benchmarks, and the stat
 - ALTLf-to-DFA compilation — compile finite-trace temporal formulas to reusable deterministic checkers
 - dual-mode supervision — gate calls online and replay identical checkers offline for reproducible verdicts
 - contract-library analysis — test consistency, compatibility, and unsatisfiable cores before deployment
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

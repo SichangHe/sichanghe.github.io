@@ -108,5 +108,3 @@ For out-of-distribution FOLIO, the authors add seven guarded quantifier rule fam
 - rule-conditioned centering: normalize verification rewards by the moving average for each logical rule
 - conditional proof-certificate soundness: derive answer entailment from acyclic trusted dependencies and discharged semantic obligations
 - expanded rule coverage: add guarded unseen quantifier schemas and replay frozen outputs to test rule generalization
-
-Checked 2026-10-15 against the paper by a Codex agent for learning_to_prove_not_just_to_answer_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

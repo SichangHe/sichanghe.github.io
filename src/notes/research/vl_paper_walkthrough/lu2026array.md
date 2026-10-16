@@ -41,4 +41,3 @@ Generation fails mainly on unsupported `%`, `<<`, `>>`, nested loops, and recurs
 - contiguous segment summaries — represent base/offset/length/content and carry quantified array facts across statements
 - segment split and merge — split on writes and merge adjacent equal summaries to preserve precision compactly
 - external invariant generation — feed affine and idiom-specific loop invariants into symbolic execution, then check ACSL with Frama-C WP
-Checked 2026-10-14 against the paper by a Codex agent: audit record lu2026array; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

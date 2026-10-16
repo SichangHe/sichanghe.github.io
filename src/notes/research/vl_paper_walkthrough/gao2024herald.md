@@ -65,4 +65,4 @@ Lean compilation proves that accepted formal statements are syntactically and ty
 - semantic paraphrase augmentation: generate equivalent, abstract, implicit-condition, and multilingual NL variants
 - compiler plus NLI validation: require Lean compilation and back-translation agreement for at least one sampled candidate
 - section-level autoformalization: translate a project section, then use a theorem prover and human checks to repair remaining errors
-Checked 2026-10-15 against paper gao2024herald: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

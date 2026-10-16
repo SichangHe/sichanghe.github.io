@@ -47,4 +47,3 @@ Inference: the trusted boundary includes SAT, IC3 certificate logic, AIGSIM, CER
 - Compass&Jump search — rank evaluator moves by confidence, risk, and cost, then explore one or a few slots adaptively
 - instrument–gate–adapt heuristic design — measure progress, skip stalled work, and allocate budgets by observed yield
 - regression-aware champion loop — benchmark under fixed timeouts, promote only improvements, and revert all failures with provenance
-Checked 2026-10-13: audit record miao2026ic3; paper-study comparison complete; gate executed; experiments not rerun

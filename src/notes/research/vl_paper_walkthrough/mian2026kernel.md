@@ -67,4 +67,3 @@ The proved claim is the bounded nonexistence theorem through `10^9`; the larger 
 - kernel-checked witness chains: cover a bounded universal claim with gapless intervals whose witnesses are checked by a small kernel-level predicate
 - maximal smooth-part bounds: certify divisor lower bounds from maximal prime powers and double for a coprime residual cofactor
 - untrusted generation with independent replay: keep search scripts outside the trusted base and cross-check their output with independent implementations and reproducible builds
-Checked 2026-10-15 against paper mian2026kernel: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

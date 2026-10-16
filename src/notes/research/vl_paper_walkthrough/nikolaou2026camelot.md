@@ -90,4 +90,3 @@ Limits. Extraction accuracy is benchmark-specific and depends on a fixed vocabul
 - CTL temporal policies: express safety, ordering, next-step, until, and liveness requirements over plan states
 - counterexample-guided plan repair: feed model-checker traces back to the planner and repeat verification
 - typed obligation grounding: compile constrained LLM proposals to CTL through trusted vocabulary checks
-Checked 2026-10-13: audit record nikolaou2026camelot; paper-study comparison complete; gate executed; experiments not rerun

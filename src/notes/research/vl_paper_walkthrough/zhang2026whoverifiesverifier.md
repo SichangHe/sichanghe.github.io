@@ -52,5 +52,3 @@ Verus form. Inference: failure capsules can contain Verus compiler diagnostics, 
 - detector lifecycle: classify active versus shadow detectors, promote by anchor agreement, and retire non-positive leave-one-out contributors
 - independent verifier audit: evaluate on locked references and use an outer judge without feeding its results into training
 - double ratchet co-evolution: alternate verifier evolution and skill synthesis while preserving rollback and held-out separation
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

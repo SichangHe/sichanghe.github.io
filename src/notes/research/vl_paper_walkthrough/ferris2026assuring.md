@@ -50,4 +50,3 @@ The study reports process observations, not defect reduction, security, HIPAA co
 - incident regression loop: seed failures, require detection, fix analogous defects, and preserve lessons
 - external coverage mapping: compare accumulated checks with independent security/property catalogs
 - auditor audit: verify check execution, outcome validity, missing-result visibility, and remediation authority
-Checked 2026-10-15 against paper ferris2026assuring: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

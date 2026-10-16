@@ -26,4 +26,3 @@ The proof checkers, Lean kernel, saturation completeness claim, generated law, a
 - renewable proof benchmark — generate fresh constructive instances and retain only those with machine-checkable certificates
 - two-channel judge — use an independent kernel proof or complete saturation plus per-step witness checks
 - proof-guided construction — require every generated step to elaborate or match a certified rewrite before acceptance
-Checked 2026-10-15 against paper xie2026alps: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

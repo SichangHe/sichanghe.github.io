@@ -47,5 +47,3 @@ The real XArm7 evaluation repeats each of three tasks 20 times. Planning succeed
 - by-construction precondition DFA — track dynamic resources, object state, and goal progress while decoding
 - canonical parser alignment — require a deterministic token-to-action bijection so the joint constraint factors exactly
 - specification-relative guarantee — treat every guarantee as conditional on the completeness and correctness of the encoded automata
-
-Checked 2026-10-15 against the paper by a Codex agent for meta_ctrl_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -75,4 +75,3 @@ Inference: In a verified-Rust product, the trusted base includes the inferred sp
 - dependency-aware incremental audit — reuse route verdicts only when changed files and import closures are absent
 - deterministic adjudication gate — filter by location, then independently judge findings against a benchmark oracle
 - run-stability accounting — report pass@1, pass@k, passk, and their exact instance/run denominators
-Checked 2026-10-14 against the paper by a Codex agent: audit record duarte2026absentia; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

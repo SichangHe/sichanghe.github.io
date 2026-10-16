@@ -89,4 +89,3 @@ The mathematical result is reported as complete and human checked, with seven ch
 - parallel patch search — compare independent fixes for one obligation and retain only checkable patches
 - versioned dependency control — keep drafts and transcript anchors, expose dependencies, and recheck downstream claims
 - mechanized bottleneck checking — delegate algebra and inequality-domain obligations to CAS or certified checkers while retaining human boundary review
-Checked 2026-10-15 against paper verbeken2026vibeproving: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

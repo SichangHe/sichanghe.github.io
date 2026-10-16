@@ -78,5 +78,3 @@ Lean verifies the formal proof terms for each supplied witness. The seed theorem
 - proof-length reward shaping — downweight easy auxiliary proofs and regulate generated proof length with normalized policy optimization
 - verifier-gated benchmark checking — count only counterexamples whose formal proofs pass the theorem prover
 - counterexample-based specification audit — use witnesses to test autoformalized theorem statements and intermediate reasoning steps
-
-Checked 2026-10-15 against the paper by a Codex agent for learning_to_disprove_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

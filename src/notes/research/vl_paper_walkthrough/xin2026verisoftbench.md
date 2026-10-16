@@ -46,5 +46,3 @@ Lean's compiler checks candidate proofs; the benchmark does not prove that an LL
 - curated-versus-full context diagnostic: compare oracle dependency context with noisy repository context under compilation checking
 - generation-check-repair loop: sample proof candidates, compile each, and feed compiler/proof-state errors into bounded repairs
 - dependency-depth analysis: correlate transitive graph depth and counts with verified-proof success
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

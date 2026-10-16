@@ -37,5 +37,3 @@ Verus form (Inference): use Verus compilation as the deterministic checker, isol
 - proof-gap generation — turn each AST transition into a local `Γ ⊢ G` obligation tied to a source step
 - replayable verifier DSL — execute deterministic state transitions, reject unsupported automation, and require all branches to close
 - verifier-guided workflow — combine bounded candidate generation, isolated checker feedback, replay, and semantic audit
-
-Checked 2026-10-15 against the paper by a Codex agent for proofgap_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

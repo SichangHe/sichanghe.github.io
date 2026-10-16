@@ -72,4 +72,3 @@ The experiments use one RTX PRO 6000 GPU, vLLM, greedy decoding, Mathlib 4, and 
 - Lean-filtered expert iteration: retain only rewriter outputs whose reconstructed statements pass the formal checker and fine-tune repeatedly
 - statement/proof signal separation: distinguish well-formedness checks from kernel-checked proofs and report both denominators
 - shared-scaffold integration: factor verifier accuracy into candidate coverage and conditional retention to isolate the effect of reuse
-Checked 2026-10-15 against paper feng2026formalize: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

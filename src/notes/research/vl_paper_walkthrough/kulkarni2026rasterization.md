@@ -133,5 +133,3 @@ The primary measurement uses 99 skps from 100 top websites, Clang 17 `-O3 -flto=
 - finite-state rewrite matching — implement each verified pattern as a linear scan with stack-aware matcher state
 - trace translation validation — convert emitted optimization traces to formal terms and prove each adjacent step equivalent
 - certificate-backed opacity and filter reasoning — expose blend, filter, and opacity assumptions as proof obligations before rewriting
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

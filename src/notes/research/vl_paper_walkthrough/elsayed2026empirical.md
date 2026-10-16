@@ -98,4 +98,3 @@ The abstract says the analyzer identified vulnerabilities in 57% of compiled sam
 - provenance-aware secret detection: follow assignments so initialize-then-fill buffers are distinguished from hardcoded secrets
 - structural nonce lifecycle checking: track nonce arguments across calls and brace-delimited loops for missing regeneration
 - domain-specific validation: combine CWE rules with benchmark cases, confidence intervals, and explicit false-positive and false-negative accounting
-Checked 2026-10-14 against the paper by a Codex agent: audit record elsayed2026empirical; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

@@ -155,4 +155,4 @@ No benchmark denominator, verification-time table, or success percentage is repo
 - conditional stuttering alignment — prove left-only, right-only, and paired steps under data-dependent guards
 - ∀∃ witness alignment — restrict nondeterministic choices and prove universal correctness plus over- and under-approximation
 - derived relational Hoare rules — use BiKAT equations to justify sequence, branch, loop, consequence, and procedure-summary rules
-Checked 2026-10-14 against the paper by a Codex agent: audit record antonopoulos2023alignment; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

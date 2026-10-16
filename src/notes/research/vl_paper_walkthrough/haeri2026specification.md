@@ -130,4 +130,3 @@ The experiment measures test detection, repair completeness, final correctness, 
 - grounded versus ungrounded baselines — compare against doubled budgets, property generation, and agentic test-and-repair flows
 - specification corruption audit — drop or contradict rules and measure coverage loss separately from precision loss
 - model and scope replication — vary code models and vendors while preserving tester controls and explicit bug-class limits
-Checked 2026-10-15 against paper haeri2026specification: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

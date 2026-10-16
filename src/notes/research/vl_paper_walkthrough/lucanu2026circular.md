@@ -79,4 +79,3 @@ The same engine can combine coinduction and induction. In the `zeros + S = S` ex
 - special-hypothesis closure — add bounded experiment instances to support strong and non-linear induction
 - subsort hypothesis compression — store generic frozen lemmas by source subsort and instantiate generated variables
 - induction/coinduction composition — save a coinductive proof state, discharge an inductive lemma, then resume coinduction
-Checked 2026-10-15 against paper lucanu2026circular: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

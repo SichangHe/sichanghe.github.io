@@ -86,4 +86,3 @@ evidence and limits. The case study shows that a green build and baseline axioms
 - staged multi-agent proof workflow — lock signatures, execute isolated waves, review bodies and axioms, integrate on a rebuilt trunk, and close only after audit
 - Scout gap reports and falsification triage — boundedly classify library support and route blocked goals through counterexample or confirmation checks
 - definition-layer drift control — pin authored structures and definitions so proof obligations cannot move silently from theorem signatures into ghost or concept fields
-Checked 2026-10-15 against paper wei2026hypothesis: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -98,4 +98,3 @@ Inference: For a product producing agent-written verified Rust, the threat is hi
 - form/mechanism separation — record contract or oracle shape separately from the computation that adjudicates pass or fail
 - execution filtering — compile and run generated oracle candidates on known-correct behavior before acceptance
 - mutation-grounded evaluation — test whether an oracle catches injected faults instead of relying only on resemblance to a reference
-Checked 2026-10-15 against paper mughal2026testoracles: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

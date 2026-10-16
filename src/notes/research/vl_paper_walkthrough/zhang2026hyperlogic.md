@@ -75,4 +75,3 @@ Inference: this is directly useful for Verus: generate a concrete state that sat
 - coverage and restriction audit — test missing source claims and unjustified constraints with concrete worlds
 - tool-condition evaluation — compare direct answers, sandbox agents, and sandbox agents with a modeling library
 - possibility-space error taxonomy — separate under-enumeration, over-enumeration, and semantic modeling failures
-Checked 2026-10-15 against paper zhang2026hyperlogic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

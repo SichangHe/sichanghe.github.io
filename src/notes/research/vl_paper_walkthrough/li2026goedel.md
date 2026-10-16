@@ -45,4 +45,3 @@ The soundness policy admits only `propext`, `Classical.choice`, and `Quot.sound`
 - structural decomposition ranking — use operator footprints to reward smaller proof obligations
 - hybrid proof policy training — reinforce decomposition while replaying verified completion trajectories
 - hierarchical bounded search — decompose difficult goals, then refine leaf proofs with compiler diagnostics
-Checked 2026-10-13: audit record li2026goedel; paper-study comparison complete; gate executed; experiments not rerun

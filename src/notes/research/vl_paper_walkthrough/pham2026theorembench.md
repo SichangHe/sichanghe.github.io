@@ -63,5 +63,3 @@ The benchmark proves only that retained Lean snippets compile and that reported 
 - theorem-level coverage — measure partial and complete progress over all subtheorems in a parent theorem group
 - token-efficiency analysis — compare accepted generated proof length with checked reference proofs and report selective-solve bias
 - premise ablation — compare identical theorem units with and without explicit context to diagnose proof-agent use of dependencies
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

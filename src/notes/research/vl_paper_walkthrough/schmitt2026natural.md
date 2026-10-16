@@ -39,5 +39,3 @@ A successful nuXmv check proves the finite Verilog instance satisfies the suppli
 - inspectable autoformalization: expose NL-to-TLSF output for review before synthesis
 - dual specification checking: verify generated code against both autoformalized and independently authored ground truth
 - syntax-feedback repair: iterate formal-spec generation with grammar diagnostics while monitoring semantic shifts
-
-Checked 2026-10-15 against the paper by a Codex agent for natural_synthesis_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

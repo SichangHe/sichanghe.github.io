@@ -153,4 +153,3 @@ Cross-model test (Section 6.3 and Figure 2, p.7): the skill evolved with Codex o
 - executable-projection check: accept an annotated artifact only if erasing annotations, comments and whitespace gives back the input program and no bypass construct was added
 - evolution memory: log every accepted, rejected and skipped revision with its pattern and outcome, and consult the log before attributing or writing again
 - unchanged-skill transfer test: give the final guidance to other models without further tuning to check that it is knowledge and not a model-specific prompt
-Checked 2026-10-13: audit record jia2026veriskill; paper-study comparison complete; gate executed; experiments not rerun

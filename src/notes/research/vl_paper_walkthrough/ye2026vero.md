@@ -37,5 +37,3 @@ The grader proves the submitted Lean artifacts against frozen specifications and
 - clean re-rendered grading — extract editable regions into a fresh checkout and enforce axiom and declaration screens
 - formal benchmark audit — use machine-checked counterexamples to distinguish agent failures from defective specifications or references
 - shared lemma-library measurement — track helper reuse and proof-chain depth across specifications, not only local proof success
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

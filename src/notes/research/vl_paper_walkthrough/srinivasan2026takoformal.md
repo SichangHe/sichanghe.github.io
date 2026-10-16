@@ -39,5 +39,3 @@ The authors report 119 clauses in the inductive invariant and 61K lines of proof
 - environmental overapproximation: parameterize hidden scheduling and replacement behavior with nondeterministic transitions
 - prefix-closed invariants: reformulate full-execution axioms so every partial execution satisfies them
 - intermediate-state refinement: prove an abstract event-graph machine and separately connect it to the detailed implementation
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

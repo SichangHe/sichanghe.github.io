@@ -72,4 +72,3 @@ The paper does not establish that all mathematically equivalent rewrites are equ
 - rejection sampling audit — retain verified candidates while reporting failures, retention rates, and changed difficulty distribution
 - pass@k coverage — vary ATP attempts, report diminishing returns, and expose verifier capability limits
 - paired rewrite evaluation — compare original and proof-verified rewrites to diagnose memorization and reformulation sensitivity
-Checked 2026-10-15 against paper zhou2026repro: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

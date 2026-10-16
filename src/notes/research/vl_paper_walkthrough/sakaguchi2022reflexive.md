@@ -35,4 +35,4 @@ The adapted ring and field tactics replace reflection work in an Apéry proof of
 - homomorphism preprocessing: push maps through algebraic syntax to leaves and reuse one normalizer
 - canonical zification: infer integer representatives of ring terms and discharge field side conditions with linear arithmetic
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

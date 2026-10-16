@@ -70,4 +70,3 @@ Inference: Verus transition proofs would use `requires`/`ensures` for `post_chan
 - atomic transition lemmas — split concurrent updates into Change and MarkTbm and prove each preservation implication
 - 
 - safe-set rely derivation — derive a component's rely from a universally quantified guarantee without sharing its local set
-Checked 2026-10-15 against paper yatapanage2026complexity: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -47,5 +47,3 @@ On the 100-supertype test set, Qwen2.5-Coder-7B direct generation produced 85.0%
 - token-level derivative filtering — prune prefixes that cannot complete to a valid asynchronous subtype
 - widening-based final checking — verify complete session trees with coinductive derivatives and recursion widening
 - variance and reordering refinement — apply covariance, contravariance, and independent send/receive anticipation
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

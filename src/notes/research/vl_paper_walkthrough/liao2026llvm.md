@@ -85,5 +85,3 @@ The loop counterexample branch adds a concrete execution bound so candidate eval
 - counterexample certification — turn a concrete LLM candidate into a kernel-checked non-refinement proof
 - inductive loop scaffolding — prove initialization, preservation, and exit for a canonical loop without bounded unrolling
 - deterministic semantic harness — accept results only after the formal kernel checks the assembled proof
-
-Checked 2026-10-15 against the paper by a Codex agent for llvm_translation_validation_automated_wi_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

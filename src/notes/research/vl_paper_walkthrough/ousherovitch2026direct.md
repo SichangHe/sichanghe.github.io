@@ -77,4 +77,3 @@ Trusted elements include Lean's kernel, LeanDojo's environment, the theorem stat
 - strategy-specific recurrences: derive separate objectives for Pass@N, best-first, and other frontier policies
 - off-trace error analysis: account for alternative proofs and the recovery cost of exploratory branches
 - paired proof-search evaluation: report proof-found rates with theorem, expansion-budget, and paired-cohort denominators
-Checked 2026-10-15 against paper ousherovitch2026direct: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

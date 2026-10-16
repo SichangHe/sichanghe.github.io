@@ -55,4 +55,4 @@ No theorem proves STORM's completeness. Measured outputs are bugs found, reprodu
 - satisfiable-by-construction oracle — negate false-valued assertions so `unsat` identifies a solver bug
 - depth minimization — binary-search formula depth while preserving satisfiability and the incorrect result
 - incremental-mode fuzzing — generate push/pop variants and vary depth/assertion bounds to probe solver configurations
-Checked 2026-10-15 against paper mansur2020storm: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

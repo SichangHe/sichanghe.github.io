@@ -52,4 +52,3 @@ The FR sealor and its guarantees are fully mechanized in Lean. The real-Rust sea
 - selective soundness — retain stronger rejection guarantees at statement boundaries while keeping other rules lightweight
 - typed placeholders and scoped suppression — use divergent/value placeholders and suppress only errors that later tokens can resolve
 - bounded feedback harness — combine early restarts with a fixed post-generation repair budget and deterministic diagnostics
-Checked 2026-10-13: audit record mundler-sasahara2026generative; paper-study comparison complete; gate executed; experiments not rerun

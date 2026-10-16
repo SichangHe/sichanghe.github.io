@@ -74,4 +74,3 @@ The paper’s main limits are C/C++ memory vulnerabilities, sanitizer-dependent 
 - two-phase generation: explore to the vulnerable function first, then refine near-target inputs toward the triggering effect
 - hybrid execution feedback: always provide coarse source-level coverage and query fine-grained coverage when stalled
 - validated versus variant outcomes: distinguish matching sanitizer type/location from other crashes and report both denominators
-Checked 2026-10-15 against paper li2026execution: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -84,4 +84,3 @@ Evidence and limits. The harness tests only provided inputs, so it does not prov
 - FFI behavioral verification — compile and run the original C and generated Rust on identical inputs, compare outputs, and allow a fixed repair budget
 
 - seed-averaged success rate — compute per-seed pass fractions over a fixed program denominator and report the arithmetic mean over five stochastic runs
-Checked 2026-10-15 against paper zhao2026qwen3: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

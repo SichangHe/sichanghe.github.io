@@ -162,4 +162,3 @@ Inference: threat to a product of agent-written verified Rust is indirect and mo
 - counterexamples as benchmark audit: a real counterexample at a search node marks a benchmark item whose extraction dropped an assumption
 - rejected-step error census: classify every rejected step by prover error to find where the budget goes; here 60.1% were nonexistent facts
 - search-ready prover interface: per-step execution with time limits, state clone and restore, and caching that skips unrelated theories
-Checked 2026-10-13: audit record he2026neuro; paper-study comparison complete; gate executed; experiments not rerun

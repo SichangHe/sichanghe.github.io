@@ -47,5 +47,3 @@ What is proved is Lean acceptance of retained statements and proof trajectories.
 - binary RLVR with GRPO — optimize grouped proof attempts using verifier reward 1/0 and reject escape-hatch tokens
 - proof-length curriculum — order training statements from shorter verified proofs to longer ones
 - rejection-sampling fine-tuning — fine-tune only on in-distribution, verifier-accepted sampled proofs
-
-Checked 2026-10-15 against the paper by a Codex agent for physprover_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

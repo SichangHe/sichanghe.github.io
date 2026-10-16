@@ -63,4 +63,3 @@ Lean proves the quantifier-rewrite equivalence theorem under Equations 1–4. Ve
 - immutable sequence modeling — encode never-written arrays as immutable mathematical sequences after releasing mutable permissions
 - uniqueness classes — assign pointer and field uniqueness numbers so non-overlapping arrays use separate heap fields
 - kernel-body extraction — verify a GPU body under its own contract to reduce solver context and proof time
-Checked 2026-10-13: audit record unknown2026scalabledeductiveverificationofdata; paper-study comparison complete; gate executed; experiments not rerun

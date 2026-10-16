@@ -52,4 +52,3 @@ What remains trusted is the audited reference consensus, faulty-program bank, ex
 - additive executable reward — jointly reward correctness, valid inputs, potential kill, and effective kill
 - group-relative suite training — normalize eight complete-suite rewards and apply a clipped policy update
 - fixed-input crossover — freeze inputs and cross policies to separate input-selection difficulty from oracle prediction
-Checked 2026-10-15 against paper liang2026correct: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

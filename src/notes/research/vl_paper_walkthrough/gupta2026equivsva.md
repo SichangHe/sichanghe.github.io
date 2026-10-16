@@ -63,4 +63,3 @@ The corpus emphasizes small control logic and next-cycle implications/invariants
 - controlled mutation testing — inject localized semantic changes and measure counterexample detection
 - family-safe evaluation splits — keep all equivalent implementations of a behavior in one train, development, or test split
 - implementation-robustness metrics — compare sound-property counts across variants with explicit task, family, and mutant denominators
-Checked 2026-10-15 against paper gupta2026equivsva: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

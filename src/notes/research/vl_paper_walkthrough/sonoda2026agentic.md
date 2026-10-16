@@ -62,5 +62,3 @@ What is proved is a conditional statistical bound. What remains trusted is the p
 - occupancy-sensitive evaluation: weight local value errors by the learned prover's unsolved-state tail and average truncated length
 - geometry and margin engineering: use retrieval and representations to improve coverage, smoothness, dimension and action gaps
 - overflow truncation: cap variable-goal states and report the probability mass discarded by the cap
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

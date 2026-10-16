@@ -36,4 +36,3 @@ The paper reports all 101 first errors at the final chain step, with residual co
 - legality-constrained decoding — restrict arguments with per-operator admissibility sets
 - version-frozen audit — replay, checksum, independently recheck, and reverse-test accepted proofs
 - state-visible decision loops — feed each engine result into the next policy decision
-Checked 2026-10-13: audit record zhou2026scope; paper-study comparison complete; gate executed; experiments not rerun

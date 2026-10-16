@@ -40,4 +40,3 @@ What is proved is graph recoverability under fixed schema queries and the report
 - feedback-driven graph construction: require all state changes through tools, return structured violations, and retry until constraints hold
 - deterministic lexical grounding: cache endpoint labels, rank finite candidates, and materialize a chosen IRI mapping or `owl:sameAs`
 - database-backed CBU derivation: parse crystallographic files, segment nodes/linkers, enrich identifiers, and instantiate derived entities under the ontology
-Checked 2026-10-15 against paper zhou2026ontology: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

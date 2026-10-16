@@ -96,4 +96,3 @@ Inference: the threat is medium to high at the specification boundary. A Verus p
 - validator-directed retry and fallback — use stage diagnostics for one repair and route irreducible formulas through direct NL→SHACL
 - Corpus Adapter grounding — select predicates from a registry, canonicalise residual names, and swap registries for domain transfer
 - two-pass expressiveness audit — scan six higher-order signatures and manually inspect fallback rules before claiming FOL adequacy
-Checked 2026-10-15 against paper kaewsawee2026policykg: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

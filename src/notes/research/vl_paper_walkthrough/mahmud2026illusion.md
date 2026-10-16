@@ -61,5 +61,3 @@ The study trusts compiler/tool versions (g++ 13.3.0, cppcheck 2.19.0, clang-tidy
 - cross-tool Jaccard analysis — compare flagged-program sets to expose complementary coverage
 - clustered risk regression — use mixed-effects logistic regression with task-level random effects and explicit covariates
 - scope-sensitive interpretation — separate proven bounded violations, observed runtime failures, warnings, parse errors, and timeouts
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

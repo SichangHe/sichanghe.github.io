@@ -74,5 +74,3 @@ These are concrete-parameter proofs, not universal proofs over symbolic dimensio
 - product-program equivalence: combine aligned programs and prove relational invariants at loop cut points
 - VC generation with Z3: discharge loop-free verification conditions over arrays, bitvectors, and uninterpreted functions
 - concrete-parameter verification: replace symbolic dimensions and flatten bounded quantifiers when SMT cannot solve nonlinear formulas
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

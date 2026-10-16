@@ -84,5 +84,3 @@ Theorems 1 and 2 prove soundness of unconditional and dependency-conditional k-b
 - conditional compositional checking: retry failed standalone assertions under explicitly recorded preceding assumptions
 - dependency closure: recursively replace intermediate assumptions with root facts and expose the final condition set
 - solver portfolio and compile gates: run parallel bounded checkers, normalize assertion locations, and compile after every generated artifact
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

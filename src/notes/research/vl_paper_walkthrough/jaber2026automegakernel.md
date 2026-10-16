@@ -79,4 +79,3 @@ Inference: AMK trails cuBLAS on training-class A100/H100 because fixed cross-SM 
 - reference-oracle gate — require semantic equivalence against a CPU reference before measuring or retaining an optimization
 - drift-robust autoresearch — use interleaved A/B timing, keep/revert, and a physical roofline guard for noisy unattended optimization
 - adversarial validator audit — compare a checker against an independent unsafe oracle, report every class denominator, and retain stricter checks the oracle cannot model
-Checked 2026-10-14 against the paper by a Codex agent: audit record jaber2026automegakernel; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

@@ -95,4 +95,3 @@ The symbolic pipeline provides certificates: clingo either returns an answer set
 - leakage-free core repair — return only constraints from the model's own program, never the ground-truth answer
 - generic-error ablation — compare core feedback with identical repair using only the raw solver message
 - verifier-pattern triage — transfer domain-specific failure categories to Rust/Verus specification repair (Inference)
-Checked 2026-10-15 against paper sarkar2026errors: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

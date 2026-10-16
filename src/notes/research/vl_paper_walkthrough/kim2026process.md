@@ -60,4 +60,3 @@ Lean's kernel checks the final proof and elaborated tactic steps. The measured c
 - first-token credit — attach process advantage to the first token that chooses each tactic's strategy
 - combined outcome/process GRPO — optimize global proof success together with dense verifier-grounded local feedback
 - verifier as process oracle — use the proof assistant during training, not only for final evaluation
-Checked 2026-10-13: audit record kim2026process; paper-study comparison complete; gate executed; experiments not rerun

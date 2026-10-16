@@ -89,5 +89,3 @@ Lean checks the generated proof terms, so accepted Lean artifacts receive kernel
 - checker-gated repository — persist formal snippets only after Lean or Verus acceptance and return diagnostics otherwise
 - three-point proof checking — verify final proofs, intermediate lemmas, and worker tool calls during search
 - interactive budgeted orchestration — let a human inspect or interrupt agents while preserving autonomous reproducibility under a fixed token budget
-
-Checked 2026-10-15 against the paper by a Codex agent for openprover_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -69,5 +69,3 @@ Record wall time, Verus invocations, solver time, generated proof size, and retr
 - error-attribution routing — classify a failed proof as mathematical or implementation error and revise only the responsible component
 - diagnostic-conditioned repair — preserve context on syntax errors and regenerate proof code from verifier diagnostics
 - budget-aware certification — report verified coverage as a function of explicit statement, proof, token, and internal-call budgets
-
-Checked 2026-10-15 against the paper by a Codex agent for magenta_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

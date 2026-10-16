@@ -29,5 +29,3 @@ The evidence is three runs on one open problem, one extractor, one embedding mod
 - abstention-aware aggregation — encode parser, timeout, and API failures separately from substantive rejection
 - diverse verifier ensemble — require independent judgments when no external checker exists and preserve disagreement
 - polarity-preserving memory — retain provenance and refutation context when storing claims for retrieval
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

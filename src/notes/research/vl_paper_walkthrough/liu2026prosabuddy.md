@@ -74,4 +74,3 @@ The Rocq kernel checks proof terms; retrieval, ReAct, decomposition, and skills 
 - trace-derived proving skills — mine failed and successful proof traces into reviewed, reusable tactics guidance
 - stagnation detection — compare proof states and block repeated attempts that add no evidence
 - independent proof audit — compile in a clean process, restrict proof commands, and compare theorem source outside the proof body
-Checked 2026-10-13: audit record liu2026prosabuddy; paper-study comparison complete; gate executed; experiments not rerun

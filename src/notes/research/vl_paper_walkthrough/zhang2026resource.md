@@ -67,4 +67,3 @@ Inference: a Verus-oriented oracle can check ghost event traces and postconditio
 - constrained LLM concretization: compile and structurally repair generated Rust while forbidding invented events and weakened assertions
 - conflict-first schedule shaping: allocate Loom or deterministic scheduler budget to high-conflict partial-order harnesses
 - layered semantic oracle: separate structural concretization errors from outcome, invariant, and liveness failures
-Checked 2026-10-15 against paper zhang2026resource: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -43,4 +43,3 @@ The Qiskit tableau simulator and exact state checks establish the paper’s chos
 - verifier-checked algorithmic traces — train on deterministic derivations paired with final programs retained only after exact semantic verification
 - verifier-filtered continuation — fine-tune on the model’s own verifier-accepted completions
 - criterion-separated evaluation — report syntax, representation equality, semantic equivalence, and finite-budget Pass@N independently
-Checked 2026-10-14 against the paper by a Codex agent: audit record wei2026agcot; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

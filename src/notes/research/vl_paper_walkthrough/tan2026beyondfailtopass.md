@@ -58,4 +58,3 @@ The authors remove each phase to test causal contribution. Full COHARDEN is 69.4
 - temporal-matrix hardening: compare each new test with the previous test and reject high-laxity regressions
 - bounded mutant sampling: generate admissible variants with targeted semantic operators and record the denominator
 - phase ablation: measure each workflow phase separately for causal contribution
-Checked 2026-10-15 against paper tan2026beyondfailtopass: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

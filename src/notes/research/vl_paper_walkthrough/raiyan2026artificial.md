@@ -127,4 +127,3 @@ Verus form. Inference: let the agent propose verified helper lemmas, data-struct
 - RL with verifiable rewards: train from execution or proof-assistant rewards with explicit baselines and budgets
 - verifier-guided test-time scaling: sample candidates and let an independent checker select accepted proofs
 - verified discovery: evolve executable constructions, then certify their properties and audit novelty
-Checked 2026-10-14 against the paper by a Codex agent: audit record raiyan2026artificial; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

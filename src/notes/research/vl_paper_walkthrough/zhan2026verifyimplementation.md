@@ -85,5 +85,3 @@ Verus form (Inference): use the first failed `assert` or unsatisfied `ensures` a
 - tiered rule validation — use SMT for symbolic operators and constrained random tests for opaque kernels, with evidence labels
 - congruence rebuilding — propagate each accepted local merge through parent nodes until a fixpoint
 - earliest-frontier localization — trace an unmatched output backward to the first unexplained cross-graph divergence
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

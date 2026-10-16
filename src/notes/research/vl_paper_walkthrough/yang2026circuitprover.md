@@ -37,4 +37,3 @@ Lean kernel checks establish only the formalized Lean theorem. Trust remains in 
 - feedback-driven proving — iteratively edit proof scaffolds using compiler/prover states until the kernel accepts the proof
 - reusable proof libraries — distill checked lemmas and separate natural-language strategies for retrieval on related tasks
 - parameterized verification — prove one symbolic theorem for all legal design parameters instead of checking instances separately
-Checked 2026-10-14 against the paper by a Codex agent: audit record yang2026circuitprover; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

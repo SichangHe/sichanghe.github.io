@@ -62,5 +62,3 @@ The steps are: generate a plan; execute it against mock state; feed errors into 
 - confined endorsement: reclassify only a bounded value while proving confidentiality-preserving insulated TIPNI
 - oracle interpreter: pass model nondeterminism as an oracle to connect executable evaluation with formal semantics
 - practice-mode retries: repair generated code on mock state before permitting real-world side effects
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

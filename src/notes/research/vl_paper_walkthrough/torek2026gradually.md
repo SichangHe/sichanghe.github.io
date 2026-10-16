@@ -80,4 +80,3 @@ The authors list missing features: fractional and quantified permissions, richer
 - gradual optimistic heaps — track precise and imprecise ownership separately and emit runtime checks for assumptions introduced by `?`
 - recursive visited-set cutoff — stop recursive symbolic unfolding or pure-function evaluation at visited instances and retain sound postcondition constraints
 - progress-preservation soundness — prove that matching static and dynamic states preserve validity and only halt when a generated runtime check fails
-Checked 2026-10-13: audit record torek2026gradually; paper-study comparison complete; gate executed; experiments not rerun

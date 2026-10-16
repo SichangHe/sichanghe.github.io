@@ -32,4 +32,3 @@ The prototype demonstrates a data model, interfaces, synchronization, authoring 
 - lifecycle statuses: track draft, stated, supported, cited, verified, questioned, and addressed states without treating them as proof
 - structural lint: warn about unsupported claims, cycles, malformed vocabulary, and misuse of synthesis nodes
 - risk dialogue: attach contestable risk nodes to claims and revise support or status in response
-Checked 2026-10-15 against paper ma2026engineering: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

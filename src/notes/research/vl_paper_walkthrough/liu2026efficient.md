@@ -44,4 +44,3 @@ What it is. Treat the maximum number of decomposition-evolution rounds as a cont
 - Pareto rubric evolution: evolve a pool of decompositions using faithfulness, provability, and language-friendliness scores
 - verification gating: invoke expensive formal checking only after cheap proxy scores clear a threshold
 - budget scaling: choose test-time optimization rounds from measured accuracy-cost curves
-Checked 2026-10-15 against paper liu2026efficient: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

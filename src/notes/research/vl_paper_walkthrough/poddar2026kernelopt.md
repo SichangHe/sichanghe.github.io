@@ -60,4 +60,3 @@ KernelOPT measures speed and correctness on NVIDIA H200 with Claude Sonnet 4.6, 
 - end-to-end performance gate — accept only re-stitched model time within a 3% margin of baseline
 - fail-closed baseline fallback — ship the compiler baseline whenever no candidate passes every gate
 - composition-gap testing — re-stitch and test whole models because sub-kernel speedups can regress end-to-end execution
-Checked 2026-10-15 against paper poddar2026kernelopt: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

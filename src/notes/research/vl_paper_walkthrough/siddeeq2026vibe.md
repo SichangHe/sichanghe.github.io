@@ -49,4 +49,3 @@ The review also finds short-term productivity or time-to-prototype gains in 21 o
 - evaluation–repair loop — run checks after generation, feed concrete failures into a patch or prompt, and repeat before reliance
 - trust checkpoints — retain versioned diffs and human review at commit or deployment boundaries while calibrating reliance to evidence
 - constrained execution and provenance — sandbox generated code and record source, model, dependency, and artifact lineage
-Checked 2026-10-15 against paper siddeeq2026vibe: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

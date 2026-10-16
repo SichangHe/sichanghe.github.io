@@ -70,4 +70,3 @@ Evidence and limits. The capstone has one theorem and approximately 260 lines, a
 - minimal-diff mutation boundary — distinguish a production-safe function from a structurally adjacent mutant under one predicate
 - no-retrofit theorem composition — seal component proofs before direct-conjunction capstone composition
 - axiom-record CI gating — recheck theorem types, dependencies, and expected axiom footprints on every push
-Checked 2026-10-15 against paper iskander2026tridirectional: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

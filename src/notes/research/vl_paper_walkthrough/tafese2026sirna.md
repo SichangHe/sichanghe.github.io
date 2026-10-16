@@ -64,5 +64,3 @@ The verified result is SMT equivalence under A/B, mappings, constraints, and the
 - mapped equivalence checking — compare outputs under variable correspondences and legal-domain constraints
 - counterexample diagnostics — expose concrete input assignments when the equivalence implication is invalid
 - majority-vote evaluation — report precision, recall, errors, and denominators separately for translation and consistency stages
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

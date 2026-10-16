@@ -45,4 +45,3 @@ The limitation is explicit: “The reliability of TA increases with the number a
 - downstream prompt context: provide successor declarations with natural-language proof context during generation
 - coverage-controlled evaluation: increase successor count and dependency depth to make semantic tests stricter
 - caller-slice Verus inference: re-run Verus over every dependent specification and executable caller after replacement
-Checked 2026-10-14 against the paper by a Codex agent: audit record kim2026testing; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

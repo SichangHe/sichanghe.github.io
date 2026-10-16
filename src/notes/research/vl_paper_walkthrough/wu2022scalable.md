@@ -36,4 +36,4 @@ The experiments use Decima, 32 threads, 128 GB memory, one-hour single-step and 
 - node abstraction refinement — verify many disjunctive node constraints through one embedding abstraction, then split the group on spurious counterexamples
 - trace enumeration — enumerate feasible action prefixes and stop on a matching bad trace
 - proof-transfer encoding — reuse unchanged graph/network structure across time steps while encoding only local feature updates
-Checked 2026-10-14: audit record wu2022scalable; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

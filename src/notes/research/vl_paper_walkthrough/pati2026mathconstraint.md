@@ -81,4 +81,3 @@ limits: SIM@k truncates observed trajectories and does not allow a model to adap
 - adaptive frontier filtering — crank parameters and admit candidates that at least one frontier model fails
 - sandboxed solver orchestration — expose bounded SAT/SMT tool calls and verify the final structured submission
 - SIM@k replay — truncate logged tool trajectories and rerun the verifier to quantify budget sensitivity
-Checked 2026-10-15 against paper pati2026mathconstraint: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

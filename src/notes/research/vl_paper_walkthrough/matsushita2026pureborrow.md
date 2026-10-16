@@ -110,5 +110,3 @@ evidence and denominators: benchmarks used randomly generated integer vectors of
 - scoped reborrowing — derive shorter borrowers with lifetime intersection and restore the parent borrower
 - history-based semantics — record path updates on lifetime tokens and replay them at reclamation
 - borrow-aware integration benchmark — test safe parallel mutation with quicksort and work stealing
-
-Checked 2026-10-15 against the paper by a Codex agent for pure_borrow_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

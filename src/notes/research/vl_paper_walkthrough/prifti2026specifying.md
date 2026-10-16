@@ -57,5 +57,3 @@ The capability boundary is material: with gpt-oss:20b, rates were A 9.1%, B 19.2
 - invariant enforcement — maintain token, capability, blocker, audit, and session invariants under explicit assumptions
 - policy trade-off analysis — quantify false-pass and false-block behavior with denominator-labeled simulations
 - capability-aware evaluation — measure process gains and identify the base-agent capability floor
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -51,4 +51,3 @@ Verus form.
 - self-verifying answer discovery — generate a candidate, inspect it for errors, and iteratively correct it before formalization
 - answer-conditioned rewriting — insert a reviewed candidate into a single-goal statement before invoking the theorem prover
 - semantic benchmark curation — expert cross-validation, unified conventions, and compilation checks prevent answer leakage and misaligned goals
-Checked 2026-10-15 against paper liu2026discoverprove: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

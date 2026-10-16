@@ -109,4 +109,3 @@ Trusted elements include Lean's kernel and compiler, the pinned Mathlib fork, th
 - deterministic proof grading — require compilation, dependency-closure cleanliness, and no newly introduced axioms
 - semantic failure audit — search for definitions, hypotheses, or missing algorithms that make a wrong claim provable
 - documented library fork — pin, explain, publish, and upstream-review domain-specific foundational changes
-Checked 2026-10-14 against the paper by a Codex agent: audit record yin2026axqm; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

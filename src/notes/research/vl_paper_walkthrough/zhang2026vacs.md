@@ -71,5 +71,3 @@ Inference: these are proof-of-concept measurements under engineered roles, finit
 - nucleolus/Hamiltonian consensus — allocate coalition-fair influence and optimize a constrained consensus with co-state updates
 - verifier-grounded explanations — rank sensitive steps and render certificates containing each action's verified constraint and pre/postconditions
 - finite-candidate evidence boundary — treat no-new-error as conditional on the generated candidate set and verifier assumptions
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

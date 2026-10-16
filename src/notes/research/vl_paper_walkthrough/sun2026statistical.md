@@ -55,5 +55,3 @@ The paper’s evidence is human assessment of eight paired proof attempts; it do
 - precise bounded formulation — state definitions, assumptions, target, and a manageable sub-problem
 - targeted strategy hint — provide the domain proof route, decomposition, and regularity conditions
 - iterative decomposition — solve and inspect smaller lemmas before recombining a long proof
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

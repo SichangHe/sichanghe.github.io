@@ -111,4 +111,3 @@ The paper demonstrates empirical bug finding and component ablations; it proves 
 - CFG/SAT summary validation — retain an LLM summary only when a feasible path satisfies its allocation or deallocation claim
 - summary-augmented static analysis — inject validated summaries into complementary analyzers to expose custom wrappers
 - path-feasibility warning filtering — use symbolic state reachability to discard infeasible leak reports before expensive review
-Checked 2026-10-15 against paper huang2026findingmemoryleaks: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

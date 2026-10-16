@@ -95,4 +95,3 @@ The paper demonstrates an agentic pipeline on three synthetic or literature-insp
 - verifiability gate — filter properties outside the target model’s observable and semantic boundaries
 - grammar-constrained translation — generate formal queries under an explicit BNF and model mapping
 - three-level validation — apply compilation, exact comparison, and carefully justified semantic-equivalence checking
-Checked 2026-10-15 against paper tagliaferro2026requirementformalization: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

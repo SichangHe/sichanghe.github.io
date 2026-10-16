@@ -90,4 +90,3 @@ evidence, contradictions, and trusted scope: the paper manually classifies 3,189
 - representation transformation proof — construct target domains and maps, then prove relaxation or equivalence
 - semantic dependency density — measure non-trivial typed declaration dependencies to stratify formal tasks
 - structural prompt and failure audit — enforce construction-first output and classify compile/proof failures with denominators
-Checked 2026-10-15 against paper yang2026constructionverification: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

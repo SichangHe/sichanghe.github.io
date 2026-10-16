@@ -74,5 +74,3 @@ Lean verifies the theorem statements supplied to it. The method leaves skill tex
 - progressive position-tree refinement: compare successful and failed trajectories and patch only the relevant skill component
 - concept-guided semantic mutation: perturb abstract proof concepts, realize coherent candidate skills, and retain only verifier-improving candidates
 - retention and forgetting audit: compare verified-problem sets across checkpoints with disjoint tests and frozen controls
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

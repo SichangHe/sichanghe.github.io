@@ -51,4 +51,3 @@ Table I reports percentages for BigCodeBench (BCB) and Less Basic Python Problem
 - dual execution agreement — cluster candidate solutions by pass/fail test signatures
 - consensus scoring — rank clusters by passed-test coverage and number of agreeing solutions
 - verification metrics — report validity, precision, recall, F1, line coverage and mutation score with dataset/model denominators
-Checked 2026-10-15 against paper taherkhani2026consistency: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

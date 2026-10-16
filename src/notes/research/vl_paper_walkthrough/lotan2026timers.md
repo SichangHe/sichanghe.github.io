@@ -55,5 +55,3 @@ The tool takes a first-order transition system, FO-LTL property, composed implic
 - inductive invariant validation — discharge initial, preservation, and decrease verification conditions with SMT
 - inductively finite approximation — prove finiteness in infinite domains using a bounded-growth over-approximation
 - timer-aware termination — use decreasing prophecy timers as components of a well-founded ranking
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

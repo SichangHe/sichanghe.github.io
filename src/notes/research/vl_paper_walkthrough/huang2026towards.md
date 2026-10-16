@@ -100,5 +100,3 @@ Fact: Z3 decides satisfiability of the generated model, but the encoded state, o
 - retrieval-grounded synthesis: retrieve independently validated semantic models to anchor types, schemas, and solver APIs
 - typed SMT encoding: represent pre/post EVM state, guards, assignments, frame conditions, and safety obligations with fixed-width bit-vectors and arrays
 - verification-guided repair: classify compiler and solver feedback, apply bounded localized repairs, and recheck executable semantic constraints
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

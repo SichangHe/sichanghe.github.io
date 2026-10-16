@@ -75,5 +75,3 @@ Inference: threat to a product is high when a weak oracle silently labels interm
 - verifier-error bias bound — bound policy-gradient bias by score norm times verifier disagreement fraction
 - horizon credit analysis — compare linear accumulation of dense process signal with exponential dilution of terminal success signal
 - oracle-quality ablation — vary verifier strength and measure both in-domain and transfer degradation before trusting dense rewards
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

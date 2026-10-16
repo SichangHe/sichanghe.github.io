@@ -62,5 +62,3 @@ Evidence. The dataset has 327 IAF points, 116 SSAF points, 327 IAF-D points, 420
 - dependency-ordered implementation — build datatypes, definitions, then theorem statements with compilation and structural review after each round
 - counterexample-guided faithfulness review — distinguish hard proofs from false or vacuous specifications and repair the earliest bad declaration
 - definitional-equivalence checking — evaluate heterogeneous auto-formalized declarations by structure and computation as well as theorem compilation
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

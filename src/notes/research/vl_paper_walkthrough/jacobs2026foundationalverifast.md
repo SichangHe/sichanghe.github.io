@@ -56,4 +56,3 @@ The trusted remainder is substantial. `AxSem` is unvalidated and has the known l
 - hinted mirroring: record symbolic-execution decisions and replay them in a small Rocq checker with `ConsumeChunk` and `Done` hints
 - foundational soundness model: prove symbolic-heap operations sound against an Iris-based axiomatic semantics
 - certificate trust analysis: enumerate source representation, specifications, semantics, replay kernel, and unsupported Rust features that remain trusted
-Checked 2026-10-15 against paper jacobs2026foundationalverifast: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

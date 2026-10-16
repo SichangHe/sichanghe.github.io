@@ -47,5 +47,3 @@ The work is a design/formalization report, not a completed product evaluation. I
 - union-find region equality: represent variance-induced equalities by canonical representatives in the loan map
 - borrow-check soundness refinement: relate abstract loans to concrete locations and show every operation is non-stuck
 - end-to-end safety composition: combine borrow-check refinement with verified backend semantics
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

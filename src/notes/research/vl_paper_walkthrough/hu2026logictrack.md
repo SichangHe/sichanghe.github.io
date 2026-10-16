@@ -68,5 +68,3 @@ The paper's trusted components include the autoformalizer, fidelity judge, promp
 - solver-based backtracking reward: combine premise fidelity and solver validity, accept only above step and running-average thresholds, and regenerate at the first failure
 - verified-prefix search: preserve the verified prefix while using greedy, beam, or MCTS exploration over candidate continuations
 - backtracking SFT: train on verified paths with rejected steps followed by `<backtrack>` and corrected continuations
-
-Checked 2026-10-15 against the paper by a Codex agent for logictrack_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

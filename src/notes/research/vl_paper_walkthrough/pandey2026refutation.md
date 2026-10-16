@@ -37,4 +37,3 @@ Proved or checked: circuit validity, whole-input equivalence, Lean certificates,
 - self-contained trust reporting: emit certificates with explicit axiom lists and no hidden library/build dependencies
 - adversarial result auditing: recompute claims from raw records and rerun budgeted failures to expose aggregation artifacts
 - encoding-faithfulness review: separately verify that solver constraints exactly represent the optimization problem
-Checked 2026-10-15 against paper pandey2026refutation: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

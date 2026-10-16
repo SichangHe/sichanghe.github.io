@@ -91,4 +91,3 @@ The paper also states a limitation: the explicit evaluation of the normalization
 - independent proof routes — formalize derivative and resolvent proofs with the same hypotheses and conclusion
 - sharpness witness — use explicit circular cones and contact weights to prove the universal constant is optimal
 - reproducible audit — pin tool/library versions, rebuild cleanly, audit declarations and axiom dependencies
-Checked 2026-10-15 against paper zhou2026spectral: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

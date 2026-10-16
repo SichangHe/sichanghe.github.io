@@ -70,4 +70,3 @@ The paper measures pass@32 on two Lean benchmarks, correction ablations, proof-l
 - large-block corrector — replace one failed subgoal with a mask and fill it from both prefix and suffix context
 - verifier-gated repair loop — invoke correction only after the checker confirms a repairable skeleton failure and re-check every fill
 - proof-length curriculum — sort training examples by proof length to stabilize whole-proof model training
-Checked 2026-10-15 against paper wang2026diffusionproof: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

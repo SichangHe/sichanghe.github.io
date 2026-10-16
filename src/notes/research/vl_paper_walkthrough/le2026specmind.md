@@ -106,5 +106,3 @@ The paper’s measurements establish performance on EvalPlus and FixEval under L
 - test/mutant completeness feedback — measure correctness on known executions and discriminative power on mutated implementations
 - autonomous best-so-far stopping — stop at a threshold or budget and return the strongest submitted candidate
 - enhanced hard-case feedback — provide an uncaught mutant and extra attempts when binary feedback stalls
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

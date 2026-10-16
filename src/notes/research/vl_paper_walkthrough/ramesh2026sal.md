@@ -67,5 +67,3 @@ Lean's kernel checks DG and Aristotle proof terms. Lean-blaster/Z3 results are t
 - staged multi-modal tactic — try kernel-checked automation, then SMT, then interactive proof under bounded heartbeats
 - property-based VC counterexamples — generate concrete violating executions for decidable failed conditions
 - finite-universe visualization — track touched elements to render abstract set traces for debugging
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -52,4 +52,3 @@ TorchLean distinguishes proof-level reals/rationals, executable IEEE32 models, a
 - IBP/CROWN transfer: propagate sound interval or affine enclosures by topological induction
 - certificate checking: replay external bounds and prove the target property about the Lean graph
 - explicit numerical boundary: separate real, interval, IEEE32, and hardware semantics with named assumptions
-Checked 2026-10-15 against paper george2026torchlean: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

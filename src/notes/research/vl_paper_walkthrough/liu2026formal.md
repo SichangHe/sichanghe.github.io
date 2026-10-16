@@ -60,4 +60,3 @@ Evidence and limits. The evaluation uses 22 APIs with Booleans, integers, floati
 - two-stage test-derived inference — infer a contract from tests, then refine it with repeated state relations while isolating unsupported hypotheses
 - bounded consistency checking — reject candidates that contradict implementation executions within the BMC bound and feed counterexamples back
 - observation-coverage checking — require every recorded test behavior to be admitted by the candidate, while reporting the finite evidence boundary
-Checked 2026-10-14 against the paper by a Codex agent: audit record liu2026formal; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

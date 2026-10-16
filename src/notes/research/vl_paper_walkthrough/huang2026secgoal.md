@@ -56,5 +56,3 @@ Trusted elements are expert labels, source specifications, supplied flows and sc
 - context-preserving extraction: remove boilerplate, chunk by section, extract structured goals, then aggregate and deduplicate
 - randomized negative downsampling: control positive-to-negative examples to improve precision on sparse goals
 - AIFG formalization: retrieve context and condition property templates on a supplied protocol flow and typed schema
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

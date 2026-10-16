@@ -71,4 +71,4 @@ What is proved is soundness of the internal rules and the final proof when close
 - proof-producing preprocessing — attach equivalence or derivation proofs to every formula simplification and added lemma
 - theory-specific certificates — use dedicated checked rules for equality, arrays, bit-vectors, arithmetic, quantifiers, and strings while marking unsupported theories trusted
 - coverage accounting — report proof coverage and overhead with explicit logic sets, solved-problem denominators, hardware, and time limits
-Checked 2026-10-15 against paper barbosa2022flexible: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -114,4 +114,3 @@ The paper measures localization quality against the mutated source line, using E
 - structure-aware counterexample ranking — augment traced lines with enclosing control nodes and rank by frequency, depth, and node type
 - iterative multi-trace localization — block each discovered failing path, collect independent counterexamples, and rank their aggregate line evidence
 - verifier-native versus LLM diagnostics — compare deterministic counterexample rankings with strict-output LLM line rankings under identical localization metrics
-Checked 2026-10-13: audit record silva2026improving; paper-study comparison complete; gate executed; experiments not rerun

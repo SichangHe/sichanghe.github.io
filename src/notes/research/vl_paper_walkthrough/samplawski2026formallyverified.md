@@ -99,4 +99,3 @@ Inference: Verus executable Rust can eliminate a separate PVS-to-C stage, but an
 - multi-island verifier-gated evolution — mutate candidates with LLMs, score them by theorem checking, and retain verified programs in a search database
 - Thompson-sampling model selection — adaptively choose LLMs from observed proof success while separately tracking cost
 - verified-theorem operationalization — deterministically translate a proven specification into deployment code and identify the translation as a trust boundary
-Checked 2026-10-15 against paper samplawski2026formallyverified: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

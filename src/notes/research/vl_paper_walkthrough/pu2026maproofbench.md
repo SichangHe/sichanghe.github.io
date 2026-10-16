@@ -53,5 +53,3 @@ The benchmark proves only that accepted Lean terms compile under Mathlib 4.28.0 
 - human-led formalization and reverse-translation review: clean problems, iterate with compiler feedback, and require independent reviewers to validate Lean statements
 - compiler-gated proof sampling: compile sampled candidates in a fixed environment and reject errors, holes, missing prerequisites, or changed statements
 - verifier failure taxonomy: classify API hallucinations, type errors, and incomplete proofs from diagnostics and count them by model and denominator
-
-Checked 2026-10-15 against the paper by a Codex agent for ma_proofbench_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

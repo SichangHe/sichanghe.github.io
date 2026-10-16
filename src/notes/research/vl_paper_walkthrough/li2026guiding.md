@@ -89,4 +89,3 @@ Frama-C proves the candidate invariants establish, preserve, and imply the targe
 - implication auto-formalization: translate each step into annotated first-order implications and check premises and conclusions with an SMT solver
 - diagnostic refinement: feed exact invalid premises or implications back to the synthesizer and iterate
 - BMC conjunct accumulation: after feedback rounds, collect valid conjuncts with bounded model checking and combine them with the growing invariant set
-Checked 2026-10-15 against paper li2026guiding: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

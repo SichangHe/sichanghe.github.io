@@ -79,4 +79,3 @@ The paper measures solved-task counts and Pass@1 under fixed benchmark denominat
 - graph-role alignment — retain implementation roles supported by overlapping proof roles and generate region obligations
 - multi-target injection — train one model on code, concept, and obligation targets with a summed loss
 - verification-to-code consolidation — remove auxiliary outputs through a second code-only training phase before deployment
-Checked 2026-10-15 against paper zhang2026graphaligncoder: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

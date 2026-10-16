@@ -103,4 +103,3 @@ Inference: In a Verus product, the trusted boundary should include the formal sp
 - symbolic transformation checking — use a CAS to verify each algebraic mapping step rather than relying on output equality
 - interaction-graph invariants — compute treewidth, planarity, symmetry, and connectivity to constrain admissible mappings
 - scalable oracle stack — combine bounded enumeration with MCMC or tensor-network checks as system size grows
-Checked 2026-10-15 against paper zhao2026exploring: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

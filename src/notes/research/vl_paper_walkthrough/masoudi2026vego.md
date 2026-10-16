@@ -93,5 +93,3 @@ Inference: for Verus, the analogous loop is editing Rust, running the project ve
 - contract precision: strengthen weak specifications with preservation and permutation properties
 - SSA VC pipeline: desugar annotations, build SSA, generate weakest-precondition VCs, and solve constraints
 - interactive workflow: use headers, editor diagnostics, verified compilation, and native tests as one loop
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

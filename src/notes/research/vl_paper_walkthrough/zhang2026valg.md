@@ -104,5 +104,3 @@ The paper measures candidate counts, source-scope progress, mathematical-soundne
 - typed proof-dependency DAGs — represent assumptions and lemma interfaces as an acyclic graph and run a whole-theorem composability diagnostic
 - split proof and independent review — generate sketch, global proof, local steps, and assembly with stage-specific reviewers
 - diagnosis-routed minimal repair — classify failure level, retry only the implicated artifact, and create a related variant only for formulation obstructions
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

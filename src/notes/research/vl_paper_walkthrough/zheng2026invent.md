@@ -86,5 +86,3 @@ Trusted elements include the inventory’s completeness, parser correctness, reg
 - bounded self-refinement: ask the model to review each external crate and regenerate up to three times when the name is suspect
 - registry RAG grounding: retrieve five relevant crates from a 10,000-crate database and append a standard-library list to the prompt
 - Cargo and verifier gating: combine dependency resolution and source checks with Verus contracts because CHR does not measure behavior or installation outcomes
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

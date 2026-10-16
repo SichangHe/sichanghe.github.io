@@ -53,4 +53,3 @@ Evidence and limits. These are symbolic proofs for arbitrary probe sets, not exh
 - sequence and loop composability — propagate noninterference contracts through calls and index-dependent loops
 - symbolic probe invariants — quantify arbitrary probes and track ownership, uniform masks, and affine share equations
 - compositional masked primitives — combine refresh, noise addition, and multiplication proofs with uniform-bijection rules
-Checked 2026-10-15 against paper kura2026probing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -87,4 +87,3 @@ Inference: A Verus product should make its trusted parser, model interpretation,
 - solver-aware feature engineering — add tightness, propagation, constraint-family, and domain metrics correlated with solver behavior
 - inspectable fixed-shape output — require exactly 50 named features and a methodology description for downstream selection
 - multi-run selector evaluation — compare baselines, all independent syntheses, and valid-run denominators with held-out accuracy and rank
-Checked 2026-10-15 against paper xia2026synthesizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

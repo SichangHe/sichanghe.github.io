@@ -80,5 +80,3 @@ Trusted components include Ethos's C++ implementation, the CPC Eunoia signature,
 - cross-checking in theorem provers — reconstruct rules in Lean and Isabelle to expose unsound definitions and quantify coverage
 - solver-checked rule conditions — translate each rule to an SMT verification condition and use SyGuS to search for counterexamples
 - full-library certificate evaluation — measure proof completeness, step counts, timeout denominators, and generation/checking overhead
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

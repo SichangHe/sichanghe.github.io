@@ -73,5 +73,3 @@ The table's success counts sum to 135 successful attempts out of 160, or 84.375%
 - diagnostic classification: map syntax, hallucinated facts, failed tactics, and timeouts to targeted repair actions
 - staged prompting: give full theory context initially, then only the current proof state and error
 - bounded proof search: cap iterations, persist per-lemma history, and stop instead of looping on a repeated failed step
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

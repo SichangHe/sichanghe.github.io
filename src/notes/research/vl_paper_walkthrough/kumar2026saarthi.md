@@ -47,5 +47,3 @@ Inference: in Verus, a counterexample or failed proof obligation can be routed t
 - hybrid and graph retrieval — ground generation in cited lexical/vector passages and connected verification-artifact subgraphs
 - counterexample root-cause analysis — combine traces, specs, RTL, and specialized diagnoses before patching and rechecking
 - human-in-the-loop learning cache — store approved corrections with prompts, errors, and resolutions for later refinement
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -71,4 +71,3 @@ The two exploitation policies reverse ordering by model. The authors therefore c
 - feedback projection — compare generic failure text, named categories, and masked identities while keeping numeric residuals hidden
 - budget-matched resampling — compare staged feedback repair with independent verifier-filtered attempts under the same eleven-call budget
 - paired clustered evaluation — reuse the same fixtures across policies and report fixture-clustered risk differences with multiplicity correction
-Checked 2026-10-15 against paper yu2026dualitycert: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

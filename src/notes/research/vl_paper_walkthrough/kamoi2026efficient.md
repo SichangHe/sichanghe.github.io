@@ -70,4 +70,3 @@ Measured: PRM Best-of-7 answer accuracy, ProcessBench AUROC, cross-task results,
 - task-mixture ablation — compare single-domain and mixed formal datasets to measure transfer and specialization
 - verifier-label data ablation — test whether 10K or 20K verified instances approach the full 40K corpus
 - strictness audit — inspect accepted-but-imprecise intermediate steps to detect over-penalization by exact formal labels
-Checked 2026-10-15 against paper kamoi2026efficient: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

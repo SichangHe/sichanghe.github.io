@@ -77,4 +77,3 @@ Threat to agent-written verified Rust.
 - kernel-checked LLM proof workflow — keep human model design and use agents to elaborate proofs whose scripts must pass the kernel
 - folded pipeline specification — relate a clean abstract transition to several internal pipeline steps with a ghost fold
 - stable identifier reservation — preserve unique queue identities and reserve in-flight response identifiers to prevent ABA reuse
-Checked 2026-10-13: audit record lee2026out; paper-study comparison complete; gate executed; experiments not rerun

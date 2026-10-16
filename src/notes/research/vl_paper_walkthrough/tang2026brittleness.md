@@ -34,4 +34,3 @@ Stockfish 18 depth 20 supplies the ground truth; the authors report it remains c
 - bounded retry and reset — suppress repeated parser failures and restart context after three consecutive failures
 - explicit metric denominators — distinguish pass@1, pass@10, puzzle-wide success, position accuracy, and sanity
 - verifier-scope discipline — treat accepted output as satisfying implemented checks while recording what remains trusted
-Checked 2026-10-15 against paper tang2026brittleness: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

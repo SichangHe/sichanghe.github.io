@@ -66,4 +66,4 @@ Inference: The threat to agent-written verified Rust is high at the specificatio
 - difficulty-controlled benchmark variants — publish simplified and competition-faithful versions with explicit solution handling
 - human semantic evaluation — compare LLM judgments against expert review of every retained translation sample
 - controlled prover benchmarking — pin versions, hardware, sampling, and denominator-stratified subsets
-Checked 2026-10-15 against paper ospanov2025minif2f: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

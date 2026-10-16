@@ -99,5 +99,3 @@ evidence and limits: MathlibMPR reports one to eight groups per theorem and mean
 - global sketch loop — sketch proof steps, retrieve, filter, judge, and revise unsupported routes
 - three-level evaluation — measure ranking, premise-group coverage, and fixed-loop verifier success
 - route and empty-set modeling — preserve interchangeable lemmas, alternatives, and genuine no-support signals
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.

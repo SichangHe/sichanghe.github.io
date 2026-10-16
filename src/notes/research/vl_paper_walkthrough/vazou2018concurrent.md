@@ -83,4 +83,4 @@ The paper does not give a denominator-based benchmark of verification time acros
 - most-general-choice consumption — make guarded linear-store transitions consume only the minimal information needed for entailment
 
 - animator-plus-prover analysis — inspect one executable trace with Alcove, then use the theorem prover for all reachable configurations in the encoded model
-Checked 2026-10-14: audit record vazou2018concurrent; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

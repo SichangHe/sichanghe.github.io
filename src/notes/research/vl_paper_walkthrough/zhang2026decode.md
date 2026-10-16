@@ -139,4 +139,3 @@ Serving measurements used two Intel Xeon Gold 6430 CPUs, 512 GB memory, four RTX
 - offline fragment induction: anti-unify corpus examples, mine ghost substitutions, and gate executable fragments before deployment
 - dynamic-support necessity: synthesize exact prefix-dependent reference support online because finite fixed-support families cannot be both sound and non-blocking
 - engine correspondence testing: differentially test rendered slot grammars and token masks, then extend Γ queries to immutable sort and shape attributes
-Checked 2026-10-15 against paper zhang2026decode: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

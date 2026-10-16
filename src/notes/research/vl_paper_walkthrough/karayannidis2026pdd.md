@@ -63,4 +63,3 @@ Verus form. Inference: choose a corresponding assurance level: runtime tests, a 
 - behavioral-class typing: reject invalid read/write transitions and require key evidence for re-graining
 - proof-carrying constraints: compose `(Pre, Intra, Post)` contracts and compile residual predicates to faithful queries
 - assurance spectrum: choose runtime, typed, or machine-checked evidence and require an agent certificate
-Checked 2026-10-15 against paper karayannidis2026pdd: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

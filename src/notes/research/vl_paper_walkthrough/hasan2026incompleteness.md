@@ -73,4 +73,3 @@ What is proved: the theorem proves existence of true, sufficiently complex compl
 - richness counting: use a large compliant subset and program-counting to show that high-K compliant instances exist
 - proof-enumeration contradiction: enumerate hypothetical proofs to derive a short description and contradict (K(x)>n)
 - proof-carrying instances: attach an instance-specific certificate π and verify (\langle z,y,\Pi,\pi\rangle) instead of seeking universal completeness
-Checked 2026-10-15 against paper hasan2026incompleteness: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

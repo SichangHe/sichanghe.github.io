@@ -37,4 +37,3 @@ Inference: For Verus, specify a round-trip relation in a `spec fn` and use Rust 
 - certificate-aware differential execution — compare executable machine semantics with printed-and-executed code and retain reproducible seeds
 - credible-compilation rejection repair — classify certificate failures, localize transform/generator/checker causes, and re-prove checker changes
 - typed AST round trips — print and parse generated ASTs, compare equality, and repair parser/printer mismatches
-Checked 2026-10-13: audit record rinard2026automated; paper-study comparison complete; gate executed; experiments not rerun

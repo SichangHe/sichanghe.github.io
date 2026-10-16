@@ -71,4 +71,3 @@ Evidence and limits. The authors state, “No output reported by an agent or by 
 - budget-driven information density — use fixed time/call budgets and measure tokens and calls so useful diagnostics reduce interaction cost
 - anti-cheating proof harness — protect statements/imports, reject unsound commands, rebuild cleanly, and audit assumptions before counting success
 - cross-prover interface transfer — port an evolved tool set to another proof assistant and report accuracy, cost, and time with contamination caveats
-Checked 2026-10-15 against paper viennot2026growinginterface: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -125,4 +125,4 @@ The paper proves behavioral equivalence of the eight PageRank stages through Coq
 - nested-loop flattening: replace nested folds by a fold over concatenation, then expose `flatMap`
 - grouped keyed reduction: replace indexed updates with grouping plus per-key fold while preserving absent accumulator entries
 - reduceByKey abstraction: use a framework keyed reducer whose specification expands to group, map, and fold
-Checked 2026-10-14: audit record beckert2018proving; paper-study comparison complete; gate executed; experiments not rerun
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

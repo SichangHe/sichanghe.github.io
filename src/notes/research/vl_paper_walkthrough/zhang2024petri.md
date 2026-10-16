@@ -43,5 +43,3 @@ The three reductions are linear-sequence compression, concurrency-irrelevant cal
 - unsafe race detection — pair concurrently enabled accesses to one unsafe place when at least one access writes
 - relaxed atomicity backtracking — trace predecessors from a branch after a relaxed load and collect unsynchronized relaxed stores
 - Petri-net reduction — compress linear chains, prune irrelevant calls, and abstract resource-free loops before exploration
-
-Checked 2026-10-15 against the paper by a Codex agent for petri_nets_based_methods_on_automaticall_2_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

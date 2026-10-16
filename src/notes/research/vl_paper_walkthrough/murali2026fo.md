@@ -85,4 +85,3 @@ Threat and prior work.
 - cloud quantifier elimination: replace guarded location quantifiers with value-preserving, support-free terms
 - strongest-postcondition VC generation: process SSA blocks while tracking transformations, heaps, allocations, frames, and recursive definitions
 - FO-complete natural proofs: restrict VCs to one-way foreground functions and discharge them by systematic quantifier instantiation plus SMT
-Checked 2026-10-13: audit record murali2026fo; paper-study comparison complete; gate executed; experiments not rerun

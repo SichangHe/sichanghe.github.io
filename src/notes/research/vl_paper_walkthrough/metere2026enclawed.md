@@ -134,4 +134,3 @@ The paper reports 261 unit tests and 95 adversarial penetration tests, all passi
 - bounded model checking: enumerate bounded envelope traces and check the runtime state-change biconditional
 - proof-carrying bundle: sign canonical evidence, rerun all methods at load, and abort on drift or signature failure
 - mechanizable classification lattice: enforce Bell-LaPadula dominance, least upper bounds, and scheme invariants over integer ranks and sets
-Checked 2026-10-15 against paper metere2026enclawed: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

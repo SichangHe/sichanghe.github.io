@@ -61,4 +61,3 @@ Cost is measured per sample over three runs for the three repeated classes. For 
 - kernel-checked synthesized model — translate retained facts into Lean claims and classify every claim as proved, unproved, or error
 - bounded neuro-symbolic refinement — retry once on verdict conflicts or empty lifecycle models
 - evidence-aware adjudication — combine symbolic evidence quality, neural evidence quality, and obligation count conservatively
-Checked 2026-10-13: audit record zhao2026neuro; paper-study comparison complete; gate executed; experiments not rerun

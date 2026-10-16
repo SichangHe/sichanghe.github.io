@@ -65,5 +65,3 @@ Inference: the threat to a product that lets agents write verified Rust is subst
 - embedding-enriched graph matching — combine LLM semantic embeddings with structural and type constraints to retrieve candidate correspondences
 - graph-based artifact adaptation — rewrite aligned artifacts and check preservation of relational invariants before reuse
 - semantic interoperability — use UTP healthiness/refinement and Institution satisfaction-preserving mappings as language-independent constraints
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.

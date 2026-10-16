@@ -132,4 +132,3 @@ The authors observe in Section 5.6 (p. 10) that removing regularization can leav
 - syntax-and-satisfaction repair — compile, check examples, score, and retry candidates with compiler and misclassification feedback
 
 - prompt regularization — constrain expression length, operator nesting, and alphabet to discourage early overfitting while preserving verifier checks
-Checked 2026-10-15 against paper liu2026counterexample: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

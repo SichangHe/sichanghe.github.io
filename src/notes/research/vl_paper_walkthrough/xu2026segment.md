@@ -52,5 +52,3 @@ Evidence and limits. Segment-level wins miniF2F in all three training sources: 6
 - open-goal segment supervision — place boundaries after goal-count changes and train on locally coherent tactic sequences
 - goal-aware rollout — after a structural goal change, execute a bounded linear continuation before returning to search
 - granularity ablation — compare atomic, whole-proof, and segment targets under matched data and evaluation settings
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

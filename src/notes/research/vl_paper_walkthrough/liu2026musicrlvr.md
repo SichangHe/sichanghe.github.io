@@ -73,4 +73,3 @@ Evidence. Direct reaches 0.595 on Unseen (n=200) versus a best zero-shot 0.195, 
 - graded verifier reward: average per-property scores and add a joint all-satisfied bonus
 - verifier-driven GRPO: normalize deterministic verifier rewards within prompt groups and update the policy
 - generalisation and reranking: test held-out constraints and select among sampled candidates by verifier score
-Checked 2026-10-15 against paper liu2026musicrlvr: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

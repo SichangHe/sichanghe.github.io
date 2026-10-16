@@ -25,5 +25,3 @@ A candidate is rejected when at least two of up to six selected operators flag i
 - interface escalation: widen checker inputs after repeated failures on the same blind spot
 - null-calibrated admission: accept checks on held-out decision improvement against size-matched shuffles
 - weighted vote composition: enumerate small check subsets and weight false alarms by the deployment endpoint
-
-Checked 2026-10-15 against the paper by a Codex agent for metrics_that_write_themselves_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

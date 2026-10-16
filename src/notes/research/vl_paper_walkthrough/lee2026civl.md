@@ -66,4 +66,3 @@ The guarantees depend on the simplified Grid model, fixed AMR topology, CIVL's s
 - property-first staged development — write contracts before code and re-check them after each bottom-up implementation stage
 - counterexample-driven repair — use model-checker traces to expose reachable defects that sampled tests miss
 - cost-tiered checking — run cheap low-dimensional checks after edits and expensive configurations as staged checkpoints
-Checked 2026-10-15 against paper lee2026civl: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

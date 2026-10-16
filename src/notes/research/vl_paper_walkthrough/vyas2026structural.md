@@ -58,5 +58,3 @@ Use the certified/impossible/unknown output to make abstention explicit. “The 
 - propose–certify loop: have a model propose, let an external engine accept or return a violation, and retry until certified, impossible, or unknown
 - three-valued decline: treat impossible and unknown as explicit safe verdicts instead of forcing an answer
 - root-input correction: compute the minimal input change that crosses a violated threshold and feed it back to the next proposal
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

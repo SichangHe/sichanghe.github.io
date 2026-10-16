@@ -69,4 +69,4 @@ The paper demonstrates proofs for Taylor_Sin, Heron's method, and a restricted A
 - compositional error budgeting — sum model, rounding, analysis, subprogram, and proving errors when selecting a decidable specification bound
 - invariant-based numerical verification — verify loop range and error invariants, then compose helper contracts for full numerical routines
 - multi-prover counterexample feedback — run complementary nonlinear provers and replay their potential models against the original specification
-Checked 2026-10-14 against the paper by a Codex agent: audit record rasheed2022autoactive; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

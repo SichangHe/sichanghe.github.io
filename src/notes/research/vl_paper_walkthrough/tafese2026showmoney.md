@@ -97,5 +97,3 @@ The authors caution that their code did not change during the exercise, so maint
 - counterexample feedback — turn an unprovable model obligation into a concrete executable trace for debugging
 - proof-artifact regression — preserve models, lemmas, and harnesses as rerunnable interfaces for future code changes
 - assumption boundary review — distinguish a local function's proved behavior from upstream reachability assumptions
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

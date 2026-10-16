@@ -67,4 +67,3 @@ Inference: the main threat to an agent-written verified Rust product is a mismat
 - machine-checked liveness — prove eventual decision under explicit synchrony, fairness, and validity assumptions
 - generated-proof workflow — separate audited definitions and theorem statements from kernel-checked generated proof scripts
 - topology-driven provisioning — choose fast-path budget from slow-region size and simultaneous-fault targets
-Checked 2026-10-15 against paper yu2026hydrozoan: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

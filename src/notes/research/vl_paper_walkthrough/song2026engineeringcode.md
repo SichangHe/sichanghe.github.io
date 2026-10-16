@@ -75,4 +75,3 @@ SD-HWE-Bench is designed to test agents generating ADL from natural-language req
 - diagnostic CI integration: emit machine-readable failures with stage-specific blocking policies
 - violation injection: evaluate detection with known semantic edits and report denominator, latency and false positives
 - agent benchmark design: score pass@k, latency, requirement coverage and human sign-off on generated declarations
-Checked 2026-10-15 against paper song2026engineeringcode: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

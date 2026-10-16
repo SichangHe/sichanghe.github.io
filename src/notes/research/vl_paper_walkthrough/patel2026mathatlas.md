@@ -92,5 +92,3 @@ Proved or measured: extraction validity and relation F1 on annotated samples; co
 - dependency-depth stress testing: evaluate a deepest-tree subset separately from average examples
 - context and grounding ablations: measure local-context and existing-library effects with model, split, and denominator
 - judge calibration: test semantic-faithfulness metrics on a labeled benchmark instead of assuming judge scores are truth
-
-Checked 2026-10-15 against the paper by a Codex agent for mathatlas_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

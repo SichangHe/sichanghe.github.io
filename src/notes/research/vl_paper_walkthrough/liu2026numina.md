@@ -124,4 +124,3 @@ Threat to a product of agent-written verified Rust.
 - subgoal subagents — isolate a context-heavy lemma, obtain a hint, formalize it independently, and compose it into the parent proof
 - recursive blueprint — maintain a dependency DAG of definitions and lemmas and revise it from compiler and proof-state feedback
 - human-guided self-correction — permit reviewed hints and contract revisions when formalization reveals a false or degenerate statement
-Checked 2026-10-13: audit record liu2026numina; paper-study comparison complete; gate executed; experiments not rerun

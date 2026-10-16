@@ -121,4 +121,3 @@ The paper formally proves coverage amplification, coverage-not-identifiability, 
 - blind-spot decomposition — separate finite proposal width from zero-support proposer failures
 - oracle-gap recovery — quantify the fraction of perfect-selection gain realized by a deployable selector
 - context intervention — hold candidate pools fixed and add task-relevant context to raise comparator edge
-Checked 2026-10-15 against paper sunkaraneni2026inference: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

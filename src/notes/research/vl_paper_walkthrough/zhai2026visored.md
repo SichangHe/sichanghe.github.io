@@ -74,5 +74,3 @@ What is proved or measured: emitted Lean files compile for accepted examples; co
 - explicit well-definedness obligations — generate and solve domain hypotheses for partial functions with asymmetric logical-context flow
 - cost-bounded forward/backward rule search — index rules, schedule them by fees, and terminate with a source-local diagnostic on budget exhaustion
 - canonical IR and target emission — normalize before matching, record derivations in a target-neutral IR, and choose sparse or dense backend output
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -45,4 +45,4 @@ Trusted elements are the transition encoding, EHSF's Horn/well-founded solver, a
 - witness relation synthesis — replace existential data quantifiers with solver-discovered `aux`/Skolem relations
 - temporal invariant and ranking synthesis — encode `AG`, `EF`, and `U` using inductive predicates and well-founded rank
 - CEGAR Horn solving — refine witness templates from contradiction trees until a model or counterexample is found
-Checked 2026-10-15 against paper beyene2014ctlfo: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

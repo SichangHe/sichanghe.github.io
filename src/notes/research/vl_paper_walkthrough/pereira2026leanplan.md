@@ -35,4 +35,3 @@ The proof covers unit-cost STRIPS tasks satisfying certificates, not arbitrary P
 - max-combined relaxations — combine overlapping lower bounds with `max` to preserve admissibility
 - checked distance tables — use BFS tables only after verifying the distance properties the proof consumes
 - automated candidate acceptance — rebuild code, proofs, certificates, and performance before accepting an agent artifact
-Checked 2026-10-13: audit record pereira2026leanplan; paper-study comparison complete; gate executed; experiments not rerun

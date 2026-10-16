@@ -81,5 +81,3 @@ Verus form (Inference). Use compilation and proof-check outcomes as binary or gr
 - template-guided formalization reasoning: require explicit restatement, concept/object mapping, Lean issue analysis, and final code review
 - two-stage SFT fusion: train first on formal pairs and then on structured informal-to-formal trajectories
 - BEq-reward RL: use proof-assistant equivalence as a binary reward with GRPO and multiple rollouts
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

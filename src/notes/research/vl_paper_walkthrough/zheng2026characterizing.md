@@ -28,4 +28,3 @@ Evidence and limits. bpfix-bench has 75 tasks: 40 required-proof tasks and 35 mi
 - evidence-aware diagnostics — emit source spans, proof obligations, confidence, and a concrete re-establishment action
 - layer attribution — separate source bugs from compiler-lowering, environment, and verifier causes sharing one terminal message
 - verifier-gated repair benchmarking — accept an LLM patch only after independent load, functional, and source-semantics checks
-Checked 2026-10-15 against paper zheng2026characterizing: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -91,4 +91,3 @@ There are no percentage results whose denominators could be confused: the paper 
 - schema and type separation — publish predicate signatures and typed constants to support controlled translation settings
 - direct long-form baseline — evaluate single-pass model translation with fixed output length and qualitative failure analysis
 - decomposition direction — use smaller segments, schema constraints, guided grammars, or neuro-symbolic checks as the paper's proposed next steps
-Checked 2026-10-14 against the paper by a Codex agent: audit record moore2026pilot; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

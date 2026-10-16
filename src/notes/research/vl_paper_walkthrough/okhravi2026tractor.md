@@ -58,4 +58,3 @@ Battery 02 adds heap allocation and ownership transfer, mutable aliasing and int
 - rubric-based idiomaticity — combine rustc/Clippy/Lizard measurements with six-dimensional manual Likert review
 - reproducible performance measurement — randomize cloud jobs, warm up, and measure throughput, perf-stat runtime, and Massif memory
 - staged C-to-Rust batteries — escalate from affine-safe B01 features to aliasing, ownership, type erasure, cleanup, and large B02/P02 projects
-Checked 2026-10-15 against paper okhravi2026tractor: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

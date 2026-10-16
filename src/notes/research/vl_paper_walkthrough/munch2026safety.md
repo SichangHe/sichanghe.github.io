@@ -66,4 +66,3 @@ The trusted boundary includes the Rust compiler and standard/core libraries, uns
 - stack and schedulability analysis — combine call-graph stack bounds with worst-case execution-time and schedulability analysis
 - heapless and fallible allocation — use bounded preallocation or fallible allocator results so out-of-memory behavior is explicit
 - audited drop obligations — require unsafe markers or lint checks for intentional leaks and preserve resource-release obligations
-Checked 2026-10-15 against paper munch2026safety: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

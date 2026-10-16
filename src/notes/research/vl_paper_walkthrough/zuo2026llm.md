@@ -64,4 +64,3 @@ Trusted and measured: Lean’s kernel checks the generated proof; the LLM, Newto
 - neural SOS conjecture: train an LLM to propose and rank Gram-matrix structures
 - symbolic correction: refine numerical candidates and recover exact rational coefficients
 - template formalization: instantiate a fixed Lean proof template and let the kernel check equality and nonnegativity
-Checked 2026-10-15 against paper zuo2026llm: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

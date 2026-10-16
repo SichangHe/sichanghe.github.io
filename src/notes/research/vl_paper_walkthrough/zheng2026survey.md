@@ -59,4 +59,3 @@ The survey organizes evidence by method, benchmark, and evaluation criterion, in
 - retrieval and feedback refinement — retrieve design context and iteratively repair with compiler, simulation, formal, counterexample, and coverage feedback
 - agentic verification decomposition — separate analysis, generation, checking, debugging, and escalation with independently validated artifacts
 - training plus deterministic checking — adapt models to domain idioms while retaining formal tools as the correctness evidence
-Checked 2026-10-15 against paper zheng2026survey: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -65,4 +65,3 @@ Verus form (Inference): use Verus to prove deterministic contract and observer-p
 - compatible-kernel composition: prove or measure local class-mass preservation and compose the bounds across workflow layers
 - guarded commitment: require a sound validator before commit and model repair success conditionally on failure history
 - finite robustness certificate: estimate quotient total variation with frozen settings, confidence bounds, and a summed layer-defect budget
-Checked 2026-10-15 against paper priami2026genos: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

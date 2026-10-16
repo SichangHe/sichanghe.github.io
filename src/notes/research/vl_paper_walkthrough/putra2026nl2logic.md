@@ -45,5 +45,3 @@ The abstract describes a 30% semantic improvement, while the conclusion and Tabl
 - two-pass deterministic compilation — collect declarations first, then emit solver expressions with checked scope and arity
 - structured parser output — constrain LLM responses to JSON schemas and count malformed or incomplete nodes
 - solver-backed semantic evaluation — execute generated rules for entailment, contradiction, or uncertainty after syntax checks
-
-Checked 2026-10-15 against the paper by a Codex agent for nl2logic_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

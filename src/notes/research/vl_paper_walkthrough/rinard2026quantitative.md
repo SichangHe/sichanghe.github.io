@@ -72,5 +72,3 @@ Fact: the study's all-code-and-proof agent work was supervised by a human, and a
 - full transformation verification: prove the optimizer, analysis, and semantic-preservation theorem directly in a proof assistant
 - composite certificates: combine several passes under one relational certificate to amortize checking cost
 - proof-friendly dataflow: use worklists and fixed-point lemmas to recover performance without abandoning machine-checked proofs
-
-Checked 2026-10-15 against the paper by a Codex agent for quantitative_comparison_of_credible_comp_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

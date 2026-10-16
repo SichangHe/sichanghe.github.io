@@ -57,4 +57,3 @@ Inference: in Verus, add a reusable spec-level conditional expression and a proo
 - aliasing-case derivation — generate same-handle and distinct-handle drivers from profile rules
 - contract-only oracle checking — use a certified postcondition when no reference model exists
 - profile evolution — extend parser and compiler when unsupported recurring semantics are identified
-Checked 2026-10-13: audit record suh2026petsc; paper-study comparison complete; gate executed; experiments not rerun

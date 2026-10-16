@@ -104,5 +104,3 @@ Inference: the product threat is semantic incompleteness. Agent-written verified
 - invariant knowledge base — reconcile Daikon candidates, documentation-derived contracts, and manual curation
 - chunk-invariant reasoning — insert documentation-grounded assertions at semantic chunk boundaries with up to five repairs
 - high-confidence candidate review — report persistent assertion failures for developer confirmation rather than claiming autonomous detection
-
-Checked 2026-10-15 against the paper by a Codex agent for llm_based_invariant_testing_for_software_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

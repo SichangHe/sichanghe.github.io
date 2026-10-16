@@ -48,4 +48,3 @@ The paper's key contrasting example says DeepSeek-R1 mistranslates a place premi
 - two-stage locked formalization — validate and freeze the formal statement before proof generation, diffing any later changes
 - directional divergence test — run incompatible target answers and flag simultaneous successful proofs as inconsistent formalizations
 - contract-faithfulness gate — require verifier success plus an independent check that contracts and assumptions preserve intended behavior
-Checked 2026-10-15 against paper poiroux2026llmsgame: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

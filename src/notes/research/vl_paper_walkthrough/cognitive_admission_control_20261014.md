@@ -95,4 +95,3 @@ The trusted enforcement core is the policy resolver, evidence evaluator, certifi
 - structural-cut witness requirements — reject correlated approval evidence unless its modeled root-fault cut meets the policy threshold
 - certificate-bound guarded dispatch — bind proposal, witnesses, expiry, guards and nonce to a certificate and recheck them at the gateway
 - independent effect observation — separate controller verdicts and acknowledgments from hidden pre/post state and harmful-effect measurements
-Checked 2026-10-14 against the paper by a Codex agent: audit record he2026cognitive; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

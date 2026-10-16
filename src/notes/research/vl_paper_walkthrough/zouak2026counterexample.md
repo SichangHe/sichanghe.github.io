@@ -38,4 +38,3 @@ They also evaluate unchanged prompts on GSM8K (n=1,319), MATH-500 (n=500), MMLU-
 - witness-schema interface — derive a concise expected output shape from the checker and canonical witness, then include it in the prompt
 - sparse outcome RLVR — reward only a verifier-confirmed terminal counterexample to preserve calibration and abstention
 - verifier audit and transfer — independently audit accept/reject decisions and test unchanged-prompt transfer on held-out benchmarks
-Checked 2026-10-15 against paper zouak2026counterexample: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

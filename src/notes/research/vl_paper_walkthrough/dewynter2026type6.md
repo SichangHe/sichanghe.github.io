@@ -36,4 +36,3 @@ Evidence: on 996 traces (276 CoT-Logic, 370 MMLU, 311 DebateLab, 39 handcrafted)
 - licensed revision test — require a structural revisit plus a targeting constraint before accepting a changed claim
 - multigraph route analysis — enumerate bounded edge-simple derivation paths and compare terminal states
 - provenance failure taxonomy — report hard, soft, residual, and quality failures with statement locations
-Checked 2026-10-15 against paper dewynter2026type6: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -50,5 +50,3 @@ Use an adversarial corpus whose rows map to explicit security claims. The paper 
 - two-level invariant proof: combine Z3 model reasoning with Kani exhaustive checking of the shipped Rust function
 - signed transparency evidence: keep operator signing authority outside the kernel and verify append-only decisions externally
 - claim-mapped robustness corpus: tie each attack-class test row to the property it is intended to substantiate
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -61,4 +61,3 @@ Table 2 checks accounting on the core trajectory. For example, B0→B1 has 439 h
 - observable-behavior filtering: retain questions about outputs, stored data, and external interactions in modernization scope
 - fresh curriculum with frozen test: revise from newly sampled failures while scoring every version on an unseen fixed set
 - repair–regression accounting: model gains and losses with repair and regression rates and report their denominators
-Checked 2026-10-15 against paper erata2026fidelity: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

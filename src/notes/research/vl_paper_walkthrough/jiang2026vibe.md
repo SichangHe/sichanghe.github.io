@@ -71,5 +71,3 @@ Inference: Verus form: model the held-out result as a separate postcondition and
 - independent adjudicator — let a deterministic engine decide while the LLM only proposes revisions
 - violated-set repair — feed failed constraint identities back as a process signal for discrete repairs
 - constructability projection — enforce analytic geometry constraints before expensive simulation
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

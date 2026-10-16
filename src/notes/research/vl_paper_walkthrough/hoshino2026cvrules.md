@@ -62,4 +62,3 @@ The model intentionally excludes abort behavior and scheduling power. The paper 
 - bounded-width search — decide serializability by exploring chain-progress vectors when C-rule width is fixed
 - view-chain design — enforce V-rule structurally with per-item writer/reader slots
 - Lean mechanization pattern — separate core definitions, generic order lemmas, protocol-specific constructions, and audited theorem instantiations
-Checked 2026-10-15 against paper hoshino2026cvrules: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

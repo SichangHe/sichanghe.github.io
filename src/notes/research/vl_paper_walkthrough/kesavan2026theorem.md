@@ -71,5 +71,3 @@ The table is explicitly introduced as “an illustrative example demonstrating h
 - feedback-driven decomposition: use diagnostics to revise prompts, split goals into lemmas, and try alternative tactics
 - human–machine responsibility split: keep theorem intent and semantic judgment with humans, syntax proposals with the model, and acceptance with the prover
 - metric-driven evaluation: report pass rate, accuracy, completion time, correction cycles, and qualitative cognitive load with explicit denominators
-
-Checked 2026-10-15 against the paper by a Codex agent for llms_for_formal_theorem_proving_human_ma_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

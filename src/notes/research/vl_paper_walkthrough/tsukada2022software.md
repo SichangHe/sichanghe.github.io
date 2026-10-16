@@ -66,4 +66,4 @@ Inference: For agent-written verified Rust, the threat is proof-search quality a
 - model-based PDR — block concrete bad-successor models recursively, then interpolate a frame after the counterexample loop ends
 - model-based projection — replace quantified bad-successor enumeration with finite-image projections over stable variables, yielding a terminating PDR variant
 
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

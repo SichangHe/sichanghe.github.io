@@ -60,4 +60,3 @@ For autoformalization, connect the coding agent to Isabelle through Isabelle/Q, 
 - sandwich uniqueness proof — prove a completion is unique by bounding it between current annotations and a fixed most-general completion
 - Isabelle agent workflow — iterate LLM-generated specifications through human review, Isabelle proof checking, and statement-alignment audits
 - human-hinted autogeneralization — reduce an ad hoc algorithm to an independence-system greedy theorem and mechanize the reduction
-Checked 2026-10-15 against paper kappelmann2026justtype: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

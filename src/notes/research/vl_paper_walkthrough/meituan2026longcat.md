@@ -60,5 +60,3 @@ Verus form. Inference: search over candidate proof-function decompositions while
 - layered legality validation — combine compiler outcomes with semantic consistency and AST/context checks
 - tool-integrated RL with anti-hacking rewards — train on diagnostic trajectories while clipping unstable importance ratios and rejecting illegal proofs
 - tree search over lemma sketches — decompose hard goals, prune unprovable nodes, and verify each resulting proof under a fixed statement
-
-Checked 2026-10-15 against the paper by a Codex agent for longcat_flash_prover_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

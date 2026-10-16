@@ -76,4 +76,3 @@ The paper also contains a concrete inconsistency in its own appendix labeling: i
 - agent phase separation — separate protocol translation and repair from attack search and trace validation, with verifier feedback between phases
 
 - sandbox trace checking — check executability, protocol coherence, and contradiction of the stated security property before reporting an attack
-Checked 2026-10-15 against paper curaba2024cryptoformaleval: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

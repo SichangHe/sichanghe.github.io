@@ -114,4 +114,3 @@ Verus form (inference)
 - counterexample-guided refutation — negate a postcondition and use concrete Coq tests plus hammer to prove one violating case
 - anti-trivialization checks — reject missing input bindings and `admit`, `Parameter`, or `Axiom` declarations in refutation tests
 - overlap-aware benchmark construction — normalize C data types for QCP and report overlapping structure categories with denominators
-Checked 2026-10-13: audit record zhang2026neuro; paper-study comparison complete; gate executed; experiments not rerun

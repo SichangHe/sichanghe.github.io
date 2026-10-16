@@ -76,4 +76,3 @@ Nothing is formally proved or empirically measured by this paper. It makes engin
 - partial-specification assurance ladder — move from concrete tests to property tests, symbolic execution and proof
 - specification-driven design clarification — use mechanized contracts to expose ambiguity and contradictory intent
 - cross-layer semantics infrastructure — relate Rust, compilers, intermediate languages and hardware with tested and proved semantics
-Checked 2026-10-13: audit record sewell2026escaping; paper-study comparison complete; gate executed; experiments not rerun

@@ -42,4 +42,3 @@ Verus form: Inference: retain rejected proofs with their exact Verus diagnostics
 - trace-budget ablation: vary reasoning style and maximum tokens by model scale
 - on-policy verifier training: compare current-policy sampling with offline and batch-online alternatives
 - negative-sample learning: train on rejected candidates and checker diagnostics, not positives alone
-Checked 2026-10-15 against paper venkatkrishna2026aletheia: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

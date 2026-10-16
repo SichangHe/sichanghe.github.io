@@ -70,4 +70,3 @@ Verus form. Inference: use structural comparison as a pre-proof diagnostic for g
 - repair boundary — automate syntax repair but require renewed review for semantic changes
 - structural and causal comparison — compare generated models with references while inspecting role order and input provenance
 - counterexample classification — compare traces with expected attacks instead of assuming every failed lemma is a modeling error
-Checked 2026-10-15 against paper li2026confidence: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

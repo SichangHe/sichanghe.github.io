@@ -64,4 +64,3 @@ Trusted components include the Coq or Lean kernel, the proof assistant implement
 - staged proof pipeline — separate extraction, first proof, error repair, and fresh-session style polishing while kernel-checking every accepted edit
 
 - bounded session reuse — preserve retry history and nearby-lemma context for a small window, then reset to prevent context dilution
-Checked 2026-10-13: audit record kan2026harnessing; paper-study comparison complete; gate executed; experiments not rerun

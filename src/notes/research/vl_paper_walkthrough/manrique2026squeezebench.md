@@ -56,5 +56,3 @@ The Lean kernels check the submitted theorem proofs; Comparator fixes statements
 - challenge/solution isolation: fix theorem statements in a trusted challenge and independently check untrusted definitions and proofs with an explicit axiom list
 - anti-search admission gates: evaluate candidates over a bounded range and budget, reject hidden exhaustive search, and audit reports for larger-n search
 - persistent agent records: use accepted verified versions as the next agent’s state and measure progress by record history rather than solved-problem count
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

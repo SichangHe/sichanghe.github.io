@@ -124,4 +124,4 @@ Inference: the survey trusts each cited tool’s semantics, compiler or bytecode
 - intermediate-language program verification: translate source or bytecode to Boogie, F*, Why3, K, LLVM, or Datalog and discharge contracts
 - runtime trace monitoring: instrument clients or contracts to detect invariant and legal-property violations on observed executions
 - specification-layer taxonomy: combine contract-level temporal/deontic models with program-level Hoare and path-pattern properties
-Checked 2026-10-14 against the paper by a Codex agent: audit record tolmach2021survey; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments
+Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

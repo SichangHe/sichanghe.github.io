@@ -86,5 +86,3 @@ Inference: Verus adoption would trust the Verus verifier, solver, proof erasure,
 - proof sketch subgoal decomposition: turn an informal proof into compilable intermediate lemmas, solve them, assemble, and stop early on failure
 - decoupled local extraction: retain verified statements, subgoals, premises, corrections, and sketches even when the parent theorem fails
 - independent majority semantic verification: exclude the generator identity and aggregate independent binary semantic judgments
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

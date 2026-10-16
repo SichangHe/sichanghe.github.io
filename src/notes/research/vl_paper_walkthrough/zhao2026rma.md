@@ -36,5 +36,3 @@ Inference: In a Verus workflow, the literature record can point to existing lemm
 - Inference: bounded operation-specific context — retrieve and prioritize whole records, then fit a fixed context budget without cutting proof fragments
 - Inference: severity/dependency issue repair — rank correctness impact and downstream dependencies, apply anchored patches, and re-criticize globally
 - Inference: coordinated revision — use literature, meetings, action plans, and a concept glossary to guide broader proof changes
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -71,4 +71,3 @@ Verus form (Inference): report first-pass verification, repaired-pass verificati
 - temporal equivalence checking: encode clock latency explicitly when verifying sequential or pipelined behavior
 - counterexample-guided repair: localize syntax errors and simplify mismatching signals before asking an LLM for a patch
 - denominator-aware metrics: report first-pass success, bounded repair success, adjusted iterations, and QoR separately
-Checked 2026-10-15 against paper li2026formalrtl: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

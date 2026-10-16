@@ -46,5 +46,3 @@ The benchmark tests executable Python behavior; it does not prove semantic compl
 - rollback verification gate — reject a regressive version, restore the last passing version, and permit one bounded retry
 - deterministic requirement recap — prepend machine-maintained summaries of earlier requirements before each new request
 - multi-turn failure taxonomy — label sampled failures by context loss, cross-turn conflict, or accumulation with explicit denominators
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

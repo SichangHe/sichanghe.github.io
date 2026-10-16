@@ -59,4 +59,3 @@ The executor implements approximately 20 operations with fuzzy matching and skip
 - code-execution grounding — let the Critic run sandboxed checks against actual data before issuing objections
 - rescue–damage routing condition — deploy debate when Critic verification odds times repairability exceed baseline accuracy odds
 - factorial self-verification control — compare separate Critic, same-tool self-check, and text-only conditions to isolate causal interaction
-Checked 2026-10-15 against paper parmar2026helping: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -24,4 +24,4 @@ Inference: The replay trusts MATLAB arithmetic, parser correctness, the chosen r
 - independent replay — parse the witness, apply implementation arithmetic, simulate, compare outputs, and persist a reproducibility report
 - property-specific replay — use quantized roots for stability/minimum-phase, range checks for overflow, and amplitude-period checks for limit cycles
 - exhaustive LCO absence check — apply Bauer's search to classify asymptotically stable systems as limit-cycle free
-Checked 2026-10-15 against paper chaves2016dsvalidator: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

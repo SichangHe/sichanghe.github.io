@@ -79,5 +79,3 @@ evidence and limits: the paper reports practical scalability, but its CVE benchm
 - interval layout analysis — track byte bounds, alignment, nullability, and mutability with widening at loops
 - boundary and instruction checks — apply explicit rules for leaked dangling pointers, aliasing, UAF, OOB, invalid slices, and related UB
 - context-sensitive inlining — recursively analyze callees and use conservative summaries at depth or external boundaries
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

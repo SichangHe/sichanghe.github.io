@@ -56,4 +56,3 @@ The runtime layer caught an AMM partial-fill pricing bug and a 10^12 perp-fundin
 - shape-routed proof dispatch — classify proof shape, race capable backends, and cross-route structured negatives while kernels decide success
 - honest-negative protocol — require workers to report machine-checkable failure modes instead of plausible unverified success
 - specification-to-runtime codegen — hash canonical specs, generate invariant checks, and run them at configured production or test tiers
-Checked 2026-10-15 against paper falda2026federated: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

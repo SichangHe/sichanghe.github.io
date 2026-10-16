@@ -54,5 +54,3 @@ What is proved, measured, and trusted. The paper proves the exposure proposition
 - specialized local judges — route citation, computation, problem, and initial-state checks separately
 - pedantry filter and convention lift — distinguish cosmetic rejection from a single explicit domain convention
 - certify-or-decline repair — bound correction attempts and abstain when a witness cannot be certified
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

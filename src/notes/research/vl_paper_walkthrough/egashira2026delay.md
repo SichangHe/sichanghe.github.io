@@ -34,4 +34,3 @@ The experiments prove causal effects in a controlled arithmetic environment, not
 - oracle versus verifier metrics — track true oracle reward, training reward, FPR, and FNR separately
 - conditional advantage — correlate trigger frequency and oracle advantage to predict plateau versus collapse
 - verifier alternation — periodically replace a cheap verifier with a trusted oracle to mitigate destructive reward bias
-Checked 2026-10-15 against paper egashira2026delay: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

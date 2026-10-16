@@ -70,4 +70,3 @@ Trusted elements include Z3's solver result for its input, the manually written 
 - solver-versus-model replay — compare a model's classification with an executed Z3 result on the same formal input
 - failure-mode auditing — detect scope laundering, implicit constraint blindness, and code-generation errors with directional comparisons
 - bounded repair loop — retry invalid solver code for three iterations, then record it as Invalid rather than silently treating it as a result
-Checked 2026-10-15 against paper wang2026knowyourlimits: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

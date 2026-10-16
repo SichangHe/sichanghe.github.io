@@ -74,4 +74,3 @@ The formal proof covers client CHCs under synthesized predicates. Library behavi
 - contextual contracts: synthesize call-site summaries tested only on states reached by one client
 - ICE-CHC learning: alternate candidate invariant/contract learning with positive, implication, and negative counterexamples
 - tested-contract loop: run a bounded modular or contextual tester and feed violating valuations back into synthesis
-Checked 2026-10-13: audit record uppar2026modulo; paper-study comparison complete; gate executed; experiments not rerun

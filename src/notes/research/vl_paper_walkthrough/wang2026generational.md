@@ -233,4 +233,3 @@ The no-scan bug was absent from tests because no test exercised both `depth>0` a
 - client adequacy feedback — strengthen contracts when realistic clients expose omitted semantic cases
 
 - C-semantics axiomatization — isolate nonstandard tagged-value and pointer-range operations as explicit trusted assumptions
-Checked 2026-10-15 against paper wang2026generational: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

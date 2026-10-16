@@ -117,4 +117,3 @@ Inference: The threat to an agent-written verified-Rust product is high when spe
 - reject-only independent auditor — let an independent LLM add rejection while deterministic code retains approval authority
 - hashed evidence certificate — bind thresholds, predicate outcomes, and accepted hypothesis to canonical evidence serialization
 - discriminative active sensing — reveal hidden measurements where surviving hypotheses’ twin responses differ most
-Checked 2026-10-15 against paper mu2026abstention: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

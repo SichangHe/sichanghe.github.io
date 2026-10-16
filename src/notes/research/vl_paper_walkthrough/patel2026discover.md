@@ -42,5 +42,3 @@ Lean checks the syntax and proofs of retained statements. The measured numbers u
 - interestingness divides verified proof cost by conditional statement-description length
 - GRPO rewards a conjecturer for valid, relevant statements with high estimated normalized proof cost
 - iterative discovery proves candidate theorems, de-duplicates them, and promotes the highest interestingness into later premise sets
-
-Checked 2026-10-15 against the paper by a Codex agent for learning_to_discover_interesting_mathema_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

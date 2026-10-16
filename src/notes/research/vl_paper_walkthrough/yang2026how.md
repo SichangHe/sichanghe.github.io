@@ -92,4 +92,3 @@ Rocq proves concrete acceptance or rejection obligations. It does not prove univ
 - staged filtering — filter syntax, first positive, all positive, and negative rejection in sequence
 - verifier calibration — anchor prover choice on fixed human-written specifications and track evaluation duality
 - executable recursive specifications — use Fixpoint-like ghost recursion when it reduces specification and proof complexity
-Checked 2026-10-13: audit record yang2026how; paper-study comparison complete; gate executed; experiments not rerun

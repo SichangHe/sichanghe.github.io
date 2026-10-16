@@ -70,5 +70,3 @@ All results are mechanized in Rocq, and the paper reports more than 13,000 proof
 - linearization extraction — insert unique logical points between matching pre and post events using atomic specifications
 - transaction chopping — group linearization points by connection into well-formed transactions and abstract executions
 - ghost resource wrapping — combine original resources with permissions and reflection predicates to preserve cross-level coherence
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

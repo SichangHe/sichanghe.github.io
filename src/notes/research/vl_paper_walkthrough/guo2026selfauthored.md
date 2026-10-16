@@ -64,5 +64,3 @@ The paper proves an information-limit inequality for endogenous evidence, `α+β
 - sealed exogenous acceptance loop: compare candidate and incumbent on hidden task-native audits and expose only accept/reject
 - conservative non-regression gate: use relative and absolute slack to reject clear regressions while permitting neutral edits
 - leakage and retention ablations: test internal test constraints, score disclosure, proposal-matched runs, and peak-to-final loss
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

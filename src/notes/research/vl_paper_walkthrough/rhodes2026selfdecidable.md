@@ -53,4 +53,3 @@ The paper tests whether labels are stable under meaning-preserving paraphrases a
 - intervention gate: require structure, groundedness, sensitivity, and rewording invariance
 - perturbation audit: re-probe labels under meaning-preserving paraphrases and templates
 - dual-cost accounting: report automation coverage, false-decidable denominator, and recurring judge cost
-Checked 2026-10-15 against paper rhodes2026selfdecidable: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -133,4 +133,3 @@ The mechanical claims are state-hash mismatch cannot trigger a commit and parser
 - gated admission and recertification — run challenge/full checks before commit and re-execute them on the selected completion
 - risk/dependence stopping — choose verifier thresholds using selective risk and conditional false-accept dependence at stated coverage
 - conformance failure injection — exercise replay, mutation, malformed action, rollback, and recertification cases with auditable receipts
-Checked 2026-10-15 against paper gao2026looping: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

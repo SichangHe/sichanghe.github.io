@@ -65,4 +65,3 @@ The table's percentages are internally consistent with the stated 771 validation
 - graded verifier reward ladder — ordered type, completeness, semantic-equivalence, and length checks with diagnostic certificates
 - HarnessEvolve — UCB-guided evolutionary mutation of the agent harness while retaining rejected designs and their verifier certificates
 - Agentic RLSF — multi-turn GRPO post-training from symbolic verifier rewards inside a frozen harness
-Checked 2026-10-13: audit record jana2026aiprover; paper-study comparison complete; gate executed; experiments not rerun

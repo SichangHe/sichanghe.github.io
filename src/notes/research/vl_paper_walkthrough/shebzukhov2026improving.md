@@ -42,4 +42,3 @@ The paper also observes that RL gains decline from 0.208 at difficulty 1 to 0.12
 - curriculum ablation: compare difficulty-ordered SFT with identical shuffled data and budget
 - GRPO semantic tuning: sample groups of completions, normalize rewards, and optimize a KL-constrained clipped objective
 - proof-aware reward design: combine semantic round-trip quality with a hard formal-check result to avoid proxy reward hacking
-Checked 2026-10-15 against paper shebzukhov2026improving: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -74,4 +74,3 @@ Inference: a Verus version can mine transition relations and quantified invarian
 - parallel hint mining: search template permutations in parallel, rank with context-aware metrics, filter, and cluster
 - association-rule mining: discover temporal rules in traces, tune corner-case thresholds, and convert rules to assertions
 - coverage hygiene: treat traces, fault coverage, thresholds, and model checking as separate evidence with explicit blind spots
-Checked 2026-10-15 against paper iman2026automatic: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

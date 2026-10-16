@@ -41,4 +41,3 @@ The paper's example finds an out-of-bounds access in `decode_utf16`: when a two-
 - scenario extraction — split assertions with backward use-def analysis, deduplicate traces, and preserve calls by replay
 - dependency graph synthesis — recursively build nondeterministic complex values from constructors and trait implementations
 - compiler-feedback refinement — compile with Kani, freeze correct sections, and reject fabricated declarations
-Checked 2026-10-15 against paper wang2026harnessllm: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

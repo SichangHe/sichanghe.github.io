@@ -53,4 +53,3 @@ Evidence and limits. In one sampled interval, the judge flagged 0.6%–2.0% of o
 - balanced token weighting — interpolate per-response and global normalization to avoid short-trace and long-trace collapse
 - fluency reward filter — suppress binary rewards for repetitive, looping, malformed, or unsupported reasoning traces
 - best-of-k verifier reranking — sample candidate proofs and select the one with the highest verifier score
-Checked 2026-10-15 against paper yang2026proofverifier: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

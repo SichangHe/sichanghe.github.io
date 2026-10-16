@@ -59,5 +59,3 @@ The PDE study uses three formalization routes and 20 attempts. Table 5 reports 1
 - NL-first scaffold — write an informal proof before formal translation when the formal statement is hard to navigate
 - verified knowledge base — extract source mathematics, formalize in dependency order, compile, index, and re-verify on library updates
 - abstraction-aware certification — separate opaque domain assumptions from the formally checked assembly and report both
-
-Checked 2026-10-15 against the paper by a Codex agent for mathcopilot_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

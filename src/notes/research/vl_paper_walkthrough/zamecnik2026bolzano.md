@@ -36,4 +36,3 @@ Verus form. Inference: encode extracted problem assumptions as `requires` and th
 - self-contained open-problem extraction — check source status and literature, then package definitions, assumptions and question before proof search
 - verifier-gated orchestration — critique all prover outputs and apply structured append/replace updates through one gate
 - source-and-proof audit — separately test source support, proof correctness, scope, completeness and novelty before human review
-Checked 2026-10-15 against paper zamecnik2026bolzano: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

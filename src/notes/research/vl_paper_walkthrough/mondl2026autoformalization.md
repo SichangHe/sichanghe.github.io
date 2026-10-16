@@ -65,4 +65,3 @@ Inference: The paper uses Cedar's formally verified, human-readable policy langu
 - Inference: fail-closed enforcement: keep deterministic policy evaluation outside the model and deny on engine errors
 - Inference: denominator-separated replay: compare policy conditions with explicit rule scope and eligible-action denominators
 - Inference: temporal policy extension: model prerequisites and persistent trajectory state for multi-turn authorization
-Checked 2026-10-15 against paper mondl2026autoformalization: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

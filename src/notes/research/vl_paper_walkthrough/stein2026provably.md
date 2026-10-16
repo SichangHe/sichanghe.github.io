@@ -137,4 +137,3 @@ The paper reports 12/13 provably complete domains, but this denominator excludes
 - anti-cheating kernel checks — reject theorem edits, nonstandard axioms, unsafe notation/macros, and incremental-build loopholes, then rebuild standalone
 - declaration-level proof repair — debug generated definitions and lemmas one at a time while retaining accepted declarations
 - Verus contract freezing — preserve `requires`, `ensures`, and ghost predicates while agents modify executable code and proof bodies
-Checked 2026-10-13: audit record stein2026provably; paper-study comparison complete; gate executed; experiments not rerun

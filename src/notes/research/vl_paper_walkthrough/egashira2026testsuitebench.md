@@ -19,5 +19,3 @@ When an implementation fails a reference test, a generated test kills E*, or a m
 - isolated requirement mutation — create compiling mutants that violate one requirement and filter by targeted killing
 - validity/mutation metrics — report tests that preserve the reference and mutants they kill, with explicit denominators
 - failure-attribution repair — classify failures as generation or specification defects and iteratively revise the specification
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

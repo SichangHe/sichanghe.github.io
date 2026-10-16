@@ -81,4 +81,3 @@ The paper's trusted components include the RTL and specification, the formal too
 - context JSON extraction: encode exact code, signals, timing, preconditions, reset logic, and a logic signature
 - targeted SVA generation: emit one timing-matched assertion or cover per location using only available signals
 - iterative closure loop: merge properties, rerun formal analysis, and escalate unresolved intent to human review
-Checked 2026-10-14 against the paper by a Codex agent: audit record pothireddypalli2026agentic; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

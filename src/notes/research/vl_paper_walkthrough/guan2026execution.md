@@ -33,4 +33,3 @@ Removing the reasoning block caused a “significant performance collapse across
 - outcome-only reward: reward only executable outputs whose verified outcome matches a trusted answer
 - group-relative verifier RL: update a policy from within-group normalized execution rewards
 - environment switching: transfer or adapt by changing the verification backend instead of rebuilding process labels
-Checked 2026-10-15 against paper guan2026execution: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

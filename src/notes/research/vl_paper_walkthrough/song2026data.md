@@ -55,4 +55,3 @@ Inference: threat to agent-written verified Rust is high when agents train on un
 - Inference: calibrated confidence: softmax answer-token log probabilities and separate confidence from verifier acceptance
 - Inference: generation-time SMT gate: check each partial artifact before committing it to the design
 - Inference: constraint-rich benchmark: publish executable oracles and explicit denominators for reproducible verification-aware evaluation
-Checked 2026-10-15 against paper song2026data: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

@@ -44,5 +44,3 @@ The paper excludes mutual concurrent authorization revocations among equally pri
 - authorization/query/revocation invariants — separate immutable authorization, query-change, and backdating safety obligations
 - staged algorithm verification — add grants, then revocations, in monotonic-to-non-monotonic steps
 - pure total queries — prove deterministic convergence and termination while keeping chronicle consistency assumptions explicit
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

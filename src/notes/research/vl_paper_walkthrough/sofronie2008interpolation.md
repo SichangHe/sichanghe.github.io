@@ -92,4 +92,4 @@ Proved: locality-based reduction (Theorems 4.5–4.7), separation of mixed Horn 
 - mixed-clause separation — split each mixed Horn rule through shared interpolating terms and fresh shared extension values
 - hierarchical interpolant procedure — iterate separation, interpolate the pure base problem, and substitute fresh constants back to original terms
 - abstraction-refinement use — turn an interpolant for a spurious counterexample into predicates that refine the next abstract-state check
-Checked 2026-10-15 against paper sofronie2008interpolation: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

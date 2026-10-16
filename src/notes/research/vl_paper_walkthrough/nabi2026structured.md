@@ -59,5 +59,3 @@ Lean's kernel proves accepted generated code. Measured quantities are pass@32 so
 - error-guided prover loop — repeatedly submit generated proof code to the kernel and feed bounded diagnostics back
 - four-mode ablation — isolate graph, library, combined, and no-context proving under matched budgets
 - complementarity oracle — union problems solved by different augmentation modes to quantify adaptive selection headroom
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numerical/section/page references, technique descriptions, catalog entries, and overlap; corrected none.

@@ -46,4 +46,3 @@ Threat to an agent-written verified-Rust product (Inference): low for algorithm 
 - normalized payload transduction: reverse-scan bytes with thresholded emit/divide and `256x+b` updates
 - staged suffix-tolerant decode: recover declared length, invert state, consume exactly that many bytes, ignore valid suffix
 - layered roundtrip proof: prove prefix inversion, renormalization, payload inversion, then stream correctness
-Checked 2026-10-15 against paper riabov2026canonical: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

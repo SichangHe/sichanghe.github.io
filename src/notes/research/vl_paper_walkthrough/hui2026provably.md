@@ -94,5 +94,3 @@ The trusted core includes the transition semantics, crash/message-loss model, co
 - guided curriculum — begin with definite late-loss scenarios and progressively relax losses and initial states
 - exhaustive counterexample replay — enumerate bounded executions, retain failures, and bias later sampling toward them
 - group freezing — freeze one transition per round/process pair when a definite-decision scenario preserves completeness
-
-Checked 2026-10-15 against the paper by a Codex agent for learning_provably_correct_distributed_pr_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

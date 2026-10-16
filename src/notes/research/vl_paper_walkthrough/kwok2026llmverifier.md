@@ -60,5 +60,3 @@ The paper's limitations include requiring scoring-token logits for the main meth
 - criteria decomposition — score specification, output, and error criteria separately and ensemble them
 - probabilistic pivot tournament — use a ring pass and k pivots to reduce N-candidate comparisons from quadratic to O(Nk)
 - checker-gated ranking — use model scores for triage but require the formal checker for acceptance
-
-Checked 2026-10-15 against the paper by a Codex agent for llm_as_a_verifier_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

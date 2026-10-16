@@ -73,4 +73,3 @@ The paper proves no new kernel theorem and reports no implemented-system benchma
 - proof-trace explanations — attach each verified conclusion to source authority and intermediate values before generating prose
 - verifier-rewarded GRPO — sample candidate formalizations, score staged verification outcomes, and update the policy by group-relative advantage
 - specification-gap testing — use worked examples, concolic inputs, and literate code review to detect wrong formal rules
-Checked 2026-10-14 against the paper by a Codex agent: audit record heydari2026closing; compared the full paper and study, corrected metadata where needed, and did not rerun the experiments

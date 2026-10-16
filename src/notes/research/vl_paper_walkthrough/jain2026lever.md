@@ -62,5 +62,3 @@ What is proved: the exact-prior backup property in the formal model, and Lean ke
 - weighted proof objective — combine remaining computation with additive length, purity, or repository-specific metrics
 - subgoal-local agents — run each obligation in a compact local context with compiler and library tools
 - quality-aware verification — enforce verifier correctness while optimizing measurable proof quality during construction
-
-Checked 2026-10-15 against the paper by a Codex agent for lever_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -71,4 +71,3 @@ Verus form. Inference: materialize every agent-introduced assumption as a separa
 - assumption-gap detection — materialize assumptions and discharge them with a fixed tactic sequence, marking unclosed obligations
 - citation-gap detection — enforce backward-only proposition dependencies and flag unavailable or incorrect cited results
 - immutable proof structure — lock approved map objects and prevent agents from skipping ahead or rewriting prior steps
-Checked 2026-10-13: audit record mao2026does; paper-study comparison complete; gate executed; experiments not rerun

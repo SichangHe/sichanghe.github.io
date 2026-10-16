@@ -71,4 +71,3 @@ The table arithmetic is internally consistent for Table 1: faithfulness totals 9
 - APBA — allocate entailment queries by expected information gain across drift classes
 
 - FGD — rerank sampled formalizations by the spectrum and re-prompt with witness probes to repair drift
-Checked 2026-10-13: audit record mohammad2026faithfulness; paper-study comparison complete; gate executed; experiments not rerun

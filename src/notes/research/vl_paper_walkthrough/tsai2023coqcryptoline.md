@@ -76,4 +76,4 @@ Inference: for a Verus-based product, the strongest reusable idea is a small ver
 - mixed-theory fact transfer — prove carry/range facts in QF_BV and pass them as algebraic lemmas through assertion/assumption annotations
 - verified slicing — remove irrelevant predicates during reduction, accepting incompleteness when the optional slice is enabled
 - solver engineering — combine Gröbner `lift`, substitution elimination, QF_BV bit-blasting caches, and parallel obligations
-Checked 2026-10-15 against paper tsai2023coqcryptoline: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
+Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -92,5 +92,3 @@ The paper does not measure specification errors, retrieval poisoning, dependency
 - round-level repair supervision — split trajectories into local diagnostic-to-repaired-proof examples and deduplicate them
 - co-evolving corpus and policy — feed verified proofs, repairs, and partially solved groups into SFT and RL in repeated iterations
 - budget-aware proving — allocate a fixed verifier-call budget between independent samples and repair depth based on measured per-chain success
-
-Checked 2026-10-15 against the paper by a Codex agent for oprover_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -88,5 +88,3 @@ The paper measures compile-and-verify pass rates on real Trn1 hardware, by diffi
 - compile–verify–fix loop — iterate real-hardware compilation and reference comparison for up to ten turns
 - curated LoRA SFT — train on quality-controlled domain episodes with frozen low-rank adaptation settings
 - binary-reward GRPO audit — compare RL against SFT and treat sparse binary compilation reward as a tested failure mode
-
-Checked 2026-10-15 against the paper by a Codex agent for nki_agent_20261014.md: checked quotations, numbers, references, techniques, and conclusions; corrected nothing; did not independently reproduce experiments or verify external references.

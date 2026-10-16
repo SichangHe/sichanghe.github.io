@@ -51,5 +51,3 @@ Verus form (Inference). A Verus proof can encode each unifier instance as a lemm
 - preprocessing replay: reproduce rectification through CNF and justify Skolem functions with explicit equivalence lemmas
 - unifier-guided inference: instantiate each rule with the prover's most-general unifier and check the ground consequence
 - avatar certificate: split clauses into Boolean-labelled components and check the final SAT refutation in the proof assistant
-
-Checked 2026-10-15 against the paper by a Codex agent: checked quotations, numbers, references, techniques, and conclusions against the full paper; corrected nothing; did not independently reproduce experiments or verify external references.

@@ -76,4 +76,3 @@ The paper’s numbers are internally consistent when denominators and conditioni
 - PoC confirmation: instantiate exploitation steps and execute them in isolation to validate reachability
 - counterexample-guided repair: compile-filter patches, model-check invariants, and feed counterexamples into the next synthesis round
 - conditioned patch metrics: report success and vulnerability rates with their denominators and conditioning
-Checked 2026-10-15 against paper fan2026bulkhead: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced

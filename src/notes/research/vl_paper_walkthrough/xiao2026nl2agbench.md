@@ -43,4 +43,3 @@ The executable AlphaGeometry engine checks generated syntax and can expose certa
 - few-shot formal examples: provide verified input/output pairs covering syntax and semantic variants
 - verifier-guided repair: feed localized checker errors or hints back into a second generation pass
 - fine-tuning with caution: improve DSL fluency while independently checking semantics
-Checked 2026-10-15 against paper xiao2026nl2agbench: full comparison completed; metadata and unsupported claims reviewed; experiments not reproduced
