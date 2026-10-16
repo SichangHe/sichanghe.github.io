@@ -2306,6 +2306,8 @@
         - [🤖 Latte walkthrough](notes/research/vl_paper_walkthrough/zimmerman2023latte.md)
         - [🤖 Gradual Exact Logic walkthrough](notes/research/vl_paper_walkthrough/zimmerman2024gradualexact.md)
         - [🤖 From LLM-Generated Conjectures to Lean Formalizations walkthrough](notes/research/vl_paper_walkthrough/zuo2026llm.md)
+        - [🤖 Symbolic Model Checking without BDDs? walkthrough](notes/research/vl_paper_walkthrough/biere1999symbolic.md)
+        - [🤖 All from One, One for All walkthrough](notes/research/vl_paper_walkthrough/peled1993representatives.md)
         - [🤖 Literature shortlist for Verus work](notes/research/vl_literature_shortlist_20261012.md)
         - [🤖 Formal verification techniques, by paper](notes/research/vl_fv_techniques/index.md)
         - [🤖 Formal verification techniques, by stage of work](notes/research/vl_fv_techniques/overview.md)
