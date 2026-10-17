@@ -3,7 +3,7 @@
 Tag: `crick2015cav`, [paper](http://arxiv.org/abs/1502.02448v1)
 
 ## what the paper proposes
-Crick, Hall, and Ishtiaq propose an infrastructure that makes verification-tool results reproducible by automatically rebuilding code, running unit tests, and benchmarking submitted models. The abstract states: “In this paper we propose an infrastructure for enabling reproducibility in our community, by automating the build, unit testing and benchmarking of research software.” This is a requirements and workflow paper, not a new verifier: it reports no theorem, benchmark denominator, or measured success rate. Its running example is BioModelAnalyzer (BMA), a biological model analysis tool.
+Crick, Hall, and Ishtiaq propose an infrastructure that makes verification-tool results reproducible by automatically rebuilding code, running unit tests, and benchmarking submitted models. The abstract states: “In this paper we propose an infrastructure for enabling reproducibility in our community, by automating the build, unit testing and benchmarking of research software.” The paper describes itself as “not a theory paper or a tool paper, nor an industrial case study” (Section 1, PDF p. 2). It is a requirements and workflow proposal, not a new verifier: it reports no theorem, benchmark denominator, or measured success rate. Its running example is BioModelAnalyzer (BMA), a biological model analysis tool.
 
 The service has three roles: show that code compiles, runs, and behaves as described; store artefacts linked to publications or datasets; and let non-developers add benchmarks (Section 2, pp. 2–3). The proposal treats reproducibility as an extension of testing and distinguishes “compilation and testing in a new machine, a continuous integration strategy for code commits, and the ability to add and remove benchmarks to the test set” (Section 1, PDF p. 2).
 
@@ -15,7 +15,7 @@ how to do it:
 2. connect the service to a standard repository and detect a new commit or dependency update
 3. pull the code, download dependencies, and compile it
 4. if compilation fails, report the failure and stop; otherwise continue to tests (Section 2.2, pp. 3–4)
-5. retain the exact commit ID and build result with the artefact
+5. store results with a note of the commit ID (Section 2.2, PDF p. 4; the paper names the commit ID for benchmark results, so keeping the build result too is my extension)
 
 The BMA example found that only one machine could deploy a web service because one developer had run undocumented commands for mixed 64- and 32-bit components; the proposed fresh build would expose this because “such undocumented commands would lead to all tests failing until explicitly added to the build process” (Section 2.1, PDF p. 3).
 
@@ -25,7 +25,7 @@ what it is: separate a developer's fast sanity tests from property-bearing model
 how to do it:
 1. after compilation, run basic tests supplied by the developer
 2. stop and report if any sanity test fails
-3. if they pass, run every submitted model against its known property
+3. if they pass, run a series of models against a known property
 4. record outcomes in a database with the commit ID
 5. expose historical results through a web interface (Section 2.2, PDF pp. 3–4)
 
@@ -41,12 +41,12 @@ how to do it:
 2. add it to the repository's model set
 3. execute every stored model whenever a new revision is pushed
 4. link changed behavior to the exact code commit (Section 2.4)
-5. retain timeouts and property failures as regression records
+5. log models that time out or fail, as regression records (the paper mentions logging timeouts in Section 2.5; recording property failures is my extension)
 
-The authors describe BMA refinements where unit tests caught rounding changes, while untested behavior for nodes without inputs would have benefited from user-submitted benchmarks. They also propose logging models that time out under one algorithm but succeed under another, then examining their features (Section 2.5).
+The authors describe BMA refinements: some subtle ones, such as switching rounding mechanisms between floors and rounds, “were identified by unit tests”, while more complex changes, such as the treatment of nodes without inputs, “broke behaviours which were not tested in our available benchmark set” (Section 2.3, PDF p. 4). They argue that user-submitted benchmarks would help identify such breaking changes. They also propose logging models that time out under one algorithm but succeed under another, then examining their features (Section 2.5).
 
 ## technique 4: dependency-triggered and performance-aware runs
-Dependencies may be supplied as binaries, but the authors suggest triggering the same compile-and-test workflow when external dependencies change (Section 2.6). This can expose third-party breaking changes. Performance comparison is harder in cloud VMs because migration and shared hardware distort raw timings; the paper recommends frozen virtual-machine experiments as a direction, while stating that this remains unresolved (Section 2.7).
+Dependencies may be supplied as binaries, but the authors suggest triggering the same compile-and-test workflow when external dependencies change (Section 2.6). This can expose third-party breaking changes. Performance comparison is harder in cloud VMs because of “too much infrastructure interference” such as VMs spinning up, being torn down and migrating, and the bus being used by other VMs (Section 2.7, PDF pp. 5–6). The paper cites Recomputation.org's use of cloud virtual machines to freeze and unfreeze experiments as “not the whole solution” but “a move in the right direction”, and says performance “is one aspect of this proposal that needs further investigating”.
 
 ## technique 5: artefact review and staged adoption
 what it is: make reproducibility an explicit conference workflow with declared requirements, parallel artefact review, traffic-light reporting, and a curated repository.
