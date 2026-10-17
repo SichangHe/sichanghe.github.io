@@ -1,51 +1,57 @@
 # Synthesizing Inductive Invariants for Distributed Protocols via IC3 and Large Language Models
 (authored by agents unless marked 🧑)
-Tag: `cao2026synthesizing`, [paper](https://www.semanticscholar.org/paper/051b782eadefdb2b52f4735555f6a1cfc1fbbc05)
+Tag: `cao2026synthesizing`, [paper](https://arxiv.org/abs/2605.24619)
 
 ## core technique
-IC3Syn combines property-directed reachability with LLM proposals for TLA+ protocol invariants. The paper says: “IC3Syn combines a symbolic IC3 controller, which decomposes invariant synthesis into focused blocking tasks and an LLM which provides protocol-level reasoning that IC3 alone lacks for TLA+ specifications.” (abstract, p. 1) The motivation is that directly asking for a complete invariant is brittle: “the clauses must satisfy initiation, consecution, and safety implication, and any gap in the conjunction invalidates the entire invariant.” (section 1, p. 2)
 
-Inference: For Verus, the transferable idea is to ask an LLM for one local lemma that blocks a concrete counterexample, while Verus checks initiation, loop preservation, and the final safety implication.
+IC3Syn combines property-directed reachability with LLM proposals for TLA+ protocol invariants. The paper says: “IC3Syn combines a symbolic IC3 controller, which decomposes invariant synthesis into focused blocking tasks and an LLM which provides protocol-level reasoning that IC3 alone lacks for TLA+ specifications.” (abstract, p. 1) Directly asking for a complete invariant is brittle: “the clauses must satisfy initiation, consecution, and safety implication, and any gap in the conjunction invalidates the entire invariant.” (§1, p. 1)
+
+Inference: For Verus, the transferable idea is to ask an LLM for a local lemma that blocks a concrete counterexample, while Verus checks the resulting proof obligations.
 
 ## applying IC3Syn
 
 when to use it
 
-Use the method for transition systems with a safety property and a finite executable instance useful for counterexamples. The source language here is TLA+, with `Init`, `Next`, and `Safety`; the final proof is checked for the unbounded protocol in TLAPS. It does not require manually curated predicate templates.
+The paper targets TLA+ transition systems described by `Init`, `Next`, and `Safety`. Search uses a configured finite instance; unbounded verification requires a subsequent TLAPS proof. Manually designed templates are unnecessary, but automatically extracted quantifier templates are part of the prompt: “Quantifier templates are extracted directly from the specification and deduplicated modulo variable renaming, providing the LLM with protocol-specific quantifier structure without requiring manual template design.” (§5.4, p. 7)
 
 steps from the paper
 
-1. Initialize IC3 frames with the initial condition and safety property. Algorithm 1 gives `F ← [{Init}, {Safety}]` and an empty clause memory.
-2. Find a bad state at the frontier of the current frame by the IC3/PDR controller. Search backward through predecessor states in earlier frames.
-3. When a predecessor-free state is reached, send the full TLA+ specification and the current batch of bad states to the LLM. Ask for quantified, protocol-level blocking clauses. The paper states: “The LLM module receives the full TLA+ specification along with the current batch of bad states, and proposes candidate blocking clauses expressed as quantified TLA+ predicates over protocol-level variables.” (section 3, p. 7)
-4. Validate each candidate against reachable states on the configured finite instance with TLC. Clauses falsified by reachable states are discarded; counterexamples are returned as feedback. Valid clauses are ranked by how many bad states they exclude and admitted to the frame.
-5. Add accepted clauses to the current frame and propagate them forward. Repeat frontier blocking and propagation.
-6. If repeated LLM attempts fail, add an exact aggregate blocker negating all accumulated bad states. This fallback preserves finite-instance completeness.
-7. Stop when two adjacent frames coincide. Extract their conjunction as the candidate invariant, then prove it inductive for the full unbounded protocol in TLAPS. The abstract reports that “the invariants synthesized on finite instances are shown in TLAPS to be inductive for the full unbounded protocol, thereby establishing safety.” (abstract, p. 1)
+1. Initialize the frame sequence as `F ← [{Init}, {Safety}]` and clause memory as empty. Later frames begin with `Safety` and are strengthened by admitted clauses. (§4.1, p. 4; Algorithm 1, §5.1, p. 6)
+2. Use Apalache to find a state in the deepest frame with a one-step successor violating `Safety`. Search backward through predecessors in shallower frames. Reaching frame level zero reports an unsafe protocol; a predecessor-free bad state above zero triggers clause search. (§§4.1, 5.2, pp. 4, 6–7)
+3. First try clauses retained in memory. If none is admissible, query the LLM with the full specification, the current batch of bad states, extracted quantifier templates, existing clauses, and prior verification feedback. The paper states: “The LLM module receives the full TLA+ specification along with the current batch of bad states, and proposes candidate blocking clauses expressed as quantified TLA+ predicates over protocol-level variables.” (§4.2, p. 6) Parse the JSON response, normalize clauses, repair common scoping mistakes, and syntax-check with SANY. (§5.4, p. 7)
+4. Screen candidate clauses together against reachable states of the finite instance using TLC. Discard falsified clauses and return their counterexamples as feedback. Prefer candidates excluding more current bad states; break coverage ties in favor of shorter clauses. TLC screening alone does not admit a clause. Apalache checks `Init ⇒ c` and `F[k−1] ∧ c ∧ Next ⇒ c′`; admit successful clauses into frames one through the current level. Remove covered bad states from the worklist. (§§5.2–5.3, p. 7)
+5. If blocking fails, retain the bad state and query for additional frontier bad states while excluding those already seen. After exhausting LLM-guided search, if no fresh frontier bad state exists, use the negation of all known bad states as the exact aggregate fallback blocker. The paper limits its completeness claim to the checked finite instance. (§4.1, p. 4)
+6. Once the frontier is blocked, append a fresh frame and push clauses using `F[k] ∧ Next ⇒ c′`. A push failure triggers one opportunistic blocking attempt using memory and, if needed, at most one LLM query. If unsuccessful, move on; new admitted clauses trigger re-pushing. (§5.1, p. 6)
+7. Stop when adjacent frames coincide and extract the shared frame formula as the candidate invariant. Unbounded verification is a subsequent step: “the invariants synthesized on finite instances are shown in TLAPS to be inductive for the full unbounded protocol, thereby establishing safety.” (abstract, p. 1) Integrating the agent-driven TLAPS work into a fully automated pipeline remains ongoing work. (§7.1, p. 11)
 
 Verus form
 
-Inference: Treat a Verus function's precondition as `Init`, its transition or loop body as `Next`, and its postcondition as `Safety`. Maintain a set of candidate `ensures` predicates. Use failing Verus assertions or counterexamples to ask for a lemma that excludes the state, then validate with `assert` and proof functions. Replace TLC's finite-state screening with bounded test harnesses only as a heuristic; the sound check remains Verus. Verus has no IC3 frame API, so frame storage and candidate ranking would be an external synthesis driver.
+Inference: Treat a Verus function's precondition as `Init`, its transition or loop body as `Next`, and its postcondition as `Safety`. Generate candidate loop invariants or supporting lemmas from failing assertions or available counterexamples, then check them with Verus. Bounded test harnesses could screen candidates heuristically; they would not replace proof. Reproducing IC3Syn's frame management and clause ranking would require an external synthesis driver. The paper neither implements nor evaluates this Verus adaptation.
 
 ## evidence and limits
 
-The evaluation covers 29 distributed protocols across consensus, reconfiguration, and client-server systems, including MongoLoglessDynamicRaft (MLDR), an industrial-scale Raft reconfiguration protocol. The paper reports discovery for all 29 and highlights MLDR and a complex Paxos variant as cases where compared tools report no solution. These are counts over the 29-protocol benchmark named in the abstract; “all 29” means candidate invariants were discovered, while the unbounded TLAPS claim is the proof condition.
+The evaluation uses 29 distributed protocols, with a 600-second timeout per tool, extended to two hours for MLDR and `pyv-paxos-epr`. The default model is Claude Opus 4.6. (§6.1, p. 8; Table 1, p. 9) The paper reports: “For all 29 solved benchmarks, TLAPS confirms that the discovered invariants are inductive for unbounded protocol instances, thereby establishing the corresponding safety arguments.” (§6.2, p. 8)
 
-Inference: Finite TLC success alone would not establish an unbounded protocol theorem; the paper's TLAPS induction step is essential. The method assumes the TLA+ model, finite instance, TLC reachability, and translation to TLAPS are faithful. LLM clauses can be irrelevant or overgeneral; the exact blocker guarantees progress but may produce large invariants. The evaluation compares against Endive, IC3PO, SWISS, and DistAI, but benchmark performance is not a probability of correctness.
+IC3Syn solves all 29; Endive solves 24 of 28 shared benchmarks, and IC3PO solves 26 of 29. The direct-LLM ablation solves 23 of 29; Gemini 3 Flash within IC3Syn solves 27 of 29. MLDR takes 4,525 seconds and the complex Paxos variant takes 1,806 seconds; neither is solved by the four compared tools. (§§6.2–6.3, pp. 8–10; Table 1, p. 9) These are reported experimental results, not independently reproduced measurements.
+
+The authors explicitly limit finite-instance validation: “the IC3 fixpoint on the checked instance does not automatically generalize to arbitrary parameter configurations.” (§7.2, p. 11) The MLDR output has 15 strengthening clauses, plus safety; automatic deletion with finite-instance inductiveness rechecks removes eight strengthening clauses before TLAPS proof development. The proof exceeds 3,000 lines and is primarily completed by LLM agents with minimal human intervention. (§7.1, pp. 10–11)
 
 ## what is proved and trusted
 
-IC3's frame invariant and clause validation establish that accepted clauses exclude only states inconsistent with the finite reachable behavior. The final safety claim depends on TLAPS proving initiation, consecution, and implication for the unbounded model. Trusted components therefore include TLC/Apalache semantics, the IC3 controller, clause parser, and TLAPS kernel; the LLM is not trusted because every clause is checked. Inference: In VL, generated Rust lemmas should be retained as source and checked by Verus, with the synthesis driver treated as untrusted.
+Inference: TLC screening establishes finite reachable-state validity, while Apalache's admission and push checks support the IC3 frame construction. Neither alone establishes the unbounded result. That result depends on the subsequent TLAPS obligations for the specified protocol. Confidence therefore depends on the model and verification tools, rather than the plausibility of LLM output. The paper reports proof completion; this study does not inspect proof artifacts or audit the implementation.
+
+Inference: In VL, retain generated Rust lemmas as source and check them with Verus. Treat the synthesis driver as proposing proof material whose correctness must be checked.
 
 ## threat to VL and prior work
 
-Inference: Product threat is medium to high for distributed-state specifications: a plausible but incomplete invariant can hide a missing transition case, and bounded checks can miss unbounded failures. The IC3 decomposition reduces this risk by making each clause solve a concrete frontier state. VL should reuse counterexample-focused lemma generation and exact fallback blockers. It should not duplicate mature finite-state screening or IC3 frame management unless Rust/Verus-specific extraction is needed.
+Inference: IC3Syn is relevant to VL's distributed-state reasoning because it combines counterexample-focused lemma generation with checked clause admission. Its results do not establish effectiveness on Rust or Verus. Reusing this decomposition is a plausible direction; an exact blocker over concrete finite states would need a separate justification before transferring the paper's finite-instance completeness claim to a Verus workflow.
 
 ## techniques for the catalog
 
-- IC3/LLM blocking synthesis: decompose invariant discovery into frontier bad states and validate LLM clauses symbolically
-- finite-instance clause screening: reject clauses falsified by reachable TLC states and feed counterexamples back to synthesis
-- exact aggregate fallback: negate all accumulated bad states when LLM proposals fail, preserving finite-instance completeness
-- unbounded induction handoff: prove the extracted invariant with TLAPS after finite-state search
+- IC3/LLM blocking synthesis: search backward from frontier bad states, reuse stored clauses, and request new clauses for unresolved states
+- finite-instance clause screening and admission: use TLC to reject reachable-state counterexamples, then Apalache to check initiation and relative induction
+- exact aggregate fallback: negate accumulated bad states after LLM-guided search fails and no fresh frontier bad state exists
+- push-failure refinement: attempt one extra blocking step when a clause cannot move to the next frame
+- unbounded induction handoff: prove the extracted invariant with TLAPS after finite-instance synthesis
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Quantifier templates are extracted directly from the specification and deduplicated modulo variable renaming, providing the LLM with protocol-specific quantifier structure without requiring manual template design."): read the complete paper text and study; checked quotations, numbers, section and page references, algorithm steps, and finite versus unbounded claims; corrected two citation locations, added clause reuse, syntax processing, symbolic admission, fallback prerequisites and push-failure handling, replaced the fetch-record link with the paper's arXiv identifier, and marked Verus and trust conclusions as inferences; did not reproduce experiments, inspect code or TLAPS proof artifacts, or test the proposed Verus adaptation.
