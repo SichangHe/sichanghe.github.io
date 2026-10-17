@@ -1,0 +1,41 @@
+# PBLean: Pseudo-Boolean Proof Certificates for Lean 4
+(authored by agents unless marked 🧑)
+Tag: `pblean2026pblean`, [paper](https://arxiv.org/abs/2602.08692)
+
+## certificate-checking architecture
+PBLean imports VeriPB pseudo-Boolean certificates into Lean 4. It supports a fast reflection checker and an explicit proof-term fallback. The abstract states, “Key to our approach is reflection: a Boolean checker function whose soundness is fully proved in Lean and executed as compiled native code.” (p. 1) The checker covers all VeriPB kernel rules, including cutting planes, reverse unit propagation, redundancy, and nested proof-by-contradiction subproofs.
+
+The trusted boundary is explicit. The parser and proof-term constructor are untrusted; Lean’s kernel and the soundness lemmas are trusted. The paper says, “The parser and proof-term constructor are untrusted code, as in FromLRAT. The trusted base consists of Lean’s kernel and the soundness lemmas presented in Section 3.” (Section 2, p. 2)
+
+## technique 1: prove rule soundness once, then reflect
+Use this when an external solver emits a long certificate. Formalise each primitive VeriPB operation as a Lean soundness lemma. Define a Boolean `check` that parses and replays the proof string, returning true only when a contradictory constraint is derived. Prove once that `check (F, π) = true` implies F is unsatisfiable. Invoke Lean’s `native_decide` to execute the checker and apply the soundness theorem to the computation witness.
+
+The paper reports, “Lean’s native_decide runs the checker as compiled code, yielding a kernel proof term consisting solely of the soundness theorem applied to the computation witness.” (Section 3, p. 4) This avoids constructing one large proof term per derivation step. The alternative explicit method builds `Expr` terms step by step, with IDs retrieving prior proofs and nested pbc contexts; its trusted base is just the kernel and the soundness lemmas, but the paper says the accumulated proof terms “exhaust memory for instances with thousands of constraints” (Section 3, p. 3).
+
+Inference: Verus can use the same pattern for a Rust certificate checker: write an executable checker, prove a lemma that acceptance implies the desired abstract proposition, and keep the checker’s parser outside the trusted proof. Verus has no Lean `native_decide`; the checker must run as ordinary Rust, and the proof function must establish the acceptance theorem over its specification. Do not mark the function being verified `external_body`.
+
+## technique 2: bridge solver constraints to domain theorems
+A PB certificate alone proves unsatisfiability of an encoding. PBLean closes the semantic gap by formalising the encoding and its correctness in Lean. Section 4 (p. 4) says a verified encoding has three components: (1) an encode function translating problem instances to PB constraints; (2) a soundness theorem proving that unsatisfiability of the encoding implies non-existence of solutions; (3) a bridge theorem composing encoding correctness with the imported VeriPB certificate to yield a theorem about the original problem. The paper states, “We address this gap with verified encodings: both the constraint translation and its correctness proof are entirely in Lean, so that certificate import yields theorems about the original problem, not merely about PB constraints.” (Section 1, p. 2)
+
+For independent sets, the resulting theorem has the shape `¬hasIndependentSet(G, k)`; for other examples it proves impossibility or exact combinatorial numbers. The bridge theorem is the key reusable pattern: an untrusted optimiser supplies a certificate, while Lean checks both the certificate and the semantics of the encoding.
+
+Inference: in Verus, define a `spec fn` encoding and prove implication from a Rust object satisfying the domain predicate to a satisfying PB assignment. Then prove that an accepted certificate implies no such assignment. The arithmetic kernel and parser remain assumptions unless independently verified.
+
+## technique 3: fold many obligations into one checker
+The reflection checker keeps a constraint database (a hash map, with an `@[implemented_by]` array-based runtime replacement) and each rule updates or queries it; `pbc` subproofs save the database, add the negated assumption, verify inner steps recursively, then restore the snapshot. The paper says, “The checker returns true only when a contradictory constraint arises, and we establish soundness by induction over proof steps, connecting the Boolean computation to the kernel lemmas.” (Section 4, p. 4)
+
+The evaluation uses RoundingSat, `veripb --elaborate`, and cached `.olean` files on an Apple M2; times include parsing, native checker execution, and kernel verification (Section 5, p. 5). The largest Paley(101) instance has about 63,000 proof lines and verifies in about 3.5 minutes. The Langford L(2,9) instance has 162 variables and 1,867 constraints, a 44,342-line proof, and takes about 155 seconds. These denominators and settings are the paper’s reported instances, not averages. Direct proof terms do not scale; in Table 2 every Direct run with p >= 37 hit the 60 s timeout, and the paper says the bottleneck “appears to be” the compiled checker rather than the kernel, which only checks the soundness theorem application (Section 5, p. 6).
+
+The paper’s Table 2 reports independent sets on Paley graphs (Direct versus Reflect timings) and Table 3 reports additional combinatorial results. It also says that CakePB checks Paley(101) in under 1 s while PBLean takes about 200 s, a “roughly 200× overhead” that it calls “the cost of producing a Lean theorem rather than a standalone verdict” (Section 6, p. 8). The authors retain `Lean.trustCompiler` as a trust assumption: “a bug in the compiler could in principle produce an incorrect evaluation result.” (Section 3, p. 4) Explicit proof terms avoid that axiom but lose scalability.
+
+Inference: Verus should expose this trust trade-off explicitly. A verified Rust checker with a small specification can yield composable lemmas, but native execution, parser correctness, and integer arithmetic libraries must be listed as trusted unless proved. The product threat is moderate when agents generate certificate parsers: malformed-input handling and encoding correctness are more dangerous than the PB arithmetic itself.
+
+## what has already been done
+PBLean already supplies Lean reflection, explicit proof terms, nested contradiction handling, semantic bridge theorems, and benchmarks across Paley graphs, Langford, Schur, van der Waerden, Ramsey, equitable coloring, pigeonhole, and bin packing problems (the red rule is exercised only by the pigeonhole example, Section 5, p. 7). Inference: VL should not reimplement PB certificate checking in Lean; it can adapt the architecture to Verus and focus on Rust-specific certificate formats and proof obligations.
+
+## techniques for the catalog
+- reflected certificate checker: prove Boolean-checker soundness once and execute it natively for large certificates
+- explicit proof-term fallback: construct kernel terms per derivation when avoiding compiler trust matters more than scale
+- semantic bridge theorem: compose encoding correctness with imported unsatisfiability to prove the original domain claim
+- induction over proof steps: connect each parser/checker rule to its mathematical soundness lemma
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The bottleneck appears to be the compiled checker execution rather than Lean’s kernel, which only checks the soundness theorem application."): I read the whole paper and checked every quotation, number, section and page reference, and the technique steps against it. I changed the paper link (it pointed to reference [1], a different paper; now the arXiv page from the paper text), the page of the Section 2 trust quote (p. 2), one misattributed quote (the verified-encodings quote is from Section 1, not the abstract wording), the Table 2/3 description, the CakePB overhead page (p. 8), the bottleneck hedge, the three-component encoding description, and the memory claim for explicit terms. I did not check the Inference paragraphs about Verus (they are my own conclusions), the Lean/GitHub code, or the cited references.
