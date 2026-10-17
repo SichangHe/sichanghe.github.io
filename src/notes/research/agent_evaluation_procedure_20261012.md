@@ -3,7 +3,7 @@
 
 ## What this is
 
-A person says, in a few vague sentences, what they want guaranteed. An agent works out the details and hands back a precise spec, a proof, usually some code, and logs. You get that bundle and must decide whether it gives the person what they asked for. Follow this text and nothing else. You end with exactly one verdict: valid, valid with conditions, invalid, or unknown.
+A person says, in a few vague sentences, what they want guaranteed. An agent works out the details and hands back a precise spec, a proof, usually some code, and logs. You get that bundle and must decide whether it gives the person what they asked for. Follow this text and nothing else. You end with exactly one verdict: valid, agent-checked, invalid, or unknown.
 
 A proof checker only tells you the proof matches the statement it was given. It does not tell you the statement is what the person meant. Most checks below are about that gap, plus the ways an agent can fake a pass.
 
@@ -11,14 +11,14 @@ The checks come from the literature review and from audits of earlier results in
 
 What the four labels tell a reader who must decide whether to trust the result:
 - valid: every claim holds as the person's words say, with no limit to list. You can rely on it as stated.
-- valid with conditions: every claim holds, but only under listed limits (assumptions the agent added, a narrower reading it stated, a missing tie to the code). Read the conditions before relying on it.
+- agent-checked: every claim holds as far as agents can tell, but only under listed limits (assumptions the agent added, a narrower reading it stated, a missing tie to the code). Read the conditions before relying on it.
 - invalid: at least one claim is not guaranteed as the person asked, or a cheat or defect was found. It does not mean the agent lied: an honest, checkable result that proves only part of the request is invalid too. Do not rely on the result as a whole; the per-claim labels show which claims you can still use.
 - unknown: you could not tell, and the hand-back says what would settle it.
 
 Three choices the rule makes, which the human may want to change:
 - A claim backed only by examples or small-size model checking is `unknown`, not `invalid`.
 - A claim with no statement at all is `invalid`, not `unknown`. A missing statement is the result's fault.
-- Nobody but you looked at the result: the best it can get is `valid with conditions`.
+- Nobody but you looked at the result: the best it can get is `agent-checked`.
 
 ## Words used
 
@@ -394,13 +394,13 @@ Pass: all lines have evidence. Cannot tell: you cannot fix a line.
 Work out each claim's label first. The first rule that matches wins.
 1. invalid if: its grade (after M1 and M2) is weaker, different or missing; or any [C] check failed for it; or its evidence level is 0.
 2. unknown if: any [C] check is cannot tell for it; or its evidence level is 1 or 2.
-3. valid with conditions if: its level is 3 and the required level is 4; or any condition is attached to it (a grade of "same with a condition" always brings one).
+3. agent-checked if: its level is 3 and the required level is 4; or any condition is attached to it (a grade of "same with a condition" always brings one).
 4. valid.
 
 Then the result's label. The first rule that matches wins. The result gets the worst claim label, unless a result-level check says worse.
 1. invalid if: any [G] check failed, or any claim is invalid.
 2. unknown if: any [G] check is cannot tell, or any claim is unknown.
-3. valid with conditions if: any condition exists anywhere (claim or result), or E1 ran without a second agent.
+3. agent-checked if: any condition exists anywhere (claim or result), or E1 ran without a second agent.
 4. valid.
 
 Cases the rule already covers:
@@ -412,7 +412,7 @@ Cases the rule already covers:
 ## What to hand back
 
 Write `evaluation.md` with:
-1. The verdict line: `verdict: valid | valid with conditions | invalid | unknown`, followed by the count, for example `3 of 5 claims valid or valid with conditions`.
+1. The verdict line: `verdict: valid | agent-checked | invalid | unknown`, followed by the count, for example `3 of 5 claims valid or agent-checked`.
 2. For each claim: the request words, the theorem (file:line), the grade, the evidence level, the label, and its conditions. Claim labels come first, then the result label.
 3. The conditions, and the unknowns with what would settle each.
 4. Every fail with its reproduction.
