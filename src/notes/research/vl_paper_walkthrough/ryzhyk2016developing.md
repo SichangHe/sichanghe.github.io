@@ -1,6 +1,6 @@
 # Developing a Practical Reactive Synthesis Tool: Experience and Lessons Learned
 (authored by agents unless marked 🧑)
-Tag: `ryzhyk2016developing`, [paper](https://www.semanticscholar.org/paper/7d823380355401e45c1c253cc8edd56c75718189)
+Tag: `ryzhyk2016developing`, [paper](https://doi.org/10.4204/EPTCS.229.8)
 
 ## scope
 
@@ -28,13 +28,13 @@ Limits. The authors warn that debugging still requires domain expertise: “Synt
 
 ## technique 3: two-phase user-guided code generation
 
-What it is. Termite separates automatic game solving from interactive extraction of one implementation. The winning strategy compactly represents all compliant controllers. The user edits magic blocks; the generator is invoked on demand and never changes user code. After every edit, the partial implementation is validated against the winning set (Section 2.5, pp. 91–92).
+What it is. Termite separates automatic game solving from interactive extraction of one implementation. The winning strategy compactly represents all compliant controllers. The user edits magic blocks; the generator is invoked on demand and never changes user code. The paper states that the combination of manual and generated code is “continuously validated against the input specification”; concretely, the check against the winning set runs each time the user invokes the generator (Section 2.5, p. 91).
 
-How to do it. First edit a selected magic block. Second invoke generation, which symbolically simulates all partial executions and computes reachable states at that location. If any reachable state is outside the winning set, report a counterexample. Otherwise, check whether all reachable states share one winning action; if so emit a method call. If not, partition the reachable states so each subset has a common action, then emit conditional branches and return to editing (Section 2.5, p. 92). Example 4 shows manual insertion of `cmd_lift` followed by generation of later handlers while preserving the prior change (Section 2.5, p. 92).
+How to do it. First edit a selected magic block. Second invoke generation, which symbolically simulates all partial executions and computes reachable states at that location. If any reachable state is outside the winning set, the manual changes made the partial controller incorrect and Termite can produce a counterexample. Otherwise, check whether all reachable states share one winning action; if so emit a method call. If not, partition the reachable states so each subset has a common action, then emit a conditional branching statement, insert it at the control location, and return to editing (Section 2.5, p. 91). Example 4 shows manual insertion of `cmd_lift` followed by generation of the `evt_parked` handler while preserving the prior change (Example 4, p. 92). Termite does not yet allow creating new functions interactively (Section 2.5, p. 91).
 
-Verus form. Inference: keep human-authored Rust branches and generate only proof-preserving completions in marked regions; after each edit, run Verus on the complete function and present failing obligations as counterexamples. Inference: the winning-set check can become a contract-preservation check, while state partitioning can generate `if` branches whose guards discharge the relevant `requires` clauses. Verus does not support generated code mutating source during proof, so the tool should write ordinary Rust and rerun verification.
+Verus form. Inference: keep human-authored Rust branches and generate only proof-preserving completions in marked regions; after each edit, run Verus on the complete function and present failing obligations as counterexamples. Inference: the winning-set check can become a contract-preservation check, while state partitioning can generate `if` branches whose guards discharge the relevant `requires` clauses. Inference: the tool should write ordinary Rust into the marked region and rerun verification, rather than rely on Verus itself to rewrite source.
 
-Evidence and limits. In eight device-driver case studies, Table 1 reports input specification size, GR-1 variables and total bits, synthesis seconds, and generated-code lines. The cases are webcam (487 LOC, 128 variables/125,565 bits, 215 s, 113 LOC), 16550 UART (289, 81/407, 210 s, 74), exynos UART (380, 80/1,185, 645 s, 37), STM SPI (317, 68/389, 67 s, 24), exynos SPI (327, 83/933, 25 s, 40), exynos I2C (326, 65/303, 45 s, 79), RT clock (370, 92/810, 56 s, 84), and IDE (668, 114/1,333, 285 s, 94) (Table 1, p. 94). The authors report 60%–90% of code generated automatically; manual edits address suboptimal structure/performance and partially observable state (Section 4, p. 94). Inference: these percentages describe eight case studies, not a general success rate.
+Evidence and limits. In eight device-driver case studies, Table 1 reports input specification size, GR-1 variables and total bits, synthesis seconds, and generated-code lines. The cases are webcam (487 LOC, 128 variables/125,565 bits, 215 s, 113 LOC), 16550 UART (the text says 16550, Table 1 labels it 16450) (289, 81/407, 210 s, 74), exynos UART (380, 80/1,185, 645 s, 37), STM SPI (317, 68/389, 67 s, 24), exynos SPI (327, 83/933, 25 s, 40), exynos I2C (326, 65/303, 45 s, 79), RT clock (370, 92/810, 56 s, 84), and IDE (668, 114/1,333, 285 s, 94) (Table 1, p. 94). The authors report 60%–90% of code generated automatically; manual edits address suboptimal structure/performance and partially observable state (Section 4, p. 94). Inference: these percentages describe eight case studies, not a general success rate.
 
 ## technique 4: symbolic abstraction for interactive performance
 
@@ -44,7 +44,7 @@ Verus form. Inference: use Verus to check concrete contracts after an external a
 
 ## what is proved, measured, and trusted
 
-The paper measures synthesis time, specification and generated-code size, bit-vector complexity, debugging effort, and automation fraction. It does not prove that the Termite implementation is sound; trust includes the Haskell compiler, CUDD BDD library, Z3, TSL compiler, GR-1 solver, abstraction refinement, and the environment models (Section 4, p. 93). The paper reports that DMA and pointer-based structures remain unsupported, and that hundreds of registers can exceed existing synthesis scalability (Section 4, p. 94).
+The paper measures synthesis time, specification and generated-code size, bit-vector complexity (variables and bits), and the fraction of automatically generated code. Debugging effort is reported only qualitatively: “A typical debugging session takes a few minutes and involves entering only a few commands manually before the defect is localised” (Section 4, p. 94). The paper has no soundness proof or trusted-base discussion. It states the implementation is in Haskell and uses the CUDD BDD library and the Z3 SMT solver (Section 4, p. 93).
 
 ## techniques for the catalog
 

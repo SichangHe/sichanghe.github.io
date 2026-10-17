@@ -1,19 +1,19 @@
 # Interpolant Tree Automata and their Application in Horn Clause Verification
 (authored by agents unless marked 🧑)
-Tag: `kafle2016interpolant`, [paper](http://arxiv.org/abs/1601.06521v2)
+Tag: `kafle2016interpolant`, [paper](https://doi.org/10.4204/EPTCS.216.6) (DOI from the paper text: EPTCS 216, 2016, pp. 104–117)
 
 ## what the paper proves and measures
-The paper combines convex-polyhedra abstract interpretation with interpolant tree automata (ITA) in counterexample-guided refinement of constrained Horn clauses (CHCs). Its abstract states: “The role of an interpolant tree automaton is to provide a generalisation of a spurious counterexample during refinement, capturing a possibly infinite set of spurious counterexample traces.” The method is implemented as RAHIT and compared with RAHFT (finite-tree-automata refinement) and TAR (trace abstraction refinement).
+The paper combines convex-polyhedra abstract interpretation with interpolant tree automata (ITA) in counterexample-guided refinement of constrained Horn clauses (CHCs). Its abstract states: “The role of an interpolant tree automaton is to provide a generalisation of a spurious counterexample during refinement, capturing a possibly infinite set of spurious counterexample traces.” The method is called RAHIT and is compared with RAHFT (the authors' earlier refinement with finite tree automata, ref. [27]) and TAR (the trace-abstraction tool of Wang and Jiao, ref. [33]). The implementation uses Ciao Prolog, the Parma polyhedra library and the Yices SMT solver over linear real arithmetic; interpolants come from the constraint-based algorithm of ref. [30] (Sec. 4.1, p. 112).
 
-The experiment has 68 programs: “A set of 30 programs from SV-COMP’15 repository” and 38 Eldarica-source problems (Sec. 4.1, p. 112). The table reports RAHIT solving 61/68 versus RAHFT 56/68, with average RAHIT time 11.40 seconds and 2.08 iterations versus RAHFT 10.55 seconds and 2.32 iterations (Table 1, p. 114). On the 38-problem comparison, RAHIT solves 33/38 versus TAR 28/38, but the authors warn that the tool chain is “not optimised at all” (Sec. 4.1, p. 112). The timeout is 300 seconds on a 2.3 GHz Intel Core i7 Mac with 8 GB memory (Sec. 4.1, p. 112). The paper reports no Verus experiment.
+The experiment has 68 programs: “A set of 30 programs from SV-COMP’15 repository” and 38 Eldarica-source problems (Sec. 4.1, p. 112). The table reports RAHIT solving 61/68 versus RAHFT 56/68, with average RAHIT time 11.40 seconds and 2.08 iterations versus RAHFT 10.55 seconds and 2.32 iterations (Table 1, p. 114). On the 38-problem comparison, RAHIT solves 33/38 versus TAR 28/38, but the authors describe their tool chain as “a proof of concept which is not optimised at all” (Sec. 4.1, p. 112); the TAR figures are copied from [33], because TAR “is not publicly available” (p. 113). The timeout is 300 seconds on a 2.3 GHz Intel Core i7 Mac with 8 GB memory (Sec. 4.1, p. 112). The paper reports no Verus experiment.
 
 ## technique 1: encode derivations as finite tree automata
 
-What it is. A CHC has the form `φ ∧ p1(X1) ∧ ... ∧ pk(Xk) → p(X)`; each clause gets a function-symbol identifier. The trace FTA has predicate symbols as states, `false` as final state, and transitions `cj(p1,...,pk) → p` for clauses (Definitions 1–2, pp. 104–105). An accepted tree is a derivation trace. An AND-tree labels each node with its atom, clause identifier, and constraint; the conjunction `F(T)` of all node constraints is feasible exactly when the trace is feasible (Definition 3, pp. 106–107). The Fibonacci example's trace `c3(c2(c1,c1))` is infeasible because its conjunction is unsatisfiable (Fig. 2, p. 107).
+What it is. A CHC has the form `φ ∧ p1(X1) ∧ ... ∧ pk(Xk) → p(X)`; each clause gets a function-symbol identifier. The trace FTA has predicate symbols as states, `false` as final state, and transitions `cj(p1,...,pk) → p` for clauses (Definitions 1–2, pp. 105–106). An accepted tree is a derivation trace. An AND-tree labels each node with its atom, clause identifier, and constraint; the conjunction `F(T)` of all node constraints is feasible exactly when the trace is feasible (Definition 3, p. 106; the formula `F(T)`, p. 107). The Fibonacci example's trace `c3(c2(c1,c1))` is infeasible because its conjunction is unsatisfiable (Fig. 2, p. 107).
 
 How to apply it.
-1. Translate program procedures and assertions into CHCs.
-2. Assign each clause a unique identifier whose arity equals its body-atom count.
+1. Obtain the CHCs. The paper's own benchmarks were translated from C by SeaHorn (inter-procedural encoding) or taken from the Eldarica repository (Sec. 4.1, p. 112).
+2. Assign each clause an identifier (a function symbol) whose arity equals its body-atom count.
 3. Build the trace FTA from clause bodies.
 4. Select an accepted trace rooted at `false`; expand it to an AND-tree and conjoin constraints.
 5. Check `F(T)` with a background solver; feasible means unsafe, infeasible means spurious and eligible for refinement.
@@ -35,7 +35,7 @@ Verus form (Inference). State each interpolant as a `spec fn` predicate over the
 
 ## technique 3: lift interpolants into an automaton that removes many traces
 
-What it is. The interpolant mapping becomes states of an interpolant automaton `AtI`; transitions are clause applications whose mapped formulas satisfy the clause implication (Definition 8, p. 109). Theorem 1 says the automaton “recognises only infeasible trace-terms of P.” Thus one spurious trace generalizes to a possibly infinite language of spurious traces. If the conjunction of all interpolants for each predicate is a model of `P`, Theorem 2 says the automaton recognizes all infeasible traces (p. 110).
+What it is. The interpolant mapping becomes states of an interpolant automaton `AtI`; transitions are clause applications whose mapped formulas satisfy the clause implication (Definition 8, p. 109). Theorem 1 says the automaton “recognises only infeasible trace-terms of P.” The paper's motivation is that one spurious trace then generalizes to a possibly infinite set of spurious traces (Sec. 1 and Sec. 3). If the conjunction of all interpolants for each predicate is a model of `P`, Theorem 2 says the automaton recognizes all infeasible traces (p. 110).
 
 How to apply it.
 1. Create one automaton state for each atom occurrence/interpolant label.
@@ -48,14 +48,14 @@ Verus form (Inference). Use a ghost finite-state abstraction and prove that ever
 
 ## technique 4: combine convex-polyhedra abstraction with CEGAR
 
-What it is. Abstract interpretation computes an over-approximate model `M` of CHCs using conjunctions of linear equalities and inequalities. The FTA `APM` omits transitions whose clause bodies are unsatisfiable under `M`; if `false` is absent from `M`, the program is safe. Otherwise select a trace, test feasibility, and refine with RAHIT (Sec. 4, pp. 110–112). This is CEGAR: coarse invariants first, then targeted trace elimination.
+What it is. Abstract interpretation computes an over-approximate model `M` of CHCs using conjunctions of linear equalities and inequalities. The FTA `APM` omits transitions whose clause bodies are unsatisfiable under `M`; if `false` is absent from `M`, the program is safe. Otherwise select a trace, test feasibility, and refine with RAHIT (Sec. 4, pp. 110–111, Definition 10 and Fig. 4 on p. 111). This is CEGAR: coarse invariants first, then targeted trace elimination.
 
 How to apply it.
 1. Compute convex-polyhedral facts for every predicate.
 2. Build `APM`, retaining only transitions whose abstract body is satisfiable.
 3. If `false` is absent, report safe; otherwise choose an accepted trace.
 4. Check the concrete trace. If feasible, report unsafe; if infeasible, construct `AtI`.
-5. Replace `APM` by `APM \ AtI`, generate refined clauses, and iterate until safe, unsafe, or resources are exhausted (Fig. 4, pp. 111–112).
+5. Build `A'P` recognising `L(APM) \ L(AtI)`, generate a refined set of clauses from `P` and `A'P`, feed it back to the abstract interpreter, and iterate until safe, unsafe, or resources are exhausted (Sec. 4, p. 110; Fig. 4, p. 111). The authors' tool chain determinises the FTA in Java following ref. [14] (p. 112).
 
 Verus form (Inference). A Verus workflow can use ghost linear inequalities as candidate invariants and counterexample-specific lemmas as refinements. It must preserve Rust aliasing and ownership obligations; convex-polyhedron facts alone do not establish heap or concurrency safety.
 

@@ -6,7 +6,7 @@ Tag: `protzenko2017verified`, [paper](https://doi.org/10.48550/arxiv.1703.00053)
 
 Protzenko et al. introduce Low*, a low-level subset embedded in F* and compiled to C by KreMLin. The paper defines a structured memory model, dependent specifications, erasure of proofs, a formal translation to CompCert Clight, and verified cryptographic case studies. Its abstract says: “Low∗ is a shallow embedding of a small, sequential, well-behaved subset of C in F∗, a dependently-typed variant of ML aimed at program verification.” (§abstract, p.1) The design targets code that needs C-like layout and performance while retaining F* proofs of memory safety, functional correctness, and side-channel properties.
 
-The key architectural choice is to write the low-level code in a restricted language and prove a translation theorem, rather than verify arbitrary existing C. The paper says: “We give up on verifying existing C code and embrace the idea of writing low-level code in a subset of C shallowly embedded in F∗.” (§6, p.25)
+The key architectural choice is to write the low-level code in a restricted language and prove a translation theorem, rather than verify arbitrary existing C. The paper says: “we give up on verifying existing C code and embrace the idea of writing low-level code in a subset of C shallowly embedded in F∗.” (§6, p.25)
 
 ## technique: a structured region memory model
 
@@ -16,7 +16,7 @@ The paper's `Stack` computation effect requires the stack tip to be restored and
 
 When to use it. Use regions and explicit frames for APIs that mix stack temporaries, heap ownership, interior pointers, and modular separation. Heap regions provide logical separation; stack regions also compile to C lexical scopes (§2.2, pp.7–8).
 
-How to apply it (paper procedure).
+How to apply it (reconstructed from the paper; it gives no numbered procedure).
 1. Define a state type with references, region membership, and select/update operations (§2.2, p.7).
 2. Give each stateful function an `ST a pre post` computation type, where `pre` relates the initial memory and `post` relates initial memory, result, and final memory (§2.2, p.6).
 3. Use `alloc`, `free`, `(!)`, `push_frame`, `pop_frame`, and `salloc` only through their pre/post specifications (§2.2, pp.7–8).
@@ -24,7 +24,7 @@ How to apply it (paper procedure).
 
 Verus form. Inference: represent the memory state as a ghost map or a view of owned buffers, and expose liveness and region membership through predicates. Use `requires` for liveness and `ensures` for preservation or ownership transfer. Use a loop `invariant` for frame ownership and `old(...)` in postconditions when relating pre-state memory. Verus does not provide F* effects or region-indexed reference types; this encoding is a library discipline, not a direct translation.
 
-Evidence and limits. The paper's model prevents double-free and use-after-free by typing, but allocation can still fail at runtime and pointer-arithmetic overflow is not fully ruled out by the `create` type (§2.2, p.9). The authors say indices are 32-bit and therefore cannot address very large 64-bit buffers (§2.2, p.9). Heap region deletion is not supported; region creation compiles to a no-op (§2.2, p.7).
+Evidence and limits. The paper's model prevents double-free and use-after-free by typing, but allocation can still fail at runtime and pointer-arithmetic overflow is not fully ruled out by the `create` type (§2.2, p.9). The authors say indices are 32-bit and therefore cannot address very large 64-bit buffers (§2.2, p.9). Deleting whole heap regions is not supported; heap region creation compiles to a no-op in KreMLin (§2.2, p.7). Heap regions serve only to partition the heap logically for separation and modular verification (§2.2, p.7).
 
 ## technique: refinement-typed buffers, structs, and interior pointers
 
@@ -32,7 +32,7 @@ What it is. A `buffer a` is an abstract value containing a reference to a sequen
 
 When to use it. Use these wrappers to expose C layout and pointer arithmetic to proofs without reducing all memory to an unstructured byte array. Interior pointers are needed for slices such as the ChaCha20 state sub-buffer and for nested struct fields.
 
-How to apply it (paper procedure).
+How to apply it (reconstructed from the paper; it gives no numbered procedure).
 1. Allocate a buffer with a statically known maximum length and maintain a refinement tying logical sequence length to the physical object (§2.2, p.8).
 2. Form a sub-buffer only with an in-bounds offset and length; retain the parent `includes` relation (§2.2, p.9).
 3. Use `index` only with a proof of liveness and bounds; use `extend` to follow a field path after proving the base pointer is live (§2.2, pp.9–10).
@@ -46,9 +46,9 @@ Verus form. Inference: define a `struct` view of each buffer and a `spec fn` map
 
 What it is. Low* code is F* code in a first-order, monomorphic, explicitly allocating subset. Proofs and specifications may use arbitrary higher-order dependent F*, but computational code must be first order, make heap allocation explicit, avoid recursive datatypes, and be monomorphic (§1, p.3). F* erases ghost terms and specifications; KreMLin then transforms the resulting λow* core to C* and C. The paper says: “At extraction time, specifications and proofs are erased, and the remaining code enjoys a predictable translation to C.” (§abstract, p.1)
 
-How to apply it (paper procedure).
+How to apply it (reconstructed from the paper; it gives no numbered procedure).
 1. Write high-level reusable F* code and use partial evaluation to specialize it into the Low* subset before enforcing the restrictions (§1, p.3).
-2. Type-check the stateful code and prove its contracts with SMT plus manual lemmas (§2.2, p.6).
+2. Type-check the stateful code and prove its contracts with SMT plus manual lemmas (§2.2, p.6; §2.3, p.11).
 3. Erase `Ghost` computations and specifications; transcribe to the first-order λow* core (§3, pp.13–16).
 4. Translate λow* to C* and then CompCert Clight, preserving traces and functional behavior (§3, pp.13–18).
 5. Use KreMLin's inlining, reachability, hoisting, and readable pretty-printing to produce C11 (§4.1, pp.19–20).
@@ -61,21 +61,21 @@ Evidence and limits. The formal pipeline proves semantics preservation to Clight
 
 What it is. Low* implementations are related to pure mathematical functions. For Poly1305, a five-limb buffer is mapped by a ghost `eval` function to an integer; `normalize` preserves the value modulo `2^130 − 5`, and `poly1305_mac` ensures the output tag equals a pure `Spec.mac_1305` computation (§2.3, pp.10–12). The proof pattern is to use a ghost snapshot, state an abstract invariant, and invoke a lemma that connects bit masks and arithmetic.
 
-How to apply it (paper procedure).
+How to apply it (reconstructed from the paper; it gives no numbered procedure).
 1. Define a pure specification over sequences or mathematical integers (§2.3, pp.10–11).
 2. Define a representation invariant such as limb compactness and a ghost interpretation function (`eval`) (§2.3, p.10).
-3. State the stateful routine's `requires`, `ensures`, and `modifies` relation to the pure function (§2.3, pp.11–12).
+3. State the stateful routine's `requires`, `ensures`, and `modifies` relation to the pure function (§2.3, p.11, Fig. 3).
 4. Insert manual lemmas at bit-manipulation boundaries; proofs are erased during extraction (§2.3, p.11).
 
 Verus form. Inference: use `spec fn` for the mathematical model, `requires`/`ensures` for representation invariants, and `lemma` functions with `ensures` to connect machine arithmetic to the model. Use `old(...)` to refer to the pre-state and `assert` to expose arithmetic facts to the solver. The exact F* `ST.get` snapshot idiom does not carry over.
 
-Evidence and limits. The paper reports functional correctness for the four HACL* primitives and cryptographic constructions, but the formal security assumptions for AEAD are partly idealized and probabilistic (§2.4, pp.12–13). A small C adapter between miTLS and extracted AEAD is unverified, creating a stated security gap (§5.2, p.25).
+Evidence and limits. The paper says that for its four primitives (ChaCha20, Salsa20, Poly1305, Curve25519) “we prove that our stateful optimized code matches a high-level functional specification written in F∗” (§5.1, p.22). For the HACL* library as a whole it claims memory safety, side-channel resistance, and functional correctness only “where there exists a simple mathematical specification” (§5, p.21). The AEAD security argument relies on idealization that is justified by a probabilistic proof on paper, and holds against computationally limited adversaries “except with small probabilities” (§2.3, p.10; §2.4, p.12). A small C adapter between miTLS and extracted AEAD is unverified, creating a stated security gap (§5.2, p.25).
 
 ## technique: type abstraction for side-channel resistance and idealization
 
 What it is. Secret-dependent values use abstract types whose operations expose no secret-dependent branch or memory trace. A ghost view can reveal a value to proofs while computational code cannot inspect it. The paper proves a secret-independence theorem for λow*: two executions with different secret values produce identical traces when the secret interface implementation is related modulo secrets (§3.1, pp.15–16).
 
-How to apply it (paper procedure).
+How to apply it (reconstructed from the paper; it gives no numbered procedure).
 1. Define a secret abstract type and expose only constant-time operations such as `eq_mask`; make the mathematical value available only in ghost code (§2.3, p.11).
 2. Type-check all code against the abstract interface, so branching and accesses cannot depend on a representation of the secret (§2.3, p.11).
 3. Prove interface implementations are equivalent modulo secrets and apply the secret-independence theorem (§3.1, pp.15–16).
@@ -90,7 +90,7 @@ Evidence and limits. The trace theorem covers λow* to Clight, not arbitrary pos
 
 What it is. Layout changes can alter concrete pointer traces even if behavior is preserved. The paper handles each transformation by reinterpreting traces into abstract variable/field identities, proving exact preservation in that abstract trace, and then reinterpreting back (§3.3, pp.18–19). For transformations that add accesses, it first adds provisional trace events and then proves the final transformation preserves them.
 
-How to apply it (paper procedure).
+How to apply it (reconstructed from the paper; it gives no numbered procedure).
 1. Define a trace that records branches and each memory read/write (§3.1, p.15).
 2. Replace pointer addresses with function, call-depth, local-variable, array-index, and field identifiers (§3.3, p.18).
 3. Prove the transformed program has the same abstract trace and functional result (§3.3, pp.18–19).
