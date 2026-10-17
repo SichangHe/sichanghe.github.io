@@ -1,6 +1,6 @@
 # A Light-Weight Approach for Verifying Multi-Threaded Programs with CPAchecker
 (authored by agents unless marked 🧑)
-Tag: `beyer2016light`, [paper](http://arxiv.org/abs/1612.04983v1)
+Tag: `beyer2016light`, [paper](https://doi.org/10.4204/EPTCS.233.6)
 
 ## what is proved or measured
 The paper defines ThreadingCPA, a configurable program analysis (CPA) for bounded-thread C programs in CPAchecker. Its abstract says: “We introduce a new configurable program analysis for verifying multi-threaded programs with a bounded number of threads.” The analysis explores thread interleavings on a control-flow automaton (CFA), while leaving the data-flow abstract domain to existing CPAs such as value, interval, and BDD analysis. The authors state: “The approach is sound and can be combined with several steps of optimization to achieve an efficient analysis for multi-threaded programs.”
@@ -17,7 +17,7 @@ how to do it:
 2. keep one `(thread identifier -> CFA location)` entry for every active thread (Section 2.2)
 3. for each active thread, apply its LocationCPA transfer and enqueue every successor; the paper says “The transfer relation returns all possible successors for all threads that are active in an abstract state” (Section 2.2, PDF p. 3)
 4. on `pthread_create`, retain the creator's successor and add the new thread at its entry location; on `pthread_join`, remove the exited thread only when its exit location is present; otherwise advance the selected thread normally (Section 2.2)
-5. treat C statements as atomic CFA edges; continue reachability until the property or resource limit is decided (Section 2.2)
+5. treat C statements as atomic CFA edges, so interleaving happens at statement level (Section 2.2)
 
 The running example creates two threads that update globals `i` and `j`, joins both, then asserts `j <= 8`. The ARG labels each state with locations of all active threads; joining removes the exited thread location (Section 2.3, pp. 4–5).
 
@@ -42,7 +42,7 @@ how to do it:
 2. sort by fewer active threads first, optionally then by exploration order
 3. continue ordinary transfer and coverage
 
-This is a heuristic: the paper says it “might bring no benefit” for a bug-free program, while an error path with few interleavings can be found earlier. It can also reach unsupported operations earlier and abort sooner. It does not change the reachable-state set when resources are unlimited.
+This is a heuristic: the paper says “For a bug-free program this heuristic does not bring any benefit. however an existing error path in a faulty program might be found sooner.” (Section 3.2). Section 5.1 adds that it can reach unsupported operations (such as assigning several thread instances to the same thread identifier) earlier, so the analysis can abort sooner. Inference: it only reorders exploration, so it does not change the reachable-state set when resources are unlimited.
 
 Inference: a Verus proof-search agent can use the same priority to choose which failing transition or invariant obligation to attack first, but the final proof must cover every required transition; a priority queue cannot justify omitting cases.
 
@@ -66,7 +66,7 @@ Deadlock detection is an observer automaton over ThreadingCPA abstract states. M
 ## evidence, limitations, and trust
 The evaluation used 1,016 SV-COMP’16 multi-threaded C tasks, CPAchecker 1.6.1 revision 23 011, a 2.6 GHz Intel Xeon E5-2650 v2 running Ubuntu 16.04, and 15-minute/15-GB limits per run (Section 5, PDF p. 7). Quantile plots compare plain value analysis, partitioning, waitlist ordering, and POR, and compare value, interval, and BDD domains. The paper reports that partitioning reduced runtime by “more than an order of magnitude”; waitlist ordering improved runtime mainly on violation tasks but produced no additional correctly solved tasks in this benchmark; POR reduced explored states and increased performance (Section 5.1). The paper gives plots rather than a table of solved-task fractions, so no denominator supports a percentage claim. Comparisons with CBMC and VVT show competitive runtime, but the authors note missing pointer-aliasing and array support and the simplicity of POR prevent CPAchecker from solving as many tasks within the limit (Section 5.3).
 
-The soundness claim is for the stated CFA semantics, atomic statements, bounded threads, and conservative local/global classification. Trusted components include CFA construction, each abstract domain, the reachability implementation, and the correctness of the POR classification. Inference: for a Verus product, Verus's verifier and solver remain the acceptance boundary, while the agent's interleaving exploration, state partitioning, and repair priorities are search components. The paper's bounded thread identifiers, fixed clone count, no pointer-aliasing thread IDs, and simple locking do not cover arbitrary Rust concurrency. Inference: threat to agent-written verified Rust is moderate for concurrent protocol specifications: these techniques can guide ghost-state models and proof search, but a claimed verified implementation can still omit an interleaving or weaken the specification unless Verus checks a complete transition invariant.
+The paper states “The approach is sound” without a separate proof. Inference: the claim holds only under the stated CFA semantics, atomic statements, bounded threads, and conservative local/global classification. Inference: trusted components include CFA construction, each abstract domain, the reachability implementation, and the correctness of the POR classification. Inference: for a Verus product, Verus's verifier and solver remain the acceptance boundary, while the agent's interleaving exploration, state partitioning, and repair priorities are search components. The paper's bounded thread identifiers, fixed clone count, no pointer-aliasing thread IDs, and simple locking do not cover arbitrary Rust concurrency. Inference: threat to agent-written verified Rust is moderate for concurrent protocol specifications: these techniques can guide ghost-state models and proof search, but a claimed verified implementation can still omit an interleaving or weaken the specification unless Verus checks a complete transition invariant.
 
 ## techniques for the catalog
 - ThreadingCPA interleaving transfer — represent all active thread locations and generate one successor per enabled thread edge
@@ -76,4 +76,4 @@ The soundness claim is for the stated CFA semantics, atomic statements, bounded 
 - CFA cloning for thread-local names — clone each function per thread to keep analysis identifiers unique
 - observer deadlock detection — monitor ThreadingCPA states with an automaton that reports mutual waiting
 - mutex-aware transfer — carry lock availability in the abstract state and suppress blocked successors
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our solution is simple: We use different function names for each thread by cloning the function and inserting the corresponding indexed function name."): read all 11 pages (pdftotext) and compared every quotation, section and page reference, the transfer-relation steps, evaluation setup (1,016 tasks, CPAchecker 1.6.1 rev. 23 011, Xeon E5-2650 v2, 15 min/15 GB), and the Section 5.1-5.3 claims; changed the link to the DOI printed in the paper (doi:10.4204/EPTCS.233.6), replaced a misquote in technique 3 (the earlier text attributed to the paper a phrase it does not contain), reworded step 5 of technique 1 (its clause about running until the property or a resource limit is decided was not in the paper), and marked the soundness-scope and trusted-component sentences and the waitlist reachable-set claim as Inference; did not check the PDF figures (Fig. 1-6) beyond the text extraction, the cited references, or any claim about Verus beyond marking it Inference.

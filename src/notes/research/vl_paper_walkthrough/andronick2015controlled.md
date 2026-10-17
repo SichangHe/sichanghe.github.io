@@ -1,12 +1,12 @@
 # Controlled Owicki-Gries Concurrency: Reasoning about the Preemptible eChronos Embedded Operating System
 (authored by agents unless marked 🧑)
-Tag: `andronick2015controlled`, [paper](http://arxiv.org/abs/1511.04170v1)
+Tag: `andronick2015controlled`, [paper](https://doi.org/10.4204/EPTCS.196.2)
 
 ## what the paper builds
 
 Andronick, Lewis, and Morgan adapt Owicki-Gries (OG) reasoning so a uniprocessor system can model explicit, hardware-controlled interleaving: preemptible user tasks, nested interrupts, and synchronous/asynchronous ARM supervisor calls. They formalise both the generic framework and an eChronos scheduler model in Isabelle/HOL. The abstract describes “a controlled concurrency framework, derived from the Owicki-Gries method, for describing a hardware interface in detail sufficient to support the modelling and verification of small, embedded operating systems (OS’s) whose run-time responsiveness is paramount.” (Abstract, p. 10)
 
-The key modelling fact is that the machine is not truly parallel, but interrupts and saved contexts simulate concurrency. The paper says, “Our extension follows from the observation that a uniprocessor OS is not truly concurrent: via interrupts and saved contexts it interleaves its tasks’ executions in a way that simulates concurrency.” (Section 2, p. 12) The trusted assumptions include ARM hardware atomicity for the interface operations, single OG statements, and restrictions on applications accessing pseudo-hardware variables. Refinement to the actual implementation is planned, not proved here.
+The key modelling fact is that the machine is not truly parallel, but interrupts and saved contexts simulate concurrency. The paper says, “Our extension follows from the observation that a uniprocessor OS is not truly concurrent: via interrupts and saved contexts it interleaves its tasks’ executions in a way that simulates concurrency.” (Section 2, p. 12) The assumptions the paper names are: the hardware interface operations (such as ITake and IRet) are atomic as in the ARM manual, single OG statements are atomic (to be validated later by refinement proofs), and hardware pseudo-variables are accessed only through the hardware API, which "will remain an assumption for any user-provided applications" (Section 4, pp. 15–16). Proving that the implementation refines the model is planned ("We plan to then prove that this restricted but faithful model of the eChronos OS is refined by its implementation", Section 1, p. 11), not done here.
 
 ## technique 1: control OG interleaving with an active-task guard
 
@@ -16,14 +16,14 @@ Introduce a pseudo-variable `AT` (active task), assign each task a unique identi
 
 when to use it
 
-Use it for a uniprocessor scheduler or interrupt-driven system where execution order is constrained by explicit hardware or scheduler state. It is useful when monitors or critical regions would abstract away performance-critical code.
+Use it for a uniprocessor scheduler or interrupt-driven system where execution order is constrained by explicit hardware or scheduler state. The paper chooses low-level OG because more structured mechanisms such as monitors and critical regions trade away run-time performance (Section 2, p. 12).
 
 how to do it
 
 1. Write each task as a sequence of OG atomic commands. For task 2's `First; Second; Third`, apply the paper's transformation: “AWAIT AT=2 THEN First END; AWAIT AT=2 THEN Second END; AWAIT AT=2 THEN Third END;” (Section 2, p. 12).
 2. Insert a guarded atomic assignment when control is transferred, for example `AWAIT AT=2 THEN AT := 1 END`.
 3. Model a scheduler as a loop that, while `AT=0`, chooses the next runnable task and assigns `AT := t` (Section 2, p. 12).
-4. Implement `control T P` as a preprocessing function that inserts the guards into every atomic command of program `P`; then run the ordinary OG verification-condition generator (Section 2, p. 12).
+4. Implement `control T P` as a preprocessing function that inserts the guard `AT=T` into every atomic command of program `P` (Section 2, p. 12; in the Isabelle model it is `control r c ≡ add-await-bare-com {|AT = r|} c`, Appendix B.2, pp. 19–20). The paper then relies on the OG proof method over the controlled program; it does not describe a separate generator.
 
 Verus form (inference)
 
@@ -31,7 +31,7 @@ Inference: represent `AT` and runnable-task state as ghost state protected by a 
 
 evidence and limits
 
-The authors expect most non-interference conditions to become trivial because an assertion guarded by `AT=X` and a statement guarded by `AT=Y` has a false antecedent when `X ≠ Y` (footnote 2, p. 12). OG conditions are still quadratic in program size (Section 2, pp. 11–12). The paper reports no completed end-to-end refinement proof.
+The authors expect most non-interference conditions to become trivial because an assertion guarded by `AT=X` and a statement guarded by `AT=Y` has a false antecedent when `X ≠ Y` (footnote 2, p. 12). The paper says plain OG interference-freedom conditions are "quadratically numerous in the size of the program" (Section 2, p. 11). Inference: the paper does not say this quadratic growth disappears under `control`; it only claims most conditions become trivial. The paper reports no completed end-to-end refinement proof.
 
 ## technique 2: model nested interrupts with stacks and masks
 
@@ -41,10 +41,10 @@ Use pseudo-variables `ATstack` and `EITstack` to save interrupted active-task an
 
 how to do it
 
-1. Define interrupt masking as `Int Disable(X) ≡ EIT := EIT − X` and `Int Enable(X) ≡ EIT := EIT ∪ X` (Section 3.1, p. 13).
+1. Define interrupt masking as `Int Disable(X) ≡ EIT := EIT − X` and `Int Enable(X) ≡ EIT := EIT ∪ X` (Section 3.1, p. 13; equations (1) and (2)).
 2. On `ITake(X)`, require that `X` is enabled, is not current or already stacked, and satisfies the policy. Atomically push `AT` and `EIT`, then set `AT := X`. The exact guard is “AWAIT X ∈ EIT − AT − ATstack ∧ (interrupt policy AT X ) THEN” (Section 3.1, p. 14).
 3. Allow nested handlers by pushing each interrupted context. Guard normal handler execution with `AT=X`; return with `IRet` only at the handler end, restoring stack heads.
-4. Treat pending masked interrupts as nondeterministic future `ITake` events; no separate pending queue is needed for ordinary interrupts (Section 3.1, p. 14).
+4. Treat pending masked interrupts as nondeterministic future `ITake` events; no separate pending queue is needed for ordinary interrupts. The paper says for re-enabling that "adding the interrupt identifier to EIT is enough" (Section 3.1, p. 13), and similarly for return from interrupt (p. 14).
 
 Verus form (inference)
 
@@ -52,7 +52,7 @@ Inference: define ghost `Seq<routine>` stacks and a set/map for enabled interrup
 
 evidence and limits
 
-The model targets ARM nested interrupts but leaves the interrupt policy generic. The paper states, “Note that all statements inside an AWAIT are executed atomically, where the atomicity here is ensured by the hardware (i.e., these multiple instructions represent a single atomic hardware-defined mechanism).” (Section 3.1, p. 14) This is an explicit trusted hardware assumption.
+The model targets ARM nested interrupts but leaves the interrupt policy generic. The paper states, “Note that all statements inside an AWAIT are executed atomically, where the atomicity here is ensured by the hardware (i.e. these multiple instructions represent a single atomic hardware-defined mechanism).” (Section 3.1, p. 14) This is an explicit trusted hardware assumption. Note: the Isabelle model in Appendix B differs slightly from the Section 3 presentation: its `ITake` and context save do not store `EIT`, because "ARM does not save the mask status when an interrupt occurs" (footnote 4, p. 20).
 
 ## technique 3: synchronous and asynchronous SVC transitions
 
@@ -62,7 +62,7 @@ Represent ARM supervisor calls as additional OG tasks. A synchronous call saves 
 
 how to do it
 
-1. Model synchronous `SVC now()` as the atomic transition `ATstack := AT + ATstack; EITstack := EIT + EITstack; AT := SVCs` (Equation 3, Section 3.2, p. 14).
+1. Model synchronous `SVC now()` as the atomic transition `ATstack := AT + ATstack; EITstack := EIT + EITstack; AT := SVCs` (Equation 3, Section 3.2, p. 14; the Appendix B version `SVC-now` pushes only `AT`, p. 21).
 2. Model `SVCa Request()` as `SVCa Req := True` (Equation 4, p. 15).
 3. Run an unguarded `ITakeSVCa` task that atomically checks the request bit, enabled set, current task, stack, and policy; clear the bit, push context, and set `AT := SVCa` (p. 15).
 4. Extend `IRet` to inspect the saved enabled set and policy. If an asynchronous request can run, switch to `SVCa`; otherwise restore the interrupted context (p. 15).
@@ -73,7 +73,7 @@ Inference: encode SVC request and take as separate contract-bearing functions ov
 
 evidence and limits
 
-The framework is instantiated with user tasks `U`, interrupt handlers `I`, asynchronous handler `A`, and synchronous handler `S` (Section 3.2, p. 15). The paper models only state relevant to interleaving; it does not verify all ARM registers or instruction semantics.
+The framework is instantiated by defining user tasks `U`, interrupt handlers `I`, asynchronous handler `A`, and synchronous handler `S` (end of Section 3, p. 15). The paper says "we only model here what is relevant to the task interleaving" (Section 3.1, p. 13). Inference: ARM registers and instruction semantics beyond that are not modelled.
 
 ## technique 4: instantiate and reduce verification conditions
 
@@ -84,10 +84,10 @@ Instantiate the generic framework with eChronos scheduling code, then exploit co
 how to do it
 
 1. Define user-task, interrupt, synchronous-SVC, and asynchronous-SVC programs and compose them as in Figure 1 (Section 3, p. 13).
-2. Define the scheduler's priority policy; the intended property is that application code runs only for the highest-priority task (Section 4, p. 16).
+2. Instantiate `U`, `I`, `S`, `A` (Appendix A, p. 18) and leave the scheduling policy generic (`sched-policy` is unspecified, Appendix B.3, p. 20); the intended property is that "whenever application code is executing, then it is the highest priority task" (Section 4, p. 15). In the instantiation, interrupt handlers do `E := change events; SVCa Request()`, and user tasks run a `syscall block` that disables SVCa, marks the task not runnable, calls `SVC now()`, re-enables SVCa and waits for `SVCa Req` to clear (Appendix A, p. 18).
 3. Generate OG conditions for the composed model.
 4. Automatically remove redundant conditions before invoking Isabelle/HOL proof methods. The paper reports: “As expected, at first there are a very large number of verification conditions: on the order of 10,000. However, by just defining a method that automatically removes any redundant conditions we can easily reduce this to under 500.” (Section 4, p. 16)
-5. Discharge routine conditions automatically and guide the final difficult cases interactively.
+5. Discharge conditions with standard Isabelle/HOL methods; the paper says the last 10 needed human guidance and that this number might be reduced by small improvements to automation (Section 4, p. 16).
 
 Verus form (inference)
 
@@ -95,20 +95,20 @@ Inference: stage Verus verification similarly: write contracts and loop invarian
 
 evidence and limits
 
-After reduction to under 500, “The majority of these are then trivial enough to be automatically solved by standard Isabelle/HOL methods, with the final 10 conditions requiring human guidance.” (Section 4, p. 16) These are initial verification results, not a full functional correctness theorem for eChronos. Hardware abstraction accuracy and atomicity still require informal justification and future refinement proofs.
+After reduction to under 500, “The majority of these are then trivial enough to be automatically solved by standard Isabelle/HOL methods, with the final 10 conditions requiring human guidance.” (Section 4, p. 16) The paper calls this an "initial verification" ("we have begun initial verification of our model", Section 4, p. 16); it states no completed functional correctness theorem for eChronos and does not report that the final 10 conditions were discharged. "Validating the hardware abstractions still requires informal arguments" (Section 4, p. 16), and the atomicity of single OG statements awaits refinement proofs.
 
 ## what is proved, measured, and trusted
 
-Proved: formal definitions of controlled OG, interrupt/SVC hardware interfaces, and an eChronos scheduling model in Isabelle/HOL; initial verification-condition reduction and discharge. Measured: approximately 10,000 initial conditions, under 500 after redundancy elimination, and 10 requiring human guidance. Trusted: Isabelle's kernel, ARM-manual-based atomicity assumptions, single OG-statement atomicity, and application compliance with the hardware-variable access discipline. The paper does not report a percentage success rate, runtime, or a refinement theorem to the deployed implementation.
+Formalised in Isabelle/HOL (Section 1, p. 11; Appendix B): controlled OG, the interrupt/SVC hardware interfaces, and an eChronos scheduling model. No theorem about the model is reported as proved; only initial verification-condition reduction is reported. Reported numbers (Section 4, p. 16): on the order of 10,000 initial conditions, under 500 after automatic removal of redundant conditions, and 10 requiring human guidance. Assumed (Section 4, pp. 15–16): ARM-manual-based atomicity of the hardware operations, atomicity of single OG statements, and application compliance with the hardware-variable access discipline. Inference: Isabelle's kernel is also trusted, as in any Isabelle development; the paper does not discuss it. The paper does not report a percentage success rate, runtime, or a refinement theorem to the deployed implementation.
 
 ## what VL should reuse and product threat
 
-Existing work already supplies a precise pattern for scheduler and nested-interrupt interleaving; VL should not reinvent generic active-task guards, context stacks, or SVC request transitions without checking this model. Inference: for agent-written verified Rust, the largest threat is an incorrect abstraction boundary—treating a multi-instruction hardware transition as atomic or allowing ordinary code to mutate ghost hardware state. A Verus library should make those operations opaque behind contracts and prove access-control invariants before verifying scheduler policy.
+Inference: this paper supplies a precise pattern for scheduler and nested-interrupt interleaving, so VL should check this model before designing generic active-task guards, context stacks, or SVC request transitions. Inference: for agent-written verified Rust, the largest threat is an incorrect abstraction boundary—treating a multi-instruction hardware transition as atomic or allowing ordinary code to mutate ghost hardware state. A Verus library should make those operations opaque behind contracts and prove access-control invariants before verifying scheduler policy.
 
 ## techniques for the catalog
 
 - active-task controlled OG — guard each atomic command with `AWAIT AT=task` and model yields as atomic active-task changes
 - nested-interrupt stacks — save active task and interrupt masks on stacks, enforce enablement and priority policy, and restore on return
 - SVC transition modelling — represent synchronous and asynchronous supervisor calls as guarded atomic state transitions with request bits
-- obligation reduction — remove guard-implied redundant OG conditions before automated Isabelle discharge
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- obligation reduction — automatically remove redundant OG conditions (about 10,000 down to under 500) before Isabelle discharge
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Another important issue was the distinction between variables that are part of the eChronos OS and the pseudo-variables for hardware mechanisms."): read the whole paper including Appendices A and B; checked every quotation, page and section reference, equation and the technique steps against it; changed the link to the paper's DOI, corrected the i.e. punctuation in one quote, fixed page references (the pointer on pending interrupts is pp. 13–14, the highest-priority property is p. 15), removed the claim that the scheduler priority policy is defined (the paper leaves it generic), softened the proved and trusted-Isabelle-kernel wording to what the paper states, replaced the unsupported guard-implied description of redundant-condition removal, added the Appendix B differences (EIT not saved) and instantiation details, and marked own conclusions as Inference; did not check the Verus-form inference paragraphs for technical correctness, the Isabelle theory files themselves (not in the text), or the cited external works.

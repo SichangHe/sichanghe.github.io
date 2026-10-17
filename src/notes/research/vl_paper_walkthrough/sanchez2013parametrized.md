@@ -5,9 +5,9 @@ Tag: `sanchez2013parametrized`, [paper](http://arxiv.org/abs/1312.4043v2)
 
 ## what the paper proves or measures
 
-Sánchez and Sánchez address uniform safety verification for an arbitrary number of concurrent processes manipulating unbounded data and heap state. The abstract describes the split: “The contribution of this paper is a general method for the verification of safety properties of parametrized programs that manipulate complex local and global data, including mutable state in the heap.” (Abstract, p. 1.) A parametrized system `S[N]` is correct when every instance with `N≥1` satisfies the property. Their proof rules reduce this unbounded family to finitely many verification conditions (VCs) whose count depends on the program and property, not on `N`; when specifications and transitions are quantifier-free, the generated VCs are quantifier-free (Sections 1 and 3, pp. 1–8).
+Sánchez and Sánchez address uniform safety verification for an arbitrary number of concurrent processes manipulating unbounded data and heap state. The abstract states the contribution: “The contribution of this paper is a general method for the verification of safety properties of parametrized programs that manipulate complex local and global data, including mutable state in the heap.” (Abstract, p. 1.) A parametrized system `S[N]` is correct when every instance with `N≥1` satisfies the property. Their proof rules reduce this unbounded family to finitely many verification conditions (VCs) whose count depends on the program and property, not on `N`; when specifications and transitions are quantifier-free, the generated VCs are quantifier-free (Sections 1 and 3, pp. 1–8).
 
-The running example is a lock-coupling linked list with `Search`, `Insert`, and `Remove`, global ghost sets `reg` and `elems`, and a most-general client that repeatedly chooses an operation (Section 2, pp. 3–5). Leap generates VCs from the rules and discharges them with Z3/Yices-based decision procedures. The paper proves list shape, set representation, functional search/insert/remove properties, and ticket-based mutual exclusion. The authors state the core soundness result: “If P1, P2 and P3 hold, then S |= □ϕ.” (Theorem 1, Section 3, p. 8.)
+The running example is a lock-coupling linked list with `Search`, `Insert`, and `Remove`, global ghost sets `reg` and `elems`, and a most-general client that repeatedly chooses an operation (Section 2, pp. 3–5). Leap generates VCs from the rules and discharges them with Z3/Yices-based decision procedures. The paper reports verification of list shape preservation, set representation, functional search/insert/remove properties, and ticket-based mutual exclusion (Section 4, pp. 11–12; Appendices A–B). The authors state the core soundness result: “If P1, P2 and P3 hold, then S |= □ϕ.” (Theorem 1, Section 3, p. 8.)
 
 ## technique 1: encode arbitrary threads with parameterized arrays
 
@@ -27,7 +27,7 @@ The paper distinguishes a symbolic `v(k)` array term from a concrete `v[0]` vari
 
 Verus form (Inference: the paper uses a C-like language and SMT arrays): model per-thread state as a ghost `Map<tid, State>` or a Verus state-machine map, and state transition predicates as `spec fn`. Use `requires`/`ensures` on transition proof functions and `invariant` clauses for any executable bounded loop. A map encoding requires explicit finite-support or lookup assumptions; Verus does not automatically provide the paper's uninterpreted infinite `tid` domain. Inference: a practical Rust implementation would verify a fixed representation plus a quantified abstraction lemma, while the paper's uniformity theorem remains a separate meta-level argument.
 
-evidence and limits: the array encoding is sound under full symmetry and the stated transition semantics. The system is not automatically decidable in general; data theories need suitable decision procedures, and the framework requires user-supplied support invariants when a candidate is not inductive (Section 1, p. 3).
+evidence and limits: the paper says uniform verification of parametrized systems “is, in general, undecidable [3], even for finite state components” (Section 1, p. 2). Its VCs are checked automatically only “as long as there are decision procedures for the data that the program manipulates” (Section 1, p. 3), and the user must supply support invariants (“one needs to provide some support invariants”, Section 1, p. 2). Appendix C says p-inv and sp-inv “are sound for all parametrized systems” but “particularly useful for symmetric systems” (p. 18). Inference: the array encoding is therefore not what needs full symmetry; the array elimination of technique 5 is.
 
 ## technique 2: the basic parametrized invariance rule p-inv
 
@@ -42,7 +42,7 @@ how to do it (Figure 4, p. 8):
 4. discharge these quantifier-free VCs in the data decision procedure
 5. invoke Theorem 1 to conclude uniform safety
 
-The paper explicitly says P1 generates one VC, P2 one per transition and property index, and P3 one extra per transition (Section 3, p. 8). Its soundness proof reduces a violating concrete run to one failed premise.
+The paper explicitly says P1 generates one VC, P2 one per transition and property index, and P3 one extra per transition (Section 3, p. 8). Its soundness proof is only a sketch: assume a violation in some `S[N]`, use soundness of rule inv for closed systems to get a failed inv premise, and turn its counter-model into a counter-model of the matching p-inv premise (Theorem 1, p. 8).
 
 Verus form (Inference): write a ghost transition relation and a proof function whose `ensures` says the invariant is preserved for a transition by a participating thread. A second lemma can represent an arbitrary non-participating thread, with a `requires` clause carrying the invariant for all relevant ghost IDs. Use `assert` to instantiate map lookups and disjointness. Verus `invariant` is a loop clause, not a callable `invariant(...)`; p-inv is a proof schema that must be encoded as lemmas or state-machine transition proofs.
 
@@ -50,7 +50,7 @@ evidence and limits: p-inv is sound, but it can fail when a fresh thread needs t
 
 ## technique 3: support invariants and the strengthening rule sp-inv
 
-what it is: a support formula `ψ` is instantiated for all relevant substitutions and conjoined to the antecedent of a VC. This lets a proof assume that the fresh thread also satisfies a previously established invariant. Rule sp-inv uses an already proved support invariant, a candidate target, and three preservation conditions.
+what it is: a support formula `ψ` is instantiated for all relevant substitutions and conjoined to the antecedent of a VC. This lets a proof assume that the fresh thread also satisfies a previously established invariant. Rule sp-inv (Figure 5, p. 9) has four premises: S0 (the support `ψ` is already an invariant), S1 (`Θ→ϕ`), S2 (property-thread steps) and S3 (one fresh-thread step).
 
 when to use: use it when p-inv's fresh-thread VC is false because the target property does not mention the fresh process, or when the candidate needs a stronger inductive context.
 
@@ -66,7 +66,7 @@ The authors define support semantically as a conjunction over substitutions and 
 
 Verus form (Inference): encode each support as a separate ghost predicate or state-machine invariant and prove it with a `proof fn` before using it in a target lemma. The target lemma's `requires` should include the support facts for the concrete thread IDs under consideration; its `ensures` should preserve the target. Quantified support over all threads may require a finite map invariant or a carefully bounded abstraction, because arbitrary quantifier instantiation is solver-sensitive in Verus.
 
-evidence and limits: support is a proof assumption only after S0 has been verified. The paper's list proof uses support facts such as `region(i)`, `next(i)`, `order(i)`, and `lock(i)` (Section 4, pp. 11–12), showing that the method shifts work into meaningful auxiliary invariants.
+evidence and limits: support is a proof assumption only after S0 has been verified. The paper's list proof uses support facts such as `region(i)`, `next(i)`, `order(i)`, and `lock(i)` (Section 4, pp. 11–12), Inference: this shows the method moves effort into writing auxiliary invariants. The paper says counterexample models returned by the SMT solver “allow to write easily the support invariants” (Section 4, p. 12).
 
 ## technique 4: graph proof rules for mutually dependent invariants
 
@@ -92,20 +92,20 @@ evidence and limits: the graph makes the proof modular, but the decision procedu
 
 what it is: Theorem 4 eliminates arrays indexed by symbolic thread IDs by checking finitely many assignments of the formula's `n` indices to `0,…,n−1`. For example, an arbitrary fresh-thread obligation for `p(i)` becomes `p[0] ∧ τ[1] → p'[0]`.
 
-when to use: use it for fully symmetric systems where thread identities are compared only for equality and the formula has finite index diameter.
+when to use: use it for fully symmetric systems (thread identifiers compared only for equality, Section 1, p. 2) when the formula has `n` free thread variables.
 
 how to do it (Section 3, pp. 10–11):
 1. count the symbolic IDs in `ϕ(k)`
-2. enumerate all assignments to distinct representatives among `0,…,n−1`
+2. enumerate all assignments of the `n` symbolic IDs to `[n] = {0,…,n−1}` (Theorem 4: “the set of all possible assignments of variables in Var (ϕ) to [n]”)
 3. replace array reads/updates with concrete per-thread variables
 4. send each resulting quantifier-free formula to the decision procedure
 5. accept the original formula iff every concretization is valid
 
-The paper states: “ϕ(k) is valid if and only if α(ϕ) is valid” for all assignments in the representative set (Theorem 4, p. 10). This is a symmetry theorem, not a bounded-thread testing heuristic.
+Theorem 4 (Section 3, p. 10) says that, for `|k| = n`, “ϕ(k) is valid” holds “if and only if” the conjunction of `α(ϕ)` over all such assignments `α` is valid. The text states Theorem 4 without proof and without the full-symmetry condition; Appendix C restates it as Theorem 5 for fully symmetric systems (p. 22). Inference: it is a symmetry theorem, not a bounded-thread testing heuristic.
 
 Verus form (Inference): instantiate a finite set of ghost thread representatives and prove a symmetry lemma relating renaming to state transitions. Then use ordinary `assert` and `proof fn` obligations over those representatives. Verus will not automatically derive the paper's array elimination theorem; the theorem and its symmetry assumptions must be proved or trusted outside the Rust crate.
 
-evidence and limits: the reduction relies on full symmetry and quantifier-free transition/property formulas. Systems with identity-dependent behavior or non-symmetric scheduling do not meet the theorem's assumptions.
+evidence and limits: Section 5 (p. 14) says the array dependencies “can be eliminated, under the assumption of full symmetry”. Appendix C (p. 22) says that “In practice, the concretization is not performed upfront” and that the arrays can be handled with the theory of uninterpreted functions, leaving the search to the solver. Inference: a system whose behavior depends on thread identity beyond equality is outside the theorem's assumptions.
 
 ## technique 6: ticket mutual exclusion and counterexample-guided support discovery
 
@@ -119,7 +119,7 @@ how to do it (Appendix A and B, pp. 16–18):
 5. when those supports are not inductive, add `activelow(i)` (`active(i) → ticket(i) < avail`) and use the resulting proof graph
 6. for the set variant, replace the minimum counter with `bag.min` and repeat the support dependencies
 
-The appendix reports the two concrete countermodels: one has another critical thread with a different minimum ticket, and one has two threads with the same ticket (Appendix B, pp. 17–18). The authors then state: “Now, mutex can be verified using sp-inv with minticket and notsame as support.” (Appendix B, p. 18.)
+Appendix B (pp. 17–18) lists two countermodels for `τ4`, both with `pc(j) = 5`, `min = 1`, `avail = 2`, `ticket(i) = 1`: in the first `ticket(j) = 3` (the critical thread does not hold the minimum ticket), in the second `ticket(j) = 1` (two threads hold the same ticket). The authors then state: “Now, mutex can be verified using sp-inv with minticket and notsame as support.” (Appendix B, p. 18.)
 
 Verus form (Inference): represent tickets and critical-section state in a ghost state machine. State uniqueness, lower-than-next-ticket, and minimum-ticket facts as transition invariants; prove mutual exclusion as a lemma with `requires` for the invariant and `ensures` for the disjoint critical-state conclusion. Feed failed Verus assertions back into new support lemmas, but keep the final transition proof independent of test traces.
 
@@ -134,15 +134,15 @@ how to do it (Appendix C and E, pp. 19–25):
 4. instantiate only representative IDs `0,…,n−1` for a formula with `n` free IDs (Theorem 5, p. 22)
 5. in the proof graph, attach supports to particular transition locations and premises, and use pruning/simplification tactics (Appendix E, pp. 24–25)
 
-The paper states that the representative range is independent of the running thread count: “It is important to note that the range of the concrete indices is [n], independent of the number of running threads N.” (Appendix C, p. 21.)
+The paper states that the representative range is independent of the running thread count: “It is important to note that the range of the concrete indices is [n], independent of the number of running threads N” (Appendix C, p. 21, after Lemma 1).
 
 Verus form (Inference): prove a ghost renaming lemma for the state representation and use it to reduce symmetric transition obligations to a finite representative set. Store location-scoped support requirements as metadata for proof functions; each proof function should have explicit `requires` facts for only the transitions it covers. Verus does not provide the paper's proof-graph parser or small-model bound, so those remain tool infrastructure outside the Rust crate.
 
 ## evidence, trusted boundary, and product threat
 
-Leap's evaluation uses Z3 and Yices decision procedures, including TLL3 for linked-list heap layouts and Presburger-plus-finite-set procedures for ticket protocols (Section 4, pp. 11–13). Figure 7 reports 121 VCs for `order`, `lock`, and `next`; specialized tactics reduce `order` from a 998.35-second full-support run to 7.56 seconds with necessary support and 1.20 seconds with tactics. Several full-support rows time out at 30 minutes, while the tactic times are finite; these are settings in the table's single 2.8 GHz, 8 GB machine, not universal speed claims. The list row has 61 VCs, 38 solved by the position-only procedure and 23 by the specialized procedure; all-list and next full-support modes time out (Figure 7, p. 13).
+Leap's evaluation uses Z3 and Yices decision procedures, including TLL3 for linked-list heap layouts and Presburger-plus-finite-set procedures for ticket protocols (Section 4, pp. 11–13). Figure 7 reports 121 VCs for `order`, `lock`, and `next`; `order` takes 998.35 s with full support, 7.56 s with only the necessary support (“Supp”), 2.69 s with support only at potentially offending transitions, and 1.20 s with tactics. “TO represents a timeout of 30 minutes”; the paper concludes “tactics are essential for efficiency when handling non-trivial examples such as concurrent lists” (p. 13). The times come from one machine (2.8 GHz, 8GB), so they are not universal speed claims. The `list` row has 61 VCs, 38 proved by the position-only procedure and 23 by the specialized one, and times out in the Full supp, Supp and Offend columns (12.85 s with tactics). `next` times out in Full supp and Supp (26.58 s Offend, 1.76 s tactics) (Figure 7, p. 13). Appendix D (p. 24) describes the Figure 7 columns differently (scenarios FS, FA, FA-SS and proof graphs, with “OM” for out-of-memory), which does not match the table's column names or its TO entries.
 
-The soundness theorems cover the proof rules and concretization under their formal assumptions. Trusted components include the transition model, user-provided invariants/support graph, SMT decision procedures and their small-model theorems, full symmetry, and the C-like-to-VC translation. Inference: VL should reuse finite-diameter thread reasoning, support invariants, modular proof graphs, and counterexample models as a way to discover missing facts. VL should not redo the paper's basic result that unbounded thread counts can yield finite VCs. Inference: threat to agent-written verified Rust is high for missing concurrency invariants and abstraction assumptions, while the graph and support organization offer a concrete way to expose those omissions. A Verus proof of one bounded execution is not evidence for the paper's uniform theorem unless the symmetry and concretization argument is also established.
+The paper proves Theorem 3 and gives only a sketch for Theorem 1; Theorems 2 and 4, Lemma 1 and Theorem 5 are stated without proof in the text, and the completeness of sp-inv is asserted but not proved (Section 5, p. 14). Inference: trusted components include the transition model, user-provided invariants/support graph, SMT decision procedures and their small-model theorems, full symmetry, and the C-like-to-VC translation. Inference: VL should reuse finite-diameter thread reasoning, support invariants, modular proof graphs, and counterexample models as a way to discover missing facts. VL should not redo the paper's basic result that unbounded thread counts can yield finite VCs. Inference: threat to agent-written verified Rust is high for missing concurrency invariants and abstraction assumptions, while the graph and support organization offer a concrete way to expose those omissions. A Verus proof of one bounded execution is not evidence for the paper's uniform theorem unless the symmetry and concretization argument is also established.
 
 ## techniques for the catalog
 
@@ -153,4 +153,4 @@ The soundness theorems cover the proof rules and concretization under their form
 - symmetry concretization — reduce finite-index array formulas to representative concrete thread assignments
 - counterexample-guided support discovery — inspect small SMT models of failed VCs to add missing invariants
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Leap parses the counterexample (model) returned by the SMT solver, which is usually very small, involves only few threads and allows to understand the missing intermediate facts."): read the full text (pp. 1–25, including appendices A–E) and viewed page 8 of the PDF to confirm the Theorem 1 symbols; checked every quotation, page and section reference, the rule premises (P1–P3, S0–S3, G1–G3), theorem and proof status, the Figure 7 numbers, the Appendix B countermodels and the technique steps; changed the sp-inv premise count, the countermodel description, the concretization step (assignments to [n], not distinct representatives), the Figure 7 timeout description, the Section 1 limits, the proof-status statement, and marked the study's own conclusions "Inference:"; did not check the Verus-form paragraphs against Verus itself, the paper's cited references, or the correctness of the paper's proofs and invariants.

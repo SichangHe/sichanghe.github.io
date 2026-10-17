@@ -6,11 +6,11 @@ Tag: `rybalchenko2014quantified`, [paper](http://arxiv.org/abs/1405.7739v1)
 
 This paper gives a common encoding for verification and synthesis. Its claim is that “automatic tools for the verification of linear and branching time properties of procedural, multi-threaded, and functional programs as well as program synthesis can be naturally and uniformly seen as solvers of constraints in form of (quantified) Horn clauses over background logical theories.” (Abstract, p. 1) The architecture separates generating proof obligations from discovering a solution. The paper says this gives “a logical separation of concerns between constraint generation (also known as generation of proof obligations) and constraint solving (also known as proof discovery)” (Abstract, p. 1).
 
-The paper is a formulation paper, not an implementation benchmark. It writes constraint systems for safety, backward safety, combined forward/backward reasoning, termination, information flow, temporal properties, and reactive synthesis (§2, pp. 2–4), then characterizes solver families (§3, p. 4). No experimental denominator, runtime, or success percentage is reported.
+The paper is a formulation paper, not an implementation benchmark. It writes constraint systems for safety, backward safety, combined forward/backward reasoning, termination, information flow, temporal properties, and reactive synthesis (§2, pp. 2–4), then characterizes solver families (§3, p. 4). The paper is four pages of text plus references and reports no experimental denominator, runtime, or success percentage.
 
 ## technique 1: encode safety as existential invariant constraints
 
-What it is. Represent a program by `init(v)` and `next(v,v')`. To prove `safe(v)` for every reachable state, ask a solver to find an invariant `inv` satisfying initiality, inductiveness, and safety. The paper's displayed constraint is:
+What it is. Represent a program by `init(v)` and `next(v,v')`. To prove `safe(v)` for every reachable state, ask a solver to find an invariant `inv` satisfying initiality, inductiveness, and safety. The paper's displayed constraint (under the heading "Safety") is:
 
 `∃inv: (∀v: init(v) → inv(v)) ∧ (∀v∀v': inv(v) ∧ next(v,v') → inv(v')) ∧ (∀v: inv(v) → safe(v))` (§2, p. 2).
 
@@ -25,7 +25,7 @@ How to do it.
 
 Verus form. Inference: state `safe` as an `ensures` clause on the public function and state the inductive relation as a loop `invariant` or a state-machine invariant. Inference: Verus does not expose an existential predicate search in Rust syntax, so an agent must propose the invariant expression and prove it with `requires`, `ensures`, and proof lemmas. The Horn architecture is useful as a backend design: generate obligations from Rust contracts separately from the solver that discharges them.
 
-Evidence and limits. The paper gives the constraint and its logical interpretation, but no implementation measurement for this encoding. The result depends on finding a model of `inv`; the paper does not claim that every solver finds one. The transition relation and `safe` predicate themselves remain trusted specifications.
+Evidence and limits. The paper gives the constraint and the statement "Any model of inv is such an invariant." (§2, p. 2), but no implementation measurement for this encoding. The paper does not claim that every solver finds a model of `inv`. Inference: the transition relation and `safe` predicate themselves remain trusted specifications.
 
 ## technique 2: switch proof direction without changing the solver
 
@@ -39,13 +39,13 @@ How to do it.
 
 Verus form. Inference: encode the forward invariant as the normal loop or state-machine invariant and the backward predicate as a ghost `spec fn` over states, with proof lemmas establishing disjointness. Inference: this can guide VL's proof search: try a forward invariant, a backward “bad-state” barrier, or both, while keeping the executable Rust unchanged.
 
-Evidence and limits. The paper says, “All these reasoning approaches can be automated by the same solver, which can be made highly beneficial through consolidation of heuristics, optimizations, and improvements.” (§2, p. 2) This is an architectural claim, not an evaluation result. The paper does not compare solver success for the three forms.
+Evidence and limits. The paper says, “All these reasoning approaches can be automated by the same solver, which can be made highly beneficial through consolidation of heuristics, optimizations, and improvements.” (§2, p. 2) Inference: this is an architectural claim, not an evaluation result; the paper does not compare solver success for the three forms. The paper also notes that the proof rule changes "by using the following constraint system (but not the solver/inference engine)" (§2, p. 2).
 
 ## technique 3: encode termination and temporal progress with well-founded relations
 
-What it is. Termination adds an existential invariant `inv`, a transition relation `round`, and a well-foundedness condition `wf(round)`. The closure clause requires every transition from an invariant state to decrease according to `round` (§2, p. 2). The paper notes that a solver may establish well-foundedness with abstract interpretation, ranking functions, or transition invariants (§3, p. 4).
+What it is. Termination adds an existential invariant `inv`, a relation `round`, and a well-foundedness condition `wf(round)`. The paper's clause `inv(v) ∧ next(v,v') → round(v,v')` makes `round` contain every transition from an invariant state, and `wf(round)` then rules out infinite sequences (§2, p. 2). The paper writes `wf` as "a second order predicate wf that holds for well-founded relations" and says each solver can prove well-foundedness "e.g., using abstract interpretation (Cousot and Cousot 2012), ranking functions (Turing 1949) or transition invariants" (§2, p. 2). The displayed termination constraint also contains the clause `¬safe(v) → binv(v)`, with `binv` not quantified; Inference: this looks like a typo carried over from the safety constraints.
 
-For an existential temporal property, the paper encodes `E(p U q)` by requiring that from an invariant state not satisfying `q`, there exists a successor that remains invariant and advances a well-founded `round`; it also requires `inv → p` (§2, pp. 3–4). The paper explains: “Note that we model the existence of a computation by relying on existential quantification in the constraints together with a recursive dependency” (§2, p. 3).
+For an existential temporal property, the paper encodes `E(p U q)` by requiring that from an invariant state not satisfying `q`, there exists a successor that remains invariant and advances a well-founded `round`; it also requires `inv → p` (§2, p. 3). The paper explains: “Note that we model the existence of a computation by relying on existential quantification in the constraints together with a recursive dependency” (§2, p. 3).
 
 How to do it.
 
@@ -53,51 +53,53 @@ How to do it.
 2. Existentially quantify `inv` and `round` (§2, p. 2)
 3. Require invariant initialization and preservation (§2, p. 2)
 4. Require every relevant transition to satisfy `round` and require `wf(round)` (§2, p. 2)
-5. For `E(p U q)`, require a successor preserving `inv` and `round` whenever `q` is false, and require `inv → p` (§2, p. 3)
+5. For `E(p U q)`, require that whenever `inv(v) ∧ ¬q(v)` there is a `v'` with `next(v,v') ∧ inv(v') ∧ round(v,v')`, require `inv → p`, and require `wf(round)` (§2, p. 3)
 
 Verus form. Inference: prove termination with a decreasing `decreases` measure and a loop invariant; prove temporal progress with a state-machine transition relation and a ghost rank that decreases until the goal state. Inference: Verus's executable Rust still needs a concrete progress measure; the Horn existential search is a design pattern for generating candidate measures, not a direct Verus construct.
 
-Evidence and limits. The paper provides logical encodings and lists solver techniques, but no measured termination cases. A claimed proof relies on the soundness of `wf` and the chosen ranking or transition-invariant inference.
+Evidence and limits. The paper provides logical encodings and lists well-foundedness techniques, but no measured termination cases. For the temporal case it relies on a cited proof system ("the proof system for CTL* (Kesten and Pnueli 2005)", §2, p. 3) and does not itself prove soundness of the encoding. Inference: a claimed proof relies on the soundness of `wf` and the chosen ranking or transition-invariant inference.
 
 ## technique 4: relational information-flow proofs by self-composition
 
-What it is. Security is expressed over pairs of executions. An existential `io(v,v')` relation is initialized, closed over transitions, and required to relate final states so that changing a secret input cannot change the public output (§2, p. 3). The paper explicitly says this captures pairs of computations “through self-composition of input/output relation of the program, instead of performing a source-to-source transformation” (§2, p. 3).
+What it is. Security is expressed over pairs of executions. An existential `io(v,v')` relation is initialized, closed over transitions, and constrained on pairs of final states; the paper's stated aim is that "any alternation of a (secret) program input is undetected by observing its (public) output", and it says the program satisfies non-interference "if the following constraint is satisfiable" (§2, p. 3). The paper explicitly says this captures pairs of computations “through self-composition of input/output relation of the program, instead of performing a source-to-source transformation” (§2, p. 3).
 
 How to do it.
 
 1. Define `init`, `next`, and `final` state predicates (§2, p. 3)
-2. Existentially quantify `io` and require initial states to relate to their successors (§2, p. 3)
+2. Existentially quantify `io` and require `init(v)` and `next(v,v')` to imply `io(v,v')` (the printed clause has no connective between `init(v)` and `next(v,v')`; the conjunction is Inference) (§2, p. 3)
 3. Require relation closure across transitions (§2, p. 3)
-4. For distinct initial states, require related final states to agree on the public result (§2, p. 3)
+4. Require that `v ≠ w ∧ io(v,v') ∧ io(w,w') ∧ final(v) ∧ final(w')` implies `w = w'`, exactly as printed (§2, p. 3). Inference: the printed conclusion `w = w'` sits oddly next to `v ≠ w`, so the intended clause may differ and the paper does not explain it
 
 Verus form. Inference: define a ghost relational state containing two executions and prove a non-interference `ensures` clause for public outputs. Inference: use a state-machine or proof function to establish relation closure; Rust code need not be duplicated if the proof reasons over two ghost states. The paper's self-composition relation is a direct conceptual fit for a Verus ghost proof, but the exact encoding depends on available Verus specifications.
 
-Evidence and limits. This section is a logical construction without experimental measurements. It assumes a correct `final` predicate and a suitable relational background theory; it does not prove confidentiality of unspecified channels or external effects.
+Evidence and limits. This section is a logical construction without experimental measurements. Inference: it assumes a correct `final` predicate and a suitable background theory, and says nothing about confidentiality of unspecified channels or external effects.
 
 ## technique 5: reactive synthesis as a quantified game
 
-What it is. Synthesis introduces an unknown system transition `sys(v,v')` facing an adversarial environment transition `env(v,v')`. The solver must find `inv`, `round`, and a system move that reaches `goal` regardless of environment behavior (§2, pp. 3–4).
+What it is. Synthesis introduces an unknown system transition `sys(v,v')` facing an adversarial environment transition `env(v,v')`. The paper says "The system's objective is to reach a state satisfying an assertion goal(v) regardless of environment's behavior" and turns the problem "into a game solving problem (Beyene et al. 2014)"; the solver must find `inv`, `round`, and the `sys` relation (§2, p. 3).
 
 How to do it.
 
-1. Specify `init`, adversarial `env`, desired `goal`, and unknown `sys` transitions (§2, p. 4)
-2. Existentially quantify `inv` and `round` (§2, p. 4)
-3. Require an invariant-preserving system successor for every environment successor while `goal` is false (§2, p. 4)
-4. Require `wf(round)` so the strategy reaches the goal (§2, p. 4)
+1. Specify `init`, adversarial `env`, desired `goal`, and unknown `sys` transitions (§2, p. 3)
+2. Existentially quantify `inv` and `round` (§2, p. 3)
+3. Require that `inv(v) ∧ ¬goal(v) ∧ env(v,v')` implies some `v''` with `sys(v',v'') ∧ inv(v'') ∧ round(v,v'')` (§2, p. 3)
+4. Require `wf(round)` (§2, p. 3). Inference: this is what forces the system to reach the goal rather than postpone it forever
+
+The paper adds only that "Other temporal objectives can be satisfied by relying on a temporal proof system, akin to temporal verification." (§2, p. 4)
 
 Verus form. Inference: use a ghost state machine with environment and implementation transitions; verify that every allowed environment step has a corresponding implementation step preserving the invariant and decreasing a rank. Inference: Verus can verify a supplied Rust strategy, but this paper's existential synthesis of `sys` would require a separate generator that emits candidate Rust and then discharges Verus contracts.
 
-Evidence and limits. The paper presents the game constraint but no synthesized program sizes, solver times, or success rates. The unknown transition relation is a mathematical object; compilation, resource bounds, and implementability remain outside the formulation.
+Evidence and limits. The paper presents the game constraint but no synthesized program sizes, solver times, or success rates. Inference: the unknown transition relation is a mathematical object; compilation, resource bounds, and implementability remain outside the formulation.
 
 ## solver architecture and implications for VL
 
-The paper groups solvers by recursion-only safety, well-founded extensions for liveness, universal quantification for quantified invariants, and existential quantification for synthesis and branching-time questions (§3, p. 4). It reports that “Solvers often take advantage of the fact that constraints have Horn-like structure, which enables iterative, abstraction based solving approaches.” (§3, p. 4) Constraint logic programming is identified as an implementation route, including HSF and extensions (§3, p. 4).
+The paper groups solvers by recursion-only safety, well-founded extensions for liveness, universal quantification for quantified invariants, and existential quantification for synthesis and branching-time questions (§3, p. 4). It reports that “Solvers often take advantage of the fact that constraints have Horn-like structure, which enables iterative, abstraction based solving approaches.” (§3, p. 4) Constraint logic programming is identified as an implementation route: "the HSF solver and its extensions" are "implemented using ideas of blending meta-logic programming and constraint logic programming" (§3, p. 4).
 
 Inference: VL could separate Rust/Verus obligation generation from proof search, allowing invariant, ranking, and relational solvers to be reused across APIs. Inference: this is a threat to a product that treats one solver strategy as the verifier itself: changing proof direction or adding a progress relation can materially alter what is discoverable without changing the executable Rust. Inference: the paper already supplies the generic encodings VL should not re-invent as product-specific ad hoc checks. VL's product risk is specification risk: a satisfiable Horn model proves the generated predicates, not that those predicates capture the real system requirement. The paper measures no implementation reliability, runtime, or trusted-base reduction, so those remain open engineering questions.
 
 ## what is proved and what stays trusted
 
-Proved, in the paper's framework, is that a satisfying interpretation of the generated predicates establishes the corresponding logical property over the supplied transition system. The paper does not provide an end-to-end verified solver, benchmark denominator, or empirical accuracy claim. Trusted assumptions include the correctness of `init`, `next`, `safe`, `final`, `goal`, background theories, well-foundedness encoding, solver implementation, and the mapping from a concrete program to constraints. Inference: a Verus deployment additionally trusts the Rust-to-formula translation, solver, proof erasure, compiler, and any external-library contracts.
+The paper states no theorem. It says of the safety constraint that "Any model of inv is such an invariant" (§2, p. 2), and for temporal properties it points to existing proof systems (§2, p. 3). Inference: in the paper's framework, a satisfying interpretation of the generated predicates is meant to establish the corresponding property over the supplied transition system. The paper does not provide an end-to-end verified solver, benchmark denominator, or empirical accuracy claim. Inference: trusted assumptions include the correctness of `init`, `next`, `safe`, `final`, `goal`, background theories, well-foundedness encoding, solver implementation, and the mapping from a concrete program to constraints. A Verus deployment would additionally trust the Rust-to-formula translation, solver, proof erasure, compiler, and any external-library contracts.
 
 ## techniques for the catalog
 
@@ -107,4 +109,4 @@ Proved, in the paper's framework, is that a satisfying interpretation of the gen
 - relational self-composition: prove information flow by relating paired executions without source duplication
 - quantified reactive synthesis: solve an adversarial environment game for an invariant-preserving system transition relation
 - abstraction-based Horn solving: exploit recursion and Horn structure for iterative solver and invariant inference
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Note that we model the existence of a computation by relying on existential quantification in the constraints together with a recursive dependency"): read the whole paper text (a four-page paper plus references) and checked the abstract and §2 and §3 quotations, the constraint systems (including the printed information-flow and synthesis constraints against the PDF page image), section and page references, and the step lists; changed the page of the termination well-foundedness sentence (§2, p. 2, not §3), the pages of the temporal and synthesis constraints (p. 3, not pp. 3–4 or p. 4), the information-flow steps and the termination description to follow the printed clauses, noted two apparent typos in the paper, added the quotations on HSF and the synthesis objective, and marked unsupported conclusions "Inference:"; did not check the cited external works, and the Verus mappings are only my inference, not checked against Verus.

@@ -1,6 +1,6 @@
 # Extending ACL2 with SMT Solvers
 (authored by agents unless marked 🧑)
-Tag: `peng2015extending`, [paper](http://arxiv.org/abs/1509.06082v1)
+Tag: `peng2015extending`, [paper](https://doi.org/10.4204/EPTCS.192.6)
 
 ## what the paper proves or measures
 
@@ -13,14 +13,14 @@ what it is: translate an ACL2 goal first into a small, expanded ACL2 language, t
 how to do it:
 1. start from an ACL2 goal `G` and collect type assertions, function-expansion results, user hypotheses, uninterpreted-function declarations, and substitutions (Sections 3.1–3.2, pp. 65–70)
 2. produce expanded clause `G0` using only supported primitive forms; retain assumptions `A` describing the generalizations
-3. translate `G0` and `A` to SMT sorts and expressions and ask Z3 whether `¬(H ⇒ G0)` is unsatisfiable, where `H` is the user hypothesis conjunction
+3. translate `G0` to SMT expressions, declare SMT variables from the type assertions `T` and uninterpreted functions `U`, and ask Z3 whether `(not (implies H G0))` is unsatisfiable, where `H` is the set of user `:hypothesize` terms (Section 3.2, p. 69); the second-phase output is not returned to ACL2
 4. return `Q1 = (G0 ∧ A) ⇒ G` and `Q2 = A ∨ G` (Equation 2, p. 70) to ACL2; ACL2 proves them and the SMT-checked clause establishes the original goal.
 
-The architecture diagram shows the chain “original clause … expand & simplify … expanded clause … translate to smt-py … SMT clause” (Figure 1, p. 65). The authors state: “Smtlink returns a list of clauses for subgoals that arose in the translation process.” (Section 3, p. 64)
+Figure 1 (p. 65) shows the pipeline from the original clause through an expand-and-simplify step to the expanded clause, then a translation to the SMT clause for Z3. The authors state: “Smtlink returns a list of clauses for subgoals that arose in the translation process.” (Section 3, p. 64)
 
 Verus form: Inference: use a small, reviewable translation layer that emits Verus proof obligations, while keeping the Verus verifier as the checker of the final `requires`/`ensures` contract. A proof-producing SMT bridge could emit `lemma` calls or `assert` facts, but the translation and solver remain outside Verus unless their correspondence is proved. Do not treat an external solver answer as a Verus proof by itself.
 
-evidence and limits: the first translation phase is largely checked by ACL2; the second Python interface is the critical trusted code. The authors explicitly say the current construction of `Q1` and `Q2` is trusted, unverified code (Section 3.3.6, p. 72). The paper does not report solver error rates or a soundness theorem for the implementation.
+evidence and limits: the first translation phase is largely checked by ACL2; the second Python interface is the critical trusted code. The authors explicitly say the current construction of `Q1` and `Q2` is trusted, unverified code (Section 3.3.6, p. 72). Inference: I found no solver error rates or machine-checked soundness theorem for the implementation in the paper; Section 3.3 gives an informal argument.
 
 ## technique 2: type-safe generalization from untyped ACL2
 
@@ -57,7 +57,7 @@ what it is: use a custom SMT interface that recognizes `expt` instances, checks 
 
 how to do it:
 1. declare `expt` as an uninterpreted function in the custom configuration
-2. in `RewriteExpt.prove`, find each `expt` instance and ask whether the theorem hypotheses imply its guard (nonzero base or nonnegative exponent as stated in Section 4, p. 73)
+2. in `RewriteExpt.prove`, find each `expt` instance and ask whether the theorem hypotheses imply its guard (the text of Section 4, p. 73 says the base must be non-zero or the exponent non-negative; the Table 1 note says the exponent must be positive)
 3. if the guard is not provable, fail; otherwise apply rules such as `expt x 0 → 1`, multiplicative decomposition, and monotonicity (Table 1, p. 73)
 4. add each consequent as an SMT hypothesis and solve the remaining claim.
 
@@ -67,7 +67,7 @@ Verus form: Inference: package recurring arithmetic facts as named `lemma`s with
 
 ## what is proved, measured, and trusted
 
-The paper proves the logical shape of the two-phase argument assuming ACL2, Z3, and the translation code; it demonstrates polynomial inequalities, an `expt` example, and part of a global PLL convergence proof. It reports no denominator-based benchmark accuracy. Trust includes ACL2, Z3, Python, the ACL2-to-Python translation, fixed external paths, and user-provided hypotheses/substitutions. The standard configuration bakes paths and interface code into certified ACL2 code to reduce accidental changes; the customizable configuration uses a separate trust tag and puts the burden on the user (Sections 1 and 4, pp. 62, 72–73). The authors themselves say “we deliberately take a pragmatic approach to integration and trust both the theorem prover and the SMT solver.” (Related Work, p. 74)
+The paper gives an informal argument (Section 3.3, pp. 70–72) that ACL2 proving `Q1` and `Q2` establishes `G`, assuming Z3 and the translation code are correct; it demonstrates polynomial inequalities, an `expt` example, and part of a global PLL convergence proof. It reports no denominator-based benchmark accuracy. Trust includes ACL2, Z3, Python, the ACL2-to-Python translation, fixed external paths, and user-provided hypotheses/substitutions. The standard configuration bakes paths and interface code into certified ACL2 code to reduce accidental changes; the customizable configuration uses a separate trust tag and puts the burden on the user (Sections 1, 3.3.5 and 4, pp. 62, 71–73). The authors themselves say “we deliberately take a pragmatic approach to integration and trust both the theorem prover and the SMT solver.” (Related Work, p. 74)
 
 Inference: for agent-written verified Rust, the major threat is a plausible but unjustified abstraction or arithmetic-domain mismatch: Verus can prove a contract whose assumptions omit overflow, unsupported operations, or physical-model behavior. VL should reuse the pattern of explicit assumptions, small trusted interfaces, and checker-returned side goals. It should not redo an untrusted solver bridge as if solver output alone were a proof. The paper's future work—bounded model checking, broader recursive-function handling, and reduced trusted construction of `Q1`/`Q2`—remains outside its demonstrated implementation.
 
@@ -78,4 +78,4 @@ Inference: for agent-written verified Rust, the major threat is a plausible but 
 - bounded expansion and substitution — generalize recursive or unsupported functions with typed fresh variables and checked hypotheses
 - custom theory inference — add guarded rewrite rules such as `expt` decomposition before SMT solving
 - trusted-interface minimization — isolate the solver bridge and have the theorem prover check translation side goals
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our design goal was to keep this part of the connection as simple as possible to avoid errors and enable code inspection by cautious users."): I read the whole paper text and checked the two quotations from Sections 3 and 3.1.2, the abstract quote and the Related Work quote word for word, the equation, program, table and section/page references, the PLL numbers (19 lemmas, 334 lines, 13 lines, about 1700 lines) and each technique step; I changed the link to the DOI given in the paper text, corrected step 3 of technique 1 (what is sent to Z3), replaced a figure-label quotation with a description, softened "proves" to an informal argument and marked the absence-of-evidence statement as Inference, added the Table 1 versus Section 4 guard wording, and widened the trust-section references; I did not check the Verus-form paragraphs or the final Inference paragraph against any source beyond marking them as Inference, did not check the bibliography entries or related-work claims, and did not run Smtlink or the cited code.

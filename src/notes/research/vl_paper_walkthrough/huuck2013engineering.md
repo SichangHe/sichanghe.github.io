@@ -1,6 +1,6 @@
 # Formal Verification, Engineering and Business Value
 (authored by agents unless marked 🧑)
-Tag: `huuck2013engineering`, [paper](http://arxiv.org/abs/1301.0037v1)
+Tag: `huuck2013engineering`, [paper](https://doi.org/10.4204/EPTCS.105.1)
 
 ## what the paper does
 
@@ -14,14 +14,14 @@ when to use it: use this architecture when many small checks must run over ordin
 
 how it is done:
 1. take the C/C++ project and specifications, with standard checks pre-defined in a domain-specific language (p.3)
-2. construct the analysis representation and dispatch many small CTL model-checking tasks (pp.2–3)
+2. run many small CTL model-checking tasks: the paper says model checking the distribution of syntactic elements in C/C++ code "creates particular requirements such as handling many small verification tasks" (p.2); it does not describe how the program representation is built
 3. combine the model checker with abstract interpretation to check pointer, buffer and leak properties (p.2)
 4. cache and summarize work between runs; the paper lists efficient caching, incremental analysis, inter-function summaries and databases as necessary engineering for hundreds of millions of tasks (p.2)
 5. emit severity-classified warnings, counterexample traces and summary reports (p.3)
 
 Inference: in Verus, the analogous product path would expose Rust functions with `requires` and `ensures`, use loop `invariant` clauses for local safety facts, and use `assert` or `proof fn` lemmas to discharge intermediate obligations. Verus proves the written contracts rather than reproducing Goanna’s CTL engine, so the C/C++ check catalogue and compiler integration would need Rust-specific specifications.
 
-evidence: Goanna shipped more than 200 checks, including buffer overruns, leaks, null dereferences, arithmetic errors, C++ copy-control mistakes, MISRA and CERT checks (p.2). The paper gives the order-of-magnitude comparison but no denominator, hardware, program corpus or raw timings; that missing setup limits how broadly the performance claim can be applied.
+evidence: Goanna comes by default with over 200 individual checks, including buffer overruns, leaks, null dereferences, arithmetic errors, C++ copy-control mistakes, MISRA and CERT checks (p.2). The paper gives the order-of-magnitude comparison but no denominator, hardware, program corpus or raw timings; that missing setup limits how broadly the performance claim can be applied.
 
 limits: Goanna is explicitly “not a verification tool as such, but rather a bug detection tool” (p.2). Approximations and assumptions produce both false positives and false negatives. The paper does not report soundness or completeness for the individual checks.
 
@@ -29,24 +29,24 @@ limits: Goanna is explicitly “not a verification tool as such, but rather a bu
 
 what it is: the academic Goanna version integrates SMT solvers in a refinement loop to distinguish spurious errors from real ones. The industrial implementation also uses heuristics matching common programmer patterns and expectations to keep false alarms low (p.2).
 
-when to use it: use refinement after a fast abstract or model-checking pass reports a candidate error whose feasibility is uncertain. Use heuristics when the same analysis must run at compiler-like speed over coding styles and language extensions.
+when to use it: Inference: use refinement after a fast abstract or model-checking pass reports a candidate error whose feasibility is uncertain. Use heuristics when the same analysis must run at compiler-like speed over coding styles and language extensions.
 
 how it is done:
-1. run the inexpensive abstract/model-checking analysis and report a candidate (p.2)
-2. ask the SMT solver for a feasibility/refinement decision; the paper identifies this as a loop but does not publish its exact algorithm or solver constraints (p.2)
-3. refine the abstraction or classify the report as spurious versus real (p.2)
+1. Inference (ordering not stated in the paper): the abstract/model-checking analysis first reports a candidate error
+2. the SMT solvers are used in a refinement loop for distinguishing spurious errors from real ones (p.2); the paper does not publish the exact algorithm or solver constraints
+3. Inference: the loop either refines the abstraction or classifies the report as spurious or real
 4. apply programmer-pattern heuristics to reduce recurring false alarms (p.2)
 
 Inference: a Verus implementation would encode the candidate property as a function contract or loop invariant, then add proof lemmas and solver-visible facts until the obligation verifies. Solver success would establish the supplied specification for the modeled Rust code; it would not prove that a rejected warning class is absent from all executions.
 
-evidence and limits: the paper supplies no precision/recall table for the refinement loop and no count of false alarms before versus after heuristics. Its evidence is the industrial experience claim that these trade-offs were needed to reach reasonable performance. The paper stresses that balancing precision, speed and check coverage is “very much an engineering art” (p.2), so the method is not a fixed recipe with a guaranteed optimum.
+evidence and limits: the paper supplies no precision/recall table for the refinement loop and no count of false alarms before versus after heuristics. Its only support is the authors' statement that "a number of trade-offs had to be made" to reach performance of the same order as the compiler (p.2). The paper stresses that balancing precision, speed and check coverage is “very much an engineering art” (p.2), so the method is not a fixed recipe with a guaranteed optimum.
 
 ## technique 3: product integration and actionable reporting
 
 what it is: hide formal methods behind familiar interfaces. Goanna runs at compile time, integrates with Eclipse, Visual Studio and Makefiles, and requires no user interaction or code modification (p.2). Figure 1’s architecture combines analysis engines, a command-line/IDE/build-system front end, warning severity, error traces and management reports (p.3).
 
 how to use it:
-1. preserve the developer’s existing build invocation (p.2)
+1. keep the end-user's existing order of steps largely the same (p.1) and integrate with Eclipse, Visual Studio or Makefile-based builds (p.2)
 2. run analyses automatically at compile time (p.2)
 3. classify findings by severity and show counterexample traces (p.3)
 4. generate summaries that management can understand, including quality trends and standards compliance (p.3)
@@ -58,7 +58,7 @@ evidence and limits: the paper argues that managers and developers have differen
 
 ## what is proved, measured and trusted
 
-The paper proves no theorem about Goanna and reports no reproducible benchmark protocol. It reports architecture, check categories, an order-of-magnitude implementation comparison without denominator, and qualitative lessons from deployment. The checker, abstractions, heuristics, SMT solver, compiler interpretation and specifications are all trusted or assumed within the product story; the paper does not provide a formal trusted-computing-base analysis. Inference: for agent-written verified Rust, the main threat is not only solver failure but a workflow that hides weak specifications, emits noisy warnings, or cannot scale to repeated builds. A VL product should keep the Verus proof result visible and separately communicate assumptions and unverified code.
+The paper proves no theorem about Goanna and reports no reproducible benchmark protocol. It reports architecture, check categories, an order-of-magnitude implementation comparison without denominator, and qualitative lessons from deployment. The paper does not provide a formal trusted-computing-base analysis. Inference: the checker, abstractions, heuristics, SMT solver, compiler interpretation and specifications are all trusted or assumed within the product story. Inference: for agent-written verified Rust, the main threat is not only solver failure but a workflow that hides weak specifications, emits noisy warnings, or cannot scale to repeated builds. A VL product should keep the Verus proof result visible and separately communicate assumptions and unverified code.
 
 ## what VL should not redo
 
@@ -68,6 +68,6 @@ Inference: VL should not redo a generic “one button” wrapper around verifica
 
 - explicit-state CTL analysis — dispatch many small CTL model-checking tasks through abstract interpretation for pointer, buffer and leak checks
 - SMT refinement loop — recheck abstract warnings with SMT constraints to separate spurious from feasible reports
-- engineering-scale caching — use incremental analysis, inter-function summaries and databases to handle millions of analysis tasks
+- engineering-scale caching — use incremental analysis, inter-function summaries and databases to handle hundreds of millions of model-checking specifications
 - workflow-integrated reporting — run at compile time and present severity, traces, trends and standards reports in existing tools
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This is typically contrary to an academic environment, where one is often interested in a few complex verification tasks only."): read the whole 4-page paper (text file, 177 lines) and checked every quotation, page reference, the 200-check count, the hundreds-of-millions task figure, the technique steps and the claims of absent evidence; changed the link to the DOI printed in the paper, removed an unsupported step about constructing the analysis representation, marked ordering and use-case statements as Inference, corrected "millions" to "hundreds of millions" in the catalog line, and corrected two page references; did not check the Figure 1 image itself (only the text describing it), cited works, or the Verus inferences beyond that they are labelled as inference. The paper itself says 2012 (FTSCS 2012, EPTCS 105, 2012), while the tag says 2013; the tag was kept because it is the existing key.

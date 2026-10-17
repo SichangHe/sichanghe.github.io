@@ -10,7 +10,7 @@ The paper introduces SLH, a theory of potentially cyclic singly-linked heaps wit
 
 what it is: represent a heap as a finite directed graph with one successor per node (except the null sink), pointer variables as labels, and explicit heap variables. Observation functions are `alias`, `isPath`, `pathLength`, `isNull`, and `circular`; mutation functions are pure heap transformers `new`, `assign`, `lookup`, and `update`.
 
-when to use: use it for sequential Rust-like code whose mutable structures have one `next` field and whose properties depend on both shape and path lengths, including cyclic lists and shared tails. It is intentionally narrower than arbitrary Rust heaps.
+when to use: Inference: use it for sequential Rust-like code whose mutable structures have one `next` field and whose properties depend on both shape and path lengths, including cyclic lists and shared tails. It is intentionally narrower than arbitrary Rust heaps.
 
 how to do it:
 1. expose side-effect-free heap predicates in specifications; the explicit heap argument can be hidden for user convenience (Section 5.1, p. 15)
@@ -18,7 +18,7 @@ how to do it:
 3. define `pathLength` as the shortest path, `isPath` as finite reachability, `isNull` as distance zero to null, and `circular` as a nonempty path back to the pointer (Section 3.3, p. 8)
 4. combine these literals with Boolean connectives and the background arithmetic theory.
 
-The semantics states: “A heap H = hL, Gi is a singly linked heap iff each vertex has outdegree 1, except for a single sink vertex that has outdegree 0 and is labelled by null” (Definition 2, p. 8). The path functions are computable in `O(kHk)` time because the graph has outdegree one (Section 3.3, p. 8).
+The semantics states: “A heap H = hL, Gi is a singly linked heap iff each vertex has outdegree 1, except for a single sink vertex that has outdegree 0 and is labelled by null” (Definition 2, p. 8). The paper notes that “since the graph underlying H has outdegree 1, pathLength and circular can be computed in O(kHk) time” (Section 3.3, p. 8).
 
 Verus form: Inference: represent a list as a ghost sequence or a verified pointer structure; define `spec fn` reachability and path length over that representation. Use ownership and borrowing to constrain mutation, then prove lemmas that each Rust operation refines `assign`, `lookup`, `new`, or `update`. Cycles and shared ownership need an explicit unsafe or reference-count model; SLH's unrestricted sharing does not follow automatically from Rust ownership.
 
@@ -28,17 +28,17 @@ what it is: quotient heaps by a sound equivalence that preserves all observation
 
 how to do it:
 1. restrict attention to the reachable sub-heap from program pointers (Definition 3, p. 10)
-2. show graph isomorphism preserves `pathLength`, `circular`, and every transformer (Theorem 1, p. 10)
+2. state that heap isomorphism is a sound equivalence relation, i.e. it preserves `pathLength`, `circular`, and every transformer (Theorem 1, p. 10; stated without proof)
 3. permit weighted edge subdivision and prove subdivision preserves observations (Lemma 1, p. 11)
-4. define homeomorphism as isomorphism between subdivisions and prove transformers respect it (Lemma 2, p. 11)
-5. smooth every unlabelled degree-one chain to a kernel; use the indegree counting argument to obtain at most `2×|P|` vertices (Lemma 3, p. 13)
-6. encode only kernels when searching for a counterexample.
+4. define homeomorphism as isomorphism between some subdivisions of the two heaps (Definition 6, p. 11) and prove transformers respect it (Lemma 2, pp. 11–12; only the `lookup` case is proved in this paper, the other transformers are deferred to the extended version)
+5. smooth edges until every unlabelled vertex has indegree at least 2 (the kernel); the indegree counting argument gives `‖Ke(H)‖ ≤ 2 × ‖P‖` (Lemma 3, pp. 13–14)
+6. encode only kernels when searching for a counterexample (Theorem 3, p. 14).
 
 The paper's key result is: “Theorem 3 (SLH has Small Model). For any SLH formula ∀h.φ, if there is a counterexample Γ |= ¬φ then there is Γ ′ |= ¬φ with every heap-sorted variable in Γ being interpreted by a homeomorphism kernel.” (Section 4, p. 14)
 
 Verus form: Inference: use a canonical ghost representation for reachable list segments and prove a normalization lemma before arithmetic reasoning. This can reduce proof cases but is not a replacement for proving the concrete pointer representation refines the normalized model. Verus has no built-in heap-homeomorphism operator.
 
-evidence and limits: the bound depends on the finite pointer-variable set and the single-successor graph. It does not cover arbitrary graph degree, unbounded fields, or external aliasing beyond the model.
+evidence and limits: Inference: the bound depends on the finite pointer-variable set and the single-successor graph. It does not cover arbitrary graph degree, unbounded fields, or external aliasing beyond the model.
 
 ## technique 3: strongest-postcondition verification conditions
 
@@ -46,12 +46,12 @@ what it is: annotate loops with safety invariants and ranking functions, decompo
 
 how to do it:
 1. for safety, require invariant initiation, inductiveness across the loop body, and exclusion of assertion/null-dereference states (Section 5, p. 14)
-2. for termination, provide a ranking function that strictly decreases and is bounded below; combine its VCs with safety VCs (Section 5, p. 14)
+2. for termination, provide a ranking function that is monotonically decreasing with respect to the loop body and bounded from below; combine its VCs with safety VCs (Section 5, p. 14)
 3. compute `SP` for each heap operation using a fresh heap variable and the corresponding transformer (Section 5.2, p. 15)
 4. encode loop-entry, body, and exit triples as universally quantified SLH formulas
 5. decide each formula by the SAT procedure.
 
-For the example `x=y; while (x!=null) x=x→next; assert(isPath(y,x))`, the paper lists three Hoare triples and VCs (6–11, pp. 15–16). The body VC is `∀h. isPath(h,y,x) ∧ ¬isNull(x) ∧ h′=lookup(h,x,x) ⇒ isPath(h′,y,x)` (Equation 10, p. 16).
+For the example `x=y; while (x!=null) x=x→next; assert(isPath(y,x))`, the paper lists three Hoare triples and their VCs (6–11, p. 16). The body VC is `∀h. isPath(h,y,x) ∧ ¬isNull(x) ∧ h′=lookup(h,x,x) ⇒ isPath(h′,y,x)` (Equation 10, p. 16).
 
 Verus form: Inference: write the loop invariant as a Verus `invariant` clause, use `requires`/`ensures` for each heap operation, and prove the ranking measure with a `decreases` clause. The paper's strongest-postcondition calculation becomes a sequence of Verus lemmas over ghost state; the executable pointer update still requires ownership proofs.
 
@@ -62,24 +62,24 @@ what it is: instantiate list lengths and numeric variables with bit-vectors, bou
 how to do it:
 1. choose `N = 2P + k` nodes for a formula with `P` pointers and `k` allocation/lookup occurrences (Section 6, pp. 16–17)
 2. encode each heap as `ptr`, `succ`, and `nnodes`; null is node zero and edge weights are integers
-3. instantiate `new`, `assign`, `lookup`, `update`, `circular`, and `pathLength` with the Figure 6 procedures
-4. unroll `PathLength` and `Circular` for `N` iterations; each other operation has constant-size background-theory constraints
+3. instantiate `new`, `assign`, `lookup`, `update`, `circular`, and `pathLength` with the Figure 6 procedures (p. 18)
+4. unroll `PathLength` for `N` iterations (the paper says every function except `PathLength` encodes to a constant-size formula; Figure 6 also gives `Circular` a loop bounded by `h.nnodes`, which would unroll the same way: Inference)
 5. add canonical-topological-order constraints to remove isomorphic counterexamples (Section 6, p. 17)
 6. solve the resulting bit-vector formula with CBMC-generated SAT and Glucose; SAT means a counterexample, UNSAT means validity under the small-model theorem.
 
-The paper states: “If we are searching for a counterexample heap with at most 2P nodes, and our formula contains k occurences of Alloc and Lookup, the largest heap that can occur in the counterexample will contain no more than 2P + k nodes.” (Section 6, p. 17). Formula size is `O(x×P)` for `x` theory operations (Section 6, p. 17).
+The paper states: “Therefore if we are searching for a counterexample heap with at most 2P nodes, and our formula contains k occurences of Alloc and Lookup, the largest heap that can occur in the counterexample will contain no more than 2P + k nodes.” (Section 6, p. 17). The paper gives the final SAT formula size as `x × P` for `x` operations (Section 6, p. 17).
 
 Verus form: Inference: use bounded ghost heaps or finite sequences to reproduce this decision procedure for small tests, but retain unbounded inductive proofs for production contracts. Bit-vector arithmetic can model Rust machine integers; ensure the chosen widths and overflow behavior match the executable code. SAT counterexamples are debugging evidence, not proof of universal correctness.
 
 ## technique 5: concrete invariants and ranking functions
 
-The paper gives reusable patterns. For traversing a list `n` times, use `pathLength(y,null)=n−i` and ranking `R(i)=−i` (Section 7, p. 18). For simultaneous traversal, preserve equality of two path lengths; if both are cyclic, the program does not terminate. For division encoded by list lengths, preserve reachability and a modulo relation and use `R(w)=pathLength(w,null)`. For cycle detection, use a path relation and a lexicographic ranking over two path lengths (Section 7, pp. 18–19). These are paper examples; adapting them to Verus pointer APIs is an inference.
+The paper gives reusable patterns. For traversing a list `n` times, use `pathLength(y,null)=n−i` and ranking `R(i)=−i` (Section 7, p. 18). For simultaneous traversal, preserve equality of two path lengths; if both are cyclic, the program does not terminate. For division encoded by list lengths, preserve reachability and a modulo relation and use `R(w)=pathLength(w,null)` (the paper's cycle-detection example is labelled “Figure 1c” in Section 7 but is Figure 1d). For cycle detection, use a path relation and a lexicographic ranking over two path lengths (Section 7, pp. 18–19). These are paper examples; adapting them to Verus pointer APIs is an inference.
 
 ## what is measured, trusted, and limited
 
-Shakira evaluates list traversal, reversal, sorting, the motivating examples, and four termination-annotated programs. It generates VCs by Hoare proof and CBMC symbolic execution, then solves them with Glucose 4.0 on a four-core 3.30 GHz Core i5 with 8 GB RAM (Section 8, pp. 19–20). Safe partial-correctness benchmarks contain 40 UNSAT VCs solved in 5.9 s; safe total-correctness benchmarks contain 25 UNSAT VCs solved in 9.6 s. Counterexample sets contain 14, 31, 11, and 4 SAT VCs for nontermination, null dereference, assertion failure, and inadequate invariant, with SAT times 1.6, 3.0, 0.7, and 1.2 s respectively (Table 1, p. 20). The denominators are VCs in each row, not programs; symbolic-execution times are separate columns. The reported average counterexample sizes are 3, 3, 3.5, and 6 nodes for those four rows.
+Shakira evaluates list traversal, reversal, sorting, the motivating examples, and four termination-annotated programs. It generates VCs by Hoare proof and CBMC symbolic execution, then solves them with Glucose 4.0 on a four-core 3.30 GHz Core i5 with 8 GB RAM (Section 8, pp. 19–20). Safe partial-correctness benchmarks contain 40 UNSAT VCs solved in 5.9 s; safe total-correctness benchmarks contain 25 UNSAT VCs solved in 9.6 s. Counterexample sets contain 14, 31, 11, and 4 SAT VCs for nontermination, null dereference, assertion failure, and inadequate invariant, with SAT times 1.6, 3.0, 0.7, and 1.2 s respectively (Table 1, p. 20). The counts are VCs per row, not programs; symbolic-execution times are separate columns of Table 1. The reported average counterexample sizes are 3, 3, 3.5, and 6 nodes for those four rows.
 
-The trusted chain includes the program-to-Hoare translation, strongest-postcondition generator, finite-model encoding, CBMC, Glucose, and the correctness of the SLH abstraction. The paper assumes a one-field singly-linked heap and does not prove Rust ownership refinement. Inference: the threat to agent-written verified Rust is high where agents confuse list-length equalities with termination or omit cyclic cases; a Verus proof of an inadequate invariant can still pass if the postcondition is weak. SLH already covers shape/length interaction, SAT reduction, strongest-postcondition VCs, and counterexample diagnosis. VL should not redo that decision procedure; its needed addition is a verified bridge from concrete Rust ownership and machine memory to a suitable ghost heap model.
+Inference: the trusted chain includes the program-to-Hoare translation, strongest-postcondition generator, finite-model encoding, CBMC, Glucose, and the correctness of the SLH abstraction. The paper assumes a one-field singly-linked heap (Section 5.1, p. 15) and says nothing about Rust. Inference: the threat to agent-written verified Rust is high where agents confuse list-length equalities with termination or omit cyclic cases; a Verus proof of an inadequate invariant can still pass if the postcondition is weak. Inference: SLH already covers shape/length interaction, SAT reduction, strongest-postcondition VCs, and counterexample diagnosis. VL should not redo that decision procedure; its needed addition is a verified bridge from concrete Rust ownership and machine memory to a suitable ghost heap model.
 
 ## techniques for the catalog
 
@@ -89,4 +89,4 @@ The trusted chain includes the program-to-Hoare translation, strongest-postcondi
 - SAT reduction — encode bounded SLH[TBV] counterexamples with symbolic execution and bit-vector constraints
 - invariant and ranking patterns — relate path lengths across traversals and use decreasing or lexicographic measures
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Clearly if we continue subdividing edges, we will eventually arrive at a heap where every edge has weight 1, at which point we will be unable to subdivide any further."): read the whole paper text and checked every quotation, the numbers in Table 1 and Section 8, equation, lemma, theorem, section and page references, and the steps of all four techniques against it; changed the Definition 6/Lemma 2/Lemma 3 steps, the termination-ranking wording, the page reference for the VC example, the Theorem 3 sizing quote (it begins "Therefore if"), the PathLength/Circular unrolling step, and marked own conclusions as Inference; link is the arXiv ID printed on the paper's first page; did not check the extended version the paper cites for the omitted proofs, did not re-derive the proofs, and did not check the Verus-form paragraphs beyond marking them as inference.

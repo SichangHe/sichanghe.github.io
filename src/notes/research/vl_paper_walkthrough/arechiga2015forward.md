@@ -20,7 +20,7 @@ C → S
 I → [α∗]S
 ```
 
-This is Theorem 1 in section 3.2 (PDF page 5). The paper summarizes the purpose: “Given a region of operation and a safe forward invariant for the behaviors of that mode, the forward invariant cut rule allows us to decompose the overall global safety proof into three proof obligations.”
+This is Theorem 1 in section 3.2 (PDF page 4). The introduction (PDF page 2) summarizes the purpose: “Given a region of operation and a safe forward invariant for the behaviors of that mode, the forward invariant cut rule allows us to decompose the overall global safety proof into three proof obligations.”
 
 How to apply it.
 1. Choose a predicate `C` describing a local region, often a mode plus a Lyapunov sublevel set (section 3.1–3.3).
@@ -37,27 +37,27 @@ Evidence and limits. The theorem is proven semantically in dL. No statistical su
 
 ## technique 2: Lyapunov sublevel sets as local certificates
 
-What it is. For a continuous mode, choose a Lyapunov function `V` that is positive definite and has non-positive derivative. The paper lists the conditions in section 4.1 (PDF page 7): “Positive definiteness: for all x in X, V (x) > 0, and V (0) = 0” and “Derivative negative semidefiniteness: for all x in X, V̇ (x) ≤ 0, and V̇ (0) = 0.” Every sublevel set `Sℓ={x | V(x)≤ℓ}` is forward invariant.
+What it is. For a continuous mode, choose a Lyapunov function `V` that is positive definite and has non-positive derivative. The paper lists the conditions in section 4.1 (PDF page 5) as “1. Positive definiteness: for all x in X, V (x) > 0, and V (0) = 0” and “2. Derivative negative semidefiniteness: for all x in X, V̇ (x) = d dt V (x) ≤ 0, and V̇ (0) = 0.” (the extracted formula for the second condition reads “V̇ (x) = d/dt V (x) ≤ 0”). The paper states that “the sublevel set of a Lyapunov function, Sℓ = {x|V (x) ≤ ℓ} is a forward invariant set”, written here as `Sℓ={x | V(x)≤ℓ}`.
 
 How to apply it.
 1. Identify a mode and domain of interest where a Lyapunov function is available (section 4.1).
 2. Prove positive definiteness and derivative non-positivity on that domain (section 4.1).
 3. Pick `ℓ` so the sublevel set contains incoming resets or reachable entry states and excludes unsafe guards (sections 3.3 and 5.1).
 4. Conjoin the mode predicate with the sublevel predicate to form `C` (section 3.3).
-5. Use the forward invariant cut rule; KeYmaera discharges differential invariance with differential invariants and algebraic reasoning (sections 3.3 and 5.1).
+5. Use the forward invariant cut rule; in the paper's examples KeYmaera checks that the sublevel set excludes the guard into the fail mode (section 3.3), and in section 5.1 it uses the sublevel set as a differential invariant, with quantifier elimination in Mathematica for the forward image under a reset map.
 
-For stable linear systems, the paper gives the standard quadratic construction `V=xᵀPx`, where `P` solves `AᵀP+PA=−Q` for positive-definite `Q` (section 4.1). In the running example, mode q1 uses `V1=½x1²+½(x2−2)²` with level 5, and mode q2 uses `V2=2x1²+4x2²` with level 16 (section 3.3, page 6).
+For stable linear systems, the paper gives the standard quadratic construction `V=xᵀPx`, where `P` solves `AᵀP+PA=−Q` for positive-definite `Q` (section 4.1). In the running example, mode q1 uses `V1=½x1²+½(x2−2)²` with level 5, and mode q2 uses `V2=2x1²+4x2²` with level 16 (section 3.3, PDF page 4).
 
 Verus form. Inference: A Rust controller's continuous dynamics are outside ordinary Verus execution, but a discrete abstraction can carry a ghost energy value and prove that each transition does not increase it. Encode the sublevel predicate as a `spec fn`, preserve it in a `proof fn`, and expose it as a state-machine invariant. Inference: derivative obligations require an external real-arithmetic proof or a discrete contract; Verus alone does not solve ODE invariance.
 
-Evidence and limits. The examples show KeYmaera proving the chosen sublevel sets safe. The paper does not report a count of failed candidate functions or the cost of finding `ℓ`. Lyapunov conditions are sufficient, not necessary; a mode without a useful Lyapunov function needs another certificate source.
+Evidence and limits. The examples show KeYmaera proving the chosen sublevel sets safe. The paper does not report a count of failed candidate functions or the cost of finding `ℓ`. Inference: Lyapunov conditions are sufficient, not necessary; a mode without a useful Lyapunov function needs another certificate source.
 
 ## technique 3: simulation-guided barrier-certificate discovery
 
-What it is. Generate candidate Lyapunov/barrier functions from executions and iteratively refine them with counterexamples. The method in section 4.1 (PDF page 8) creates linear constraints from concrete executions, solves a linear program for a candidate, and uses a global optimizer to search for violations of derivative condition (8). A violating point becomes a new constraint; the LP is solved again.
+What it is. Generate candidate Lyapunov/barrier functions from executions and iteratively refine them with counterexamples. The method (section 4.1, “Discovering Barrier Certificates”, PDF page 5) is described as “a modification of a technique from [29]” and “based on [17]”. It creates linear constraints from concrete executions, solves a linear program for a candidate, and uses a global optimizer to search for violations of derivative condition (8). A violating point becomes a new constraint; the LP is solved again.
 
 How to apply it.
-1. Choose a parameterized candidate function and collect concrete trajectories in the region of interest (section 4.1).
+1. Collect concrete executions in the region of interest and use them to generate linear constraints (section 4.1); in section 5.2 the candidate has the form `V(x)=zᵀPz` with `z` the monomials of degree at most 2.
 2. Solve the associated linear program to obtain a candidate Lyapunov function (section 4.1).
 3. Use a global optimizer with a Lie-derivative cost to seek a point violating `V̇≤0` (section 4.1).
 4. If a counterexample is found, add its linear constraint and re-solve the LP (section 4.1).
@@ -65,7 +65,7 @@ How to apply it.
 6. Check the certificate with dReal, which returns `unsat` or `δ-sat` under its δ-complete semantics (section 4.1).
 7. On `δ-sat`, use the returned interval to add a new linear constraint and repeat (section 4.1).
 
-The certificate conditions are: initial states satisfy `B≤0`, unsafe states satisfy `B>0`, and on `B=0` the Lie derivative is negative (equations 10–12, section 4.1). The paper cautions that “Because there are no optimality guarantees from the global optimizer used to generate the candidate barrier function, the resulting candidate may not strictly satisfy the desired constraints.”
+The certificate conditions are: initial states satisfy `B≤0`, unsafe states satisfy `B>0`, and on `B=0` the Lie derivative is negative (equations 10–12, section 4.1). The paper adds that if the iteration terminates, “the result is a barrier certificate.” It also cautions that “Because there are no optimality guarantees from the global optimizer used to generate the candidate barrier function, the resulting candidate may not strictly satisfy the desired constraints.”
 
 Verus form. Inference: Use numerical search only to propose ghost invariants or coefficients; then encode the final inequalities as Verus specifications and prove them with trusted arithmetic lemmas. A `δ-sat` result is not a Verus proof and should trigger refinement or an explicit approximation assumption.
 
@@ -73,25 +73,25 @@ Evidence and limits. dReal's `unsat` gives an unsatisfiability proof; `δ-sat` g
 
 ## technique 4: bounded-time and transition certificates
 
-What it is. The paper lists two additional sources of local cuts (section 4.2, PDF page 9). A bounded-time flowpipe overapproximates states for a fixed interval `(tl,tu)`; if it misses the unsafe set it is a bounded-time invariant. A discrete transition certificate uses automata structure, such as strongly connected components, to prove that certain modes are unreachable.
+What it is. The paper lists two additional sources of local cuts (section 4.2, PDF page 6). A bounded-time flowpipe overapproximates the reachable states over a bounded time horizon; the paper says that if it does not intersect the unsafe set, “it is safe, and it is invariant over bounded-time”, with general form `Sreach = (R(x) < 0) ∧ (tl < t < tu)`. A discrete transition certificate uses automata structure, such as strongly connected components, to prove that certain modes are unreachable.
 
 How to apply it.
 1. For bounded-time analysis, compute an overapproximation `R(x)<0` of states reachable during `(tl,tu)` (section 4.2).
 2. Form `Sreach=(R(x)<0) ∧ (tl<t<tu)` and check that it excludes unsafe states (section 4.2).
-3. For transition reasoning, analyze the hybrid automaton's graph and identify strongly connected components or modes with no path to unsafe modes (section 4.2).
+3. For transition reasoning, analyze the hybrid automaton's graph and identify strongly connected components (section 4.2); the introduction also mentions a designer knowing that from a set of modes there are no discrete transitions to unsafe modes.
 4. Use the resulting local set or mode predicate as `C` in the forward invariant cut rule (sections 3.2 and 4.2).
 
 Verus form. Inference: A bounded-time Rust protocol can use a ghost step counter and a reachable-state overapproximation as `C`; an SCC fact can become a lemma about allowed enum states. These are abstractions and require a proof that the implementation's transitions refine them.
 
-Evidence and limits. The paper gives no numerical evaluation for these two techniques. Bounded-time certificates do not establish unbounded safety without additional cuts or an induction argument; graph certificates ignore continuous dynamics unless combined with a local continuous invariant.
+Evidence and limits. Section 4.2 gives no worked example for either technique. The bounded-time certificate is used in the fuel-control case study, where the lemma C1 ≡ (M ≠ mfail) ∧ (0 ≤ τ ≤ 0.008) ∧ (x ∈ Sreach) is called “a bounded-time invariant certificate”, with `Sreach` computed using dReal bounds on ṗ and ṙ (section 5.2, PDF page 8). The paper gives no example of an SCC certificate. Inference: bounded-time certificates do not establish unbounded safety without additional cuts or an induction argument; graph certificates ignore continuous dynamics unless combined with a local continuous invariant.
 
 ## case-study evidence
 
-The paper applies sequential cuts to a switched two-mode system. It chooses quadratic invariants `C1={V1<1}` and `C2={V2<1}`, proves reset images lie in successor sublevels, and reports that the residual initial branch becomes empty after the second cut (section 5.1, PDF pages 9–10). The automotive fuel-control study uses a barrier certificate for normal mode and a bounded-time reachable-set certificate for recovery; the goal is to keep air-to-fuel ratio within 10% after recovery (section 5.2, pages 10–12). These are demonstrations, not a benchmark with a denominator. The reported 10% is a safety target for that model, not a success rate.
+The paper applies sequential cuts to a switched two-mode system. It chooses quadratic invariants `C1={V1<1}` and `C2={V2<1}`, and, for the hard branch (C1 invariant under mode m2), shows that the forward image Ĉ1 of C1 under the reset R12 lies in a sublevel set C2* of V2 with C2* ⊆ C1 (equations 15–18). The paper reports that after the second cut “I ∧ ¬C1 ∧ ¬C2 is empty”, so the first branch has an empty antecedent (section 5.1, PDF pages 6–7). The automotive fuel-control study uses a barrier certificate for normal mode and a bounded-time reachable-set certificate for recovery; the goal is to keep the air-to-fuel ratio within 10% of nominal (unsafe set |r| > 0.1) after a fixed recovery time (section 5.2, PDF pages 7–8). The barrier certificate for normal mode comes from the authors' earlier work [17]; this paper adds a barrier certificate rule (21) to KeYmaera's calculus and discharges its obligations with dReal queries. These are demonstrations, not a benchmark with a denominator. The reported 10% is a safety target for that model, not a success rate.
 
 ## what is proved, trusted, and not established
 
-The forward-cut inference rule is proved sound in dL semantics. Case studies show proof completion for three systems, including the switched system and fuel controller, but the article does not give a total number of attempted systems, runtime distribution, or failure percentage. Trusted components include the hybrid-program model, Lyapunov/barrier assumptions, dReal's δ-complete results, KeYmaera's calculus, and numerical candidate generation. Inference: a Verus adaptation would additionally trust its Rust-to-logic translation, solver, compiler, and any ghost abstraction of physical dynamics.
+The forward-cut inference rule is proved sound in dL semantics. Case studies show proof completion for three systems, including the switched system and fuel controller, but the article does not give a total number of attempted systems, runtime distribution, or failure percentage. Trusted components include the hybrid-program model, Lyapunov/barrier assumptions, dReal's δ-complete results, KeYmaera's calculus (including the added barrier rule), Mathematica for quantifier elimination (section 5.1), and numerical candidate generation. Inference: a Verus adaptation would additionally trust its Rust-to-logic translation, solver, compiler, and any ghost abstraction of physical dynamics.
 
 Inference: VL should reuse the lazy local-certificate strategy for modular state-machine proofs and avoid redoing generic proof decomposition. The paper's certificates are domain-specific; it does not solve invariant synthesis in general and explicitly relies on designer insight and numerical methods.
 
@@ -106,4 +106,4 @@ Inference: The threat is low to moderate. Agents can generate local invariants f
 - simulation-guided barrier discovery — fit candidate functions with LP and counterexample-guided optimizer refinement, then check with dReal
 - bounded-time flowpipe cut — use a finite-horizon reachable overapproximation as a temporary safety region
 - transition-graph certificate — use SCCs and mode reachability to cut away behavior that cannot reach unsafe modes
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Because there are no optimality guarantees from the global optimizer used to generate the candidate barrier function, the resulting candidate may not strictly satisfy the desired constraints."): I read the whole paper text (body, references, appendix) and checked every quotation, formula, level value, section reference and the technique steps against it. I corrected PDF page references (Theorem 1 and section 3.3 are on page 4, not 5 and 6; Lyapunov conditions and barrier discovery on page 5; section 4.2 on page 6; section 5.1 on pages 6-7; section 5.2 on pages 7-8), made the Lyapunov-condition quote complete, removed the unsupported claim that KeYmaera uses algebraic reasoning for differential invariance, corrected the claim that the bounded-time certificate has no use (it is used in section 5.2), fixed the description of the section 5.1 reset-image argument, and marked two own conclusions as Inference. I did not check the Verus analogies beyond their Inference labels, the appendix semantics and soundness proof line by line, the engine ODE parameters, or the cited external works.

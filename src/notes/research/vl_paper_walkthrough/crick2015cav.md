@@ -3,7 +3,7 @@
 Tag: `crick2015cav`, [paper](http://arxiv.org/abs/1502.02448v1)
 
 ## what the paper proposes
-Crick, Hall, and Ishtiaq propose an infrastructure that makes verification-tool results reproducible by automatically rebuilding code, running unit tests, and benchmarking submitted models. The abstract states: “In this paper we propose an infrastructure for enabling reproducibility in our community, by automating the build, unit testing and benchmarking of research software.” This is a requirements and workflow paper, not a new verifier: it reports no theorem, benchmark denominator, or measured success rate. Its running example is BioModelAnalyzer (BMA), a biological model analysis tool.
+Crick, Hall, and Ishtiaq propose an infrastructure that makes verification-tool results reproducible by automatically rebuilding code, running unit tests, and benchmarking submitted models. The abstract states: “In this paper we propose an infrastructure for enabling reproducibility in our community, by automating the build, unit testing and benchmarking of research software.” The paper describes itself as “not a theory paper or a tool paper, nor an industrial case study” (Section 1, PDF p. 2). It is a requirements and workflow proposal, not a new verifier: it reports no theorem, benchmark denominator, or measured success rate. Its running example is BioModelAnalyzer (BMA), a biological model analysis tool.
 
 The service has three roles: show that code compiles, runs, and behaves as described; store artefacts linked to publications or datasets; and let non-developers add benchmarks (Section 2, pp. 2–3). The proposal treats reproducibility as an extension of testing and distinguishes “compilation and testing in a new machine, a continuous integration strategy for code commits, and the ability to add and remove benchmarks to the test set” (Section 1, PDF p. 2).
 
@@ -15,11 +15,11 @@ how to do it:
 2. connect the service to a standard repository and detect a new commit or dependency update
 3. pull the code, download dependencies, and compile it
 4. if compilation fails, report the failure and stop; otherwise continue to tests (Section 2.2, pp. 3–4)
-5. retain the exact commit ID and build result with the artefact
+5. store results with a note of the commit ID (Section 2.2, PDF p. 4; the paper names the commit ID for benchmark results, so keeping the build result too is my extension)
 
 The BMA example found that only one machine could deploy a web service because one developer had run undocumented commands for mixed 64- and 32-bit components; the proposed fresh build would expose this because “such undocumented commands would lead to all tests failing until explicitly added to the build process” (Section 2.1, PDF p. 3).
 
-Inference: for VL, put the Rust toolchain, Verus revision, `vstd` version, solver version, crate lockfile, and build flags in a reproducibility manifest. A clean runner should compile and run Verus from the recorded commit. Verus does not provide this repository service; the CI layer is external, and a passing local proof without a clean rebuild is weak evidence.
+Inference: for VL, put the Rust toolchain, Verus revision, `vstd` version, solver version, crate lockfile, and build flags in a reproducibility manifest. A clean runner should compile and run Verus from the recorded commit. The CI layer would sit outside Verus (my assumption, not checked against Verus documentation), and a passing local proof without a clean rebuild is weak evidence.
 
 ## technique 2: two-stage unit-test and benchmark pipeline
 what it is: separate a developer's fast sanity tests from property-bearing model benchmarks, and record both stages.
@@ -27,7 +27,7 @@ what it is: separate a developer's fast sanity tests from property-bearing model
 how to do it:
 1. after compilation, run basic tests supplied by the developer
 2. stop and report if any sanity test fails
-3. if they pass, run every submitted model against its known property
+3. if they pass, run a series of models against a known property
 4. record outcomes in a database with the commit ID
 5. expose historical results through a web interface (Section 2.2, PDF pp. 3–4)
 
@@ -43,16 +43,16 @@ how to do it:
 2. add it to the repository's model set
 3. execute every stored model whenever a new revision is pushed
 4. link changed behavior to the exact code commit (Section 2.4)
-5. retain timeouts and property failures as regression records
+5. log models that time out or fail, as regression records (the paper mentions logging timeouts in Section 2.5; recording property failures is my extension)
 
-The authors describe BMA refinements where unit tests caught rounding changes, while untested behavior for nodes without inputs would have benefited from user-submitted benchmarks. They also propose logging models that time out under one algorithm but succeed under another, then examining their features (Section 2.5).
+The authors describe BMA refinements: some subtle ones, such as switching rounding mechanisms between floors and rounds, “were identified by unit tests”, while more complex changes, such as the treatment of nodes without inputs, “broke behaviours which were not tested in our available benchmark set” (Section 2.3, PDF p. 4). They argue that user-submitted benchmarks would help identify such breaking changes. They also propose logging models that time out under one algorithm but succeed under another, then examining their features (Section 2.5).
 
 Inference: VL should accept adversarial Rust/Verus examples and regression obligations from users, replay them after agent or library changes, and retain counterexamples. The paper's model repository is a testing practice; it does not prove that a finite benchmark set covers all Rust behaviors.
 
 ## technique 4: dependency-triggered and performance-aware runs
-Dependencies may be supplied as binaries, but the authors suggest triggering the same compile-and-test workflow when external dependencies change (Section 2.6). This can expose third-party breaking changes. Performance comparison is harder in cloud VMs because migration and shared hardware distort raw timings; the paper recommends frozen virtual-machine experiments as a direction, while stating that this remains unresolved (Section 2.7).
+Dependencies may be supplied as binaries, but the authors suggest triggering the same compile-and-test workflow when external dependencies change (Section 2.6). This can expose third-party breaking changes. Performance comparison is harder in cloud VMs because of “too much infrastructure interference” such as VMs spinning up, being torn down and migrating, and the bus being used by other VMs (Section 2.7, PDF pp. 5–6). The paper cites Recomputation.org's use of cloud virtual machines to freeze and unfreeze experiments as “not the whole solution” but “a move in the right direction”, and says performance “is one aspect of this proposal that needs further investigating”.
 
-Inference: for VL, dependency updates should trigger a clean Verus replay, including trusted-specification changes and solver versions. Record wall time only with machine and resource metadata; proof success is a pass/fail gate, while timing comparisons require controlled runners. A CI result cannot establish semantic equivalence of a changed dependency unless its contract is checked against the linked implementation.
+Inference: for VL, dependency updates should trigger a clean Verus replay, including trusted-specification changes and solver versions. Record wall time only with machine and resource metadata; proof success is a pass/fail prerequisite check, while timing comparisons require controlled runners. A CI result cannot establish semantic equivalence of a changed dependency unless its contract is checked against the linked implementation.
 
 ## technique 5: artefact review and staged adoption
 what it is: make reproducibility an explicit conference workflow with declared requirements, parallel artefact review, traffic-light reporting, and a curated repository.
@@ -70,7 +70,7 @@ The paper's explicit criterion is whether reviewers can execute the artefact and
 Inference: VL can publish a per-commit proof artefact with toolchain manifest, verifier output, benchmark commit, and a traffic-light status. This improves auditability but does not itself prove the specifications are correct.
 
 ## trusted boundary, limitations, and VL threat
-The service runs arbitrary submitted code and therefore has security concerns; the authors explicitly warn about “providing open e-infrastructure that pulls, compiles and runs arbitrary code as an autonomous continuous integration framework” (Section 2.8, PDF p. 6). Isolation, privilege reduction, and dependency handling are unresolved design issues. Cloud interference also prevents faithful raw performance numbers without stronger control.
+The service runs arbitrary submitted code and therefore has security concerns; the authors explicitly warn about “providing open e-infrastructure that pulls, compiles and runs arbitrary code as an autonomous continuous integration framework” (Section 2.8, PDF p. 6). The paper says only that “we need to consider precisely how this infrastructure would interact with other open services, as well as privileges it would require to run as an autonomous cloud service”; it gives no design for isolation. It also says raw performance numbers are “not possible any more” when the whole workflow runs on the cloud (Section 2.7).
 
 The paper's claim is operational reproducibility: the same artefact can be rebuilt and its stated tests rerun. It does not establish proof soundness, specification adequacy, benchmark completeness, or hardware/OS equivalence. Inference: for agent-written verified Rust, the threat is moderate and operational. A stale Verus version, hidden `assume`/`external_body`, missing benchmark, or unrecorded dependency can make a claimed proof irreproducible even when a local run passed. The paper already supplies the needed build-test-benchmark workflow; VL should not redo that generic CI proposal. VL's added work is to define proof-specific artefact contents and reject runs whose verifier configuration or specification changed without review.
 
@@ -81,4 +81,4 @@ The paper's claim is operational reproducibility: the same artefact can be rebui
 - dependency-triggered regression — rerun builds and tests when a third-party dependency changes
 - artefact traffic-light review — execute submitted artefacts in parallel with review and report reproducibility status
 - controlled performance replay — use frozen or otherwise controlled environments before comparing benchmark timings
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Models which time-out with one but are successfully proved can be logged and identified for future study."): read the whole paper text (392 lines, 9 pages) and checked every quotation, section and page reference, the three-role list, the workflow steps of Sections 2.1-2.8 and 3, the 2016/2017/2018 schedule, tag, author, year and arXiv link (id 1502.02448v1 appears in the paper text); changed the commit-ID step, test/benchmark step 3, the BMA refinement sentence, the performance and security wording (the paper does not discuss isolation or dependency handling as security issues), added a quotation for the paper's self-description, and labelled my extensions and the Verus statement as inference or assumption; did not check the cited references, the BMA papers, or any claim about Verus, Rust or VL beyond marking them as inference.

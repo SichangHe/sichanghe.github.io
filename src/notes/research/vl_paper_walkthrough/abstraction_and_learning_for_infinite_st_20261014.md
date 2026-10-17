@@ -1,24 +1,24 @@
 # Abstraction and Learning for Infinite-State Compositional Verification
 (authored by agents unless marked 🧑)
-Tag: `giannakopoulou2013abstraction`, [paper](http://arxiv.org/abs/1309.5140v1)
+Tag: `giannakopoulou2013abstraction`, [paper](https://doi.org/10.4204/EPTCS.129.13) (DOI from the paper text, EPTCS 129, 2013, pp. 211–228)
 
 ## scope
-The paper combines assume-guarantee reasoning, predicate abstraction, counterexample-guided refinement, and Angluin’s L* learning to verify or refute compositions with infinite-state components. A component M satisfies property P under assumption A when every environment satisfying A makes the composition satisfy P. The basic rule is: prove ⟨A⟩M1⟨P⟩ and prove ⟨true⟩M2⟨A⟩, then conclude ⟨true⟩(M1‖M2)⟨P⟩ (Sections 2.2 and 4, pp. 213, 218). The authors explicitly state a limitation: “At the present time, we are not able to perform extensive experimental evaluation of the framework.” (Conclusion, p. 226)
+The paper combines assume-guarantee reasoning, predicate abstraction, counterexample-guided refinement, and Angluin’s L* learning to verify or refute compositions with infinite-state components. A component M satisfies property P under assumption A when every environment satisfying A makes the composition satisfy P. The basic rule is: prove ⟨A⟩M1⟨P⟩ and prove ⟨true⟩M2⟨A⟩, then conclude ⟨true⟩(M1‖M2)⟨P⟩ (Sections 2.2 and 4, pp. 213–214, 218). The authors explicitly state a limitation: “At the present time, we are not able to perform extensive experimental evaluation of the framework.” (Conclusion, p. 226)
 
 ## technique: assume-guarantee decomposition
 
 what it is and when to use it
 
-Replace one monolithic reachability proof with local proofs about components and an environment assumption. Use it when a composition is too large to verify directly and the interaction alphabet is smaller than each component.
+Replace one monolithic reachability proof with local proofs about components and an environment assumption. Use it when a composition is too large to verify directly. The paper says the assumption should be “(much) smaller than M2” (Section 2.2.1, p. 214).
 
 how to apply it
 
 1. Model components as communicating state machines and property P as a deterministic safety machine; reduce satisfaction to reachability of an error state. (Sections 2.1–2.2, pp. 212–213)
 2. Choose an assumption automaton A over the actions shared with the environment. (Section 2.2, p. 213)
-3. Check ⟨A⟩M1⟨P⟩ and ⟨true⟩M2⟨A⟩. If both hold, apply Rule ASYM to conclude the property for M1‖M2. (Section 2.2, p. 214)
-4. For a positive result, retain counterexamples from failed premises and determine whether they indicate a real component error or an inadequate assumption. (Sections 3.1 and 4.1, pp. 216–220)
+3. Check ⟨A⟩M1⟨P⟩ and ⟨true⟩M2⟨A⟩. If both hold, apply Rule ASYM to conclude the property for M1‖M2. (Section 2.2, pp. 213–214)
+4. If a premise fails, analyze its counterexample to decide whether it shows a real error or an inadequate assumption (or, in the infinite-state case, a spurious abstract trace). (Sections 3.1 and 4.1, pp. 216–220)
 
-The paper defines the goal of a weakest assumption as both safety and permissiveness: “These two conditions essentially ensure that ∀E : M k E |= P iff E |= Aw .” (Section 2.2, p. 213)
+The paper characterizes the weakest assumption by safety and permissiveness: “These two conditions essentially ensure that ∀E : M k E |= P iff E |= Aw .” (Section 2.2, p. 213)
 
 Verus form (Inference)
 
@@ -26,7 +26,7 @@ Represent each Rust component’s abstract interface and state predicate with `s
 
 what evidence shows it works and limits
 
-The rule is argued sound and complete for finite-state components. The paper reports prior flight-software demonstrations with time/memory savings, including cases where monolithic verification ran out of resources (Section 3.3, p. 217), but gives no denominator or numeric table here. Manual assumption construction is “highly non-trivial” (Section 2.2, p. 214), motivating learning.
+The paper states that Rule ASYM is sound and complete, with short proofs (Section 2.2.1, p. 214). It says the learning framework “has been demonstrated on checking flight software models, where it achieved significant savings in terms of time and memory, and in some cases it was able to terminate while the monolithic (non-compositional) verification ran out of time and memory resources” (Section 3.3, p. 217), but gives no numbers here. Manual assumption construction is “highly non-trivial” (Section 2.2.1, p. 214), motivating learning.
 
 ## technique: may/must predicate abstraction
 
@@ -50,13 +50,13 @@ Implement predicates as pure specifications over Rust state and prove abstractio
 
 what evidence shows it works and limits
 
-The correctness argument is the language-inclusion relation and the implication from may-premise proofs to concrete-premise proofs. Spurious counterexamples are expected; refinement is required. Predicate quality and theorem-prover calculations determine termination, and the paper gives no broad benchmark.
+The correctness argument is the language-inclusion relation and the implication from may-premise proofs to concrete-premise proofs. Spurious counterexamples are expected; refinement is required. The paper says abstraction refinement “may not always terminate” for infinite-state components, but converges if the component has a finite bisimulation quotient (Section 4.2, p. 220). It gives no broad benchmark.
 
 ## technique: L* learned assumptions with counterexample teacher
 
 what it is and when to use it
 
-Learn a minimal DFA for the weakest or sufficient assumption by membership queries and counterexamples instead of writing A manually. Use it when component behavior is regular over a finite interaction alphabet.
+Learn a minimal DFA for the weakest or sufficient assumption by membership queries and counterexamples instead of writing A manually. Inference: it fits when the needed assumption is a regular language over a finite interaction alphabet, since L* learns regular languages (Section 2.4, p. 215).
 
 how to apply it
 
@@ -66,7 +66,7 @@ how to apply it
 4. Check permissiveness by testing ⟨true⟩M2⟨Ai⟩. If this fails, distinguish an assumption refinement from a real system violation using another membership query. (Section 3.1, pp. 216–217)
 5. Stop when both premises hold or when a real counterexample proves the composition unsafe. (Section 3.1, p. 217)
 
-The paper says, “The framework uses M2 to add behaviors to over-restrictive assumptions on demand, and as needed for completion of the verification.” (Section 3.1, p. 217)
+The paper says the framework does not need a fully permissive assumption; “it uses M2 to add behaviors to over-restrictive assumptions on demand, and as needed for completion of the verification.” (Section 3.1, p. 216)
 
 Verus form (Inference)
 
@@ -74,11 +74,13 @@ A Rust/Verus integration can generate finite assumption automata externally, the
 
 what evidence shows it works and limits
 
-L* terminates for a regular target and the framework’s teacher answers are intended to be precise with respect to the weakest assumption. The paper says the learned assumption can be smaller than or equal to the weakest assumption and may terminate early once the target property is decided (Section 3.1, p. 217). No extensive evaluation is reported.
+L* terminates with a minimal DFA for its target (Section 2.4, p. 215), and the paper says the answers given to L* “are always precise with respect to the targeted weakest assumption” (Section 3.1, p. 217). It says the learned assumption is “smaller than, or in the worst case equal to Aw in terms of number of states” and learning stops as soon as the property is proved or disproved (Section 3.1, p. 217). The finite-state example in Section 5.1 (p. 221) yields a 2-state assumption, one state fewer than the Receiver, which the paper calls “modest” benefit. No extensive evaluation is reported.
 
 ## technique: infinite-state interleaving and interface generation
 
-For infinite components, the framework alternates may-abstraction refinement with L* assumption learning. A may counterexample is simulated on the concrete component; if valid, refine the assumption, and if spurious, refine the abstraction. Interface generation uses both may and must abstractions: may checks safety and must checks permissiveness. If a component is observationally deterministic, the must abstraction is deterministic and avoids exponential determinization; otherwise determinization or heuristics are needed. (Sections 4.1 and 6, pp. 219–225)
+For infinite-state components, the framework checks both premises on may abstractions and interleaves abstraction refinement with L* learning. Each counterexample c is simulated on the concrete component with simulate(c, M1) or simulate(c, M2). If c is not a real trace, the abstraction is refined with ref ine(c); refinement does not require L* to restart. If c is a real violating trace of M1 (premise 1), the assumption is refined and c ↑ αAi goes to L*. If c is a real trace of M2 (premise 2), a further membership query on M1 decides between an assumption refinement and a real error. (Section 4.1, pp. 219–220) Refinement predicates come from weakest preconditions over the counterexample transitions. (Section 4.1, p. 220) Termination is not guaranteed in general; see Section 4.2, p. 220. The paper’s own example (Section 5.2, pp. 221–222) refines an abstraction on x = 0 and x > 0 by adding x > 5 and x ≤ 5 after a spurious trace.
+
+Interface generation (Section 6, pp. 222–225) differs: a component’s environment is unknown, so permissiveness cannot be checked against M2. It uses both may and must abstractions: may for safety, must for permissiveness. The cited result [30] is: if an interface is safe with respect to M^may and permissive with respect to M^must, it is safe and permissive with respect to M. If a component is observationally deterministic, the must abstraction is deterministic and avoids exponentially expensive determinization; otherwise determinization is needed. For compositional verification, “may abstractions are sufficient” because M2 is known (Section 6, p. 225).
 
 Verus form (Inference)
 
@@ -86,7 +88,7 @@ Use a verified trace relation for concrete Rust and an abstract interface automa
 
 ## what is proved and trusted
 
-Proved on paper: soundness/completeness of the basic assume-guarantee rule, language inclusion for abstractions, correctness arguments for the learning teacher, and the refinement framework’s termination argument under regular assumptions. Measured: illustrative finite and infinite communication protocols and cited flight-software demonstrations; this paper reports no extensive experiment denominator. Trusted: model-checker results, theorem-prover calculations, learner implementation, abstraction predicates, concrete simulation, and any environment/model-code translation.
+Argued on paper (not mechanically checked): soundness and completeness of the basic assume-guarantee rule (Section 2.2.1), the language-inclusion relation for abstractions (Section 2.3), and correctness and termination arguments for the framework (Sections 3.2 and 4.2). The termination argument for infinite-state components holds only when the component has a finite bisimulation quotient (Section 4.2, p. 220). Not measured: the paper reports no experiments; it gives two small illustrative protocol examples (Section 5), and for the infinite-state one “we carried out all steps, except for abstraction refinement, automatically” (Section 8, p. 226). The flight-software results are cited from earlier work. Inference: a user of this technique would have to trust model-checker results, theorem-prover calculations, the L* implementation, the choice of abstraction predicates, concrete simulation, and any environment/model-code translation.
 
 Inference: for VeruLaw, this work reduces monolithic-proof threat by providing a principled way to learn interfaces around verified Rust modules. The main risks are spurious abstraction traces, incomplete assumptions, and trusting external automata. VL should reuse the may/must distinction and counterexample classification rather than redo generic L* research.
 
@@ -97,4 +99,4 @@ Inference: for VeruLaw, this work reduces monolithic-proof threat by providing a
 - L* assumption learning: infer finite assumptions from membership queries, conjecture checks, and counterexamples
 - interleaved refinement: classify traces by concrete simulation and refine either predicates or assumptions
 - interface generation: combine may safety and must permissiveness checks for infinite-state components
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Note that this framework has an important characteristic: the information that is communicated to L* is always correct with respect to the concrete system."): I read the whole paper text (pp. 211–228) and the whole study; I checked every quotation, page and section reference, the rule and premise descriptions, the may/must definitions, the L* query/conjecture steps, the infinite-state counterexample handling, the interface-generation claims and the tag. I changed one quotation that was not word for word (“The framework uses M2 …” is “it uses M2 …” on p. 216), the link (now the DOI printed in the paper text, replacing the arXiv link), the wrong claim that termination depends on predicate quality (the paper ties it to a finite bisimulation quotient), the wrong Measured and Proved-on-paper wording (nothing is measured; arguments are paper arguments), the overgeneral restriction of soundness and completeness to finite-state components, and the oversimplified counterexample classification for the infinite-state case; I added the example, the 2-state assumption result and the interface-generation theorem from [30]. I did not check the cited prior work ([8], [28], [30]) or the figures beyond their captions and text, and the Verus-form paragraphs are my own inferences, not claims of the paper.

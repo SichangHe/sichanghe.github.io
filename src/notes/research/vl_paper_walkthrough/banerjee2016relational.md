@@ -2,27 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `banerjee2016relational`, [paper](http://arxiv.org/abs/1611.08992v1)
 
-## purpose and scope
-The paper presents a relational program logic for comparing two imperative programs that may use procedures, mutable heap objects, and different control-flow structure. Its motivating cases are compiler changes, data-representation changes, refactoring, and noninterference. The central method is to make alignment of pairs of execution steps explicit in a structured “biprogram”, and to combine that with region-logic frame conditions and relational procedure hypotheses. The authors state: “This paper advances extant work by providing a relational logic for local reasoning about heap data structures and programs with procedures.” (Section 1, p. 2)
+Page numbers below are the paper's printed page numbers (headers XX:2 and so on). Where the text extraction lost a symbol, I use the paper's notation: the image operator G‘f is written G.f, the sync brackets are written ⌊A⌋, and the "later" operator is ◇.
 
-The basic judgment relates two terminating executions started from states satisfying a relational precondition. For the factorial example, the paper writes a relation requiring equal initial `y` values and equal final `x` values, and explains that “This relational correctness judgment says that a pair of terminating executions of C and C′, from a pair of states which both satisfy y ≥ 0 and which agree on the value of y, yields a pair of final states that agree on the value of x.” (Section 1, p. 2) The judgment is partial correctness: it rules out faults and constrains final states when both runs terminate.
+## purpose and scope
+The paper presents a relational program logic for comparing two imperative programs that may use procedures, mutable heap objects, and different control-flow structure. Its motivating cases are compiler optimizations, changes of data representation, refactoring, and noninterference (Section 1, p. 1). The central method is to make alignment of pairs of execution steps explicit in a structured “biprogram”, and to combine that with region-logic frame conditions and relational procedure hypotheses. The authors state: “This paper advances extant work by providing a relational logic for local reasoning about heap data structures and programs with procedures.” (Section 1, p. 2) The paper has a foundational focus: it gives syntax, semantics, proof rules, and a soundness theorem, with small examples and no implementation (Section 1, p. 3).
+
+The basic judgment relates two terminating executions started from states satisfying a relational precondition. For the factorial example, the paper writes a relation requiring both initial states to satisfy `y ≥ 0` and agree on `y`, with final states agreeing on `x`, and explains that “This relational correctness judgment says that a pair of terminating executions of C and C′, from a pair of states which both satisfy y ≥ 0 and which agree on the value of y, yields a pair of final states that agree on the value of x.” (Section 1, p. 2) The judgment is partial correctness: it says neither execution faults, and if both terminate the final states are related by the postcondition; no context procedure is called outside its precondition (Section 3, p. 5).
 
 ## technique 1: region-logic specifications and explicit frames
 
 what it is
 
-The unary foundation is region logic (RL), a Hoare logic with first-order side conditions and dynamic-frame effects. A region is a set of object references. Specifications have precondition, postcondition, and an effect frame containing read and write locations. The grammar includes `rd x`, `rd G.f`, `wr x`, and `wr G.f`; `rw x` abbreviates reading and writing. Heap assertions use points-to and region expressions such as `G.f` (Section 2, pp. 3–4).
+The unary foundation is region logic (RL), a Hoare logic augmented with first-order side conditions that support local reasoning about frame conditions in the manner of dynamic frames (Section 2, p. 3). A region is a set of object references. A specification `P ; Q [ε]` has precondition, postcondition, and a frame condition ε with read and write effects. The grammar includes `rd x`, `rd G.f`, `wr x`, and `wr G.f`; `rw x` abbreviates `rd x, wr x`. Formulas include first-order logic with equality, region subset, and the points-to relation `x.f = E` (Section 2, pp. 3–4).
 
 when to use it
 
-Inference: Use a region specification when a proof must reason locally about mutable heap state, especially when two implementations access different objects but should be compared through an abstract region. The paper's list-summing command records its list nodes in ghost region `r`, assumes closure `r.nxt ⊆ r`, and gives the frame `rw s,p, rd r,r.val,r.nxt,r.del` (Section 2, p. 4).
+Inference: Use a region specification when a proof must reason locally about mutable heap state, especially when two implementations access different objects but should be compared through an abstract region. The paper's list-summing command `C1` uses a ghost variable `r` of type `rgn` for its nodes, the closure condition `r.nxt ⊆ r`, and the specification `p ∈ r ∧ r.nxt ⊆ r ; s = sum(listnd(old(p))) [rw s, p, rd r, r.val, r.nxt, r.del]` (Section 2, p. 4).
 
 how to apply it
 
 Inference: 1. introduce a ghost region containing the objects relevant to the command (Section 2, p. 4)
 Inference: 2. state closure or shape conditions such as `r.nxt ⊆ r` (Section 2, p. 4)
-Inference: 3. state the functional postcondition using `old(...)`, and list every variable, field image, and region read or write in the effect frame (Section 2, p. 4)
-Inference: 4. discharge first-order side conditions for frame rules; the paper says they can be encoded as universally quantified SMT formulas (Section 2, p. 4)
+Inference: 3. state the functional postcondition, and list every variable and field image the command may read or write in the effect frame; the paper uses `old(p)` in the postcondition but says it does not formalize old expressions and that they "can be desugared using ghost variables" (Section 2, p. 4, footnote 2)
+Inference: 4. use the frame rule: from `C : P ; Q [ε]` infer `C : P ∧ R ; Q ∧ R [ε]` when R is framed by read effects disjoint from the writable locations of ε; sequence and loop rules add "immunity" and "read-framed" side conditions (Section 2, p. 5)
+
+The paper treats the side conditions semantically: “Cognoscenti will have no difficulty thinking of ways to encode the subsidiary judgments as ∀-formulas amenable to SMT” (Section 2, p. 4). It does not give or evaluate such an encoding; it points to [41, 7] for encodings of the heap.
 
 Verus form (Inference:)
 
@@ -36,18 +40,18 @@ Inference: The paper gives the list example as a specification shape, but does n
 
 what it is
 
-The relational assertion language combines expressions from two states with a partial bijection (`refperm`) between references. `F =¨ F′` means equal values modulo the bijection; for regions it means corresponding sets are bijective. `A G.f` (“agreement”) says corresponding objects have equal field values. Allocation is handled by the modal operator `◇` (printed as the paper's later operator), which permits extending the bijection after allocation. The paper states: “A refperm is a type-respecting partial bijection from references allocated in one state to references allocated in the other state.” (Section 4, p. 8)
+The relational assertion language is, in the paper's words, “essentially syntax for a first order structure comprised of the variables and heaps of two states, together with a refperm connecting the states” (Section 4, p. 8). `F =¨ F′` means the value of F on the left equals that of F′ on the right modulo the refperm: ordinary equality for integers, refperm-relatedness for references, and for regions a bijection between the two reference sets (ignoring null). `A G.f` (“agreement”) says the refperm is total on the set denoted by G in the left state and the f-field of each such object equals, modulo the refperm, the f-field of its counterpart on the right. Allocation is handled by the modal operator ◇ (read “later”): ◇P holds if some extension of the refperm with zero or more pairs of references satisfies P (Section 4, p. 8). The paper states: “A refperm is a type-respecting partial bijection from references allocated in one state to references allocated in the other state.” (Section 4, p. 8)
 
 when to use it
 
-Inference: Use these assertions when two programs allocate different objects or use different representations but their observable data must correspond. This avoids forcing both heaps into one renamed heap and supports noninterference and simulation relations (Section 1, p. 3; Section 4, p. 8).
+Inference: Use these assertions when two programs allocate different objects or use different representations but their observable data must correspond. The paper says its approach is not amenable to product reductions that rename identifiers to encode two states as one, because encoding two heaps in one costs “significant complexity” or exposes the heap model (Section 1, p. 2). It says the assertion language can describe agreement between unbounded pointer structures with differing allocation, as needed for noninterference and simulation relations, without recursively defined predicates (Section 1, p. 3).
 
 how to apply it
 
 Inference: 1. choose the references and regions that should correspond and introduce a partial bijection (Section 4, p. 8)
 Inference: 2. state scalar agreement (`x =¨ x′`) and region or field agreement (`A G.f`) (Section 4, p. 8)
-Inference: 3. after allocation, use the later operator to allow the refperm to be extended, for example the paper's allocation postcondition `◇(p =¨ p′ ∧ A{p}.any)` (Section 4, p. 8)
-Inference: 4. use monotonicity conditions when framing a formula through a possible refperm extension; the paper notes that `A G.f` and value agreement are monotonic, while negated agreement need not be (Section 4, p. 9)
+Inference: 3. after allocation, use the later operator to allow the refperm to be extended, for example the paper's allocation postcondition `◇(p =¨ p′ ∧ A{p}.any)` for the stack example (Section 4, pp. 8–9)
+Inference: 4. use monotonicity conditions when framing a formula through a possible refperm extension: the paper says `◇P ∧ Q ⇒ ◇(P ∧ Q)` is valid if Q is monotonic, that many useful formulas are monotonic, "including AG‘f and F =¨ F′, but not ¬(F =¨ F′)" (Section 4, p. 9)
 
 Verus form (Inference:)
 
@@ -61,19 +65,19 @@ Inference: The paper provides semantic definitions and examples, but no experime
 
 what it is
 
-A biprogram is syntax for a pair of commands plus an explicit alignment. The weaving relation transforms `(C|C′)` into synchronized atoms, paired conditionals, and loops carrying left and right alignment guards. The paper's grammar includes `(C|C′)`, synchronized `bA c`, and `while E|E′ • P|P′ do CC`. It says: “A biprogram run models an aligned pair of executions of the underlying programs.” (Section 1, p. 3)
+A biprogram is syntax for a pair of commands plus an explicit alignment. The weaving relation `↪` rewrites a split `(C|C′)` step by step into other biprogram forms: `(A|A) ↪ ⌊A⌋` for atomic commands, `(C; D | C′; D′) ↪ (C|C′); (D|D′)`, paired conditionals `if E|E′ then ...`, and loops `while E|E′ • P|P′ do CC` for any alignment guards `P`, `P′`, plus the analogous clause for `let` (Section 5, p. 9; complete list in Section D, p. 27). The grammar of biprograms includes `(C|C′)`, `⌊A⌋`, and `while E|E′ • P|P′ do CC` (Figure 1, p. 4). The paper says: “A biprogram run models an aligned pair of executions of the underlying programs.” (Section 1, p. 3) Biprogram semantics is small-step and deterministic modulo allocation, with a left-then-right choice for the split form (Section 5, p. 10).
 
 when to use it
 
-Inference: Use weaving when corresponding computations take different numbers of steps, or when only some loop iterations should align. In the factorial example, one extra assignment on the right is paired before the loops, yielding the relational invariant `x =¨ x′ ∧ y =¨ y′ + 1` (Section 3, pp. 5–6). In the list example, deletion flags cause left-only or right-only iterations, handled by alignment guards (Section 3, p. 6).
+Inference: Use weaving when corresponding computations take different numbers of steps, or when only some loop iterations should align. In the factorial example, the right program has one extra assignment `y := y − 1`; the paper weaves to `(x := 1 | x := 1; y := y − 1); while y > 0 | y ≥ 0 do (x := x ∗ y | x := x ∗ y + x); ⌊y := y − 1⌋`, with relational invariant `x =¨ x′ ∧ y =¨ y′ + 1` (Section 3, pp. 5–6). In the list example, deletion flags cause left-only or right-only iterations, handled by alignment guards `/p.del` and `.p.del` (Section 3, p. 6).
 
 how to apply it
 
-Inference: 1. write the two source commands as a split biprogram (Section 5, p. 9)
+Inference: 1. write the two source commands as a split biprogram `(C|C′)` (Section 5, p. 9)
 Inference: 2. apply weaving rules to pair atomic commands, sequence, and conditionals; for loops choose alignment guards `P|P′` (Section 5, p. 9)
-Inference: 3. state a relational invariant at aligned loop points (Section 3, pp. 5–6)
-Inference: 4. prove the left-only, right-only, and aligned body judgments and prove that the invariant makes these cases exhaustive (Section 6, p. 12)
-Inference: 5. use the consequence and frame rules to derive the desired relational postcondition (Section 6, pp. 11–12)
+Inference: 3. state a relational invariant at aligned loop points; the loop rule requires the invariant to imply agreement of the guards, as in `x =¨ x′ ∧ y =¨ y′ + 1 ⇒ (y > 0 =¨ y′ ≥ 0)` (Section 3, pp. 5–6)
+Inference: 4. prove the left-only, right-only, and aligned body judgments (the three premises of the loop rule) and prove the side condition `Q ⇒ E =¨ E′ ∨ (P ∧ /E) ∨ (P′ ∧ .E′)`, which makes the cases exhaustive; the alignment guards must also be refperm-independent (`P ⇒ ◇P`) (Section 6, p. 12; rule rWh in Figure 6, p. 26)
+Inference: 5. use rule rWeave to transfer a judgment about the woven biprogram to the original split, and use rConseq, rFrame, rSeq, and rEmb (Figure 6, p. 26) to derive the postcondition; Section E (pp. 27–29) works this out for the list example
 
 Verus form (Inference:)
 
@@ -81,32 +85,32 @@ Implement each program as a separate Rust function and write a ghost proof funct
 
 evidence and limits
 
-The paper proves a semantic-consistency theorem connecting biprogram runs to pairs of unary runs and gives soundness rules (Sections H–I, pp. 33–36). It also records a limitation: “one-sided divergence” can cause a woven biprogram to omit effects of a terminating side, so the weaving rule requires a termination check (Section 6, p. 12). Inference: this is a direct threat model for automated alignment generated for VL, because a plausible alignment can silently lose one-sided effects unless termination and fault coverage are checked.
+The paper proves a semantic-consistency theorem (Theorem 2, Section H, pp. 33–35) connecting biprogram runs to pairs of unary runs, stated only for hypothesis contexts with unary specifications; it also states that all relational proof rules are sound (Theorem 5, Section I, p. 36) and proves rWeave in detail (pp. 36–39). It also records a limitation: “one-sided divergence” can cause a woven biprogram to omit effects of a terminating side. Its example: assuming `loop` diverges, `(y := 0; z.f := 0 | loop; x := 0)` assigns `z.f` before diverging, but weaves to `(y := 0|loop); (z.f := 0|x := 0)`, which never assigns `z.f`. The authors restrict rWeave with a termination check, assumed given: `terminates(P, C)` means "C faults or terminates normally, from any initial state satisfying P" (Section 6, p. 12). Inference: this is a direct threat model for automated alignment generated for VL, because a plausible alignment can silently lose one-sided effects unless termination and fault coverage are checked.
 
 ## technique 4: relational procedure hypotheses and linking
 
 what it is
 
-A hypothesis context maps procedure names to unary or relational specifications. Rule `rLink` proves an implementation pair and then verifies a client under the relational hypothesis. The paper's stack example hides internal representation invariants and exposes only relational behavior and effects (Section 3, p. 7; Section 6, p. 11).
+A hypothesis context Φ maps procedure names to specifications; each is either unary or relational, of the form `R ≈> S [ε|ε′]` (Section 5, p. 10). Rule `rLink` (Figure 2, p. 11) has two premises: the fully aligned form of the client satisfies the overall specification under the relational hypothesis `m : R ≈> S [η]`, and the body pair `(B|B′)` satisfies `R ≈> S [η]` with an empty hypothesis context. The rule shown is the special case of a single non-recursive procedure; the paper sees no difficulty adding mutual recursion but has not included it in a detailed soundness proof, and a general rule also allows undischarged hypotheses for ambient libraries (Section 6, p. 11). In the toy stack example, the relational specification for `push` leaves out the internal invariants `I`, `I′` and the effects on module variables such as `top`; the paper says the invariants "should be hidden" (Section 3, p. 8). The paper does not give the hiding rule: “Hiding is the topic of another paper, for which this one is laying the groundwork” (Section 3, p. 8).
 
 how to apply it
 
-Inference: 1. specify the procedure pair's relational pre/postcondition and separate effects (Section 5, p. 10)
-Inference: 2. prove the two bodies under the empty or ambient hypothesis context (Section 6, p. 11)
-Inference: 3. verify the client while assuming the relational procedure specification (Section 6, p. 11)
+Inference: 1. specify the procedure pair's relational pre/postcondition and separate left and right effects (Section 5, p. 10; the `push` hypothesis in Section 3, p. 8)
+Inference: 2. prove the two bodies `(B|B′)` against that specification under the empty hypothesis context (Section 6, p. 11)
+Inference: 3. verify the fully aligned client under the relational hypothesis, using rCall for each aligned call (Section 3, p. 8; Section G, pp. 30–33)
 Inference: 4. apply the linking rule to discharge the hypothesis and compose the result (Figure 2, p. 11)
 
 Verus form (Inference:)
 
-Inference: Use a Verus trait or specification function for the public contract and prove each implementation against it. Keep representation invariants in private predicates and expose only the contract to client proof functions. Verus trait contracts and `requires`/`ensures` can encode the interface, but the paper's higher-order hypothesis context and effect hiding require explicit ghost predicates and ownership arguments.
+Inference: Use a Verus trait or specification function for the public contract and prove each implementation against it. Keep representation invariants in private predicates and expose only the contract to client proof functions. Verus trait contracts and `requires`/`ensures` can encode the interface, but the paper's relational hypothesis context and effect hiding (which the paper defers to other work) require explicit ghost predicates and ownership arguments.
 
 evidence, trust, and product implications
 
-The formal trust base is the semantics, proof rules, and the soundness and semantic-consistency theorems; the paper assumes deterministic commands modulo allocation and a termination check for weaving. It reports no implementation-scale measurements. Inference: the strongest reusable ideas for VL are explicit relational invariants, effect frames, and procedure contracts; the main risks are unsound alignment under divergence, incomplete frame annotations, and the proof burden of maintaining a reference correspondence.
+The formal trust base is the semantics, proof rules, and the soundness and semantic-consistency theorems; the paper assumes deterministic commands modulo allocation (Section 5, p. 9) and a given termination check for weaving (Section 6, p. 12). It reports no implementation measurements; it claims only that the biprograms and relational assertions "are easily translated to SMT-based back ends like Boogie and Why3" (Section 7, p. 13) without showing it. The worked examples are small (factorial, list sum, a one-procedure stack, loop tiling). Inference: the strongest reusable ideas for VL are explicit relational invariants, effect frames, and procedure contracts; the main risks are unsound alignment under divergence, incomplete frame annotations, and the proof burden of maintaining a reference correspondence.
 
 ## what is proved, measured, and trusted
 
-The paper proves soundness of the relational rules and that biprogram executions correspond to aligned pairs of unary executions (Sections H–I, pp. 33–36). It presents examples, not a benchmark table, so there are no empirical denominators or performance percentages to transfer. Inference: a Verus implementation should treat the SMT encoding, ghost refperm map, and termination arguments as trusted proof obligations rather than assume that a syntactic weave is evidence of equivalence.
+The paper states that all relational proof rules are sound (Theorem 5, Section I, p. 36), but gives the detailed proof only for rWeave and says the rLink proof "follows the lines" of proofs in its references [5] and [7]. Theorem 2 (Section H, p. 33) says biprogram executions correspond to aligned pairs of unary executions, for unary-only hypothesis contexts. It presents examples, not a benchmark table, so there are no empirical denominators or performance percentages to transfer. The conclusion lists limits: array-oriented loop optimizations such as loop interchange and fusion "seem to be out of reach of the logic as currently formulated" (Section 8, pp. 14–15). Inference: a Verus implementation should treat the SMT encoding, ghost refperm map, and termination arguments as trusted proof obligations rather than assume that a syntactic weave is evidence of equivalence.
 
 ## techniques for the catalog
 
@@ -115,4 +119,4 @@ The paper proves soundness of the relational rules and that biprogram executions
 - biprogram weaving: choose aligned, left-only, and right-only steps and prove relational loop invariants
 - hypothesis linking: verify procedure bodies and clients separately under relational contracts, then discharge the hypotheses by linking
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Here, a key design choice is to avoid nondeterminacy, to cater for simple semantics of relational properties."): I read the whole text (main body, appendices A to I, contents) and compared every quotation, section and page reference, rule and example against it; quotations match word for word apart from lost prime marks. I changed: "compiler changes" to "compiler optimizations"; the page of the claim about product reductions that merge two heaps (p. 2, not p. 3); the SMT-encoding claim (the paper only says experts can encode the side conditions); the agreement operator definition (equal modulo refperm); the page range for soundness (Section H pp. 33–35, Section I pp. 36–40, not "33–36"), and that only rWeave is proved in detail, with Theorem 2 limited to unary-only contexts; the hiding claim (invariants are left out of the push hypothesis, p. 8, but the hiding rule is deferred to another paper); the step 4 and 5 references for technique 3 (rules are in Figures 2 and 6, pp. 11 and 26); the loop-rule side conditions and the rLink special-case caveats; I removed the phrase calling the hypothesis context higher-order, which the paper does not say. I did not check the Verus translations (my own, marked Inference), the cited external papers, or the PDF figures beyond the pdftotext layout.

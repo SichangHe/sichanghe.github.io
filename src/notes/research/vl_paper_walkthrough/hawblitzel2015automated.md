@@ -1,12 +1,12 @@
 # Automated and Modular Refinement Reasoning for Concurrent Programs
 (authored by agents unless marked 🧑)
-Tag: `hawblitzel2015automated`, [paper](https://www.semanticscholar.org/paper/51173303167336a18a597b01c8bd929465413d28)
+Tag: `hawblitzel2015automated`, [paper](https://doi.org/10.1007/978-3-319-21668-3_26)
 
 ## scope and result
 
 Hawblitzel, Petrank, Qadeer, and Tasiran present civl, a Boogie-based verifier for refinement between shared-memory concurrent programs. A high-level procedure invokes atomic actions; a lower-level procedure refines each action, possibly through several layers, until operations are directly implementable. The verifier decomposes whole-program refinement into per-procedure simulation, checks non-interference of location invariants, and uses mover types plus a yield-sufficiency automaton to transfer safety from a cooperative semantics to preemptive sequentially consistent execution.
 
-The paper's claim is a verification method and implementation, not a Rust proof. It says civl “is the first general and automated proof system for refinement verification of shared-memory multithreaded software.” (Section 1, p. 449) The core guarantee is conditional on procedure simulation, invariant correctness, linear typing, commutativity, yield sufficiency, and infinite executions visiting yields (Section 3.1, p. 458).
+The paper's claim is a verification method and implementation, not a Rust proof. It says: “This paper presents the first general and automated proof system for refinement verification of shared-memory multithreaded software.” (Section 1, p. 449) This is the authors' own priority claim; I did not check it against other work. The core guarantee is conditional on procedure simulation, invariant correctness, linear typing, commutativity, yield sufficiency, and infinite executions visiting yields (Section 3.1, p. 458).
 
 The execution model is explicit: “The preemptive semantics of the program is sequentially consistent execution; all threads are imagined to execute on a single processor and preemption, which causes a thread to be scheduled out and a nondeterministically chosen thread to be scheduled in, may occur before any instruction.” (Section 1, p. 450)
 
@@ -22,7 +22,7 @@ Use this when a concurrent implementation has a simple abstract API but complex 
 
 how to apply it
 
-1. Write an atomic action specification with its gate, precondition, and postcondition; in the write-barrier example the high-level action is `[if (Color == WHITE) Color := GRAY]` (Figure 1, p. 452).
+1. Write an atomic action specification, which the paper models as a single-state predicate that must hold when the action runs (otherwise the program fails) plus a two-state transition relation (Section 3, p. 455); in the write-barrier example the procedure also carries `requires`/`ensures` clauses and the high-level action is `[if (Color == WHITE) Color := GRAY]` (Figure 1, p. 452).
 2. Implement that action with a procedure containing yields and calls to lower-layer actions (Section 2, pp. 452–453).
 3. For every entry-to-exit path, identify the single fragment that performs the abstract action and require other fragments to preserve global and thread-local state (Section 3.1, p. 458).
 4. Supply location invariants and procedure pre/postconditions that make the fragment simulation valid under interference (Section 2, pp. 452–453).
@@ -32,7 +32,7 @@ Verus form (Inference): model each abstract operation as a ghost state-machine t
 
 evidence and limits
 
-The soundness conditions require the high-level program to be safe under preemptive semantics, each lower procedure to contain exactly one implementing atomic block per path, sequential correctness and non-interference of location invariants, linear typing, pairwise commutativity, yield sufficiency, and infinite execution to hit yields (Section 3.1, p. 458). The paper focuses on sequential consistency and leaves weak memory models for future work (footnote, Section 1, p. 450). Refinement therefore depends on the chosen atomic model and scheduler semantics.
+The soundness conditions require the high-level program to be safe under preemptive semantics, each lower procedure to contain exactly one implementing atomic block per path, sequential correctness and non-interference of location invariants, linear typing, pairwise commutativity, yield sufficiency, and infinite execution to hit yields (Section 3.1, p. 458). The paper focuses on sequential consistency and leaves weak memory models for future work (footnote, Section 1, p. 450). Inference: refinement therefore depends on the chosen atomic model and scheduler semantics.
 
 ## technique 2: cooperative semantics plus mover types and yield-sufficiency automaton
 
@@ -43,7 +43,7 @@ civl verifies refinement on cooperative semantics, where a thread can be switche
 how to apply it
 
 1. Place yields around code regions and attach location invariants to each yield (Section 1, p. 450).
-2. Assign mover types to atomic actions and verify each pairwise commutativity condition with an automated prover (Section 2, p. 453).
+2. Assign mover types to atomic actions and verify them pairwise against every atomic action in the program with an automated theorem prover (Section 1, p. 450; Section 2, p. 453; Section 3, p. 456).
 3. Build the procedure control-flow automaton with mover types as edge labels (Figure 3, p. 454).
 4. Check that this automaton is simulated by the yield-sufficiency automaton using a labeled-graph simulation algorithm (Section 2, p. 454; Section 5, p. 459).
 5. If commutativity is too expensive, mark actions `atomic` and insert a yield before every invocation; this trades mover checks for more location invariants and non-interference checks (Section 2, p. 454).
@@ -52,7 +52,7 @@ Verus form (Inference): represent a transaction as a ghost protocol transition a
 
 evidence and limits
 
-The automata simulation runs in `O(n*m)` for control-flow nodes and edges and is fast in practice (Section 5, p. 459). More yields increase annotation burden and can require ghost variables; fewer yields rely on successful mover proofs (Section 2, p. 454). The guarantee covers sequentially consistent preemptive execution, not weak memory.
+The automata simulation runs in `O(n*m)` for control-flow nodes and edges and is fast in practice (Section 5, p. 459). The paper says more yields, each with a location invariant, make proofs difficult because the annotation burden goes up (sophisticated ghost variables may be needed) and because pairwise mover cost is replaced by pairwise non-interference cost (Section 2, p. 454). Inference: fewer yields rely on successful mover proofs. The guarantee covers sequentially consistent preemptive execution, not weak memory.
 
 ## technique 3: location invariants and interference-aware simulation
 
@@ -63,7 +63,7 @@ Location invariants attached to yields or procedure boundaries describe facts th
 how to apply it
 
 1. State a precondition for the abstract action and a location predicate for each yield.
-2. Verify the predicate itself against every possible environment action, including non-interference checks with concurrent atomic blocks (Section 1, pp. 450–451).
+2. Verify the predicate itself against every possible environment action, including non-interference checks against atomic blocks, proved as a Floyd-Hoare triple (Section 1, pp. 450–451; Section 3, pp. 456–457).
 3. Propagate the procedure precondition across the atomic action specification rather than through every yield; the action's correctness supplies a frame rule (Section 1, p. 451).
 4. Use the resulting invariant and action postcondition to prove each path's simulation and the procedure's postcondition (Section 2, pp. 452–453).
 
@@ -71,9 +71,9 @@ Verus form (Inference): write a ghost `spec fn` for each location predicate, put
 
 evidence and limits
 
-The paper's example demonstrates that a seemingly valid execution (a thread reads GRAY, another writes WHITE, then the first exits) is ruled out by `Color >= cNoLock` (Section 2, p. 452). Incomplete location invariants that cannot refer to other threads are a known limitation (footnote, Section 2, p. 455). This technique is therefore only as strong as the chosen environment model.
+In the paper's example, an interleaving that would violate WB's postcondition (a thread reads GRAY into `cNoLock`, another thread sets `Color` to WHITE, then the first exits) is ruled out by `Color >= cNoLock` (Section 2, pp. 452–453). Footnote 2 says “Location invariants that cannot refer to the state of other threads are known to be incomplete, both in theory and in practice.” (Section 2, p. 454) Inference: this technique is therefore only as strong as the chosen environment model.
 
-The verifier generates the proof obligation rather than requiring the programmer to write every intermediate formula: “The civl verifier automatically computes a logical verification condition capturing the proof obligations from the body and specification of WB.” (Section 2, p. 453)
+Annotations other than those at yields, loops, and procedure boundaries are generated automatically (Section 5, p. 459). For the example: “The civl verifier automatically computes a logical verification condition capturing the proof obligations from the body and specification of WB.” (Section 2, p. 453)
 
 ## technique 4: linear variables for disjoint permissions
 
@@ -85,20 +85,20 @@ how to apply it
 
 1. Declare a thread identifier or permission as linear at allocation and procedure boundaries (Figure 4, p. 454).
 2. Transfer, rather than copy, linear values between threads when ownership changes (Section 2, p. 455).
-3. Use the type checker's global invariant that permission sets in all available variables are mutually disjoint (Section 3, p. 458).
-4. Use distinctness to prove that a thread updates only its own array slot or that initialization/root scanning has mutual exclusion (Figures 4 and GC case study, pp. 454, 460–461).
+3. Use the type checker's global invariant that permission sets in all available variables are mutually disjoint (Section 3, p. 457).
+4. Use distinctness to prove that a thread updates only its own array slot or that initialization/root scanning has mutual exclusion (Figure 4, p. 454; GC case study, p. 461).
 
 Verus form (Inference): use Rust ownership and ghost tokens to represent linear permissions. A `proof fn` can transfer a ghost token between protocol states, while the executable borrow checker prevents aliasing for ordinary references. For shared memory, Verus's state-machine or permission predicates must establish disjointness; Rust's type system alone does not prove logical non-interference for arbitrary shared-state models.
 
 evidence and limits
 
-The paper says linearity is general enough for thread IDs, memory separation, and transferable permissions (Section 2, p. 455). The guarantee relies on the type checker and on correctly modeling every permission-bearing value; it does not automatically prove data-race freedom for unmodeled foreign or hardware state.
+The paper says linearity is general enough for thread IDs, memory separation, and transferable permissions (Section 2, p. 455). Inference: the guarantee relies on the type checker and on correctly modeling every permission-bearing value; the paper does not claim anything about unmodeled foreign or hardware state.
 
 ## technique 5: modular ownership and variable hiding
 
 what it is
 
-The module system assigns each global variable to exactly one module. Only that module's procedures, actions, and location invariants may access it. Since operations on disjoint variable sets cannot interfere, quadratic whole-program commutativity and non-interference checks become quadratic per module. Variables and procedures can also be introduced or hidden at each refinement layer to support data refinement (Section 4, pp. 458–459).
+The module system assigns each global variable to exactly one module. Only that module's procedures, actions, and location invariants may access it. Since operations on disjoint variable sets cannot interfere, quadratic whole-program commutativity and non-interference checks become quadratic per module. Variables can also be introduced or hidden at each refinement step to support data refinement (Section 2, p. 455); the implementation also hides procedures (Section 5, p. 459). This paper only outlines the module system and defers details to the technical report (Section 4, pp. 458–459).
 
 how to apply it
 
@@ -111,9 +111,9 @@ Verus form (Inference): put each protocol state and its invariant in a Rust modu
 
 ## evidence, trusted elements, and product impact
 
-The implementation has 32 benchmarks of 17–539 lines; the full set verifies in 20 seconds on a four-core Windows PC with 8 GiB RAM (Section 6, p. 460). The realistic garbage collector contains about 2,100 lines of Boogie code and six refinement layers; verification takes 60 seconds, with 54 seconds spent on sequential correctness and non-interference (Section 6.1, p. 461). These denominators are the reported benchmark suite and one GC artifact, not a general Rust performance result. Trusted elements include Boogie, the automated theorem prover, mover annotations, user location invariants, linear type rules, atomic specifications, and the sequential-consistency model. The formalization of the full language and detailed rules is in a separate technical report, not this paper (Section 3, p. 455).
+The implementation has 32 benchmarks of 17 to 539 LOC; the full set verifies in 20 s on a 4-core Windows PC (2.8GHz, 8GB) (Section 6, p. 460). The concurrent mark-sweep garbage collector uses six refinement layers (Section 6.1, p. 460) and consists of about 2100 lines of Boogie code; verification takes 60 s on the same PC, 54 s of it for sequential correctness and non-interference (Section 6.1, p. 461). These denominators are the reported benchmark suite and one GC artifact, not a general Rust performance result. Inference: the paper has no trusted-base discussion; plausibly trusted are the Boogie and theorem prover implementations, civl's type checker and verification-condition generation, the top-layer specification (condition 1 of Section 3.1 requires the high-level program to be safe), and the sequential-consistency model. Mover types and location invariants are verified by civl, not trusted. The formalization of the full language and detailed rules is in a separate technical report, not this paper (Section 3, p. 455).
 
-The implementation reports: “The complexity of the algorithm is O(n∗m), where n and m are the number of control-flow graph nodes and edges.” (Section 5, p. 459) The benchmark claim is also bounded to the artifact: “The civl verifier is fast; the entire benchmark set verifies in 20 s on a standard 4-core Windows PC (2.8GHz, 8GB) with no benchmark requiring more than a few seconds.” (Section 6, p. 460)
+The adapted simulation algorithm (from Henzinger et al.) is described thus: “The complexity of the algorithm is O(n∗m), where n and m are the number of control-flow graph nodes and edges.” (Section 5, p. 459) The benchmark claim is also bounded to the artifact: “The civl verifier is fast; the entire benchmark set verifies in 20 s on a standard 4-core Windows PC (2.8GHz, 8GB) with no benchmark requiring more than a few seconds.” (Section 6, p. 460)
 
 Inference: civl is a strong precedent for VL's concurrent refinement layer. It threatens a product that asks agents to verify concrete concurrent code without an explicit abstract state machine, interference invariants, or ownership model. It does not replace Verus: civl's language is idealized Boogie, and its results do not establish Rust ownership, unsafe-code behavior, weak-memory correctness, or external-library contracts. A useful VL architecture would preserve civl's layered contracts and linear ghost permissions while using Verus `requires`, `ensures`, `invariant`, `decreases`, and `proof fn` lemmas for the concrete Rust refinement.
 
@@ -124,4 +124,4 @@ Inference: civl is a strong precedent for VL's concurrent refinement layer. It t
 - interference location invariants — attach predicates to yields and propagate procedure contracts across atomic specifications
 - linear permission typing — use non-duplicable thread IDs and permission tokens to establish disjointness for interference checks
 - modular ownership and hiding — assign globals to modules and hide representation variables so quadratic checks are local
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The civl type checker guarantees that the values contained in available linear variables, across all threads at their respective control locations, are distinct from each other."): I read the whole paper text (pp. 449-465) and the whole study; checked every quotation word for word, the numbers (32 benchmarks, 17 to 539 LOC, 20 s, 2100 lines, 60 s, 54 s, six layers, O(n*m)), and the section and page references. Changed: the link (now the DOI printed on the paper's first page); the first-claim quotation (the paper says "This paper presents the first ...", not "is the first"); the atomic-action description in technique 1; page references for the linear-type disjointness invariant (p. 457), the incompleteness footnote (p. 454) and the GC linearity passage (p. 461); 8GB instead of 8 GiB; removed the unsupported claim that mover annotations and location invariants are trusted; marked unsupported sentences as Inference. Did not check: the cited technical report MSR-TR-2015-8, the external benchmarks, the Verus-form suggestions beyond marking them as inference, or the priority claim against other work.

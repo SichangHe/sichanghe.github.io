@@ -4,7 +4,7 @@ Tag: `bouajjani2015linearizability`, [paper](http://arxiv.org/abs/1502.06882v2)
 
 ## purpose and result
 
-Bouajjani, Emmi, Enea, and Hamza reduce automatic linearizability checking for fixed atomic-object specifications to control-state reachability. The abstract states: “In this work we demonstrate that verifying linearizability for certain fixed ADTs is reducible to control-state reachability, despite being harder for arbitrary ADTs.” (Abstract, p. 1.) The paper instantiates the method for queues, stacks, registers, and mutexes.
+Bouajjani, Emmi, Enea, and Hamza reduce automatic linearizability checking for fixed atomic-object specifications to control-state reachability. The introduction states: “In this work we demonstrate that verifying linearizability for certain fixed ADTs is reducible to control-state reachability, despite being harder for arbitrary ADTs.” (Section 1, p. 1; the abstract says “certain fixed ADT specifications”.) The conclusion calls it a “linear-time reduction” (Section 7, p. 12). The paper instantiates the method for queues, stacks, registers, and mutexes.
 
 The reduction applies when implementations are data independent and closed under intersection with regular languages, and when the ADT's violations form a finite union of regular languages. The paper summarizes the final reduction: “linearizability is equivalent to the emptiness of the language intersection between the implementation and finite union of regular violations.” (Section 1, p. 2.)
 
@@ -12,13 +12,13 @@ The reduction applies when implementations are data independent and closed under
 
 Use this to describe a sequential specification in a form that can be incrementally checked. A data structure is an ordered list of rules. A rule decomposes an existing execution into subsequences, checks method and matching guards, and inserts a new operation pattern.
 
-Steps from Sections 2–3 (pp. 3–8):
+Steps from Sections 2–3 (pp. 3–7):
 
 1. Choose methods and data values, and treat return values as method arguments so every event has a uniform `m(x)` form.
-2. Define base rule `R0` for the empty execution and one or more inductive rules. For a queue, `REnq` appends an enqueue, `REnqDeq` inserts a matching enqueue/dequeue pair, and `RDeqEmpty` inserts an empty dequeue only when all preceding enqueues are matched.
+2. Define base rule `R0` for the empty execution and one or more inductive rules. For a queue, `REnq` appends an enqueue, `REnqDeq` has the form `u · v ∈ Queue` with `u ∈ Enq*`, `v ∈ {Enq, Deq}*` giving `Enq · u · Deq · v` (a new matching pair whose enqueue goes first and whose dequeue precedes `v`), and `RDeqEmpty` inserts `DeqEmpty` after a prefix `u` in which every `Enq` has a same-valued event (`matched(Enq, u)`). The paper's rule guards use only `ui ∈ M*` and `matched(m, ui)`.
 3. Require rules to be applied in nondecreasing rule order. A derivation starts at the empty word and repeatedly applies rules.
-4. Define `last(u)`, the unique rule that could have produced the final step of a sequential execution. Queue uses the presence of `DeqEmpty`, then `Deq`, then only `Enq` to select this rule.
-5. For a differentiated execution, compute projections to subsets of data values and test whether each projection matches a rule's matching set `M_R`.
+4. Define `last(u)`, the unique rule that could have produced the final step of a sequential execution. Queue uses the presence of `DeqEmpty`, then `Deq`, then only `Enq` to select this rule (Example 6, p. 7). The paper requires rules to be non-ambiguous in this sense, and `last` must also be consistent under permutations of projections.
+5. For a differentiated execution (one with at most one `m(x)` per input method `m` and value `x`), compute projections to subsets of data values and test whether each projection matches some rule's matching set `M_R`, the set of executions of the shape the rule produces for a witness value `x` (Section 4.1, p. 8).
 
 The queue derivation in Example 5 inserts `Enq(1),Deq(1)`, then `Enq(2),Deq(2)`, then `Enq(3),Deq(3)`, and finally `DeqEmpty`; this is the paper's concrete construction (Section 3, pp. 5–6). Lemma 3 states that a differentiated sequential execution is in the ADT exactly when all its projections belong to some rule matching set.
 
@@ -26,30 +26,30 @@ Inference: In Verus, encode the ADT state as a ghost sequence or state machine a
 
 ## technique 2: step-by-step linearizability and finite violation classes
 
-Use this to turn an existential linearization search into a finite set of local checks. A specification is step-by-step linearizable when, for a witness data value `x`, a linearization of the projection with `x` removed can be extended to a linearization including `x`.
+Use this to turn an existential linearization search into a finite set of local checks. A specification is step-by-step linearizable (Definition 7, p. 8) when, for a differentiated execution `e` linearizable with respect to `M_Ri` with witness `x`, `e ∖ x ⊑ [R1,…,Ri]` implies `e ⊑ [R1,…,Ri]`: a linearization of the projection with `x` removed extends to one including `x`.
 
-Steps (Section 4.1, pp. 7–9):
+Steps (Section 4.1, pp. 8–9; Lemma 5 gives the underlying equivalence):
 
-1. Restrict to differentiated executions using data independence. This removes duplicate input-method/data pairs without losing a counterexample.
+1. Restrict to differentiated executions using data independence (Lemma 1, from Abdulla et al., Section 2, p. 5): a data-independent implementation is linearizable iff its differentiated executions are.
 2. For each history `e`, consider every projection `e′` onto a subset of values.
 3. Determine `last(e′)`, the rule corresponding to that projection.
-4. Check whether `e′` linearizes to the matching set `M_last(e′)`. Lemma 6 proves `e` is linearizable iff every projection passes this check.
+4. Check whether `e′` linearizes to the matching set `M_last(e′)`. Lemma 6 states, for step-by-step linearizable `S` and differentiated `e`, that `e` is linearizable iff every projection passes this check.
 5. Negate the condition to classify every violation as a projection that fails its one corresponding matching set. There are finitely many classes because the rule list is finite.
 
-The paper's central statement is: “This means that whenever an execution is not linearizable w.r.t. S, there can be only finitely reasons, namely there must exist a projection which is not linearizable with respect to the matching set of its corresponding rule.” (Section 4.1, p. 9.)
+The paper's central statement is: “This means that whenever an execution is not linearizable w.r.t. S, there can be only finitely reasons, namely there must exist a projection which is not linearizable w.r.t. the matching set of its corresponding rule.” (Section 4.1, p. 9.) Lemma 4 (queue, stack, register, mutex are step-by-step linearizable) is proved in Appendix 8.3 (pp. 15–18) by building a graph from a linearization and showing it can be chosen acyclic.
 
 Inference: A Verus proof can use a ghost history and a finite enum of rule classes, then prove that each concurrent operation either extends a valid abstract history or enters one of the explicitly modeled bad classes. This is a proof architecture; Verus will not infer the needed projection argument automatically.
 
 ## technique 3: co-regular violation automata
 
-Use this when each violation class can be recognized by a finite automaton over call and return actions. A rule is co-regular if an automaton recognizes exactly enough executions whose projection is not in that rule's matching set, for every data-independent implementation.
+Use this when each violation class can be recognized by a finite automaton over call and return actions. A rule `R` is co-regular (Definition 8, p. 9) if one can build an automaton `A` such that, for every data-independent implementation `I`, `A ∩ I ≠ ∅` iff some differentiated `e ∈ I` has a projection `e′` with `last(e′) = R` and `e′` not linearizable to `M_R`.
 
 Steps (Section 4.2, pp. 9–10):
 
 1. Build one automaton `A_R` for each rule `R`. The automaton ignores operation identifiers and uses a finite representative data alphabet.
-2. For queues, recognize a `DeqEmpty` operation covered by enqueue/dequeue pairs. The automaton in Figure 2 uses three data values: `1` for the repeated pairs, `2` for the empty dequeue, and `3` for all irrelevant values.
-3. Prove both directions: an accepted implementation execution has a projection violating `M_R`; and every violating execution can be renamed to one accepted by the automaton.
-4. Take the union `A` of all rule automata. Theorem 1 gives `I ⊑ S` iff `I ∩ A = ∅`.
+2. For queues, recognize a `DeqEmpty` operation covered by enqueue/dequeue pairs (Corollary 1, Appendix 8.6, p. 22, and Fig. 1). The automaton in Figure 2 (p. 10) uses three data values: `1` for the repeated pairs, `2` for the empty dequeue, and `3` for all irrelevant values; all `call Enq(1)` actions are assumed initial by the closure properties.
+3. Prove both directions: an accepted implementation execution has a projection violating `M_R`; and every violating execution can be renamed to one accepted by the automaton. The main text sketches this only for `RDeqEmpty` (Lemma 7, p. 9); the complete proof is deferred to the extended version, and the appendix gives `REnqDeq` (Lemma 16, Fig. 3, with a small-model result in Lemma 12) and stack rules (Lemmas 20–24, Fig. 4, mostly briefly). For register and mutex it only says the `REnqDeq` argument can be redone.
+4. Take the union `A` of all rule automata. Theorem 1 (p. 10) gives, for step-by-step linearizable and co-regular `S` and data-independent `I`, `I ⊑ S` iff `I ∩ A = ∅`.
 
 Inference: In Verus, the automata can be represented as a ghost finite state machine whose transitions consume operation events. A safety invariant proves the implementation never reaches an automaton accepting state. The regular-language construction remains an external synthesis step unless VL implements a generator.
 
@@ -60,17 +60,17 @@ Use this for finite-shared-memory implementations with a finite-state thread abs
 Steps (Section 5, pp. 10–11):
 
 1. Use data independence to restrict automata and implementation traces to representative data values `{1,2,3}`.
-2. Represent each thread's finite control state and local valuation as a Petri-net place; tokens represent arbitrarily many threads.
-3. Add places for each shared-variable valuation and synchronize the implementation net with the violation automaton.
-4. Ask whether the synchronized net can cover an accepting state. An empty intersection means linearizability.
+2. Represent the three-valued implementation `I3` as a Petri net: places count the threads in each control location (which includes a local-variable valuation), and each token represents another thread, so the thread count can be unbounded.
+3. Give each shared variable one place per value to store its current valuation.
+4. Emptiness of the intersection with a regular automaton reduces to Petri-net coverability, which is EXPSPACE-complete; bounding the number of threads lowers it to PSPACE. The hardness part of Theorem 2 comes from hardness of state reachability in finite-state concurrent programs. The paper does not spell out the product construction between net and automaton.
 
-The reported complexity is PSPACE-complete for a fixed number of threads and EXPSPACE-complete for an unbounded number (Theorem 2, p. 11). These are complexity classes for the paper's class `C`, not measurements of a particular implementation.
+The reported complexity is PSPACE-complete for a fixed number of threads and EXPSPACE-complete otherwise (Theorem 2, p. 11). These are complexity classes for the paper's class `C`, not measurements of a particular implementation.
 
 Inference: Verus can prove the finite-thread case directly with a state-machine invariant, but an unbounded thread count requires a parameterized invariant or an external Petri-net argument. Rust ownership and atomics do not automatically satisfy the paper's data-independence assumptions; they need explicit abstraction contracts.
 
 ## evidence, assumptions, and VL impact
 
-The paper proves step-by-step linearizability for queue, stack, register, and mutex (Lemma 4), co-regularity for all four (Lemma 7), and the generic reduction (Theorem 1). It gives no runtime benchmark; its evidence is theorems and automaton constructions. The method assumes completed executions or an independent progress condition, well-formed call/return histories, data independence, and non-ambiguous inductive rules. The paper notes that priority queues are not data independent and are outside the current method (Section 7, p. 12).
+The paper states step-by-step linearizability for queue, stack, register, and mutex (Lemma 4), co-regularity for all four (Lemma 7), and the generic reduction (Theorem 1); proofs are in the appendix (pp. 14–24) and, for Lemma 7, partly in an extended version. It gives no runtime benchmark or tool; its evidence is theorems and automaton constructions. The method assumes completed executions (sound when methods can always make progress in isolation), well-formed call/return histories, data independence, and non-ambiguous inductive rules. The paper notes that the methodology “currently does not capture priority queues, which are not data independent” (Section 7, p. 12).
 
 Inference: VL should not redo the generic reduction or the four ADT rule proofs. The reusable engineering target is a Verus ghost-history library plus generators for queue/stack violation monitors, followed by proofs that the Rust implementation's call/return trace refines the monitor model. Threat to agent-written verified Rust is high for concurrent objects: a local method contract can pass while a global history is not linearizable, and the monitor itself becomes a trusted specification artifact unless its rules are proved against the intended ADT.
 
@@ -81,4 +81,4 @@ Inference: VL should not redo the generic reduction or the four ADT rule proofs.
 - co-regular violation automata: recognize renamed call/return patterns for each non-linearizability class and union them
 - Petri-net reachability reduction: encode unbounded finite-state threads as tokens and check emptiness against the violation automata
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Methods communicate through a finite number of shared variables that also store Boolean values, or data values from D."): I read the whole paper text including the appendix and checked every quotation, section and page reference, rule definition, theorem and lemma statement, and the Petri-net and complexity claims; I changed the first quotation (it is from the introduction, p. 1, not the abstract), restored the last word-for-word quotation (“w.r.t.”), corrected page ranges, tightened the definitions of step-by-step linearizability and co-regularity, and replaced the Petri-net steps 3-4 that the paper does not state; I did not check the extended version, the appendix proofs line by line, or the Inference paragraphs beyond marking them.
