@@ -1,0 +1,82 @@
+# Impact of Code Language Models on Automated Program Repair
+(authored by agents unless marked 🧑)
+Tag: `jiang2023impact`, [paper](https://arxiv.org/abs/2302.05020)
+
+## scope and evaluation principle
+This ICSE paper evaluates ten code language models (CLMs) and four deep-learning automated program-repair (APR) systems on Defects4J v1.2, Defects4J v2.0, QuixBugs, and a new HumanEval-Java benchmark. It uses Java bugs, developer tests, and manual inspection of plausible patches. The central evaluation rule is execution, not text similarity: “We run developer-written test cases to validate the correctness of generated patches to evaluate and compare the ten CLMs.” (Section I-A, p.2)
+
+Inference: VL should use the same separation between generated proof code and checked behavior. A Verus acceptance result is stronger than a textual similarity score, but a specification can still be wrong, so tests and specification review remain necessary.
+
+## technique 1: create an uncontaminated benchmark
+
+What it is. Public code corpora can contain benchmark bugs or fixes. The authors manually convert HumanEval functions to Java and inject bugs, creating 164 single-hunk bugs that the evaluated CLMs had not seen during pretraining (Section III-B, p.4). They write: “HumanEval-Java contains 164 (single-hunk) Java bugs, varying from simple bugs like incorrect operator usage to complex logical bugs that require modification of several lines of code to fix.” (Section III-B, p.4)
+
+How to apply it. The paper converts the Python programs and test cases of HumanEval into Java programs and JUnit tests, then injects bugs into the correct Java programs. It reasons that, because the programs were converted and the bugs injected manually, none of the CLMs would have seen the result (Section III-B, p.4). Every tool then runs on the same bugs and tests and is scored by correct fixes within ten candidates (Section III-G, p.6; Section IV, p.6). The paper does not state these as numbered steps; the sequence here is a restatement.
+
+Verus form. Inference: build a held-out corpus of Rust modules and specifications written after the model’s training cutoff, then inject specification, invariant, and implementation faults. Keep the intended specification and tests private to the agent. Run Verus and behavioral tests on every candidate. The benchmark must test whether a candidate proves the intended property, not merely whether it compiles.
+
+Evidence and limits. HumanEval-Java has 164 bugs, but the paper says: “HumanEval-Java contains mostly small programs. An APR benchmark that consists of larger buggy programs (and also not seen by CLMs) is still needed.” (Section VII-C, p.10) The paper checked CodeSearchNet and BigQuery and found that four Defects4J repositories are in CodeSearchNet and the whole Defects4J repository is in BigQuery (Section III-B, p.4). It also argues the leakage threat is “less of a concern” for APR because CLMs do not see pairs of buggy and fixed code (Section I-A, p.2; Section VIII, p.11). Inference: the new benchmark mitigates leakage on the three public benchmarks but does not remove all external validity limits.
+
+## technique 2: generate a bounded set of patches and validate by tests
+
+What it is. Every tool generates ten candidates per bug. The first candidate passing all developer tests is a plausible patch, which authors then manually classify as correct or incorrect. The method is explicit: “For all experiments, we let each tool (CLMs, fine-tuned CLMs, or DL-based APR techniques) generate ten candidate patches for each bug and run the developer-written test cases on the patched program.” (Section III-G, p.6)
+
+Steps. (1) provide the bug context in the model-specific prompt. (2) generate ten patch candidates. (3) form the patched program from each candidate. (4) run all developer-written tests. (5) stop at the first all-tests-passing patch for plausible-patch accounting. (6) manually check whether each plausible patch is identical or semantically equivalent to the developer patch (Section III-G, p.6).
+
+Verus form. Inference: generate at most ten proof/code candidates, run `verus` and relevant Rust tests for each, and record the first candidate accepted by both. Manually inspect or automatically compare the specification and behavior to detect vacuous proofs. Keep all ten outcomes for diagnosis; stopping early should not hide later candidates.
+
+Evidence. Without fine-tuning, InCoder-6B correctly fixes 105 of 442 bugs, while KNOD, the best compared DL APR method, fixes 61 of 442 (Table II, p.7). InCoder-6B therefore fixes 72% more bugs than KNOD, calculated as (105−61)/61 = 72.1%. The paper reports CodeGen’s average compilation rate as 73% with median 97%, while DL APR techniques produce 44%–62% compilable patches on average (Section IV-A and Figure 5, p.7). Inference: compilation is not correctness; the table’s correct-fix counts are the relevant measure. Table II counts “the number of correct patches within the top ten patches generated by each technique” and reports CLMs without buggy lines (Section IV, p.6).
+
+## technique 3: compare prompts with and without an indicated buggy line
+
+What it is. Each CLM receives two prompt variants: one masks or omits the buggy line while retaining its location, and one supplies the buggy line as a comment. The paper uses model-specific prompt shapes in Figure 3 and states: “To set up a fair comparison, we apply each code language model with two different prompts, i.e., the input to a CLM.” (Section III-D, p.5)
+
+Steps. (1) preserve surrounding function context. (2) per Section III-D: PLBART gets the whole buggy function with the buggy lines replaced by <mask> and outputs the whole patched function; CodeT5 gets the same input with <extra_id_0> and outputs the patched lines; CodeGen gets only the function before the buggy lines and completes the function; InCoder gets the PLBART-style input and outputs the patched line plus the code after it. (3) repeat with the buggy lines supplied as comment lines before the bug location. (4) assemble the model output into a complete function or patched program. (5) run the developer-written tests.
+
+The result is counterintuitive: “Although CLMs fix fewer bugs when buggy lines are given, they fix some unique bugs with the help of buggy lines.” (Section IV-B, p.8) Across all 442 bugs, giving buggy lines reduces correct fixes by 6%–78% for every CLM (Table III, p.8). Examples show models following the erroneous line, deleting it, or repeating it. Fine-tuning later improves use of the line but can create over-reliance (Finding 4, Section V-B, p.9).
+
+Verus form. Inference: compare proof agents that see only the obligation context with agents that receive a highlighted failing line, error span, or counterexample. Record whether the extra signal helps or causes copying of the faulty assertion. A failing Verus assertion should be evidence, not an instruction to preserve the assertion.
+
+## technique 4: fine-tune on task-specific repair pairs
+
+What it is. The paper fine-tunes all ten CLMs on 143,666 single-hunk Java repair instances collected from commits of open-source GitHub Java projects (APR data shared in previous work [10], the Recoder paper). The data is randomly split into 129,300 training and 14,366 validation examples. All models use batch size 1, Adam at learning rate 1e−5, one epoch, and a fixed random seed; the paper says batch size one is “due to our hardware constraints” and one epoch is used “as they converge fast on the validation dataset” (Section III-E, p.6).
+
+Steps. (1) represent each instance as buggy code plus fixed code. (2) use one identical prompt for all models, with the buggy code as part of the prompt and the patched lines as the output (Figure 4). (3) train for one epoch with the common optimizer settings. (4) use the validation split to tune hyper-parameters such as the number of training epochs. (5) generate and test ten patches per benchmark bug. (6) compare with the unfine-tuned baseline and APR systems.
+
+Verus form. Inference: fine-tune or adapt a proof-repair model on pairs of failing Rust/Verus states and corrected proofs, with exact compiler diagnostics and specifications. Hold out repositories and task families. Do not train on private benchmark obligations. Keep the Verus checker outside the training objective’s trust boundary.
+
+Evidence. The abstract says fine-tuning “brings 31%–1,267% improvement to CLMs” (abstract, p.1). In Table IV (p.9), total correct fixes rise from 105 to 161 for InCoder-6B, a 56/105 = 53.3% increase. Section V-A (p.8) says CodeT5 models gain the most (889%–1,267%) and PLBART models the least (31%). Inference from the tables: CodeT5-small (9 to 89) gives 80/9 = 889% and PLBART-base (72 to 94) gives 22/72 = 31%, matching the text, but CodeT5-large (11 in Table II to 125 in Table IV) gives 114/11 = 1,036%, not 1,267%; 114/9 = 1,267%, so the paper’s upper figure seems to use a different baseline than Table II’s 11 for CodeT5-large. I did not resolve this. The best fine-tuned model, InCoder-6B, fixes 100 (164%) more bugs than the best DL-based APR technique, KNOD: 161 versus 61, 100/61 = 164% (Section V-A, p.8; Table IV, p.9).
+
+Fine-tuning can hurt. On HumanEval-Java, PLBART-large fixes 52 without fine-tuning but 48 after fine-tuning (Table II, p.7; Table IV, p.9). The authors report that fine-tuned models can miss bugs when they over-rely on the buggy lines (Finding 4, Section V-B, pp.8–9). In Section V-C (p.9) they add that the fine-tuned PLBART-large “always fixes fewer bugs than the pre-trained PLBART-large” without buggy lines.
+
+## technique 5: tune the amount of repair data
+
+What it is. The experiment varies fine-tuning data from 100, 1,000, 10,000, 50,000, to the full 129,300-instance dataset and counts correct fixes on HumanEval-Java (Figure 9, p.9).
+
+How to apply it. (1) sample increasing training-set sizes from the same corpus. (2) keep optimizer, epoch, prompt, and evaluation fixed. (3) fine-tune each model at each size. (4) evaluate on the same held-out bugs. (5) report the best size and whether additional data regresses.
+
+Evidence. CodeT5-large and CodeGen-6B peak at 10,000 instances; InCoder-6B peaks at 50,000 and reaches 76 correct fixes, while more data lowers performance (Section V-C, p.9). The paper’s Finding 5 says: “CodeT5, CodeGen, and InCoder models reach the best fixing capabilities after being fine-tuned with 10,000 and 50,000 APR instances, yet too much fine-tuning data makes them fix fewer bugs.” (Section V-C, p.9) The results are benchmark-specific and do not establish that more data is generally harmful.
+
+Verus form. Inference: sweep proof-repair training sizes and measure verified obligations, solver time, and specification regressions. More examples can increase memorization of local proof idioms while reducing generalization, so held-out projects and mutation tests are required.
+
+## technique 6: report capability together with size, time, and memory
+
+What it is. The paper compares correct fixes against parameter count, GPU seconds per correct fix, and GPU memory. It finds CodeT5 and InCoder most size-efficient; PLBART takes 0.70–0.89 seconds per correct fix, while CodeGen takes 3.64–13.88 seconds; CodeGen-6B and InCoder-6B require 19.84–24.81 GB, whereas other models fit an 8 or 12 GB card (Section VI, pp.9–10).
+
+Verus form. Inference: report verified-task count per model, wall-clock time per accepted proof, peak memory, solver time, and number of repair iterations. A model that proves more obligations but exhausts deployment memory may be unusable. Include failed and timed-out attempts in denominators.
+
+## what is trusted and what VL should learn
+
+Inference: the study trusts developer tests, manual patch inspection, the benchmark construction, model implementation, and the experimental scripts. Its threats section (Section VIII, p.11) names data leakage, the exclusion of Codex (a black box that cannot be fine-tuned), and the subjectivity of manually checking patch correctness; separately it notes that HumanEval-Java is mostly small programs (Section VII-C, p.10) and that it fixed one random seed to minimize variance (Section III-E, p.6). BLEU or textual similarity is rejected because “many patches with a good BLEU score are incorrect patches.” (Section I-A, p.1) Section VIII adds that RewardRepair’s CodeBLEU on HumanEval-Java (36.76) is higher than fine-tuned CodeT5’s (33.47) although it fixes 19 fewer bugs.
+
+Inference: existing VL work should not redo a generic ten-model APR leaderboard. It should reuse the paper’s executable validation, held-out benchmark construction, prompt ablation, training-size sweep, and cost reporting for Verus proof repair. The threat to agent-written verified Rust is substantial but bounded: a model can generate a plausible or vacuous proof, or overfit known obligations, yet Verus rejects code that fails its formal checks. Product safety still depends on immutable specifications, independent tests, leak-resistant benchmarks, and review of what the specification actually says.
+
+## techniques for the catalog
+
+- leak-resistant benchmark: inject unseen faults into tested programs and keep intended fixes outside model training
+- candidate validation: generate a fixed candidate budget, run full tests or Verus, then manually inspect accepted patches
+- buggy-line ablation: compare repair prompts with and without highlighted faulty lines
+- APR fine-tuning: train a general code model on buggy/fixed pairs with fixed optimization settings
+- data-size sweep: vary task-specific training volume and measure the peak before overfitting
+- cost reporting: pair correct-fix counts with parameter, time, and memory efficiency
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We fine-tune the CLMs to directly output the patched lines, the same as the output of DL-based APR techniques."): I read the whole paper text and checked every quotation, number, table value, percentage, section and page reference (pages located in the PDF) and the per-model prompt and fine-tuning steps; I changed the link (the old DOI 10.1145/3318162 is reference [2], Goues et al., not this paper; now the arXiv page from the paper's stamp), about ten page references, the prompt description per CLM, the threats list (the study had named model stochasticity and benchmark size as stated threats), the over-reach in the HumanEval-Java and 1,267% claims, and added Inference labels; I did not check the cited related papers, did not verify Table I or the Figure 10 values beyond the quoted numbers, and did not re-derive the paper's own percentages beyond those shown.

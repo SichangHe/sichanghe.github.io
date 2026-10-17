@@ -1,0 +1,57 @@
+# A New Approach Towards Autoformalization
+(authored by agents unless marked 🧑)
+Tag: `patel2023autoformalization`, [paper](http://arxiv.org/abs/2310.07957v3)
+
+## problem and decomposition
+This paper targets research-level mathematics, where short statements depend on substantial context and libraries. Its central claim is a staged pipeline: “we propose an avenue towards tackling autoformalization for research-level mathematics, by breaking the task into easier and more approachable subtasks: unlinked formalization (formalization with unlinked definitions and theorems), entity linking (linking to the proper theorems and definitions), and finally adjusting types so it passes the type checker.” (abstract, page 1). The paper releases arXiv2Formal, 50 Lean 3 theorem pairs sampled from arXiv papers (abstract, page 1; section 4, page 4).
+
+The four stages are (1) unlinked theorem formalization, (2) unlinked definition formalization, (3) entity linking, and (4) type adjustment. The paper lists them as follows: “Translate natural language theorem statements into syntactically correct but not necessarily semantically valid Lean.”; “Translate definitions of functions, variables, etc. from a paper into a ‘library’ which can be referenced by theorems.”; “Link referenced names to the definitions in the library from step 2.”; and “Postprocess the generated translations with the assistance of the Lean type checker to ensure types are aligned.” (section 1, page 2).
+
+Inference: The decomposition maps naturally to Verus code generation: first emit placeholder contracts, then emit definitions and predicates, resolve identifiers to Rust/Verus APIs, and use compiler/verifier diagnostics to repair types. Verus does not accept Lean syntax or arbitrary unresolved names, so placeholders require an intermediate representation rather than source submitted directly to Verus.
+
+## technique: unlinked theorem and definition generation
+Unlinked formalization deliberately permits names that do not yet exist. The authors motivate this by separating translation from context resolution: “we propose separating the tasks of (1) translating theorems to a formal language with placeholder names and (2) linking the placeholders to the actual definitions.” (section 3, page 3). Section 1 says definitions “should be recursively constructed using a base library (e.g., Lean’s mathlib [16])” (page 2), and section 3 says definitions “need to be constructed iteratively” (page 3). Theorem statements may reference names that do not yet exist (section 1, page 2).
+
+Sequence implied by the paper's four subtasks (it gives no more detailed procedure): (1) take a theorem or definition from a paper; (2) formalize it with placeholder names; (3) collect the generated definitions into a “library” that theorems can reference; (4) later link names and adjust types (sections 1 and 3, pages 2–3). The Figure 1 caption describes a case that lacks “context for the set X, the definitions of flubs and glibs, and the function f”, where a plausible translation is still made and filled in later (figure 1, page 3).
+
+Inference: For Verus, use a typed intermediate record containing a candidate Rust signature, unresolved symbols, and a natural-language description. Do not put unresolved identifiers into production Rust. Generate `spec fn`/`fn` skeletons only after names are bound; use `requires` and `ensures` once the intended state and types are known.
+
+## technique: entity linking and coreference resolution
+After generation, identifiers in theorem text may not match library names. The paper gives the concrete mismatch that “a theorem may reference a vector space, but mathlib does not define vector spaces, and instead uses a module over a field.” (section 3, page 3). Entity linking maps the surface name to the actual definition; the authors note that this is a known NLP problem and plan to adapt existing methods (section 3, page 3). They also connect it to prior error analysis: a majority of miniF2F autoformalization errors came from inability to link natural-language and formal definitions (section 2, page 3).
+
+The paper says only that unlinked formalization gives “list of theorems and definitions, but the identifiers are not necessarily aligned” and that linking resolves this (section 3, page 3); it gives no step-by-step linking procedure, no implemented linker and no measured linking accuracy.
+
+Inference: A concrete procedure would be: (1) extract identifiers from the unlinked outputs; (2) search the generated library and base library; (3) resolve each identifier to a declaration; (4) rewrite references consistently; (5) pass the result to type adjustment.
+
+Inference: A Verus linker should match terms such as “map,” “queue,” or “lock” to the actual Rust type, trait, module, and specification function, using signatures and imported modules as constraints. The linker must preserve ownership and mutability distinctions that Lean does not express in the same way. This is an inference, not a result reported by the paper.
+
+## technique: type adjustment with checker feedback
+The final stage uses the formal type checker to repair mismatches. The paper's example is a vector space whose field argument is omitted in prose: “if a theorem references a vector space without specifying the field, but we linked it to mathlib’s module definition, which requires a specified field, we would need to add the field argument to correct the types.” (section 3, pages 3–4). The paper calls this step “a catch-all for any processing that requires the assistance of the Lean type system” and says what it entails “is dependent on the output of the previous three steps” (section 3, page 3).
+
+Section 1 describes the step as postprocessing “with the assistance of the Lean type checker”, possibly “adjusting type signatures to add arguments to definitions which, in text, don’t appear to need any, but are necessary in a formal setting” (page 2). The paper gives no further procedure and no implementation.
+
+Inference: A concrete loop would be: (1) run the type checker on the linked theorem; (2) inspect missing or incompatible arguments; (3) add parameters or change signatures; (4) rerun until types align.
+
+Inference: In Verus, run Rust parsing/type checking and Verus verification after linking. Repair generic parameters, trait bounds, reference types, and specification arguments first; only then attempt proof obligations. Verus diagnostics are evidence that the program is well typed and that stated contracts are provable, not evidence that the generated contract expresses the paper's mathematics.
+
+## technique: semi-automated arXiv2Formal data collection
+The benchmark contains 50 theorem statements in LaTeX and Lean 3 from a random subset of arXiv mathematics papers. Average natural-language statements have 140 tokens and formal versions 113 tokens (section 4, page 4). The process is semi-automated: “We formalize the theorems first automatically via prompting GPT-3.5 turbo [17] and manually correcting any mistakes in the automatic translation.” (section 4, page 4). As examples accumulate, they are added to prompts: “As more translations are completed, we use them to improve the quality of future translations by selecting them as examples for the prompt.” (section 4, page 4).
+
+Reading of that description (the paper lists no numbered steps): sample a theorem from an arXiv paper; prompt GPT-3.5 turbo; manually correct the output; reuse corrected pairs as prompt examples for later items. The paper says correction effort lessens “because the prompts become better (Table 1)” (section 4, page 4). Table 1 reports GPT-3.5 turbo (16k) on arXiv2Formal with varying numbers of in-context-learning (ICL) examples, as BLEU/TER/TrueSkill: GPT-3.5 alone 17.2/140.5/10.9; +ICL 1 31.9/93.4/25.4; +ICL 5 37.5/85.7/28.0; +ICL 10 41.7/83.9/33.1 (table 1, page 4). Higher BLEU and TrueSkill and lower TER are better. A ten-example human comparison found correlation R=.99 between metric improvement and human evaluation, but this is a small experiment (section 4, page 4).
+
+Inference: A Verus dataset can use the same human-in-the-loop accumulation, with verifier acceptance as an additional syntactic/contract check. BLEU and TER compare strings and cannot establish semantic equivalence; retain expert semantic review and test the generated Rust against intended behavior.
+
+## boundaries, trust, and product implications
+The paper explicitly leaves theorem proving separate: “theorem proving poses its own (separate) challenges compared to theorem formalization.” (section 1, page 2). Its data are Lean 3 and only 50 examples; the proposed entity linker is not implemented or evaluated. The GPT baseline often guesses types from insufficient context and “hallucinates regularly and mistypes in most cases.” (section 4.1, page 4). Multipart theorems may require splitting, which the paper identifies as another unresolved challenge (section 4.1, page 4).
+
+The paper does not claim that the dataset's Lean statements are checked by Lean: the appendix examples (pages 7–8) use undefined placeholder names such as `is_semi_brjuno` and end in `:= sorry`, and the human-written versions are the reference. Inference: human annotators are trusted for correction and semantic interpretation; with unlinked placeholders, the examples cannot be type-checked as they stand. Inference: For agent-written verified Rust, the threat is high at the specification boundary: staged generation can make code compile while linking the wrong state or repairing types with an unintended meaning. VL should require a property-level review and verifier evidence, and record unresolved symbols and assumptions for audit.
+
+## what VL should not redo
+This paper already proposes the four-stage decomposition, a research-level benchmark shape, and iterative few-shot data collection. Inference: VL should test these ideas against Rust/Verus and measure linking and type-repair error classes rather than claim the decomposition itself as novel.
+
+## techniques for the catalog
+- unlinked formalization: generate syntactically plausible theorem and definition statements with placeholder identifiers before context resolution
+- entity linking: map generated surface names to the declarations that implement their intended concepts
+- checker-guided type adjustment: use type errors to add parameters and repair signatures until the formal statement type checks
+- iterative human-corrected prompting: add corrected model translations as future in-context examples
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "One common mistake is that GPT often attempts to guess the type of referenced objects based on insufficient context."): read all 399 lines of the paper text (abstract, sections 1-5, Table 1, Figure 1 caption, appendix); checked every quotation, number, page and section reference, and the four-stage description against it; changed page references (the stage list is on page 2; the type-adjustment example spans pages 3-4), the Figure 1 description, the Table 1 labels, and the claim about Lean checking; relabelled the linking, type-adjustment and data-collection step lists as inferences because the paper gives no such procedures; the arXiv link is the one on the paper's first page (arXiv:2310.07957v3); I did not read the cited papers or the arXiv2Formal repository, and did not check the PDF figures beyond the extracted text.
