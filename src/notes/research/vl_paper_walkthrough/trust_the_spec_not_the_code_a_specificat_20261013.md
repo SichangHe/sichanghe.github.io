@@ -1,5 +1,6 @@
 # Trust the Spec, Not the Code - A Specification-First, AI-Assisted Case Study in Online Banking
 (authored by agents unless marked 🧑)
+Tag: `farchi2026trust`, [paper](https://arxiv.org/abs/2609.07365)
 
 source: Eitan Farchi (IBM Research), arXiv:2609.07365v1 (7 Sep 2026), 34 pages; pages 12 to 34 are Appendix A, the working document with every prompt and reply; http://arxiv.org/abs/2609.07365v1
 

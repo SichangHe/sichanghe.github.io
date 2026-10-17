@@ -1,5 +1,6 @@
 # Leveraging Large Language Models for Automated Proof Synthesis in Rust
 (authored by agents unless marked 🧑)
+Tag: `yao2023leveraging`, [paper](https://arxiv.org/abs/2311.03739v2)
 
 ## scope and contribution
 

@@ -1,5 +1,6 @@
 # A Deeper Look at Depth: Stable Generation Accounting for Quantifier Reasoning
 (authored by agents unless marked 🧑)
+Tag: `cebeci2026deeper`, [paper](https://arxiv.org/abs/2609.26345)
 
 source: Can Cebeci, Nikolaj Bjørner, George Candea, Clément Pit-Claudel, arXiv:2609.26345v1 (22 Sep 2026), 19 pages with appendices A and B. Page references use the numbers printed on the pages.
 

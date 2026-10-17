@@ -1,5 +1,6 @@
 # Automated Lemma Discovery in Agentic Program Verification
 (authored by agents unless marked 🧑)
+Tag: `zhao2026automated`, [paper](https://doi.org/10.1145/3832783.3834356)
 
 ## paper focus
 

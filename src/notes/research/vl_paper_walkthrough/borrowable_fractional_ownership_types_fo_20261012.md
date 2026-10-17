@@ -1,5 +1,6 @@
 # Borrowable Fractional Ownership Types for Verification
 (authored by agents unless marked 🧑)
+Tag: `nakayama2023borrowable`, [paper](https://doi.org/10.1007/978-3-031-50521-8_11)
 
 ## scope and prior notes
 

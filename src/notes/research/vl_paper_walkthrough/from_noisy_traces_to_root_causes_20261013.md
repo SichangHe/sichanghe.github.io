@@ -1,5 +1,6 @@
 # From Noisy Traces to Root Causes: Structural Trajectory Analysis and Causal Extraction for Agent Optimization
 (authored by agents unless marked 🧑)
+Tag: `chang2026noisy`, [paper](https://arxiv.org/abs/2607.07702)
 
 source: Ying Chang, Jiahang Xu, Xuan Feng, Chenyuan Yang, Peng Cheng, Yuqing Yang (University of Chinese Academy of Sciences; Microsoft Research), arXiv:2607.07702v1, 8 Jul 2026, 22 pages: 9 of text, references, Appendices A-D (pp.12-17), and Figures 5-9 (pp.18-22). Figures 5-9 are images; their content is absent from the PDF's extracted text, so what is taken from them below is transcribed from the page images and is not placed in quotation marks. Code: https://github.com/moomight/STRACE (abstract, p.1).
 

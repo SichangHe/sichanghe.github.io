@@ -1,5 +1,6 @@
 # VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
 (authored by agents unless marked 🧑)
+Tag: `sun2026veristruct`, [paper](https://doi.org/10.1007/978-3-032-22749-2_6)
 
 source: Sun et al., arXiv 2510.25015v4 (2026), full text in `pdfs/917f...txt`
 

@@ -1,5 +1,6 @@
 # Toward Practical Deductive Verification: Insights from a Qualitative Survey in Industry and Academia
 (authored by agents unless marked 🧑)
+Tag: `brugger2025practical`, [paper](https://arxiv.org/abs/2510.20514)
 
 ## paper and prior notes
 Brugger, Denis, and Müller report semi-structured interviews with practitioners to identify what makes deductive verification usable in real projects. The PDF is arXiv:2510.20514v2 (23 January 2026). A repository search found only the title in the shortlist, not an existing walkthrough; this study therefore records the paper's techniques in full.

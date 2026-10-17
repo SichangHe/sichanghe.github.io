@@ -1,5 +1,6 @@
 # PropertyGPT: LLM-driven Formal Verification of Smart Contracts through Retrieval-Augmented Property Generation
 (authored by agents unless marked 🧑)
+Tag: `liu2025propertygpt`, [paper](https://doi.org/10.14722/ndss.2025.241357)
 
 ## scope and prior notes
 

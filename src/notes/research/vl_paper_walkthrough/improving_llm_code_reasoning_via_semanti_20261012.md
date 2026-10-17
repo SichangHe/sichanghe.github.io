@@ -1,5 +1,6 @@
 # Improving LLM Code Reasoning via Semantic Equivalence Self-Play with Formal Verification
 (authored by agents unless marked 🧑)
+Tag: `nok2026improving`, [paper](https://doi.org/10.18653/v1/2026.findings-acl.1615)
 
 ## paper and scope
 

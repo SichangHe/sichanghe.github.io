@@ -1,5 +1,6 @@
 # Beyond Postconditions: Can Large Language Models infer Formal Contracts for Automatic Software Verification?
 (authored by agents unless marked 🧑)
+Tag: `richter2025postconditions`, [paper](https://arxiv.org/abs/2510.12702v1)
 
 ## paper and purpose
 

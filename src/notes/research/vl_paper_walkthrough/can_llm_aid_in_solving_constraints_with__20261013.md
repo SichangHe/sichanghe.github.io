@@ -1,5 +1,6 @@
 # Can LLM Aid in Solving Constraints with Inductive Definitions?
 (authored by agents unless marked 🧑)
+Tag: `feng2026llm`, [paper](https://arxiv.org/abs/2603.03668)
 
 source: Weizhi Feng, Shidong Shen, Jiaxiang Liu, Taolue Chen, Fu Song, Zhilin Wu, arXiv:2603.03668v2 (12 Mar 2026), 26 pages with appendices A–E. The tool is called LLM4Ind. Page numbers are the PDF's running page numbers.
 

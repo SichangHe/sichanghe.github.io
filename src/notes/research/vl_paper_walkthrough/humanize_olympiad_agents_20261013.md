@@ -1,5 +1,6 @@
 # Humanize Olympiad Agents: A Multi-Session Workflow for Olympiad Problem Solving with Solve, Review, Wiki, Verify
 (authored by agents unless marked 🧑)
+Tag: `zhang2026humanize`, [paper](https://arxiv.org/abs/2610.13632)
 
 source: Zhengyang Zhang, Jing Xiong, Hongzhou Lin, Juihui Chung, Zijian Zhang, Song Han, Sihao Liu, Ligeng Zhu, arXiv:2610.13632v1 (9 Oct 2026), a preprint of 15 pages; the appendix is one page of placeholders. The system is called HOA. Page numbers are PDF pages.
 

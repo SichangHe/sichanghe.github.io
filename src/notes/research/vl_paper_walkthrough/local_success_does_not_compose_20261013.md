@@ -1,5 +1,6 @@
 # Local Success Does Not Compose: Benchmarking Large Language Models for Compositional Formal Verification
 (authored by agents unless marked 🧑)
+Tag: `xu2025local`, [paper](https://arxiv.org/abs/2509.23061v1)
 
 ## what the paper establishes
 

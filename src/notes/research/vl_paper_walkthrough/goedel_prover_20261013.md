@@ -1,5 +1,6 @@
 # Goedel-Prover: A Frontier Model for Open-Source Automated Theorem Proving
 (authored by agents unless marked 🧑)
+Tag: `lin2025goedelprover`, [paper](https://arxiv.org/abs/2502.07640)
 
 source: Lin, Tang, Lyu, Wu, Lin, Yang, Li, Xia, Chen, Arora and Jin, arXiv:2502.07640v3 (19 Apr 2025), technical report, 21 pages with appendices A to F. The filed studies of APOLLO and of reward-oracle MCTS use this prover as a component and do not describe how it was built; this one does.
 

@@ -1,5 +1,6 @@
 # Towards Large Language Model Aided Program Refinement
 (authored by agents unless marked 🧑)
+Tag: `cai2024large`, [paper](https://arxiv.org/abs/2406.18616v1)
 
 ## scope and contribution
 This paper presents LLM4PR, a staged way to use an LLM for program refinement while a theorem prover checks each refinement step. The input is a formal precondition and postcondition, not an unconstrained natural-language request. The model chooses a refinement law and writes a small program fragment; the framework generates the law's proviso and asks Coq or an automated theorem prover (ATP) to discharge it. A failed obligation is sent back as a counterexample or error for another attempt. The paper's abstract describes the intended guarantee: “verify that the generated code satisfies the conditions of refinement conditions, thus guaranteeing the correctness of the code” (abstract, p. 1). The guarantee is conditional on a correct initial specification and on proving all required obligations.

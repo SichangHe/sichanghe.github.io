@@ -1,5 +1,6 @@
 # Combining Mechanical and Agentic Specification Inference for Move
 (authored by agents unless marked 🧑)
+Tag: `grieskamp2026combining`, [paper](https://arxiv.org/abs/2605.10005)
 
 ## what the paper contributes
 

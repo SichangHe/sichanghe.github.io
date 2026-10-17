@@ -1,5 +1,6 @@
 # Compositional Reasoning for Side-effectful Iterators and Iterator Adapters
 (authored by agents unless marked 🧑)
+Tag: `bila2022compositional`, [paper](https://arxiv.org/abs/2210.09857v1)
 
 ## scope and result
 

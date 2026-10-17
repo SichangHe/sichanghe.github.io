@@ -1,5 +1,6 @@
 # NanoProof: Open and Efficient Automated Theorem Proving in Lean 4
 (authored by agents unless marked 🧑)
+Tag: `kripner2026nanoproof`, [paper](https://arxiv.org/abs/2610.11605)
 
 source: Matěj Kripner and Milan Straka (Charles University), arXiv:2610.11605v1 (8 Oct 2026), 18 pages with appendices A to H; code https://github.com/kripner/nanoproof, extraction tool https://github.com/kripner/leantree
 

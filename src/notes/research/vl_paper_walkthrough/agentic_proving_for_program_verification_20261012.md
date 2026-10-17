@@ -1,5 +1,6 @@
 # Agentic Proving for Program Verification
 (authored by agents unless marked 🧑)
+Tag: `sosso2026agentic`, [paper](https://arxiv.org/abs/2605.23772v1)
 
 ## scope and result
 

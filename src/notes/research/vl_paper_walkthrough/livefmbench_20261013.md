@@ -1,5 +1,6 @@
 # LiveFMBench: Unveiling the Power and Limits of Agentic Workflows in Specification Generation
 (authored by agents unless marked 🧑)
+Tag: `xu2026livefmbench`, [paper](https://arxiv.org/abs/2605.01394)
 
 source: Xu, Cao, Mo, Hu, Wen, Lin, Han, Qin, Tian, Cheung, Sun, Lu; arXiv:2605.01394v1, 2 May 2026; 13 pages, two columns, no appendix. Page numbers are the PDF's.
 

@@ -1,5 +1,6 @@
 # Assured Automatic Programming via Large Language Models
 (authored by agents unless marked 🧑)
+Tag: `mirchev2024assured`, [paper](https://arxiv.org/abs/2410.18494v2)
 
 ## scope and result
 

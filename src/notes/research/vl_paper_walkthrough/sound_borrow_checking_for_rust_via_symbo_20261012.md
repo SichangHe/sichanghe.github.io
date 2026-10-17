@@ -1,5 +1,6 @@
 # Sound Borrow-Checking for Rust via Symbolic Semantics
 (authored by agents unless marked 🧑)
+Tag: `ho2024sound`, [paper](https://doi.org/10.1145/3674640)
 
 ## scope and relation to earlier notes
 

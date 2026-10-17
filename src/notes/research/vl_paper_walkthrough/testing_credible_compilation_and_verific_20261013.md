@@ -1,5 +1,6 @@
 # Testing, Credible Compilation, and Verification in the Axon Verified Compiler in Lean and Claude Code
 (authored by agents unless marked 🧑)
+Tag: `rinard2026testing`, [paper](https://arxiv.org/abs/2605.01660)
 
 source: Martin C. Rinard, arXiv:2605.01660v3 (31 Jul 2026), PAgE '26 workshop, 13 pages, no appendix; code at https://github.com/rinard/Axon
 

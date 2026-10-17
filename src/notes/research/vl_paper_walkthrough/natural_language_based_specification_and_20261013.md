@@ -1,5 +1,6 @@
 # Natural Language based Specification and Verification
 (authored by agents unless marked 🧑)
+Tag: `li2026natural`, [paper](https://arxiv.org/abs/2605.11315)
 
 source: Zhaorui Li, Chengyu Song (UC Riverside), arXiv:2605.11315v1, 11 May 2026; 27 pages, of which pages 11 to 27 are appendices (A broader impact, B licenses, prompt templates C.1 to C.8, dataset lists D, model settings E)
 

@@ -1,5 +1,6 @@
 # VerifyThisBench: Generating Code, Specifications, and Proofs All at Once
 (authored by agents unless marked 🧑)
+Tag: `deng2025verifythisbench`, [paper](https://arxiv.org/abs/2505.19271v2)
 
 ## what this paper contributes
 

@@ -1,5 +1,6 @@
 # A Hybrid Approach to Semi-automated Rust Verification
 (authored by agents unless marked 🧑)
+Tag: `ayoun2025hybrid`, [paper](https://doi.org/10.1145/3729289)
 
 ## scope and result
 Ayoun, Denis, Maksimović, and Gardner propose splitting end-to-end Rust proofs: Creusot handles safe code while Gillian-Rust handles unsafe code with separation logic. The paper claims this is viable on standard-library LinkedList and Vec fragments and gives a shared specification boundary. Its central claim is explicit: “We propose a hybrid approach to end-to-end Rust verification where the proof effort is split into powerful automated verification of safe Rust and targeted semi-automated verification of unsafe Rust.” (abstract, p. 1). This is a proof-of-concept, not a complete Rust verifier.

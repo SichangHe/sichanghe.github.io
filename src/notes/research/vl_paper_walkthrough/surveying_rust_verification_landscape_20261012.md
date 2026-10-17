@@ -1,4 +1,5 @@
 # Surveying the Rust Verification Landscape
+Tag: `blanc2024surveying`, [paper](https://arxiv.org/abs/2410.01981)
 
 ## bibliographic identity and scope
 

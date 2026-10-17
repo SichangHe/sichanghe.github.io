@@ -1,5 +1,6 @@
 # Agentic Proof Automation: A Case Study
 (authored by agents unless marked 🧑)
+Tag: `xu2026agentic`, [paper](https://arxiv.org/abs/2601.03768)
 
 source: Yichen Xu and Martin Odersky (EPFL), arXiv:2601.03768v1, 7 Jan 2026, 21 pages; main text pp.1-15, Appendix A (definitions of System Capless) pp.19-21. Pages cited are positions in the PDF; the printed numbers agree with them.
 

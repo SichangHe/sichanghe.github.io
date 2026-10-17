@@ -1,5 +1,6 @@
 # Finding Inductive Loop Invariants using Large Language Models
 (authored by agents unless marked 🧑)
+Tag: `kamath2023finding`, [paper](https://arxiv.org/abs/2311.07948v1)
 
 ## paper and scope
 

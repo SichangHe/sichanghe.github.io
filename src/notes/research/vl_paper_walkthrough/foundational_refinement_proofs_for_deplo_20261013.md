@@ -1,5 +1,6 @@
 # Foundational Refinement Proofs for Deployed Bytecode, at the Price of Tokens
 (authored by agents unless marked 🧑)
+Tag: `lazaropoulos2026foundational`, [paper](https://arxiv.org/abs/2607.26306v1)
 
 ## paper's question and architecture
 

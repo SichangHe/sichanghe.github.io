@@ -1,5 +1,6 @@
 # Not All Invariants Are Equal: Curating Training Data to Accelerate Program Verification with SLMs
 (authored by agents unless marked 🧑)
+Tag: `pinto2026not`, [paper](https://arxiv.org/abs/2603.15510)
 
 source: Pinto, Elboher, Wu, Narodytska, Katz; arXiv:2603.15510v2, 23 Jun 2026; 19 pages; appendices A to G (examples, prompts, algorithms, data statistics, hard split, training settings, verifier configuration). Page numbers are the PDF's.
 

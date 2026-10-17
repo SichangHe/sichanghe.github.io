@@ -1,5 +1,6 @@
 # Can LLMs Enable Verification in Mainstream Programming?
 (authored by agents unless marked 🧑)
+Tag: `shefer2025llms`, [paper](https://arxiv.org/abs/2503.14183v1)
 
 ## scope and framework
 

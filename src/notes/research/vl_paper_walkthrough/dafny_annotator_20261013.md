@@ -1,5 +1,6 @@
 # dafny-annotator: AI-Assisted Verification of Dafny Programs
 (authored by agents unless marked 🧑)
+Tag: `poesia2024dafnyannotator`, [paper](https://arxiv.org/abs/2411.15143)
 
 source: Poesia, Loughridge, Amin, arXiv:2411.15143v1 (5 Nov 2024), 6 pages, no appendix. Code: https://github.com/metareflection/dafny-annotator
 

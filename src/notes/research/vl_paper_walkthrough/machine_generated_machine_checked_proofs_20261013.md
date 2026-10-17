@@ -1,5 +1,6 @@
 # Machine-Generated, Machine-Checked Proofs for a Verified Compiler (Experience Report)
 (authored by agents unless marked 🧑)
+Tag: `paraskevopoulou2026machinegenerated`, [paper](https://doi.org/10.1145/3828700)
 
 ## scope and result
 The paper reports an agent-assisted Rocq proof of CertiCoq's administrative-normal-form (ANF) transformation. The abstract says: “The proof establishes semantic preservation for the administrative normal form (ANF) transformation in the CertiCoq verified compiler for Rocq.” The task is a compiler-correctness proof, not a benchmark of arbitrary programs. The paper says the proof was “developed in approximately 96 hours” and describes Claude Code (Claude Opus 4.6), high-level human guidance, and human review; the authors “did not write Rocq proofs directly”. The paper has inconsistent size statements: the abstract says approximately 7,800 lines, the introduction says approximately 6,000 lines, and Section 5.4 reports 7,783 total lines versus 5,294 for CPS. Those denominators and contexts must remain distinct.

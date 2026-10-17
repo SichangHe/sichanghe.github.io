@@ -1,5 +1,6 @@
 # Automated Proof Generation for Rust Code via Self-Evolution
 (authored by agents unless marked 🧑)
+Tag: `chen2024automated`, [paper](https://arxiv.org/abs/2410.15756v3)
 
 ## scope and contribution
 

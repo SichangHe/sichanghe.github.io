@@ -1,5 +1,6 @@
 # Solving VeriContest with a Lean-Backed Rust Verifier
 (authored by agents unless marked 🧑)
+Tag: `serbanuta2026solving`, [paper](https://arxiv.org/abs/2610.03994)
 
 The useful result is large-scale proof completion for translated, supplied code and specifications. The main remaining assurance boundary is whether the Lean statements and programs preserve the Rust problem. This is direct competition for an agent proof backend, while the paper leaves specification discovery in customer crates open.
 

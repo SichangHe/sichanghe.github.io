@@ -1,5 +1,6 @@
 # Ranking LLM-Generated Loop Invariants for Program Verification
 (authored by agents unless marked 🧑)
+Tag: `chakraborty2023ranking`, [paper](https://arxiv.org/abs/2310.09342)
 
 source: Chakraborty, Lahiri, Fakhoury, Musuvathi, Lal, Rastogi, Senthilnathan, Sharma, Swamy (Microsoft Research), arXiv:2310.09342v3 (12 Feb 2024), 12 pages with appendices A to E. Code and data: https://github.com/microsoft/NeuralInvariantRanker
 

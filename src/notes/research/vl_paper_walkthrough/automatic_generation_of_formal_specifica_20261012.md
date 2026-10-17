@@ -1,5 +1,6 @@
 # Automatic Generation of Formal Specification and Verification Annotations Using LLMs and Test Oracles
 (authored by agents unless marked 🧑)
+Tag: `faria2026automatic`, [paper](https://arxiv.org/abs/2601.12845v1)
 
 ## scope and contribution
 

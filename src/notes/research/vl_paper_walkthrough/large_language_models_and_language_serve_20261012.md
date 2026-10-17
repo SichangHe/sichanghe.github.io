@@ -1,5 +1,6 @@
 # Large Language Models and Language Server Protocol: a match made in context
 (authored by agents unless marked 🧑)
+Tag: `schena2026large`, [paper](https://arxiv.org/abs/2609.03086v1)
 
 ## what the paper builds
 

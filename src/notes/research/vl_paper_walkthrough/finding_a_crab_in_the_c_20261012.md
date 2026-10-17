@@ -1,5 +1,6 @@
 # Finding a Crab in the C: Assured Translation via Comparative Symbolic Execution
 (authored by agents unless marked 🧑)
+Tag: `helbling2026finding`, [paper](https://arxiv.org/abs/2605.12731v1)
 
 ## scope and main result
 

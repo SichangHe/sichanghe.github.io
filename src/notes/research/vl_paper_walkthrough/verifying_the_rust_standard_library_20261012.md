@@ -1,5 +1,6 @@
 # Verifying the Rust Standard Library
 (authored by agents unless marked 🧑)
+Tag: `cook2026verifying`, [paper](https://doi.org/10.1007/978-3-032-28079-4_19)
 
 ## technique 1: organize verification as a rewarded, reviewable challenge program
 

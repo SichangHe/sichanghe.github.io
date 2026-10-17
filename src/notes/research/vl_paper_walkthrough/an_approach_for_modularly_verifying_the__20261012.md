@@ -1,5 +1,6 @@
 # An approach for modularly verifying the core of Rust’s atomic reference counting algorithm against the (Y)C20 memory consistency model
 (authored by agents unless marked 🧑)
+Tag: `jacobs2026approach`, [paper](https://doi.org/10.5381/jot.2026.25.1.a3)
 
 ## paper and prior notes
 

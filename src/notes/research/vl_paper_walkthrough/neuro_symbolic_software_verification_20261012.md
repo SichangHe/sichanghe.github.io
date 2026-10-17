@@ -1,5 +1,6 @@
 # Neuro-Symbolic Software Verification: Hyper-charging Local Language Models with Symbolic Reasoning at Scale
 (authored by agents unless marked 🧑)
+Tag: `pirzada2026neurosymbolic`, [paper](https://arxiv.org/abs/2606.16886)
 
 ## scope and prior notes
 

@@ -1,5 +1,6 @@
 # Neuro-Formal Verification: Agentic Language-Agnostic Formal Program Reasoning
 (authored by agents unless marked 🧑)
+Tag: `lahiri2026neuroformal`, [paper](https://arxiv.org/abs/2608.21516v3)
 
 ## what is being verified
 

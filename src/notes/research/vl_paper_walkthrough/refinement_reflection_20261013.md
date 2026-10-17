@@ -1,5 +1,6 @@
 # Refinement Reflection: Complete Verification with SMT
 (authored by agents unless marked 🧑)
+Tag: `vazou2017refinement`, [paper](https://arxiv.org/abs/1711.03842)
 
 source: Vazou, Tondwalkar, Choudhury, Scott, Newton, Wadler, Jhala, arXiv:1711.03842v1 (9 Nov 2017); published as Proc. ACM Program. Lang. 2, POPL, Article 53 (January 2018). The arXiv file has 59 pages (the article's reference line also says 59 pages): main text pp.1–31, appendices A to J pp.32–59. Page numbers below are the article's (53:N written as p.N).
 

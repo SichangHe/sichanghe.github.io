@@ -1,5 +1,6 @@
 # Towards Neural Synthesis for SMT-Assisted Proof-Oriented Programming
 (authored by agents unless marked 🧑)
+Tag: `chakraborty2024neural`, [paper](https://arxiv.org/abs/2405.01787)
 
 source: Chakraborty, Ebner, Bhat, Fakhoury, Fatima, Lahiri, Swamy (Microsoft Research); arXiv:2405.01787v3 (4 Sep 2024), 14 pages with Appendix A and B. Page numbers below are PDF pages.
 

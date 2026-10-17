@@ -1,5 +1,6 @@
 # Towards Real-World Industrial-Scale Verification: LLM-Driven Theorem Proving on seL4
 (authored by agents unless marked 🧑)
+Tag: `zhang2026realworld`, [paper](https://arxiv.org/abs/2602.08384)
 
 source: Jianyu Zhang, Fuyuan Zhang, Jiayi Lu, Jilin Hu, Xiaoyi Yin, Long Zhang, Feng Yang, Yongwang Zhao, arXiv:2602.08384v1 (9 Feb 2026), 30 pages with appendices A to D. Pages cited are the printed page numbers. The method is called AutoReal and the model AutoReal-Prover.
 

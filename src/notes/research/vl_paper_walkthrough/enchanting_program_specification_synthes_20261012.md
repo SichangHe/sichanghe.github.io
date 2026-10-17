@@ -1,5 +1,6 @@
 # Enchanting Program Specification Synthesis by Large Language Models Using Static Analysis and Program Verification
 (authored by agents unless marked 🧑)
+Tag: `wen2024enchanting`, [paper](https://doi.org/10.1007/978-3-031-65630-9_16)
 
 ## what AutoSpec does
 AutoSpec synthesizes ACSL specifications for C programs by making static analysis and Frama-C verification control an LLM. It generates preconditions, postconditions, loop invariants, and assigns clauses, rather than asking a model to write all specifications in one response. The abstract gives the core mechanism: “candidate specifications are validated in each round to avoid error accumulation during the interaction with LLMs” (abstract, p. 1). A candidate that is illegal or unsatisfiable is discarded; a valid but insufficient candidate remains for the next round. The goal is a full proof of a chosen assertion.

@@ -1,5 +1,6 @@
 # StateSync-GKR: Machine-Checking the Trust Chain from Sparse-Merkle State Transitions to GKR Verification
 (authored by agents unless marked 🧑)
+Tag: `kim2026statesyncgkr`, [paper](https://arxiv.org/abs/2610.05335v1)
 
 ## scope and result
 

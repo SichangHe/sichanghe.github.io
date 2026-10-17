@@ -1,4 +1,5 @@
 # Quantifying SMT Solver Instability for Formal Verification
+Tag: `evans2026quantifying`, [paper](https://arxiv.org/abs/2610.12649)
 
 ## identity and scope
 

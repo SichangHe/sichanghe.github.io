@@ -1,5 +1,6 @@
 # Resource Specifications for Resource-Manipulating Programs
 (authored by agents unless marked 🧑)
+Tag: `grannan2023resource`, [paper](https://arxiv.org/abs/2304.12530v2)
 
 ## scope and result
 This paper extends Prusti with first-class, user-defined resources for programs that manipulate assets such as token balances. State-based specifications become verbose because they must spell out frame conditions, e.g. that other accounts' balances are unchanged by a deposit. The authors' methodology makes resource operations explicit. They verify 31 resource-related functions across four applications (IBC token transfer, IBC NFT transfer, an ERC-721 contract, a PSP-22 contract) and report shorter and syntactically simpler specifications but slower verification (Sec. 6). They write that “specifications for resource-manipulating programs quickly become verbose and difficult to interpret” and propose “defined first-class resources”.

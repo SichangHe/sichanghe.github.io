@@ -1,5 +1,6 @@
 # Contract-Aware Rescue of a Drifted Isabelle Development: The Double-Tank Case Study
 (authored by agents unless marked 🧑)
+Tag: `woodcock2026contractaware`, [paper](https://arxiv.org/abs/2608.18822)
 
 source: Woodcock, Leite, Sampaio, Wei, arXiv:2608.18822v1 (19 Aug 2026), 15 pages, no appendix; submitted to Formal Methods for Autonomous Systems 2026; artefact at Zenodo doi 10.5281/zenodo.21981425 (not read)
 

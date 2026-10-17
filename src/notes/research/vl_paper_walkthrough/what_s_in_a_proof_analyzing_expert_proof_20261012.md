@@ -1,5 +1,6 @@
 # What’s in a Proof? Analyzing Expert Proof-Writing Processes in F* and Verus
 (authored by agents unless marked 🧑)
+Tag: `jain2025whats`, [paper](https://arxiv.org/abs/2508.02733v1)
 
 ## study design and evidence
 

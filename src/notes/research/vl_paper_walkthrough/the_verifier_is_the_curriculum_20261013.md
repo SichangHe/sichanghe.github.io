@@ -1,5 +1,6 @@
 # The Verifier is the Curriculum: Precision Sets the Return on Search in Code Self-Distillation
 (authored by agents unless marked 🧑)
+Tag: `zhou2026verifier`, [paper](https://arxiv.org/abs/2607.09709)
 
 source: Zhou, Jiang, Wu, Zhou (Institute of Science Tokyo, Zhejiang University, National University of Singapore), arXiv:2607.09709v2, 15 Sep 2026, 15 pages in two columns; appendices A to D
 

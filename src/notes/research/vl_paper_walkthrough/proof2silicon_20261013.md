@@ -1,5 +1,6 @@
 # Proof2Silicon: Prompt Repair for Verified Code and Hardware Generation via Reinforcement Learning
 (authored by agents unless marked 🧑)
+Tag: `jha2025proof2silicon`, [paper](https://arxiv.org/abs/2509.06239)
 
 source: Jha, Wan, Chen (University of Illinois Urbana-Champaign), arXiv:2509.06239v2 (20 Oct 2025), presented at SRC TECHCON 2025, 9 pages, no appendix, no code link in the text
 

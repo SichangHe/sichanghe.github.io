@@ -1,5 +1,6 @@
 # Agent-Driven Verification of Memory Safety for liblzma Decoder Components with VST
 (authored by agents unless marked 🧑)
+Tag: `shlyakhtun2026agentdriven`, [paper](https://arxiv.org/abs/2608.29716)
 
 source: Shlyakhtun, Gryzlov, Kukharenko, Nesterov, Vasiliev, Ziborov, Zolotarev, Pokras (GenProof; IMDEA), arXiv:2608.29716v1, 30 Aug 2026; 22 pages with appendices A-D. Page numbers are the running-head ones.
 

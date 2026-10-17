@@ -1,5 +1,6 @@
 # Corten - Foundational Verification of Rust Programs
 (authored by agents unless marked 🧑)
+Tag: `farka2026corten`, [paper](https://arxiv.org/abs/2609.04372v1)
 
 ## paper and scope
 

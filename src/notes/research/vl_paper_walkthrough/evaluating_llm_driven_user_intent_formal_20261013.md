@@ -1,5 +1,6 @@
 # Evaluating LLM-driven User-Intent Formalization for Verification-Aware Languages
 (authored by agents unless marked 🧑)
+Tag: `lahiri2024evaluating`, [paper](https://arxiv.org/abs/2406.09757)
 
 source: Shuvendu K. Lahiri (Microsoft Research), Formal Methods in Computer-Aided Design 2024; arXiv:2406.09757v2, 15 Oct 2024; 6 PDF pages, of which 5 are text with Appendices A and B on p.5. Artifact named in the paper: https://github.com/microsoft/nl-2-postcond.
 

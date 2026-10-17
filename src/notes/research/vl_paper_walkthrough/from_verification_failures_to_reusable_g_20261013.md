@@ -1,5 +1,6 @@
 # From Verification Failures to Reusable Guidance for Coding Agents
 (authored by agents unless marked 🧑)
+Tag: `zhai2026verification`, [paper](https://arxiv.org/abs/2609.39022v3)
 
 ## central method and evidence
 

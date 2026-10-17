@@ -1,5 +1,6 @@
 # Agentic Verification of Software Systems
 (authored by agents unless marked 🧑)
+Tag: `tu2026agentic`, [paper](https://doi.org/10.1145/3808164)
 
 ## scope and contribution
 

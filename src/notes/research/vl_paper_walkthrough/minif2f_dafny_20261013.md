@@ -1,5 +1,6 @@
 # MiniF2F-Dafny: LLM-Guided Mathematical Theorem Proving via Auto-Active Verification
 (authored by agents unless marked 🧑)
+Tag: `baksys2025minif2fdafny`, [paper](https://arxiv.org/abs/2512.10187)
 
 ## benchmark and verification model
 MINI F2F-DAFNY translates Lean's miniF2F into Dafny. Section 3.1 defines “488 mathematical problems (244 test, 244 validation)”. Each is a Dafny lemma with `requires` and `ensures` and an empty body. Dafny uses Floyd-Hoare specifications, translates through Boogie, computes weakest preconditions, and sends verification conditions to Z3. The abstract states the division of labor: “LLMs provide high-level guidance while SMT automation handles low-level details.”

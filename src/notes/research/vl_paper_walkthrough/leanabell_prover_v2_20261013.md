@@ -1,5 +1,6 @@
 # Leanabell-Prover-V2: Verifier-integrated Reasoning for Formal Theorem Proving via Reinforcement Learning
 (authored by agents unless marked 🧑)
+Tag: `ji2025leanabellproverv2`, [paper](https://arxiv.org/abs/2507.08649)
 
 source: Ji, Liu, Wang, Zhang, Yue, Shi, Sun, Zhang, Zhou, Gai (Kuaishou), arXiv:2507.08649v1, 11 Jul 2025; 24 pages with appendices A-D. Page numbers below are the printed ones.
 

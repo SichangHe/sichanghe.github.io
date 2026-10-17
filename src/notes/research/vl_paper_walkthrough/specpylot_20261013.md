@@ -1,5 +1,6 @@
 # SpecPylot: Python Specification Generation using Large Language Models
 (authored by agents unless marked 🧑)
+Tag: `ayon2026specpylotb`, [paper](https://arxiv.org/abs/2604.16560)
 
 source: Ayon and Ahmed, arXiv:2604.16560v1 (17 Apr 2026), FSE Companion '26 tool demo, 5 pages, no appendix. Section 8 points to a Zenodo package and a video, which this study does not cover.
 

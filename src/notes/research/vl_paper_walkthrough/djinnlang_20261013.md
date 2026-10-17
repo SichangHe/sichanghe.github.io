@@ -1,5 +1,6 @@
 # Djinnlang: Higher-Level Programming by Unambiguous Specification with an LLM in the Compiler
 (authored by agents unless marked 🧑)
+Tag: `henniger2026djinnlang`, [paper](https://arxiv.org/abs/2609.23954)
 
 source: Henniger, Chong, Amin (Harvard), arXiv:2609.23954v1, 21 Sep 2026, preprint; 14 PDF pages, no appendix. The preprint prints no page numbers; p.N below is the N-th PDF page.
 

@@ -1,5 +1,6 @@
 # Reward-Oracle MCTS for Formal Theorem Proving: Sample-Efficient Search and the Need for Kernel-Level Proof Auditing
 (authored by agents unless marked 🧑)
+Tag: `vamshi2026rewardoracle`, [paper](https://arxiv.org/abs/2608.28639v1)
 
 ## claim, search state, and trust boundary
 

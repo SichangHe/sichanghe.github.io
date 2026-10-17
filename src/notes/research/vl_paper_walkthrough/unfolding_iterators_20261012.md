@@ -1,5 +1,6 @@
 # Unfolding Iterators: Specification and Verification of Higher-Order Iterators in OCaml
 (authored by agents unless marked 🧑)
+Tag: `chirica2025unfolding`, [paper](https://doi.org/10.1007/978-3-032-10794-7_1)
 
 ## scope and result
 

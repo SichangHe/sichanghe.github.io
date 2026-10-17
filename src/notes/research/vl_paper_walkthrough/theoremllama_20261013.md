@@ -1,5 +1,6 @@
 # TheoremLlama: Transforming General-Purpose LLMs into Lean4 Experts
 (authored by agents unless marked 🧑)
+Tag: `wang2024theoremllama`, [paper](https://arxiv.org/abs/2407.03203)
 
 source: Wang, Zhang, Jia, Pan, Diao, Pi and Zhang, arXiv:2407.03203v2 (4 Oct 2024), 22 pages with appendices A to K.
 

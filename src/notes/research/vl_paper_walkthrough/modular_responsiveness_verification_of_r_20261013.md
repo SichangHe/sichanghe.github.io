@@ -1,5 +1,6 @@
 # Modular Responsiveness Verification of Rust Async Runtimes
 (authored by agents unless marked 🧑)
+Tag: `li2026modular`, [paper](https://arxiv.org/abs/2610.09198)
 
 source: Li, Beschastnikh, Summers (University of British Columbia), arXiv:2610.09198v1, 6 Oct 2026; 36 pages; appendix A (well-formedness) and appendix B (full semantics) included.
 

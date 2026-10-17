@@ -1,5 +1,6 @@
 # Next Steps in LLM-Supported Java Verification
 (authored by agents unless marked 🧑)
+Tag: `teuber2025next`, [paper](https://doi.org/10.1109/nse66660.2025.00007)
 
 ## what the paper studies
 

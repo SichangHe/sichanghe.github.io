@@ -1,5 +1,6 @@
 # Inferring multiple helper Dafny assertions with LLMs
 (authored by agents unless marked 🧑)
+Tag: `silva2025inferring`, [paper](https://arxiv.org/abs/2511.00125)
 
 source: Álvaro Silva, Alexandra Mendes, Ruben Martins (INESC TEC / University of Porto; Carnegie Mellon), arXiv:2511.00125v1, 31 Oct 2025, 21 pages, no appendix. The tool is DAISY (Dafny Assertion Inference SYstem). It builds on Laurel (Mugnier et al., the paper's reference 25). Section and page references below were located in the PDF text; the printed page number equals the PDF page.
 

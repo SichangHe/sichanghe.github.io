@@ -1,5 +1,6 @@
 # FORALL-LEAN-AGENT for Auditable Reasoning in Formal Mathematics and Software Verification
 (authored by agents unless marked 🧑)
+Tag: `lwin2026forallleanagent`, [paper](https://arxiv.org/abs/2610.00885)
 
 source: Naing Oo Lwin (Astrio Labs), arXiv:2610.00885v1, 1 Oct 2026, NeurIPS 2026 Workshop on AI for Verifiable Coding; 9 pages of text, Appendices A to C (pp.12-18) with budgets, validation and the full prompts
 

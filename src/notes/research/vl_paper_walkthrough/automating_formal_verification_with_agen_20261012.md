@@ -1,5 +1,6 @@
 # Automating Formal Verification with Agent-Guided Tree Search
 (authored by agents unless marked 🧑)
+Tag: `yao2026automating`, [paper](https://arxiv.org/abs/2605.27485)
 
 ## technique 1: iterative replacement with compiler feedback (vericoder)
 

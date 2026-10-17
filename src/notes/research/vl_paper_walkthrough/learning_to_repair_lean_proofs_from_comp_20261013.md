@@ -1,5 +1,6 @@
 # Learning to Repair Lean Proofs from Compiler Feedback
 (authored by agents unless marked 🧑)
+Tag: `wang2026learning`, [paper](https://arxiv.org/abs/2602.02990)
 
 source: Wang, Chess, Lee, Ge, Mallavarapu, Alper, Ilin (University of Washington), arXiv:2602.02990v2, 13 Mar 2026; 18 pages with appendices A–E. Appendix E stops in the middle of a sentence on p.18 (“By instructing the model to produce accurate code,”), so the expanded description of line and multi-line mutation is missing from the PDF itself.
 

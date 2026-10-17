@@ -1,5 +1,6 @@
 # Interactive Safety Verification of Distributed Protocols by Inductive Proof Decomposition
 (authored by agents unless marked 🧑)
+Tag: `schultz2026interactive`, [paper](https://doi.org/10.1007/978-3-032-28079-4_1)
 
 ## scope and prior notes
 

@@ -1,5 +1,6 @@
 # Prophecy-Based Automated Verification of Message-Passing Programs
 (authored by agents unless marked 🧑)
+Tag: `nagatomi2026prophecybased`, [paper](https://arxiv.org/abs/2606.28066)
 
 source: Takashi Nagatomi, Musashi Katsura, Naoki Kobayashi, Ken Sakayori (University of Tokyo), Yusuke Matsushita (Kyoto University, MPI-SWS), arXiv:2606.28066v1, 26 Jun 2026; 38 pages: body to p.16, references p.16 to 19, Appendix A (auxiliary predicates, a three-thread example) p.20 to 21, Appendix B (proof of the main theorem) p.21 to 34, Appendix C (benchmark programs) p.34 to 38
 

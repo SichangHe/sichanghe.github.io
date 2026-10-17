@@ -1,5 +1,6 @@
 # Trustworthy Software Project Generation : a Case Study with an Interactive Theorem Prover
 (authored by agents unless marked 🧑)
+Tag: `fang2026trustworthy`, [paper](https://arxiv.org/abs/2605.26017)
 
 source: Jian Fang and Yingfei Xiong (Peking University), arXiv:2605.26017v1, 25 May 2026, 10 pages, no appendix. The system is printed as "SPDDW L" in the extracted text.
 

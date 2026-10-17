@@ -1,5 +1,6 @@
 # DafnyBench: A Benchmark for Formal Software Verification
 (authored by agents unless marked 🧑)
+Tag: `loughridge2024dafnybench`, [paper](https://arxiv.org/abs/2406.08467v1)
 
 ## what the benchmark measures
 DafnyBench is a dataset and protocol for measuring whether a language model can supply missing proof hints to a deductive verifier. A benchmark item is a complete, compiling Dafny program with `requires` and `ensures` retained but body `assert` and loop `invariant` statements removed. The model must put hints back so Dafny verifies the program. A run is successful only if the verifier succeeds, all preconditions and postconditions are unchanged, and the model does not use `{:verify false}` or `assume false` (Section 3.2, p. 4). This is a narrowly defined capability: proof-hint synthesis for an existing contract, not requirements discovery or implementation synthesis.

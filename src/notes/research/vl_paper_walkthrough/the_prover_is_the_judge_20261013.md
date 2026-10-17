@@ -1,5 +1,6 @@
 # The Prover Is the Judge: Verified Security Software from AI Coding Agents in Ada/SPARK
 (authored by agents unless marked 🧑)
+Tag: `philipp2026prover`, [paper](https://arxiv.org/abs/2607.14340v1)
 
 ## scope and assurance model
 

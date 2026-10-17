@@ -1,5 +1,6 @@
 # Trigger Selection Strategies to Stabilize Program Verifiers
 (authored by agents unless marked 🧑)
+Tag: `leino2016trigger`, [paper](https://doi.org/10.1007/978-3-319-41528-4_20)
 
 source: Leino and Pit-Claudel, CAV 2016, LNCS 9779, pp. 361–381 (page numbers below are the proceedings' own); Appendix A gives pseudo-code (pp. 378–379)
 

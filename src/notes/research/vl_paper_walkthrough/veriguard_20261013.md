@@ -1,5 +1,6 @@
 # VeriGuard: Enhancing LLM Agent Safety via Verified Code Generation
 (authored by agents unless marked 🧑)
+Tag: `miculicich2025veriguard`, [paper](https://arxiv.org/abs/2510.05156)
 
 source: Miculicich, Parmar, Palangi, Dvijotham, Montanari, Pfister, Le (Google Cloud AI Research, Google DeepMind), arXiv:2510.05156v1, 3 Oct 2025, 22 pages; appendix A holds the prompts
 

@@ -1,5 +1,6 @@
 # Towards verifying unsafe Rust programs against Rust’s pointer-aliasing restrictions
 (authored by agents unless marked 🧑)
+Tag: `tas2026verifying`, [paper](https://arxiv.org/abs/2603.28326v1)
 
 ## scope and status
 

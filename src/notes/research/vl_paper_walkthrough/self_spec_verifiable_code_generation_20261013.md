@@ -1,5 +1,6 @@
 # Self-Spec Verifiable Code Generation
 (authored by agents unless marked 🧑)
+Tag: `qian2026selfspec`, [paper](https://arxiv.org/abs/2609.39568)
 
 source: Qian, Dong, Li, Zhu, Gu, Li; arXiv:2609.39568v1, 30 Sep 2026; 21 pages with appendices A to E. Page numbers below are the PDF's.
 

@@ -1,5 +1,6 @@
 # Automatically Building Machine-Checked Assurance Cases from C Codebases to Requirements
 (authored by agents unless marked 🧑)
+Tag: `li2026automatically`, [paper](https://arxiv.org/abs/2609.40119)
 
 ## scope and existing notes
 

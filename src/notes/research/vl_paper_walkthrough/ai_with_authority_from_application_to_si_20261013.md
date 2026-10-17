@@ -1,5 +1,6 @@
 # AI with Authority, from Application to Silicon
 (authored by agents unless marked 🧑)
+Tag: `hickey2026ai`, [paper](https://arxiv.org/abs/2608.21356)
 
 source: Jason Hickey, arXiv:2608.21356v2 (25 Aug 2026), 17 pages, no appendix. Page numbers below are the PDF's printed page numbers.
 

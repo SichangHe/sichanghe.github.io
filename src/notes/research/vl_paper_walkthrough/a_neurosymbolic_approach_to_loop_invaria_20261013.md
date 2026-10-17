@@ -1,5 +1,6 @@
 # A Neurosymbolic Approach to Loop Invariant Generation via Weakest Precondition Reasoning
 (authored by agents unless marked 🧑)
+Tag: `king2025neurosymbolic`, [paper](https://arxiv.org/abs/2512.15816)
 
 source: King, Koutavas, Kovács; arXiv:2512.15816v1, 17 Dec 2025; 24 pages; Appendix A (p.18 to 24) holds all nine prompts. Page numbers are the paper's own, which equal the PDF's.
 

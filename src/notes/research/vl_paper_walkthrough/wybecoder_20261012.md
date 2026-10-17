@@ -1,5 +1,6 @@
 # WybeCoder: Verified Imperative Code Generation
 (authored by agents unless marked 🧑)
+Tag: `gloeckle2026wybecoder`, [paper](https://arxiv.org/abs/2603.29088v2)
 
 ## scope and central claim
 

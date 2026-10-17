@@ -1,5 +1,6 @@
 # Knowledge Graphs, the Missing Link in Agentic AI-based Formal Verification
 (authored by agents unless marked 🧑)
+Tag: `viswambharan2026knowledge`, [paper](https://arxiv.org/abs/2605.06434)
 
 ## identity and scope
 

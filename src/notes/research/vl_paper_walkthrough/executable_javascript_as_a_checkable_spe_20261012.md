@@ -1,5 +1,6 @@
 # Executable JavaScript as a Checkable Specification Language: A JS-SAM Case Study on SysMoBench
 (authored by agents unless marked 🧑)
+Tag: `dubray2026executable`, [paper](https://arxiv.org/abs/2607.13092v1)
 
 ## identity, question, and boundaries
 

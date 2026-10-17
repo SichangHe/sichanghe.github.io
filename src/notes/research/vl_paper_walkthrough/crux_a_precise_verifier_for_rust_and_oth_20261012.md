@@ -1,5 +1,6 @@
 # Crux, a Precise Verifier for Rust and Other Languages
 (authored by agents unless marked 🧑)
+Tag: `pernsteiner2024crux`, [paper](https://arxiv.org/abs/2410.18280v1)
 
 ## what this paper contributes
 

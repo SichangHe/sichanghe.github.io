@@ -1,5 +1,6 @@
 # Can ChatGPT support software verification?
 (authored by agents unless marked 🧑)
+Tag: `janen2023chatgpt`, [paper](https://arxiv.org/abs/2311.02433)
 
 source: Janßen, Richter, Wehrheim (Oldenburg), arXiv:2311.02433v2 (v2 dated 14 Oct 2025); 8 pages of text, references, Appendix A (pp.13-14) with the full prompt
 

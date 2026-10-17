@@ -1,5 +1,6 @@
 # Diversifying to Verify: When Task-Equivalent Programs Differ in Verifiability
 (authored by agents unless marked 🧑)
+Tag: `yu2026diversifying`, [paper](https://arxiv.org/abs/2607.09366)
 
 source: Shirley Yu (Stanford), Ruben Martins (CMU), arXiv:2607.09366v1 (10 Jul 2026), 20 pages, no appendix. Artifacts: https://github.com/forge-lab/Diversify2Verify
 

@@ -1,5 +1,6 @@
 # Building A Proof-Oriented Programmer That Is 64% Better Than GPT-4o Under Data Scarsity
 (authored by agents unless marked 🧑)
+Tag: `zhang2025building`, [paper](https://arxiv.org/abs/2502.11901)
 
 source: Zhang, Wang and Sun, arXiv:2502.11901v2 (13 Apr 2025), 18 pages with appendices A to D. The PDF's own title spells the last word “Scarcity”. An abstract-level entry on the same paper (PoPilot) is in the notes file c_and_systems_proofs.md; what follows is from the full text.
 

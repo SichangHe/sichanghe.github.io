@@ -1,5 +1,6 @@
 # Cost-Efficient Theorem Proving via Agent Orchestration in Program Verification
 (authored by agents unless marked 🧑)
+Tag: `yao2026costefficient`, [paper](https://arxiv.org/abs/2610.09681)
 
 source: Yao, Holzer, Santolucito, Ray, Jana, She (Columbia, Barnard, HKUST), arXiv:2610.09681v1, 7 Oct 2026, preprint, 55 pages: main text pp.1-9, Appendix A theory pp.14-21, B operational details pp.21-26, C experiment details pp.26-30, D two case studies with full Lean code pp.30-51, E prompt templates pp.51-54, F limitations pp.54-55. The system is called CoCo-Prover. Cited pages are the PDF's, which carry the same printed number.
 

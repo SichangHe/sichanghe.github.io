@@ -1,5 +1,6 @@
 # Adaptive Proof Refinement with LLM-Guided Strategy Selection
 (authored by agents unless marked 🧑)
+Tag: `lu2025adaptive`, [paper](https://arxiv.org/abs/2510.25103)
 
 source: Lu, Zhou, Xie, Jia, Delaware, Zhang, arXiv:2510.25103v2 (9 Sep 2026), ASE '26, 13 pages, no appendix. The system is called Adapt. The prover is Rocq (formerly Coq), not Verus; every Verus form below is an inference.
 
