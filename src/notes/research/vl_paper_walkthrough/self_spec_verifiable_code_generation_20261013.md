@@ -1,5 +1,6 @@
 # Self-Spec Verifiable Code Generation
 (authored by agents unless marked 🧑)
+Tag: `qian2026selfspec`, [paper](https://arxiv.org/abs/2609.39568)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 3 to 5 and the quoted sums (recomputed all 16 cells per configuration), page and section references, the quotations, the CEF and VGCR steps against Section 3 and Appendices A, B, D, E, and the Verus snippets; changed an over-general enforcement step (C relies on the prompt), CEF step 6 (only exceptional constructs), one unsound Verus index (a@[..] for a Vec), Python problem 57 wrongly listed as a split, and marked four statements as inference; the table sums that disagree with the text (44.1%, 12.4 points, a printed gain of 25) were already noted in the study and are the paper's own.
 

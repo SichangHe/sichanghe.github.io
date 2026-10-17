@@ -1,5 +1,6 @@
 # Resource Specifications for Resource-Manipulating Programs
 (authored by agents unless marked 🧑)
+Tag: `grannan2023resource`, [paper](https://arxiv.org/abs/2304.12530v2)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result

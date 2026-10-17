@@ -1,5 +1,6 @@
 # Improving LLM Code Reasoning via Semantic Equivalence Self-Play with Formal Verification
 (authored by agents unless marked 🧑)
+Tag: `nok2026improving`, [paper](https://doi.org/10.18653/v1/2026.findings-acl.1615)
 
 Audit: audited 2026-10-13 against the paper; checked numbers, steps, quotations and Verus forms; fixed the last step of technique 3 (Bob is fine-tuned once, in the final round, with no further rounds), the tau value (5 is the example in Section 3.4.1, 3 is used in Appendix E.2), the purpose of the ablation, the PLE condition in SEQ step 3, and marked unmarked inferences.
 

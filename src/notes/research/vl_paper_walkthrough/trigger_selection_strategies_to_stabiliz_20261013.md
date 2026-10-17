@@ -1,5 +1,6 @@
 # Trigger Selection Strategies to Stabilize Program Verifiers
 (authored by agents unless marked 🧑)
+Tag: `leino2016trigger`, [paper](https://doi.org/10.1007/978-3-319-41528-4_20)
 
 Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, quotation, the Appendix A comparisons and the Verus forms against the Tunable Automation paper; changed: the quantifier-splitting ordering sentence no longer called the paper's main claim to novelty (the introduction names willingness to rewrite quantifiers), Verus trigger statements that were unsupported (arithmetic in triggers, splitting) now follow the Tunable Automation paper, a counts-are-approximate claim narrowed, three unmarked inferences marked, and the already-done sentence no longer says since this paper; not checked: whether Verus offers alternative trigger sets by syntax, and Verus quantifier splitting beyond the Tunable Automation paper remark.
 

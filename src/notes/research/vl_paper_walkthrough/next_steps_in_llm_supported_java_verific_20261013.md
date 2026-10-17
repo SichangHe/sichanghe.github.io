@@ -1,5 +1,6 @@
 # Next Steps in LLM-Supported Java Verification
 (authored by agents unless marked 🧑)
+Tag: `teuber2025next`, [paper](https://doi.org/10.1109/nse66660.2025.00007)
 
 Audit: audited 2026-10-13 against the paper; checked numbers, quotations, steps, pages and Verus forms; corrected page references (the paper has 6 pages; most were shifted by one or two), the 85% and 57% figures wrongly tied to the mixed strategy, the source-level-names instruction wrongly placed in the initial prompt, an unsupported claim about existing systems, and unmarked inference.
 

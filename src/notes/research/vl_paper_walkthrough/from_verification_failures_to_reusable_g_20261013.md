@@ -1,5 +1,6 @@
 # From Verification Failures to Reusable Guidance for Coding Agents
 (authored by agents unless marked 🧑)
+Tag: `zhai2026verification`, [paper](https://arxiv.org/abs/2609.39022v3)
 
 Audit: audited 2026-10-13 against the paper; checked numbers against Tables 1 to 3, quotations, pages, technique steps and Verus forms; corrected page references, an invented first step and failure categories in technique 2, the audit inputs in technique 3, a three-claims framing the paper does not state, the missing model and attempt count of the historical comparison, and unmarked inference.
 

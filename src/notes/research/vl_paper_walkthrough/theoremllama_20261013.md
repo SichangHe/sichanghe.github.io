@@ -1,5 +1,6 @@
 # TheoremLlama: Transforming General-Purpose LLMs into Lean4 Experts
 (authored by agents unless marked 🧑)
+Tag: `wang2024theoremllama`, [paper](https://arxiv.org/abs/2407.03203)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 5, Appendices C, F, G, I and the sums and fractions derived from them, the quotations, page references and the steps of techniques 1 to 5 against Section 2 and 3; corrected the claim that tree-search baselines got 128 generations, the smallest-drop claim for curriculum sorting (false on Test), the hand-aligned example set, the one-in-six wording, the incomplete list of non-whole percentages, the Appendix G setting, the Appendix A remedy, and the Threat paragraph; marked the 256-generation budget, the block-sorting interaction and the translation-is-easier claim as inference; Verus claims such as lemma and modifies not existing in Verus were not checked against a Verus source.
 

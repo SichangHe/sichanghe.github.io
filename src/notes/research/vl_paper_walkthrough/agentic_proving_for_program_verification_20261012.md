@@ -1,5 +1,6 @@
 # Agentic Proving for Program Verification
 (authored by agents unless marked 🧑)
+Tag: `sosso2026agentic`, [paper](https://arxiv.org/abs/2605.23772v1)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result

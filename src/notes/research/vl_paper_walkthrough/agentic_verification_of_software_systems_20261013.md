@@ -1,5 +1,6 @@
 # Agentic Verification of Software Systems
 (authored by agents unless marked 🧑)
+Tag: `tu2026agentic`, [paper](https://doi.org/10.1145/3808164)
 
 Audit: audited 2026-10-13 against the paper; checked every number, fraction and section reference against the text and Tables 1, 3, 4; corrected the cost figure (it is in dollars, and the paper does state what it averages over), the certificate description (a replayable tactic script whose proof term the kernel checks), the section reference for the four subgoals and for Search being preferred, and an invented history-reuse step; marked the study's own advice and limits as inference; the assert_by remark in the Verus form is unchecked.
 

@@ -1,5 +1,6 @@
 # Finding a Crab in the C: Assured Translation via Comparative Symbolic Execution
 (authored by agents unless marked 🧑)
+Tag: `helbling2026finding`, [paper](https://arxiv.org/abs/2605.12731v1)
 
 Audit: audited 2026-10-13 against the paper; checked quotations, steps, numbers (none beyond three experiments), figure and section references, Verus forms; changed step 5 of technique 1 (disequality applies to memory, event streams use a line diff), removed an invented assumption on unsat cores and path constraints, removed the claim that a sequential harness avoids annotations and that path explosion is a stated limitation, marked own inferences.
 

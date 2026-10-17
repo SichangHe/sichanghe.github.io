@@ -1,5 +1,6 @@
 # Not All Invariants Are Equal: Curating Training Data to Accelerate Program Verification with SLMs
 (authored by agents unless marked 🧑)
+Tag: `pinto2026not`, [paper](https://arxiv.org/abs/2603.15510)
 
 Audit: audited 2026-10-13 against the paper; rechecked every number in Tables 3 to 5, Appendix D and E and Table 9, the propositions, algorithms, rewrite rules, quotations and page references (all matched); corrected the proof description, the Verus claims on loops without an invariant and on casts, an unsupported claim about single timing runs, and the 16% figure, which excludes model inference time.
 

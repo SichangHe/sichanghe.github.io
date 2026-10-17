@@ -1,5 +1,6 @@
 # Advancing Mathematics Research with AI-Driven Formal Proof Search
 (authored by agents unless marked 🧑)
+Tag: `tsoukalas2026advancing`, [paper](https://doi.org/10.1126/science.aej2213)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes

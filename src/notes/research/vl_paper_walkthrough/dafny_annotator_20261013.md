@@ -1,5 +1,6 @@
 # dafny-annotator: AI-Assisted Verification of Dafny Programs
 (authored by agents unless marked 🧑)
+Tag: `poesia2024dafnyannotator`, [paper](https://arxiv.org/abs/2411.15143)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Table 1, the DafnySynth counts, the 83/326 split, the page and section references and all quotations against the PDF text; corrected one widened prompt description (up to the method, not including it), one unsupported yield claim, and marked six unmarked inferences (use-when rationale, peeling limits, single-run remark, code-pretraining explanation, comparability remark, textbook-scale label); the Verus maxArray form could not be run (no Verus binary) and is left as the study's marked inference.
 

@@ -1,5 +1,6 @@
 # Trust the Spec, Not the Code - A Specification-First, AI-Assisted Case Study in Online Banking
 (authored by agents unless marked 🧑)
+Tag: `farchi2026trust`, [paper](https://arxiv.org/abs/2609.07365)
 
 Audit: audited 2026-10-13 against the paper and its Appendix A; checked every number, page reference and quotation, the technique steps against Sections 3 to 7 and Appendix A.2 to A.4, and the Verus forms; corrected claims that the author read every proof and that a transcript backs the dropped-sections remark, the trusted list, the incomplete list of first-attempt defects, the scheduling-schema note, a disagreement bullet the paper does not support, and an overclaim that a mechanical checker would have rejected all four defects.
 

@@ -1,5 +1,6 @@
 # A Hybrid Approach to Semi-automated Rust Verification
 (authored by agents unless marked 🧑)
+Tag: `ayoun2025hybrid`, [paper](https://doi.org/10.1145/3729289)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result

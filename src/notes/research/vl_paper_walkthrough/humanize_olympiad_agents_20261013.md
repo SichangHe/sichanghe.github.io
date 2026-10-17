@@ -1,5 +1,6 @@
 # Humanize Olympiad Agents: A Multi-Session Workflow for Olympiad Problem Solving with Solve, Review, Wiki, Verify
 (authored by agents unless marked 🧑)
+Tag: `zhang2026humanize`, [paper](https://arxiv.org/abs/2610.13632)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 1-3 and Figures 3-4 with the printed gains, all quotations and page references, the technique steps against Sections 3.2-3.5 and Appendix A; changed human spot-checking, the appendix and prompts remark, the reviewer-rule label, the math-only reviewer verifier run, the Lean-Eval attribution of the G2 example and the store-seeding inference; Verus statements checked only for consistency with the Verus paper where it covers them.
 

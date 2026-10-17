@@ -1,5 +1,6 @@
 # Lessons Learned So Far From a Community Effort to Verify the Rust Standard Library (work-in-progress)
 (authored by agents unless marked 🧑)
+Tag: `blanc2025lessons`, [paper](https://arxiv.org/abs/2510.01072)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 source: Le Blanc and Lam (2025), arXiv:2510.01072v3. Full text read.

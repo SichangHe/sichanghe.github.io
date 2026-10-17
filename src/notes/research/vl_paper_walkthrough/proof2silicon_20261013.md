@@ -1,5 +1,6 @@
 # Proof2Silicon: Prompt Repair for Verified Code and Hardware Generation via Reinforcement Learning
 (authored by agents unless marked 🧑)
+Tag: `jha2025proof2silicon`, [paper](https://arxiv.org/abs/2509.06239)
 
 Audit: audited 2026-10-13 against the paper; rechecked Tables I to III, every fraction and percentage, the loop, reward and PPO details, page and section references and the numbers-that-do-not-add-up list, which all held; changed one overstated claim (no functional test, when tests were written but not reported), one added premise (closed model), one pointer to the earlier paper the text does not make, one reference range (Section IV-E spans pp.5-6) and one detail (32-bit, where the paper gives np.int32 and np.float32 as examples); the Verus statements are marked Inference and agree with the Verus papers.
 

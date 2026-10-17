@@ -1,5 +1,6 @@
 # Building A Proof-Oriented Programmer That Is 64% Better Than GPT-4o Under Data Scarsity
 (authored by agents unless marked 🧑)
+Tag: `zhang2025building`, [paper](https://arxiv.org/abs/2502.11901)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 4 and Figure 4, page and section references, quotations, step lists and appendix prompts; changed the repair-versus-resampling claim (true only for the last three fine-tuned rows), the six-model count and best-in-F* claim, the 64% derivation, the seed-dataset attribution, the generator-choice wording, the Table 3 and 4 cross-reference, the two repair caps, and six unmarked inferences; could not check the Verus forms against a source.
 

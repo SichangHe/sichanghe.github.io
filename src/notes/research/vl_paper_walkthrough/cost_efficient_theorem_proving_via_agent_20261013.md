@@ -1,5 +1,6 @@
 # Cost-Efficient Theorem Proving via Agent Orchestration in Program Verification
 (authored by agents unless marked 🧑)
+Tag: `yao2026costefficient`, [paper](https://arxiv.org/abs/2610.09681)
 
 Audit: audited 2026-10-13 against the paper; checked every number, fraction and percentage in Tables 1-3, 7, 8, 10, 12-14, the page and section references, the steps of Algorithms 1 and 2 and B.1-B.7, the prompt rules of Appendix E, the quotations and the Verus forms; changed 7 slips: an ablation called uninterpretable where the paper says hard to attribute, the automation ablation said to agree with the induction-unfolding story though the paper explains the AlgoVeri drop otherwise, within noise for comparable to noise, two hardest lemmas for the one the paper calls hardest, the source of items 5 and 6 of technique 10, and two unmarked inferences.
 

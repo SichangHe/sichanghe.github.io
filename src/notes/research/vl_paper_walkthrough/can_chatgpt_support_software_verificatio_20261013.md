@@ -1,5 +1,6 @@
 # Can ChatGPT support software verification?
 (authored by agents unless marked 🧑)
+Tag: `janen2023chatgpt`, [paper](https://arxiv.org/abs/2311.02433)
 
 Audit: audited 2026-10-13 against the paper; checked every Table 1 cell and column sum, all counts and fractions, page and figure references, quotations, the prompt in Appendix A, and the Verus sketch of Figure 1; changed: a section reference for step 1, the placeholder name, one general claim about the checker taken from a single case, one unmarked inference on timeouts, and the procedure of the no-invariant run marked as the study's reading; the Verus statements on shifts and bit_vector in technique 5 are left unchecked.
 

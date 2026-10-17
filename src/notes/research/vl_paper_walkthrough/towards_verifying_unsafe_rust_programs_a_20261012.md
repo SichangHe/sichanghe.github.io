@@ -1,5 +1,6 @@
 # Towards verifying unsafe Rust programs against Rust’s pointer-aliasing restrictions
 (authored by agents unless marked 🧑)
+Tag: `tas2026verifying`, [paper](https://arxiv.org/abs/2603.28326v1)
 
 Audit: audited 2026-10-13 against the paper; checked the quotations, page and section references, rules, the Listing 1 description and the technique steps; changed the abstract reference of the first quotation (it is from Sec. 1), the Listing 1 description, one wrong Verus clause (opens_invariants), technique 5 (the technical report's extended logic was omitted, so features were wrongly presented as unsolved), the hedge on the Verus-is-unsound claim, and marked the trusted base as inference.
 

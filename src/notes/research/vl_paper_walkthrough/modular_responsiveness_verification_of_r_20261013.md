@@ -1,5 +1,6 @@
 # Modular Responsiveness Verification of Rust Async Runtimes
 (authored by agents unless marked 🧑)
+Tag: `li2026modular`, [paper](https://arxiv.org/abs/2610.09198)
 
 Audit: audited 2026-10-13 against the paper; checked the definitions, transfer functions, verification conditions, theorem statements, Tables 1 and 2 with their averages, page references and quotations; changed one claim about seeded bugs, one wrong Verus claim about tracked tokens, and two unmarked inferences.
 

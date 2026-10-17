@@ -1,5 +1,6 @@
 # Foundational Refinement Proofs for Deployed Bytecode, at the Price of Tokens
 (authored by agents unless marked 🧑)
+Tag: `lazaropoulos2026foundational`, [paper](https://arxiv.org/abs/2607.26306v1)
 
 Audit: audited 2026-10-13 against the paper; checked every number against Tables 1 and 2 and the text, the section and figure references, the steps against Sections 4 to 6, and the trusted-base list against Section 5.2; corrected a wrong number (the ERC20 runtime is 2,708 bytes, 35 is its source lines), the proof-line range, the 99.99% conformance figure (it is Nethermind's EVMYulLean, not this paper's extended model), the Table 1 caption claim about imports, the reuse scope of ABI decoders, the stopped-versus-still-running status of Clipper and Auction, three section references, an invented run-Lean step, and a filler sentence about Table 2 percentages; marked the study's own advice as inference; the assert_by remark in the Verus forms is unchecked.
 

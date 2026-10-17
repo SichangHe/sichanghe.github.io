@@ -1,5 +1,6 @@
 # Learning to Repair Lean Proofs from Compiler Feedback
 (authored by agents unless marked 🧑)
+Tag: `wang2026learning`, [paper](https://arxiv.org/abs/2602.02990)
 
 Audit: audited 2026-10-13 against the paper and its figures; all numbers, tables, quotations and technique steps checked; corrected the easiest-class claim, the fine-tuning-does-not-help-line claim, a quotation applied to the wrong model, a page reference, the line-only scope of one labelling step, and three unmarked inferences; Verus statements are marked inference and rest on no Verus source, so they are unchecked.
 

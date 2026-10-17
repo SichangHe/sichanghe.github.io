@@ -1,5 +1,6 @@
 # Finding Inductive Loop Invariants using Large Language Models
 (authored by agents unless marked 🧑)
+Tag: `kamath2023finding`, [paper](https://arxiv.org/abs/2311.07948v1)
 
 Audit: audited 2026-10-13 against the paper; checked all counts (469, 293, 237, 383, 398, 370, 430, 31, the Table 2 rows), Algorithms 1 to 3 step by step, the prompt descriptions, the two quotations on Houdini, the repair-prompt quotation and the Example 1 description, and the Verus forms; changed the Repair success condition (the paper also returns a Houdini subset of the repaired set) and marked three unmarked inferences.
 

@@ -1,5 +1,6 @@
 # AlphaVerus: Bootstrapping Formally Verified Code Generation through Self-Improving Translation and Treefinement
 (authored by agents unless marked 🧑)
+Tag: `aggarwal2024alphaverus`, [paper](https://arxiv.org/abs/2412.06176)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 source: Aggarwal, Parno, Welleck (2024), arXiv:2412.06176v1. Full text and appendices read.

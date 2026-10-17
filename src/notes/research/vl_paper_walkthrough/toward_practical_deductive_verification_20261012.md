@@ -1,5 +1,6 @@
 # Toward Practical Deductive Verification: Insights from a Qualitative Survey in Industry and Academia
 (authored by agents unless marked 🧑)
+Tag: `brugger2025practical`, [paper](https://arxiv.org/abs/2510.20514)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## paper and prior notes

@@ -1,5 +1,6 @@
 # Machine-Generated, Machine-Checked Proofs for a Verified Compiler (Experience Report)
 (authored by agents unless marked 🧑)
+Tag: `paraskevopoulou2026machinegenerated`, [paper](https://doi.org/10.1145/3828700)
 
 Audit: audited 2026-10-13 against the paper; checked all numbers (96 hours, 7,800/6,000/7,783/5,294 lines), section references, quotations, rule descriptions of Figure 3, Theorem 4.1 and the Let case; changed one mislabel (the Section 2 example is a CPS case, not ANF-like) and marked the trusted-base sentence as the study's inference; Verus remarks are unchecked against a Verus source.
 

@@ -1,5 +1,6 @@
 # LiveFMBench: Unveiling the Power and Limits of Agentic Workflows in Specification Generation
 (authored by agents unless marked 🧑)
+Tag: `xu2026livefmbench`, [paper](https://arxiv.org/abs/2605.01394)
 
 Audit: audited 2026-10-13 against the paper; rechecked every number in Tables 1 to 5, the page and section references, the quotations and the steps of each technique; corrected a claim that the agent's gap closes at pass@5 for all thinking models (only DeepSeek-R1), the Listing 5 description (the paper shows a weak outer invariant, not an inner one), an overstated best configuration, a typical-length claim and an unmarked inference.
 

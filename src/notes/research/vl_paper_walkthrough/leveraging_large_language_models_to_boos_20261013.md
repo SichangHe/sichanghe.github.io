@@ -1,5 +1,6 @@
 # Leveraging Large Language Models to Boost Dafny's Developers Productivity
 (authored by agents unless marked 🧑)
+Tag: `silva2024leveraging`, [paper](https://arxiv.org/abs/2401.00963)
 
 Audit: audited 2026-10-13 against the paper; checked page and section references, both figures, footnotes, every quotation, the lemma statements and the false-lemma counterexample, and the Verus sketches; corrected claims that the trials were run by hand, that the 3 lemmas were proved zero times, that the paper does not link the missing preconditions to the proof failures, the unmarked falsity inference, the unsupported claims about later work, and the fifth requires line attributed to the paper; Verus sketches left unchanged and unchecked (exists over p * q may have no usable trigger).
 

@@ -1,5 +1,6 @@
 # The Prover Is the Judge: Verified Security Software from AI Coding Agents in Ada/SPARK
 (authored by agents unless marked 🧑)
+Tag: `philipp2026prover`, [paper](https://arxiv.org/abs/2607.14340v1)
 
 Audit: audited 2026-10-13 against the paper; checked numbers, section references, quotations, technique steps and inference marks; corrected the 1,600-tests source (Introduction, not Abstract), III-A and III-B references, an invented step and a stated order of fixes, a misattributed enforcement claim, the trust-base list, an SSH wording, and unmarked inference; the Verus statements were not changed and could not be checked against the Verus reference.
 

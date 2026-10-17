@@ -1,5 +1,6 @@
 # Evaluating LLM-driven User-Intent Formalization for Verification-Aware Languages
 (authored by agents unless marked 🧑)
+Tag: `lahiri2024evaluating`, [paper](https://arxiv.org/abs/2406.09757)
 
 Audit: audited 2026-10-13 against the paper (text and PDF page layout); checked the 64 of 153 and 41.8% arithmetic, 0.6 score, 5 mutants, mutation operators, task ids 61, 145, 161, 234, 240, 445, the 0.66 threshold, every quotation and page reference, the harness code, and the Verus forms (reveal_with_fuel, broadcast use, old, triggers are supported by the Verus papers); changed: the conjecture sentence is wholly on p.4, not spanning pages 3-4; the fuel claim now says unrolled in proportion to length, as the paper does, not exactly as many times as the length; the Appendix B objection now says too strong, as the paper does. Not checked: the cited earlier notes, the dataset and repository outside the PDF.
 

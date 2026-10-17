@@ -1,5 +1,6 @@
 # Synthesizing Proofs Using Proof Sharding and Exploration
 (authored by agents unless marked 🧑)
+Tag: `ghahani2026synthesizing`, [paper](https://arxiv.org/abs/2609.28535v1)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result

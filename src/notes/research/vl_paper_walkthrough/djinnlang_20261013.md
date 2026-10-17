@@ -1,5 +1,6 @@
 # Djinnlang: Higher-Level Programming by Unambiguous Specification with an LLM in the Compiler
 (authored by agents unless marked 🧑)
+Tag: `henniger2026djinnlang`, [paper](https://arxiv.org/abs/2609.23954)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 3 and the sums, ratios and counts derived from them, page and section references (each quotation located on its PDF page), the steps of the obligation list, the tamper checks, procedures and the bootstrap, and the Verus forms; corrected the page count (14, not 15), three section references, one step placed in the wrong command, evidence that the paper does not tie to the unambiguity or redundancy techniques, and several unmarked inferences.
 

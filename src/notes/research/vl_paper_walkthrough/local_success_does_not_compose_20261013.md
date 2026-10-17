@@ -1,5 +1,6 @@
 # Local Success Does Not Compose: Benchmarking Large Language Models for Compositional Formal Verification
 (authored by agents unless marked 🧑)
+Tag: `xu2025local`, [paper](https://arxiv.org/abs/2509.23061v1)
 
 Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, the technique steps, quotations, Table 1 and Table 2 arithmetic and the Verus forms; changed: the 95.67% and 3.69% averages and the Pass@4 to Pass@8 gains now flagged as not matching Table 1, verification denominator corrected to the paper's definition over syntactically valid outputs, pages for the validation pipeline and Observations 2 and 3, array-bound invariant example reworded, a Verus benchmark claim the paper does not make removed, Inference marks added to the study's own statements, a stray catalog word fixed.
 

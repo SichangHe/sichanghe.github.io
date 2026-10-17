@@ -1,5 +1,6 @@
 # Verifying the Rust Standard Library
 (authored by agents unless marked 🧑)
+Tag: `cook2026verifying`, [paper](https://doi.org/10.1007/978-3-032-28079-4_19)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes

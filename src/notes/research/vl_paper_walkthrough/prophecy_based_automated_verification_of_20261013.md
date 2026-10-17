@@ -1,5 +1,6 @@
 # Prophecy-Based Automated Verification of Message-Passing Programs
 (authored by agents unless marked 🧑)
+Tag: `nagatomi2026prophecybased`, [paper](https://arxiv.org/abs/2606.28066)
 
 Audit: audited 2026-10-13 against the paper; checked numbers, tables 1 and 2, page and section references, quotations, clauses of Figure 4 and the appendix, and the five proof moves; changed one widened claim about Verus, one unmarked inference, one unsupported statement on the benchmark authorship, and one empty sentence about the status table.
 

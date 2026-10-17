@@ -1,5 +1,6 @@
 # Can LLMs Reason Like Automated Theorem Provers for Rust Verification? VCoT-Bench: Evaluating via Verification Chain of Thought
 (authored by agents unless marked 🧑)
+Tag: `xie2026llms`, [paper](https://arxiv.org/abs/2603.18334v2)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and contribution

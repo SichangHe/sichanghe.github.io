@@ -1,5 +1,6 @@
 # Towards Real-World Industrial-Scale Verification: LLM-Driven Theorem Proving on seL4
 (authored by agents unless marked 🧑)
+Tag: `zhang2026realworld`, [paper](https://arxiv.org/abs/2602.08384)
 
 Audit: audited 2026-10-13 against the paper; rechecked every number, fraction and percentage (Tables 2 to 4, budget curves, RQ3 and RQ4 figures, training settings), page references, quotations, technique steps and the Verus sketches; changed one claim (the one proof in four reading of the 84 wrong done rationales was widened); Verus loop sketch checked against the Verus reference only by reading, not run.
 

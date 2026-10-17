@@ -1,5 +1,6 @@
 # Contract-Aware Rescue of a Drifted Isabelle Development: The Double-Tank Case Study
 (authored by agents unless marked 🧑)
+Tag: `woodcock2026contractaware`, [paper](https://arxiv.org/abs/2608.18822)
 
 Audit: audited 2026-10-13 against the paper; checked every number, table count, page and section reference, quotation, the steps of techniques 1 to 5, the R1 to R10 list and the arithmetic; changed four slips (audit classes taken from the separate declaration map in 7.1, seam-definition rule widened beyond the paper, v0.10 called the skeleton, clean build claimed throughout) and softened one unchecked claim about Mathlib names; Verus forms are labelled inference and unchanged, with assume_specification not confirmed in the Verus reference.
 

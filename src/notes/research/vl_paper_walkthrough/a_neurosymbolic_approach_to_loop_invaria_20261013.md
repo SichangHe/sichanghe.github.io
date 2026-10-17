@@ -1,5 +1,6 @@
 # A Neurosymbolic Approach to Loop Invariant Generation via Weakest Precondition Reasoning
 (authored by agents unless marked 🧑)
+Tag: `king2025neurosymbolic`, [paper](https://arxiv.org/abs/2512.15816)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 4 and Figures 3 to 5 (Figure 5 bars read from the rendered page), page and listing references, Algorithms 2 and 3 step by step, the quotations and the Verus forms; changed a swapped pair of counts (run 4 is 51 preservation and 53 exit), the ordinal of a stated difference (third, not fourth), an ablation credit (the neural module as a whole, not chaining alone), an unsupported statement about JML integers, a claim that the authors wrote the hard set, a typed split that has two fix lists and not three, and marked three statements as inference; one Verus claim about unmodified values was checked against the AutoVerus paper's description of loop isolation and reworded.
 

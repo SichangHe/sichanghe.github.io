@@ -1,5 +1,6 @@
 # Enchanting Program Specification Synthesis by Large Language Models Using Static Analysis and Program Verification
 (authored by agents unless marked 🧑)
+Tag: `wen2024enchanting`, [paper](https://doi.org/10.1007/978-3-031-65630-9_16)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## what AutoSpec does

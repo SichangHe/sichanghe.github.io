@@ -1,5 +1,6 @@
 # Solving VeriContest with a Lean-Backed Rust Verifier
 (authored by agents unless marked 🧑)
+Tag: `serbanuta2026solving`, [paper](https://arxiv.org/abs/2610.03994)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 Source: [2610.03994v2](https://arxiv.org/abs/2610.03994v2); [saved full PDF](/ssd1/sichangheagent/vlpw/lean_rust.pdf). This study uses the full primary text, including appendices. Page numbers are printed PDF pages. Results are author reports unless labeled otherwise.

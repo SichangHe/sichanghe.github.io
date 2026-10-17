@@ -1,5 +1,6 @@
 # Can LLM Aid in Solving Constraints with Inductive Definitions?
 (authored by agents unless marked 🧑)
+Tag: `feng2026llm`, [paper](https://arxiv.org/abs/2603.03668)
 
 Audit: audited 2026-10-13 against the paper; checked all numbers in Tables 1-5, the sums, algorithm steps, both prompt templates, appendices A-E, page references and quotations; changed trust claim to marked inference, prompt-pool order and conjecture limit wording, quant-ind configurations, filter scope, unsupported cvc5 remark, benchmark age; Verus code and fuel remark checked only against the Verus paper.
 

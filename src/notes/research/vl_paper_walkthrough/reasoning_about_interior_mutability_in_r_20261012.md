@@ -1,5 +1,6 @@
 # Reasoning about Interior Mutability in Rust using Library-Defined Capabilities
 (authored by agents unless marked 🧑)
+Tag: `poli2024reasoning`, [paper](https://arxiv.org/abs/2405.08372)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior coverage

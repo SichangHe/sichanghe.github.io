@@ -1,5 +1,6 @@
 # From Noisy Traces to Root Causes: Structural Trajectory Analysis and Causal Extraction for Agent Optimization
 (authored by agents unless marked 🧑)
+Tag: `chang2026noisy`, [paper](https://arxiv.org/abs/2607.07702)
 
 Audit: audited 2026-10-13 against the paper (text, and PDF pages 18-22 for Figures 5-9); checked Tables 1-7 numbers, the denominator inferences (every printed percentage re-derived), Figure 5 counts, Figures 6-9 steps and rules, Appendix D rules, quotations and page references, and the Verus forms; changed: single run per setting was not stated by the paper; cascade ranking and router-attribution list reworded to the figures' words; unmarked inferences marked; Appendix D rules no longer called usable as written by any agent; NRKernel GPT-5 tie and IronKV claim corrected against Table 7; IronKV 41.6% rounding misfit added; Sonnet 4 comparison made within one point. Not checked: the 41, 39, 39 runs cited from the VeruSAGE study (read only that study's text), the identity of Figure 3's benchmark.
 

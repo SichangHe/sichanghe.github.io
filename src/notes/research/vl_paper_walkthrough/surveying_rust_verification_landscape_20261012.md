@@ -1,5 +1,6 @@
 # Surveying the Rust Verification Landscape
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
+Tag: `blanc2024surveying`, [paper](https://arxiv.org/abs/2410.01981)
 
 ## bibliographic identity and scope
 

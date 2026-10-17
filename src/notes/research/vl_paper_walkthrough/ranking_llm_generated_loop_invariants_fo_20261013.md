@@ -1,5 +1,6 @@
 # Ranking LLM-Generated Loop Invariants for Program Verification
 (authored by agents unless marked 🧑)
+Tag: `chakraborty2023ranking`, [paper](https://arxiv.org/abs/2310.09342)
 
 Audit: audited 2026-10-13 against the paper; rechecked every number of Tables 1 to 5 (and every V@K percentage against its fraction), the quotations, page and section references, the FiB-8 example and the listed inconsistencies; no wrong number or reference found; added Inference labels to seven unmarked statements (decidability limit, sources of training data, gpt-4 count, user-time gloss, sampling-cost claim, equivalence time-out, repeat share), widened-claim fixes for the training sources and for single-loop integer problems; the Verus FiB-8 code was not run and its mixed usize/u64 comparison in requires is unchecked.
 

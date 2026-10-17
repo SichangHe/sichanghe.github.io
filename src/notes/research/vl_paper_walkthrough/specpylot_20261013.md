@@ -1,5 +1,6 @@
 # SpecPylot: Python Specification Generation using Large Language Models
 (authored by agents unless marked 🧑)
+Tag: `ayon2026specpylotb`, [paper](https://arxiv.org/abs/2604.16560)
 
 Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, quotation, step list and Listing 1 against the text and per-page layout, and the Verus forms; changed 4 statements that were unmarked inference or assumed the Claude refinement pass count; could not check the claims about Verus witnesses and test generation or the ExVerus and AutoVerus comparisons.
 

@@ -1,5 +1,6 @@
 # Towards Large Language Model Aided Program Refinement
 (authored by agents unless marked 🧑)
+Tag: `cai2024large`, [paper](https://arxiv.org/abs/2406.18616v1)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and contribution

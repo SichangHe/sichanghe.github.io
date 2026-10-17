@@ -1,5 +1,6 @@
 # An Empirical Study of LLM-Generated Specifications for VeriFast
 (authored by agents unless marked 🧑)
+Tag: `fan2026empirical`, [paper](https://arxiv.org/abs/2606.26490v1)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and setup

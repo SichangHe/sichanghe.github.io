@@ -1,5 +1,6 @@
 # SaltBench: A Referee-Gated Protocol for Measuring Method Effects in Machine-Checked Software Work
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
+Tag: `hickey2026saltbenchb`, [paper](https://arxiv.org/abs/2609.11076)
 
 ## identity and claim
 

@@ -1,5 +1,6 @@
 # The Verifier is the Curriculum: Precision Sets the Return on Search in Code Self-Distillation
 (authored by agents unless marked 🧑)
+Tag: `zhou2026verifier`, [paper](https://arxiv.org/abs/2607.09709)
 
 Audit: audited 2026-10-13 against the paper; checked numbers, fractions, section and appendix references, quotations, steps against Algorithm 1 and §5 to §10, and the Verus forms; corrected the claim that techniques 2 to 7 all rest on the launch gate (4 to 7 use APPS), step 2 of technique 1 (5 frames is not in the paper), an unmarked inference on needing a passing first model, a widened only-for-offline claim, the blind judge called an LLM judge, the crossed bootstrap given for all seeds, the false-negatives-lower-reward claim in the catalog, and two overstatements in Verus forms.
 

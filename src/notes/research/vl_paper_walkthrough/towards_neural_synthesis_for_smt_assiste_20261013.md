@@ -1,5 +1,6 @@
 # Towards Neural Synthesis for SMT-Assisted Proof-Oriented Programming
 (authored by agents unless marked 🧑)
+Tag: `chakraborty2024neural`, [paper](https://arxiv.org/abs/2405.01787)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables I to VIII and Fig. 3, the percentage and ratio arithmetic, page and section references, quotations, the steps of techniques 1 to 9 against Sections III to VI and Appendix B, and the Verus forms; corrected one widened claim (the authors conjecture, not conclude, that same-project examples help most), one imprecise number (the ideal-premise gain is 4.7 intra and 2.8 cross, not about 5), one overbroad sentence about reaching a half, and marked four unmarked inferences; Verus forms are sound and already marked as inference.
 

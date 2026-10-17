@@ -1,5 +1,6 @@
 # Agentic Proof Automation: A Case Study
 (authored by agents unless marked 🧑)
+Tag: `xu2026agentic`, [paper](https://arxiv.org/abs/2601.03768)
 
 Audit: audited 2026-10-13 against the paper; checked every number, Table 1 sums, page and section references and quotations; corrected unmarked advice (marked Inference), widened claims (agents often fail to start decompositions; instruction file persists across sessions, not read every session; the human wrote every definition, not every statement), unsourced step details (error layout rule, in order, one run per edit) and the invented citation basis for the loop in technique 4; Verus sketch checked, no change.
 

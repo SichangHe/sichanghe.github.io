@@ -1,5 +1,6 @@
 # Lemma Functions for Frama-C: C Programs as Proofs
 (authored by agents unless marked 🧑)
+Tag: `volkov2018lemma`, [paper](https://arxiv.org/abs/1811.05879)
 
 Audit: audited 2026-10-13 against the paper; checked Tables I and II sums, Fig. 1 line counts, section references, quotations, technique steps and the Verus sketches; corrected the 31 lemma functions called a restatement of the old lemmas, an unmarked trusted-base and Verus inference, a missing reliance on an earlier lemma in the worked example, the number of axiom measures, the wrong lemma named as counterpart of the Verus sketch, the proxy condition left out, an SCC detail not in the paper, the strchr/strchrnul difference, Coq named where the paper says interactive prover, the tenfold line count, five reasons given as four, and an added after tuning. Not checked for lack of support in the Verus sources: broadcast proof fn behaviour and proof-mode loops.
 

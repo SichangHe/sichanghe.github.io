@@ -1,5 +1,6 @@
 # A Complete, Formal Semantics for Rust Source Code
 (authored by agents unless marked 🧑)
+Tag: `drodt2026complete`, [paper](https://arxiv.org/abs/2610.06003)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 source: Daniel Drodt, “A Complete, Formal Semantics for Rust Source Code,” arXiv:2610.06003v1, 5 October 2026; 67-page ACM-format manuscript and its appendices. The study uses the full extracted text and PDF. A search of the walkthrough notes found no earlier study of this title.

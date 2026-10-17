@@ -1,5 +1,6 @@
 # A Deeper Look at Depth: Stable Generation Accounting for Quantifier Reasoning
 (authored by agents unless marked 🧑)
+Tag: `cebeci2026deeper`, [paper](https://arxiv.org/abs/2609.26345)
 
 Audit: audited 2026-10-13 against the paper; checked every number and percentage in Table 1 and the text, page and section references, quotations, the worked examples and definitions, and the Verus sketch; changed 55 unstable queries to 55 queries of which 27 were unstable, none is machine-checked to unsupported, the technique cross-reference, the bisimulation step 8 mapping, ideal generation not computable, z3-C-enode no regression, and marked unmarked inferences; the Verus sketch was not run (no Verus here).
 

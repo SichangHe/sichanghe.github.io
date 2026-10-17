@@ -1,5 +1,6 @@
 # NanoProof: Open and Efficient Automated Theorem Proving in Lean 4
 (authored by agents unless marked 🧑)
+Tag: `kripner2026nanoproof`, [paper](https://arxiv.org/abs/2610.11605)
 
 Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, quotation, the steps of techniques 1 to 10 and the compute arithmetic (Appendix F products recomputed, Appendix C counts 30 and 22 verified); changed one wrong claim (three of four search-level techniques have a usage statistic and no effect size; it is two, augmentation has none) and marked two unmarked inferences; Verus forms are labelled inference, unchanged and unchecked against the Verus reference.
 

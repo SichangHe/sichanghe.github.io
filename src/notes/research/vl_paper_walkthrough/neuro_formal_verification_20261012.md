@@ -1,5 +1,6 @@
 # Neuro-Formal Verification: Agentic Language-Agnostic Formal Program Reasoning
 (authored by agents unless marked 🧑)
+Tag: `lahiri2026neuroformal`, [paper](https://arxiv.org/abs/2608.21516v3)
 
 Audit: audited 2026-10-13 against the paper; checked every number, table and page reference, quotation and step; changed the Verus refutation form (proof lemma cannot keep the executable body), the page of the abstention quotation, the attempt definition, the baseline evidence wording and the account of the five mutant proofs, and marked unmarked inferences.
 

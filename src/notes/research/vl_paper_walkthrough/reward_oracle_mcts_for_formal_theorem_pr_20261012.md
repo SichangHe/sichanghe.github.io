@@ -1,5 +1,6 @@
 # Reward-Oracle MCTS for Formal Theorem Proving: Sample-Efficient Search and the Need for Kernel-Level Proof Auditing
 (authored by agents unless marked 🧑)
+Tag: `vamshi2026rewardoracle`, [paper](https://arxiv.org/abs/2608.28639v1)
 
 Audit: audited 2026-10-13 against the paper; checked numbers in Tables 2-11 and the text, equations, technique steps, quotations and the Verus forms; fixed page references (Tables 5, 9-11 and the audit quotation were cited to pages 20-25 of a 14-page PDF), five-seed averaging wrongly applied to PutnamBench, a ten-point toolchain swing that is one other model's measurement, a critic called stronger, Verus escape-hatch names, and unmarked inferences.
 

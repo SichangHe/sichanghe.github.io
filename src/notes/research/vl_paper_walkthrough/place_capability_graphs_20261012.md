@@ -1,5 +1,6 @@
 # Place Capability Graphs: A General-Purpose Model of Rust's Ownership and Borrowing Guarantees
 (authored by agents unless marked 🧑)
+Tag: `grannan2025place`, [paper](https://doi.org/10.1145/3763122)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## paper and overlap with earlier notes

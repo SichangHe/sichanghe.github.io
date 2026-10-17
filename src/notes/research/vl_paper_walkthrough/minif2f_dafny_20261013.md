@@ -1,5 +1,6 @@
 # MiniF2F-Dafny: LLM-Guided Mathematical Theorem Proving via Auto-Active Verification
 (authored by agents unless marked 🧑)
+Tag: `baksys2025minif2fdafny`, [paper](https://arxiv.org/abs/2512.10187)
 
 Audit: audited 2026-10-13 against the paper; checked all numbers (488, 174, 128/160, 80%, 95/106/79, Table 2, N, E, temperature, token limit), Section 2.2 and 3.5 descriptions, Figure 6 and Appendix B; corrected one altered quotation (strengthening, not weakening, preconditions), widened wording of failure causes and ghost-code forms, pass@4 scope, and marked two unmarked inferences; Verus remarks are unchecked.
 

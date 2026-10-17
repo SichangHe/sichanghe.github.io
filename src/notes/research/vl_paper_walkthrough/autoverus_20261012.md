@@ -1,5 +1,6 @@
 # AutoVerus: Automated Proof Generation for Rust Code
 (authored by agents unless marked 🧑)
+Tag: `yang2025autoverus`, [paper](https://doi.org/10.1145/3763174)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## what the paper proves and how

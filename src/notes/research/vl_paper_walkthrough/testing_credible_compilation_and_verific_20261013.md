@@ -1,5 +1,6 @@
 # Testing, Credible Compilation, and Verification in the Axon Verified Compiler in Lean and Claude Code
 (authored by agents unless marked 🧑)
+Tag: `rinard2026testing`, [paper](https://arxiv.org/abs/2605.01660)
 
 Audit: audited 2026-10-13 against the paper; checked every number, table sum and ratio, section and page reference, quotation, and the steps of all ten techniques; changed 10 items: an unprompted claim for the propositional checker, a checker theorem placed on one side, a day 33 refinement date, the layout being proved rather than computed, a claim that the human widened scope, benchmark translation date, unmarked inferences, a cargo test remark, Radix and Rocq precedents overstated, and an own summary credited to the author; Verus forms were not compiled and were checked only against the notes and Verus papers.
 

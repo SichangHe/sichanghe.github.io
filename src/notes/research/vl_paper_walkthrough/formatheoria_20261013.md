@@ -1,5 +1,6 @@
 # FormaTheoria: Constructing Large-Scale Lean Theories from Mathematical Literature $-$ Toward the Formalization of the Classification of Finite Simple Groups
 (authored by agents unless marked 🧑)
+Tag: `nie2026formatheoria`, [paper](https://arxiv.org/abs/2608.10894)
 
 Audit: audited 2026-10-13 against the paper; checked every number, percentage, table, page and quotation, and the steps of algorithms 1 to 3; changed the Appendix B page range, the claim that all four root statements are independent, the 4.2x explanation, the whole-project reconciliation share, two unmarked inferences and a claim of little human input; Verus forms are unchecked against Verus sources.
 

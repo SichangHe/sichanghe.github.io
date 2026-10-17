@@ -1,5 +1,6 @@
 # Inferring multiple helper Dafny assertions with LLMs
 (authored by agents unless marked 🧑)
+Tag: `silva2025inferring`, [paper](https://arxiv.org/abs/2511.00125)
 
 Audit: audited 2026-10-13 against the paper; checked every number and fraction in Tables 1-8 and Table 5 overlaps, the cost arithmetic, the percentages, the page and section references, the prompts, the removal procedure, the failure counts, the quotations and the Verus forms; changed 3 slips: the worked example misplaced the condition inside its own by block, at most 4 positions for at most 4 generated assertions, and the insertion script said to add only assert statements, which the paper does not state.
 

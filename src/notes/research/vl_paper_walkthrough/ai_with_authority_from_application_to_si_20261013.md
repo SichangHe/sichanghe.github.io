@@ -1,5 +1,6 @@
 # AI with Authority, from Application to Silicon
 (authored by agents unless marked 🧑)
+Tag: `hickey2026ai`, [paper](https://arxiv.org/abs/2608.21356)
 
 Audit: audited 2026-10-13 against the paper; checked every number, percentage, page and section reference, quotation and the Verus sketches; changed the Figure 4 caption attribution, the page range of R6, a quotation with an ellipsis, the section that names the kernel fixtures, the overstated not verified at all and commonest, the abstract-vs-section source of the zero incorrect proofs wording, and marked six unmarked inferences; the Verus sketches were not run (no Verus here).
 

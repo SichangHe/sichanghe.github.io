@@ -1,5 +1,6 @@
 # FORALL-LEAN-AGENT for Auditable Reasoning in Formal Mathematics and Software Verification
 (authored by agents unless marked 🧑)
+Tag: `lwin2026forallleanagent`, [paper](https://arxiv.org/abs/2610.00885)
 
 Audit: audited 2026-10-13 against the paper; checked every number, table row, page reference, quotation and the appendix prompts and counts; changed: the six Table 4 incidents were called wrong earlier measurements of the author and the leak incidents the author's own runs, which the paper does not say; the leak evidence was widened to similarity alone while the paper also cites transcript and access records; the sentence that no technique has a measured effect ignored the one single-run retrieval comparison; the heading claimed every known way; three unmarked inferences marked; the import wording and a one run wording fixed; not checked: the Verus claims that Verus has no command listing assumptions and no independent proof checker, which the Verus references do not address.
 

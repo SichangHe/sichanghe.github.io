@@ -1,5 +1,6 @@
 # Adaptive Proof Refinement with LLM-Guided Strategy Selection
 (authored by agents unless marked 🧑)
+Tag: `lu2025adaptive`, [paper](https://arxiv.org/abs/2510.25103)
 
 Audit: audited 2026-10-13 against the paper; checked every number, fraction, page and table reference, quotation and technique step; changed the CoqHammer scope (not every non-Rango system uses it), the Section 4.8 note (RQ5 varies the iteration limit, so it is no contradiction), marked three unmarked inferences as Inference, and reworded one unclear admit() sentence; other numbers and quotations matched.
 

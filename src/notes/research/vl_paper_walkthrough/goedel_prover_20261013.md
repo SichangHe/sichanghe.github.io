@@ -1,5 +1,6 @@
 # Goedel-Prover: A Frontier Model for Open-Source Automated Theorem Proving
 (authored by agents unless marked 🧑)
+Tag: `lin2025goedelprover`, [paper](https://arxiv.org/abs/2502.07640)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 8, 10 and 11, the quotations, page references, the steps of techniques 1 to 7 against Sections 3 to 5 and Appendices A, B, D, E, F; corrected the run-to-run claim for the plus-minus 0.7, the 3-point lead, the 508K denominator, the SymPy 0.8%, the claims on Lean exits and on the hand-made benchmark, the leaderboard and cost claim in the threat paragraph, and marked the volume confound, the unaudited judge and the iter-0 split as inference; Verus statements were not checked beyond the study's own Inference marks.
 

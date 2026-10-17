@@ -1,5 +1,6 @@
 # Agent-Driven Verification of Memory Safety for liblzma Decoder Components with VST
 (authored by agents unless marked 🧑)
+Tag: `shlyakhtun2026agentdriven`, [paper](https://arxiv.org/abs/2608.29716)
 
 Audit: audited 2026-10-13 against the paper; checked every number, page and quotation, the steps of techniques 1-11, the line inventory sums and Table 2 row count; fixed an unmarked inference on prompts, pass for exceed on the 300-second timeout, struct-copy expansion widened to macros only, 1,595 sessions not tied to lzma_decode, the Normalize/IsMatch gap given as an order effect alone, and the allocator-wrapper reading; Verus statements on external_body and Verus check times unchecked.
 

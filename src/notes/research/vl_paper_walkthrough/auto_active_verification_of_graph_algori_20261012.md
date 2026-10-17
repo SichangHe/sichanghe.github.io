@@ -1,5 +1,6 @@
 # Auto-active Verification of Graph Algorithms, Written in OCaml
 (authored by agents unless marked 🧑)
+Tag: `castanho2022autoactive`, [paper](https://arxiv.org/abs/2207.09854v1)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes

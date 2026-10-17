@@ -1,5 +1,6 @@
 # Leanabell-Prover-V2: Verifier-integrated Reasoning for Formal Theorem Proving via Reinforcement Learning
 (authored by agents unless marked 🧑)
+Tag: `ji2025leanabellproverv2`, [paper](https://arxiv.org/abs/2507.08649)
 
 Audit: audited 2026-10-13 against the paper; checked numbers in Tables 1-6, pages, quotations, steps of techniques 1-7 and Verus forms; fixed unsupported claim that Lean statements are fixed text and a Lean-feedback description, an invented per-failed-trajectory reading of the 32-# budget, an unmarked inference on zero advantage and on the 1.7K/3.8K link, hand-set for pre-defined power values, and removed a wrong doubt about Qwen-2.5-72B; external_body and solver timeouts in Verus forms unchecked.
 

@@ -1,5 +1,6 @@
 # Trustworthy Software Project Generation : a Case Study with an Interactive Theorem Prover
 (authored by agents unless marked 🧑)
+Tag: `fang2026trustworthy`, [paper](https://arxiv.org/abs/2605.26017)
 
 Audit: audited 2026-10-13 against the paper; checked every number, quotation, page and section reference, each technique's steps, the figures and the Verus forms; changed one wrong count (the proof in Fig. 4 has four tactic lines, not five), one invented ordering of helper functions, one wrong section reference, a bodyless proof fn in Verus, claims widened beyond the paper (Interaction Trees as the way, all global properties in preservation form, no guard against weakened theorems, inspection by hand, under 30 minutes), and several statements now marked as inference; Verus indexing of Vec fields in a frame clause and the Verus solver-timeout behaviour are unchecked.
 

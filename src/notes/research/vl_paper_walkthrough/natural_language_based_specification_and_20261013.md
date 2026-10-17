@@ -1,5 +1,6 @@
 # Natural Language based Specification and Verification
 (authored by agents unless marked 🧑)
+Tag: `li2026natural`, [paper](https://arxiv.org/abs/2605.11315)
 
 Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 and 2 and the sums quoted from them, the scoring arithmetic, page and section references, the appendix schema fields, quotations and the Verus forms; fixed the appendix page range (A starts on p.11), a quotation used for a reason the paper does not give (syntax failures), the claim that every library summary may be null (memsafe is not), a no-variance claim the paper does not make, an unmarked trusted-base inference, an unmarked cache-layout purpose, and the next page that is the same page; Verus forms left as sound.
 

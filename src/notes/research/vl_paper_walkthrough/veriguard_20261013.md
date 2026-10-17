@@ -1,5 +1,6 @@
 # VeriGuard: Enhancing LLM Agent Safety via Verified Code Generation
 (authored by agents unless marked 🧑)
+Tag: `miculicich2025veriguard`, [paper](https://arxiv.org/abs/2510.05156)
 
 Audit: audited 2026-10-13 against the paper; checked every number, table cell, page reference, quotation, step, the Verus sketch (sound) and the conflict list (all confirmed); changed: black box credited to Nagini only, error messages go to the code generator only, precision reading and Nagini-passed assumption marked as inference, ASB gain wording softened, largest-gain claim removed, five strategies in the catalog line, own when-to-use lines marked; no wrong numbers.
 

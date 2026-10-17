@@ -1,5 +1,6 @@
 # The Secrets Must Not Flow: Scaling Security Verification to Large Codebases
 (authored by agents unless marked 🧑)
+Tag: `arquint2026secrets`, [paper](https://doi.org/10.1109/sp63933.2026.00026)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result

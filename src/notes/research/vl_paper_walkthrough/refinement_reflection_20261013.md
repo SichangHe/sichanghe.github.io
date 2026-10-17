@@ -1,5 +1,6 @@
 # Refinement Reflection: Complete Verification with SMT
 (authored by agents unless marked 🧑)
+Tag: `vazou2017refinement`, [paper](https://arxiv.org/abs/1711.03842)
 
 Audit: audited 2026-10-13 against the paper; checked every quotation page, theorem and figure reference, all Table 1 numbers and totals, the ratios in the unsupported-statements section, the PLE steps against Figure 9, the Figure 10 rules, Figure 11 laws, Appendices A, H, I, J; corrected the arXiv-extended-version claim, the unqualified termination of PLE, a fuel example source, a Table 1 evidence sentence, two unmarked inferences and one reworded limit; Verus code not run (no support found to change it, left as the reader's marked inference).
 

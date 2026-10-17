@@ -1,5 +1,6 @@
 # Tunable Automation in Automated Program Verification
 (authored by agents unless marked 🧑)
+Tag: `bai2025tunable`, [paper](https://arxiv.org/abs/2512.03926v1)
 Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
