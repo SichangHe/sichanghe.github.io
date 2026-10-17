@@ -5,82 +5,84 @@ Tag: `le2009statechart`, [paper](http://arxiv.org/abs/0909.1361v1)
 
 ## scope and result
 
-This paper gives the full algorithm used by iState to generate Hoare-style verification conditions from hierarchical, concurrent statecharts. State invariants are attached to states, accumulated through XOR and AND hierarchy, and checked for every guarded event transition. The implementation represents event code as an abstract syntax tree, maps each statement to sets of verification tuples, expands parallel and sequential composition, eliminates broadcasts by topological sorting, and discharges the resulting conditions with Simplify. The paper's abstract says: “We describe in detail the algorithm to generate verification conditions from statechart structures implemented in the iState tool.” (Abstract, p. 1) It also states: “Statecharts allow executable specifications to be derived from user requirements.” (§2, p. 2)
+This paper (the long version of an FM 2006 extended abstract, ref. [9]) describes the algorithm iState uses to generate Hoare-style verification conditions from hierarchical, concurrent statecharts. State invariants are attached to states, accumulated through XOR and AND hierarchy and ancestors, and checked for every guarded event transition. Event code is represented as an abstract syntax tree (AST). Each statement is mapped to sets of verification tuples, parallel and sequential composition are expanded by Cartesian products, and broadcasts are eliminated after a topological sort. The conditions are discharged with the Simplify theorem prover (§6). The paper's abstract says: “We describe in detail the algorithm to generate verification conditions from statechart structures implemented in the iState tool.” (Abstract, p. 1) Its second stated contribution is “a novel method to define a version of predicate semantics for statecharts” (Abstract, p. 1; §5). On requirements it says: “Statecharts allow executable specifications to be derived from user requirements.” (§2, p. 1) The paper has no theorems, proofs, case studies or measurements.
 
 ## technique 1: state invariants and accumulated invariants
 
-What it is. An invariant is a predicate over global variables and a state test, attached to a state to document what must hold whenever the system is in that state (§2, p. 2). For each state `s`, `si(s)` is the user predicate conjoined with the test that the state is active, or `true` if none is supplied. Hierarchy then creates a child invariant `ci`: XOR states conjoin the parent predicate with a disjunction over children; AND states conjoin it with a conjunction over all children; basic states keep `si`. The accumulated invariant `ai(s)` conjoins `ci(s)` with every ancestor's `si`.
+What it is. The paper proposes to “supplement a statechart specification by invariants. These are attached to states and specify what has to hold in a state configuration.” Invariants are “predicates over global variables ... and states (state tests)”, are derived from requirements, are “not meant for execution”, and document the “purpose” of states (§2, p. 1). Let `si: State → Condition` assign to each state the designer's invariant, or `true` if none, together with a test for being in that state (§2, p. 2). Because being in a state also means being in all its ancestors, in exactly one child of an XOR state and in all children of an AND state, `si` values are composed into the accumulated invariant `ai(s)` (§2, p. 2). The child invariant `ci` is defined by cases: for an XOR state, `si(s)` conjoined with the xor (the paper's operator ⊻, "stands for xor") of `ci` over the children; for an AND state, `si(s)` conjoined with the conjunction of `ci` over the children; for a Basic state, `si(s)`. Then `ai(s)` conjoins `ci(s)` with `si` of every ancestor (`parent+`) (§2, p. 2).
 
-The example uses `si(S) = (r = S ∧ x ≤ 100)` and `si(U) = (root = U ∧ x > 6)`, yielding `ai(S) = (root = R ∧ x > 1) ∧ (r = S ∧ x ≤ 100)` (§2, pp. 1–2).
+The example uses `si(S) = (r = S ∧ x ≤ 100)` and `si(U) = (root = U ∧ x > 6)`, giving `ai(S) = (root = R ∧ x > 1) ∧ (r = S ∧ x ≤ 100)` and `ai(U) = (root = U ∧ x > 6) ∧ ((a = M ∧ x < 111) ∧ (b = N ∧ x ≠ 15))` (§2, p. 2). The example chart is on p. 1. The states are translated to variables `root`, `r`, `a`, `b` using the translation of refs. [15,16] (p. 2).
 
-How to apply it.
+How to apply it (the steps restate the paper's definitions in §2).
 
-1. Encode each state as a variable or state test, including ancestor membership (§2).
-2. Attach requirement-derived predicates to states.
-3. Recursively compose child predicates according to XOR or AND semantics.
-4. Conjoin all ancestor predicates to obtain the condition for each concrete state.
+1. Encode each state as a variable test, including ancestor membership (§2, p. 2).
+2. Attach requirement-derived predicates to states (§2, p. 1).
+3. Recursively compose child predicates by XOR or AND semantics (`ci`, §2, p. 2).
+4. Conjoin all ancestor predicates to obtain the condition for each concrete state (`ai`, §2, p. 2).
 
-Verus form. Inference: Represent state membership and data predicates as `spec fn` predicates over a ghost or executable state enum. Use `requires` for the source accumulated invariant and `ensures` for the target one; maintain the state predicate with loop `invariant` clauses. Inference: unlike iState's visual hierarchy, Verus requires the Rust data representation and each parent/child relation to be written explicitly.
+Verus form. Inference: represent state membership and data predicates as `spec fn` predicates over a ghost or executable state enum. Use `requires` for the source accumulated invariant and `ensures` for the target one, and maintain the state predicate with loop `invariant` clauses. Inference: unlike iState's visual hierarchy, Verus requires the Rust data representation and each parent/child relation to be written explicitly.
 
-Evidence and limits. The construction is a symbolic semantics, not an executable invariant checker by itself. It assumes the statechart's XOR/AND hierarchy is well-formed and that predicates can be expressed in the theorem prover's first-order logic and linear arithmetic.
+Evidence and limits. The paper states that the invariants are not executed (§2, p. 1) and that its prover handles first-order logic and linear arithmetic (§6, p. 10). Inference: the construction is a symbolic semantics and not an invariant checker by itself, and it presumes a well-formed XOR/AND hierarchy.
 
 ## technique 2: verification tuples for transitions
 
-For a transition `E[guard]/action` from `S` to `T`, iState generates the Hoare triple `{ai(S) ∧ guard} action {ai(T)}` (§3, p. 3). Broadcasts are replaced by calls, and transitions in concurrent states on one event are combined. The paper's example action updates `x` and four state variables; its postcondition is the accumulated invariant for `U`, `M`, and `N`.
+For a transition `E[guard]/action` from `S` to `T`, iState generates the Hoare triple `{ai(S) ∧ guard} action {ai(T)}` (§3, p. 3). A broadcast in the action is replaced by a call to the corresponding operation, and for transitions in concurrent states on the same event `E` a combined transition is considered (§3, p. 3). The paper's example action is `x := x + 10 ‖ root := U ‖ a := M ‖ b := N`, which updates `x` and three state variables. Its postcondition is `ai(U)`, which includes the invariants of `M` and `N`. The corresponding tuple is `({R, S}, x ≠ 5, action, {U, M, N})` (§3, pp. 3, 5).
 
-The tuple representation is `VTuple = P(State) × Expression × Statement × P(State)`, where `(s,g,a,t)` stores source states, guard, action, and target states (§3, p. 4). It is converted to `{ ∧ ai[s] ∧ g } a { ∧ ai[t] }`. Keeping sets of source and target states avoids recomputing common ancestors and reduces duplicate invariant conjunctions.
+The tuple type is `VTuple ≜ P(State) × Expression × Statement × P(State)`, where `(s,g,a,t)` stores the source states, guard, action and target states (§3, p. 4). It is converted to `{ ⋀ ai[s] ∧ g } a { ⋀ ai[t] }`, “verified as a normal Hoare's triple” (§3, p. 4). The paper says using sets of source and target states “gives a more optimal way of composing verification conditions together” and “helps us avoiding redundancy when generating accumulating invariants due to states having common ancestors” (§3, p. 4). For a state set `ss`, the closure `cl(ss)` is the union of `parent*` of its members, and `sai(ss)` conjoins `si(s, ss)` over `cl(ss)` (§3, pp. 4–5).
 
 How to apply it.
 
-1. Generate an intermediate `EventCode` AST for each event using `StateAssign`, `Assignment`, `Bcast`, `Guard`, `Par`, `Seq`, and `Skip` nodes (§3, pp. 3–4).
-2. Convert state tests to tuples `( {s}, true, Skip, ∅ )` and user predicates to `(∅, predicate, Skip, ∅)` with `c2tuple` (§4, p. 5).
-3. Compose tuples through the AST, conjoining guards and collecting source/target state sets.
-4. Convert each final tuple into a Hoare verification condition.
+1. Generate an intermediate `EventCode` AST (a partial function from event identifiers to statements) using `StateAssign`, `Assignment`, `Bcast`, `Guard`, `Par`, `Seq` and `Skip` nodes (§3, pp. 3–4).
+2. Convert state tests to tuples `({s}, true, Skip, ∅)` and user predicates to `(∅, e, Skip, ∅)` with `c2tuple` (§4, p. 5).
+3. Compose tuples through the AST, conjoining guards and collecting source and target state sets (§4, pp. 5–6).
+4. Convert each final tuple into a Hoare verification condition (§3, p. 4).
 
-Verus form. Inference: Each tuple maps naturally to a Verus proof lemma with `requires` equal to the source invariant and guard and `ensures` equal to the target invariant. The action is ordinary Rust code; state assignments are field updates. Inference: nondeterministic guarded choices must be represented by explicit Rust branches or a ghost relation, and the proof must cover each branch.
+Verus form. Inference: each tuple maps naturally to a Verus proof lemma with `requires` equal to the source invariant and guard and `ensures` equal to the target invariant. The action is ordinary Rust code and state assignments are field updates. Inference: nondeterministic guarded choices must be represented by explicit Rust branches or a ghost relation, and the proof must cover each branch.
 
-Evidence and limits. The paper does not report a benchmark count or proof-time measurements. The method inherits Simplify's supported logic and does not automatically establish liveness or temporal properties.
+Evidence and limits. The paper reports no benchmark, count of conditions or proof-time measurement. It attaches invariants (safety properties) to states instead of writing temporal specifications in CTL or LTL (§7, p. 11). Inference: the method therefore establishes no liveness or temporal properties.
 
 ## technique 3: parallel and sequential product algorithms
 
-What it is. `parProd` computes the Cartesian product of tuple sets from parallel statements; `concat1` unions source and target states, conjoins guards, and creates a `Par` action. `seqProd` does the analogous product for sequential statements; `concat2` creates a `Seq` action (§4, pp. 5–6).
+What it is. `parProd` computes the Cartesian product of the tuple sets of parallel statements, and `concat1` unions the source states, conjoins the guards, creates a `Par [a1, ..., an]` action and unions the target states. `seqProd` and `concat2` do the same for sequential composition with a `Seq` action (§4, pp. 5–6). The paper says of `parProd`: “This function parProd is used very often in our implementation and it helps to simplify the implementation substantially.” (§4, p. 6)
 
 How to apply it.
 
-1. Recursively map each child statement to a set of tuples with `s2tuples`.
-2. For `Par ss`, call `parProd([s2tuples(s) | s ← ss])`; for `Seq ss`, call `seqProd` (§4, p. 7).
-3. For a guarded statement, call `c2tuple` on each guard and combine it with the child's tuples.
-4. Use `sai` over the closure of all ancestor states to build one accumulated invariant for a state set.
+1. Recursively map each child statement to a set of tuples with `s2tuples` (§4, p. 6).
+2. For `Par ss`, call `parProd([s2tuples(s) | s ← ss])`. For `Seq ss`, call `seqProd` on the same list (§4, p. 6).
+3. For `Guard r`, take the union over `(c, s) ∈ r` of `parProd([{c2tuple(c)}, s2tuples(s)])` (§4, p. 6).
+4. Use `sai` over the closure of all ancestor states to build one accumulated invariant for a state set (§3, pp. 4–5).
 
-The resulting representation preserves nondeterminism: when several guard conditions are true, each guarded alternative contributes a possible tuple. The paper explicitly notes that `Condition ↔ Statement` is used to represent this nondeterministic choice (§3, p. 4).
+Nondeterminism is kept by typing `Guard` as `Condition ↔ Statement`: “When several conditions are true at the same time, a choice is made non-deterministically.” (§3, p. 4) Each `(c, s)` pair of a `Guard` yields its own tuple set. Inference: the paper's if-then-else examples (pp. 5–6) list the tuple `(¬c1 ∧ c2, s2‖s3)` twice and omit `(c1 ∧ ¬c2, s1‖s4)`, apparently a typo (the sequential example repeats it).
 
-Verus form. Inference: Encode each product case as a separate lemma or match branch. A proof of a `Par` action needs a frame argument showing independent field updates commute; a `Seq` action uses the postcondition of the first operation as the precondition of the second. Inference: Verus does not infer arbitrary relational products from an AST, so a generator or library macro would be needed.
+Verus form. Inference: encode each product case as a separate lemma or match branch. A proof of a `Par` action needs a frame argument showing independent field updates commute, and a `Seq` action uses the postcondition of the first operation as the precondition of the second. Inference: Verus does not infer arbitrary relational products from an AST, so a generator or library macro would be needed.
 
 ## technique 4: broadcast elimination by topological sorting
 
-What it is. Event actions may broadcast other events. iState first topologically sorts the event-to-tuple map so every event's broadcasts refer only to earlier events. This requires the assumption that circular broadcasting is disallowed (§4, p. 7). `collectBcast` finds broadcast names, `filterBcast` replaces them with `Skip`, and `vtupleNoBcast` combines the filtered tuple with the already-expanded tuples of each broadcast event. `vseqNoBcast` repeats this over the sorted sequence.
+What it is. Event actions may broadcast other events. iState applies a topological sort [10] to `vtupleMap(ec)` to get a sequence `[(e1, s1), ..., (en, sn)]` such that the tuple set `si` broadcasts only events in `{e1, ..., ei-1}`. The paper says: “We can always obtain such a list with the assumption that we don't allow circular broadcasting [3].” (§4, p. 7) `collectBcast` finds the broadcast names in a statement. `filterBcast` replaces a top-level `Bcast` with `Skip` and removes broadcast branches from `Guard`, `Par` and `Seq` nodes. `vtupleNoBcast` applies `parProd` to the filtered tuple and the already-expanded tuple sets of the broadcast events, and `vtupleSetNoBcast` lifts this to tuple sets. `vseqNoBcast` repeats it over the sorted sequence (§4, pp. 7–8). The paper adds that the real implementation filters and collects broadcasts in one pass “for the sake of efficiency” (§4, p. 7).
 
 How to apply it.
 
-1. Build `vtupleMap = s2tuples ∘ ec` for all event code (§4, p. 7).
-2. Topologically sort the dependency graph of broadcasts.
-3. For each tuple, collect broadcasted event identifiers and filter broadcast nodes from its action.
-4. Parallel-compose the filtered action with the previously expanded tuple sets for those identifiers.
-5. Use the resulting broadcast-free tuples to generate final verification conditions.
+1. Build `vtupleMap ec = s2tuples ◦ ec` for all event code (§4, p. 7).
+2. Topologically sort by the broadcast dependencies (§4, p. 7).
+3. For each tuple, collect the broadcast event identifiers and filter the broadcast nodes from its action (§4, p. 7).
+4. Parallel-compose the filtered tuple with the previously expanded tuple sets for those identifiers (`vtupleNoBcast`, §4, pp. 7–8).
+5. Use `vseqNoBcast(tss)` to generate the final verification conditions (§4, p. 8).
 
-Verus form. Inference: Model a broadcast as a call to a verified event lemma, with a precondition equal to its source invariant and a postcondition equal to its target invariant. A topological order can be checked in a build-time generator; cyclic broadcasts require a separate fixpoint or explicit invariant and are outside this paper's algorithm.
+Verus form. Inference: model a broadcast as a call to a verified event lemma, with a precondition equal to its source invariant and a postcondition equal to its target invariant. A topological order can be checked in a build-time generator. Cyclic broadcasts are outside this paper's algorithm and would need a separate fixpoint or explicit invariant.
 
 ## technique 5: predicate semantics and implementation
 
-The paper defines a predicate semantics directly from the tuple functions. A state is `Basic`, `And`, or `Xor`; a transition is a five-ary relation of source, event, guard, action, and target (§5, pp. 8–10). `resStateEvent` restricts a chart to one event, `initialize` creates initial-state tuples, and `getNext`/`getSpon` handle ordinary and spontaneous transitions. For each event, `s2tuples` recursively combines basic, AND, and XOR states; spontaneous transitions are represented by a guard and the conjunction of negated spontaneous guards when none fires.
+The paper defines a predicate semantics by translating statecharts to verification tuples, instead of “the traditional operational way in [8,13,11]” (§5, p. 8). A state is `Basic`, `And` (name and sequence of parallel substates) or `Xor` (name, substates, initial state and transition relation). A `Transition` is a five-ary relation of source state, triggering event, guard, action and target state (§5, pp. 8–9). Events are handled one at a time. `resStateEvent` restricts a chart to one event plus spontaneous transitions (empty event name). `initialize` returns the tuple for initializing a state and always a singleton set. `getNext` and `getSpon` find ordinary transitions and chains of spontaneous transitions from their targets. The paper calls spontaneous transitions in XOR states “the most difficult problem” (§5, p. 9). In `getSpon` the condition `G` is the conjunction of the negated guards of the spontaneous transitions, which holds when none of them is taken. For an XOR state, `s2tuples` takes the union of `getNext` over the substates (`S1`) and a second set `S2`. `S2` is the product of the tuple sets of the substates with the conjunction of the negated guards of `S1`, i.e. the case where no transition fires (§5, p. 10).
 
-iState currently uses the Simplify theorem prover because it supports first-order logic and linear arithmetic (§6, p. 10). The authors say the approach yields many small local conditions: “As many small verification conditions are easier to handle automatically than a few large ones” (§7, p. 11). No performance denominator, model size, or number of discharged conditions is reported.
+iState “currently uses the Simplify theorem prover [6] to discharge the generated verification conditions because of its support of first order logic and linear arithmetic” (§6, p. 10). The authors plan to add arrays, rational and real numbers, and timed transitions (§6, p. 10). In the discussion they claim the approach “leads to many small ‘local’ verification conditions and avoids some impossible configurations” and write: “As many small verification conditions are easier to handle automatically than a few large ones, we believe that the approach can more easily scale up for the verification of large systems.” (§7, p. 11) This is a belief; the paper reports no model size, number of conditions or prover time.
 
-Inference: A Verus backend could generate one proof lemma per tuple and let Z3 discharge arithmetic and state-update obligations. Inference: the decomposition may help agent-written Rust proofs by localizing failures, but it does not verify event scheduling, timing, external I/O, or the adequacy of state invariants.
+Inference: a Verus backend could generate one proof lemma per tuple and let Z3 discharge arithmetic and state-update obligations. Inference: the decomposition may help agent-written Rust proofs by localizing failures, but it does not verify event scheduling, timing, external I/O, or the adequacy of state invariants.
 
 ## what is proved, trusted, and already done
 
-The paper specifies and implements the tuple-generation algorithms and gives a predicate semantics corresponding to statechart structure. It reports no independent soundness theorem comparing generated conditions with an external operational semantics, and no benchmark measurements. Trusted components are the statechart-to-AST translation, Simplify, the logical encoding, and the designer's invariants. Inference: for Verus, the largest threat is specification error: a false or incomplete state invariant can make every generated proof succeed while missing the real requirement. VL should not redo generic guarded-command VC generation or statechart invariant accumulation as a new technique; it should reuse the decomposition if a product workflow has hierarchical event models. Inference: threat to agent-written verified Rust is medium for reactive controllers and low for ordinary data-structure proofs.
+Stated by the paper: it specifies the tuple-generation algorithms, says they are implemented in iState, and gives a predicate semantics corresponding to statechart structure. It contains no soundness theorem relating generated conditions to an operational semantics, and no benchmark measurements. The translation from statecharts to event code is taken from refs. [15,16]. The paper disallows circular broadcasting (§4, p. 7) and enforces a single way to initialize a state by disallowing some statechart variants (§5, p. 9).
+
+Inference: the trusted components are the statechart-to-AST translation, Simplify, the logical encoding and the designer's invariants. For Verus, the largest threat is specification error: a false or incomplete state invariant can make every generated proof succeed while missing the real requirement. Inference: VL should not redo generic guarded-command verification-condition generation or statechart invariant accumulation as a new technique. It should reuse the decomposition if a product workflow has hierarchical event models. Inference: threat to agent-written verified Rust is medium for reactive controllers and low for ordinary data-structure proofs.
 
 ## techniques for the catalog
 
@@ -90,4 +92,4 @@ The paper specifies and implements the tuple-generation algorithms and gives a p
 - broadcast elimination — topologically expand event calls into broadcast-free verification tuples
 - predicate statechart semantics — recursively generate tuples for initialization, ordinary, and spontaneous transitions
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Hence, we can construct a global verification tuple map for all events using the following function"): read all 573 lines of the paper text start to end and compared every quotation, formula, definition, page and section reference, and technique step; changed the XOR child invariant (an xor over children, not a disjunction), the example action (three state variables, not four), several page references (§2 and the s2tuples definitions), the unsupported "full algorithm", the unsupported liveness and scaling statements (now marked as belief or Inference), and added the paper's typo in the if-then-else product example; did not check the PDF layout of the formulas beyond the text, the cited references, or the earlier FM 2006 abstract, and the link is the arXiv ID printed in the paper.

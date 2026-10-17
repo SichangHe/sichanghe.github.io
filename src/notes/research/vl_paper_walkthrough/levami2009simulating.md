@@ -1,6 +1,6 @@
 # Simulating reachability using first-order logic with applications to verification of linked data structures
 (authored by agents unless marked 🧑)
-Tag: `levami2009simulating`, [paper](http://arxiv.org/abs/0904.4902v2)
+Tag: `levami2009simulating`, [paper](https://doi.org/10.2168/LMCS-5(2:12)2009)
 
 ## purpose and result
 
@@ -24,17 +24,17 @@ Inference: In Verus, represent reachability as a ghost `spec fn` over a mathemat
 
 ## technique 2: coloring axioms for path absence
 
-Use coloring when the hard goal is that no path exits a region, or that every path must pass through a region. A color is a unary predicate over nodes. The paper's three schemes are NoExit, GoOut, and NewStart. “NoExit axiom scheme says that if no f-edges leave color class, A, then no f-paths leave A.” (Section 1, p. 3.)
+Use coloring when the hard goal is that no path exits a region, or that every path must pass through a region. A color is a unary predicate over nodes. The paper's three schemes are NoExit, GoOut, and NewStart. The paper says that “NoExit[A, f], says that if no f-edges leave color class, A, then no f-paths leave A.” (Section 1, p. 3.)
 
-Steps (Sections 3.2 and 5, pp. 3, 17–22):
+Steps (Sections 3.2 and 5, pp. 7–8, 17–22):
 
 1. Select initial colors from unary predicates in the specification and program variables. Add forward and backward reachability colors such as `r_x,f(v) := ∃w. x(w) ∧ TC[f](w,v)`.
 2. For NoExit, prove the premise that no edge leaves color `C`; add the conclusion that no TC path leaves `C`.
 3. For GoOut, prove that all `f` edges from `A` enter `B`; conclude that every path leaving `A` passes through `B`.
 4. For NewStart, prove that all `g` edges inside `C` are also `h` edges; combine it with NoExit to prove that no new paths arise inside `C`.
-5. Feed the conclusions to SPASS while proving the target formula. In the reverse-list example, the authors use reachability colors from `x`, `y`, `x′`, and `y′` to prove acyclicity and edge reversal.
+5. Feed the conclusions to SPASS while proving the target formula. In the reverse-list example, the instances used (Fig. 9, p. 20) are NoExit and NewStart over the reachability colors `r_x′,n`, `r_x′,n′`, `r_y,n`, `r_y,n′`, plus GoOut over the unary colors `x`, `x′`, `y`.
 
-The paper's reverse invariant partitions nodes between the `x` and `y` lists and states that original edges remain on `x` while edges on `y` are reversed (Section 5.1, pp. 16–17). The proof of `NoExit[r_x′,n,n′]` proceeds by contradiction: a purported escaping path yields a changed edge out of `x`, then an incoming edge back to `x′`, contradicting list acyclicity (Section 5.2, p. 17).
+The paper's reverse invariant partitions nodes between the `x` and `y` lists and states that original edges remain on `x` while edges on `y` are reversed (Section 5.1, pp. 16–17). The proof of the premise `NoExit[r_x′,n,n′]` proceeds by refutation (Section 5.2, p. 17, Fig. 8): assume `x′(u1)`, `n_tc(u1,u2)`, `¬n_tc(u1,u3)` and `n′(u2,u3)`; then `¬n(u2,u3)` by T2, so the changed edge leaves `u2`, hence `x(u2)`; by the definition of `x′`, `n(u2,u1)` holds, giving a cycle between `u1` and `u2` that contradicts acyclicity of the list at `x`.
 
 Inference: A Verus proof can define colors as predicates over a ghost set of allocated nodes, then prove `forall` closure lemmas. `NoExit` becomes an invariant-preservation lemma; `GoOut` and `NewStart` become path decomposition lemmas. Verus has no built-in TC axiom scheme, so each use requires a concrete finite-path induction lemma.
 
@@ -42,13 +42,13 @@ Inference: A Verus proof can define colors as predicates over a ghost set of all
 
 Use this when manually choosing all colors is impractical. The paper limits the search to colors appearing in the goal, their forward/backward reachability, and Boolean combinations.
 
-Steps (Sections 5.3–5.5, pp. 19–22):
+Steps (Sections 5.3–5.5, pp. 19–21):
 
 1. Start with unary predicates in the target and pre/postconditions, then add forward and backward reachability colors.
-2. Add initial colors inferred from code: roots, edge-change starts, and edge-change ends. For reverse, the table selects `x,y,x′,y′` and the changed-edge roots.
+2. Add initial colors inferred from code: roots, edge-change starts, and edge-change ends. For reverse, Table 5(b) (p. 20) gives `x, y` for Roots[n], `x′, y′` for Roots[n′], `x` for StartChange[n,n′], and `y, x′` for EndChange[n,n′].
 3. Enumerate Boolean combinations up to a bounded complexity level.
 4. Run phases in order: try GoOut premises, then NoExit, then NewStart. Add a coloring conclusion only when the theorem prover proves its premise.
-5. After each level, retry the target formula. Stop when the goal is proved or the search budget is exhausted.
+5. After each level, retry the target formula. The pseudocode (Fig. 10, p. 21) loops until the goal is proved; the prototype is a Perl script calling SPASS and limits the time SPASS may spend on each formula, because SPASS may not terminate on an invalid formula (Section 5.5).
 
 The paper warns that “the set of possible colors to choose from is doubly-exponential in the number of initial colors; giving all the axioms directly to the theorem prover is infeasible.” (Section 5.4, p. 20.) Its prototype automatically chooses useful axioms for the examples, but the authors describe the method as heuristic and incomplete.
 
@@ -58,13 +58,15 @@ Inference: For Verus, generate candidate ghost lemmas from root and field predic
 
 Use this when a heap operation adds or removes exactly one pointer edge and reachability must be updated. For adding `s→t`, the paper gives the precise relation `e′_tc(v1,v2) ↔ e_tc(v1,v2) ∨ (e_tc(v1,vs) ∧ e_tc(vt,v2))`. It proves this with colors forward from `t` and backward from `s` (Section 6.1.1, pp. 26–27).
 
-For removing an edge in an acyclic graph with at most one path between nodes, use `e′_tc(v1,v2) ↔ e_tc(v1,v2) ∧ ¬(e_tc(v1,vs) ∧ e_tc(vt,v2))`. The paper says precise removal is unavailable for arbitrary cyclic graphs without extra relations; it proves the formula for acyclic functional graphs and trees using NewStart and NoExit instances (Section 6.1.2, pp. 26–27).
+For removing an edge in an acyclic graph with at most one path between nodes, use `e′_tc(v1,v2) ↔ e_tc(v1,v2) ∧ ¬(e_tc(v1,vs) ∧ e_tc(vt,v2))`. The paper says “There is no known precise formula for updating the transitive closure of a general graph”; for functional graphs it cites Hesse's formulas, which use an auxiliary binary or a ternary relation, and “Without these additions, it is not possible to give precise update formulas in the presence of cyclicity.” It proves the formula above for acyclic functional graphs and trees using NewStart and NoExit instances (Section 6.1.2, pp. 26–27, Table 6(b),(c)).
 
 Inference: A Verus pointer proof can maintain a ghost reachability relation and update it with these formulas only under the same acyclicity/unique-path assumptions. The executable pointer mutation remains ordinary Rust; the ghost update lemma must prove that no other path was created or destroyed.
 
 ## evidence, assumptions, and VL impact
 
-The paper reports successful verification of list reversal, mark-and-sweep, and update formulas with SPASS, and compares the reasoning to TVLA. It gives no aggregate benchmark denominator; claims are per example. It states that coloring axioms are sound regardless of which instances are selected, but the theorem prover may fail to terminate. Trusted components include user-supplied loop invariants, the first-order prover, heap transformer formulas, and assumptions such as acyclicity and unsharedness.
+The paper reports successful verification with SPASS of list reversal, list append, the mark phase of mark-and-sweep (Sections 5.1, 5.6), and the unit-edge update formulas (Section 6.1), and compares the reasoning to TVLA (Section 6). For mark, the loop invariant was proved “using only the positive axioms” and the postcondition needed only `NoExit[marked, f]` (Section 5.6.2, pp. 23–24). The abstract says mark-and-sweep “has been previously reported as being beyond the capabilities of ESC/Java”. The only measurements I found are “under ten seconds” for proving each coloring axiom from induction (Section 1) and “2 orders of magnitude” speedup from GoOut on the acyclic part of reverse's postcondition (Section 5.2); there is no benchmark table. The paper states “soundness is guaranteed no matter which axioms are instantiated” (Section 7, p. 28), but the theorem prover may fail to terminate. The conclusion calls the examples “still preliminary” (Section 8, p. 28).
+
+Inference: Trusted components include the user-supplied loop invariants, the first-order prover, the heap transformer formulas, and assumptions such as acyclicity and unsharedness.
 
 Inference: VL should not redo the paper's TC axiomatization or its reverse-list examples. The reusable gap is a Verus ghost reachability library with finite-path induction, list-segment colors, and unit-edge update lemmas. Threat to agent-written verified Rust is high for pointer-heavy code: proving a local pointer update does not automatically establish global reachability, and the method remains conditional on supplied invariants and heap-model contracts.
 
@@ -75,4 +77,4 @@ Inference: VL should not redo the paper's TC axiomatization or its reverse-list 
 - directed color search: enumerate root, reachability, and Boolean-combination colors in phased theorem-prover search
 - unit-edge reachability update: maintain precise closure formulas for edge insertion and restricted acyclic edge removal
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Also, it ensures that the nodes reachable from the formal parameter x on entry to the procedure are exactly the nodes reachable from the return value y at the exit."): read the whole paper text (pp. 1–30) and checked every quotation, section and page reference, the T1, NoExit, GoOut and NewStart definitions, the explore algorithm steps (Fig. 10), Table 5, Fig. 9, the NoExit[r_x′,n,n′] refutation, and the edge addition and removal claims; changed the NoExit quotation (the paper writes "NoExit[A, f], says"), the page ranges, the reverse color list, the Table 5 description, the search-termination claim, the edge-removal limitation wording, and the evidence section (added mark/ESC/Java, timings, preliminary status, labeled trusted components as inference), and set the link to the DOI printed on the paper's first page; did not check the Verus Inference paragraphs beyond labeling, proofs of Propositions 3.1–4.7, Theorem 4.8 and Lemmas 4.9–4.10 in detail, Nelson's axioms N1–N7, or the cited references.

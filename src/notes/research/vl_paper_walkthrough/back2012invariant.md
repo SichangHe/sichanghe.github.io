@@ -1,6 +1,6 @@
 # An Exercise in Invariant-based Programming with Interactive and Automatic Theorem Prover Support
 (authored by agents unless marked 🧑)
-Tag: `back2012invariant`, [paper](http://arxiv.org/abs/1202.4829v1)
+Tag: `back2012invariant`, [paper](https://doi.org/10.4204/EPTCS.79.2)
 
 ## scope and result
 
@@ -14,9 +14,9 @@ The paper gives the criterion: “A diagram is correct iff all transitions are c
 
 ## technique 2: incremental weakest-precondition checking
 
-Use Socos's diagram editor to add transitions one at a time. The checker computes weakest preconditions and emits one PVS lemma per condition, with a proof script and final proof state. Check all transitions currently present; defer liveness and termination by omitting a termination function, which produces a warning. The environment pinpoints an inconsistent transition in the Problems view.
+Use Socos's diagram editor to add transitions one at a time. The checker computes weakest preconditions and emits one PVS lemma per condition, with a proof script and final proof state. Consistency is always checked for all transitions added so far; liveness and termination checking can be postponed (omitting the termination function disables termination conditions and Socos prints a warning that the program may not be terminating). The environment pinpoints an inconsistent transition in the Problems view.
 
-The implementation rule is: “The verification conditions are calculated by weakest preconditions, and exported into a PVS theory file containing a lemma for each condition.” (Section 4.2, p. 34). Inference: a Verus IDE can generate obligations after each function/loop edit and associate failures with source spans, while `requires` and `ensures` remain the user-facing specification. This incremental granularity catches local errors before a complete program exists.
+The implementation rule is: “The verification conditions are calculated by weakest preconditions, and exported into a PVS theory file containing a lemma for each condition.” (Section 4.2, pp. 33-34). Inference: a Verus IDE can generate obligations after each function/loop edit and associate failures with source spans, while `requires` and `ensures` remain the user-facing specification. This incremental granularity catches local errors before a complete program exists.
 
 ## technique 3: build domain background theories for automation
 
@@ -38,7 +38,7 @@ The first `siftdown` diagram fails at `n = r(k)`: the left child is the last in-
 
 The paper says: “This bug is hard to spot, and is easily missed even with extensive testing.” (Section 6.3, p. 42). Inference: this is a direct lesson for VL: failed proof obligations can reveal missing safety cases that tests miss. Keep the failing obligation, identify the missing case, and repair the invariant/guard before adding assumptions.
 
-A second failure occurs in `TEAR_HEAP`: automation cannot show `partitioned` is preserved through `siftdown`. Add assertions after decrement and swap: the root is maximal through `k`, and `partitioned` holds after the swap. Prove `heap_max` and `perm_partitioned` as background lemmas; endgame then discharges the transition.
+A second failure occurs in `TEAR_HEAP`; it is an automation gap, not a program bug: automation cannot show `partitioned` is preserved through `siftdown`. Add assertions after decrement and swap: the root is maximal through `k`, and `partitioned` holds after the swap. Prove `heap_max` and `perm_partitioned` as background lemmas; endgame then discharges the transition.
 
 ## technique 6: choose between interactive proofs, assertions, and assumptions
 
@@ -48,7 +48,7 @@ Inference: Verus should prefer a proved lemma or explicit assertion over `assume
 
 ## evidence, trust, and product implications
 
-The case study reports a PVS-checked proof of consistency, liveness, and termination for heapsort, with automatic discharge of the final application of background lemmas. It reports no benchmark denominator, elapsed times, or success percentage. The evidence is one algorithm and its proof obligations, including two discovered corner-case failures and their repairs. Trusted components include PVS's kernel and type-correctness proofs, Yices, the weakest-precondition translation, background lemmas, and user invariants/specifications.
+The case study reports “a PVS checked proof of consistency, liveness and termination of the invariant diagram” (Section 7, p. 47) for heapsort, and says “The actual application of the lemmas to verify individual transitions was completely automatic.” (Section 7, p. 47). It reports no benchmark denominator, elapsed times, or success percentage. The evidence is one algorithm and its proof obligations, including one discovered corner-case bug in `siftdown` (with its repair) and one automation gap in the `TEAR_HEAP` loop transition (closed with two assertions and two background lemmas). Inference: trusted components include PVS's kernel and type-correctness proofs, Yices, the weakest-precondition translation, background lemmas, and user invariants/specifications.
 
 Inference: agent-written verified Rust faces the same invariant-design bottleneck; automation can discharge routine arithmetic only after the right abstraction and invariant exist. The paper's strongest product lessons are proof-first control flow, reusable domain lemmas, incremental diagnostics, and preserving counterexamples as proof obligations. It does not show that Socos scales beyond this heapsort exercise.
 
@@ -59,4 +59,4 @@ Inference: agent-written verified Rust faces the same invariant-design bottlenec
 - background-theory abstraction — prove reusable array, permutation, and swap lemmas and feed them to SMT endgames
 - corner-case proof repair — use failed obligations to add missing branches and strengthen invariants
 - explicit proof escape hatches — choose interactive proofs, assertions, helper lemmas, or consciously trusted assumptions
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Quantifiers render Yices incomplete, and the catch-all strategy grind fails to prove even that perm is reflexive."): read the whole paper text start to end; checked all six quotations word for word and their page numbers, the technique steps (diagram correctness criteria, weakest-precondition lemmas, background theory lemmas, heapsort and siftdown structure, the n = r(k) corner case, the TEAR_HEAP assertions and lemmas, the four escape options), and the no-benchmark claim; changed the Section 4.2 quote page to pp. 33-34, the liveness/termination deferral wording, the evidence paragraph (one corner-case bug plus one automation gap, not two bugs; quoted Section 7 for the automatic lemma application; marked the trusted-components list as Inference), and the tag link to the DOI printed in the paper (doi:10.4204/EPTCS.79.2); did not check the Verus inferences against Verus itself, the reference list contents, or the figures beyond their text extraction.

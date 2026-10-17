@@ -3,7 +3,7 @@
 Tag: `katz2010mutation`, [paper](https://www.semanticscholar.org/paper/81ba66c3a5ddb2c69b1d981679a3ceb559c4059c)
 
 ## scope and result
-Katz and Peled combine finite-state model checking with genetic-programming mutations. Their target is a parameterized communication protocol: each concrete architecture is finite, but the family of architectures is too broad for exhaustive checking. The tool first mutates only architecture parameters to expose a counterexample, then mutates selected protocol code while retaining the discovered architectures as regression checks. The running case is the published α-core multiparty synchronization protocol. The paper reports a livelock-producing architecture and a replacement for the coordinator's REFUSE handler.
+Katz and Peled combine finite-state model checking with genetic-programming mutations. Their target is a parameterized communication protocol: each concrete architecture is finite, but the family of architectures is too broad for exhaustive checking. The tool first mutates only architecture parameters to expose a counterexample, then mutates selected protocol code while retaining the discovered architectures as regression checks. The running case is the published α-core multiparty synchronization protocol. The paper reports an architecture on which the protocol can reach livelock and a replacement for the coordinator's REFUSE handler.
 
 The paper's central claim is explicit: “The synthesis tool we constructed is capable of generating various mutations of the code.” (abstract, p. 435). Its scope is heuristic. The authors state, “Although our method does not guarantee termination, neither for finding the error, nor for finding a correct version of the algorithm” (conclusion, p. 449). Inference: a candidate that survives the generated architectures is evidence against the bug, not a proof over every possible architecture.
 
@@ -11,11 +11,11 @@ The paper's central claim is explicit: “The synthesis tool we constructed is c
 
 what it is
 
-A population contains syntactically valid candidate programs. Mutation erases, inserts, or replaces syntax-tree fragments; optional crossover was described but not implemented in this work. Model checking supplies the fitness value rather than ordinary tests. The paper says the search “begins with the construction of some random candidate programs (typically, a few hundreds candidates)” and then retains the highest-fitness candidates after mutation (section 2.1, p. 437).
+A population contains candidate programs from a syntactically constrained space, often represented as trees. Mutation erases, adds, or replaces program segments, and may generate extra code where the syntax requires it. The paper describes crossover as a possible operator, with “some arguments against its utilization”, and states “In our work, we did not implement the crossover operation.” (section 2.1, p. 437, footnote 1). Model checking supplies the fitness value rather than ordinary tests. The paper says the search “begins with the construction of some random candidate programs (typically, a few hundreds candidates)” and then retains the highest-fitness candidates after mutation (section 2.1, p. 437).
 
 when to use it
 
-Use it when exhaustive synthesis or verification is infeasible, but each candidate can be model-checked on a bounded finite instance. It is especially suited to a parameterized system in which changing topology or parameters can reveal a bug that a fixed topology misses.
+Inference: use it when exhaustive synthesis or verification is infeasible, but each candidate can be model-checked on a bounded finite instance. It fits a parameterized system in which changing topology or parameters can reveal a bug that a fixed topology misses, which is the paper's motivation (section 1, p. 436).
 
 how to do it
 
@@ -24,7 +24,7 @@ how to do it
 3. Model-check every candidate in Γ ∪ Δ. Rank each property with a four-level measure: no execution satisfies it; some but not all do; every bad prefix can still be extended to a satisfying execution; or all executions satisfy it (section 2.1, p. 438).
 4. Add a parsimony score so shorter programs are preferred, then keep the |Γ| highest-ranked candidates. Stop at a target fitness or an iteration limit; restart with fresh random candidates if needed (section 2.1, pp. 437–438).
 
-The paper's concrete fitness example negates an LTL implication and rewards partial progress toward its counterexample: for ϕ = □(P → Q), search for ◇(P ∧ ¬Q), first rewarding a path reaching P and then one that violates Q there (section 3, p. 443).
+The paper's concrete fitness example for architecture search negates an LTL implication and rewards partial progress toward its counterexample: for ϕ = □(P → Q), search for ¬ϕ = ◇(P ∧ ¬Q), giving intermediate rank to solutions with a path satisfying ◇P, and the highest fitness when Q is violated on reaching the location P (section 3.2, p. 443). For program evolution, the paper says a combination of the methods of its references [9,10] is used, with an initial fitness level per LTL property from a deep model checking analysis (section 4, pp. 445–446). That variant is not described in detail in this paper.
 
 Verus form (Inference)
 
@@ -32,26 +32,26 @@ Inference: encode each candidate Rust function with a `requires`/`ensures` contr
 
 what shows it works
 
-The experiment is qualitative rather than a statistical benchmark. The tool generated two small architectures within seconds that exercised α-core's unusual LOCK and UNLOCK receptions in the participant's sync state (section 3, p. 444). The protocol case then produced a concrete assertion violation and a corrected handler (section 5, pp. 446–448).
+The experiment is qualitative rather than a statistical benchmark. The tool generated two small architectures “Within seconds” that violated an added assertion that only ACKREF is received in the participant's sync state, i.e. that exercised the LOCK and UNLOCK receptions (section 3.2, pp. 443–444, Fig. 3). The protocol case then produced a concrete assertion violation and a corrected handler (section 5, pp. 446–448).
 
 limits and assumptions
 
-The search is probabilistic and bounded by iteration and architecture-list limits. Fitness is only as good as the checked finite instances and properties. The authors note that unrestricted mutation can radically change the algorithm; restricting dynamic code reduces search but “can make it impossible to reach a perfect solution” (section 5.2, p. 448). Crossover is not implemented. Model checking and the mutation engine are trusted components; the paper does not provide a soundness proof for the heuristic as a universal verifier.
+The search is probabilistic and bounded by iteration and architecture-list limits. Fitness is only as good as the checked finite instances and properties. The authors note that unrestricted mutation can radically change the algorithm; restricting dynamic code reduces search but “can make it impossible to reach a perfect solution” (section 5.2, p. 448). Crossover is not implemented. The paper does not provide a soundness proof for the heuristic as a universal verifier. Inference: model checking and the mutation engine are trusted components.
 
 ## technique 2: evolve architectures to find a violating instance
 
 what it is
 
-Instead of enumerating every topology, mutate the communication architecture and related parameters while keeping protocol code fixed. Fitness drives the population toward an architecture that violates the specification. The paper motivates this because enumeration can spend effort extending an innocuous ring while missing the topology that exposes the fault (section 1, pp. 436–437).
+Instead of enumerating every topology, mutate the communication architecture and related parameters while keeping protocol code fixed. Fitness drives the population toward an architecture that violates the specification. The paper motivates this because the enumeration of instances “can easily progress in a direction that will not reveal the existence of an error (e.g., focusing on a particular architecture such as a ring and just extending the number of processes)” (section 1, p. 436).
 
 how to do it
 
-1. Represent an architecture as participants, coordinators, connectivity, and parameters such as buffer sizes (section 3, p. 442).
-2. Start with random architectures and mutate edges, process counts, and parameters subject to syntactic constraints.
-3. Model-check each architecture running the protocol. Rank partial counterexamples using decomposed properties, as in the ◇P then ◇(P ∧ ¬Q) fitness scheme (section 3, p. 443).
-4. Preserve high-fitness architectures and iterate until one violates the target property or the search budget expires.
+1. Represent an architecture (participants, coordinators, connectivity, and parameters such as buffer sizes; section 3, p. 441) as the code of a dedicated `init` process built from the blocks `CreateProc`, `Participant`, `Coordinator`, and `Connect`; the process code of each type stays fixed and only `init` is generated and altered (section 3.1, p. 442). The number of allowed processes, and the range of process ids, are bounded (p. 442).
+2. Start with random `init` programs and mutate them as in technique 1.
+3. Model-check each architecture running the protocol. Rank partial counterexamples using decomposed properties, as in the ◇P then ◇(P ∧ ¬Q) fitness scheme; satisfying the negation of the specification raises fitness, and a single violating path suffices (section 3.2, p. 443).
+4. A parsimony measure prefers shorter programs, which “often leads to the removal of redundant lines from the code, and to the generation of simpler architectures and counterexamples” (section 3.1, pp. 442–443). Iterate until an architecture violates the target property or the iteration limit expires (section 2.1, p. 438).
 
-The α-core fault was exposed by adding `ASSERT (n = |shared| + |locked|)` before accepting-state message reception. The resulting two-participant/two-coordinator topology is shown in Figure 4 (section 5.1, pp. 446–447). Its message sequence causes `n` to fall to zero while another offer remains active, violating the Progress requirement and producing livelock (section 5.1, p. 447).
+The authors suspected that the coordinator's counter `n` could be decremented twice for one refusal despite the `if n > 0` check, and added `ASSERT (n = |shared| + |locked|)` “just before receiving any message in the “accepting” state”. The tool found “several architectures” violating it; the simplest has two participants and two coordinators (Figure 4, section 5.1, p. 446). In its message sequence (Figure 5), P1's late REFUSE arrives after C2 has reset `n` and a new offer from P2 has set `n` to 1, so `n` is wrongly decreased to 0 although P2's offer is active. The paper says this violates the Progress property of the α-core paper [13], and “The result can be a livelock” or even deadlock (section 5.1, pp. 446–447).
 
 Verus form (Inference)
 
@@ -59,7 +59,7 @@ Inference: model the topology as a ghost/specification value such as a finite se
 
 Evidence and limits
 
-The paper gives the exact architecture and message sequence, but no count of tried architectures, probability of discovery, or completeness guarantee. The discovered assertion is an excellent debugging witness; it is not evidence that other architectures are safe. The property itself assumes the α-core paper's interpretation of an enabled interaction and eventual execution (section 5.1, p. 447).
+The paper gives the architecture and message sequence, but no count of tried architectures, probability of discovery, or completeness guarantee; it says only “After a short progress between various architectures” (section 5.1, p. 446). Inference: the discovered assertion violation is a debugging witness; it is not evidence that other architectures are safe. The Progress property is taken from the α-core paper [13] and requires that “an enabled interaction (i.e., one in which the participating processes have requested OFFER or PARTICIPATE and did not subsequently sent a REFUSE) will eventually be executed” (section 5.1, p. 447).
 
 ## technique 3: co-evolve program repairs and counterexample architectures
 
@@ -70,11 +70,11 @@ A repair that passes only the first bad topology may fail elsewhere. Algorithm 1
 how to do it
 
 1. Set `prog := initialProg` and `archList := ∅`.
-2. Call `EvolveArch(prog, spec)`. If it returns null, the tool assumes (without guaranteeing) that `prog` is good and returns true (Algorithm 1, lines 1–6).
+2. Call `EvolveArch(prog, spec)`. If it returns null, the paper says “we assume (though we cannot guarantee) that the program is correct” and the algorithm returns true (Algorithm 1, lines 3–6; section 4, p. 445).
 3. Otherwise append the architecture and call `EvolveProg(archList, spec)`. If no candidate is found, return false; otherwise replace `prog` and repeat (lines 7–11).
-4. Stop when `maxArchs` is reached. The architecture list prevents a previously refuted program from being proposed again and supplies difficult witnesses to later candidates (section 4, p. 445).
+4. When `|archList|` reaches `maxArchs` the algorithm returns false (line 12). The architecture list serves two purposes: a program refuted by a new architecture will not be suggested again, and architectures complex enough to fail earlier programs are good candidates to fail later ones (section 4, p. 445). `initialProg` can be the program to correct or a random program when synthesizing from scratch. Since `EvolveProg` is probabilistic, the paper notes it is possible to increase iterations or re-run it (p. 445).
 
-The α-core repair allowed only the REFUSE-handling fragment to mutate; participant code and most coordinator code remained static. After an initial repair failed on a newly evolved architecture, alternation eventually produced `if sender ∈ shared then n:=n − 1` (section 5.2, pp. 447–448). Removing the sender from `shared` prevents a second decrement for the same refusal.
+In the α-core repair, the participant code and most of the coordinator code were static, and only the code the authors “manually identified as wrong” and that deals with the REFUSE message was dynamic (section 5.2, pp. 447–448). The tool first found a correction for the architecture of Fig. 4, then found a new architecture on which it failed; after an alternating series, it produced `if sender ∈ shared then n:=n − 1` (Fig. 6, p. 448). This replaces the comparison of `n` to 0 in coordinator transition 3. The paper says this “indeed seems to solve the previous error, since after the first decrease of n, the sender is removed from the shared list, thus avoiding a second redundant decrease” (p. 448). The paper gives no proof of correctness.
 
 Verus form (Inference)
 
@@ -82,13 +82,13 @@ Inference: keep immutable verified Rust and its contracts fixed, expose a small 
 
 Evidence and limits
 
-The corrected handler survived the architectures generated by this run, but the paper reports no exhaustive bound, run count, or independent reimplementation. The stopping condition “without any architecture on which a violation could be found” is explicitly an assumption, not a theorem (section 4, p. 445). Restricting the mutable region improves speed and preserves structure but can exclude the true repair.
+The corrected handler survived the architectures generated by this run, but the paper reports no exhaustive bound, run count, or independent reimplementation. It describes the final correction as generated “without any architecture on which a violation could be found” (section 5.2, p. 448), while the null return of `EvolveArch` is assumed, not guaranteed, to mean correctness (section 4, p. 445). Restricting the mutable region improves speed and preserves structure but can exclude the true repair.
 
 ## what is proved, measured, and trusted
 
-The experiment demonstrates one real protocol bug and one candidate correction. It does not report denominated success rates, runtime distributions, or a proof that α-core is correct for all parameter values. Model checking establishes properties of each finite instance supplied to it; genetic selection chooses which instances and code variants to inspect. The mutation grammar, fitness design, finite model, protocol specification, model checker, solver, and the unvalidated assumption that no undiscovered architecture refutes the final program remain trusted or influential. Inference: for VeruLaw, the method is most useful as counterexample-guided repair around a Verus proof boundary, while the final universal claim must still be discharged by Verus invariants or a separately proved parameterized model.
+The experiment demonstrates one real protocol bug and one candidate correction. It does not report success rates, runtime distributions, or a proof that α-core is correct for all parameter values. Model checking establishes properties of each finite instance supplied to it; genetic selection chooses which instances and code variants to inspect. Inference: the mutation grammar, fitness design, finite model, protocol specification, model checker, and the unvalidated assumption that no undiscovered architecture refutes the final program remain trusted or influential. Inference: for VeruLaw, the method is most useful as counterexample-guided repair around a Verus proof boundary, while the final universal claim must still be discharged by Verus invariants or a separately proved parameterized model.
 
-The paper's correction addresses a specific counter decrement race. It does not address arbitrary implementation bugs, message loss, scheduler fairness, unbounded process counts, or the semantic gap between the α-core model and deployed Rust. Inference: an agent-written verified Rust product faces a moderate threat from this technique as an automated bug-finding and patch proposal system, but a lower threat to its core value of machine-checked contracts because this paper's search does not replace a sound proof of the final implementation.
+The paper's correction addresses a specific counter decrement race in the REFUSE handler. The paper does not discuss arbitrary implementation bugs, message loss, scheduler fairness, or deployed implementations of α-core, and its architectures have a bounded number of processes (section 3.1, p. 442). Inference: an agent-written verified Rust product faces a moderate threat from this technique as an automated bug-finding and patch proposal system, but a lower threat to its core value of machine-checked contracts because this paper's search does not replace a sound proof of the final implementation.
 
 ## techniques for the catalog
 
@@ -96,4 +96,4 @@ The paper's correction addresses a specific counter decrement race. It does not 
 - architecture evolution for counterexamples — mutate topology and parameters to discover a finite instance that violates a temporal property
 - co-evolutionary repair — alternate refuting architectures with program mutations while retaining all discovered architectures
 - assertion-guided scenario search — add a local assertion and evolve architectures toward a concrete message trace that violates it
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "When searching for the goal architecture, a permanent code is given for each of the process types, where the genetic process is allowed to randomly generate and alter only the code of the init process."): I read the whole paper text (pp. 435-450) and checked every quotation, section and page reference, the four-level fitness measure, Algorithm 1 steps and line numbers, the α-core assertion, counterexample and the final REFUSE correction; I changed the page for the "without any architecture" quote (section 5.2, p. 448, not section 4), the page of the ring-enumeration motivation (p. 436), the architecture representation (init process with CreateProc/Connect, section 3.1), the Algorithm 1 line numbers, softened the livelock claim to what the paper says (livelock or even deadlock is possible), removed unsupported items (solver, message loss and fairness presented as paper findings, "denominated") and labelled my own conclusions "Inference:"; I did not check the Verus-form paragraphs beyond labelling them as inference, did not check the cited references [1-15], and the link is from the fetch record (the paper text gives no DOI; it gives TACAS 2010, LNCS 6015, pp. 435-450).

@@ -1,12 +1,12 @@
 # Automatic Function Annotations for Hoare Logic
 (authored by agents unless marked 🧑)
-Tag: `matichuk2012automatic`, [paper](http://arxiv.org/abs/1211.6188v1)
+Tag: `matichuk2012automatic`, [paper](https://doi.org/10.4204/EPTCS.102.6)
 
 ## problem and contribution
 
 Matichuk introduces function annotations for monadic Hoare logic. A proof of one property often establishes facts about intermediate states that another property needs, but ordinary preconditions and postconditions do not retain those facts in a reusable form. The paper's abstract says, “when proving that a function satisfies a Hoare triple, intermediate reasoning is automatically stored as function annotations,” and that annotations “can be exploited in future Hoare logic proofs.” (Abstract, p. 46) The implementation is in Isabelle/HOL and is tested on an experimental seL4 microkernel branch.
 
-An annotation wraps a function with assertions checked at each intermediate operation and a failure flag. Under a precondition that proves the flag never fails, later proofs may assume the intermediate assertions. Multiple annotations for the same function are merged by conjoining their assertions. The technique preserves the underlying monadic function's behavior: annotations are proof artifacts and checks, not changed executable semantics. The paper reports no soundness gap in the formal definitions, but its practical evidence is one seL4 function and selected proof-script line counts.
+An annotation wraps a function with assertions checked at each intermediate operation and a failure flag. Under a precondition that proves the flag never fails, later proofs may assume the intermediate assertions. Multiple annotations for the same function are merged by conjoining their assertions. The technique preserves the underlying monadic function's behavior: annotations are proof artifacts and checks, not changed executable semantics. The paper gives definitions and rules in Isabelle/HOL but no separate soundness argument beyond them, and its practical evidence is one seL4 function (`invoke-untyped`) and selected proof-script line counts.
 
 ## technique: derive annotations from an existing Hoare proof
 
@@ -20,7 +20,7 @@ Apply the method as follows:
 4. let the verification-condition generator store each computed intermediate precondition as an annotation (§4, pp. 52–53)
 5. prove that annotations cannot fail from P; then use the annotation in later triples (§3–4)
 
-The example annotation in Figure 3 records `valid-free` before allocation, `valid-free-except i` during creation and initialization, and `valid-free` before enqueueing (p. 49). The paper emphasizes that annotations “do not need to be explicitly defined, but can be generated as a consequence of an existing Hoare logic proof.” (§1, p. 47)
+The example annotation in Figure 3 records `valid-free` before allocation, `valid-free-except i` during creation and initialization, and `valid-free` before enqueueing and before the final return (p. 49). The paper emphasizes that annotations “do not need to be explicitly defined, but can be generated as a consequence of an existing Hoare logic proof.” (§1, p. 47)
 
 Inference: In Verus, this corresponds to extracting intermediate facts from a successful `proof fn` or loop proof into reusable lemmas about a function's abstract state. Verus has no annotation monad or `afails` flag; a VL tool would store proof obligations and generated lemmas externally, then invoke Verus to recheck each use. The source code's executable behavior should remain unchanged, but the extracted fact is useful only if its `requires` conditions are preserved.
 
@@ -36,17 +36,17 @@ The reuse procedure is:
 4. use assertions supplied by F at each intermediate operation instead of reproving them from R (§3)
 5. discharge the remaining ordinary Hoare triples and conclude the original triple via the annotation soundness rule (§4, p. 52)
 
-For `new-tcb`, the `valid-free` annotation lets the `valid-queues` proof assume `valid-free-except i` during initialization. The paper derives `valid-queues ∧ valid-free-except i → not-queued i`, avoiding propagation and reproving of `not-queued i` through earlier operations (§3, pp. 50–51). Rule (5) turns an annotated precondition into an ordinary Hoare precondition, and rule (6) transfers the result when the function satisfies the annotation (§3–4, pp. 50–52).
+For `new-tcb`, the `valid-free` annotation lets the `valid-queues` proof assume `valid-free-except i` during initialization. The paper uses the implication `valid-queues s ∧ valid-free-except i s −→ not-queued i s` to strengthen the precondition of `init-tcb`, so `not-queued i` need not be propagated and reproved through `create-tcb` and `alloc` (§3, p. 50). Rule (5) turns an annotated precondition into an ordinary Hoare precondition (p. 50), and rule (6) transfers the result to the underlying function when it satisfies the annotation (§4, p. 52).
 
 Inference: A Verus version would pass previously proved lemmas as `requires` facts to a later `proof fn`, or invoke a lemma whose postcondition supplies an intermediate invariant. The reuse is sound only when Verus checks the original lemma and the new function's precondition; there is no implicit dynamic annotation state.
 
 ## technique: merge orthogonal annotations
 
-Use merging when separate proofs establish different properties of the same function. The paper defines `F ⊲⊳ G` by combining the failure flags of annotations F and G, while evaluating only one underlying function (§3, pp. 51–53). To merge:
+Use merging when separate proofs establish different properties of the same function. The paper introduces the merge `⊲⊳` in §3 (p. 51) and defines `F ⊲⊳ G` as `λ s. (dropA F s, afails (F s) ∨ afails (G s))`, so only one underlying function is evaluated and `dropA F s = dropA G s` is assumed (§4, p. 53). To merge:
 
 1. produce annotations F and G with their respective preconditions P and Q (§3)
 2. require the combined precondition `P ∧ Q` (§4, p. 53)
-3. conjoin failure conditions pointwise, preserving the shared underlying computation (§3–4)
+3. take the disjunction of the two failure flags, `afails (F s) ∨ afails (G s)`, while evaluating only one underlying computation; the assertions themselves are thereby conjoined (§4, pp. 52–53)
 4. distribute the merge through monadic composition so each operation receives both relevant assertions (Fig. 8, p. 53)
 5. use the merged annotation in a later proof (§3, Fig. 6, p. 51)
 
@@ -72,13 +72,13 @@ Inference: Verus's verifier does not expose a weakest-precondition VCG that retu
 
 ## evidence: seL4 case study
 
-The case study concerns `invoke-untyped`, whose invariant-preservation proof is 300 lines of Isabelle script. About five lines reformulated the top-level precondition to produce an annotation, and the generated annotation was manually edited to remove extraneous properties (§5, p. 54). Applying it to integrity and authority-confinement proofs reduced those scripts from 192 to 56 lines; applying the resulting annotation to confidentiality reduced that proof from 215 to 39 lines (§5, p. 54). The conclusion reports the combined reduction as 407 to 95 lines for two properties of one function (§7, p. 55). These are line counts, not time measurements, and the denominators are the named proof scripts, not all seL4 proofs.
+The case study concerns `invoke-untyped`, whose invariant-preservation proof is 300 lines of Isabelle script. About five lines of Isabelle reformulated the top-level precondition to produce an annotation, and the generated annotation was manually edited to remove extraneous properties (§5, p. 54). The paper says the net edit was "a single line was added to the script with 40 lines of manual annotation modifications." Applying the annotation to the integrity and authority-confinement proofs reduced the proof script from 192 to 56 lines; this "produced another annotation which, when applied to the proof of confidentiality, reduced the lines of proof script from 215 to to 39" (§5, p. 54). The conclusion reports the combined reduction as 407 to 95 lines for two properties of one function (§7, p. 55). These are line counts, not time measurements, and the denominators are the named proof scripts, not all seL4 proofs.
 
-The authors state that “Some manual effort is still required to effectively use these annotations, so they are currently in an experimental branch of the seL4 proof.” (§5, p. 54) Annotation generation is therefore not fully automatic in the engineering sense: users adjust top-level preconditions and remove irrelevant assertions. Recursive annotations and annotations over inductive maps are described as possible but left for future work (§4, p. 54).
+The authors state that “Some manual effort is still required to effectively use these annotations, so they are currently in an experimental branch of the seL4 proof.” (§5, p. 54) Inference: annotation generation is therefore not fully automatic in the engineering sense: users adjust top-level preconditions and remove irrelevant assertions. The paper also says automation work is "still ongoing" (§5, p. 54). Recursive annotations and annotations over inductive maps are described as possible but left for future work (§4, p. 54).
 
 ## trusted boundary, limitations, and VL threat
 
-The formal trusted base includes Isabelle/HOL's monadic semantics, the Hoare and annotation rules, the VCG's implementation, and the proof that an annotation's failure flag is unreachable under its precondition. The method assumes that the original proof really establishes annotation adherence; it does not infer that a property is semantically relevant or that a selected annotation is minimal. It also assumes the function's intermediate states are expressible in the chosen monadic model. The paper's seL4 evidence is one experimental branch and two reused properties, with manual edits.
+Inference: the paper has no trusted-base section; the following is my reading. The trusted base would include Isabelle/HOL's monadic semantics, the Hoare and annotation rules, the VCG's implementation, and the proof that an annotation's failure flag is unreachable under its precondition. The method assumes the original proof establishes annotation adherence; the paper does not say it checks that a property is semantically relevant or that an annotation is minimal (it says generated annotations needed manual removal of extraneous properties, §5). It assumes the function's intermediate states are expressible in the chosen monadic model. The paper's seL4 evidence is one function (`invoke-untyped`) in an experimental branch, reused for the integrity, authority-confinement and confidentiality proofs, with manual edits. The paper also lists limitations and future work: recursive annotations are unexplored (§4, p. 54), and the authors plan to make annotations "more opaque to the end user" (§6, p. 55).
 
 Inference: For VL, this is a high-value proof-maintenance technique. Agent-written Verus proofs repeatedly establish ownership, representation, and state-machine facts that later lemmas need. Capturing those facts as named, checked lemmas can reduce duplicated proof text and make repairs local. The threat to product differentiation is moderate: an annotation cache could make a competing verification agent substantially more effective, but it does not replace specification design or Verus checking. VL should record each extracted lemma's preconditions, source obligation, and dependency version so stale annotations fail visibly after code changes.
 
@@ -88,4 +88,4 @@ Inference: For VL, this is a high-value proof-maintenance technique. Agent-writt
 - annotated-triple reuse — assume a verified annotation's intermediate predicates while proving a new property
 - annotation merging — conjoin independent annotation sets under a combined precondition
 - VCG annotation extraction — use weakest-precondition splitting and schematic lemmas to generate annotations automatically
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Function annotations are implemented by creating a new function which, effectively, has an assertion between every operation."): read the whole paper text and the whole study; checked every quotation, number (300, about 5, 40, 192 to 56, 215 to 39, 407 to 95), figure, rule and page reference, and the technique steps; changed the merge step (failure flags are disjoined, not conjoined), the confidentiality step (a second, derived annotation), the page for the not-queued implication, the soundness and trusted-base wording (now marked Inference), and the link (DOI from the paper text); did not check the Verus inferences against Verus, and did not check the Isabelle formulas beyond comparing them with the paper text.

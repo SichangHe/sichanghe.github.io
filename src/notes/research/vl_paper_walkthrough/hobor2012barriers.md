@@ -1,6 +1,6 @@
 # Barriers in Concurrent Separation Logic: Now With Tool Support!
 (authored by agents unless marked 🧑)
-Tag: `hobor2012barriers`, [paper](http://arxiv.org/abs/1203.6412v2)
+Tag: `hobor2012barriers`, [paper](https://doi.org/10.2168/LMCS-8(2:02)2012)
 
 ## scope and result
 
@@ -19,7 +19,7 @@ How to apply it, from §3 (pp. 5–7) and §4 (pp. 8–9).
 1. Choose the barrier's participant count and a finite list of states (§4, p. 8).
 2. For each state, list mutually exclusive outgoing transitions (§4, p. 8).
 3. For each transition, write exactly one precise pre/post pair for every participant (§4, p. 8).
-4. Put a positive share of the barrier in every precondition and the corresponding state in its postcondition (§4, p. 8).
+4. Put a positive share of the barrier in the current state in every precondition (§4, p. 9, item 7). The SLEEK checker also requires each postcondition to contain a fraction of the barrier in the next state (§8.5, p. 26).
 5. Check that the joined preconditions and joined postconditions contain the full barrier and agree on every other resource (§4, pp. 8–9).
 6. In the program, give each thread the appropriate initial share, then call the barrier at every phase boundary (§3, pp. 5–7).
 
@@ -51,7 +51,7 @@ How to apply it. Verify each thread independently. At a barrier call, select the
 
 Verus form. Inference: write a ghost `proof fn` for each transition and call it at the barrier API boundary; the proof function should consume a state/token fact and return the post-state fact. Use `requires` and `ensures` on the API, and use a state-machine invariant to connect all threads. Do not make a proof function part of executable control flow; Verus erases proof code. Inference: the paper's partial-correctness escape for a stuck barrier should be modeled explicitly as a liveness assumption or omitted when the product requires termination.
 
-Evidence. The paper verifies the Appendix A variant with three postconditions: `True`, lax bounds relating `x1`, `x2`, and `n`, and the exact result `x1 = 59`. Each has 73 lines of code plus specification; HIP times are 2.55 s, 2.91 s, and 3.04 s respectively (§8.7, pp. 27–28). The loop was replaced with recursion and arithmetic expressions were changed to suit Omega, so these timings are for the modified example, not the original source.
+Evidence. The paper verifies a modified variant of the example against three specifications: `barrier-paper.ss` (postcondition `True`, meaning the program does not get stuck), `barrier-weak.ss` (a relationship between `x1`, `x2`, and `n`), and `barrier-strong.ss` (the exact value `x1 = 59` after the loop; only this one is listed, in Appendix A, p. 34). Each has 73 lines of code plus specification; HIP times are 2.55 s, 2.91 s, and 3.04 s respectively (§8.7, pp. 27–28). The loop was replaced with recursion and arithmetic expressions were changed to suit Omega, so these timings are for the modified example, not the original source.
 
 ## technique 4: separate unerased concurrent semantics, oracle semantics, and erased execution
 
@@ -67,9 +67,9 @@ Trusted boundary. The development uses Coq's standard axioms plus dependent and 
 
 ## technique 5: mechanize soundness in Coq and account for proof cost
 
-The authors machine-check the barrier rules, semantics, oracle soundness, and erasure relation. Figure 5 reports 16,598 total lines and 7 minutes 34 seconds on a 2.66 GHz, 8 GB machine. `SLB HRulesSound` has 1,664 lines and takes 1m14s; `SLB ESEquiv` has 3,352 lines and takes 30s; `SLB Ex` has 2,700 lines and takes 48s (Figure 5, p. 17). The loop rule is only proved on paper because mechanizing it was judged painful (§6, p. 16; §7, p. 17).
+The authors machine-check the barrier rules, semantics, oracle soundness, and erasure relation. Figure 5 reports 16,598 total lines and 7 minutes 34 seconds on a 2.66 GHz, 8 GB machine. `SLB HRulesSound` has 1,664 lines and takes 1m14s; `SLB ESEquiv` has 3,352 lines and takes 30s; `SLB Ex` has 2,700 lines and takes 48s (Figure 5, p. 17). The loop (While) rule is only proved on paper because it is "known to be painful to mechanize" and was skipped for time (§6, footnote 12, p. 15); the authors estimate a further 2,000-3,000 lines for it (§7, p. 17).
 
-How to use the technique. Define the assertion and operational semantics; prove each sequential rule; prove barrier-rule soundness, including resource accounting and the token/precision argument; prove oracle soundness by progress/preservation; then prove erasure conservativity. Keep proof-size and compilation-time measurements by file so later changes can be audited.
+How to use the technique (Inference: this order summarizes §6-§7; the paper does not present it as a procedure). Define the assertion and operational semantics; prove each sequential rule; prove barrier-rule soundness, including resource accounting and the token/precision argument; prove oracle soundness by progress/preservation; then prove erasure conservativity. Keep proof-size and compilation-time measurements by file so later changes can be audited.
 
 Verus form. Inference: split the development into executable API lemmas, state-machine invariants, and abstraction/erasure lemmas. Use `proof fn`, `lemma`, `requires`, `ensures`, `assert`, and `invariant` only in forms supported by the Verus reference used by this project. Inference: Verus's SMT automation may discharge local arithmetic and ownership facts, but the paper's Coq dependent-type bookkeeping and metatheory still require explicit Rust ghost encodings.
 
@@ -85,7 +85,7 @@ Evidence and limits. The solver handled all fractional-permission entailments in
 
 ## technique 7: extend entailment to inductive predicates and fractional heap matching
 
-SLEEK supports user-defined inductive predicates for lists, trees, lengths, heights, and bags (§8.2, p. 20). Its base entailment reduces heap obligations by matching, folding, and unfolding, with restrictions that guarantee termination (§8.3, pp. 22–23). Fractional permissions require three changes: `FXPure` records pointers with shares so unequal pointers are required only when shares overlap; folding/unfolding propagates a node's share through every abstracted node; and matching supports full, left-split, and right-split cases (§8.4, pp. 24–25).
+SLEEK supports user-defined inductive predicates that describe data-structure shapes and properties such as list length, tree height, and bag of values (§8.2, p. 20). Its base entailment reduces heap obligations by matching, folding, and unfolding, with restrictions that guarantee termination (§8.3, pp. 22–23). Fractional permissions require three changes: `FXPure` records pointers with shares so unequal pointers are required only when shares overlap; folding/unfolding propagates a node's share through every abstracted node; and matching supports full, left-split, and right-split cases (§8.4, pp. 24–25).
 
 How to apply it. Define an inductive predicate with a shape and pure invariant. During entailment, match aliased nodes, unfold a predicate only when the exposed node can match, and fold only when the definition is entailed. When permissions differ, split the larger share and add a join constraint for the pieces. Prune cases by comparing share inclusion before attempting all three match forms (§8.4, pp. 24–25).
 
@@ -93,7 +93,7 @@ Verus form. Inference: encode the inductive predicate as a recursive `spec fn` o
 
 ## what is proved, measured, and trusted
 
-Proved: the stated Hoare rules are sound for the paper's unerased semantics; oracle soundness connects thread-local proofs to the concurrent machine; erasure is conservative; and the example barrier satisfies the stated consistency conditions. Measured: Coq proof size and compilation time (16,598 LOC, 7m34s); SLEEK's six-definition check (279 entailments, 2.3 s); and HIP's three 73-LOC examples (2.55–3.04 s) (Figures 5 and §8.7, pp. 17, 27–28).
+Proved: the stated Hoare rules are sound for the paper's unerased semantics (the While rule only on paper, not in Coq); oracle soundness connects thread-local proofs to the concurrent machine; erasure is conservative; and the example barrier satisfies the stated consistency conditions. Measured: Coq proof size and compilation time (16,598 LOC, 7m34s); SLEEK's six-definition check (279 entailments, 2.3 s); and HIP's three 73-LOC examples (2.55–3.04 s) (Figures 5 and §8.7, pp. 17, 27–28).
 
 Trusted or assumed: Coq's standard axioms and excluded middle; the correctness of Omega, Redlog, and MONA; the SLEEK prototype and its sound-but-incomplete solver; precise/token preconditions; static barrier declarations in the mechanized model; private stores; a simplified allocator and scheduler; and the correspondence between the model and real Pthreads. The authors also say, “We also do not address the tricky problem of barrier definition inference.” (§9, p. 29)
 
@@ -101,7 +101,7 @@ Inference: the strongest product threat is specification and model mismatch. An 
 
 ## what VL should not redo
 
-The paper already supplies a soundness pattern for stateful rendezvous: explicit barrier automata, full-share accounting, mutually exclusive transitions, thread-modular Hoare rules, unerased/erased semantics, and a machine-checked proof. A new VL component should reuse these ideas rather than invent another informal barrier invariant. It should focus on Rust/Verus encodings, inference of barrier definitions, realistic memory models, and checking that generated specifications match ordinary Rust intent.
+Inference: the paper already supplies a soundness pattern for stateful rendezvous: explicit barrier automata, full-share accounting, mutually exclusive transitions, thread-modular Hoare rules, unerased/erased semantics, and a machine-checked proof. A new VL component should reuse these ideas rather than invent another informal barrier invariant. It should focus on Rust/Verus encodings, inference of barrier definitions, realistic memory models, and checking that generated specifications match ordinary Rust intent.
 
 ## techniques for the catalog
 
@@ -113,4 +113,4 @@ The paper already supplies a soundness pattern for stateful rendezvous: explicit
 - fractional-share decision procedure — solve share joins, bounds, existential elimination, unsatisfiability, and implication with a sound overapproximation
 - inductive fractional entailment — combine predicate fold/unfold with full and split permission matching
 - automated HIP/SLEEK integration — compile barrier diagrams to entailment obligations and discharge calls through structured specifications
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Oracle soundness says that if each of the threads on a machine are safe with respect to the oracle semantics, then the entire concurrent machine combining the threads together is safe."): read the whole paper text (pp. 1-36 including Appendix A) and checked every quotation, number, Figure 5 and benchmark-table figure, section and page reference, and the technique steps against it; changed the link to the DOI printed in the paper (the arXiv link was from the fetch record), corrected the step-4 postcondition claim (the postcondition-state check is from SLEEK, §8.5), corrected the loop-rule citation (footnote 12, p. 15), corrected the description of the three HIP specifications (only barrier-strong.ss is in Appendix A), reworded the SLEEK predicate list, and marked two own-conclusion passages as Inference; did not check the Verus encodings (marked Inference, not claims of the paper), the Coq files or the HIP/SLEEK tool themselves, or the cited external papers.
