@@ -9,16 +9,17 @@ A proof checker only tells you the proof matches the statement it was given. It 
 
 The checks come from the literature review and from audits of earlier results in this project. The sources are in [agent_evaluation_procedure_sources_20261012.md](agent_evaluation_procedure_sources_20261012.md), keyed by check id. You do not need that file to follow the procedure.
 
-What the four labels tell a reader who must decide whether to trust the result:
+What the five labels tell a reader who must decide whether to trust the result:
 - valid: every claim holds as the person's words say, with no limit to list. You can rely on it as stated.
-- agent-checked: every claim holds as far as agents can tell, but only under listed limits (assumptions the agent added, a narrower reading it stated, a missing tie to the code). Read the conditions before relying on it.
+- agent-checked: every claim holds as the person's words say, with no limit to list, but only one agent checked it, with no independent second reader. You can rely on it as far as you trust one careful agent.
+- agent-checked-limited: every claim holds, but only under listed limits (assumptions the agent added, a narrower reading it stated, a missing tie to the code). Read the limits before relying on it. When a result is both limited and checked by one agent only, it gets this label, and "single reader" is listed among its limits: the limits say more about what you can rely on than the number of readers does.
 - invalid: at least one claim is not guaranteed as the person asked, or a cheat or defect was found. It does not mean the agent lied: an honest, checkable result that proves only part of the request is invalid too. Do not rely on the result as a whole; the per-claim labels show which claims you can still use.
 - unknown: you could not tell, and the hand-back says what would settle it.
 
 Three choices the rule makes, which the human may want to change:
 - A claim backed only by examples or small-size model checking is `unknown`, not `invalid`.
 - A claim with no statement at all is `invalid`, not `unknown`. A missing statement is the result's fault.
-- Nobody but you looked at the result: the best it can get is `agent-checked`.
+- Nobody but you looked at the result: the best it can get is `agent-checked`, or `agent-checked-limited` if it also has limits.
 
 ## Words used
 
@@ -383,7 +384,7 @@ Fail: the guarantee a claim depends on is decided in unverified code (for exampl
 ### E1. A second reader [C, cond]
 Do, in two parts. First, give a fresh agent that has not seen the request only the theorem and its definitions, and ask for a plain English statement of what it guarantees; compare with the claim. Second, give it your claim list, grade lines and quoted evidence, and ask it to refute your three weakest grades and any pass on M1, M2, L2 and T1. If you can compare formulas with a tool, you may also have it write the formal statement again from its English and compare.
 Pass: the English matches the claim and it could not refute you. Fail: it shows a difference that matters or a defect you accept; fix the grade and redo the verdict.
-Without a second agent: do the English statement yourself before rereading the claim, and add the condition "single reader". This never makes the result unknown.
+Without a second agent: do the English statement yourself before rereading the claim, and add the condition "single reader". This never makes the result unknown; by itself it makes the best label `agent-checked` (see the verdict).
 
 ### E2. Your own evidence [G]
 Do: reread `evaluation.md`. Every fail needs a reproduction (a quote, a failing run, or an edit that should break things but verifies). Every pass needs evidence that is not a comment, a name or the report. Change anything else to cannot tell.
@@ -394,14 +395,16 @@ Pass: all lines have evidence. Cannot tell: you cannot fix a line.
 Work out each claim's label first. The first rule that matches wins.
 1. invalid if: its grade (after M1 and M2) is weaker, different or missing; or any [C] check failed for it; or its evidence level is 0.
 2. unknown if: any [C] check is cannot tell for it; or its evidence level is 1 or 2.
-3. agent-checked if: its level is 3 and the required level is 4; or any condition is attached to it (a grade of "same with a condition" always brings one).
-4. valid.
+3. agent-checked-limited if: its level is 3 and the required level is 4; or any condition other than "single reader" is attached to it (a grade of "same with a condition" always brings one).
+4. agent-checked if: E1 ran without a second agent.
+5. valid.
 
 Then the result's label. The first rule that matches wins. The result gets the worst claim label, unless a result-level check says worse.
 1. invalid if: any [G] check failed, or any claim is invalid.
 2. unknown if: any [G] check is cannot tell, or any claim is unknown.
-3. agent-checked if: any condition exists anywhere (claim or result), or E1 ran without a second agent.
-4. valid.
+3. agent-checked-limited if: any claim is agent-checked-limited, or any condition other than "single reader" exists at result level.
+4. agent-checked if: E1 ran without a second agent.
+5. valid.
 
 Cases the rule already covers:
 - No model or only a prose design: K1 fails, so invalid.
@@ -412,7 +415,7 @@ Cases the rule already covers:
 ## What to hand back
 
 Write `evaluation.md` with:
-1. The verdict line: `verdict: valid | agent-checked | invalid | unknown`, followed by the count, for example `3 of 5 claims valid or agent-checked`.
+1. The verdict line: `verdict: valid | agent-checked | agent-checked-limited | unknown | invalid`, followed by the count, for example `3 of 5 claims valid, agent-checked, or agent-checked-limited`.
 2. For each claim: the request words, the theorem (file:line), the grade, the evidence level, the label, and its conditions. Claim labels come first, then the result label.
 3. The conditions, and the unknowns with what would settle each.
 4. Every fail with its reproduction.
