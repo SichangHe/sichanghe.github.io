@@ -1,0 +1,40 @@
+# Change2Task: From Repository Changes to Executable Coding Agent Tasks and Environments
+(authored by agents unless marked 🧑)
+Tag: `qi2026change2task`, [paper](https://arxiv.org/abs/2607.28591)
+
+## scope and result
+Change2Task converts merged pull requests into executable coding-agent tasks on healthy modern revisions of the same repository. It preserves developer evidence while constructing a task state, executable oracle and restoration state. The abstract reports: “Starting from 1,130 source changes eligible for construction, Change2Task achieves 79.6% verified task construction success across these task families.” (Abstract, PDF p. 1). The five families are Bug Fix, Feature Addition, Test Generation, API Migration and Security Repair. The final corpus has 900 paired tasks: 500 Bug Fix and 100 of each other family (Experiment Setup, PDF p. 4). Inference: The evidence is lifecycle execution, scope checks and source-to-modern fidelity, not formal proof.
+
+## technique 1: derive evidence and freeze a healthy base
+Start from a merged PR and a fixed descendant revision. Extract the PR description, implementation patch and executable checks. Classify checks into target checks, which expose the changed condition, and regression checks, which protect nearby behavior; record affected components and edit extent in a source-change profile. Reject candidates when the condition is ambiguous, checks cannot execute, or the changed condition cannot be separated from unrelated modifications (Deriving Task Evidence, PDF p. 3). Select a healthy modern base H from the same lineage, freeze its commit hash, and require that it supports a clean checkout, runtime dependencies and services, and executable checks, and that the mapped target and regression checks pass on H before construction (Establishing the Modern Task Base, PDF p. 3). The paper states that Change2Task "operates after the base is runnable": a native repository configuration or an external preparation tool builds the environment.
+
+The paper states: “Target checks expose the condition to be reconstructed; regression checks protect surrounding behavior; the source change profile records the affected components and edit extent.” (Deriving Task Evidence, PDF p. 3). It also says that it “selects a fixed descendant revision from the same repository lineage as the healthy modern base H” (Establishing the Modern Task Base, PDF p. 3). The resulting task specification contains the agent goal, expected output, executable oracle and permitted edit scope. Adapters instantiate an unfixed bug, missing feature, failing test, obsolete API or sandboxed vulnerability (Establishing the Modern Task Base, PDF pp. 3-4).
+
+Inference: For Verus, the source-change profile can identify the Rust functions, contracts and proof lemmas to preserve across repository evolution. The executable oracle should include compilation and Verus verification, while target checks can expose a missing invariant and regression checks protect unrelated proofs. This is an inference; Change2Task uses repository tests and does not claim theorem-prover soundness.
+
+## technique 2: escalate construction routes
+Construct a task patch D so C=apply(H,D) exposes the intended maintenance condition while preserving unrelated behavior. Escalate only when an earlier route fails.
+
+1. Patch Reversal reverses the source patch when it remains compatible with modern context, preserving the closest structural link.
+2. Code Mapping locates a unique post-change block in a modern file, normalizes indentation, replaces it with the pre-change form, reparses, and applies scope and executable checks. One structure-guided attempt is allowed.
+3. Agent Reconstruction gives historical evidence, modern context, task specification and prior feedback to a construction agent. It accepts only patches passing apply, syntax and scope checks, ranks survivors by source-profile fidelity and edit complexity, and allows at most four attempts.
+
+The paper says: “Construction escalates only when an earlier level cannot produce a valid candidate.” (Constructing the Task State, PDF p. 4). For reconstruction, “A failed candidate returns structured evidence identifying an unmet target condition, broken regression check, restoration failure, or fidelity deviation.” (Constructing the Task State, PDF p. 4). Cases without a defensible modern behavior host are rejected. Appendix C.2 (PDF p. 11) adds that Level 2 resolves the file, requires exactly one exact or indentation-normalized occurrence of the post-change block, and excludes pure additions, pure deletions, import-only changes and missing modern files.
+
+## technique 3: lifecycle, scope and fidelity validation
+Validate each candidate in three states. On healthy H, target and regression checks pass. On task C, target checks fail while regression checks pass. After restoration patch G, both pass on H′. Reject unstable repeated runs. The paper summarizes this as: “The target checks therefore pass, fail, and pass across the three states, while regression checks pass throughout.” (Lifecycle and Scope Validation, PDF p. 4). The scope check permits only artifacts allowed by the task specification and stops protected checks or metadata from manufacturing validity. The fidelity check compares the source PR with the modern realization by affected components, edit extent and check surface, rejecting scope collapse (a substantial source change becomes trivial) or scope inflation (a narrow change needs broad unrelated edits). Appendix C.4 (PDF p. 11) lists the compared dimensions as files, hunks, changed lines, symbols, target checks and regression checks, with an aggregate score of at least 0.65 required. Accepted records freeze H, D, G, task specification, checks and provenance.
+
+Inference: This lifecycle is directly useful for Verus benchmark generation. A target proof obligation should be intentionally broken in C, restored in H′, and regression lemmas should pass in all states. Verus verification output is stronger than runtime tests for safety properties, but the same three-state discipline prevents a benchmark from being accidentally solvable without the intended change.
+
+## evidence and denominators
+Across 1,130 eligible changes, 900 were finalized, a 79.6% recovery rate (RQ1, PDF p. 5). Construction levels contributed 95 Level-1 tasks (10.6%), 190 Level-2 tasks (21.1%) and 615 Level-3 tasks (68.3%) out of 900 (RQ1 text on Figure 4, PDF p. 5). On the matched 621 Bug Fix candidates, direct reversal recovered 81/621 (13.0%, 95% CI [10.6,15.9]), SWE-smith PR Mirror 387/621 (62.3%, CI [58.4,66.0]), and Change2Task 500/621 (80.5%, CI [77.2,83.4]) (Table 1, PDF p. 5; the paper labels these 95% CIs and the RQ1 text says Wilson intervals are in Appendix E). The 500-versus-387 comparison is within that same 621-candidate setting.
+
+Paired evaluation uses 4 agents on 900 tasks, giving 3,600 matched agent-task pairs; each branch solved 1,478/3,600 (41.1%); raw agreement was 89.7%, Cohen’s κ 0.787, positive agreement 87.4%, Jaccard overlap 77.6%, and the paired solve-rate difference 0.0 points with 95% interval [−1.1,1.1] (RQ3, PDF p. 6). Reusing 388 modern bases for 900 tasks reduced setup time from 3,240 to 1,349 hours (58.4%) and retained storage from 5,580 to 1,607 GB (71.2%) (RQ4, Table 3, PDF p. 7). These figures concern agent outcomes and infrastructure cost, not proof correctness.
+
+## techniques for the catalog
+- evidence extraction: derive target checks, regression checks and a source-change profile from a merged PR
+- healthy-base selection: freeze a runnable descendant revision and require baseline checks to pass
+- adaptive construction: escalate from patch reversal to code mapping to bounded agent reconstruction
+- three-state lifecycle: require target pass–fail–pass and continuous regression passes
+- scope and fidelity checks: reject protected-file edits, scope collapse/inflation and mismatched modern patches
+- paired evaluation: compare historical and reconstructed branches with solve rates and agreement statistics
