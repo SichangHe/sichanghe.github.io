@@ -1,0 +1,43 @@
+# Account Verification on Social Media: User Perceptions and Paid Enrollment
+(authored by agents unless marked 🧑)
+Tag: `xiao2023accountverification`, [paper](https://www.usenix.org/conference/usenixsecurity23/presentation/xiao-madelyne)
+
+This paper studies the meaning and effects of social-media account verification. The authors explicitly frame the work as two components: “The project consists of two components: a user survey and a measurement of verified Twitter accounts.” (Abstract, p. 3099.)
+
+## technique: representative perception survey
+
+Inference: use this when a system's stated assurance may differ from what users believe. The paper lists research questions about what assurances users think marks provide, whether perception mismatches actual assurances, whether current practices suffice, and how demographics interact (Sec. 3.1, p. 3102). The authors recruited 300 U.S. adults through Prolific, with a sample representative of Census distributions for gender, age, and race (Sec. 4, p. 3102), and paid $3.75 for an expected 15-minute survey. They designed 37 multiple-choice, matrix, and free-response questions covering digital literacy, platform use, and perceived requirements. They ran two pilots and randomized questions where needed (Sec. 4, pp. 3102–3103).
+
+Steps: (1) state questions and the target population; (2) pilot the instrument and calibrate completion time; (3) recruit a demographically representative sample; (4) include attention and news-awareness checks; (5) inspect response quality; (6) analyze both structured responses and inductively coded free text. The final sample was 299 after excluding one respondent who identified Bill Clinton as the current U.S. President (Sec. 4.2, p. 3103). However, the authors retained the 263/299 (88%) who failed the attention check: “In a manual review of answers, especially free response prompts, these participants clearly demonstrated that they were paying attention to the study.” (Sec. 4.3, pp. 3107–3108.) Appendix D reports negligible effect size (Hedges’ g = 0.090), but its prose reverses the pass/fail counts relative to Table 9 and Sec. 4.3 (p. 3116). Inference: this inconsistency limits interpretation of that robustness analysis.
+
+Verus form.
+
+Evidence and limits. Fifty-two percent (154/299) believed identity confirmation was required for Twitter's blue check (Sec. 4.2.1, p. 3104). Eighty percent (239/299) did not know what gold checks meant, and 87% (259/299) did not know what gray checks meant (Sec. 4.2.3, p. 3106). Self-reported digital literacy may be inflated: the authors note that the dummy term “Proxypod” could resemble legitimate terminology (Sec. 4.3, p. 3108). Prolific recruitment may introduce biases beyond the demographic factors represented (Sec. 4.3, p. 3107). The demographic associations with understanding verification were not statistically significant (Sec. 4.2.4, pp. 3106–3107).
+
+## technique: longitudinal measurement from platform snapshots
+
+Inference: use this to compare populations before and after a policy change. The authors randomly sampled more than 15 million English-language tweets from October 2022 by choosing 33,600 timestamps uniformly over the month and retrieving the 500 most recent English tweets at each timestamp (Sec. 5.1, p. 3108). They extracted account fields, then checked verification status on January 10, 2023. After deleted-account filtering, the longitudinal dataset contained 2.85 million accounts (Sec. 5.1, p. 3109). The paper states: “On November 8, 2022, we randomly sampled over 15 million tweets published in the month of October 2022 using the Twitter API for Academic Research.” (Sec. 5.1, p. 3108.)
+
+Steps: (1) define a sampling frame and timestamp distribution; (2) collect the initial account data, including Twitter IDs; (3) collect the later verification status; (4) derive transitions by comparing `verified` and `verified_type`; (5) retain only accounts whose legacy verification status remained unchanged, excluding churn affecting less than 0.003% of the dataset; (6) report bucket counts (Table 7, p. 3108). They sampled 200 accounts per group: Blue but not legacy verified, legacy but not Blue verified, and a control drawn from all accounts regardless of verification. After filtering inaccessible accounts and those not tweeting mostly in English, the coded samples contained 157, 173, and 149 accounts respectively. They retrieved up to the most recent 3,200 tweets per account (Secs. 5–5.1, pp. 3108–3109).
+
+Verus form. Inference: a possible analogue is checking whether a change to account records preserves a specified property. Proving that property of a local transition function would not establish the completeness or accuracy of external API data.
+
+Evidence and limits. The paper compares 2.85 million accounts, while the initial sample is over 15 million tweets. Sec. 5.1 gives January 10, 2023; the abstract and introduction instead say January 2022, inconsistent with the stated chronology. English metadata is imperfect, Blue was region-limited, and tweet sampling favors accounts that tweet more frequently (Sec. 5.3, pp. 3109–3110). Inference: the findings do not establish that the policy change caused the observed composition.
+
+## technique: inductive codebook and inter-rater reliability
+
+Inference: use this for qualitative labels whose categories are not known in advance. Two researchers first discussed a small sample, grouped themes, applied a provisional codebook to another sample, and iterated until the codebook stabilized (Sec. 5.2, p. 3109). For account types, they began from categories presented to survey respondents and added emergent types. They marked accounts not tweeting primarily in English and classified account types and content using Appendix C. Content codes covered cryptocurrency/NFT promotion, political leaning, and Elon Musk mentions or retweets and their sentiment. Each researcher redundantly coded 20% of the total samples without identifying the duplicates to the other. They computed Cohen's kappa: 91.5% for account categorization and 82.3% for content tagging (Sec. 5.2, p. 3109).
+
+Evidence and limits. Political coding focused on consistent support for or opposition to candidates within the U.S. two-party system, excluding issue-based positions and other political contexts from that comparison (Sec. 5.3, p. 3110). Figure 5 reports n = 198, 199, and 216 for Blue, legacy, and control Musk sentiment coding, respectively; Figure 6 instead reports 157, 173, and 149 accounts (p. 3111). Inference: these denominators should not be treated as interchangeable.
+
+Verus form. Inference: a formal representation could check consistency with explicit category rules. Agreement between annotators would remain evidence about repeatability, rather than proof that the labels correctly describe the accounts.
+
+## what is established and trusted
+
+The study reports perception gaps and differences among sampled account groups.
+
+## techniques for the catalog
+
+- representative assurance survey — define perception questions, pilot the instrument, recruit a demographically representative sample, review response quality, and analyze structured and free text
+- longitudinal snapshot measurement — sample timestamps uniformly, retrieve tweets and account records, compare verification across dates, and report transition denominators and sampling bias
+- inductive codebook coding — iterate categories from samples, double-code an overlap, and compute Cohen's kappa
