@@ -4,7 +4,7 @@
 Short version: a verifier pass is cheap to get and easy to misread.
 A good benchmark fixes what the system is allowed to change, fixes the referee, and reports every outcome with its denominator.
 This page covers how to build such a benchmark and how to report results.
-Cheating checks are on [anti_cheating_gates.md](anti_cheating_gates.md).
+Cheating checks are on [anti_cheating_prerequisites.md](anti_cheating_prerequisites.md).
 Whether a specification says the right thing is on [specification_quality_checks.md](specification_quality_checks.md).
 An older survey of what a pass means is [here](../topic_studies/formal_verification_rust/llm_for_verification/evaluation.md).
 

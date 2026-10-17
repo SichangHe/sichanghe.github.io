@@ -5,11 +5,11 @@ A verified result is a conditional statement.
 It holds if the stubs, models, axioms and tools underneath it are right.
 This page is about finding those conditions, shrinking them, testing them, and keeping a record of them.
 It is not about an agent that sneaks new conditions in.
-That is [anti-cheating gates](anti_cheating_gates.md).
+That is [anti-cheating prerequisite checks](anti_cheating_prerequisites.md).
 For specifications that are too weak, see [specification quality checks](specification_quality_checks.md).
 
 Catalog names that land here:
-verified and environmental stubs, conservative semantic modeling, evidence-producing verification gates,
+verified and environmental stubs, conservative semantic modeling, evidence-producing verification prerequisite checks,
 external adjudication records, hand-oracle construct testing, invariant-aware input generation,
 Core/Application decomposition, virtual I/O boundaries, out-of-band conditional contracts,
 input-aware protocol soundness, and the "assumptions at unverified boundaries" half of proof maintenance.
@@ -95,7 +95,7 @@ I mark where a study gives a Verus form.
 8. Re-run the audit on every change.
    - Diff the ledger, not only the proof.
    - A new `external_body` or axiom appearing in a diff is a review event.
-   - Whether the new item was added by an agent trying to cheat is the job of [anti-cheating gates](anti_cheating_gates.md).
+   - Whether the new item was added by an agent trying to cheat is the job of [anti-cheating prerequisite checks](anti_cheating_prerequisites.md).
 
 ## variants by paper
 
@@ -166,7 +166,7 @@ Boundaries around verified code
   - [study](../vl_paper_walkthrough/the_secrets_must_not_flow_20261012.md)
 - Assurance cases from C (CCV; Rocq with VST). Input-aware protocol soundness: a state-based protocol of legal call sequences,
   with soundness conditional on the implementation meeting the contracts and callers meeting their obligations.
-  - Gates and artifacts: freeze the input, record all external functions, allocator premises and axioms,
+  - Prerequisite checks and artifacts: freeze the input, record all external functions, allocator premises and axioms,
     require proofs free of admitted obligations, audit dependencies, have humans review conformance.
   - Quotes: "Proof success does not imply unconditional correctness beyond the disclosed axiomatic specifications and assumptions." and "The LLM agent is not in the TCB:
     Rocq rechecks every formal statement and proof that it proposes."
@@ -202,7 +202,7 @@ Records of who judged, with what
   - Abstract: "Outcomes are decided outside the agent's toolchain."
   - Trust-boundary fact: Verus emits no proof object, so the record says the referee accepted, not that a kernel checked the proof.
   - [study](../vl_paper_walkthrough/saltbench_20261012.md)
-  - The screening half of this paper (rejecting `assume`, `external_body`) belongs to [anti-cheating gates](anti_cheating_gates.md).
+  - The screening half of this paper (rejecting `assume`, `external_body`) belongs to [anti-cheating prerequisite checks](anti_cheating_prerequisites.md).
 
 Residual trust reported next to the verifier count
 - Fewer Assumptions by Design (DLL skill, six author-reported runs).
@@ -220,12 +220,12 @@ Assumptions at unverified boundaries, as maintenance
   - The Verus form is the study's labelled inference, not the interviewees'.
   - [study](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md)
 
-Model-to-deployment gap (SoundGate, an admission gate for agent actions)
+Model-to-deployment gap (SoundGate, an admission prerequisite check for agent actions)
 - Verus proves the sequential admission model, 11 items verified, zero errors reported. Standard-library collections and deployment transport stay trusted.
 - The deployed Rust is tied to the model only by differential testing: 12 million operations over 200,000 randomized traces, zero divergences.
   The author calls this "not a mechanized refinement proof" (the paper's words, as quoted in the study).
 - The mediation condition is itself a trusted assumption: every side-effecting operation acts only after a release verdict.
-  Wrappers, linters and network or filesystem confinement each leave a hole; the approver and gate process stay trusted.
+  Wrappers, linters and network or filesystem confinement each leave a hole; the approver and prerequisite check process stay trusted.
 - The study's inference for VL: report model proof, code proof, conformance tests and confinement separately.
 - [study](../vl_paper_walkthrough/stop_means_stop_20261011.md)
 
@@ -350,7 +350,7 @@ Checks on the trusted pieces
 - Can the ledger be generated from the code, so it cannot drift? No study does it. CCV and SaltBench produce records, but by process, not by extraction.
 - Which stubs are worth proving? The std study says stubs speed up compilation (3.97x with caching, parallelism and ordering, per the study) but gives no per-stub trust cost.
 - How do you measure trusted size? Lines, number of items, and number of theorems that depend on each item all give different answers. The Verus systems study uses lines only.
-- Does an audit catch real unsoundness in agent-written proofs? No study measures this directly; the gate studies measure cheating, not wrong-but-honest stubs.
+- Does an audit catch real unsoundness in agent-written proofs? No study measures this directly; the prerequisite check studies measure cheating, not wrong-but-honest stubs.
 - How far does Diodon-style splitting go in Rust? The study says Rust ownership may discharge some obligations statically; that is the study's inference, untested.
 
 Where studies disagree or slip, as I read them:

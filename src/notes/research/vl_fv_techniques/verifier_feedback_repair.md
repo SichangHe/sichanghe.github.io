@@ -148,7 +148,7 @@ Other verifiers, same idea.
   - advice: after a focused run, interpret the error, fix one cause, and do not rerun without a changed hypothesis
   - a loop that refuses repeated verifier calls without a changed hypothesis is the study's inference for Verus
 
-Lean, compile-gated loop. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
+Lean, compile-checked loop. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
 - each turn compiles the sketch and feeds pending goals or errors to the next turn; the output is accepted only when Lean reports no pending goals
 - failed sketches and unresolved goals are kept as structured diagnostics for a human; the study says these steps are its reconstruction and the claim is not a measured time saving
 - the Verus form (run `cargo verus` after each edit, keep failed states apart from accepted proofs) is the study's inference
@@ -203,7 +203,7 @@ Other verifiers:
   All three together 46.7%. ([study](../vl_paper_walkthrough/apollo_20261012.md))
 - DafnyPro, 782 programs, ten attempts: over 85% for both Claude models. Hint retrieval adds about 10 percent and pruning about 3.
   The paper says only "percentage gains", not points or relative. ([study](../vl_paper_walkthrough/dafnypro_20261012.md))
-- P^3 (Lean): full-restart rates fall from 28.6% to 11.7% (Codex) on Verina, 189 runs per backend. This measures plan-gated local repair against sequential repair.
+- P^3 (Lean): full-restart rates fall from 28.6% to 11.7% (Codex) on Verina, 189 runs per backend. This measures plan-checked local repair against sequential repair.
   ([study](../vl_paper_walkthrough/p_3_20261012.md))
 - KBSpec, 699 Java programs, C@All: removing iterative repair lowers it by 21.82, 17.22 and 13.33 points (GPT-5.2, GPT-5-mini, Claude-Sonnet-5);
   removing partial-repair credit by 1.53 to 3.40. [study](../vl_paper_walkthrough/kbspec_20261012.md)
@@ -282,5 +282,5 @@ AlphaProof Nexus ([study](../vl_paper_walkthrough/advancing_mathematics_research
 - Can the loop detect repair by weakening? OSVBench says to track it. No study measures it on Verus.
 - Do the Lean and Dafny results transfer to Verus? The studies say so only by inference. SMT-driven failures are less local than tactic goals (P^3 study, its inference).
 - How do you stop a repair from undoing an earlier proof? AutoVerus uses a never-decrease-V rule in its refinement phase. The debugging phase relies on valid-and-safe checks.
-  I found no study that tests a regression gate in repair.
+  I found no study that tests a regression prerequisite check in repair.
 

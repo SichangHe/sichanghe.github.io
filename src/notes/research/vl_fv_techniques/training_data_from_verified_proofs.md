@@ -10,7 +10,7 @@ What differs is where the first programs come from, what else gets filtered, and
 Neighbours: repair at inference time is in [verifier feedback repair](verifier_feedback_repair.md).
 Spending samples at inference is in [proof search strategies](proof_search_strategies.md).
 Checking that a specification means what you meant is in [specification quality checks](specification_quality_checks.md).
-Rejecting proofs that cheat is in [anti-cheating gates](anti_cheating_gates.md).
+Rejecting proofs that cheat is in [anti-cheating prerequisite checks](anti_cheating_prerequisites.md).
 
 ## the problem
 
@@ -36,7 +36,7 @@ Where a step below is marked inference, it is mine, not a study's.
 3. Get proofs.
    - Ask a strong model first (SAFE and Formal Disco start from GPT-4o and Claude).
    - Run Verus. Keep a proof only if it reports zero errors.
-   - Also drop proofs that pass by cheating, such as `assume(false)`. See [anti-cheating gates](anti_cheating_gates.md).
+   - Also drop proofs that pass by cheating, such as `assume(false)`. See [anti-cheating prerequisite checks](anti_cheating_prerequisites.md).
 4. Deduplicate.
    - VeruSyn uses it as a stop rule too.
 5. Fine-tune an open model on the kept `(program, specification, proof)` triples.
@@ -157,7 +157,7 @@ That is a second filter after the verifier: pass, then be novel.
 The study reports pass@1 on 149 filtered VerusBench programs of 8.7% (base), 43.0% (trained), and 40.9% for a SAFE-trained comparison.
 At pass@32 it reports 59.1% against SAFE's 51%.
 
-### proof-gated equivalence self-play (SEQ/SINQ)
+### proof-checked equivalence self-play (SEQ/SINQ)
 
 Study: [SEQ/SINQ study](../vl_paper_walkthrough/improving_llm_code_reasoning_via_semanti_20261012.md).
 Haskell with Liquid Haskell, not Verus; the Verus forms are the study's inference.
@@ -251,8 +251,8 @@ SAFE's gcd example has `ensures result > 0`, which gives a trivial proof.
 Low-quality specifications cut accuracy from 43.17% to 17.27%, so spec filtering is not optional.
 
 Reward hacking: `assume(false)` and trivial preconditions pass the verifier.
-Both AlphaVerus and ANCORA add non-verifier gates.
-Those gates (neural critics, vacuity filters) have no formal guarantee.
+Both AlphaVerus and ANCORA add non-verifier prerequisite checks.
+Those prerequisite checks (neural critics, vacuity filters) have no formal guarantee.
 
 Self-generated data narrows.
 The VeruSyn study says self-synthesis alone gives "narrow and shallow Verus features".
@@ -289,4 +289,4 @@ RL from a base model collapses without an SFT warm start.
 - Does diversity-aware selection beat verifier-only filtering? Formal Disco compares only against a SAFE-trained model, and no study compares it to VeruSyn's tutorial seeds.
 - Does fine-tuning on this data help specification writing? Most studies train on proofs given a specification.
 - Which of RL (ANCORA) or filtered SFT (the rest) is cheaper for equal accuracy? No study runs both on the same tasks.
-- For a repository, what is training-worthy? Formal Disco proposes verifies, passes anti-cheat gates, preserves behavior, and adds coverage. That is a proposal, not a measured result.
+- For a repository, what is training-worthy? Formal Disco proposes verifies, passes anti-cheat prerequisite checks, preserves behavior, and adds coverage. That is a proposal, not a measured result.

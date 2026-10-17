@@ -228,7 +228,7 @@ Verus participant P8's summary, quoted in the study from the paper:
 P1 split Intersection into deduplication and intersection (F*, Section 6.1.1).
 F* experts picked `Seq` or `List` with proof complexity in mind (Section 6.1.2).
 P8 replaced a subrange invariant by a direct "for all" invariant that worked at once.
-The gate that keeps `assume(false)` out of the accepted branch is the study's suggestion, not the paper's.
+The prerequisite check that keeps `assume(false)` out of the accepted branch is the study's suggestion, not the paper's.
 
 ### helper lemmas found by an agent: AlphaProof Nexus
 

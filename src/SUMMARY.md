@@ -2514,7 +2514,7 @@
             - [🤖 Ownership and borrows](notes/research/vl_fv_techniques/ownership_and_borrows.md)
             - [🤖 Verifier feedback repair](notes/research/vl_fv_techniques/verifier_feedback_repair.md)
             - [🤖 Counterexample guided repair](notes/research/vl_fv_techniques/counterexample_guided_repair.md)
-            - [🤖 Anti-cheating gates](notes/research/vl_fv_techniques/anti_cheating_gates.md)
+            - [🤖 Anti-cheating prerequisites](notes/research/vl_fv_techniques/anti_cheating_prerequisites.md)
             - [🤖 Trusted base audit](notes/research/vl_fv_techniques/trusted_base_audit.md)
             - [🤖 Bounded model checking harnesses](notes/research/vl_fv_techniques/bounded_model_checking_harnesses.md)
             - [🤖 Proof minimization](notes/research/vl_fv_techniques/proof_minimization.md)

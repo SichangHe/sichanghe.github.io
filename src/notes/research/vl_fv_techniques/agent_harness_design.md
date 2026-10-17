@@ -11,15 +11,15 @@
 - a strong model did better with less harness, a weak one with more
   - Sonnet 4.5: 688/849 hands-off against 569/849 with a controller
   - o4-mini and GPT-5 went the other way
-- gates and rollback protect the user's file, not the proof
-  - the verifier still decides; see [anti-cheating gates](anti_cheating_gates.md)
+- prerequisite checks and rollback protect the user's file, not the proof
+  - the verifier still decides; see [anti-cheating prerequisite checks](anti_cheating_prerequisites.md)
 - nothing here is measured on Verus except VeruSAGE and VeriStruct; the other mappings are my inference
 
 Neighbours, not covered here
 - what to retry and how: [verifier feedback repair](verifier_feedback_repair.md)
 - how to spend the call budget: [proof search strategies](proof_search_strategies.md)
 - what goes in the prompt: [context for the model](context_for_the_model.md)
-- how to stop the agent cheating: [anti-cheating gates](anti_cheating_gates.md)
+- how to stop the agent cheating: [anti-cheating prerequisite checks](anti_cheating_prerequisites.md)
 - wider background: [LLMs for code and agents](../topic_studies/formal_verification_rust/llm_for_verification/code_and_agents.md)
 
 ## the problem
@@ -54,7 +54,7 @@ The others are Lean, Eiffel, Move, Coq, CUDA or C, and I mapped them.
    - write code and proof skeleton from the plan
    - fill the leaves
    - run mechanical checks, then a compliance check
-   - a failed gate goes back one phase, not forward
+   - a failed prerequisite check goes back one phase, not forward
 6. Add edit hooks.
    - after every edit to a `.rs` file run the formatter and a parser check
    - return the result in the transcript so the agent sees it before it calls Verus
@@ -104,13 +104,13 @@ The stop rule is 20 minutes or 20 proof steps.
 The study says the hands-off setting has no stop rule; the model gives up.
 Acceptance depends on the action: a case split may add errors if the targeted one goes; a solver repair must strictly reduce them.
 
-### phase gates and a plan
+### phase prerequisite checks and a plan
 
 [study](../vl_paper_walkthrough/p_3_20261012.md)
 P^3 (Lean) fixes a plan first.
 The paper's rule, quoted in the study: "repair local errors in place, but return to Step 1 if elaboration requires an unplanned algorithm, invariant, or structural lemma".
 Appendix E in the study gives six phases, an external PASS-PLAN verdict, read-only specifications, and final mechanical and compliance checks.
-The study says the paper reports no ablation of each gate.
+The study says the paper reports no ablation of each prerequisite check.
 The study notes the paper allows refining the current plan once or twice before discarding it.
 
 ### planner decomposition
@@ -199,7 +199,7 @@ Verus steps here are the paper's Lean-structure workflow with Verus replacing Le
 [study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
 Rust-Prover (Lean) gives each agent three hours and 40 official checks, with unrestricted scratch Lean checks between submissions.
 The study quotes the paper: "most of the revision happens there."
-The agent cannot change the statement or generated code (see [anti-cheating gates](anti_cheating_gates.md)).
+The agent cannot change the statement or generated code (see [anti-cheating prerequisite checks](anti_cheating_prerequisites.md)).
 Study inference: first official acceptance is not one-shot generation; 944/1,325 passed the first official check, maximum seven.
 
 ### planner and syntax agents
@@ -265,7 +265,7 @@ The study also suggests logging each verifier call, edit and active diagnostic a
 
 - the weak spot of every harness is the same: the verifier proves the stated obligation
   - the harness cannot tell a wrong contract from a right one
-- a gate that checks text misses what it does not list
+- a prerequisite check that checks text misses what it does not list
   - VeruSAGE: residual cheating remains when a model gives up and leaves `assume`, `admit` or an axiom
 - long persistent runs grow long contexts
   - the thesis counts unique tokens under ideal caching; real cache hits differ (footnote 3 of the thesis, in the study)
@@ -281,7 +281,7 @@ The study also suggests logging each verifier call, edit and active diagnostic a
 ## open questions
 
 - does a persistent context beat restarts on Verus? Only the Lean thesis tests it
-- does a phase gate pay for itself? P^3 reports no per-gate ablation
+- does a phase prerequisite check pay for itself? P^3 reports no per-check ablation
 - what does rollback buy? No study runs with and without it
 - how long should memory live before pruning? No study measures guide decay
 - which model needs a controller? VeruSAGE gives three models and one benchmark

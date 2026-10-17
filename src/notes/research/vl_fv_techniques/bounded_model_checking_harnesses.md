@@ -169,9 +169,9 @@ Each point below is evidence from the Kani, Crux or std papers plus my inference
 - Cheap equality against an executable model, with panics counted as differences.
   Crux's SHA1 and SHA2 proofs against Cryptol and hacspec each reran in under ten minutes.
   A newcomer took three weeks for the first, then three more for the other three.
-- A cheap gate on generated code.
-  Both Kani studies suggest it as a gate for agent output (inference of those studies).
-  Gate rules are on [anti-cheating gates](anti_cheating_gates.md).
+- A cheap prerequisite check on generated code.
+  Both Kani studies suggest it as a prerequisite check for agent output (inference of those studies).
+  Prerequisite check rules are on [anti-cheating prerequisite checks](anti_cheating_prerequisites.md).
 - Different trust base.
   Kani relies on rustc, MIR-to-GOTO translation, CBMC and the solver.
   Verus relies on its own encoding and Z3.
@@ -220,7 +220,7 @@ The study counts 29 usable interviews for most totals, so this is a minority-sca
 
 Model checking beside a Verus proof (SoundGate)
 - TLC checked the concurrent abstract model over finite run and key sets; the largest completed search had 74,805,201 states.
-  Loom checked bounded interleavings of the deployed Rust gate: three models, zero failures reported.
+  Loom checked bounded interleavings of the deployed Rust prerequisite check: three models, zero failures reported.
 - The finite TLC search is bounded. TLAPS proved the invariants for arbitrary run and key sets (68 obligations).
 - Study inference: a statistical bound under the harness distribution does not establish arbitrary deployment correctness.
 - [study](../vl_paper_walkthrough/stop_means_stop_20261011.md)

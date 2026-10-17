@@ -43,7 +43,7 @@ These steps are my inference from their Dafny, Lean and Kani procedures.
 Run them in this order, cheapest first.
 
 1. Freeze the contract the agent may not edit.
-   - Mark `requires` and `ensures` read-only, as P^3 does: "Specifications are read-only" (the [P^3 study](../vl_paper_walkthrough/p_3_20261012.md) on the paper's phase gates, not a quote).
+   - Mark `requires` and `ensures` read-only, as P^3 does: "Specifications are read-only" (the [P^3 study](../vl_paper_walkthrough/p_3_20261012.md) on the paper's phase prerequisite checks, not a quote).
    - Reject `assume`, `admit`, `external_body` and implementation edits before counting any success.
 
 2. Check the contract is satisfiable and not vacuous.
@@ -235,7 +235,7 @@ None of these numbers say the checks find specification errors in real Verus cod
 - Test oracles (Dafny, 110 programs): 106 generated pre/postconditions were logically equivalent to the manual ones. Four were not: one too strong postcondition and three weak preconditions.
   All four were repaired with negative tests.
   Of 165 manually analysed failed Claude repair attempts (syntax errors and timeouts excluded), 7 had a verified body but failing tests due to weak or missing postconditions.
-- P^3 benchmark gate (108 libraries, 1,030 placeholders): 98.6% mutation rejection, 82.7% review score, 90.7% mean quality. The authors still warn that tests may miss intent.
+- P^3 benchmark prerequisite check (108 libraries, 1,030 placeholders): 98.6% mutation rejection, 82.7% review score, 90.7% mean quality. The authors still warn that tests may miss intent.
 - KaPilot ablation, 54 functions: with the precheck removed, 12 good specifications; the full pipeline, 31. With verification feedback removed, 12.
   The vacuity check is part of the verification stage, so no number isolates it. Labels came from two experts (Cohen's kappa 0.81 to 0.95).
 - SpecAgent critique stage, 50 programs: recall up 8.02 points (DeepSeek) and 10.63 (GPT-5) over generation only ([study](../vl_paper_walkthrough/specagent_20261012.md))

@@ -144,7 +144,7 @@ The studies give four rules.
 - A plan fixes contract, decomposition, library lemmas and proof obligations before any code.
 - Reject plans whose invariant cannot entail the postcondition. Then elaborate code and proof under the plan.
 - Per the study: "return to Step 1 if elaboration requires an unplanned algorithm, invariant, or structural lemma". Those are the paper's words as quoted there.
-- Also six gated phases with an outside plan check.
+- Also six checked phases with an outside plan check.
 
 [VeruSAGE study](../vl_paper_walkthrough/verusage_20261012.md), Verus.
 - Plan-then-act. A planner reads the error and history and picks an action family. An action agent writes a diff.
