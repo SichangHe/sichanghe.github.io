@@ -65,7 +65,7 @@ Each step names where it comes from.
 7. give the agent a search tool for lemmas
    - return names and signatures, not bodies
    - keep one conversation so earlier hits stay visible
-8. gate the output before it reaches Verus
+8. prerequisite check the output before it reaches Verus
    - parse it, check every name resolves, reject changed contracts
 9. store only what Verus accepted
    - save the proof with its Verus version and what it depends on

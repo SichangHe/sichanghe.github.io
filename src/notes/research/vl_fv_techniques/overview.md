@@ -35,7 +35,7 @@ For the wider literature map, see the
 - [Proof search strategies](proof_search_strategies.md):
   spend a fixed budget across samples, repair chains and trees.
 - [Agent harness design](agent_harness_design.md):
-  tools, phases and gates around a proof-writing agent.
+  tools, phases and prerequisite checks around a proof-writing agent.
 - [Triggers and quantifiers](triggers_and_quantifiers.md):
   make the solver use quantified facts.
 - [Solver modes and instability](solver_modes_and_instability.md):
@@ -54,7 +54,7 @@ For the wider literature map, see the
 
 ## Checking what is trusted
 
-- [Anti-cheating gates](anti_cheating_gates.md):
+- [Anti-cheating prerequisites](anti_cheating_prerequisites.md):
   reject proofs that pass by weakening the specification
   or by adding assumptions.
 - [Trusted base audit](trusted_base_audit.md):

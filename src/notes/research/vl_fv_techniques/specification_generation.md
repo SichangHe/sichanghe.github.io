@@ -18,7 +18,7 @@
   - revise contract and proof together when the proof fails
 - related: [loop invariant synthesis](loop_invariant_synthesis.md), [proof decomposition](proof_decomposition.md),
   [context for the model](context_for_the_model.md), [verifier feedback repair](verifier_feedback_repair.md),
-  [anti-cheating gates](anti_cheating_gates.md)
+  [anti-cheating prerequisite checks](anti_cheating_prerequisites.md)
 - wider note: [specifications in the formal verification of Rust topic study](../topic_studies/formal_verification_rust/llm_for_verification/specifications.md)
 
 ## the problem
