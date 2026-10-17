@@ -1,0 +1,58 @@
+# Diagnosing with Insights: Structured Analysis of Agent Failures via Behavioral Abstractions
+(authored by agents unless marked 🧑)
+Tag: `bi2026diagnosing`, [paper](https://arxiv.org/abs/2609.02371)
+
+## purpose and evidence
+
+AGENT SCOPE diagnoses failures in long LLM-agent trajectories. It converts traces into a structured Reasoning-Action Graph (ReAG), checks neural invariants over that graph, keeps candidate failures with evidence, and chooses the decisive root cause. The abstract says, “AGENT SCOPE leverages LLM-guided reasoning atop the structured representation against neural invariants to pinpoint both the failure step and its type in the trajectory.” (abstract, p. 1). The method is neuro-symbolic: graph structure and invariant formulas are explicit, but semantic predicates are evaluated by LLM calls.
+
+The paper’s failure taxonomy has reasoning failures (wrong context, instruction unfollowing, insufficient context, context miss), control-flow failures (termination miss, premature termination, step loop), and action failures (action mismatch, invocation issue, execution failure) (Section 2, pp. 2-3, Table 1). The paper calls the taxonomy "comprehensive and interpretable" and says it is derived from the authors' empirical analysis of failure trajectories plus existing community categorizations. Inference: it is an input to invariant design, not a proof that the categories are complete.
+
+## technique 1: behavioral abstraction as a ReAG
+
+What it is. A trajectory becomes a directed acyclic graph G = (V,E). Each vertex stores an identifier, agent role, operational content, and an intermediate semantic representation (ISR). ISR has intent/context, reasoning/action, and signal/validation components. Edges encode control or data dependencies.
+
+How to apply it. (1) Instrument API calls, tool interactions, and system logs. (2) Detect step boundaries. (3) Parse each step into role, instructions, purpose, actions, tool calls, outputs, confidence, knowledge-use, and termination signals. (4) Build vertices and dependency edges. (5) Store a trajectory index and memory so later checks can retrieve relevant nodes without rereading raw logs. (6) Preserve the annotated graph as the evidence object for every diagnosis. Section 3.1 states, “Vertices are constructed through instrumentation of API calls, tool interactions, and system logs, and are further refined with semantic parsing to ensure coherent step boundaries.” (Section 3.1, p. 4).
+
+In inference for Verus, a ReAG can be a ghost state machine whose nodes record verified Rust agent actions and whose edges record allowed transitions. `requires`, `ensures`, and state-machine transition proofs could enforce structural conditions, while an external model may still judge semantic fields. The paper’s graph is not a Rust proof artifact and does not prove that an annotation is faithful to an execution.
+
+## technique 2: neural invariants
+
+What it is. Each failure mode is expressed as an invariant violation over selected graph nodes. Unlike a conventional symbolic predicate, a neural function receives structured graph context and returns a semantic judgment. For action mismatch, the paper defines `aligned(purpose, action, tool_name, tool_args)` and flags a violation when an action node does not align with its preceding reasoning node.
+
+How to apply it. (1) Select a failure category. (2) Define the node sets and context range relevant to it. (3) Write a logical violation condition, such as existence of a reasoning/action pair for which `aligned` is false. (4) Implement each neural function as a task-specific prompt with explicit inputs, criteria, and JSON output. (5) Generate diverse test cases for the invariant and manually verify its behavior. (6) Record the violated invariant, node, evidence, and category rather than only a free-form verdict. The authors write, “Each failure mode is formalized as an invariant violation; Appendix A lists all invariant violations used in AGENT SCOPE.” (Section 3.2, p. 4).
+
+Their action-mismatch prompt asks whether action type matches intent, tool choice matches task semantics, and the action advances the task, returning `action_mismatch`, `reason`, and `mismatch_type`. Inference: a VL checker could use neural invariants to triage agent-generated proof scripts before Verus runs, but LLM judgments are trusted inputs and can be inconsistent; only the graph-level structural predicates are deterministic.
+
+## technique 3: staged diagnosis and decisive-error selection
+
+What it is. AGENT SCOPE separates representation, local checks, and global attribution. Failure-mode checks produce multiple candidate failures with supporting evidence. A final judge selects the failure whose downstream impact best explains the degraded outcome, rather than simply choosing the first anomaly.
+
+How to apply it. (1) Construct and align the ReAG. (2) Run the invariant associated with each failure mode on its relevant nodes and context. (3) Retain all candidates and evidence. (4) Give the full trajectory and optional task context to a decisive-error judge. (5) Select one root-cause step and category, preserving links to the candidate evidence. The paper says, “Candidate failures are then retained with supporting evidence rather than immediately reduced to a single diagnosis, allowing multiple hypotheses to be maintained for broader coverage and auditability while avoiding premature selection.” (Section 3.3, p. 5).
+
+In inference for VL, this supports a review queue: structural invariant failures can identify a likely faulty proof-generation step, while the final attribution should remain separate from the Verus result. A passing invariant check does not establish functional correctness, and a selected root cause does not prove that later code is safe.
+
+## technique 4: fault-taxonomy-guided benchmark construction
+
+What it is. AgentErrata is a dataset with explicit failure steps and types, created by injecting taxonomy-specific errors into successful trajectories so each injected decisive error causes task failure.
+
+How to apply it. (1) Run agent frameworks (OpenManus, OWL, Mini SWE Agent) on benchmark tasks (BrowseComp, SWE-Bench Lite, WebArena) and keep only the trajectories that complete the task successfully. (2) Instrument replay to inject step-local failures. (3) Post-process traces for cross-step semantic/textual inconsistencies. (4) Use an LLM to judge whether a trajectory is suitable for a target category before injection. (5) Manually verify injected traces and discard invalid ones. (6) Label the root-cause step and failure type. Injections are spread across all ten categories with a "rough uniform distribution"; Appendix B (Figure 7) shows the actual mix is uneven (for example 14.9% Execution Failure versus 5.3% Context Miss). AgentErrata currently contains 303 trajectories (Section 4.1, p. 7).
+
+The paper defines step-level accuracy (SLA) as the fraction of samples whose predicted root-cause step equals the true step, tolerance accuracy (SLAT) as within δ steps, and classification accuracy (CA) as the fraction where the true mode appears among predicted modes (Section 4.2, p. 7). Inference: this construction pattern can benchmark VL’s proof-agent failures by injecting missing invariants, wrong specifications, or tool misuse, but injected failures may not represent naturally occurring failures.
+
+## evaluation, trust, and limits
+
+The experiments use GPT-4o (2024-11-20), GPT-5.1 (2025-11-13), and DeepSeek-V3.2, temperature 0.01 and max_tokens 4096 (Section 4, p. 6). Who&When has 184 human-annotated trajectories: 126 algorithm-generated and 58 hand-crafted. AgentErrata has 303 injected trajectories. Table 2 reports SLAT percentages at tolerances T±0, T±1 and T±3. The paper defines N only as the total number of samples and does not list per-cell denominators. With GPT-4o and no solution, AGENT SCOPE reaches AgentErrata T±0 = 30.03%, T±3 = 49.83%, versus 8.91% and 25.74% for step-by-step. On Who&When algorithm-generated it reaches 28.57% and 77.78%; on hand-crafted, 22.41% and 32.76% (Table 2, p. 8). With GPT-5.1 and no solution, AgentErrata is 31.35% at T±0 and 54.13% at T±3 (Table 2). Table 3 gives AgentErrata SLA and CA: GPT-4o AGENT SCOPE is 30.03%/43.56% without solution and 28.38%/41.58% with solution; GPT-5.1 is 31.35%/45.87% and 29.70%/44.88% (Table 3, p. 10). The gains are not uniform: with GPT-5.1 on Who&When, AGENT SCOPE is not the best everywhere (Algo-Generated w/ solution at T±3: 64.29% versus 79.37% for All-at-once; Hand-Crafted w/ solution at T±3: 29.31% versus 41.38% for Step-by-step). The paper attributes this to Who&When annotating the first mistake while AGENT SCOPE selects the decisive error (Section 5.1, p. 9; Appendix C).
+
+Runtime profiling of 20 trajectories with GPT-4o (per-trace overhead about 25 s to about 750 s) finds Step Loop costs about 85 seconds because pairwise windows cause quadratic LLM calls; Wrong Context costs about 30 seconds per trace and is called about six times per trace (Section 5.4, p. 12). These are measured sampled-trace costs, not a general runtime bound. The paper notes, “Since AGENT SCOPE is built on LLMs as the base models, its work is orthogonal to that of fine-tuned detection models.” (Section 6, p. 13).
+
+Inference: trusted parts include instrumentation, semantic parsing, taxonomy coverage, prompt design, every neural-function judgment, manual benchmark labels, and the assumption that ReAG annotations preserve causal structure. Threat to agent-written verified Rust is moderate to high for diagnosis and triage: neural invariants can expose proof-agent misalignment but cannot replace Verus’s executable/specification proof. Existing work already provides staged trace abstraction, candidate retention, and root-cause attribution; VL should adapt these ideas rather than redo a one-pass LLM judge.
+
+## techniques for the catalog
+
+- ReAG behavioral abstraction: instrument traces into a dependency graph with structured intent, action, reasoning, and validation fields
+- neural invariant checking: express each failure mode as a graph violation whose semantic predicate is evaluated by a structured LLM prompt
+- staged candidate diagnosis: retain local invariant failures with evidence before selecting a decisive root cause globally
+- taxonomy-guided fault injection: create labeled failure benchmarks by injecting category-specific errors into successful trajectories
+- tolerance-aware attribution metrics: report exact step, within-window step, and failure-category accuracy with explicit denominators
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Many reviewed GPT-5.1 predictions identify a later verification, answer-submission, or termination step on the same failure-propagation chain as the annotated onset."): read the whole paper text (pp. 1-22 including appendices) and checked all quotations, the taxonomy, ReAG, neural-invariant and three-stage descriptions, the AgentErrata construction steps, metric definitions, the experiment setup, the figures quoted from Tables 2 and 3, and the runtime numbers; changed page references (p. 4 for the Section 3.1 quote, p. 6 for the experiment setup, p. 7 for the 303-trajectory count), clarified the roles of frameworks versus benchmarks, removed the unsupported claim about Table 2 denominators, added the paper's own results where AGENT SCOPE does not win with GPT-5.1 on Who&When and that the AgentErrata category mix is uneven, and marked the trust-list sentence as Inference; did not check the cited external papers, the DeepSeek-V3.2 numbers in Table 4, Figures 3-5 (images), or the Appendix A formulas beyond Action Mismatch.
