@@ -4,30 +4,30 @@ Tag: `gurfinkel2021quantifiers`, [paper](http://arxiv.org/abs/2106.00664v1)
 
 ## what the paper proves
 
-Gurfinkel, Shoham, and Vizel present QUIC3, an IC3/PDR procedure that infers universally quantified inductive invariants for transition systems over linear integer arithmetic (LIA) and arrays. The abstract states: “we present a new algorithm, Q UIC 3, that extends IC3 to infer universally quantified invariants over the combined theory of LIA and Arrays.” (Abstract, p. 1). The procedure either returns a quantified invariant proving safety or a counterexample. The paper explicitly says that “While Q UIC 3 is not guaranteed to converge, it is guaranteed to make progress by exploring longer and longer executions.” (Abstract, p. 1).
+Gurfinkel, Shoham, and Vizel present QUIC3, an IC3/PDR procedure that infers universally quantified inductive invariants for transition systems over linear integer arithmetic (LIA) and arrays. The abstract states: “we present a new algorithm, Q UIC 3, that extends IC3 to infer universally quantified invariants over the combined theory of LIA and Arrays.” (Abstract, p. 1). The procedure returns Safe (with a universally quantified inductive invariant) or Cex (a counterexample), but it may run forever. The paper explicitly says that “While Q UIC 3 is not guaranteed to converge, it is guaranteed to make progress by exploring longer and longer executions.” (Abstract, p. 1).
 
 Inference: The result is most relevant to VL when a Rust function manipulates a `Vec` or array whose length is symbolic and the needed postcondition quantifies over every valid index. It supplies an algorithmic pattern for discovering such facts; it does not prove that Verus can automatically run QUIC3 or infer the same formulas.
 
-The input is a quantifier-free safety problem `(Init, Tr, Bad)` in first-order logic over LIA and arrays. States are represented by uninterpreted constants, and array operations use `sel` and `store`. A safety proof is an inductive invariant satisfying initialization, preservation by `Tr`, and exclusion of `Bad` (Section 2, pp. 3–4). The implementation accepts CHCs in SMT-LIB and emits an invariant or counterexample (Section 1, p. 2).
+The input is a quantifier-free safety problem `(Init, Tr, Bad)` in first-order logic over LIA and arrays. States are represented by uninterpreted constants, and array operations use `sel` and `store`. A safety proof is an inductive invariant satisfying initialization, preservation by `Tr`, and exclusion of `Bad` (Section 2, p. 4). The implementation accepts CHCs in SMT-LIB and emits an invariant or counterexample (Section 1, p. 2).
 
 ## technique 1: quantified IC3 frames and proof obligations
 
 What it is. QUIC3 keeps IC3's monotone frame sequence and proof-obligation queue, but each lemma has a formula with free integer variables plus a substitution recording the ground instance. The paper defines a proof obligation as “a triple hm, σ, ii, where m is a monomial over X such that FVars(m) are of sort int” (Section 3, p. 5). A frame pair `(ℓ, σ)` denotes the universally quantified lemma `∀ℓ` and its known instance `ℓσ` (Section 3, p. 6).
 
-When to use it. Use this representation when a finite ground lemma is only one instance of a property that should hold for all integer indices. The running example initializes every array cell and then asserts an arbitrary in-range cell is zero (Figure 1, p. 7).
+When to use it. Use this representation when a finite ground lemma is only one instance of a property that should hold for all integer indices. The running example initializes every array cell and then asserts an arbitrary in-range cell is zero (Figure 1, p. 8).
 
 How to apply it, following the paper.
 
 1. Encode `Init`, `Tr`, and `Bad` as quantifier-free ground formulas (Section 3, p. 5)
-2. Initialize frame `Q0` with `Init`, set later frames empty, and maintain a queue of triples `(m, σ, i)` (Algorithm 1, p. 5)
-3. For a candidate bad state at frame `N`, enqueue a proof obligation (Algorithm 1, p. 5)
-4. Check the current frame's *known ground instances* together with `Tr` and a skolemized target; if satisfiable, compute a predecessor (Algorithm 1 and Figure 3, pp. 5, 10)
-5. If unsatisfiable, interpolate to obtain a blocking lemma, abstract skolem constants back to variables, and add the lemma to all appropriate earlier frames (NewLemma, Section 3, pp. 6–7)
-6. Push lemmas forward; if two consecutive quantified frames are equal, return Safe (Push and Safe, Algorithm 1, p. 5)
+2. Initialize frame `Q0` with `Init`, set later frames empty, and maintain a queue of triples `(m, σ, i)` (Algorithm 1, p. 6)
+3. For a candidate bad state at frame `N`, enqueue a proof obligation (Candidate, Algorithm 1, p. 6)
+4. For a proof obligation at level `i+1`, check the *known ground instances* `qi(Qi)` of frame `i` together with `Tr` and the skolemized target; if satisfiable, compute a predecessor (Predecessor, Algorithm 1, p. 6; Figure 3, p. 10)
+5. If unsatisfiable, interpolate to obtain a blocking lemma, abstract skolem constants back to variables, and add the lemma to every frame `Qj` with `j ≤ i+1` (NewLemma, Algorithm 1, p. 6; Section 3, p. 7)
+6. Push lemmas forward; if `∀Qi ⊆ ∀Qi+1` for some `i < N`, return Safe (Push and Safe, Algorithm 1, p. 6). Section 4 describes this as two consecutive frames becoming equal (p. 10)
 
 Verus form. Inference: encode the executable loop over a vector with ordinary Rust operations, state the desired quantified property in `ensures`, and carry the finite-index facts in `invariant` declarations. Inference: a proof helper can use `assert forall` and `proof fn` lemmas to establish preservation for arbitrary indices. QUIC3's frame queue, substitutions, and interpolation engine are verifier infrastructure, not Verus source constructs; Verus users would supply or generate the resulting lemmas.
 
-Evidence and limits. QUIC3's soundness lemma says: “If Q UIC 3 returns Cex, then P is not safe (and there exists a counterexample). Otherwise, if Q UIC 3 returns Safe, then P is safe.” (Lemma 3, p. 9). The proof depends on the inductive-frame conditions and the soundness of predecessor and interpolation rules. Inference: it does not establish completeness because quantified LIA-plus-array safety is undecidable.
+Evidence and limits. QUIC3's soundness lemma says: “If Q UIC 3 returns Cex, then P is not safe (and there exists a counterexample). Otherwise, if Q UIC 3 returns Safe, then P is safe.” (Lemma 3, p. 9). The paper's proof rests on Lemma 1 (every state in a generated predecessor POB can reach `Bad`), the inductive-trace properties, and Lemma 2 (each new lemma keeps the trace inductive) (Lemma 3, p. 9). Inference: it does not establish completeness because quantified LIA-plus-array safety is undecidable.
 
 ## technique 2: partial model-based projection for predecessors
 
@@ -35,13 +35,13 @@ What it is. A satisfiable predecessor query is generalized with partial model-ba
 
 How to apply it.
 
-1. Skolemize the free variables of the target POB with deterministic constants `sk_i` (Predecessor, Section 3, p. 6)
-2. Query satisfiability of the current frame instances, `Tr`, and the skolemized target (Algorithm 1, p. 5)
-3. On a model `M`, call `MBP(X′ ∪ SK, Tr ∧ m′sk, M)` to obtain a predecessor monomial (Algorithm 1, p. 5)
-4. Abstract any remaining post-state or skolem constants into fresh integer variables, retaining the substitution `σ` that maps them back (Section 3, p. 6)
+1. Skolemize the free variables of the target POB with deterministic constants `sk_i` (Predecessor, Section 3, p. 7)
+2. Query satisfiability of the instances of the frame below the POB, `Tr`, and the skolemized target (Algorithm 1, p. 6)
+3. On a model `M`, call `MBP(X′ ∪ SK, Tr ∧ m′sk, M)` to obtain a predecessor monomial (Algorithm 1, p. 6)
+4. Abstract any remaining post-state or skolem constants into fresh integer variables, retaining the substitution `σ` that maps them back (Section 3, p. 7)
 5. Enqueue the resulting non-ground predecessor POB at the preceding frame
 
-The paper defines the projection requirement as: “The underapproximation ψ is chosen such that it is consistent with the provided model M.” (Section 2, p. 4). In the array initialization example, the predecessor is `pc = 2 ∧ sel(A, v0) ≠ 0 ∧ 0 ≤ v0 < sz`, with substitution `v0 ↦ j` (Section 3, p. 7).
+The paper defines the projection requirement as: “The underapproximation ψ is chosen such that it is consistent with the provided model M.” (Section 2, p. 4). In the array initialization example, the predecessor is `pc = 2 ∧ sel(A, v0) ≠ 0 ∧ 0 ≤ v0 < sz`, with substitution `v0 ↦ j` (Section 3, p. 8).
 
 Verus form. Inference: the analogue is a ghost predecessor relation over an index and array snapshot, proved with `requires`/`ensures` and index-bound lemmas. Verus does not provide MBP; a generated proof lemma must justify that every state satisfying the predecessor predicate has a transition into the target predicate. Inference: the abstraction of an array index becomes a universally or existentially quantified specification variable, while executable Rust remains unchanged.
 
@@ -54,14 +54,14 @@ What it is. Instead of asking an SMT solver to decide arbitrary quantified formu
 How to apply it.
 
 1. Keep each quantified lemma together with the concrete substitution that caused it (Section 3, p. 6)
-2. Use only the accumulated instances `qi(Qi)` in predecessor satisfiability checks (Algorithm 1, p. 5)
-3. During pushing, combine existing instances with a finite trigger-based instantiation set (Section 4, p. 10)
+2. Use only the accumulated instances `qi(Qi)` in predecessor satisfiability checks (Algorithm 1, p. 6)
+3. During pushing, combine existing instances with a finite trigger-based instantiation set (Section 3, p. 8; Section 4, p. 10)
 4. Add instances discovered while blocking new proof obligations; reuse them in later frames
-5. Increase the frame depth only after constructing an interpolation sequence for the current bound (Section 4, p. 10)
+5. Increase the frame depth only after an interpolation sequence of length `N` is obtained (Section 4, p. 11)
 
-The progress argument relies on deterministic skolemization. The paper reports: “for each POB hm, ξ, ii, the number of POBs generated by applying Predecessor on hm, ξ, ii is finite.” (Lemma 5, p. 11). It then concludes that every fixed bound reaches the next depth, returns Safe, or finds a counterexample (Lemma 6, p. 11), and that a counterexample is shortest (Corollary 1, p. 11).
+The progress argument relies on deterministic skolemization. The paper reports: “for each POB hm, ξ, ii, the number of POBs generated by applying Predecessor on hm, ξ, ii is finite.” (Lemma 5, p. 10). Lemma 6 then states that for every `k`, Quic3_Main reaches `N = k`, returns Safe, or finds a counterexample (p. 11), and Corollary 1 states that if a counterexample exists, Quic3_Main terminates and returns a shortest one (p. 11).
 
-Verus form. Inference: expose only selected quantified facts to the solver with `assert forall` triggers or helper `proof fn` calls, and retain finite ground instances as ghost facts. Inference: this is an engineering analogue, not a theorem that Verus's solver uses the same completeness or progress argument. The paper itself notes the trade-off: finite instantiation “ensures progress ... at an expense of completeness” (Section 4, p. 10).
+Verus form. Inference: expose only selected quantified facts to the solver with `assert forall` triggers or helper `proof fn` calls, and retain finite ground instances as ghost facts. Inference: this is an engineering analogue, not a theorem that Verus's solver uses the same completeness or progress argument. The paper itself notes the trade-off: finite instantiation “ensures progress ... at an expense of completeness” (Section 3, Push rule, p. 8).
 
 ## technique 4: quantified generalization (QGen)
 
@@ -77,11 +77,11 @@ Limits. The authors report that their two heuristics were sufficient for their b
 
 ## measured evidence and trust
 
-The implementation is in Z3's CHC engine and uses SeaHorn-converted SV-COMP array programs. Experiments used “a Linux machine with an Intel E3-1240V2 CPU and a timeout of 300 seconds.” (Section 6, p. 13). Table 1 compares QUIC3 with Z3/SPACER on 32 listed safe benchmarks (Table 1, p. 14). For example, `array-init-const` takes 0.14 seconds, discovers 24 lemmas and 7 invariant lemmas at depth 6; SPACER times out? No: its row reports depth 130 and 4,483 lemmas, with no time column shown for SPACER in that row. `array-mul-init-tuc` times out for QUIC3 after depth 129 and 8,136 lemmas; SPACER reaches depth 131 with 8,393 lemmas. The table reports QUIC3 timeouts on several benchmarks, so the result is not universal termination.
+The implementation is in Z3's CHC engine. The benchmarks are array-manipulating C programs from SV-COMP and from the paper's reference [13] (Dillig et al., fluid updates), converted to CHC with SeaHorn; the authors manually made array bounds symbolic so that quantified invariants are needed (Section 6, p. 13). Experiments used “a Linux machine with an Intel E3-1240V2 CPU and a timeout of 300 seconds.” (Section 6, p. 13). Table 1 compares QUIC3 with the Spacer engine of Z3 on 44 listed safe benchmarks (Table 1, p. 14). QUIC3 times out (TO) on 10 of the 44 and has a time for the other 34. For example, `array-init-const` takes 0.14 seconds, with depth 6, 24 lemmas and 7 lemmas in the invariant; Spacer's columns for that row give only depth 130 and 4,483 lemmas. The Spacer columns have no time or invariant entry in any row. `array-mul-init-tuc` times out for QUIC3 at depth 129 with 8,136 lemmas; Spacer reaches depth 131 with 8,393 lemmas. So the result is not universal termination for QUIC3.
 
-The paper says SPACER “times out on all of the benchmarks” in the comparison (Section 6, p. 13), but Table 1 contains finite SPACER depths and lemma counts. Inference: this is an internal presentation inconsistency; the table's finite depth/count entries cannot by themselves establish a timeout, and the sentence may refer to completing the instances within the reported 300-second limit. The denominator for the percentages is not supplied because the authors report per-benchmark counts, not aggregate success rates.
+The paper says: “As expected, S PACER times out on all of the benchmarks.” (Section 6, p. 13). Inference: the depth and lemma figures in the Spacer columns are then what Spacer had reached when it timed out at the 300-second limit; the paper does not say so explicitly. The one odd row is `std-sort-N-nd-assert-L`, where Spacer shows depth 5 and 17 lemmas. The paper does not comment on it. The authors state that they could not compare with other tools (SAFARI, BOOSTER, and [13] are “no longer available”), so Spacer is the only baseline (Section 6, p. 13). No aggregate success rate is given; the counts above are from my tally of the table.
 
-What is proved: soundness of returned Safe/Cex results, finite progress at each depth under deterministic skolemization, and shortest-counterexample termination when a counterexample exists (Lemmas 1–6 and Corollary 1, pp. 6–11). What stays trusted: the Z3 implementation, SMT satisfiability and interpolation/MBP procedures, SeaHorn's CHC translation, the C-to-CHC encoding, and the correctness of the supplied safety property. Inference: a Verus product would additionally trust the Rust compiler, Verus translation and erasure, solver behavior, external specifications, and the adequacy of the quantified contract.
+What is proved: soundness of returned Safe/Cex results, finite progress at each depth under deterministic skolemization, and shortest-counterexample termination when a counterexample exists (Lemmas 1–6 and Corollary 1, pp. 7–11). Inference: what stays trusted is the Z3 implementation, SMT satisfiability and interpolation/MBP procedures, SeaHorn's CHC translation, the C-to-CHC encoding, and the correctness of the supplied safety property. A Verus product would additionally trust the Rust compiler, Verus translation and erasure, solver behavior, external specifications, and the adequacy of the quantified contract.
 
 Inference: the threat to a product that generates verified Rust is medium for array-heavy code. QUIC3 can discover index-general invariants that an agent might otherwise omit, but its undecidable theory, heuristic QGen, partial MBP, and implementation-specific CHC pipeline leave substantial integration work. Existing work means VL should not redo a generic IC3-with-quantifiers implementation; it should test whether the generated quantified lemmas improve Verus proof completion and whether finite instantiation remains stable under real Rust ownership and borrowing.
 
@@ -97,4 +97,4 @@ Inference: the threat to a product that generates verified Rust is medium for ar
 
 - arithmetic qgen — generalize repeated arithmetic/index data points with convex hulls or polyhedral joins
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thus, for any value of N , there is only a finite number of POBs that are added to Q and processed by the rules, resulting in a finite number of rule applications."): I read the whole paper text and this study, and checked each quotation, number, section and page reference against the PDF page breaks. I corrected page references (Figure 1 and the Predecessor example are on p. 8, Algorithm 1 on p. 6, Lemma 1 on p. 7, Lemma 5 on p. 10, the finite-instantiation quote is in the Push rule on p. 8), the benchmark count (44, not 32; QUIC3 times out on 10), the garbled Spacer comparison, the description of Lemma 6, and the benchmark sources, and I marked the trust list as inference. The tag and the arXiv link are unchanged (the paper text carries arXiv:2106.00664v1). I did not check the cited related-work papers, the proofs line by line, or the Verus mappings, which are the study's own inferences.
