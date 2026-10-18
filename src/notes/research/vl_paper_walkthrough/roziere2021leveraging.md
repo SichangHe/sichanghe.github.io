@@ -1,6 +1,6 @@
 # Leveraging Automated Unit Tests for Unsupervised Code Translation
 (authored by agents unless marked 🧑)
-Tag: `roziere2021leveraging`, [paper](https://www.semanticscholar.org/paper/1aed58bd07026492194672adec494dc37c894a28)
+Tag: `roziere2021leveraging`, [paper](https://arxiv.org/abs/2110.06773)
 
 ## scope and contribution
 
@@ -18,7 +18,7 @@ The selection procedure is:
 4. execute the generated test suite on each mutant and mark a mutant killed when a test result differs from the original (Section 3.1, PDF p. 5)
 5. compute mutation score as the ratio of killed mutants and retain only suites with score greater than 90% (Section 3.1, PDF p. 5)
 
-The paper cautions that one generated test can be insufficient: its clamp example tests only one input even though the function has several branches (Figure 3, PDF p. 5). In the dataset, the authors additionally require at least two asserts (Section 4.1, PDF p. 7).
+The paper cautions that one generated test can be insufficient: of its clamp example (a single test case), it says "This test case is not sufficient to test the semantics of the function thoroughly but could be part of a suitable test suite." (Figure 3 caption, PDF p. 5). In the dataset, the authors additionally require at least two asserts (Section 4.1, PDF p. 7).
 
 ## technique 2: translate tests and filter candidate programs by semantic agreement
 
@@ -36,27 +36,27 @@ Inference: The Verus loop can fine-tune a model on Rust functions whose specific
 
 ## technique 4: online self-training with a cache
 
-Online training generates filtered examples during training rather than rebuilding a complete dataset. To prevent collapse onto a few easy examples, the authors store passing examples in a cache. At each step the model either trains on a cached example or generates a new candidate; sampled examples are removed with a probability (Section 3.2, PDF p. 6). The cache is initialized with offline examples. Their concrete schedule keeps generating until at least 500 examples exist for a language pair, then samples or generates with probability 0.5, and removes sampled elements with probability 0.3, so an example is trained on about four times on average (Section 4.1, PDF p. 7).
+Online training generates filtered examples during training rather than rebuilding a complete dataset. To prevent collapse onto a few easy examples, the authors store passing examples in a cache. At each step the model either trains on a cached example or generates a new candidate; sampled examples are removed with a probability (Section 3.2, PDF p. 6). The cache is initialized with offline examples. Their concrete schedule always generates new examples while the cache holds fewer than 500 examples for any language pair, and otherwise samples from the cache or generates new examples (training on them once and caching them), each with probability 0.5, and removes sampled elements with probability 0.3, so an example is trained on about four times on average (Section 4.1, PDF p. 7).
 
-The ablation shows why the cache matters: no-cache online training averages 59.4% CA@1, an empty cache 60.1%, and the full model with beam 20 during self-training and beam 10 at evaluation 66.3% (Table 4, PDF p. 8). The paper says: "Training online with no cache makes the training much more unstable." (Section 4.2, PDF p. 8).
+The ablation shows why the cache matters: with greedy decoding at evaluation, no-cache online training averages 59.4% CA@1 and an uninitialized cache 60.1%, versus 64.7% for the full model (self-training beam 20) under the same greedy evaluation; the 66.3% figure for the full model uses beam 10 at evaluation (Table 4, PDF p. 8). The paper says: "Training online with no cache makes the training much less stable." (Section 4.2, PDF p. 8).
 
 Inference: A Verus implementation can maintain a cache of previously verified Rust candidates keyed by contract and environment, mix fresh generations with cached proofs, and evict examples gradually. Cache keys should include compiler, Verus, crate, and dependency versions; that versioning requirement is an inference because the paper does not use Verus.
 
 ## technique 5: checker-based evaluation and beam selection
 
-The benchmark metric is computational accuracy CA@N: whether any of the top N generated solutions passes every associated test (Section 3.3, PDF p. 6). The paper evaluates with beam sizes 1, 10, and 20 and reports CA@1, CA@10, and CA@20 (Table 3, PDF p. 7). Online self-training reaches 66.3% CA@1 with beam 10 and 77.2% CA@20, compared with 53.7% and 70.5% for the best baseline; each percentage is over the benchmark's full validation/test function set (Table 3, PDF p. 7).
+The benchmark metric is computational accuracy CA@N: whether any of the top N generated solutions passes every associated test (Section 3.3, PDF p. 6). The paper evaluates with beam sizes 1, 10, and 20 and reports CA@1, CA@10, and CA@20 (Table 3, PDF p. 8). Online self-training reaches 66.3% CA@1 with beam 10 and 77.2% CA@20, compared with 53.7% and 70.5% for the best baseline (Table 3, PDF p. 8). The paper evaluates "on the full validation and test sets of TransCoder" (Section 3.3, PDF p. 6).
 
-Across directions, Online ST averages 66.3% CA@1 versus 51.7% for TransCoder and reduces baseline error by 25.5%; for Python→C++, it reaches 56.7% versus 32.6%, a 35.7% error-rate reduction (Table 2 and Section 4.2, PDF pp. 7–8). These are benchmark computational-accuracy denominators, not percentages of all generated programs.
+Across directions, Online ST averages 66.3% CA@1 (beam 10) versus 51.7% for TransCoder (Table 2); the paper reports an average gain of 12.6 points over the best baseline per pair and direction, an error-rate reduction of 25.5%; for Python→C++, it reaches 56.7% versus 32.6%, a 35.7% error-rate reduction (Table 2 and Section 4.2, PDF pp. 7–8). These are benchmark computational-accuracy denominators, not percentages of all generated programs.
 
 Inference: Verus should report top-k candidate proof success, compile success, and semantic-contract success separately, with the denominator being attempted benchmark tasks. Beam candidates can be checked in parallel, but the first textual candidate should not be accepted merely because it has the highest model score.
 
 ## limitations and semantic assumptions
 
-The authors explicitly report that generated tests can disagree with benchmark tests and that passing generated tests is not perfectly correlated with benchmark performance (Section 4.2, PDF p. 8). Their factorial example differs on integer overflow: Python's arbitrary-precision result and Java's 32-bit overflow are not equivalent for input 21 (Figure 4, PDF p. 8). The paper says: "By using the test suites from EvoSuite as source of truth, we sometimes train the model to generate translations that are more rigorous but also less natural." (Section 4.2, PDF p. 8).
+The authors explicitly report that generated tests can disagree with benchmark tests and that passing generated tests is not perfectly correlated with benchmark performance (Section 4.2 "Limitations", PDF p. 9). Their factorial example differs on integer overflow: the text says the Java implementation (with long integers) "would return a negative number for the input 21 due to integer overflow while the Python implementation would return 21! correctly"; Figure 4 shows the Java int version and a Python translation using np.int32 that passes the generated tests but fails some benchmark tests (PDF p. 9). The paper says: "By using the test suites from EvoSuite as source of truth, we sometimes train the model to generate translations that are more rigorous but also less natural." (Section 4.2, PDF p. 9).
 
 ## what is proved, measured, and trusted
 
-The paper measures test-passing translation accuracy and self-training gains; it does not prove full semantic equivalence. Its test suites, mutation operators, type mappings, benchmark tests, translation models, and EvoSuite implementation are trusted or assumed adequate. Inference: A Verus pipeline can reduce this trusted base by requiring proof, but still trusts the Verus verifier, Rust compiler assumptions, specifications, and any external-body or axiomatized code.
+The paper measures test-passing translation accuracy and self-training gains; it does not prove full semantic equivalence. Inference: the paper's results rest on the adequacy of its test suites, mutation operators, type mappings, benchmark tests, translation models, and EvoSuite implementation, none of which it verifies formally. A Verus pipeline can reduce this trusted base by requiring proof, but still trusts the Verus verifier, Rust compiler assumptions, specifications, and any external-body or axiomatized code.
 
 ## techniques for the catalog
 

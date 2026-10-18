@@ -20,15 +20,15 @@ how to do it:
 2. At each statement, apply the calculus rule for the current specification. For a local session type, syntactically match the call, synchronization, suspension, or return against the active action (Section 2.1, pp. 4–5; Section 5, p. 7).
 3. If a match fails, stop symbolic execution on that branch; do not generate later nodes. If matching cannot decide among alternatives, delay the choice and explore all alternatives (Section 5, p. 7).
 4. Generate logical path conditions only after a branch has been identified and the syntactic match succeeds (Section 5, p. 7).
-5. Continue with ordinary symbolic updates and path conditions on surviving branches; leaves become logic or static obligations (Sections 3 and 6, pp. 5 and 8).
+5. Continue with ordinary symbolic updates and path conditions on surviving branches; leaves become logic or static obligations (Sections 3 and 6, pp. 5–6 and 8).
 
-The paper’s session-type example requires `f!m` followed by `g!n` and then a return with `result == 0`; a method that calls `f!m` three times has its extra-call branch omitted. Figure 2’s caption says, “Illustration of guides in BSE. Verification of the method to the left results in a symbolic execution tree where the dashed nodes are not generated.” (Figure 2, p. 5.)
+The paper’s session-type example (Example 2, p. 4) requires a call of `m` on role `f`, then `n` on role `g`, then a return in a state where `result == 0`. In Figure 2 (p. 5) the method is specified with the type `f!m.g!n.↓ϕ`, "the method is specified to make two calls, but executes three" (Section 3, p. 5; the code calls `this.f!m()`, `this.g!m()`, `this.f!m()`), so the nodes after the second call are not generated. Figure 2’s caption says, “Illustration of guides in BSE. Verification of the method to the left results in a symbolic execution tree where the dashed nodes are not generated.” (Figure 2, p. 5.)
 
 verus form (inference): model a protocol as a ghost state machine and make each executable operation advance a permitted state. A Verus `proof fn` can establish a transition relation and an `ensures` clause can state the resulting protocol state; `invariant` clauses can preserve state-machine facts across loops.
 
-evidence: Crowbar reports fully automatic verification of a model extracted from C code with 260 lines of ABS, 5 classes, 5 interfaces, 19 method contracts, and one contracted function (Section 7, p. 10). The earlier KeY-ABS case had 140 lines in one class and required manual interaction; the paper uses this comparison to show scale, not a controlled benchmark. The system’s abstract claim that behavioral guides reduce formula size is supported by this case study, but no separate formula-size denominator is reported.
+evidence: Crowbar reports fully automatic verification of a model extracted from C code with 260 lines of ABS, 5 classes, 5 interfaces, 19 method contracts, and one contracted function (Section 7, p. 10). The earlier KeY-ABS case had 140 lines of code for 1 class and required manual interaction (Section 7, p. 10). Inference: this comparison shows scale only; it is not a controlled benchmark. The introduction says BSE improves automatization "as they reduce the size of the final logical formulas" (Section 1, p. 2); the paper reports no formula-size measurement, so Inference: the case study does not isolate that claim.
 
-where it fails or assumes: a symbolic leaf means the behavioral guide stopped execution and verification fails (Section 6, p. 8). Static nodes remain external obligations: context-set consistency and local-type compositionality are not discharged by Crowbar itself. Inference: the final guarantee therefore assumes those analyses are sound and complete enough for the chosen model; the paper does not prove that external analyses preserve BPL semantics.
+where it fails or assumes: a symbolic leaf means the behavioral guide stopped execution and verification fails (Section 6, p. 8). Static nodes remain external obligations: the paper says the context sets are output with their heap precondition, that the consistency of cooperative contracts and adherence to the specified method order are checked externally, and that each class with local types outputs a static node for compositionality (Section 6, p. 9); Crowbar itself does not discharge them. Inference: the final guarantee therefore assumes those analyses are sound and complete enough for the chosen model; the paper does not prove that external analyses preserve BPL semantics.
 
 ## technique 2: static-analysis and type-system guides
 
@@ -39,7 +39,7 @@ how to do it:
 1. Mark fields and variables annotated `[NonNull]`, or infer non-nullness from the nullability type system (Section 4, p. 6).
 2. Tag an access as non-null in Crowbar’s intermediate representation when the type system proves it safe (Section 5, p. 7).
 3. During BSE, omit the null-exception side branch for that access; retain the side branch when inference cannot establish null safety (Section 5, p. 7).
-4. Treat the resulting proof tree as conditional on the type analysis; any remaining side branch becomes a logic obligation for SMT (Sections 5–6, pp. 7–8).
+4. Inference: treat the resulting proof tree as conditional on the type analysis. Side branches that are still generated end up as logic nodes sent to SMT (Sections 5–6, pp. 7–8).
 
 Figure 2’s example omits node (1) because the field is declared non-null. The paper says, “An access that is shown to be non-null by the type system is marked as such in the intermediate representation of Crowbar.” (Section 5, p. 7.)
 
@@ -63,7 +63,7 @@ The paper states: “Logic nodes are interfaces that contain no modalities and r
 
 verus form (inference): use Verus `requires`, `ensures`, `assert`, `invariant`, and `spec fn` expressions; Verus lowers these to its SMT backend. A Rust heap abstraction may require ghost maps or state-machine fields, and each polymorphic collection needs an explicit mathematical model. Inference: Crowbar’s monomorphic-heap split and partial-function encoding are translator concerns; they do not become Verus source constructs. The trusted boundary is Verus’s checker plus the adequacy of the heap abstraction and any external model.
 
-evidence and limits: the 260-line case closes fully automatically, but static nodes are explicitly outside SMT and require external checks. Crowbar supports partial correctness and selected exceptions; it does not establish total correctness or termination merely by closing a logic node. The under-specified `else` branch is sound only for the stated partial-correctness interpretation, so a total-correctness claim would require a different encoding.
+evidence and limits: the 260-line case closes fully automatically, but static nodes are explicitly outside SMT and require external checks. The paper says "Crowbar only considers partial correctness (and some exceptions)" (Section 6, p. 8) and that the partial-function approach is "inspired by the KeY system". Inference: closing a logic node therefore does not establish total correctness or termination, and the under-specified `else` branch fits only the partial-correctness interpretation.
 
 ## technique 4: guided source-level counterexamples
 
@@ -81,7 +81,7 @@ Listing 4 gives a concrete `heartbeat` CE: `beats` starts at 21239, an error bra
 
 verus form (inference): translate a failed Verus obligation into a small Rust test harness or proof lemma with concrete ghost values, preserving the relevant branch and adding `assert` statements for the failed `ensures` or `invariant`. Inference: a harness can help an agent diagnose a proof, but it is evidence of one state, not a proof of all states. The final candidate still requires Verus verification; generated assignments and annotations are untrusted debugging output.
 
-evidence and limits: source-level CEs hide Crowbar internals and are intended for non-expert users, but the paper gives no user-study denominator. A failure caused by a loop invariant removes information outside or inside the loop depending on where the failure occurs (Section 6, p. 9). Static-node failures are not necessarily reconstructible as a concrete CE because they depend on external analyses.
+evidence and limits: source-level CEs hide Crowbar internals and are intended for non-expert users, but the paper gives no user-study denominator. A failure caused by a loop invariant removes information outside or inside the loop depending on where the failure occurs (Section 6, p. 9). Inference: static-node failures may not be reconstructible as a concrete CE because they depend on external analyses; the paper describes CEs only for open branches of the symbolic execution tree.
 
 ## techniques for the catalog
 

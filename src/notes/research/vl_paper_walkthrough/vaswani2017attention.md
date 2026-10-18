@@ -6,13 +6,13 @@ Tag: `vaswani2017attention`, [paper](https://arxiv.org/abs/1706.03762)
 
 The paper introduces the Transformer for sequence transduction. Its abstract states: “We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.” (abstract, PDF p. 1.) The evaluation is machine translation and English constituency parsing, not program verification. Inference: the verification relevance is architectural: a proof-search agent can use global attention, masking, and a verifier-backed action loop, but this paper provides no formal proof of its neural network or of a theorem prover.
 
-The authors report 28.4 BLEU on WMT 2014 English–German and 41.8 BLEU on English–French after 3.5 days on eight P100 GPUs (abstract and Section 6.1, PDF pp. 1, 8).
+The authors report 28.4 BLEU on WMT 2014 English–German (abstract, PDF p. 1; Section 6.1, PDF p. 8: “Training took 3.5 days on 8 P100 GPUs.”) and 41.8 BLEU on English–French (abstract, PDF p. 1; Table 2, PDF p. 8; the prose of Section 6.1 says 41.0, see below).
 
 ## technique 1: scaled dot-product attention
 
-What it is. The paper defines an attention function as a weighted sum of values, with weights obtained from query-key compatibility (Section 3.2, PDF p. 4). It names the concrete algorithm: “We call our particular attention "Scaled Dot-Product Attention".” (Section 3.2.1, PDF p. 4.) Given query matrix Q, key matrix K, and value matrix V, it computes `softmax(QK^T / sqrt(d_k)) V` (Equation 1, Section 3.2.1, PDF p. 4).
+What it is. The paper defines an attention function as a weighted sum of values, with weights obtained from query-key compatibility (Section 3.2, PDF pp. 3-4). It names the concrete algorithm: “We call our particular attention "Scaled Dot-Product Attention".” (Section 3.2.1, PDF p. 4.) Given query matrix Q, key matrix K, and value matrix V, it computes `softmax(QK^T / sqrt(d_k)) V` (Equation 1, Section 3.2.1, PDF p. 4).
 
-When to use it. Use it when each proof-state token or graph element must retrieve information from all other elements in one layer. The paper says dot-product attention is faster and more space-efficient than additive attention in practice because optimized matrix multiplication implements it (Section 3.2.1, PDF p. 4). The scaling by `sqrt(d_k)` is needed for large key dimensions: the authors explain that unscaled dot products can push softmax into very small gradients (footnote 4, PDF p. 4).
+When to use it. Use it when each proof-state token or graph element must retrieve information from all other elements in one layer. The paper says dot-product attention is faster and more space-efficient than additive attention in practice because optimized matrix multiplication implements it (Section 3.2.1, PDF p. 4). The paper reports that “additive attention outperforms dot product attention without scaling for larger values of dk” and says: “We suspect that for large values of dk , the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients” (Section 3.2.1, PDF p. 4); footnote 4 illustrates why the dot products grow, assuming independent components of mean 0 and variance 1 (PDF p. 4). This is the authors' suspicion, not a tested result.
 
 How to apply it.
 
@@ -25,7 +25,7 @@ Verus form (inference). Treat a verified implementation as a Rust matrix routine
 
 ## technique 2: multi-head attention
 
-What it is. The authors project Q, K, and V into several learned subspaces, run attention in parallel, concatenate the results, and apply an output projection. Their exact definition is “MultiHead(Q, K, V) = Concat(head1, ..., headh)W^O where headi = Attention(QW_i^Q, KW_i^K, VW_i^V)” (Section 3.2.2, PDF p. 5). The base Transformer uses eight heads with `d_k = d_v = d_model / h = 64` and `d_model = 512` (Section 3.2.2, PDF p. 5).
+What it is. The authors project Q, K, and V into several learned subspaces, run attention in parallel, concatenate the results, and apply an output projection. Their exact definition is “MultiHead(Q, K, V) = Concat(head1, ..., headh)W^O where headi = Attention(QW_i^Q, KW_i^K, VW_i^V)” (Section 3.2.2, PDF p. 5; the paper writes the sub- and superscripts as W_i^Q etc.). The base Transformer uses eight heads with `d_k = d_v = d_model / h = 64` and `d_model = 512` (Section 3.2.2, PDF p. 5).
 
 When to use it. Use multiple heads when different relations should be attended to simultaneously. The paper says this “allows the model to jointly attend to information from different representation subspaces at different positions” (Section 3.2.2, PDF p. 5). Inference: for formal-verification agents, heads could specialize in syntax, hypotheses, counterexamples, or API context, but specialization is a hypothesis rather than a guarantee.
 
@@ -61,9 +61,9 @@ Inference: a verified agent can encode token positions as explicit indices and p
 
 ## technique 5: training and decoding protocol
 
-The paper trains on WMT 2014, batches about 25,000 source and 25,000 target tokens, and uses Adam with `β1=0.9`, `β2=0.98`, `epsilon=10^-9` (Sections 5.1–5.3, PDF p. 7). Its learning-rate schedule is linear warmup for 4,000 steps followed by inverse-square-root decay (Equation 3, Section 5.3, PDF p. 7). It applies residual dropout at rate 0.1 and label smoothing 0.1 for the base model (Section 5.4, PDF p. 7).
+The paper trains on WMT 2014, batches about 25,000 source and 25,000 target tokens, and uses Adam with `β1=0.9`, `β2=0.98`, `epsilon=10^-9` (Sections 5.1–5.3, PDF p. 7). Its learning-rate schedule is linear warmup for 4,000 steps followed by inverse-square-root decay (Equation 3, Section 5.3, PDF p. 7). It applies residual dropout at rate 0.1 for the base model and label smoothing of 0.1 (Section 5.4, PDF pp. 7-8).
 
-For translation inference, the paper averages the last five checkpoints for base models and the last 20 for big models, then uses beam size 4 and length penalty 0.6 (Section 6.1, PDF p. 8). For parsing, it uses beam size 21 and length penalty 0.3 (Section 6.3, PDF p. 9).
+For translation inference, the paper averages the last five checkpoints for base models and the last 20 for big models, then uses beam size 4 and length penalty 0.6 (Section 6.1, PDF p. 8). For parsing, it uses beam size 21 and length penalty 0.3 (Section 6.3, PDF p. 10).
 
 ## techniques for the catalog
 
