@@ -9,7 +9,7 @@ The paper studies imperative programs whose assignments use uninterpreted functi
 
 when to use it
 
-Use this method when data values are opaque and only equality, disequality, and applications of uninterpreted functions matter. The program grammar has assignment, sequencing, conditionals, while loops, and `assume`; its postcondition is a quantifier-free Boolean combination of equalities. The paper's example P1 models list traversal with uninterpreted `n` and `key`; it can prove a relation such as `b=T => key(r)=k` without assuming list representation.
+Use this method when data values are opaque and only equality, disequality, and applications of uninterpreted functions matter. The program grammar has assignment, sequencing, conditionals, while loops, and `assume`; its postcondition is a quantifier-free Boolean combination of equalities. The paper's example P1 (Figure 1) models a list-segment search with uninterpreted `n` and `key`, and is annotated with the postcondition `b=T => key(r)=k`; the paper classifies P1 as coherent (Example 6) but does not report running the verifier on it.
 
 how to do it
 
@@ -17,9 +17,9 @@ how to do it
 2. For each execution prefix rho and variable x, compute a symbolic term `Comp(rho,x)` from initial constants, copies, and function applications (Definition 3)
 3. Collect equality assumptions alpha(rho) and disequality assumptions beta(rho), then compute congruence closure of alpha. An execution is feasible exactly when the closure has no disequality pair; equivalently, the canonical initial term model suffices (Section 3.2)
 4. For coherent executions, stream the execution with a finite automaton state `(equivalence, disequalities, partial function interpretation)`. Update this state on copy, function assignment, equality assume (local congruence closure), and disequality assume (Section 3.2)
-5. Intersect that feasibility automaton with the NFA of program executions and search for an accepting path. A path is a feasible counterexample; no path proves the postcondition (Theorem 8)
+5. Intersect that feasibility automaton with the NFA of program executions and search for an accepting path. Without loss of generality the postcondition is fixed to false (Section 2.3), so a path is a feasible counterexample and no path means the program is correct (Theorem 8)
 
-The paper emphasizes the trust boundary of the abstraction: “The set of terms computed by an execution are independent of the assume statements in the execution and depend only on the assignment statements.” Assumptions constrain feasibility, not symbolic term construction.
+The paper notes (Section 2.3, after Definition 3): “Notice that the terms computed by an execution are independent of the assume statements in the execution and depend only on the assignment statements.” Assumptions constrain feasibility, not symbolic term construction.
 
 ## technique: coherence and automatic recognition
 
@@ -29,7 +29,7 @@ Apply it by building a second deterministic automaton. Track the feasibility sta
 
 ## technique: k-coherence and recursion
 
-If a program is not coherent, add up to k ghost variables that are written but never read, preserving terms that would otherwise be dropped. Decide whether such assignments exist, construct the augmented automaton, and verify the resulting coherent program (Section 5). The paper explicitly says: “These ghost variables are only written and never read, and therefore, play no role in the actual computation.” For recursive calls, replace finite-word automata with VPAs that respect call, return, and internal actions; intersect the VPA for executions with the VPA accepting coherent executions and check emptiness (Section 6).
+If a program is not coherent, add up to k ghost variables that are written but never read, preserving terms that would otherwise be dropped. Decide whether such assignments exist, construct the augmented automaton, and verify the resulting coherent program (Section 5). The paper says (Section 2.4): “These ghost variables are only written and never read, and therefore, play no role in the actual computation.” Executions with ghost variables have an extra letter `g := x` (Section 5), and the k-coherent executions are the projection of the coherent ones over V plus ghosts (Proposition 14). For recursive calls, replace finite-word automata with visibly pushdown automata that respect call, return, and internal letters. The proof sketch of Theorem 17 builds a VPA A_P for the program's executions and a VPA A_rfs for feasible executions, and checks that their intersection is empty. A_rfs tracks the Afs-style state over V together with primed copies V' of the caller's variables, pushes its state at `call m`, and merges the popped state at the return (Section 6.3). Theorem 18 states that k-coherence of a recursive program and its verification are decidable.
 
 ## Verus form (inference)
 
@@ -47,4 +47,4 @@ Inference: the direct threat to agent-written verified Rust is low for ordinary 
 - coherence checker: track recomputation table E and superterms to reject non-memoizing or late-equality executions
 - k-coherence: add bounded write-only ghost variables to retain dropped terms and recover decidability
 - recursive VPA verification: intersect execution and coherence visibly pushdown automata and test emptiness
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The crux of this result is an observation that the collection of coherent executions form a regular language."): I read the whole paper text (introduction, Sections 2 to 8, appendices A and B, references) and checked every quotation, theorem number, complexity claim (Theorems 8 to 13, 15 to 18), and the steps of the techniques against it; I changed the Section 2.3 quotation (the study had an extra "The set of", now exact), the Section 5 attribution of the ghost-variable quotation (it is in Section 2.4), the recursion step (the paper intersects the program VPA with the feasibility VPA A_rfs, not with a coherence VPA), the P1 sentence (the paper does not claim a proof of its postcondition), and the postcondition-false assumption in step 5; the tag keeps year 2018 (arXiv id 1811.00192, Nov 2018) although the paper's own citation says 2019 (POPL 2019), and the link is the arXiv page named in the paper (the DOI is 10.1145/3290359); I did not check the appendix proofs in detail (Lemmas 3 to 7, 2-counter-machine reduction) for correctness, the Verus-form and product-relevance inferences, or any external literature.

@@ -4,7 +4,7 @@ Tag: `jin2019local`, [paper](http://arxiv.org/abs/1904.04442v2)
 
 ## purpose and model
 
-Jin et al. build a separation-logic verification framework for block-based cloud storage systems (BCSSs), using a file store, block store, variable store, and two heaps. The abstract states the motivation and scope: “Therefore, a verification framework based on Separation Logic (SL) is proposed to prove the correctness of management programs in Block-based Cloud Storage Systems (BCSSs), which is the most popular CSSs.” (Abstract, p. 1) The framework targets management commands such as create, append, delete, and block movement. It models a file as a sequence of block addresses, while each block address maps to a sequence of locations in the location heap.
+Jin et al. build a separation-logic verification framework for block-based cloud storage systems (BCSSs), using a file store, block store, variable store, and two heaps. The abstract states the motivation and scope: “Therefore, a verification framework based on Separation Logic (SL) is proposed to prove the correctness of management programs in Block-based Cloud Storage Systems (BCSSs), which is the most popular CSSs.” (Abstract, p. 1) The framework targets management commands such as create, append, and delete (Introduction, p. 1); the worked example is the Disk Balancer's Transfer algorithm, which moves blocks (Section 2, p. 3; Section 7, p. 10). It models a file as a sequence of block addresses, each block address maps to a sequence of location addresses, and each location address maps to a value (Section 1, p. 3). The paper's title in the PDF is “Local Reasoning about Block-based Cloud Storage Systems”.
 
 The paper's contributions are a two-tier heap, paired assertions for the two tiers, and Hoare-style rules. It claims: “The results show that the correctness of BCSSs can be verified precisely and flexibly.” (Abstract, p. 1) This is a claim about the framework; the paper supplies worked derivations rather than a product-scale benchmark.
 
@@ -12,18 +12,18 @@ The paper's contributions are a two-tier heap, paired assertions for the two tie
 
 what it is
 
-Inference: The state separates block metadata from block contents. A block heap `hB` maps a block variable to a sequence of locations, and a location heap `hV` maps locations to values. File variables map to block sequences. Allocation, append, lookup, and mutation update the appropriate tier. The model therefore preserves both the logical order of blocks in a file and the fine-grained content inside a block.
+Inference: The state separates block metadata from block contents. A block heap `hB` maps a block address to a sequence of location addresses, and a location heap `hV` maps location addresses to values. Block variables map to block addresses (`StoresB`), and file variables map to sequences of block addresses (`StoresF`). Allocation, append, lookup, and mutation update the appropriate tier. The model therefore preserves both the logical order of blocks in a file and the fine-grained content inside a block.
 
 when to use it
 
-Inference: Use this model when an operation changes a block's contents but must preserve its address sequence, or when a file operation changes the sequence of blocks. The authors motivate it by noting that ordinary SL does not represent this hierarchy or connect block contents to arithmetic variables (Introduction, pp. 2–3).
+Inference: Use this model when an operation changes a block's contents but must preserve its address sequence, or when a file operation changes the sequence of blocks. The authors motivate it by saying that “The low-level heap-manipulating framework in SL cannot describe the complicated structure” (Introduction, p. 2), and that the model “is not simply a double combination of SL since there is a joint implication between the two tiers of the heap structure” (Introduction, p. 3). They also say their earlier language LMDSS treated block content as one big integer and kept block variables disconnected from general variables (Introduction, p. 2).
 
 how to apply it
 
-Inference: 1. represent files as sequences of block addresses and blocks as sequences of locations (Sections 3.1–3.3, pp. 3–5)
-Inference: 2. define denotational semantics for `create`, `attach`, `allocate`, `append`, `delete`, and lookup/mutation commands (Section 3.3, pp. 5–6)
-Inference: 3. keep location assertions about the location store/heap and block assertions about block sequences; combine them as a global assertion pair (Sections 4.1–4.3, pp. 6–7)
-Inference: 4. use the supplied `#`, `==`, `7→`, and `#` forms to state block length, block-content equality, points-to content, and disjointness (Section 4.3, p. 7)
+Inference: 1. represent files as sequences of block addresses and blocks as sequences of locations (Sections 3.1–3.2, pp. 3–4)
+Inference: 2. define denotational semantics for `create`, `attach`, `delete f`, `allocate`, `append`, block content lookup `x := {bk.e}`, block address assignment, `f.e := bk`, and `delete b` (Section 3.3, pp. 4–5)
+Inference: 3. keep location assertions about the location store/heap and block assertions about block sequences; combine them as a global assertion pair (Sections 4.1–4.3, pp. 5–6)
+Inference: 4. use the paper's block forms: `#bk` for block content length (Section 3.3, p. 4), `==` for block address equality and concatenation, `bk 7→ (ē)` for a block's location sequence, and `b1 # b2` for content correspondence (Section 4.2, pp. 5–6)
 
 Verus form (Inference:)
 
@@ -37,19 +37,19 @@ The semantics gives precise state transitions and the appendix gives step-by-ste
 
 what it is
 
-Location assertions extend BI separation logic with quantification over variables, files, and blocks. Block assertions describe address sequences and contents. A global assertion is a pair `⟨α, β⟩`, where the location and block components affect each other. The paper explains: “The pair form of global assertions is consistent with the hierarchical structural of the framework.” (Section 4.3, p. 7) Quantification over block variables handles dynamically sized sequences, including while-loop iterations.
+Location assertions extend BI separation logic with quantification over variables, files, and blocks. Block assertions describe address sequences and contents. A global assertion is a pair `⟨α, β⟩`, where the location and block components affect each other. The paper explains: “The pair form of global assertions is consistent with the hierarchical structural of the framework.” (Section 4.3, p. 6) Quantification over block variables handles dynamically sized sequences, including while-loop iterations.
 
 when to use it
 
-Inference: Use paired assertions to state an invariant that simultaneously relates a block's addresses to its values, or a file's block sequence to the blocks' contents. For a copy loop, the invariant must say that the destination block contains exactly the source prefix copied so far while the source remains unchanged.
+Inference: Use paired assertions to state an invariant that simultaneously relates a block's addresses to its values, or a file's block sequence to the blocks' contents. For a copy loop, the invariant must say that the destination block contains exactly the source prefix copied so far while the source remains unchanged; the paper's invariant for Transfer is `A` in Section 7 (p. 11).
 
 how to apply it
 
-Inference: 1. write a location assertion for scalar variables and location cells, using separating conjunction `*` for disjoint heaps (Section 4.1, pp. 6–7)
-Inference: 2. write a block assertion for block length, block-content sequence, and block disjointness (Section 4.2, pp. 6–7)
-Inference: 3. pair them as a global assertion `⟨α,β⟩` and quantify block variables when a loop changes sequence length (Section 4.3, p. 7)
+Inference: 1. write a location assertion for scalar variables and location cells, using separating conjunction `*` for disjoint heaps (Section 4.1, p. 5)
+Inference: 2. write a block assertion for block length, block-content sequence, and block disjointness (Section 4.2, pp. 5–6)
+Inference: 3. pair them as a global assertion `⟨α,β⟩` and quantify block variables when a loop changes sequence length (Section 4.3, p. 6)
 Inference: 4. translate Boolean guards into global assertions with the transfer function `T`; for example the paper maps `e1=e2` to `⟨e1=e2,trueB⟩` and block equality to `⟨trueV,b1==b2⟩` (Section 5.2, p. 7)
-Inference: 5. prove the loop invariant before initialization, after each body, and on exit (Section 5.3 and Algorithm 1, pp. 7–11)
+Inference: 5. for a while loop, rule R3 needs `{p ∧ T(be)} C' {p}` and yields `{p} while be do C' {p ∧ ¬T(be)}`; the invariant must be established by the commands before the loop and the exit condition `p ∧ ¬T(be)` is then used afterwards (Section 5.3, p. 8; Section 7, pp. 10–11)
 
 Verus form (Inference:)
 
@@ -57,25 +57,25 @@ Inference: Use a ghost predicate `GlobalInv` taking the Rust state, a block sequ
 
 evidence and limits
 
-The paper's principal evidence is the complete derivation of `Transfer` and the semantic copy example (Section 7, pp. 10–14). It gives no denominator for verified programs beyond these examples. Quantification over block variables increases expressiveness but also creates more difficult proof obligations; the authors explicitly note that the logic is “quite different from SL, and more complicated.” (Section 4.3, p. 7)
+The paper's principal evidence is the Hoare-style derivation of `Transfer` (Section 7, pp. 10–11) and a concrete state-by-state evaluation of a copy program (Appendix A, pp. 13–14). It gives no denominator for verified programs beyond these examples. Quantification over block variables increases expressiveness but also creates more difficult proof obligations; the authors explicitly note that the logic is “quite different from SL, and more complicated.” (Section 4.3, p. 7)
 
 ## technique 3: Hoare-style axioms, composition, and loop reasoning
 
 what it is
 
-The proof system uses triples `{p} C {q}` with global assertions. It supplies axioms for skip, assignment, allocation, lookup, mutation, deallocation, file creation, block appending, and block-content operations, plus consequence, sequence, conditional, and while rules. The paper's local-reasoning requirement is: “Every valid specification {p}C{q} is ‘tight’, that is to say when C runs in a state satisfying p, it must dereference only those cells that guaranteed to exist by p or allocated during the execution.” (Section 5.1, p. 7)
+The proof system uses triples `{p} C {q}` with global assertions. It supplies axioms for skip, assignment, allocation, lookup, mutation, deallocation, file creation, file block address appending, file deletion, and block commands (allocation, content append, content lookup, address assignment, block deletion), plus sequence (R1), conditional (R2), while (R3), consequence (R4), auxiliary-variable (R5, R6), and frame (R7) rules (Section 5.3, pp. 7–9). The paper's local-reasoning requirement is: “Every valid specification {p}C{q} is ‘tight’, that is to say when C runs in a state satisfying p, it must dereference only those cells that guaranteed to exist by p or allocated during the execution by possible commands like x := cons(e1 , ..., en ) or f := create(bk ∗ ).” (Section 5.1, p. 7)
 
 when to use it
 
-Inference: Use a primitive axiom for each storage command, compose them with sequencing, and introduce a strengthened assertion before a loop. Use backward rules when the desired postcondition is easier to propagate backward through a block-content operation; the paper identifies its block-content lookup backward form as the most complex example (Section 5.3, p. 9).
+Inference: Use a primitive axiom for each storage command, compose them with sequencing, and introduce a strengthened assertion before a loop. Use backward rules when the desired postcondition is easier to propagate backward through a block-content operation; the paper says of its backward block-content lookup axiom A21: “Obviously, such backwards version can be applied generally since it works for any postcondition (p).” and calls the instance “the most complex one” (Section 5.4, “Scalability Issues”, p. 9; the text there says “block content loop command”).
 
 how to apply it
 
 Inference: 1. choose a tight precondition that owns every dereferenced location or block (Section 5.1, p. 7)
-Inference: 2. apply the primitive axiom, substituting the assigned expression in the postcondition (Section 5.3, pp. 7–9)
-Inference: 3. use the transfer function for guards and apply consequence to strengthen or weaken assertions (Section 5.2–5.3, p. 7)
-Inference: 4. for a loop, prove initialization, body preservation, and exit entailment; quantify the copied prefix and remaining source suffix (Algorithm 1 and Section 7, pp. 10–14)
-Inference: 5. compose the resulting triples with the sequence rule to obtain the whole-program triple (Section 5.3, p. 7)
+Inference: 2. apply the primitive axiom, substituting the assigned expression in the postcondition (Section 5.3, pp. 7–8)
+Inference: 3. use the transfer function for guards and apply consequence (R4) to strengthen or weaken assertions (Sections 5.2–5.3, pp. 7–9)
+Inference: 4. for a loop, prove body preservation under R3, with block variables quantified to split the source block into a prefix of length `i − 1` and the remainder (invariant `A`, Section 7, pp. 10–11)
+Inference: 5. compose the resulting triples with the sequence rule R1 to obtain the whole-program triple (Section 5.3, p. 8; Section 7, p. 11)
 
 Verus form (Inference:)
 
@@ -83,22 +83,22 @@ Primitive axioms become verified Rust functions with `requires` and `ensures`. A
 
 evidence and limits
 
-Algorithm 1 transfers every element of `b1` into `b2` and then deletes `b1`; the paper's appendix expands the state after each labeled command and loop iteration (Section 7, pp. 10–14). The derivation demonstrates method use, not automated scalability. The framework assumes the command semantics and all primitive axioms are sound.
+Algorithm 1 allocates `b1` with content (1011, 1012), creates a file `f` from it, copies `b1` into `b2` in a loop, sets `f.1 := b2`, and deletes `b1`; Section 7 gives a numbered derivation (steps 1–25) citing axioms and rules (pp. 10–11). Appendix A expands the state after each command and loop iteration of a concrete copy program (pp. 13–14). The derivation demonstrates method use, not automated scalability. The soundness of the axioms is argued case by case in Appendix B (pp. 14–16).
 
 ## technique 4: frame rule and soundness by heap decomposition
 
 what it is
 
-The frame rule derives `{p * r} C {q * r}` from `{p} C {q}` when `r` is independent of variables modified by `C`. The paper states: “Point 2 is a proof method called Frame Rule to formalize local reasoning.” (Section 5.1, p. 7) Its soundness proof decomposes the initial heaps into a part satisfying `p` and a disjoint frame part satisfying `r`, applies safety and locality lemmas, and recombines the heaps.
+The frame rule derives `{p * r} C {q * r}` from `{p} C {q}` when `r` is independent of variables modified by `C`. The paper states: “Point 2 is a proof method called Frame Rule to formalize local reasoning.” (Introduction, p. 2) Its soundness proof decomposes the initial heaps into a part satisfying `p` and a disjoint frame part satisfying `r`, applies safety and locality lemmas, and recombines the heaps.
 
 when to use it
 
-Frame unrelated file, block, and location state around a command so each proof mentions only the cells it accesses. Use the side condition `ModifyS(C) ∩ FV(r) = ∅`, expressed in the paper's semantic rule as `r = ∀XS.r` for the relevant store kind (Section 5.3, p. 9).
+Frame unrelated file, block, and location state around a command so each proof mentions only the cells it accesses. Use the side condition `ModifyS(C) ∩ FV(r) = ∅`, expressed in the paper's semantic version of the rule as `r = ∀XS.r` for the relevant store kind (R7 in Section 5.3, p. 9; Section 6, p. 9).
 
 how to apply it
 
-Inference: 1. prove the local triple `{p} C {q}` (Section 5.3, p. 7)
-Inference: 2. identify the frame assertion `r` and prove it is unaffected by all modified stores (Section 5.3, p. 9)
+Inference: 1. prove the local triple `{p} C {q}` (Section 5.1, p. 7)
+Inference: 2. identify the frame assertion `r` and prove it is unaffected by all modified stores (R7, Section 5.3, p. 9)
 Inference: 3. split the initial heaps with separating conjunction, run the command on the owned part, and use write locality on the frame part (Section 6, pp. 9–10)
 Inference: 4. recombine the post-state heaps to conclude `{p*r} C {q*r}` (Theorem 6.1, p. 10)
 
@@ -108,11 +108,11 @@ Inference: Use ownership or disjoint ghost maps to isolate the frame state. Prov
 
 evidence and limits
 
-Theorem 6.1 claims soundness for both partial and total correctness (Section 6, p. 10). Lemma 6.1 supplies safety and termination monotonicity, Lemma 6.2 the frame property, and Lemma 6.3 write locality (Section 6, pp. 9–10). No experimental error rate or performance denominator is given. Inference: frame reasoning can reduce VL proof size, but an incorrect `ModifyS` approximation would invalidate the locality argument.
+Theorem 6.1 claims soundness for both partial and total correctness (Section 6, p. 10); the proof is written out for partial correctness, and the total-correctness case is dismissed with “can be handled similarly” (p. 10). Lemma 6.1 supplies safety and termination monotonicity, Lemma 6.2 the frame property, and Lemma 6.3 write locality (Section 6, p. 10); the paper takes these local properties from Yang's thesis [28] and does not reprove them. No experimental error rate or performance denominator is given. Inference: frame reasoning can reduce VL proof size, but an incorrect `ModifyS` approximation would invalidate the locality argument.
 
 ## trust, reuse, and product risk
 
-Inference: The trusted core is the denotational semantics, assertion satisfaction relation, primitive axioms, and soundness lemmas. The paper's worked examples establish correctness of the specified copy and transfer behaviors under its model. Inference: VL should reuse the two-tier abstraction and frame decomposition for storage-like Rust, while avoiding a direct claim that these rules cover concurrency, crashes, or distributed failures; the paper models sequential management commands and says future work includes parallelism. Inference: threat to agent-written verified Rust is medium where ghost/executable correspondence is complex, because the framework's guarantees stop at the modeled heap and axioms.
+Inference: The trusted core is the denotational semantics, assertion satisfaction relation, primitive axioms, and soundness lemmas. The paper's Hoare derivation for Transfer establishes the specified postcondition under its model; the copy program in Appendix A is a concrete execution trace, not a general proof. Inference: VL should reuse the two-tier abstraction and frame decomposition for storage-like Rust, while avoiding a direct claim that these rules cover concurrency, crashes, or distributed failures; the paper models sequential management commands and says future work includes parallelism. Inference: threat to agent-written verified Rust is medium where ghost/executable correspondence is complex, because the framework's guarantees stop at the modeled heap and axioms.
 
 ## techniques for the catalog
 
@@ -121,4 +121,4 @@ Inference: The trusted core is the denotational semantics, assertion satisfactio
 - Hoare axioms and loop invariants: verify primitive storage commands, compose them, and preserve quantified copy invariants
 - frame-rule locality: decompose heaps, prove a command on its footprint, and recombine untouched state
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since we treat predicates semantically in this paper, we need to reformulate the Frame Rule to get a semantic version and we need to rewrite the condition in the syntactic version of the Frame Rule."): read the whole text (pp. 1–16 incl. appendices) and checked all quotations word for word, page and section references, the state/heap definitions, the assertion forms, the transfer function, axioms and rules R1–R7, Section 6 lemmas and Theorem 6.1, and the Transfer derivation. Changed: corrected the hB/StoresB description (hB maps block addresses, not block variables); moved the Frame Rule quote to the Introduction p. 2 and the “pair form” quote to p. 6; fixed section/page references (3.3 pp. 4–5, 4 pp. 5–6, R1 p. 8, lemmas p. 10, Appendix A pp. 13–14); completed the truncated Point 1 quote; moved the “most complex one” remark to Section 5.4; corrected the loop-rule description (R3 only needs body preservation); described Algorithm 1 fully; noted total correctness is only sketched; the copy program in Appendix A is a trace, not a proof; added the PDF title “Local Reasoning about …”. Link: arXiv page from the paper text (arXiv:1904.04442v2). Not checked: Verus-form paragraphs and product-risk judgments (Inference by the study author, outside the paper), the individual axiom soundness proofs in Appendix B, and the cited references.

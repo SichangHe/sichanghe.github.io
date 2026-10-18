@@ -4,7 +4,7 @@ Tag: `demoura2008z3`, [paper](https://www.semanticscholar.org/paper/3960dda299e0
 
 ## what the paper provides
 
-Z3 is an SMT decision engine for formulas combining Boolean structure with theories such as arithmetic, fixed-size bit-vectors, arrays, uninterpreted functions, and quantifiers. The abstract calls it “a new and efficient SMT Solver freely available from Microsoft Research” and says it “is used in various software verification and analysis applications.” The paper presents the architecture and the verification-facing techniques; it does not give a single end-to-end correctness benchmark. Its clients include Spec#/Boogie, Pex, HAVOC, VCC, and Yogi (§2).
+Z3 is an SMT decision engine for first-order formulas over background theories such as arithmetic, bit-vectors, arrays, and uninterpreted functions; the introduction also lists quantifiers (§1). The abstract calls it “a new and efficient SMT Solver freely available from Microsoft Research” and says it “is used in various software verification and analysis applications.” The paper presents the architecture and the verification-facing techniques; it is a four-page system description (pp. 337-340) and reports no benchmark data. Its stated clients include Spec#/Boogie, Pex, HAVOC, Vigilante, a verifying C compiler (VCC), and Yogi (§1); §2 describes only Spec#/Boogie and Pex.
 
 ## technique: DPLL(T) pipeline with preprocessing
 
@@ -13,13 +13,13 @@ Use this when a verifier has generated a logical verification condition and need
 1. run the incomplete but efficient simplifier; standard algebraic reductions include “p ∧ true → p,” and contextual substitution turns `x = 4 ∧ q(x)` into `x = 4 ∧ q(4)` (§3)
 2. compile the simplified syntax tree into clauses and congruence-closure nodes (§3)
 3. let the SAT solver assign Boolean atoms; the congruence-closure core propagates equalities through an E-graph (§3)
-4. dispatch theory atoms to arithmetic, arrays, bit-vector, and tuple solvers; merge solver references when E-graph nodes merge (§3)
+4. E-graph nodes may point to theory solvers (linear arithmetic, bit-vectors, arrays, tuples in the architecture figure); when two nodes merge, their solver-reference sets merge and the merge is propagated as an equality to the solvers in the intersection of the two sets (§3)
 5. reconcile theory models incrementally with Z3's model-based theory combination (§3)
 6. learn conflict clauses, use two-watch literals, phase caching, and non-chronological backtracking (§3)
 7. garbage-collect useless clauses produced by quantifier instantiation while retaining conflict clauses (§3)
 8. use relevancy propagation to ignore expensive theory atoms and quantifier instantiations that are don't-cares (§3)
 
-The SAT solver and theory solvers cooperate through assignments, equalities, fresh atoms, and lemmas. A model generator returns values for constants and partial function graphs when the formula is satisfiable (§3).
+The figure in §3 labels the exchanges between the SAT solver, the congruence closure core and the theory solvers as literal assignments, equalities, new atoms, and clauses. Theory solvers may produce fresh atoms for non-convex theories; these atoms are then owned and assigned by the SAT solver (§3). Z3 "has the ability to produce models as part of the output": "Models assign values to the constants in the input and generate partial function graphs for predicates and function symbols" (§3). The trivially satisfiable conjunct from the simplifier (e.g. x = 4) is kept aside so a model can still evaluate x (§3).
 
 verus form
 
@@ -29,11 +29,11 @@ Inference: Verus lowers Rust specifications and proof obligations to formulas fo
 
 Z3 handles quantified formulas by matching terms in its E-graph. The paper states, “Z3 uses a well known approach for quantifier reasoning that works over an E-graph to instantiate quantified variables,” and adds that its algorithms identify matches incrementally and efficiently (§3). Use it when verification conditions contain universal contracts or quantified data-structure facts. The engine creates instances, adds resulting clauses and atoms to the search space, and retains useful conflict-producing instances; useless clauses are collected (§3).
 
-Inference: Verus quantifier-heavy specifications should expose triggers or lemmas carefully; a `forall` fact can be instantiated only when matching terms appear. A proof that passes is checked by the solver, but solver completeness for quantifiers is not guaranteed. The paper's own architecture labels quantifier handling as an E-matching engine, not complete first-order theorem proving.
+Inference: Verus quantifier-heavy specifications should expose triggers or lemmas carefully; a `forall` fact can be instantiated only when matching terms appear. A proof that passes is checked by the solver, but solver completeness for quantifiers is not guaranteed. The paper's architecture labels quantifier handling an "E-matching engine" (figure) or "E-matching abstract machine" (§3) and makes no completeness claim for quantifiers; Inference: it should not be read as complete first-order theorem proving.
 
 ## technique: theory-specific decision procedures
 
-For linear arithmetic, Z3 uses an algorithm based on Yices (§3). Arrays use lazy instantiation of array axioms. Fixed-size bit-vectors are bit-blasted to Boolean form except equality (§3). These reductions let a common SAT core decide heterogeneous obligations. Use the theory native to the property: integer bounds and linear resource counts map to arithmetic; byte-level operations map to bit-vectors; maps and memory models map to arrays.
+For linear arithmetic, Z3 uses an algorithm based on Yices (§3). Arrays use lazy instantiation of array axioms. Fixed-size bit-vectors are bit-blasted to Boolean form except equality (§3). Inference: these reductions let a common SAT core decide heterogeneous obligations (the paper does not say this). Inference, advice not from the paper: use the theory native to the property: integer bounds and linear resource counts map to arithmetic; byte-level operations map to bit-vectors; maps and memory models map to arrays.
 
 Inference: in Verus, choose mathematical integer specifications when machine-width overflow is not the property, and use bit-vector-like encodings only when widths matter. Array and heap models may require quantified extensionality lemmas; proof effort depends on the generated formula and backend version.
 
@@ -41,18 +41,18 @@ Inference: in Verus, choose mathematical integer specifications when machine-wid
 
 The paper reports that a prototype entered SMT-COMP'07 and “won 4 first places, and 7 second places” (§1), but it gives no denominator of competition divisions in this short system paper. It reports qualitative client improvements: Spec# replaced Simplify as its default engine in May 2007, “resulting in substantial performance improvements during theorem proving” (§2). No timing table or reproducible benchmark denominator is supplied. Therefore these are historical capability claims, not a measured Verus proof-speed guarantee.
 
-The mathematical specification and generated formula remain trusted inputs; the solver, its simplifier, theory implementations, quantifier instantiation, model generation, and the checker or proof consumer are part of the trusted verification chain. A SAT/SMT `sat` result supplies a model; an `unsat` result supports validity only under the solver's soundness assumptions. Inference: the threat to agent-written verified Rust is medium: Z3 is a powerful backend, but quantifier heuristics, relevancy choices, and theory-combination performance can make proofs timeout or become fragile while leaving the source contracts unchanged.
+Inference (the paper has no trust discussion): the mathematical specification and generated formula remain trusted inputs; the solver, its simplifier, theory implementations, quantifier instantiation, model generation, and the checker or proof consumer are part of the trusted verification chain. A `sat` result comes with a model; an `unsat` result supports validity only under the solver's soundness assumptions. Inference: the threat to agent-written verified Rust is medium: Z3 is a powerful backend, but quantifier heuristics, relevancy choices, and theory-combination performance can make proofs timeout or become fragile while leaving the source contracts unchanged.
 
 what VL should reuse
 
-Inference: expose stable formula patterns, record solver versions/options, and treat model-producing counterexamples as debugging artifacts rather than proofs. Reuse the layered architecture idea in proof search: simplify first, separate theories, and avoid presenting irrelevant facts. The paper already establishes these backend mechanisms; VL should measure their behavior on its own Rust contracts instead of reimplementing an SMT solver.
+Inference: expose stable formula patterns, record solver versions/options, and treat model-producing counterexamples as debugging artifacts rather than proofs. Reuse the layered architecture idea in proof search: simplify first, separate theories, and avoid presenting irrelevant facts. The paper only describes these backend mechanisms, without measurements; VL should measure their behavior on its own Rust contracts instead of reimplementing an SMT solver.
 
 ## techniques for the catalog
 
 - DPLL(T) SMT architecture — combine SAT search, congruence closure, theory solvers, and incremental model reconciliation
-- contextual simplification — substitute equalities and discard trivial conjuncts before clausification
+- contextual simplification — substitute equational definitions into the rest of the formula, and keep the trivially satisfiable defining conjunct out of the core (aside, for model evaluation)
 - E-matching quantifiers — instantiate universal formulas from E-graph matches and retain useful conflict clauses
 - relevancy propagation — suppress expensive theory reasoning for atoms that do not affect the current branch
 - theory reductions — solve arrays lazily and bit-vectors by bit-blasting while sharing a SAT core
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Equalities asserted by the SAT solver are propagated by the congruence closure core using a data structure that we will call an E-graph following [8]."): read the whole 4-page text (abstract, §§1-4, references) and checked every quotation, the §1/§2/§3 references, the client list, the pipeline steps, the SMT-COMP and Spec# claims, and the catalog bullets against it. Changed: moved the client list from §2 to §1 (and added Vigilante); replaced "lemmas" with the figure's "clauses"; made step 4 follow the paper's solver-reference rule; corrected the contextual-simplification bullet (the defining conjunct is kept aside, not discarded); labelled the unsupported quantifier-completeness, trust-chain and theory-choice remarks as Inference; added page range and model-generation quotes. Not checked: external facts about Verus, the cited papers, and the semantic-scholar link (kept from the fetch record; the paper text gives no DOI or URL for itself).

@@ -16,10 +16,10 @@ When to use it. Use a small trusted kernel when proof results are intended to co
 
 How to do it.
 
-1. Define the logic and proof-checking rules as part of the MM0 specification. The paper uses PA plus list, bitvector, and set operations; the PA foundation is 311 lines (Section 1, p. 2).
+1. Define the axiom system as part of the specification, since MM0 is a logical framework (Section 1, p. 2). The first part of the specification file defines PA together with operations on lists, bitvectors, and sets, running to 311 lines (Section 1, p. 2).
 2. Use a small reference checker while the self-hosted MM0 verifier is under construction. The Haskell implementation checks the files used in the report (Section 1, p. 2).
-3. State the verifier's correctness theorem and the target binary semantics in the same framework.
-4. Check the proof with the minimal kernel, then use the verified output binary as the next verifier stage. The trusted assumptions remain the kernel and theorem statement.
+3. State the verifier's correctness theorem and the target binary semantics in the same framework (Section 1, p. 2: the trusted part is "the verifier binary, and the statement of the correctness theorem").
+4. Check the proof; the paper's argument is that, assuming the trusted part is correct, "the proof is checked correctly and the program that is output is described in the specification, so we know that the output program is also a correct verifier" (Section 1, pp. 1-2). Steps 3-4 describe the plan; the paper says the verified MM0 verifier is still under construction.
 
 Verus form. Inference: the analogous Verus design is to make the Verus verifier, Rust compiler, and proof erasure explicit trust assumptions, then minimize the application-specific trusted layer. A Verus `proof fn` can establish a source-level refinement theorem, but Verus cannot by itself prove the machine-code semantics of its own compiler. A product can instead define a small verified runtime model as `spec fn`s and record the compiler/ISA boundary as an external assumption. The MM0 approach does not carry over as a Verus construct; it is a trust-base architecture.
 
@@ -27,25 +27,25 @@ Evidence and limits. The paper reports a framework and specifications, not a com
 
 ## technique 2: specify only the ISA slice exercised by the program
 
-What it is. The x86 model is intentionally incomplete. It starts from the Sail x86 specification, translates it to Lean and MM0 for comparison, and keeps only common user-mode integer instructions and the Linux behavior needed for simple IO. The author explains: “It is not a complete specification, but we do not need the complete semantics of x86 in order to specify our simple program” (Section 2, p. 2). This is a compositionality tradeoff: a universal lower layer cannot omit behavior that an unknown upper layer might use, whereas an endpoint proof can.
+What it is. The x86 model is intentionally incomplete. It starts from the Sail x86 specification, formalizes it in MM0, and also translates it into Lean because the MM0 bootstrap is not complete, giving three versions for comparison (Section 2, p. 2). It keeps only common user-mode integer instructions and the Linux behavior needed for simple IO. The author explains: “It is not a complete specification, but we do not need the complete semantics of x86 in order to specify our simple program” (Section 2, p. 2). This is a compositionality tradeoff: a universal lower layer cannot omit behavior that an unknown upper layer might use, whereas an endpoint proof can.
 
 How to do it.
 
 1. Choose the target executable and list its required instructions, memory behavior, and system calls.
 2. Translate or write only those instruction semantics. The paper's x86-specific portions are about 1600 Sail lines, 766 Lean lines, and 1095 MM0 lines (Section 2, p. 2).
 3. Define configurations as tuples `(RIP, regs, flags, mem)`, where `RIP` is a 64-bit instruction pointer, `regs` maps the 16 general-purpose registers, `flags` tracks four bits, and `mem` maps addresses to protection bits and bytes (Section 2, p. 3).
-4. Define a step relation `step ⊆ Config × Config`. Loads require readable bytes and writes require writable bytes; unspecified or disallowed behavior has no successor (Sections 2–3, pp. 3–4).
-5. Add nondeterminism wherever the Intel manual leaves behavior unspecified or the model intentionally abstracts state (Section 3, p. 4).
+4. Define a step relation `step ⊆ Config × Config`. Loads read only from readable bytes and writes go only to writable bytes (Section 2, p. 3). States that would fault, or that invoke an unspecified instruction, have no successor (Section 3, p. 4).
+5. Add nondeterminism where the Intel manual leaves parts unspecified, or where one wishes to abstract from specified behavior, particularly when it depends on state outside the user-mode model (Section 3, p. 4).
 
 Verus form. Inference: represent the machine configuration as a Verus struct or ghost tuple and define `spec fn step(old: Config, new: Config) -> bool`. Prove each Rust operation's postcondition implies a corresponding `step` relation using `requires` and `ensures`. Model protection checks as preconditions on memory access. Verus `old(...)` in postconditions can refer to the pre-state; the paper's relation is mathematical and does not require an executable simulator. Unspecified instructions should produce an explicit precondition or an `Option`-like transition relation rather than an unproved execution path.
 
-Evidence and limits. The paper gives one complete MM0 theorem for `mul`: `execXASTMul` relates decoded syntax to register reads, multiplication, and writes to `RAX`/`RDX` (Section 2, p. 3). This demonstrates the representation but does not establish coverage of every x86 instruction. The model deliberately excludes unsupported instructions and faulting states, so the proof assumes the binary never reaches them.
+Evidence and limits. The paper gives one complete MM0 theorem for `mul`: `execXASTMul` relates decoded syntax to register reads, multiplication, and writes to `RAX`/`RDX` (Section 2, p. 3). This demonstrates the representation but does not establish coverage of every x86 instruction. The model gives no successor to unsupported instructions and faulting states (Section 3, p. 4). Inference: a proof about the binary therefore only covers executions that avoid them.
 
 ## technique 3: replace pattern matching and types with explicit predicates
 
 What it is. MM0 has first-order logic but no inductive types or pattern matching. The paper avoids boilerplate and unchecked duplication by declaring a definition signature and proving its specification later. The declaration `def execXAST (k ast k2: nat): wff;` introduces a relation; subsequent theorems constrain it. The author says: “This command declares the existence of a definition, but doesn’t say what it is” (Section 2, p. 3).
 
-Types are recovered as predicates. The theorem `execXASTT` states that a valid configuration and execution imply that the syntax is an `XAST` and the resulting state is a configuration. All variables range over natural numbers because PA is untyped (Section 2, pp. 3–4).
+Types are recovered as predicates. The theorem `execXASTT` states that a valid configuration and execution imply that the syntax is an `XAST` and the resulting state is a configuration. All variables range over natural numbers because PA is untyped (Section 2, p. 3).
 
 How to do it.
 
@@ -53,11 +53,11 @@ How to do it.
 2. Declare a relation signature without giving an unchecked body.
 3. State theorems that constrain every allowed use of the relation, including semantic equations such as `execXASTMul`.
 4. Add type predicates (`Config`, `XAST`) and prove preservation theorems such as `execXASTT`.
-5. Let the proof checker reject any definition that cannot satisfy all later theorems.
+5. Per the paper, a proof of the specification must supply a definition that satisfies all subsequent theorems; the paper compares this to a Coq Module (Section 2, p. 3).
 
 Verus form. Inference: Verus already has typed Rust data, so the MM0 encoding is unnecessary for ordinary application code. The transferable idea is specification-first interfaces: declare a `spec fn` relation, then prove lemmas that characterize each constructor or instruction case. Use Rust enums and pattern matching for executable code, and `ensures` for type/shape preservation. Do not mark the executable function `external_body` merely to obtain this effect; the paper's relation still has to satisfy its theorems.
 
-Evidence and assumptions. The MM0 theorem statements are checked by the Haskell reference implementation, but the verified MM0 checker itself was incomplete at publication. The use of an untyped PA model shifts trust to explicit type predicates and their preservation lemmas. Inference: an agent-written Verus proof has a similar failure mode if a ghost predicate is too weak; type correctness alone does not show functional correctness.
+Evidence and assumptions. The Haskell reference implementation "has been used to check the files in this report" (Section 1, p. 2), but the verified MM0 checker itself was incomplete at publication. The use of an untyped PA model shifts trust to explicit type predicates and their preservation lemmas. Inference: an agent-written Verus proof has a similar failure mode if a ghost predicate is too weak; type correctness alone does not show functional correctness.
 
 ## technique 4: model IO as streams and simplify ELF
 
@@ -66,9 +66,9 @@ What it is. The paper extends the machine state with `KernelState = List u8 × L
 How to do it.
 
 1. Extend `Config` to `KernelState` with input and output byte lists.
-2. Define syscall transitions for the supported calls and leave unsupported calls without a transition.
+2. Support only the `syscall` instruction, with `mmap()`, `read()`, and `write()` available to the program (Section 3, p. 4). Inference: other calls then have no transition.
 3. Specify the single ELF program header and code loading; omit linking and section metadata.
-4. State the endpoint theorem as a relation between input and output streams.
+4. Inference: state the endpoint theorem as a relation between input and output streams; the paper says only that the model turns a program into an abstract function on byte streams.
 
 Verus form. Inference: use `Seq<u8>` ghost values for streams and a state-machine proof for each syscall transition. Executable Rust can read and write through an abstraction whose `ensures` clauses relate buffers to ghost stream prefixes. A Verus state machine can preserve the postcondition that output is the program transformation of input across calls; the Linux kernel and ELF loader remain trusted unless separately modeled.
 
@@ -91,4 +91,4 @@ VL should not reproduce the PA encoding, MM0 parser design, or x86 instruction f
 - predicate-based weak-logic specification: replace missing types and pattern matching with explicit relations and preservation theorems
 - stream-and-ELF abstraction: model IO as mathematical byte streams and simplify ELF to the headers needed by the endpoint
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Lean is a full dependent type theory with support for inductive types and pattern matching."): read the whole 4-page paper text; checked every quotation, the line counts (311, 1600/766/1095, 237), the configuration and KernelState definitions, the mul and execXAST examples, and section and page references. Changed: removed the unsupported "proof-checking rules" claim in technique 1 step 1; added the paper's own wording for the trust argument; fixed the unspecified-versus-nondeterministic mix-up in technique 2 (unspecified Intel behavior is nondeterministic; faults and unspecified instructions have no successor); fixed page ranges for execXASTT (p. 3 only); marked the stream-theorem step and the step on other syscalls having no transition as inference. Not checked: the linked MM0 repository, Sail and Lean sources, the cited external works, and all Verus-form paragraphs (these are the study's own inference, not claims of the paper).

@@ -4,11 +4,11 @@ Tag: `lepigre2019pml2`, [paper](http://arxiv.org/abs/1901.03208v1)
 
 ## scope and result
 
-PML2 combines an ML-like call-by-value language with a type system used both for programming and proving. Programs and proofs share syntax; proof terms are accepted only when termination is established. The abstract states, “We present the PML2 language, which provides a uniform environment for programming, and for proving properties of programs in an ML-like setting.” (Abstract, p. 1) The paper is an introductory description, not a complete metatheory: it says its aim “is not to give the details of the realizability semantics, nor to prove new theoretical results.” (§1.3, p. 3)
+PML2 combines an ML-like call-by-value language with a type system used both for programming and proving. Programs and proofs share syntax; a program used as a proof must pass the termination checker, and the current implementation applies that check to every program (§1, pp. 1–2; §5.1, p. 17). The abstract states, “We present the PML2 language, which provides a uniform environment for programming, and for proving properties of programs in an ML-like setting.” (Abstract, p. 1) The paper is an introductory description, not a complete metatheory: it says its aim “is not to give the details of the realizability semantics, nor to prove new theoretical results.” (§1.3, p. 3)
 
 ## technique 1: specify program behavior with equality types
 
-What it is. A type can contain an equality `t ≡ u` between arbitrary language terms. A proof is a terminating program inhabiting that type. Examples include commutativity of `add`, involutivity of `reverse`, and sortedness of `sort` (§1.1, p. 2). The type checker maintains an equational context and uses a partial decision procedure to simplify and discharge equations.
+What it is. A type can contain an equality `t ≡ u` between arbitrary language terms. A proof is a terminating program inhabiting that type. The paper lists commutativity of `add`, involutivity of `reverse`, and sortedness of `sort` as example specifications (§1.1, p. 2); of these only `add` commutativity is proved in the paper (§3.2, p. 10). The type checker maintains an equational context and uses a partial decision procedure to simplify and discharge equations.
 
 How to apply it. Define the data type and executable function. State the property as a universally quantified equality. Restrict quantification to a type when the property is valid only for that type. Construct a terminating function whose result has the equality type. In the paper, `add_Zero_n` is immediate because `add Zero n` unfolds to `n`; `add_n_Zero` recursively pattern-matches on `n` and calls itself on the predecessor (§3.1, pp. 8–9).
 
@@ -16,7 +16,7 @@ The distinction matters: unrestricted `∀n:ι` quantifies over every value, inc
 
 Verus form. Inference: express the equality as a Verus `ensures` clause on an executable function or as a separate `proof fn`/lemma with `requires` and `ensures`. Use `assert` and recursive lemmas for the induction cases. Verus's `spec fn` and `proof fn` are separate constructs, so PML2's single syntax does not carry over; executable Rust remains ordinary Rust while proof code is erased.
 
-Evidence and limits. The examples are accepted by the implementation version named in §1.2, and the paper states that examples are automatically checked when the document is generated (§3.3, p. 11). No benchmark denominator or proof-time study is reported. Equality relies on the implementation's decision procedure and on the accuracy of the specification.
+Evidence and limits. The examples are accepted by the implementation version named in §1.2, and the paper states that examples are automatically checked when the document is generated (§3.3, p. 11). The proof of `hard_aux` is elided in the text ("We do not give the full proof for lack of space", §5.3, p. 20). No benchmark denominator or proof-time study is reported. Equality relies on the implementation's decision procedure and on the accuracy of the specification.
 
 ## technique 2: build proofs by pattern matching and lemma calls
 
@@ -30,15 +30,15 @@ Verus form. Inference: use a recursive `proof fn` for the induction hypothesis, 
 
 A restriction type `a | t ≡ u` contains values of `a` only when the equality holds. Combined with existential and membership types, it defines sets and refined data. The paper defines vectors as `{ l ∈ list<a> | length l ≡ s }` and then converts a vector to a list by identity because the vector type is a subtype (§3.4, pp. 11–12). The `app` function consumes vectors of sizes `m` and `n` and returns one of size `add m n` (§3.4, p. 12).
 
-Use this technique when a data invariant should travel with a value. Define the executable measure (`length`), define the restricted type, prove the measure relation, and write functions whose input/output types expose the relation. The paper warns that the size index is a term, not a termination ordinal, and can even be ill-typed; such a vector type is simply empty (§3.4, p. 11).
+Use this technique when a data invariant should travel with a value. Define the executable measure (`length`), define the restricted type, prove the measure relation, and write functions whose input/output types expose the relation. The size parameter has sort `τ` (terms) so that sizes such as `add n m` can be used, and the paper notes there is no constraint on its type: a vector of size `true` is allowed but empty (§3.4, p. 11). Later the paper stresses that this term-valued size, unlike an ordinal index on `slist`, cannot be used by the termination checker (§5.2, p. 19). The `app` function also needs the separate `length_total` lemma (§3.4, p. 12).
 
 Verus form. Inference: represent the refinement as a Rust data structure plus a `requires` predicate on constructors and methods, or as a ghost predicate over a value. Return-size relations become `ensures` clauses. Unlike PML2 subtyping, Rust does not automatically coerce every refined value to its base type; wrappers or proof lemmas are needed.
 
 ## technique 4: extract programs from classical proofs with continuations
 
-PML2's control operator captures and restores continuations, giving computational content to classical logic. The paper defines `extract`, which returns either an even or odd substream from any natural-number stream (§4, pp. 12–15). `extract_aux` inspects the head, calls the corresponding continuation, and recursively extends one partial stream. The outer function saves continuations for the `InL` and `InR` alternatives.
+PML2's control operator captures and restores continuations, giving computational content to classical logic. The paper defines `extract`, which returns either an even or odd substream from any natural-number stream (§4, pp. 12–14). `extract_aux` inspects the head, calls the corresponding continuation, and recursively extends one partial stream. The outer function saves continuations for the `InL` and `InR` alternatives.
 
-The finite version `finite_extract` takes a natural `n` and returns an even or odd vector of length `n`; the paper notes that an intuitionistic version can inspect at most `2 × n` input elements (§4, p. 15). The example on three zeroes followed by ones returns even prefixes for lengths 0–2 and odd prefixes for lengths 3–4 (p. 16), demonstrating backtracking caused by looking ahead one element.
+The finite version `finite_extract` takes a natural `n` and returns an even or odd vector of length `n`; the paper notes that an intuitionistic version can inspect at most `2 × n` input elements (§4, p. 15). The example on three zeroes followed by ones returns even prefixes for lengths 0–2 and odd prefixes for lengths 3–4 (p. 16), demonstrating backtracking; the paper attributes the fourth line (odd rather than three even zeroes) to `extract` looking "ahead one element further than strictly necessary" (p. 16). The paper does not prove that the result is a substream of the input; it says this "we could certainly prove it in PML2 with some effort" (p. 15).
 
 Verus form. Inference: model the result as an enum and represent the continuation algorithm with explicit state rather than Rust closures that escape arbitrarily. Use a ghost invariant tying the produced prefix to the input stream and prove bounded inspection for the finite version. Verus does not provide PML2's classical realizability semantics or `call/cc` primitive; this is a design translation, not a direct encoding.
 
@@ -52,9 +52,9 @@ Verus form. Inference: use `decreases` clauses on recursive executable or proof 
 
 ## technique 6: prove hard termination by equivalence to an easy function
 
-For McCarthy 91, PML2 treats the traditional recursive function as an untyped value object, defines a simple terminating function returning the same result, and proves pointwise equivalence on naturals (§5.3, pp. 19–21). A `check ... for ... because ...` annotation uses the easy function for type checking while retaining the hard function for execution; after erasure, the executable term is the hard implementation (§5.3, p. 21).
+For McCarthy 91, PML2 treats the traditional recursive function as an untyped value object, defines a simple terminating function returning the same result, and proves pointwise equivalence on naturals (§5.3, pp. 19–21; the `hard_aux` lemma proof is omitted, p. 20). A `check ... for ... because ...` annotation uses the easy function for type checking while retaining the hard function for execution; after erasure, the executable term is the hard implementation (§5.3, p. 21).
 
-Apply it by defining the difficult implementation as a logical object, defining a terminating surrogate, proving equivalence under the intended domain, then using the equivalence annotation. The proof is domain-restricted: the paper explicitly says it did not prove equivalence of the two functions as untyped functions, which may be observationally distinguishable outside naturals (§5.3, pp. 20–21).
+Apply it by defining the difficult implementation as a logical object, defining a terminating surrogate, proving equivalence under the intended domain, then using the equivalence annotation. The proof is domain-restricted: the paper explicitly says it did not prove equivalence of the two functions as untyped functions, which may be observationally distinguishable outside naturals (§5.3, p. 21).
 
 Verus form. Inference: prove a refinement lemma that the real Rust function equals a structurally terminating specification function for all inputs satisfying a domain predicate. Use the specification function only in proofs; do not substitute it for executable code unless the implementation itself is changed. This technique is especially useful for agent-generated code whose termination is hard to expose, but the domain assumptions must be explicit.
 
@@ -62,7 +62,7 @@ Verus form. Inference: prove a refinement lemma that the real Rust function equa
 
 A totality proof has type `∃v, f x ≡ v`, asserting that a function applied to a value evaluates to some value. PML2 needs this because a call-by-value function cannot reduce an argument that is not yet a value. In the associativity proof, `add_total n p` supplies a value `v`, allowing the chain `add Zero (add n p) ≡ add Zero v ≡ v ≡ add n p` (§5.4, pp. 21–22).
 
-Apply it by proving totality recursively alongside the function, invoking the totality lemma before pattern matching or reduction under a non-value argument. The paper says totality proofs “have a similar structure as the definition of the function itself” (§5.4, p. 22).
+Apply it by proving totality recursively alongside the function, invoking the totality lemma before pattern matching or reduction under a non-value argument. The paper says “the totality proof corresponding to a given function has a similar structure as the definition of the function itself” (§5.4, p. 22) and hopes they can be generated automatically.
 
 Verus form. Inference: use a ghost result/spec function and prove that the executable function returns a value satisfying the postcondition; Rust evaluates arguments eagerly, so the exact PML2 obstacle differs. The transferable idea is to expose an intermediate witness when automation cannot unfold a nested call.
 
@@ -74,7 +74,7 @@ Inference: the threat to agent-written verified Rust is specification drift and 
 
 ## what VL should not redo
 
-Existing work already demonstrates proof-as-terminating-program, automatic equality-context management, sized termination checking, refined data types, classical extraction, and surrogate-based termination proofs. VL should reuse these patterns as design hypotheses and focus on their Rust/Verus encodings, explicit evidence, and specification inference. It should not claim PML2's metatheoretic strength: the paper itself lists missing subject reduction and external proof traces.
+Inference: existing work already demonstrates proof-as-terminating-program, automatic equality-context management, sized termination checking, refined data types, classical extraction, and surrogate-based termination proofs. VL should reuse these patterns as design hypotheses and focus on their Rust/Verus encodings, explicit evidence, and specification inference. It should not claim PML2's metatheoretic strength: the paper itself lists missing subject reduction and external proof traces.
 
 ## techniques for the catalog
 
@@ -86,4 +86,4 @@ Existing work already demonstrates proof-as-terminating-program, automatic equal
 - equivalence-guided termination — check a hard implementation through an equivalent terminating surrogate
 - internal totality proofs — expose value witnesses needed for call-by-value equational reduction
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Indeed, the totality of is_odd implies that this function always produces a result value, and hence that we can pattern match on its result."): read the whole paper text and checked every quotation, section and page reference, the technique steps, the stated results (three-zeroes output, `2 × n` remark, subject-reduction and proof-trace limits) and the tag and link (arXiv 1901.03208v1 and DOI 10.4230/LIPIcs.TYPES.2017.5 both appear in the paper text); changed the scope sentence on termination, the list of example specifications, the vector size remark and its page attribution, the `extract` page range and added the lookahead and substream caveats, the `hard_aux` omission, the §5.3 page reference and one inexact quotation about totality proofs, and marked the last section as inference; did not check the Verus translations beyond marking them as inference, nor the cited related work, nor run PML2.
