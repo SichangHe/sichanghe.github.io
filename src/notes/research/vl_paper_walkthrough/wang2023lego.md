@@ -55,7 +55,7 @@ How to apply:
 
 Verus form: Inference: parameterize concrete proof functions over types, dimensions, or bounds while preserving explicit specifications; then run Verus before inserting the generalized lemma. Similarity filtering can use normalized ASTs or specification-aware fingerprints rather than raw text, because Rust formatting and identifier changes can defeat string thresholds.
 
-Evidence: The final library contains 22,532 skills: 10.8% from the prover, 38.2% from the evolver's request solver, and 51.1% from directional transformation (Section 4.3.1, p. 8). The percentages sum to 100.1% because of rounding. Inference: report this rounding explicitly rather than treating the categories as an exact partition.
+Evidence: The final library contains 22,532 skills: 10.8% from the prover, 38.2% from the evolver's request solver, and 51.1% from directional transformation (Section 4.3.1, p. 8). The three percentages sum to 100.1%; the paper does not explain this. Inference: the excess is probably rounding, so report it explicitly rather than treating the categories as an exact partition.
 
 ## technique 4: request solver for pending subgoals
 
@@ -69,21 +69,21 @@ How to apply:
 
 Verus form: Inference: treat each pending helper specification as a queue item, retrieve compatible proof functions, ask for a Verus implementation, and verify it independently before adding it to the catalog. A failed request remains an open obligation; it must not become a trusted declaration.
 
-Evidence: The 38.2% share of library skills originating from request solving is measured over all 22,532 generated skills (Section 4.3.1). Inference: origin counts do not show that request-solver skills are correct without the paper's Isabelle verification filter, nor do they measure downstream reuse.
+Evidence: The 38.2% share of library skills originating from request solving is measured over all 22,532 skills in the library (Section 4.3.1, p. 8). Separately, among skills directly copied into successful miniF2F-valid proofs, the paper reports: "71% are procured by the ‘do requests’ procedure" (Section 4.3.2, pp. 9-10; the 71% is a share of the directly applied skills, not of all skills). Inference: the 38.2% origin share alone does not measure downstream reuse; the 71% figure covers only the directly copied subset and comes from the authors' manual inspection of successful proofs.
 
 ## technique 5: model-generated versus human informal proofs
 
-What it is: separate the quality of informal planning from formalization. For model-generated proofs, GPT-4 pre-generates up to 20 informal proofs per problem and one is sampled for each attempt (Section 4.1, p. 6). Human-written proofs are evaluated as an alternative.
+What it is: separate the quality of informal planning from formalization. For model-generated proofs, GPT-4 pre-generates up to 20 informal proofs per problem and one is randomly selected for each proving attempt (Section 4.1, p. 7). Human-written proofs are evaluated as an alternative.
 
 How to apply:
-1. Prepare multiple informal proofs or obtain one expert proof (Section 4.1).
-2. Randomly choose one model proof for each attempt (Section 4.1).
+1. Prepare multiple informal proofs or obtain one expert proof (Section 4.1, p. 7).
+2. Randomly choose one model proof for each attempt (Section 4.1, p. 7).
 3. Run the same decomposer, retrieval, formalizer, and Isabelle checker for both conditions (Sections 3.2 and 4.1).
 4. Report valid/test denominators and attempts separately (Table 1, p. 7).
 
 Verus form: Inference: compare agent-generated plans with human plans while holding the Rust/Verus harness and retrieval budget constant. This isolates plan quality from verifier and library effects, though human proofs may encode information unavailable in deployment.
 
-Evidence: LEGO-Prover with model-generated informal proofs reaches 52.4% valid and 45.5% test; with human proofs it reaches 55.3% and 50.0% (Table 1, p. 7; 244 tasks per set). Inference: the relatively small gap suggests formal scaffolding and retrieved lemmas contribute materially, but the comparison is not a controlled causal decomposition of each component.
+Evidence: LEGO-Prover with model-generated informal proofs reaches 52.4% valid and 45.5% test; with human proofs it reaches 55.3% and 50.0% (Table 1, p. 7; 244 tasks per set). The paper says the model-informal-proof results are "close to the results with human-written informal proofs" (Section 4.2, p. 7). Inference: the system does not depend entirely on human informal proofs, but this comparison does not isolate the contribution of the formal scaffolding or of retrieved lemmas, because the paper has no ablation of those parts under the two proof conditions.
 
 ## technique 6: growing-library ablation and compute budget
 
@@ -91,8 +91,8 @@ What it is: remove the skill library and evolver to test whether accumulated ski
 
 How to apply:
 1. Fix a per-problem attempt budget (100 for main results; 50 for the ablation) (Section 4.1).
-2. Run the full prover/evolver over successive rounds so the library grows (Section 4.1).
-3. Repeat with the library and evolver removed (Section 4.1).
+2. Run the full prover/evolver over successive rounds so the library grows (Section 4.1, p. 6).
+3. Repeat with the library and evolver removed; the paper says "we remove the growing skill library (including the evolver)" (Section 4.2, p. 7), and runs the ablation only on the miniF2F validation set (Section 4.1, p. 7).
 4. Compare the number of problems solved against the number of proving attempts for both settings (Figure 3(a), p. 8).
 
 Verus form: Inference: measure VL with and without persistent lemma storage under equal model calls, verifier time, and task ordering. Because later tasks can benefit from earlier proofs, randomize or disclose task order and reset-library conditions.
@@ -101,7 +101,7 @@ The paper's main process uses multiprocessing with prover:evolver ratio 3:8, tem
 
 ## what is proved, trusted, and left open
 
-Isabelle verifies accepted lemma code, and the method rejects `sorry` and `oops`; however, the embedding model, vector database, retrieval ranking, prompts, Python orchestration, and benchmark statements remain outside Isabelle's kernel. The paper assumes each theorem has an informal statement, human-written informal proof, and formal statement (Section 3, p. 4), which gives the agent unusually rich supervision.
+Isabelle verifies accepted lemma code, and the method rejects `sorry` and `oops`; however, Inference: the embedding model, vector database, retrieval ranking, prompts, Python orchestration, and benchmark statements are not checked by Isabelle (the paper names ChromaDB and an OpenAI embedding model, footnote 2, p. 4). The paper assumes each theorem has an informal statement, human-written informal proof, and formal statement (Section 3, p. 3); it also evaluates GPT-4-generated informal proofs in place of the human ones (Section 4.1, p. 7). Inference: the human-proof setting gives the agent unusually rich supervision.
 
 Inference: threat to a product that emits agent-written verified Rust is medium to high for proof reuse and low-level automation, but unknown for system assurance. A growing Verus lemma library could reduce repeated work and improve consistency, yet stale specifications, incompatible ownership contexts, or an unsound trust escape could contaminate many downstream proofs. The paper studies mathematical Isabelle tasks, not unsafe Rust, concurrency, API contracts, or adversarial specifications; VL must add those cases before using its success rates as product evidence.
 
@@ -115,4 +115,4 @@ Inference: a VL evaluation of a lemma library should measure persistent growth, 
 - request solving — turn pending decomposer subgoals into independently verified reusable lemmas
 - library ablation — compare equal-budget proving with and without persistent skill storage
 - dual informal-proof evaluation — hold formalization fixed while comparing model-generated and human-written plans
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Since every skill in the skill library is verified by the Isabelle prover, LLM can directly copy the lemma code from the input prompt without fear of causing an error."): I read the whole paper text (main text, references, appendix prompts) and the whole study, and checked every quotation, number (Table 1 rates, 244 problems per set, 22,532 skills and the 10.8/38.2/51.1 split, 135 problems/24%/51%/49%, 0.85 threshold, 3:8 ratio, 11 heuristic tactics, nf=6/4, nd=4, 3 request-solver skills, 300 dollars), and the section and page references. I changed: the page for the GPT-4 informal-proof sentence (p. 6 to p. 7) and for the Section 3 assumption (p. 4 to p. 3); added missing section pointers; marked the rounding explanation, the Isabelle trust-boundary sentence and the human-proof supervision remark as inference; added the paper's 71% figure for directly applied request-solver skills and corrected the earlier claim that origin counts say nothing about reuse; rewrote the model-versus-human-proof inference, which the paper does not support as stated. I did not check the Verus-form paragraphs beyond confirming they are labelled inference, Figures 1-4 code contents, the cited related work, or the released code and skills.

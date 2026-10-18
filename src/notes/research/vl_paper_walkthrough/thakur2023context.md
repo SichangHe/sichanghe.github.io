@@ -18,7 +18,7 @@ The formal setting (Section 2, p.3) is what the techniques below operate on. A s
 
 what it is: “The COPRA agent solves the theorem-proving problem via a GPT-4-directed depth-first search over tactic sequences.” (Section 3, p.4). The model never writes a whole proof. It proposes the next tactic; the proof assistant executes it; the result decides whether to go deeper, retry, or pop.
 
-when to use: the checker can run one step and return the new state or an error, and whole-proof generation fails often. The paper's one-shot baseline is the motivating case (Figure 2-(c), p.3).
+when to use: the checker can run one step and return the new state or an error, and whole-proof generation fails often. The paper's few-shot baseline, which must write the whole proof in one response, is the motivating case (Figure 2-(c), p.3).
 
 how it is done, from Figure 3 (p.4), with the figure's line numbers:
 1. line 1: push the current state O on the stack `st`
@@ -30,7 +30,7 @@ how it is done, from Figure 3 (p.4), with the figure's line numbers:
 7. line 11: otherwise recurse on O'
 8. line 12: when the t tries are used up, pop the stack. “After issuing a few queries to the LLM, the agent backtracks.” (Section 3, p.4)
 
-The paper does not give the value of t. The global budget is given: 60 LLM queries and 600 seconds per theorem, whichever is exhausted first, one response per query, temperature 0 (Appendix A.1.1, p.14).
+The paper does not give the value of t. The global budget is given: for most experiments, 60 LLM queries and 600 seconds per theorem, whichever is exhausted first, one response per query, temperature 0 (Appendix A.1.1, p.14).
 
 The system prompt enforces the single step. Figure 13 (p.22) tells the model: “Multiple proof steps are more error prone, because you will not get a chance to see intermediate proof state descriptions.” The Coq prompt also closes the escape hatch: “The tactic `admit` is NOT a valid proof step, do NOT generate it.” (Figure 14, p.24). Yet Section 4 (p.6) defines an action as “exactly one action (a sequence of tactics)”, and the GPT-4 answer in Figure 18 (p.27) holds two tactics (`have h3 ...` then `linarith`). So one query may yield several tactics; the rule is one action per query.
 
@@ -45,12 +45,12 @@ Verus form. Inference: Verus has no tactic states, so the mapping is by analogy.
 
 evidence: miniF2F-test, 244 theorems, GPT-4, temperature 0, 60 queries, 600 s (Table 1, p.7).
 - COPRA without retrieval: 26.63%. Inference: 65 of 244 (65/244 = 26.64%)
-- one-shot GPT-4, 1 attempt of 1 query: 13.52%. Inference: 33 of 244
-- one-shot GPT-4 at temperature 0.7, with as many attempts as COPRA used queries on that theorem: 15.98%. Inference: 39 of 244
+- few-shot GPT-4 (whole proof in one response), 1 attempt of 1 query: 13.52%. Inference: 33 of 244
+- few-shot GPT-4 at temperature 0.7, with as many attempts as COPRA used queries on that theorem: 15.98%. Inference: 39 of 244
 - COPRA without backtracking: 24.59%. Inference: 60 of 244. “We find that backtracking is useful when proofs are longer or more complex, as COPRA is more likely to make mistakes which require amending.” (Section 4, p.8)
-- Coq, 118 theorems, 60 queries: COPRA with retrieval proves 57; one-shot GPT-4 proves 36 and one-shot GPT-3.5 proves 10 (Section 4, p.9)
+- Coq, 118 theorems, 60 queries: COPRA with retrieval proves 57; the few-shot baselines with GPT-4 and GPT-3.5 prove 36 and 10 (Section 4, p.9)
 
-Inference: backtracking adds 5 theorems of 244 (60 to 65), far less than stepwise execution with feedback adds over one-shot generation (33 to 60). The paper reports no variance and each configuration is run once.
+Inference: backtracking adds 5 theorems of 244 (60 to 65), far less than stepwise execution with feedback adds over few-shot whole-proof generation (33 to 60). The paper reports no variance and each configuration is run once.
 
 where it fails or what it assumes:
 - the model must follow the output format. With GPT-3.5 the same search reaches 9.02% and with CodeLlama 5.73% at 500 queries (Table 1, p.7). “Also, it is unclear whether a GPT-4-scale model is truly essential for our task.” (Section 6, p.10)
@@ -68,9 +68,9 @@ how it is done:
 2. after a tactic errors or fails the progress check, add it to `Bad(O)` (Figure 3, lines 9 and 10)
 3. print the set under the keyword `[INCORRECT STEPS]`, one `[STEP]` per tactic (Figure 13, item 4, p.22)
 4. print the last tactic under `[LAST STEP]` with either `[SUCCESS]` or `[ERROR MESSAGE]` and the checker's text (Figure 13, item 5, p.22)
-5. tell the model that regenerating a listed step ends the search early (Figure 13, items 4 and 5)
+5. tell the model that regenerating a listed step “will cause backtracking and early termination of your proof search” (Figure 13, item 4), and likewise for repeating a failed last step (item 5)
 
-The paper's worked case is Figure 18 (p.27): four failed steps for the goal `n = 70` are listed, the last error is “invalid type ascription”, and the next answer is the tactic that works.
+The paper's worked case is Figure 18 (p.27): for the goal `n = 70` the prompt shows four incorrect steps (with an elision marker among them), the last step's error is “invalid type ascription”, and GPT-4's next answer is the one the paper presents as correct (the proof is in Figure 7).
 
 Verus form. Inference: key the dictionary by the hash of the file text, and store each rejected edit with the first line of its Verus error. In the prompt, list them under one heading above the current function. Nothing in the idea depends on tactics.
 
@@ -103,11 +103,11 @@ what it is: a fixed textual protocol in both directions. The agent prompt is gen
 
 how it is done:
 1. system prompt: the rules and the answer grammar (Section 3, p.4; Figures 13 and 14)
-2. agent prompt, in this order in Figure 18 (p.27): `[GOALS]`, then per goal `[GOAL] i` and `[HYPOTHESES] i` with one `[HYPOTHESIS]` per line, optional `[DEFINITIONS] i` and `[THEOREMS] i`, then `[STEPS]` (the tactics that led here), `[INCORRECT STEPS]`, `[LAST STEP]`, `[ERROR MESSAGE]` or `[SUCCESS]`, and `[END]`
+2. agent prompt, as the system prompt describes it (Figure 13, p.22): `[GOALS]`, then per goal `[GOAL] i` and `[HYPOTHESES] i` with one `[HYPOTHESIS]` per line, optional `[DEFINITIONS] i` and `[THEOREMS] i`, then `[STEPS]` (the tactics that led here), optional `[INCORRECT STEPS]`, optional `[LAST STEP]` with `[ERROR MESSAGE]` or `[SUCCESS]`. The worked prompt in Figure 18 (p.27) shows goal, hypotheses, `[THEOREMS]`, `[INCORRECT STEPS]`, `[LAST STEP]`, `[ERROR MESSAGE]` and `[END]`, and shows no `[STEPS]` or `[DEFINITIONS]` block
 3. trim the prompt so that the most relevant parts fit the context window (Section 3, p.4); the paper does not give the trimming rule
 4. answer: `[RUN TACTIC]`, the tactic, `[END]` (Figure 13, p.22)
 5. parse truncated answers too. “The grammar carefully incorporates cases when the response is incomplete because of the LLM’s token limits.” (Section 3, p.5)
-6. on a format error, send `[ERROR]` with the offending text and ask again until it parses (Figure 13, item 6, p.22)
+6. on a format error, send `[ERROR]` with the offending text (Figure 13, item 6, p.22); PARSE TACTIC communicates with the LLM “multiple times until these errors are resolved” (Section 3, p.5)
 
 After the first state the prompt holds the current goals, not the original theorem (Appendix A.1.4, p.16).
 
@@ -129,7 +129,7 @@ how it is done (Section 4, p.6):
 3. print each hit as `[THEOREM] name : statement` (Figure 18, p.27)
 4. warn the model to use a listed theorem only if it applies (Figure 13, item 2, p.22)
 
-The paper's example is `mathd_numbertheory_100` (Figure 7, p.9): BM25 returned `pnat.gcd_mul_lcm`, and the proof that worked rewrites with `nat.gcd_mul_lcm`. “It is important to note that just retrieving the correct lemma is not sufficient, but knowing how to use it correctly is equally important.” (Figure 7 caption, p.9). The retrieved lemma is over positive naturals and the goal is over naturals; three of the four listed failed steps and the failed last step use the retrieved name (Figure 18).
+The paper's example is `mathd_numbertheory_100` (Figure 7, p.9): BM25 returned `pnat.gcd_mul_lcm` (listed first under `[THEOREMS]` in Figure 18), and the proof that worked rewrites with `nat.gcd_mul_lcm`. “It is important to note that just retrieving the correct lemma is not sufficient, but knowing how to use it correctly is equally important.” (Figure 7 caption, p.9). Inference: the retrieved lemma is over positive naturals (N+) and the goal is over naturals. Three of the four failed steps shown, and the failed last step, use the retrieved `pnat.` name (Figure 18).
 
 Verus form. Inference: index the signatures of `vstd` lemmas (name, `requires`, `ensures`) and of the project's own `proof fn` items, query with the failing assertion's text, and list the hits. A hit is used by calling the lemma inside a `proof { ... }` block or by `broadcast use` where the lemma is a broadcast one.
 
@@ -193,21 +193,21 @@ limits: Inference: a distinct proof text does not show the model had not seen th
 
 - Section 4 (p.9) and Appendix A.1.4 (p.16) say 91.93%; Table 4 (p.17) prints 53 / 58 and 91.37%. 53/58 = 91.38%, so the text's figure is wrong
 - Table 4's caption names COPRA with GPT-4, retrieval and informal proofs, a name two Table 1 rows share. Inference: its total of 75 proofs matches 30.74% of 244, the 100-query, 1200 s row; the 60-query row at 29.92% would be 73
-- Appendix A.1.4 (p.16) cites Table 2 for the CodeLlama gain of “about 5%”; Table 2 has no CodeLlama row. The numbers are in Table 1 (0.0% one-shot, 5.73% with COPRA), and that COPRA row used 500 queries, not 60
+- Appendix A.1.4 (p.16) cites Table 2 for the CodeLlama gain of “about 5%”; Table 2 has no CodeLlama row. The numbers are in Table 1 (0.0% few-shot, 5.73% with COPRA), and that COPRA row used 500 queries, not 60
 - the abstract claims COPRA beats REPROVER on pass@1. Inference: on 244 theorems the margins are a handful of problems. COPRA without retrieval at 26.63% is 65; REPROVER without retrieval at 22.13% is 54 and with retrieval at 25.00% is 61; LLEMMA-7b at 26.23% is 64, one theorem below COPRA without retrieval
-- on Coq the comparison set is biased towards the baseline: 98 of the 118 theorems were chosen because PROVERBOT9001 proves them, and COPRA proves 57 within 60 queries. The claim is only that COPRA is slightly ahead at an equal number of queries (Figure 16, p.25), for which the paper prints no numbers
+- on Coq, 98 of the 118 theorems were chosen because PROVERBOT9001 proves them (the paper says “For fairness”), and COPRA proves 57 within 60 queries. Inference: the set is therefore not a random sample and says little about the 501-theorem set. The text claims only that COPRA “slightly outperforms” PROVERBOT9001 at the same number of queries (Section 4, p.9); Figure 16 (p.25) is a plot with no printed numbers, in which, read by eye, COPRA is ahead at every query count and the curves are about 57 and 54 at 60
 - Section 4 (p.6) writes “Learn experiments” where Lean is meant
 
 ## COPRA parts VL can take as given
 
 Inference, all of it.
-- the loop of propose one step, execute, feed back the error, list past failures, backtrack is published and open source since 2023; it is a baseline, not a contribution
+- the loop of propose one step, execute, feed back the error, list past failures, backtrack is published, with code released (abstract); treat it as a baseline, not a contribution
 - a claim that stepwise feedback beats whole-proof generation needs no new experiment for tactic provers; whether it holds for Verus, where the checker returns failures and not goals, is the open part
 - BM25 over lemma statements is the cheap retrieval baseline to beat before building anything learned
 
 ## how much COPRA threatens agent-written verified Rust
 
-Inference: low as a competitor, high as a commodity. COPRA targets Lean 3 and Coq, proves 75 of 244 competition problems at best, and its only software-verification evidence is 57 of 118 CompCert lemmas picked to favour the baseline. It writes no specifications and no code. But every part of it is a few hundred lines around an API call, so any competitor has this loop; a product cannot be defended by it.
+Inference: low as a competitor, high as a commodity. COPRA targets Lean 3 and Coq, proves 75 of 244 competition problems at best, and its only software-verification evidence is 57 of 118 CompCert lemmas, 98 of which were selected because PROVERBOT9001 proves them. It writes no specifications and no code. Its loop is simple enough that any competitor can reimplement it (not checked against the released code), so a product cannot be defended by it.
 
 ## techniques for the catalog
 
@@ -221,4 +221,4 @@ Inference: low as a competitor, high as a commodity. COPRA targets Lean 3 and Co
 - cheap-first staged ensemble: run the shortest-prompt configuration first and spend the remaining shared budget on retrieval and hints only for unsolved goals
 - pass@k-with-n-queries: report attempts times model queries with the time limit beside each success rate
 - proof-overlap leakage audit: compare each found proof with the published one by exact match, first step and shape, and report the share that is not a copy
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "The informal proofs are used more like informal sketches for the formal proof and are generated in a separate few-shot invocation of the LLM."): I read the whole paper text (pages 1 to 27, including appendix figures and prompts) and viewed Figure 16 in the PDF. I checked every quotation, number, table cell, figure line number and page reference against it, and the derived percentages and ratios. I changed: "one-shot" to "few-shot" for the baseline (the paper says few-shot); the Figure 18 description (four incorrect steps shown with an elision; its prompt has no [STEPS] or [DEFINITIONS] block, those come from Figure 13); the citation for re-asking on format errors; the Figure 16 comparison; and unsupported or loaded claims about COPRA being open source since 2023, being a few hundred lines, and a baseline-biased Coq set. I did not check: the released code, the cited related work, the full text of Figures 13 and 14 beyond the shown excerpts (the paper truncates them), or the exact values read from Figure 16 (by eye only). The link is the arXiv page named in the paper text.
