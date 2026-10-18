@@ -1,6 +1,6 @@
 # Resources: A Safe Language Abstraction for Money
 (authored by agents unless marked 🧑)
-Tag: `blackshear2020resources`, [paper](https://www.semanticscholar.org/paper/2f4cd541b0ceae9416dbdb3845435af82bba407f)
+Tag: `blackshear2020resources`, [paper](https://arxiv.org/abs/2004.05106) (arXiv ID from the paper text, v2, 23 Jul 2020)
 
 ## what the paper proves and builds
 
@@ -14,11 +14,11 @@ Use a resource type for money, capabilities, handles, or any value whose duplica
 
 how to apply it
 
-1. Declare an asset as a resource with fields such as an amount and authority. Only its module may pack or unpack it (Sections 2 and 3.1, PDF pp. 2–7).
-2. Pass the resource by move into a procedure and return a resource by move; do not copy it. In the bank example, `deposit` consumes `Coin::T`, updates the bank balance, packs `Bank::Credit`, and returns it; `withdraw` consumes `Credit`, unpacks it, and returns `Coin::T` (Section 2.1, PDF pp. 3–4).
-3. Reject `CpLoc` on resources, reject a second `MvLoc` after a move, reject overwriting a resource in global storage, and reject `Pop`, `StLoc`, or `WriteRef` when they would discard a resource (Section 3.2, PDF pp. 8–9).
+1. Declare an asset as a resource with fields such as an amount and authority. Only its module may pack or unpack it (Sections 2.1 and 3.1, PDF pp. 3–7; the Bank example says “Only the Bank module can pack, unpack, and acquire references to the fields of the Credit resource”, p. 5).
+2. Pass the resource by move into a procedure and return a resource by move; do not copy it. In the bank example, `deposit` consumes `Coin::T`, updates the bank balance, packs `Bank::Credit`, and returns it; `withdraw` consumes `Credit`, unpacks it, and returns `Coin::T` (Section 2.1, PDF pp. 3–5; code in Figure 1, p. 3).
+3. Reject `CpLoc` on resources, reject a second `MvLoc` after a move, make `MoveTo` abort at runtime if it would overwrite a resource already in global storage, and reject `Pop`, `StLoc`, or `WriteRef` when they would discard a resource (Section 3.2, PDF pp. 8–9).
 4. Require `Ret` to find no resource in locals and no extra operand-stack values; require a successful script to end with empty call and operand stacks (Section 3.2, PDF p. 9).
-5. Rely on all-or-nothing transaction abort to restore the pre-state if execution fails (Section 3.1, PDF p. 6).
+5. Rely on all-or-nothing transaction abort to restore the pre-state if execution fails (Sections 3.1 and 3.2, PDF pp. 6 and 9).
 
 The paper summarizes the purpose: “Linearity prevents ‘double spending’ by moving a resource twice (e.g., into two different callees) and forces a well-typed procedure to move all of its resources, avoiding accidental loss.” (Section 2.1, PDF p. 3).
 
@@ -38,12 +38,12 @@ A resource can be an unforgeable capability. In the bank example, possession of 
 
 how to apply it
 
-1. Put authority data in a resource whose fields are private to its declaring module (Section 2.1, PDF p. 4).
-2. Expose procedures that consume or return the resource; external code cannot pack, unpack, or borrow private fields (Section 3.1, PDF p. 7).
-3. Transfer the whole resource to another party or store it inside another resource to compose permissions (Section 2.1, PDF p. 4).
-4. Keep the privileged creation and destruction operations in the declaring module; clients can use the capability but cannot mint or forge it.
+1. Put authority data in a resource whose fields are private to its declaring module (Sections 2.1 and 3.1, PDF pp. 5 and 7).
+2. Expose procedures that consume or return the resource; external code cannot pack, unpack, or borrow private fields (Section 3.1, PDF p. 7; Section 2.1, p. 5).
+3. Transfer the whole resource to another party or store it inside another resource to compose permissions (Section 2.1, PDF p. 5, where Alice gives her `Bank::Credit` to Bob; Section 6.2, p. 20, for `WithdrawCap`).
+4. Keep the privileged creation and destruction operations in the declaring module; clients can use the capability but cannot mint or forge it (Sections 2.1 and 3.1, PDF pp. 5 and 7).
 
-The paper says: “In essence, the credit map approach implements an access control list for withdrawing native currency, whereas the resource approach implements a linear capability for withdrawals.” (Section 2.1, PDF p. 4).
+The paper says: “In essence, the credit map approach implements an access control list for withdrawing native currency, whereas the resource approach implements a linear capability for withdrawals.” (Section 2.1, PDF p. 5).
 
 Verus form
 
@@ -51,7 +51,7 @@ Inference: encode a capability as a Rust struct with private fields and a ghost 
 
 evidence, assumptions, limits
 
-The capability pattern is demonstrated by the bank code and discussion, not by a separate theorem or benchmark. It assumes module encapsulation is enforced by the bytecode verifier and linker. It does not solve authorization policy errors inside a module.
+The capability pattern is demonstrated by the bank code and discussion, not by a separate theorem or benchmark. The paper attributes encapsulation to bytecode instructions that index into the current module's tables (Section 3.1, PDF p. 7); it does not formalize the module check or the verifier. Inference: the capability argument therefore assumes this encapsulation holds. It does not solve authorization policy errors inside a module.
 
 ## technique 3: bytecode-level operational semantics and preservation
 
@@ -61,12 +61,12 @@ Prove safety for executable bytecode rather than trusting only a source compiler
 
 how to apply it
 
-1. Define machine state as memory, global resource identifiers, local variables, and operand stack; tag values with types and resource identities (Sections 4–5, PDF pp. 10–16).
-2. Give small-step rules for local, reference, record, global, stack, and call instructions (Section 4, PDF pp. 10–15).
+1. Define machine state as memory, global resource identifiers, local variables, and operand stack; tag each value with a fresh resource tag (created by `Pack` of a resource type) or with the non-resource tag `U` (Section 4.1, PDF pp. 10–12).
+2. Give small-step rules for local-variable, reference, record, stack, global-state, and branch instructions (Section 4, PDF pp. 12–15). The semantics is for a call-free subset: `Call` and `Ret` have no rules (PDF pp. 9–10).
 3. Define globally consistent, tag-consistent, and non-aliasing states; call their conjunction well-formedness (Definitions 5.1–5.5, PDF pp. 15–16).
-4. Prove each transition preserves well-formedness by induction on execution length. The paper states: “If σ0 is well-formed, then π is well-formed, i.e., σ1, . . . , σn are all well-formed.” (Proposition 5.7, PDF p. 16).
-5. Define `R(σ)` as the set of resource tags in a state, and `RI(π)`/`RE(π)` as tags introduced by `Pack` and eliminated by `Unpack`.
-6. Prove the conservation equation `R(σn) = R(σ0) ∪ RI(π) \ RE(π)` by induction (Theorem 5.10, PDF p. 16).
+4. Prove each transition preserves well-formedness by induction on execution length. The paper writes out only the `MvLoc` case and says “The rest are verified similarly” (PDF p. 16). The paper states: “If σ0 is well-formed, then π is well-formed, i.e., σ1, . . . , σn are all well-formed.” (Proposition 5.7, PDF p. 16).
+5. Define `R(σ)` as the set of resource tags in a state, and `RI(π)`/`RE(π)` as tags introduced by `Pack` and eliminated by `Unpack` (Definitions 5.8 and 5.9, PDF p. 16).
+6. Prove the conservation equation `R(σn) = R(σ0) ∪ RI(π) \ RE(π)` by induction (Theorem 5.10, PDF p. 17).
 
 Verus form
 
@@ -74,7 +74,7 @@ Inference: represent the interpreter state as Rust enums and maps, define a ghos
 
 evidence, assumptions, limits
 
-The proof covers the call-free subset's operational semantics and explicitly excludes stronger verifier properties such as no dangling references; the paper says a well-formed state “may still contain dangling references ... as well as aliasing between references.” (Section 5, PDF p. 16). The theorem therefore establishes resource conservation under its state and transition definitions, not complete memory safety of the full VM.
+The proof covers the call-free subset's operational semantics and explicitly excludes stronger verifier properties such as no dangling references; the paper says a well-formed state “may still contain dangling references ... as well as aliasing between references.” (Section 5, text after Definition 5.5, PDF p. 16). The theorem therefore establishes resource conservation under its state and transition definitions, not complete memory safety of the full VM.
 
 ## techniques for the catalog
 

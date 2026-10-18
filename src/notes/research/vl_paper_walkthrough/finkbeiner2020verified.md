@@ -12,8 +12,8 @@ When to use it: use static analysis when a specification has streams with relati
 
 Steps from the paper:
 
-1. build the dependency graph whose vertices are streams and whose weighted edges record stream offsets (Section 2, pp. 4–5)
-2. compute each stream's shift and partial evaluation order. A non-positive offset can fail until a statically calculated time; a positive offset delays evaluation until the referenced value exists (Section 3.1, p. 6)
+1. build the dependency graph whose vertices are streams and whose weighted edges record stream offsets (Definition 2, p. 5)
+2. compute each stream's shift and partial evaluation order. A non-positive offset can fail until a statically calculated time; a positive offset delays evaluation until the referenced value exists (Definitions 3–4, p. 5; Section 3.1, p. 6)
 3. derive memory requirement `µ(s)` as the maximum weighted shift difference over outgoing dependencies, then total memory `µ*` as the sum of `µ(s)·size(Ts)` (Definition 5 and Definition 6, p. 7)
 4. derive prefix length `η←` and postfix length `η→`, and assign each output stream an evaluation layer. Streams incomparable in the evaluation order share a layer (Definitions 6–7, p. 7)
 5. generate separate evaluation functions for prefix, steady loop, and postfix. Static knowledge of failing accesses allows the generated functions to substitute defaults without a runtime presence test (Section 3.2, p. 8)
@@ -22,11 +22,11 @@ The generated structure has a `Memory` struct with a fixed array per stream, a p
 
 Verus form: Inference: a compiler targeting Verus can compute maximum history for a protocol or monitor, emit fixed-size arrays and phase-specific functions, and generate `requires` bounds for every index. Use Rust arrays, immutable borrows, and ordinary executable functions; express semantic promises with `requires` and `ensures`. A Verus `spec fn` can describe the mathematical stream equation, while executable code updates the ring buffer. Inference: if the required history is not statically bounded, reject the specialization or use a separately proved dynamic structure instead of silently weakening the contract.
 
-Evidence and limits: the paper reports compilation under ten milliseconds and below 4 MB for all experiments (Section 6, p. 15). The static analysis assumes the Lola specification's stream accesses and types are well-defined; a later experiment found a division by an input stream could have a zero denominator, so verification exposed an implicit arithmetic assumption (Section 6, pp. 16–17). Inference: this is evidence that generation plus proof can detect specification flaws, not evidence that the original requirements are correct.
+Evidence and limits: the paper reports compilation under ten milliseconds and below 4 MB for all experiments (Section 6, p. 15). In the flight-phase specification, verification flagged a division whose denominator was an input stream access and so was not necessarily non-zero; the paper reads this as detecting “flaws in specifications stemming from implicit assumptions on the system” (Section 6, pp. 16–17). Inference: this is evidence that generation plus proof can detect specification flaws, not evidence that the original requirements are correct.
 
 ## technique: ghost memory and a correspondence invariant
 
-When to use it: use ghost state when the implementation stores only a bounded window but the specification semantics refers to an unbounded history. The paper identifies this as its central proof difficulty: “The main challenge is that the evaluation model of the Lola semantics refers to unbounded data sequences, disregarding any memory concerns.” (Section 4, p. 10).
+When to use it: use ghost state when the implementation stores only a bounded window but the specification semantics refers to an unbounded history. The paper identifies this as its central proof difficulty: the main challenge is that “the evaluation model of the Lola semantics refers to unbounded data sequences, disregarding any memory concerns.” (Section 4, p. 10).
 
 Steps:
 
@@ -36,32 +36,32 @@ Steps:
 4. use an invariant for every stream and index: `0 ≤ i < µ(s) ⇒ m_s[i] = g_s[i]` (Equation (1), p. 12)
 5. establish the invariant at loop entry using the statically computed prefix length, preserve it across each loop iteration, and use it after the loop to connect every computed output to the semantic sequence (Section 4, pp. 11–13)
 
-The paper explains why the invariant is repeated explicitly: “After completing one loop iteration, Viper deletes prior knowledge about all variables that were mutated in the loop. Further reasoning about these variables is thus solely based on the loop invariants.” (Section 4, p. 12). It generates per-stream quantified invariants and unrolls the finite bound `µ(s)` to reduce solver work (Section 4, p. 12). Inline assertions after each stream expression establish that a new value is correct assuming the values read from memory are correct; the induction is well-founded by evaluation order and default substitution (Section 4, pp. 12–13).
+The paper explains why the invariant is repeated explicitly: “However, after completing one loop iteration, Viper deletes prior knowledge about all variables that were mutated in the loop. Further reasoning about these variables is thus solely based on the loop invariants.” (Section 4, p. 12). It generates per-stream quantified invariants and unrolls the finite bound `µ(s)` to reduce solver work (Section 4, p. 12). Inline assertions after each stream expression establish that a new value is correct assuming the values read from memory are correct; the paper calls this argument well-founded because failing accesses are replaced by default values, so any value read from memory “was computed in an earlier iteration or layer and therefore proven correct by Viper” (Section 4, p. 12).
 
 Verus form: Inference: model ghost history as proof-only state or a `Ghost` value and write a `lemma` that relates the executable ring-buffer sequence to an abstract sequence. Put the loop relation in an `invariant` declaration on the executable loop, for example an invariant that each valid index in the ring buffer equals the corresponding abstract history entry. Use `assert` statements or lemmas to prove each newly written slot and the unchanged suffix. Verus erases proof code, but the implementation must remain independent of the ghost sequence. Inference: the exact indexing and wraparound arithmetic must be proved in the chosen array representation; the paper's Viper annotation syntax cannot be copied into Verus.
 
-What is established and trusted: the generated annotations let Viper/Prusti prove functional correspondence, memory safety, and termination for the selected monitor. The semantic definition of Lola, the generated specification, the Rust compiler, Prusti/Viper translation, Z3, and the absence of unmodeled platform behavior remain outside that proof. The paper explicitly notes dependence on external tools and solver variability (Section 6, p. 17).
+What is established and trusted: the abstract claims the generated annotations let Viper prove functional correctness, absence of memory faults, and guaranteed termination; the body argues mainly the functional correspondence (Section 4). The paper states the approach relies on external tools and that Z3 running times are unpredictable (Section 6, pp. 15, 17). Inference: the Lola semantics, the Rust compiler, the Prusti-to-Viper-to-Z3 translation chain, and the platform are therefore trusted, not proved, by this work; the paper does not list a trusted base.
 
 ## technique: contracts, loop invariants, and assertions as generated proof scaffolding
 
-The compiler emits three annotation classes. Function contracts constrain callers and bodies with preconditions and guarantees; loop invariants are checked on entry, preserved by the body, and assumed after loop exit; inline `assert!` assertions add local facts that Viper verifies statically (Section 4, pp. 11–12). For a memory lookup it emits `#[requires=index < µ(s)]` and per-index guarantees such as `#[ensures=index == i ==> result == self.s[i]]` (Section 4, p. 11). The paper's generated loop entry checks also ensure the iteration count and ghost-memory length agree with `η← − ∆(s)` (Section 4, p. 12).
+The compiler emits three annotation classes. Function contracts constrain callers and bodies with preconditions and guarantees; loop invariants are checked on entry, preserved by the body, and assumed after loop exit; inline `assert!` assertions add local facts that Viper verifies statically (Section 4, pp. 11–12). For a memory lookup it emits a `requires` annotation with the condition `index < µ(s)` and per-index `ensures` annotations with the condition `index == i ==> result == self.s[i]` (Section 4, p. 11). The paper's generated loop entry checks also ensure the iteration count and ghost-memory length agree with `η← − ∆(s)` (Section 4, p. 12).
 
 Verus form: Inference: translate the lookup contract into a Rust function with `requires` for the index bound and `ensures` relating the returned value to the array slot. Put preservation facts on the loop with `invariant`, and use `assert` plus `lemma` calls for arithmetic or sequence updates. Keep executable assertions only when they are intended runtime checks; proof-only assertions and lemmas should not alter monitor behavior. Inference: a generated contract must mention all mutable state that matters, because a missing frame or state relation can let a proof pass while the monitor is wrong.
 
 ## technique: dependency-layer concurrency
 
-When to use it: parallelize streams that are incomparable in the dependency order and whose evaluation functions only read shared memory. The paper states, “Thus, the compilation spawns a new thread for each stream within the layer with read access to the global memory.” (Section 5, p. 14).
+When to use it: parallelize streams that are incomparable in the dependency order and whose evaluation functions only read shared memory. The paper states, “Thus, the compilation spawns a new thread for each stream within the layer with read access to the global memory.” (Section 5, p. 13).
 
 Steps:
 
 1. compute evaluation layers from the dependency graph
-2. annotate evaluation functions as pure and pass immutable memory references
+2. annotate evaluation functions with `#[pure]` and pass immutable memory references (Section 5, p. 13)
 3. in each layer, spawn one thread per stream and join all handles before writing the layer's results. The paper's code uses `crossbeam::scope`, `scope.spawn`, and `join().unwrap()` (Section 5, p. 14)
-4. prove that layer members neither read values being written in the same layer nor mutate shared state; then commit the returned tuple to memory
+4. the paper says correctness “is an immediate consequence of the correctness of the evaluation order and memory locality of streams” and that it adds annotations so Viper verifies the parallel execution (Section 5, pp. 13–14); it does not show those annotations. Inference: the returned tuple is then committed to memory as in the sequential code
 
-The Rust ownership model prevents simultaneous mutable and immutable borrowing, but the paper still requires the semantic independence proof. It warns that one thread per stream has constant spawn overhead and benefits most when the dependency graph is wide or expressions are large (Section 5, p. 14).
+The paper notes that Rust's ownership model enforces a strict separation of mutable and immutable data (Section 5, p. 13). It warns that one thread per stream has constant spawn overhead and benefits most when the dependency graph is wide or expressions are large (Section 5, p. 14).
 
-Verus form: Inference: retain the paper's pure-function and layer-independence conditions, but encode the shared-state protocol with Verus's supported Rust ownership and concurrency specifications. Verify each worker's `ensures` against an immutable snapshot and prove that joining all workers yields the same layer result as sequential evaluation. The paper uses Prusti/Viper concurrency annotations; those annotations do not carry over verbatim to Verus.
+Verus form: Inference: retain the paper's pure-function and layer-independence conditions, but encode the shared-state protocol with Verus's supported Rust ownership and concurrency specifications. Verify each worker's `ensures` against an immutable snapshot and prove that joining all workers yields the same layer result as sequential evaluation. The paper shows only `#[pure]` for the parallel case, and Viper annotations do not carry over verbatim to Verus.
 
 ## techniques for the catalog
 
