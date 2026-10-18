@@ -12,9 +12,9 @@ Inference: VL can use this result to decide whether a chosen invariant vocabular
 
 ## technique 1: model a program as a transition system and abstract its transformer
 
-Use this when a verified Rust routine can be expressed as a finite control-flow graph with a mathematical state. A program has control nodes `Q`, variables in `V^n`, transfer functions, and edges labelled by transfers (Section 4, pp. 8–9). The state space is `Q × V^n`; `postP` maps a vector of sets, one per control node, to successor sets. Reachable states are the least fixpoint `lfp(λX.Σ0 ∪ postP(X))` (p. 8).
+Use this when a verified Rust routine can be expressed as a finite control-flow graph with a mathematical state. A program has control nodes `Q`, variables in `V^n`, transfer functions, and edges labelled by transfers (Section 4, pp. 8–9). The state space is `Q × V^n`; `postP` maps a vector of sets, one per control node, to successor sets. Reachable states are the least fixpoint `lfp(λX.Σ0 ∪ postP(X))` (p. 9).
 
-Steps:
+Steps (assembled from the Section 4 definitions, not a numbered procedure in the paper):
 1. Define concrete states and initial states.
 2. Define each assignment, nondeterministic assignment, and guard as a set-valued transfer function.
 3. Build the control-flow relation and `postP`.
@@ -39,9 +39,9 @@ while i ≤A a' {
 return no abstract inductive invariant
 ```
 
-(p. 6). The sequence is ascending, so ACC ensures termination. If it returns `i`, that value is the least abstract invariant proving the property; if an iterate exceeds `a'`, no invariant in `A` can prove the property (p. 6).
+(p. 6). The hypotheses are that `∨A` and `α f γ` are computable, `≤A` is decidable, `A` is an ACC CPO, and `α(c)` is computable. The iterates form an ascending chain, so ACC ensures termination. If it returns `i`, that value is the least abstract invariant for `f` and `⟨c, γ(a')⟩`; if the loop exits with an iterate not `≤A a'`, no invariant in `A` can prove the property (p. 6).
 
-Steps: abstract the initial set; repeatedly apply the BCA; join with the initial abstraction; stop at a post-fixpoint below the target property; report failure when the target is exceeded (Corollary 3.5, p. 6). The paper emphasizes that the output is the least invariant in the domain, not necessarily the strongest concrete invariant.
+Steps: abstract the initial set; repeatedly apply the BCA; stop at a post-fixpoint (`α f γ(i) ≤A i`) that is still `≤A a'`; report failure when an iterate is no longer `≤A a'` (Corollary 3.5, p. 6). The loop as printed does not join with `α(c)` at each step; the proof analyzes it as the least fixpoint of `λa.α(c) ∨A α f γ(a)`. The returned `i` is the least invariant in `A`, which is the strongest one expressible in `A` (the paper's wording: least w.r.t. the order of `A`).
 
 Inference: A Verus implementation can mirror this algorithm over a finite ghost lattice, with a `proof fn` proving monotonicity and an executable driver generating candidate invariants. Each candidate must then be checked by Verus loop invariants and `ensures`; the driver itself need not run in the product. A finite-height domain such as a bounded set of predicates gives a direct termination argument, whereas an unbounded `Seq` of lemmas does not satisfy ACC automatically.
 
@@ -53,17 +53,17 @@ The paper derives BCA algorithms for affine assignments `xj := Σ mi xi + b` and
 
 The resulting theorem states: “The Monniaux problem (5) on C ONST for programs in CCONST , r.e. sets of initial states and recursive sets of state properties is decidable.” (p. 11). The same theorem says `AINV` synthesizes the least invariant when the safety property is representable in `CONST` (p. 11).
 
-Example 4.2 starts with `x1 := 0; x2 := 2` and nondeterministic branches. Four iterations reach the invariant asserting `x2 = 2` at the target node; the paper reports the sequence `J0` through `J4` and says `J4` is the least invariant proving the property (pp. 11–12). No runtime or benchmark denominator is reported; this is a symbolic worked example.
+Example 4.2 (Fig. 1) starts with `x1 := 0; x2 := 2` and a nondeterministic program with four control nodes. The property is that `x2` is constantly 2 at `q2`. The paper reports the sequence `J0` through `J4` (four applications of the BCA) and says `J4` is the least inductive invariant in `CONST` proving the property (pp. 11–12). No runtime or benchmark denominator is reported; this is a symbolic worked example.
 
 Inference: In Verus, constant propagation is useful for integer loop invariants: define a ghost option-like value for each variable and prove that assignments update the option according to the same singleton-or-top cases. A direct Verus `spec fn` can express the abstract transfer, while `assert` lemmas discharge arithmetic. What does not carry over is automatic synthesis inside Verus; the finite-domain iteration must be implemented externally or as proof code.
 
 ## technique 4: Karr affine-equality invariants
 
-Use affine equalities when the required facts are linear relationships such as `x1 + 2*x2 = 0`. Karr's domain `AFF` is the set of affine subspaces of `Q^n`, equivalently finite conjunctions of affine equalities. Its closure is `aff(X)`, the affine hull of a set; the lattice has finite height `n+1` because strict inclusion increases dimension (p. 12).
+Use affine equalities when the required facts are linear relationships such as `x1 + 2*x2 = 0`. Karr's domain `AFF` is the set of affine subspaces of `Q^n`, equivalently finite conjunctions of affine equalities. Its closure is `aff(X)`, the affine hull of a set; the lattice has finite height `n+1` because strict inclusion increases dimension (p. 13).
 
-Steps: represent each abstract state as an affine subspace; compute BCA for affine assignments using a kernel or affine-basis representation; compute joins as affine hulls of unions; iterate the abstract transformer to a fixpoint (pp. 12–13). Nondeterministic assignments are handled as the join of two single assignments. Positive equality guards have computable BCA; generic disequality guards do not have a known BCA and are conservatively replaced by the identity transformer (p. 13).
+Steps: represent each abstract state as an affine subspace; compute BCA for affine assignments using a kernel or affine-basis representation; compute joins as affine hulls of unions; iterate the abstract transformer to a fixpoint (pp. 12–13). Nondeterministic assignments are handled as the join of the BCAs of `xj := 0` and `xj := 1` (p. 13). Positive equality guards have computable BCA. For generic disequality guards the paper knows of no BCA algorithm, conjectures that none exists in general, and notes that Karr and Miné soundly approximate them by the identity transfer function (p. 13).
 
-The theorem states: “The Monniaux problem (5) on A FF for programs in CAFF , r.e. sets of initial states and recursive sets of state properties is decidable.” (p. 13). Example 4.4 reaches an invariant at `q4` containing `x1 + x2 + 1 = 0` after three iterations and identifies it as the least affine invariant proving the target (pp. 13–14).
+The theorem states: “The Monniaux problem (5) on A FF for programs in CAFF , r.e. sets of initial states and recursive sets of state properties is decidable.” (p. 13). Example 4.4 (Fig. 2, p. 14) reaches, at `q4`, the affine invariant `x1 + x2 + 1 = 0 ∧ x3 = 1` after three iterations (`I3`) and identifies `I3` as the least inductive invariant in `AFF` proving the target property `x1 + x2 + 1 = 0` at `q4` (p. 14).
 
 Inference: In Verus, encode affine relations as `int` equalities in a ghost predicate and use arithmetic lemmas to show assignments preserve them. A candidate invariant can be a conjunction in a `spec fn`; loop `invariant` clauses carry the relations. Verus's integer arithmetic solver can check individual preservation steps, but it does not provide Karr's affine-subspace join or synthesis algorithm. Disequality branches require explicit case splits or a weaker invariant because the paper itself has no exact BCA for them.
 
@@ -71,13 +71,13 @@ Inference: In Verus, encode affine relations as `int` equalities in a ghost pred
 
 A domain is fixpoint-complete for a transformer when abstracting concrete reachability gives the same result as iterating the abstract BCA. The paper notes that affine assignments are pointwise complete in both `CONST` and `AFF`, so unguarded affine programs enjoy fixpoint completeness (pp. 12, 14). Guards break this property: in `CONST`, filtering two states by `x1=0` before abstraction yields `⊥`, while filtering the abstraction first can yield `(0,0)` (p. 12). In `AFF`, a similar example shows that an equality guard is not pointwise complete (p. 14).
 
-Steps: test `α ◦ t` against `α ◦ t ◦ γ ◦ α` for each transfer; if equal, lift pointwise completeness to fixpoint completeness; otherwise retain the BCA but do not claim equality with concrete reachability (Sections 3.2, 4.1, and 4.2).
+Inference: a usable test, derived from Sections 3.2 and 3.3 rather than stated as a procedure, is to compare `α ◦ t` against `α ◦ t ◦ γ ◦ α` for each transfer; if equal, lift pointwise completeness to fixpoint completeness; otherwise retain the BCA but do not claim equality with concrete reachability (Sections 3.2, 4.1, and 4.2). The paper also characterizes fixpoint completeness directly: `α(lfp(f)) = lfp(α f γ)` iff `α(lfp(f))` can be proved by an abstract inductive invariant in `A` (Lemma 3.7, p. 7), and, equivalently, the concrete and abstract inductive invariant principles coincide (Theorem 3.6, p. 7).
 
 Inference: For VL, this is a contract audit: a generated invariant may be exact for straight-line arithmetic but lose precision at guarded branches. Marking a lemma as an exact abstraction result requires proving the relevant completeness equation; otherwise state only sound over-approximation. Verus's `ensures` proves the chosen relation, not completeness unless that relation is included explicitly.
 
 ## technique 6: co-inductive backward synthesis for disjunctive domains
 
-Use this when the abstract domain `L` is closed under arbitrary unions, equivalently when its upper closure is additive and its lower closure `µ̂L` is available. The paper defines a quasi-order on states, an `Avoid` operator, and an abstract transition relation that adds down-closure transitions (Section 5, pp. 15–16). Under well-quasi-order assumptions, it derives a greatest-fixpoint algorithm:
+Use this when the abstract domain `L` is closed under arbitrary unions, equivalently when its upper closure is additive and its lower closure `µ̂L` is available. The paper defines a quasi-order on states, an `Avoid` operator, and an abstract transition relation that adds down-closure transitions (Section 5, pp. 15–16). Under well-quasi-order assumptions (A1 and A2, p. 15), it derives a greatest-fixpoint algorithm that reproduces the algorithm of Padon et al. [32]:
 
 ```
 I := Σ
@@ -88,13 +88,13 @@ while Σ0 ⊆ I {
 return no inductive invariant in L
 ```
 
-(Algorithm 1, p. 18). The loop maintains `I ∈ L`; termination follows from the descending-chain condition. The output is the greatest, logically weakest inductive invariant proving `P` (p. 18). Algorithm 2, which repeatedly intersects with `Avoid(s)` for an inductiveness counterexample `s`, is proved equivalent to Algorithm 1 (Theorem 5.5, pp. 18–19).
+(Algorithm 1, p. 18). The loop maintains `I ∈ L`; the paper obtains termination because `⟨L, ⊆⟩` is a well-quasi-order (Lemma 5.1) and the predecessor transformer is computable (p. 18). The output is the greatest, logically weakest inductive invariant proving `P` (p. 18). Algorithm 2, which repeatedly intersects with `Avoid(s)` for an inductiveness counterexample `s`, is proved equivalent to Algorithm 1 (Theorem 5.5, p. 19). Example 5.6 (p. 19) applies Algorithm 1 to the `CONST` program of Example 4.2 and obtains a greatest invariant `I2` that is strictly weaker than the least one from Example 4.2. Section 5.2 (p. 20) also sketches a forward co-inductive variant (Algorithm 4) that uses `post~` and needs a DCC domain.
 
 Inference: In Verus, the backward algorithm can guide generation of weakest useful ghost predicates: start with the safety predicate, identify a state or transition violating closure, and strengthen by intersecting a predicate that excludes it. A well-founded measure over predicate candidates is required for termination. Verus has no built-in greatest-fixpoint domain, so this is a synthesis architecture around Verus checking, not a direct language feature.
 
 ## evidence, trust, and product implications
 
-The paper proves general order-theoretic lemmas and gives two domain theorems plus symbolic examples. It reports no empirical success percentages, execution times, or corpus sizes. All quantitative bounds are structural: `CONST^n` has height `2n` (p. 9), `AFF` has height `n+1` (p. 12), and the algorithms terminate under ACC, DCC, or wqo assumptions. Trust includes the chosen abstraction, computability of each BCA, the correctness of transfer-function models, and the safety property's representation. The paper explicitly notes that generic affine disequality BCA is unknown (p. 13), so replacing it by identity loses precision.
+The paper proves general order-theoretic lemmas and gives two domain theorems plus symbolic examples. It reports no empirical success percentages, execution times, or corpus sizes. All quantitative bounds are structural: `CONST^n` has height `2n` (p. 9), `AFF` has height `n+1` (p. 13), and the algorithms terminate under ACC, DCC, or wqo assumptions. Trust includes the chosen abstraction, computability of each BCA, the correctness of transfer-function models, and the safety property's representation. The paper explicitly notes that no BCA algorithm for generic affine disequality is known (p. 13). Inference: replacing it by the identity transfer function, as Karr and Miné do, is sound but loses precision.
 
 Inference: The threat to agent-written verified Rust is an expressive-domain mismatch. A proof can be impossible because the selected ghost vocabulary cannot express the needed invariant, rather than because the implementation is wrong. VL should classify failures by domain: constants, affine equalities, heap shape, ownership, or disjunction. It should then either switch to a domain with a computable BCA or report that no invariant in the current domain can prove the property. This avoids wasting agent iterations on annotations that cannot exist in the chosen abstraction.
 
@@ -109,4 +109,4 @@ Inference: Existing Verus infrastructure already checks concrete loop invariants
 - completeness audit: test pointwise transfer completeness before claiming abstract and concrete fixpoints coincide
 - co-inductive backward synthesis: compute a greatest fixpoint by repeatedly intersecting safety, predecessor, and abstract-avoidance facts
 - domain expressiveness diagnosis: report when no invariant exists in the selected abstract domain under its computability assumptions
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This abstract domain, here denoted by A FF, is relatively simple, precise and is widely used in numerical program analysis"): I read the whole paper text (arXiv:2004.03170v2, 22 pages) and checked the four quotations word for word, the page references, the CONST and AFF definitions and heights, the BCA cases, Corollary 3.5, Algorithms 1-2 and Theorem 5.5, and the examples 4.2, 4.4 and 5.6; I corrected page references for the program reachability definition (p. 9), the AFF height and Karr discussion (p. 13) and Example 4.4 (p. 14), described the AINV loop and its hypotheses as printed, replaced the unsupported claim that the paper "emphasizes" least versus strongest, made the completeness-test steps an Inference, and added Lemma 3.7, Example 5.6 and Algorithm 4; I did not re-derive proofs or the example iterations, and the Verus encodings are unchecked inferences. Link from the paper text (arXiv number); tag kept.

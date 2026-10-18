@@ -1,6 +1,6 @@
 # Specifying concurrent programs in separation logic: morphisms and simulations
 (authored by agents unless marked 🧑)
-Tag: `nanevski2019specifying`, [paper](https://www.semanticscholar.org/paper/359eaababf64d01ed3a69a6be8a42eb14fb3bda8)
+Tag: `nanevski2019specifying`, [paper](https://doi.org/10.1145/3360587)
 
 ## what the paper proves and builds
 
@@ -15,9 +15,9 @@ Annotate a Hoare specification with a resource `V`: `e : {P}{Q}@V`. `V` contains
 how to apply it
 
 1. Define the resource state, including concrete heap components and ghost histories (Section 2).
-2. Define each atomic transition with its guard and state update; for `lock`, require the pointer be free, and for `unlock`, require it be held (Section 1.1, PDF p. 2).
-3. Give methods preconditions and postconditions over that state, and include the resource in each Hoare type (Section 1.1).
-4. Compose threads only when their transition systems match, then use framing and ownership rules to account for shared and private state.
+2. Define each atomic transition with its guard and state update; `lock_tr` may fire only if the lock pointer is free and `unlock_tr` only if it is held (footnote 3, PDF p. 3; Section 2.2, PDF p. 7).
+3. Give methods preconditions and postconditions over that state, and include the resource in each Hoare type (Sections 1.1 and 2.3, PDF pp. 2 and 7).
+4. Compose threads only when their transition systems match (Section 1.1), then use framing and ownership rules to account for shared and private state (Section 3.1.5, PDF pp. 11-12).
 
 Verus form
 
@@ -25,7 +25,7 @@ Inference: represent a resource as a Verus ghost state machine with a transition
 
 evidence, assumptions, limits
 
-The paper formalizes the rules in Coq and uses the spin-lock example to show that a shared environment cannot deallocate the lock pointer while methods execute. It does not provide runtime performance measurements or a machine-checked proof of a Rust implementation. The resource abstraction assumes the transition specification accurately bounds interference.
+The paper formalizes the rules in Coq and uses the spin-lock example to illustrate that, because `lock` and `unlock` are typed by `Spin`, the concurrent environment "can't cause 'surprises', such as deallocating the pointer r while lock or unlock are executing" (Section 1.1, PDF p. 3). It does not provide runtime performance measurements or a machine-checked proof of a Rust implementation. Inference: the guarantee is only as good as the transition specification; if the specified transitions do not bound what the real environment does, the typing says nothing. The paper also notes that the claim that its actions erase to atomic read-modify-write commands (for example `trylock_act` to CAS) "we proved this only by hand" (footnote 11, PDF p. 13), because the formalism and Coq implementation do not issue proof obligations for it.
 
 ## technique 2: resource morphisms and simulations for proof reuse
 
@@ -35,11 +35,11 @@ A morphism `f : V → W` maps source states and transitions into a target resour
 
 how to apply it
 
-1. Define partial state map `fΣ` from target states to source states (contravariantly) and transition map `fΔ` from a target state and source transition to a target transition (Section 1.2, PDF pp. 3–4).
-2. Define a target-state predicate `I` and prove the commuting condition: for every source step from `fΣ(sw)` under `I(sw)`, `fΔ` yields a target step to `sw'` with `I(sw')` and `fΣ(sw')` equal to the source successor (Section 1.3, PDF p. 4).
+1. Define partial state map `fΣ` from target states to source states (contravariantly) and transition map `fΔ` from a target state and source transition to a target transition (Section 1.2, PDF pp. 3–4). Definition 3.9 (PDF p. 13) adds three conditions: locality of `fΣ` (a target frame `p` is matched by a source frame `ϕ(p)`), locality of `fΔ`, and other-fixity.
+2. Define a target-state predicate `I` and prove the commuting condition: for every source step from `fΣ(sw)` under `I(sw)`, `fΔ` yields a target step to `sw'` with `I(sw')` and `fΣ(sw')` equal to the source successor (Section 1.3, PDF p. 4). Definition 3.11 (PDF p. 14) adds a second clause: if `I sw` holds and the environment other-steps `sw` to `sw'` in `W`, then `I sw'` holds, `fΣ(sw')` exists, and `V` can other-step to it.
 3. Lift source pre/postconditions through `fΣ`; the paper defines `f̂R(sw)` by existence of a source state related by `fΣ` that satisfies `R` (Section 1.3).
 4. Apply the Morph rule. It conjoins the lifted source specification with `I` in both precondition and postcondition, yielding `morph f e : {...}@W` (Section 1.3, PDF p. 4).
-5. Compose morphisms when building several layers of abstraction; each simulation must preserve the next layer's invariant.
+5. Morphisms compose (Definition 3.10, PDF p. 14; the paper states that associativity with the identity as unit is proved in Coq). Section 4 applies one composite `ι ◦ f` with a single simulation `Sim`. Inference: stacking several layers would need one simulation per morphism, but the paper does not work out such a case.
 
 Verus form
 
@@ -47,7 +47,7 @@ Inference: encode `fΣ` and `fΔ` as ghost/spec functions over state-machine sta
 
 evidence, assumptions, limits
 
-The Morph rule's soundness is proved in the paper's Coq development, and the authors provide an artifact. The result reuses a proof only when the morphism and simulation obligations hold; it does not make arbitrary APIs compatible. Simulation predicates are invariants of the morphing process, not ordinary loop invariants of the original program.
+The Morph rule's soundness is proved in the paper's Coq development, and the authors provide an artifact. The result reuses a proof only when the morphism and simulation obligations hold; it does not make arbitrary APIs compatible. Simulation predicates are invariants of the morphing process; the paper says being a simulation "relies only on the resource in the program's type, and the morphism in question, not on the program's code" and contrasts this with loop invariants, "which are properties of programs" (Section 2.5, PDF p. 9).
 
 ## technique 3: derive exclusive locking by coupling transitions
 
@@ -59,11 +59,11 @@ how to apply it
 
 1. Define `CSLX` with ownership status, shared/private heaps, and `open_tr`/`close_tr` transitions (Section 4, PDF p. 18).
 2. Combine `Spin` and `CSLX`, coupling `lock_tr` with `open_tr` and `unlock_tr` with `close_tr` through a morphism (Section 4, PDF p. 18).
-3. Add permissions `πs` and `πo` so the resource distinguishes “unlock enabled for us” from “enabled for others”; the paper explains that the original Spin resource lacked this distinction (Section 4, PDF p. 19).
-4. Prove coherence and exclusivity invariants, including ownership/permission agreement and non-overlapping histories (Section 4, PDF pp. 19–20).
-5. Define simulation `Sim` stating that the private heap satisfies `R` when the thread owns the lock and is empty otherwise. Apply `morph (ι ◦ f)` to derive `exlock` and `exunlock` (Section 4, PDF pp. 20–21).
+3. Redefine `Spin` with permission components `πs` and `πo` (a permission to unlock, with `lock′` and `unlock′` specs) so the resource distinguishes “unlock enabled for us” from “enabled for others”; the paper explains that the original Spin resource lacked this distinction (Section 4, PDF p. 19).
+4. Prove that `Inv` = (4) ∧ (5) ∧ (6) is an invariant of the combined resource `CSL′`: (4) the histories agree with the ownership flag `α` (`ω(τs s) = (αs s = own)`), (5) the permission `πs` is 1 exactly when `αs s = own`, and (6) `τs s ⊥ω τo s`, which says that if one history ends in a lock then no other thread can have added a later entry to its own history (Section 4, PDF pp. 19–20). The critical case is that (6) is preserved by `unlock_tr ▷◁ close_tr`. Then restrict `CSL′` by `Inv` to get resource `CSL` via a sub-PCM construction (Appendix B, PDF pp. 31–33), with the generic morphism `ι : CSL′ → CSL`.
+5. Define simulation `Sim s` = if `αs s = own` then `R (σs s)` else `σs s = ∅`; the paper shows it is an `(ι ◦ f)`-simulation and notes it is not an invariant (Section 4, PDF p. 20). Apply `morph (ι ◦ f)` to `lock′` and `unlock′` to derive `exlock` and `exunlock`. The paper shows the derivation only for `exunlock = morph (ι ◦ f) unlock′` and refers to the Coq code for `exlock`, which it calls similar (Section 4, PDF pp. 20–21).
 
-The derived contracts are explicit: `exlock` requires ownership and an empty private heap and ensures ownership plus `R`; `exunlock` requires ownership plus `R` and ensures an empty private heap (Section 4, PDF p. 18).
+The derived contracts are explicit (Section 4, PDF p. 18): `exlock` requires that we do not own the lock (`µs s` equal to the overlined `own`, the "not owned" value of `O = {own, own̄}`) and that our private heap `χs s` is empty, and ensures ownership plus `R (χs s)`; `exunlock` requires ownership plus `R (χs s)` and ensures not-owned and an empty private heap.
 
 Verus form
 
@@ -71,7 +71,7 @@ Inference: use a Verus state machine with ghost ownership, permission count, and
 
 evidence, assumptions, limits
 
-The paper gives a derivation outline and Coq code, including the key contradiction showing another thread could not have unlocked first. It assumes a precise separation-logic heap predicate and PCM operations; permission design affects composability.
+The paper gives a derivation outline and Coq code, including the key contradiction showing another thread could not have unlocked first. The development relies on PCM operations and on a user-supplied resource invariant `R`; the paper says that "the design of resource's permissions obviously and essentially influences how that resource composes with others" (footnote 16, PDF p. 19).
 
 ## technique 4: indexed morphism families for quiescence
 
@@ -82,9 +82,9 @@ A plain morphism cannot “invent” source ghost state when a target state omit
 how to apply it
 
 1. Choose an index type `X` containing omitted source information, such as a history.
-2. Define `fΣ : X → Σ(W) ⇀ Σ(V)` and `fΔ` with the index, and prove indexed simulation conditions (Section 5, PDF pp. 21–23).
-3. Apply `MorphX` with an initial index; its postcondition existentially chooses an ending index (Section 5, PDF p. 22).
-4. For the stack, pass an empty self history and an empty interfering history to encode quiescence, erase histories in the target, and use the no-gap history invariant to conclude the two possible final orders (Section 5, PDF pp. 22–23).
+2. Define `fΣ : X → Σ(W) ⇀ Σ(V)` and `fΔ` with the index, and prove indexed simulation conditions (Section 5, PDF p. 21; the conditions are listed in Appendix C, PDF pp. 33–34, and include injectivity on indices).
+3. Apply `MorphX` with an initial index; its postcondition existentially chooses an ending index (Section 5, PDF p. 21).
+4. For the stack, `gΣ x sPriv` builds a `Stack` state whose self history is the index `x` and whose other history is declared empty, which formalizes quiescence; the morph is applied with `x = ∅` and an always-true simulation. Erase histories in the target and use the no-gap history invariant to conclude the two possible final orders (Section 5, PDF pp. 22–23).
 
 Verus form
 
@@ -92,11 +92,11 @@ Inference: make the index an explicit ghost argument to the morphism wrapper, an
 
 evidence, assumptions, limits
 
-The paper formalizes the indexed family and derives the quiescent stack contract. Its conclusion notes, “Morphisms compose and can support different constructions and applications.” (Section 7, PDF p. 27). It assumes a precise `layout` predicate so the source heap decomposition is unique. No empirical denominator or timing result is reported.
+The paper defines the indexed family and derives the quiescent stack contract; the Coq stack development is for the Treiber variant with minor modifications (footnote 20, PDF p. 22). Its conclusion notes, “Morphisms compose and can support different constructions and applications.” (Section 7, PDF p. 27). It insists that the `layout` predicate is precise so that `gΣ` is a function (footnote 21, PDF p. 23). No empirical denominator or timing result is reported.
 
 ## trusted boundary and VL implications
 
-The paper's trusted basis includes Coq, FCSL definitions, the operational semantics, atomic primitive models, and the correctness of each resource invariant and PCM. It proves a logic rule and examples, not a verified Rust runtime. Inference: the threat to VL is high for concurrent libraries that duplicate proofs for every wrapper or ownership policy. Morphisms offer a direct reuse pattern for Verus state machines: prove a generic lock or queue once, then add ownership, permissions, or private ghost state through a simulation wrapper. Inference: VL should not redo the mathematical morphism idea as a new contribution; the product-specific work is a sound, ergonomic Verus library and evidence that wrappers preserve the actual Rust implementation and memory model.
+The paper does not state a trusted base. Inference: it includes Coq, the shallow embedding and denotational semantics of Appendix D, the model of atomic primitives, and the correctness of each resource and PCM definition; the paper itself says the erasure of actions to read-modify-write commands was checked only by hand (footnote 11, PDF p. 13). It proves a logic rule and examples, not a verified Rust runtime. Inference: the threat to VL is high for concurrent libraries that duplicate proofs for every wrapper or ownership policy. Morphisms offer a direct reuse pattern for Verus state machines: prove a generic lock or queue once, then add ownership, permissions, or private ghost state through a simulation wrapper. Inference: VL should not redo the mathematical morphism idea as a new contribution; the product-specific work is a sound, ergonomic Verus library and evidence that wrappers preserve the actual Rust implementation and memory model.
 
 ## techniques for the catalog
 
@@ -106,4 +106,4 @@ The paper's trusted basis includes Coq, FCSL definitions, the operational semant
 - coupled ownership refinement — derive exclusive locks by coupling lock transitions to heap-transfer transitions
 - indexed morphism family — pass omitted ghost state as an index to express quiescent or private execution
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A thread may have more than one permission to unlock, which it can distribute among its children upon forking, who can then race to unlock."): I read the whole arXiv technical-report text (pp. 1-40, including appendices) and checked every quotation, section and page reference, the Morph and MorphX descriptions, the Section 4 construction and the Section 5 stack example against it; I also viewed PDF p. 18 to read the overlined own symbols. I changed the link to the DOI given in the paper text, fixed the exlock precondition (it requires not-owned, not ownership), corrected the MorphX page, the Sim/derivation scope (only exunlock is derived in the text), the quiescence index description, and the Appendix C reference, removed an unsupported claim about composing simulations across layers and a misplaced precision assumption in Section 4, and marked trusted-base and interference-bound remarks as Inference. I did not check the Coq artifact, the cited related work, or the Verus mappings (these are the study's own inferences). Page numbers are those of the PDF.

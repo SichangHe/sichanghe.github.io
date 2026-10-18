@@ -19,9 +19,9 @@ How:
 
 Verus form: Inference: implement the executable recursion in Rust and give it a `decreases` measure such as path length. Use `requires` for equal vector lengths and the path/tree relationship, and `ensures` for equality to a recursive/specification root function. Verus `proof fn` lemmas can establish the correspondence between bottom-up recursion and the tree definition; the paper’s Dafny syntax itself does not carry over.
 
-Evidence and limits: Listing A.3 specifies `computeRootUpIsCorrectForTree` with preconditions for complete decoration, seed, sibling vectors, and path height, and an `ensures` clause equating the computed value with `r.rootv` (PDF pp. 7–8). The proof uses induction on the tree/path and intermediate lemmas. The hash is uninterpreted in the generic proof; collision resistance of a concrete cryptographic hash is outside this functional theorem.
+Evidence and limits: Listing A.3 specifies `computeRootUpIsCorrectForTree` with preconditions for complete decoration, seed, sibling vectors, and path height, and an `ensures` clause equating the computed value with `r.rootv` (PDF p. 8). The paper says "All the proofs are by induction on the tree or the path" and that the main proof step is an equivalence between the bottom-up computation and the top-down definition of attributed Merkle trees (sec. 4, PDF p. 8). The hash is uninterpreted in the generic proof; collision resistance of a concrete cryptographic hash is outside this functional theorem.
 
-Quote: “The total correctness proof for the computeRootUp function amounts to showing that 1) the algorithm always terminates and 2) the result of the computation is the same as the hash of the root of the tree.” (sec. 4, PDF p. 7)
+Quote: “The total correctness proof for the computeRootUp function amounts to showing that 1) the algorithm always terminates and 2) the result of the computation is the same as the hash of the root of the tree.” (sec. 4, PDF p. 8)
 
 ## technique: incremental sibling-vector update
 What: update the left-sibling vector when inserting the next leaf. If path `p1 = w.0.1^k`, its successor is `p2 = w.1.0^k`; only the first left node encountered while hashing upward receives a newly computed value.
@@ -31,49 +31,49 @@ How:
 2. Identify the successor path by binary increment. The common prefix keeps its left siblings; the suffix of left nodes reuses entries because those entries are right siblings on the successor path.
 3. Recursively move upward while the final path bit is `1`, hashing the carried seed with the corresponding left sibling.
 4. Stop at a `0` bit and return `init(left) + [seed]`; the one-bit base case returns `[seed]` for a left node or the old `left` for a right node (Listing A.2, PDF p. 7).
-5. Prove that the returned entries equal the left siblings on `nextPath(p)` (Listing A.4, PDF pp. 8–9).
+5. Prove that the returned entries equal the left siblings on `nextPath(p)` (Listing A.4, PDF p. 9).
 
 Verus form: Inference: use a recursive Rust function with a `decreases` path-length measure and sequence slicing operations represented by Verus sequences. State the successor-path sibling property as an `ensures` clause and prove it with lemmas about path bits and sequence prefixes. The paper’s use of Dafny sequence syntax requires translation to Verus `Seq` operations.
 
-Evidence and limits: The paper says the proof needs intermediate verified calculations because built-in induction cannot discharge all path cases (sec. 4, PDF p. 8). It requires uniquely indexed leaves and excludes the rightmost leaf (`k < |leavesIn(r)|−1`) in Listing A.4. The algorithm assumes sibling vectors correspond to the stated path; malformed vectors are outside the contract.
+Evidence and limits: The paper says the sub-lemmas "cannot be easily discharged using solely the built-in Dafny induction strategies" and need "intermediate proof hints (verified calculations) to deal with all the nodes on the path p" (sec. 4, PDF p. 9). It requires uniquely indexed leaves and excludes the rightmost leaf (`k < |leavesIn(r)|−1`) in Listing A.4. Inference: the algorithm assumes the sibling vectors correspond to the stated path; malformed vectors are outside the lemma's preconditions.
 
-Quote: “The main proof is based on several sub-lemmas that are not hard conceptually but cannot be easily discharged using solely the built-in Dafny induction strategies.” (sec. 4, PDF p. 8)
+Quote: “The main proof is based on several sub-lemmas that are not hard conceptually but cannot be easily discharged using solely the built-in Dafny induction strategies.” (sec. 4, PDF p. 9)
 
 ## technique: functional-to-imperative refinement with index algorithms
 What: replace a path bit-vector by the integer index `k` of the next available leaf and tree height `h`, then prove the indexed algorithm computes the same value as the path algorithm. Use this functional indexed function as a ghost expected value and loop invariant for the DSC implementation.
 
 How:
 1. Encode `k` in binary over `h` bits with `natToBitList(k,h)` (sec. 4, PDF p. 9).
-2. Define `computeRootUpWithIndex(h,k,left,right,seed)`; branch on `k % 2` and recurse with `k/2`, `h−1`, and truncated vectors (Listing A.5, PDF p. 9).
+2. Define `computeRootUpWithIndex(h,k,left,right,seed)`; branch on `k % 2` and recurse with `k/2`, `h−1`, and truncated vectors (Listing A.5, PDF p. 10).
 3. Prove equivalence to `computeRootUp(natToBitList(k,h),...)` under `k < power2(h)`.
-4. In `get_deposit_root`, set a ghost expected root from the indexed function; loop while `h < TREE_HEIGHT`, maintain the indexed computation as `invariant`, update `r` with the branch/default hash, divide `size` by two, and increment `h` (Listing A.6, PDF pp. 10–11).
+4. In `get_deposit_root`, set a ghost expected root from the indexed function; loop while `h < TREE_HEIGHT`, maintain the indexed computation as `invariant`, update `r` with the branch/default hash, divide `size` by two, and increment `h` (Listing A.6, PDF p. 10).
 5. For `deposit(v)`, set a ghost expected next sibling vector, loop while `size % 2 == 1`, maintain the functional indexed sibling computation as the invariant, then write `branch[i]` and increment `count` (Listing A.7, PDF p. 11).
 
 Verus form: Inference: this is a standard refinement pattern in Verus: a `ghost` value records the specification result, the executable loop carries an `invariant` equating concrete state to that value, and `decreases` proves termination. Use `old(...)` in postconditions where the pre-state is needed. Array bounds and sequence lengths require explicit `requires`/`assert` facts.
 
-Evidence and limits: The paper proves termination with path length for recursive functions and `size` or `h` for loops; it separately proves memory safety of `branch[i]` (sec. 4, PDF pp. 9–12). The hardest proof is `deposit`, because it combines arithmetic constraints between `size` and `i`, array bounds, and the functional sibling invariant (sec. 5, PDF p. 13).
+Evidence and limits: The paper uses path length as the ranking function for the recursive path algorithms (`decreases p`), `h` for `computeRootUpWithIndex`, and `size` for the `deposit` loop; it also treats memory safety of `branch[i]` (sec. 4, PDF pp. 9–12). It calls the correctness of `deposit` "probably" the hardest proof, because it combines arithmetic constraints between `size` and `i`, array bounds, and the functional sibling invariant (sec. 5, PDF p. 13).
 
-Quote: “The correctness proof of get deposit root() uses the functional (proved correct) algorithm computeRootUpWithIndex as an invariant.” (sec. 4, PDF p. 10)
+Quote: “The correctness proof of get deposit root() uses the functional (proved correct) algorithm computeRootUpWithIndex as an invariant.” (sec. 4, PDF p. 11)
 
 ## technique: proof-driven optimization
-The verified development revealed two optimizations: the left-sibling vector need not be initialized, and the original deposit loop’s condition `C1` is always true while `C2` eventually becomes true, so the loop can be simplified to `while not(C2)`. This reduced gas cost in principle, although the deployed contract still used the unsimplified version when the paper was written (sec. 5, PDF p. 12).
+The verified development revealed two optimizations: the left-sibling vector need not be initialized, and the original deposit loop’s condition `C1` is always true while `C2` eventually becomes true, so the loop can be simplified to `while not(C2)`. The paper says this "reduces the computation cost (in gas/Ether)", and that although the proposal was being discussed with the DSC developer, "the currently deployed version still uses the non-optimised code" (sec. 5, PDF p. 12).
 
 Verus form: Inference: prove the loop-condition implication and termination as lemmas over the same state invariant before changing executable Rust. Keep the old and optimized implementations related by a refinement lemma and compare their postconditions.
 
-Evidence and limits: The paper calls these “previously unknown/unconfirmed optimisations” and says the formal proof, rather than earlier audits, established them (sec. 5, PDF p. 12). The optimization depends on the exact DSC loop and may not generalize to other trees.
+Evidence and limits: The paper calls these “previously unknown/unconfirmed optimisations” and says the C1/C2 finding "was not uncovered in any of the previous audits/analyses" (footnote 14, sec. 5, PDF p. 12). Inference: the optimization depends on the exact DSC loop and may not generalize to other trees.
 
-Quote: “Our formal machine-checkable proof revealed that indeed the condition C1 is always true and the loop always terminates because C2 eventually becomes true.” (sec. 5, PDF p. 12)
+Quote: “indeed the condition C1 is always true and the loop always terminates because C2 eventually becomes true.” (sec. 5, PDF p. 12)
 
 ## evidence, trust, and product relevance
-The paper measures code/documentation effort and line counts, not runtime benchmark accuracy: Table 1 reports 3,538 total Dafny lines and 1,030 documentation lines; 90% of lines are non-executable proofs and function definitions (sec. 5, PDF pp. 13–14). It proves functional correctness, termination, memory safety, and equivalence of representations under stated preconditions. It does not prove cryptographic collision resistance, correctness of Ethereum bytecode, or that the manually chosen Merkle specification matches every external protocol requirement. The paper explicitly states the trust base is Dafny’s verification engine and Z3.
+The paper measures code/documentation effort and line counts, not runtime benchmark accuracy: Table 1 reports 3,538 total Dafny lines and 1,030 documentation lines; the paper says "almost 90% of the lines of code are (non-executable) proofs, and function definitions used in the proofs" (sec. 5, PDF pp. 13–14). It proves functional correctness, termination, memory safety, and equivalence of representations under stated preconditions. It does not prove cryptographic collision resistance (footnote 6 notes collisions may rarely occur), (the bytecode is out of scope: "the DSC algorithms (not the bytecode)"). Inference: it also cannot show that the Merkle specification matches every external protocol requirement. The paper explicitly states the trust base is Dafny’s verification engine and Z3.
 
-Inference: a Verus port would substantially reduce the threat of agent-written Merkle-tree Rust when the tree specification and hash abstraction are reviewed, because every implementation step is checked against a functional model. Inference: remaining risks are wrong specifications, unchecked cryptographic assumptions, and trusted Verus/SMT infrastructure. The paper already demonstrates the refinement, ghost-invariant, and proof-driven optimization patterns VL should reuse rather than rediscover.
+Inference: a Verus port would substantially reduce the threat of agent-written Merkle-tree Rust when the tree specification and hash abstraction are reviewed, because every implementation step is checked against a functional model. Inference: remaining risks are wrong specifications, unchecked cryptographic assumptions, and trusted Verus/SMT infrastructure. Inference: the paper demonstrates refinement, ghost-invariant, and proof-driven optimization patterns that VL could reuse rather than rediscover.
 
 ## techniques for the catalog
 - path root computation — fold a sibling path upward with a generic hash and prove equality to the tree root
 - sibling-vector insertion — update only the first affected left sibling while moving to the successor path
 - functional-to-imperative refinement — use a proved recursive function as a ghost loop invariant for indexed code
-- termination and memory-safety ranking — use path length, height, or size to discharge recursion and array bounds
+- termination ranking and array-bound proofs — use path length, height, or size as ranking functions; prove loop index bounds with arithmetic invariants
 - proof-driven optimization — simplify loops only after proving condition and termination properties
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The main step in the proof is to establish an equivalence between a bottom-up computation computeRootUp and the top-down definition of (attributed) Merkle trees."): read the whole paper text start to end and checked every quotation, number (3,538 LoC, 1,030 doc lines, 12 person-weeks, almost 90%), listing contents, section and page references (page numbers are the paper's printed pages); changed shifted page references (Listings A.4 and A.5 and the quotes on pp. 8, 9 and 11), the evidence paragraphs on termination, optimization and bytecode, and marked unsupported conclusions as Inference; I did not run the Dafny code or the repository, and the Verus-port notes are my own inferences.

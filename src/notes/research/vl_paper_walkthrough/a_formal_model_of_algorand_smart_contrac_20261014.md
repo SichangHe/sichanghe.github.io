@@ -1,6 +1,6 @@
 # A Formal Model of Algorand Smart Contracts
 (authored by agents unless marked 🧑)
-Tag: `bartoletti2021algorand`, [paper](https://doi.org/10.1007/978-3-662-64322-8_5)
+Tag: `bartoletti2021algorand`, [paper](https://arxiv.org/abs/2009.12140)
 
 ## scope and result
 The paper gives a mathematical state-machine model for Algorand stateless smart contracts (ASC1), proves safety properties, specifies contract patterns, and compiles a declarative expression language to TEAL. Its model abstracts implementation details deliberately: it is high-level enough for reasoning but is not a byte-accurate blockchain model. The abstract says, “We develop a formal model of Algorand stateless smart contracts (stateless ASC1).” (Abstract, p. 1)
@@ -17,7 +17,7 @@ how to apply it
 
 1. Define an account as an address and finite asset balance map; enforce Algo reserve and asset-count validity. (Section 2.1, pp. 3–4)
 2. Define transaction records, temporal validity, lease acquisition, and a blockchain state containing accounts, current round, unexpired transaction set, asset managers, leases, and freezes. (Sections 2.1–2.2, pp. 4–5)
-3. Give one inference rule per transaction kind. Every rule checks no double spend, temporal validity, and valid resulting balances, then updates only its relevant state components. (Section 2.3, pp. 5–7)
+3. Give inference rules per transaction kind (the text describes pay-to-new-account, pay, close, gen, optin, burn, revoke, freeze/unfreeze, delegate; Fig. 5 on pp. 31–32 splits pay and close into several rules). Every rule checks no double spend, temporal validity, and valid resulting balances, then updates only its relevant state components. (Section 2.3, pp. 5–7; Fig. 5, pp. 31–32)
 4. Define round advancement by incrementing the round and removing transactions whose last-valid round has expired. (Section 2.3, p. 7)
 5. Define an atomic group by requiring a sequence of single-transaction transitions and expose only the final state as one labelled transition. (Section 2.4, p. 7)
 
@@ -29,7 +29,7 @@ Model the concrete Rust state with a `struct` and use `spec fn` predicates for v
 
 what evidence shows it works
 
-The paper proves three global theorems from the transition rules: no transaction occurs twice, asset value is preserved until burn, and both the blockchain and user-interaction transition systems are deterministic. It emphasizes, “Theorem 3 establishes that the transition systems −→ and =⇒ are deterministic.” (Section 2.7, p. 10) No automated prover or benchmark denominator is reported for these proofs; they are pencil-and-paper arguments.
+The paper proves three global theorems from the transition rules: no transaction occurs twice, asset value is preserved until burn, and both the blockchain and user-interaction transition systems are deterministic. It emphasizes, “Theorem 3 establishes that the transition systems −→ and =⇒ are deterministic.” (Section 2.7, p. 10) The proofs are in Appendix D (pp. 27–30). The paper reports no automated prover or benchmark denominator for them; the Future work paragraph lists mechanization in a proof assistant as a future direction, “this would allow machine-checking the proofs developed by pencil-and-paper in §D.” (Section 5, p. 18)
 
 where it fails or what it assumes
 
@@ -39,17 +39,17 @@ The model omits consensus and several fields/features, uses a single manager for
 
 what it is and when to use it
 
-Define a small expression language for stateless scripts and a total, strict evaluator parameterized by witness arguments, an atomic transaction group, and the current transaction index. Use it to reason about authorization independently of bytecode encoding.
+Define a small expression language for stateless scripts and a strict evaluator (which may fail, written ⊥) parameterized by witness arguments, an atomic transaction group, and the current transaction index. Use it to reason about authorization independently of bytecode encoding.
 
 how to apply it
 
 1. Express constants, arithmetic and Boolean operators, transaction-field/index operators, arguments, hashes, and signature verification in the syntax of Figure 2. (Section 2.5, p. 8)
-2. Define evaluation recursively; every operator fails if an operand fails, `tx(n).f` reads the selected group transaction, and `versig` checks a signature over the script and argument. (Sections 2.5 and Figure 3, pp. 8–9)
-3. Determine the authorizer from the transaction type: sender for ordinary actions, asset manager for burn/revoke/freeze operations. (Section 2.6, p. 9)
+2. Define evaluation recursively; “All operators in Fig. 3 are strict: they fail if the evaluation of any operand fails,” `tx(n).f` reads the selected group transaction, and `versig` checks a signature over the script and argument. (Sections 2.5 and Figure 3, pp. 8–9)
+3. Determine the authorizer from the transaction type: the sender for close, pay, gen, optin; the asset manager for burn, rvk, frz, unfrz (Section 2.6, p. 9), and also delegate (Appendix A, p. 22).
 4. Accept a multisignature witness when enough listed users signed the transaction, or accept a script witness when evaluation returns true. Require every transaction in an atomic group to have an authorizing witness. (Section 2.6, p. 9)
 5. Model user interaction as broadcasting witness strings, advancing rounds, and executing an authorized atomic group. (Section 2.6, p. 9)
 
-The formal authorization condition is concrete: “if auth(T.i, fasst ) = (A, n), then |set(W) ∩ sig set (A) (T, i)| ≥ n” or, for a script authorizer, “JeKW T ,i = true”. (Section 2.6, p. 9)
+The formal authorization condition is concrete: “if auth(T.i, fasst ) = (A, n), then |set(W) ∩ sig set (A) (T, i)| ≥ n”. For a script authorizer e, the condition is that e evaluates to true under W, T and i. (Section 2.6, p. 9)
 
 Verus form (Inference)
 
@@ -61,7 +61,7 @@ Theorem 3(3) proves that different witnesses cannot change the resulting state: 
 
 where it fails or what it assumes
 
-The evaluator abstracts TEAL and assumes cryptographic security. Witness sequences need not be unique, and the model does not prove cryptographic algorithms. Any Verus implementation must separately specify or verify hashing and signature behavior.
+The evaluator abstracts TEAL and assumes cryptographic security. The paper notes “the sequence of witnesses W is not unique”, and the model does not prove cryptographic algorithms. Any Verus implementation must separately specify or verify hashing and signature behavior.
 
 ## technique: contract-pattern proofs under an attacker scheduler
 
@@ -73,13 +73,13 @@ how to apply it
 
 1. Declare PPTIME user strategies that choose enabled labels from finite run history and retain private state; define an adversarial scheduler that selects among proposed labels. (Section 3.1, p. 11)
 2. State cryptographic and non-Zeno assumptions, and bound adversarial delay by δAdv; the paper simplifies examples to δAdv = 0. (Section 3.1, p. 11)
-3. Write the contract predicate over transaction fields, witnesses, hashes, signatures, and validity windows. (Section 3.2, pp. 12–16)
-4. Define transaction sets that represent successful payouts and give each honest party a strategy with explicit waiting, reveal, timeout, and extraction steps. (Section 3.2, pp. 12–16)
-5. Prove a theorem over every conformant run, allowing other users and the adversary to collude where the theorem permits it. (Section 3.2, pp. 12–16)
+3. Write the contract predicate over transaction fields, witnesses, hashes, signatures, and validity windows. (Section 3.2, pp. 12–15)
+4. Define transaction sets that represent successful payouts and give each honest party a strategy with explicit waiting, reveal, timeout, and extraction steps. (Section 3.2, pp. 12–14)
+5. Prove a theorem over every conformant run, allowing other users and the adversary to collude where the theorem permits it (Theorem 4 remarks that b and Adv “can use any strategy (and possibly collude)”). (Section 3.2, pp. 12–14; proofs in Appendix D, pp. 27–30)
 
 For an HTLC, the script lets the depositor close with a preimage whose hash matches `ha`, or lets the beneficiary close after `rmax`. The paper’s exact contract is, “HTLC (a, b, ha ) , tx.type = close and tx.asst = Algo and (tx.rcv = a and H(arg(0)) = ha ) or (tx.rcv = b and tx.fv ≥ rmax )”. (Section 3.2, p. 13) Theorem 5 proves that an honest revealer gets the funds and, if the secret is absent by the deadline, an honest beneficiary gets them.
 
-Finite-state contracts use one script/account per state; transitions close the current account into the next state. Loops require a signed next-state argument because contract hashes cannot be circular. (Section 3.2, pp. 15–16)
+Finite-state contracts use one script/account per state; transitions close the current account into the next state. Loops require a signed next-state argument (tx.rcv = arg(0), signed by all users in A) because contract accounts are referenced by script hashes and no script can depend on its own hash. The paper also sketches a quine-based alternative. (Section 3.2, p. 15 and footnote 17)
 
 Verus form (Inference)
 
@@ -87,7 +87,7 @@ Encode each contract predicate as a `spec fn` over a transaction and witness. En
 
 what evidence shows it works
 
-The paper states explicit theorems for Oracle, HTLC, and lottery patterns. For the two-player lottery, Theorem 6 guarantees an honest player’s collateral recovery and says the probability of receiving at least one Algo is at least one half up to a negligible quantity (Section 3.2, p. 14). No experimental sample count is given for these theorem results.
+The paper states explicit theorems for Oracle (Theorem 4), HTLC (Theorem 5), the two-player lottery (Theorem 6), and the mutual HTLC (Theorem 7, Appendix B.1, p. 23). For the lottery, Theorem 6 guarantees an honest player a transaction transferring at least 2 Algo to her (her collateral) and says the probability that she receives at least 1 Algo is ≥ 1/2 up to a negligible quantity (Section 3.2, p. 14). The Theorem 6 proof is a brief argument that leans on the Bitcoin lottery proof in refs [11, 12] (Appendix D, p. 30), and Theorem 7 is proved only as “analogous” to Theorem 5. No experimental sample count is given for these theorem results.
 
 where it fails or what it assumes
 
@@ -97,14 +97,14 @@ Results depend on honest strategies, cryptographic assumptions, deadlines, and t
 
 what it is and when to use it
 
-Compile declarative scripts and abstract transactions to concrete TEAL/Algorand encodings so that verified designs can be tested and deployed. Use this as a refinement boundary, while checking every opcode and transaction-field encoding.
+Compile declarative scripts and abstract transactions to concrete TEAL/Algorand encodings so that designs can be tested and deployed. Use this as a refinement boundary, while checking every opcode and transaction-field encoding.
 
 how to apply it
 
 1. Map arithmetic and cryptographic operators to corresponding TEAL opcodes; compile Boolean operators with short-circuit `bnz` and negation with `!`. (Section 4, p. 16)
 2. Map group operators (`txid`, `txlen`, `txpos`, `arg`) to `gtxn`, `global GroupSize`, `txn GroupIndex`, and `arg` opcodes. (Section 4, p. 16)
-3. Compile transaction fields directly where TEAL exposes them; decode other fields into scratch space according to the paper’s translation table. (Section 4 and Table 2, p. 16)
-4. Translate abstract transactions to concrete payment or asset-transfer records, preserving sender, receiver, amount, and asset fields. (Section 4, Figure 4, p. 16)
+3. Compile fv, lv, lx directly to `gtxn n FirstValid/LastValid/Lease`; for other fields generate TEAL that decodes the concrete transaction fields into the scratch space, as in Table 2. (Section 4, p. 16; Table 2, Appendix C, pp. 25–26)
+4. Translate abstract transactions to concrete Algorand transactions using Table 2; for example, a model `close` becomes a `pay` with `amt` 0 and a `close` field (Algo) or an `axfer` with `aamt` 0 and `aclose` (other assets). (Section 4, Figure 4, p. 16)
 5. Exercise examples and user contracts through the `secteal` prototype, which compiles expressions into executable bytecode. (Section 4, p. 16)
 
 The paper reports, “The core of the tool is a compiler that translates smart contracts written as expressions, based on the script language (§2.5), into executable TEAL bytecode.” (Section 4, p. 16)
@@ -115,22 +115,22 @@ Treat compilation as a pure function with a semantic-preservation lemma: evaluat
 
 what evidence shows it works
 
-The paper provides the `secteal` web prototype and examples but gives no benchmark denominator, test count, or measured compiler coverage. The authors call it “a first building block toward a comprehensive IDE” (Section 4, p. 16), so validation is demonstrative rather than a complete refinement proof.
+The paper provides the `secteal` web prototype and examples but gives no benchmark denominator, test count, or measured compiler coverage. The authors call it “a first building block toward a comprehensive IDE” (Section 4, p. 17). The compilation is described as a sketch (“We first sketch how to compile our scripts into TEAL”, Section 4, p. 16) and no compiler-correctness proof is given. The separate platform-coherence experiments are only cited (ref. [6], github.com/blockchain-unica/asc1-experiments) and not described in the paper text.
 
 where it fails or what it assumes
 
-The script language substantially covers LogicSigVersion 1 but omits bitwise operations, some hashes, jumps, and all stateful application calls. Concrete Algorand evolution can invalidate field mappings. The model-to-bytecode gap therefore remains a product risk unless independently verified.
+The paper says the script language “substantially covers TEAL opcodes with LogicSigVersion=1, but for a few exceptions, e.g. bitwise operations, different hash functions, jumps”, and application call transactions are outside its scope (Section 5, p. 17). Some operators used in Table 2, such as ConfigAsset, require LogicSigVer ≥ 2 (Appendix C, p. 25). Inference: the model-to-bytecode gap remains a risk unless independently verified, and later Algorand changes could invalidate the field mappings.
 
 ## what is proved, measured, and trusted
 
-Proved: transition-level no-double-spending, value preservation, determinism, and contract theorems under stated strategies. Specified: account/transaction semantics, script evaluation, authorization, attacker scheduling, and design patterns. Measured: experiments validating coherence with the actual platform are claimed in the abstract, and `secteal` examples are provided, but the paper gives no denominator or numerical experiment table in the text. Trusted: cryptographic assumptions, the scheduler model, the abstract-to-concrete TEAL mapping, and omitted Algorand features.
+Proved: transition-level no-double-spending, value preservation, determinism, and contract theorems under stated strategies. Specified: account/transaction semantics, script evaluation, authorization, attacker scheduling, and design patterns. Measured: the abstract says “We perform experiments to validate the coherence of our formal model w.r.t. the actual implementation” and the Introduction cites them as ref. [6], but the paper text reports no denominator or numerical experiment table; `secteal` examples are provided. Trusted: cryptographic assumptions, the scheduler model, the abstract-to-concrete TEAL mapping, and omitted Algorand features.
 
-Inference: for VeruLaw, the paper’s biggest threat is semantic mismatch between verified Rust contracts and deployed transaction/VM behavior. Its useful reuse is the separation of state-transition invariants, pure authorization predicates, strategy-level liveness assumptions, and compilation correctness. Existing work already covers this complete ASC1 modeling and archetypal contract reasoning; VL should not repeat it without adding verified implementation links, stronger automation, or stateful application coverage.
+Inference: for VeruLaw, the paper’s biggest threat is semantic mismatch between verified Rust contracts and deployed transaction/VM behavior. Its useful reuse is the separation of state-transition invariants, pure authorization predicates, strategy-level liveness assumptions, and compilation correctness. Existing work already covers this stateless-ASC1 modeling and archetypal contract reasoning; VL should not repeat it without adding verified implementation links, stronger automation, or stateful application coverage.
 
 ## techniques for the catalog
 
 - labelled blockchain transition model: encode account, transaction, lease, freeze, round, and atomic-group transitions as inference rules and prove invariants
 - pure script and witness semantics: evaluate transaction-group expressions and define multisignature/script authorization predicates
 - attacker-strategy contract proofs: prove timeout, escrow, lottery, and finite-state payout properties over adversarially scheduled runs
-- declarative-to-TEAL compilation: compile supported expression constructs and establish source/bytecode semantic correspondence
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- declarative-to-TEAL compilation sketch: compile supported expression constructs to opcodes and decode transaction fields into scratch space (no correctness proof in the paper)
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "To ensure that any user in A can trigger a state transition (by firing the corresponding transaction), their signatures must be exchanged before the contract starts."): read the whole paper text (main text, Appendices A-D, Fig. 5) and checked every quotation, theorem description, section/page reference, technique step and the HTLC script against it; changed the link to the arXiv page (arXiv:2009.12140 appears in the paper text, the earlier DOI is not in the paper text), the rule-per-transaction claim (Fig. 5 has several pay and close rules), the "total evaluator" claim (evaluation can fail with ⊥), the Table 2 and secteal page references (Table 2 is in Appendix C, pp. 25-26; the "first building block" sentence is on p. 17), the description of Theorem 6 and 7 proofs, the compilation claims (the paper only sketches it, no correctness proof) and the experiment claim (cited as ref. [6], not described); marked own conclusions "Inference:"; did not check the external repository, the secteal site, the Verus-form suggestions (own inference), or reference details.

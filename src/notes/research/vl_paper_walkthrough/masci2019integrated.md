@@ -1,12 +1,12 @@
 # An Integrated Development Environment for the Prototype Verification System
 (authored by agents unless marked 🧑)
-Tag: `masci2019integrated`, [paper](http://arxiv.org/abs/1912.10632v1)
+Tag: `masci2019integrated`, [paper](https://doi.org/10.4204/EPTCS.310.5)
 
 ## scope and result
 
 Inference: This paper describes VSCode-PVS, an integrated development environment that puts PVS editing, proof management, and evaluation into Visual Studio Code. Its target is adoption: the authors identify a conceptual gap (how Emacs buffers work) and a knowledge gap (many commands and a very large library) as barriers. The paper's abstract says, “This new environment integrates the editing and proof management functionalities of PVS in Visual Studio Code, a popular code editor widely used by software developers.” (abstract, p. 35)
 
-Inference: The contribution is an engineering workflow around an existing prover, not a new proof calculus. The paper reports 7K lines of TypeScript implementation: 3K in the editor front end and 4K in the language server (section 3.4, p. 40). It compares nine environments using seven feature metrics: autocompletion, hover information, jump-to-definition, refactoring, live diagnostics, animation, and proof visualisation (section 5.1, p. 43).
+Inference: The contribution is an engineering workflow around an existing prover, not a new proof calculus. The paper reports an implementation effort of "7K LoC (3K LoC for the editor front-end, and 4K LoC for the language server)" (section 3.4, p. 41); the paper says VSCode-PVS is implemented in TypeScript and that the server also needed a Lisp interface to PVS, so the 7K figure is not stated to be TypeScript only. It compares nine environments using seven feature metrics: autocompletion, hover information, jump-to-definition, refactoring, live diagnostics, animation, and proof visualisation (section 5.1, p. 43).
 
 ## technique 1: language-server separation
 
@@ -14,8 +14,8 @@ Inference: Use a two-process architecture so an editor remains responsive while 
 
 Steps from the paper:
 1. Build the front end on an LSP-capable editor and convert cursor, document, and command actions into LSP events (section 3.1, p. 38)
-2. Implement language-server providers for hover, definition lookup, commands, and diagnostics; providers translate PVS APIs to LSP messages (section 3.3, p. 39)
-3. route events through an LSP connection manager to the appropriate provider (section 3.3, p. 39)
+2. Implement language-server providers for hover, definition lookup, commands, and diagnostics; providers translate PVS APIs to LSP messages (section 3.3, pp. 39-40)
+3. route events through an LSP connection manager to the appropriate provider (section 3.3, p. 40)
 4. run PVS process workers in self-contained environments; use a worker pool for background parsing and type checking and to run proofs concurrently (section 3.3, p. 40)
 
 Inference: The paper says LSP “promotes reuse of modules and facilitates sustainability of the overall development effort” because any LSP editor can connect to the same server (section 3.1, p. 38). The paper does not report latency, throughput, or a user study; therefore no quantitative usability improvement is established.
@@ -24,10 +24,10 @@ Verus form (Inference): A Verus editor could use the same split: an editor clien
 
 ## technique 2: live diagnostics and completion
 
-Inference: Make syntax and semantic feedback continuous and local. The feature list states: “Parsing is automatically performed in the background, and errors are reported in-line in the editor.” (section 3, p. 37) It also states that tooltips show error details when the cursor is placed over underlined text (section 3, p. 37). The language server's Diagnostics Provider “continuously sends diagnostics information to the editor front-end to report syntax / type-checking errors.” (section 3.3, p. 39)
+Inference: Make syntax and type-checking feedback continuous and local. Section 3.3 (p. 40) says the Diagnostics Provider reports syntax and type-checking errors, while the section 5.2 assessment (p. 45) mentions only syntax errors, "automatically provided after a period of inactivity in the editor". The feature list states: “Parsing is automatically performed in the background, and errors are reported in-line in the editor.” (section 3, p. 37) It also states that tooltips show error details when the cursor is placed over underlined text (section 3, p. 37). The language server's Diagnostics Provider “continuously sends diagnostics information to the editor front-end to report syntax / type-checking errors.” (section 3.3, p. 40)
 
 Steps from the paper:
-1. watch edits in the front end and dispatch document changes through LSP (sections 3.1 and 3.3, pp. 38–39)
+1. (Inference from the paper's general description that the front end turns user interactions into LSP events; the paper does not name a document-change event) dispatch edits from the front end to the language server through LSP (section 3.1, p. 38)
 2. have a background worker parse or type-check the current document (section 3.3, p. 40)
 3. return diagnostics with source locations; render red wavy underlines and explanatory tooltips (section 3, p. 37)
 4. expose completion providers that suggest PVS keywords, library functions, and record accessors (section 5.2, p. 45)
@@ -54,7 +54,7 @@ Verus form (Inference): A Verus IDE can show each `proof fn`, `lemma`, `requires
 
 Inference: The evidence is feature comparison and an implementation description, not a controlled experiment. Table 1 compares VSCode-PVS 1.0.12 with PVS-Emacs 6.0, CoqIDE 8.9.0, SublimeHOL 2018, Proof General 4.5, Isabelle/jEdit 2019, Lean 0.14.1, IntelliJ-Arend 1.0.0, and KeYmaeraX 4.6.3 (section 5.3, pp. 46–47). The denominator is nine environments, and the features are categorical symbols in the table; no percentages or task-time measurements are given.
 
-Inference: The trusted base remains PVS, its prover strategies, the TypeScript/Node.js server, Visual Studio Code, LSP transport, and the user's specification. The paper explicitly says, “The verification technology used by VSCode-PVS is not automatic, as in the case of Dafny and Imandra.” (section 6, p. 47) Thus the IDE can improve access without reducing the logical assumptions or the prover's trusted implementation.
+Inference: The trusted base remains PVS, its prover strategies, the TypeScript/Node.js server, Visual Studio Code, LSP transport, and the user's specification. The paper explicitly says, “The verification technology used by VSCode-PVS is not automatic, as in the case of Dafny and Imandra.” (section 6, p. 47) The quoted sentence is about proof automation and says nothing about the trusted base; the trusted-base list above and the conclusion that the IDE does not reduce assumptions are my own inference, since the paper has no trust analysis.
 
 Inference: For VL (Verus), the direct product threat is moderate. The paper shows that editor integration can remove workflow friction, but it does not show that IDE affordances produce sounder specifications or proofs. Existing work already covers the basic ideas of an LSP server, diagnostics, completion, and proof navigation; VL should reuse these patterns instead of redoing a new verification algorithm. The unresolved product risk is specification misunderstanding: easier buttons can accelerate an incorrect contract.
 
@@ -63,4 +63,4 @@ Inference: For VL (Verus), the direct product threat is moderate. The paper show
 - language-server separation: route editor events through LSP to isolated verifier workers and return diagnostics asynchronously
 - live verification feedback: parse or type-check in the background and render source-located errors, completion, and hover information
 - proof navigation: expose theories, declarations, theorem actions, and proof trees as clickable IDE views
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Proving mathematical theorems that capture properties of the intended characteristics and functionalities of the system is the core approach used in formal methods."): read the whole paper text (pp. 35-49) and checked every quotation word for word, the LoC figures, the Table 1 tool versions, the list of nine environments and seven metrics, the section and page references, and the technique steps against sections 3, 4 and 5; changed the 7K LoC claim (the paper does not say it is all TypeScript; page is 41, not 40), the pages for the connection manager and Diagnostics Provider (p. 40, not 39), step 1 of technique 2 (marked as inference), the diagnostics scope (syntax versus type-checking), a note that the Dafny/Imandra quote does not address the trusted base, and the tag link (now the DOI from the paper text); did not check the Verus-form paragraphs and the threat assessment (my own inference, not in the paper), the Table 1 symbols (not visible in the text extraction), or the references.

@@ -5,7 +5,7 @@ Tag: `ter-gabrielyan2019modular`, [paper](http://arxiv.org/abs/1908.05799v1)
 
 This paper makes graph reachability local enough for modular separation-logic verification. Its abstract identifies the obstacles: “any heap modification may affect an unbounded number of reference chains, which complicates modular verification, in particular, framing,” and “general graph reachability is not supported by SMT solvers.” (§abstract, p.1) The solution adds a footprint parameter to reachability, uses relative convexity to frame calls, and supplies first-order encodings for updates and path decomposition.
 
-The supported classes are acyclic graphs with bounded outdegree and potentially cyclic 0–1-path graphs, where there is at most one non-trivial path modulo cycles between each pair. The paper's goal is procedure-modular reasoning: a caller uses a callee's contract without inspecting its implementation, other threads, or heap outside the callee footprint. (§1, pp.1–2)
+The supported classes are acyclic graphs with bounded outdegree and potentially cyclic 0–1-path graphs, where there is at most one path (modulo cycles) between each pair; Sec. 4 defines a ZOPG as having “at most one (non-trivial) path (modulo cycles) between all pairs of nodes in the graph.” (§4, p.17) The paper's goal is procedure-modular reasoning: a caller uses a callee's contract without inspecting its implementation, other threads, or heap outside the callee footprint. (§1, pp.1–2; §4, p.17)
 
 Inference: this is a specification and encoding technique. It does not discover graph invariants or prove arbitrary graph algorithms; users must provide footprints, reachability contracts, triggers, and class-specific side conditions.
 
@@ -34,14 +34,14 @@ what it is. Field updates are rewritten to internal methods whose contracts expo
 how to apply it.
 
 1. Encode `E` via the snapshot abstraction so the solver can determine edge facts after an assignment. (§3.1, pp.6–7)
-2. Replace each `x.f := v` by an internal unlink/add operation with the same footprint. (§3.2, p.8)
-3. For an added edge, assert the path update formula; for removal, use the appendix formula accounting for alternative paths. (§3.2, pp.7–8)
+2. Rewrite each field update `x.f := v` as a call to an internal update method with the same footprint as the current method; the update is a removal of the old edge followed by an addition of the new one (`unlinkDAG`, `linkDAG`). (§3.2, p.8; App. A, p.30)
+3. For an added edge, assert the path update formula; for removal, use the App. A formula (due to Dong and Su) accounting for alternative paths. (§3.2, pp.7–8; App. A, pp.30–32)
 4. Restrict this direct-update technique to acyclic current footprints; arbitrary cycles may remain outside the footprint. (§3, p.6)
-5. Supply quantifier triggers so the SMT solver instantiates update axioms at relevant nodes. (§5.1, p.25)
+5. Supply quantifier triggers so the SMT solver instantiates the quantified axioms only where relevant; the paper says such triggers “are essential for performance.” (§5.1, p.25)
 
 Verus form. Inference: wrap pointer-field mutation in a verified Rust method with a pre/post contract stating the edge and path delta. A helper `proof fn` can prove the add-edge concatenation rule; deletion requires a lemma that splits on alternative paths. The executable assignment remains ordinary Rust. Inference: Verus cannot treat an arbitrary recursive `spec fn path` as a solver axiom safely; the update lemma must be proved or explicitly trusted, and any external contract must be marked as an assumption.
 
-where it fails or assumes. Removal is difficult precisely because deleting one edge does not imply deleting all paths that used it. The technique's formulas are exact only under its graph restrictions and supplied axioms.
+where it fails or assumes. Removal is difficult precisely because deleting one edge does not imply deleting all paths that used it. The update formulas are defined for acyclic graphs, and the paper's `updateDAG` asserts acyclicity before the unlink and after the link to keep this sound. (App. A, p.32) The path axiomatization is partial, so the formulas are exact only under these restrictions and the supplied axioms.
 
 ## technique 3: relative-convex reachability framing across calls
 
@@ -54,33 +54,33 @@ how to apply it.
 3. Use the corresponding formulas to translate `P(g,...)` into `P(h,...)` and `P(f,...)`; instantiate them in either direction. (§3.3, pp.10–11)
 4. Apply the callee postcondition to update h-local reachability, while separation-logic framing preserves `P(f,x,y) iff P0(f,x,y)`. (§3.3, p.10)
 5. Recheck convexity after the call, because a newly created edge can make h non-convex. (§3.3, p.11)
-6. When frame-local reachability is hidden by a disjunction, use the localization formula (15), selecting the last frame node that reaches h and the first that does not. (§3.4, pp.14–16)
+6. When frame-local reachability is hidden by a disjunction (cases (iv)–(v) of (9)), use the localization formula (15), selecting a frame edge (σ, τ) where σ is the last node that reaches h and τ is the first node that does not. (§3.4, pp.13–16)
 
 The authors explain why the restriction is needed: “Without this assumption, the number of cut points of h could be arbitrary, and localization of reachability information would require either considering an unbounded set of cases or higher-order reasoning.” (§3.3, p.11)
 
 Verus form. Inference: a Rust call wrapper can take ghost sets h and f, require disjoint union and a `relatively_convex` predicate, then invoke the callee contract and a framing lemma that reconstructs caller reachability. Encode the five cases as lemmas over ghost graph snapshots. A `proof fn` can establish post-call convexity or fail when the callee adds an escaping edge. Verus's borrow checker supplies noninterference for fields outside h only when the API's ownership types enforce it; the reachability partition remains a logical proof obligation.
 
-where it fails or assumes. Non-convex callee footprints are outside the first-order framing guarantee. The frame itself may be non-convex, so formula (15) is required. The method's specifications must be strong enough to rule out bad path configurations; otherwise verification correctly fails.
+where it fails or assumes. Non-convex callee footprints are outside the technique: the paper notes that “in full generality, a first-order reachability framing formula for our path predicate cannot exist.” (§3.3, p.9) The frame itself may be non-convex, so formula (15) is required. The paper says “Our technique is complete, provided that callee postconditions specify sufficient information about reachability within their footprint.” (§3.4, p.17)
 
 ## technique 4: cyclic 0–1-path graphs
 
-what it is. The paper extends framing to potentially cyclic graphs with at most one non-trivial path modulo cycles (ZOPGs). A ring is the motivating structure. The extension retains relative convexity but replaces acyclic update reasoning with obligations that prevent four classes of alternative-path configurations. (§4, pp.20–24)
+what it is. The paper extends framing to potentially cyclic graphs with at most one non-trivial path modulo cycles (ZOPGs). A ring is the motivating structure. The extension keeps relative convexity of callee footprints (restriction (1)) and drops acyclicity (restriction (2)). Field updates use a refined relation DEP instead of P, and calls carry obligations that prevent four bad configurations that would create alternative paths. (§4, pp.17–24)
 
 how to apply it.
 
-1. State the ZOPG invariant for each footprint before and after a call. (§4, pp.20–21)
-2. Preserve local ZOPG structure for field updates using the paper's criterion (21). (§4, pp.21–22)
-3. At calls, check relative convexity and instantiate partition formulas as in the acyclic case. (§4, p.20)
-4. Add preconditions that exclude the four bad configurations (α)–(δ), covering alternative paths that enter/exit h in different patterns. (§4, pp.22–24)
-5. Verify clients such as ring insertion; reject under-constrained calls whose preconditions permit a ZOPG violation. (§4.2, pp.22–24)
+1. Mark footprints that are ZOPGs with the annotation `g : Zopg`; such a method is locally checked to preserve the ZOPG property, and is translated to a method with `g : Graph` plus extra proof obligations. (§4.2, pp.20–21)
+2. For field updates, use the DEP relation (edge-dependent paths): update it with formulas such as (16), convert between P and DEP with axioms such as (17) and (18), and translate `u.next := v` into `u.next := null; u.next := v`, emitting criterion (21) before the second update. (§4.1, pp.17–19; §4.2, p.21; App. B–C, pp.32–34)
+3. At calls, check relative convexity and instantiate the partition formulas as in the acyclic case; the paper says “Restriction (1) alone enables our handling of method calls,” where (1) is relative convexity of footprints. (§4, p.17)
+4. Conjoin the negations of formulas (22)–(25), which characterize the four bad configurations (α)–(δ) of Fig. 13, as a proof obligation of the client; the client's precondition must be strong enough to rule them out. The paper sketches a completeness argument for the four cases. (§4.2, pp.22–24)
+5. Verify clients such as ring insertion (`testZopgObligations`, Fig. 11); in the Table 1 “Fail” variants of the ring-insert client, the technique identifies the bad configurations when the heap is under-constrained before the call. (§4.2, pp.20–23; §5.2, p.26)
 
 Verus form. Inference: represent the ZOPG invariant as a ghost `spec fn` over a finite abstract edge set and prove update/call lemmas. A ring insertion API would require the no-alternative-path obligations and ensure the invariant after insertion. Cycles require a well-founded measure for recursive proof lemmas or finite graph bounds; the paper's first-order axioms do not directly become executable Rust code.
 
 ## evidence and limits
 
-The authors hand-encoded each example in Viper, using Boogie and Z3. They report laptop hardware with a 2.8 GHz Intel Core i7 and Z3 4.8.5. (Section 5.1, p.25) Table 1 contains 16 listed variants, including Merge (7.9–33.9 seconds), Left-Child-Right-Sibling (10.1–17.1 seconds), Harris List (14.5 seconds), acyclic list examples (6.9–7.9 seconds), and six Ring-Insert variants (10.1–87.2 seconds). (Table 1, pp.25–26) The denominator is the 16 rows shown; the paper does not report a success percentage because the table is a selected set of verified and intentionally failing examples. Two Merge rows are deliberate failures: one has a code bug and one a specification bug. (§5.2, p.25)
+The authors hand-encoded each example in Viper and verified them with Viper's Boogie-based verifier, which uses Z3. (§5.1, pp.24–25) They report a laptop running macOS with a 2.8 GHz Intel Core i7 and Z3 version 4.8.5. (§5.1, p.25) Table 1 contains 17 rows: Merge (4 rows, 13.2–33.9 seconds), Left-Child-Right-Sibling (4 rows, 10.1–17.1 seconds), Harris List (14.5 seconds), Acyclic List Reverse and Append (7.9 and 6.9 seconds), and six Ring-Insert rows (10.1–87.2 seconds). (Table 1, p.25) The denominator is the 17 rows shown; the paper does not report a success percentage. Four rows are deliberate failures: two Merge rows (“Bug in code” and “Bug in spec.”; the bugs are a negated branch condition and a missing last precondition of merge) and the two ring-insert client “Fail” rows. (Table 1 and §5.2, p.25)
 
-The paper reports that reachability is SMT-amenable for a broad class and that triggers are essential for performance. (§5.3, p.26) It does not establish scalability to arbitrary graph sizes, automatic trigger synthesis, or soundness of the underlying Viper/Z3 implementation. Inference: VL must trust Verus's solver translation, graph abstraction lemmas, ownership contracts, and any external-body models. The product threat is high for graph algorithms whose reachability contracts are incomplete: a passing proof can establish only the stated local relation, while a missing convexity or ZOPG precondition can make the specification unsound or unverifiable.
+The paper reports that “reachability properties are amenable to SMT-based verification for a broad class of heap-manipulating programs,” that triggers must be annotated in specifications (§5.3, p.26), and that for the technique's quantified formulas triggers “are essential for performance” (§5.1, p.25). It does not establish scalability to arbitrary graph sizes, automatic trigger synthesis, or soundness of the underlying Viper/Z3 implementation. Inference: VL must trust Verus's solver translation, graph abstraction lemmas, ownership contracts, and any external-body models. The product threat is high for graph algorithms whose reachability contracts are incomplete: a passing proof can establish only the stated local relation, while a missing convexity or ZOPG precondition can make the specification unsound or unverifiable.
 
 ## what VL should reuse and should not redo
 
@@ -96,4 +96,4 @@ Inference: VL should not redo a generic claim that reachability can be framed mo
 - relative-convex call framing — partition caller paths across callee footprint and frame when no path leaves and re-enters the callee
 - frame reachability localization — recover frame-local paths with the last-reaches and first-does-not-reach split
 - z-opg preservation — prevent four alternative-path configurations to verify cyclic graphs with at most one path modulo cycles
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our treatment of the DEP relation is similar to the treatment of the P relation described in Sec. 3.2"): I read the whole paper text (main text and Appendices A–C) and the whole study; checked every quotation, section and page reference, the Fig. 1 contract, Definition 1, the five path-partitioning cases, formulas (15), (16), (21)–(25), the Table 1 rows and times, and the experimental setup; changed the ZOPG definition wording, several page ranges, the technique 2 and technique 4 steps (rewrite via update method, DEP relation, bad-configuration obligations), the Table 1 row count (17, not 16), the Merge time range (13.2–33.9 s, not 7.9–33.9 s), the number of failing rows (four), and the macOS and trigger details; did not check the Verus-form paragraphs, which are marked Inference and are not from the paper, nor the cited external works, nor the Viper artifact; link kept as the arXiv link, which matches the arXiv identifier printed on the paper.

@@ -14,7 +14,7 @@ What it is. Treat each C function as a component. On every build, use the softwa
 
 How to do it.
 
-1. Obtain old and new revisions and enumerate changed functions from the SCM system (Section 2, p. 3).
+1. Obtain old and new revisions and enumerate changed functions from the SCM system (Section 2, pp. 2–3).
 2. Run a fast, imprecise AST structural-equivalence check (Section 2.1, p. 4).
 3. If the ASTs differ, encode both functions and run a slower precise check, such as bounded model checking, for equal inputs (Section 2.1, p. 4).
 4. Set a time limit. If formal equivalence times out, classify the versions as non-equivalent and start regression verification (Section 2.1, p. 4).
@@ -22,9 +22,9 @@ How to do it.
 
 The paper's concrete examples are a macro rename commit that an AST check would classify equivalent and a commit removing negative-index support that a formal check would classify non-equivalent, thereby triggering tests (Section 2.1, p. 4). It cautions that function equivalence is generally undecidable, so timeouts are necessary (Section 2.1, p. 4).
 
-Verus form. Inference: use a CI wrapper that computes changed Rust/Verus functions and first applies syntax-tree comparison. For a changed function, express the old/new behavioral relation as a `proof fn` over equal inputs and equal abstract state, with `requires` for valid states and `ensures` for equal outputs and permitted mutations. Keep the equivalence proof separate from the implementation proof; a successful individual `ensures` does not prove two versions equivalent. Inference: if Verus cannot finish within the CI budget, conservatively schedule the changed function and its dependent proofs; do not treat timeout as equivalence.
+Verus form. Inference: use a CI wrapper that computes changed Rust/Verus functions and first applies syntax-tree comparison. For a changed function, express the old/new behavioral relation as a `proof fn` over equal inputs and equal abstract state, with `requires` for valid states and `ensures` for equal outputs and permitted mutations. Inference: keep the equivalence proof separate from the implementation proof; a successful individual `ensures` does not prove two versions equivalent. Inference: if Verus cannot finish within the CI budget, conservatively schedule the changed function and its dependent proofs; do not treat timeout as equivalence.
 
-Evidence and limits. The paper gives no count of detected equivalent changes, timeout rate, proof time, or false classifications. Its evidence is the two `vec` commits and the algorithmic argument. The equivalence relation itself must be chosen carefully: a structural check can miss semantic equivalence, while a bounded check only covers its modeled bounds. Inference: a Verus deployment needs a dependency graph and a stated relation over ghost state, because Rust ownership changes can alter which state is reachable even when syntax is similar.
+Evidence and limits. The paper gives no count of detected equivalent changes, timeout rate, proof time, or false classifications. Its evidence is the two `vec` commits and the algorithmic argument. Inference: the equivalence relation itself must be chosen carefully; a structural check can miss semantic equivalence, while a bounded check only covers its modeled bounds. Inference: a Verus deployment needs a dependency graph and a stated relation over ghost state, because Rust ownership changes can alter which state is reachable even when syntax is similar.
 
 ## technique 2: generalized regression tests as bounded model-checking harnesses
 
@@ -38,20 +38,20 @@ How to do it.
 4. Preserve the test assertions, such as `test_assert(v.data[pos] == val)` (Section 2.2, Fig. 2b, p. 5).
 5. Run BMC over the local model and collect counterexamples for the development or analytics team (Sections 1–2, pp. 2–3).
 
-The approach reduces state by starting from the test-described state and considering only local functions. For `vec`, the entire system has cyclomatic complexity 24, whereas the regression tests have average cyclomatic complexity 1 (Section 2.2, p. 4). These are the paper's denominators and setting: one project, whole-system complexity 24, and the average over its regression tests; they are not a general benchmark.
+The approach reduces state by starting from the test-described state and considering only local functions (Section 2.2, pp. 4–5). For `vec`, the entire system has cyclomatic complexity 24, whereas the regression tests have average cyclomatic complexity 1 (Section 2.2, p. 5). These are the paper's denominators and setting: one project, whole-system complexity 24, and the average over its regression tests; they are not a general benchmark.
 
-Verus form. Inference: make a verified harness function that initializes a valid Rust value, calls the changed function with symbolic or quantified inputs represented in the specification, and asserts the test postcondition with `assert` or an `ensures` clause. Use `requires` to state the initialized-structure condition and loop `invariant` for any harness loop. Verus does not execute nondeterministic choices at runtime; the equivalent proof obligation quantifies over allowed inputs. Inference: retain concrete tests as executable smoke tests, but treat the generalized harness as the formal artifact.
+Verus form. Inference: make a verified harness function that initializes a valid Rust value, calls the changed function with symbolic or quantified inputs represented in the specification, and asserts the test postcondition with `assert` or an `ensures` clause. Use `requires` to state the initialized-structure condition and loop `invariant` for any harness loop. Inference (Verus behavior is not from this paper): Verus does not execute nondeterministic choices at runtime; the equivalent proof obligation quantifies over allowed inputs. Inference: retain concrete tests as executable smoke tests, but treat the generalized harness as the formal artifact.
 
 Evidence and limits. The method's evidence is the Figure 2 transformation and the cyclomatic-complexity comparison. The authors identify false negatives: nondeterministic values may force paths infeasible in the original program, creating a tension between coverage and soundness (Section 2.2, p. 5). They propose future test generation and conditional verifiers but report no achieved coverage, bug count, or false-negative denominator. The test suite is therefore an assumption: missing or weak tests leave behaviors outside the harness.
 
 ## technique 3: compositional CI reporting
 
-What it is. After equivalence pruning and generalized-test model checking, collect counterexamples and send reports back into the developer workflow. The approach uses the same commit and test data as CI, but applies formal checks at diff time (Section 2, pp. 3–4). The authors emphasize that workflow integration is necessary for adoption: “this step is crucial according to Sadowski et al. since careful developer workflow integration is key for any static analysis tool adoption by engineers” (Section 1, p. 2).
+What it is. After equivalence pruning and generalized-test model checking, collect counterexamples and send reports back into the developer workflow. The approach uses the same development-history and regression-test information as CI, but applies formal checks at diff time (Section 2, p. 2). Inference: the paper presents reporting as the last step of one process, not as a separate technique; this section only separates it for the catalog. The authors emphasize that workflow integration is necessary for adoption: “this step is crucial according to Sadowski et al. since careful developer workflow integration is key for any static analysis tool adoption by engineers” (Section 1, p. 2).
 
 How to do it.
 
-1. Trigger the process for each commit or pull request (Section 2, p. 3).
-2. Build the project and identify changed functions (Section 2, p. 3).
+1. Trigger the process for each commit or pull request (Section 2, p. 2).
+2. Build the project and identify changed functions (Section 2, pp. 2–3).
 3. Run structural and then formal equivalence checks (Section 2.1, p. 4).
 4. Select related tests, generalize them, and model-check the changed components (Section 2.2, pp. 4–5).
 5. Return counterexamples and analysis results to developers and the analytics team (Sections 1–2, pp. 2–3).
@@ -62,9 +62,9 @@ Evidence and limits. This technique is proposed, not validated in the paper. The
 
 ## what is proved, measured, and trusted
 
-The paper proves no new theorem and reports no completed system evaluation. It gives a process design, two illustrative commits, one `vec` project with 22 tests, and a complexity comparison of 24 versus average 1. Trusted inputs include SCM history, regression-test adequacy, the chosen equivalence checker, BMC bounds, and the validity of nondeterministic generalization. The paper explicitly acknowledges model-checking scalability and coverage limitations.
+The paper proves no new theorem and reports no completed system evaluation. It gives a process design, two illustrative commits, one `vec` project with 22 tests, and a complexity comparison of 24 versus average 1. Inference: trusted inputs include SCM history, regression-test adequacy, the chosen equivalence checker, BMC bounds, and the validity of nondeterministic generalization. The paper itself names state-space explosion (Section 1, p. 2) and the coverage-versus-soundness balance (Section 2.2, p. 5) as limitations.
 
-Inference: threat to a product that generates agent-written verified Rust is high at the workflow boundary but manageable. A green CI proof can miss changed behavior if equivalence pruning is unsound, a generalized test over-approximates or under-approximates the real domain, or a dependency contract is stale. VL should reuse the diff-time decomposition and counterexample reporting ideas. It should not claim this paper demonstrates industrial proof coverage or a five-minute guarantee; those are goals, not measured outcomes. A new VL measurement should report changed-function counts, proof timeouts, dependent proofs skipped, generalized-harness coverage, and real versus spurious counterexamples with explicit denominators.
+Inference: the threat to a product that generates agent-written verified Rust is high at the workflow boundary but manageable. A green CI proof can miss changed behavior if equivalence pruning is unsound, a generalized test over-approximates or under-approximates the real domain, or a dependency contract is stale. Inference: VL should reuse the diff-time decomposition and counterexample reporting ideas. It should not claim this paper demonstrates industrial proof coverage or a five-minute guarantee; those are goals, not measured outcomes. A new VL measurement should report changed-function counts, proof timeouts, dependent proofs skipped, generalized-harness coverage, and real versus spurious counterexamples with explicit denominators.
 
 ## techniques for the catalog
 
@@ -73,4 +73,4 @@ Inference: threat to a product that generates agent-written verified Rust is hig
 - generalized regression harness: replace selected test inputs with nondeterministic values while preserving assertions
 - local compositional BMC: model-check only changed components from test-described initial states
 - CI proof feedback: return formal counterexamples through the developer's normal commit workflow
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Instead, we combine existing test cases with non-deterministic input values to maximize the coverage of this verification"): read the whole 7-page text (arXiv v2) and compared every quotation, number (22 tests, 5 minutes, cyclomatic complexity 24 versus 1, commit ids), section and page reference (PDF page numbers), and technique step; changed page references for the SCM step, the CI trigger and build steps, and the cyclomatic-complexity figures, added a pointer for the state-space reduction claim, labeled the separation of reporting as its own technique and the Verus, trust and threat statements as inference, and replaced one unsupported "explicitly acknowledges" sentence with cited limitations; the link is the arXiv link given in the paper text; not checked: the cited works, the Facebook incident, the vec repository or commits, and the Verus claims, which go beyond the paper.

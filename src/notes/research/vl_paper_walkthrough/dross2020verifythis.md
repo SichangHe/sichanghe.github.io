@@ -16,11 +16,11 @@ Challenge 1A asks for an array scan that returns maximal monotonic cutpoints, th
 
 how to apply it
 
-1. Represent the input sequence and cutpoints in the verifier’s convenient model; the organizers explicitly allow arrays, mathematical sequences, or dynamic lists (section 2.2, p. 5)
-2. Prove non-empty, endpoint, and bounds properties for the result (section 2.1.1, p. 4)
-3. Prove that every interval between adjacent cutpoints is increasing or nonincreasing (section 2.1.1, p. 4)
-4. Strengthen the predicate with maximality and prove that extending a segment at either endpoint breaks monotonicity; teams found it preferable to state right and left maximality separately (section 2.4, p. 7)
-5. Add loop invariants relating processed indices, the current segment direction, and already emitted cutpoints; the report says teams that succeeded needed “a few key invariants” (section 2.3, p. 6)
+1. Represent the input sequence and cutpoints in the verifier’s convenient model; the organizers told participants they were free to choose any representation, listing “arrays, mathematical sequences, dynamic lists” (section 2.2, p. 6)
+2. Prove non-empty, begin-to-end, and within-bounds properties for the result (verification task 1; properties defined in section 2.1.1, pp. 4–5)
+3. Prove that every segment between adjacent cutpoints is monotonic, that is, strictly increasing or nonincreasing, without the maximality requirement (verification task 2; section 2.1.1, pp. 4–5)
+4. Strengthen the predicate with maximality (verification task 3, marked “optional task (advanced)” with no formal definition given, section 2.2, p. 6) and prove that extending a segment makes it non-monotonic; teams typically stated maximality as two properties, to the right and to the left, and found explicit treatment of both preferable since the invariants are similar (section 2.4, p. 7)
+5. Inference: add loop invariants relating processed indices, the current segment direction, and already emitted cutpoints. The paper does not list the invariants; it reports that incomplete proofs were missing them: one team “missed a few crucial invariants” (section 2.3, p. 6) and Team VerCors T(w/o)o “only missed a few key invariants” in the maximality proof (section 2.3, p. 7)
 
 Verus form
 
@@ -28,7 +28,7 @@ Inference: encode the result as a `Seq<int>` or a vector model and write a `spec
 
 evidence and limits
 
-The report records that Team OpenJML and Team The Refiners submitted complete, correct solutions; five teams made substantial progress but skipped maximality or used simplifying assumptions, and five made more limited progress (section 2.3, p. 6). OpenJML’s array-oriented implementation was close to the pseudocode and its SMT backend discharged the proof after suitable loop invariants (section 2.3, p. 6). Frama-C participants incurred extra memory-safety and separation obligations before functional properties (section 2.3, p. 7). Model checking required finite bounds on sequence length and values (section 2.3, p. 7). These denominators are teams in this 13-team event, not arbitrary programs.
+The report records that Team OpenJML and Team The Refiners submitted complete, correct solutions of challenge 1; one more team got close but missed a few crucial invariants, five made substantial progress but introduced simplifying assumptions or skipped maximality, and five made more limited progress (section 2.3, p. 6). Team OpenJML’s implementation was very close to the pseudo-code of Figure 1 and it could “express and prove properties that directly translated all of the challenge’s verification tasks”; the paper adds that for SMT-based verifiers a proof depends on writing specifications in a form amenable to automated reasoning, and that the required loop invariants had a fairly clear connection to the postconditions (section 2.3, p. 6). Frama-C participants incurred extra memory-safety and separation obligations before functional properties (section 2.3, p. 7). Model checking required finite bounds on sequence length and values (section 2.3, p. 7). These denominators are teams in this 13-team event, not arbitrary programs.
 
 ## technique 2: refinement and representation choice for GHC sort
 
@@ -38,13 +38,13 @@ Part 1B decomposes GHC sort into (1) split into monotonic segments, (2) reverse 
 
 how to apply it
 
-1. Specify each helper (cutpoint construction, reversal, merge) before composing them (section 2.1.1–2.1.2, pp. 4–5)
-2. Prove merge sortedness and permutation of its two inputs
-3. Prove that reversing a decreasing segment yields an increasing segment
-4. Prove that pairwise merging preserves the multiset of values and sortedness
-5. Use induction on the number of segments to establish the final sorted permutation
+1. Specify each helper (cutpoint construction, reversal, merge) before composing them; the paper’s Part B task 1 is to “Write functional specifications of all procedures/functions/main steps of your implementation” (section 2.1.2, p. 5)
+2. Verify that merge returns a sorted sequence (Part B task 2, section 2.1.2, p. 5)
+3. Verify that the overall algorithm returns a sorted output (task 3) that is a permutation of the input (task 4) (section 2.1.2, p. 5)
+4. Inference: prove that reversing a decreasing segment yields an increasing segment; the paper lets Part B participants fold the reversal into the pass that builds the segments (section 2.2, p. 5) but states no separate reversal task
+5. Inference: prove that pairwise merging preserves the multiset of values and sortedness, then use induction on the number of segments to establish the final sorted permutation; the paper does not describe this proof structure
 
-The Refiners used recursive predicates and Isabelle’s refinement framework; OpenJML stayed close to arrays and pseudocode. VerCors teams used immutable sequences to avoid array permissions (section 2.3, p. 6).
+For challenge 1, Team The Refiners used functional lists of lists for the segments and expressed the correctness properties recursively so that they were amenable to inductive proofs (section 2.3, p. 6); Team OpenJML stayed close to arrays and the pseudo-code. Isabelle’s refinement framework appears in the paper for challenges 2 and 3 (sections 3.3, p. 10, and 4.3, p. 14), not for challenge 1. Both teams using VerCors used immutable sequences instead of arrays to store cutpoints, which spared them dealing with permissions (section 2.3, p. 7).
 
 Verus form
 
@@ -52,7 +52,7 @@ Inference: model permutation with a `Multiset` specification and sortedness with
 
 evidence and limits
 
-The paper reports that a successful SMT proof depends on specifications shaped for automation; teams sometimes changed the implementation (for example, a global result variable) without changing behavior (section 2.3, p. 6). This is evidence about proof engineering, not a claim that every representation is equivalent in effort. The asymmetric definition of monotonicity was chosen because comparing the first two elements determines the rest of a segment and makes invariants simpler (section 2.2, p. 5).
+The paper reports that a successful SMT proof depends on specifications shaped for automation; Team OpenJML took shortcuts, such as writing the result into a global variable instead of returning it, that “do not affect its behavior but are somewhat inelegant” (section 2.3, p. 6). Team Bashers’s explicit index representation of cutpoints “turned out not to be a good match for Isabelle’s functional programming features” (section 2.3, p. 6). Inference: representation choice affects proof effort, but the paper does not claim every representation is equivalent or measure the effort. The organizers chose the asymmetric definition of monotonicity because comparing the first two elements of a segment decides the direction of the rest, and it “seemed to require slightly simpler invariants” (section 2.2, p. 6); in the postmortem, teams did not find the asymmetry hard to work with (section 2.4, p. 7).
 
 ## technique 3: stack invariants for nearest-smaller values and Cartesian trees
 
@@ -64,12 +64,12 @@ Part 2B builds a Cartesian tree from left and right nearest-smaller sequences. A
 
 how to apply it
 
-1. State stack representation and a predicate that every stack index is in the processed prefix (Figure 3, p. 8)
-2. Preserve that stack order is increasing in the relevant monotonic sense while popping (section 3.1.1, p. 8)
-3. After the pop loop, prove the top is the nearest smaller index, or that none exists
-4. Push the current index and establish the loop invariant for the next input position
+1. Choose a stack representation; the organizers let participants use an existing stack implementation or sequences as models of stacks (section 3.2, p. 9). Teams used a low-level array plus top index (OpenJML), lists with top and tail (Mergesort), logical axioms (Viper), or mathematical sequences (Sophie & Wytse) (section 3.3, pp. 10–11)
+2. Inference: state a stack invariant that every stack index lies in the processed prefix and that stack values are ordered; the paper gives no such invariant
+3. Inference: after the pop loop, prove the top is the nearest smaller index, or that none exists (this is verification task 3, “Smallest”, section 3.1.1, p. 8)
+4. Inference: push the current index and re-establish the loop invariant for the next input position
 5. For the tree, compute left neighbors forward and right neighbors backward, then select parents by the four-case rule (section 3.1.2, p. 9)
-6. Prove node uniqueness/binary structure, heap order, and finally the global in-order traversal; the report calls traversal the complex “big” invariant (section 3.4, p. 11)
+6. Prove the tree is well formed and binary with one node per value (task 1, Binary), that it has the heap property (task 2, Heap), and, as an optional task, that in-order traversal yields the input sequence (task 3, Traversal) (section 3.1.2, p. 9); the report says proving traversal “requires a complex ‘big’ invariant” (section 3.4, p. 11)
 
 Verus form
 
@@ -77,7 +77,7 @@ Inference: represent a stack as `Seq<int>` in the specification and a `Vec<usize
 
 evidence and limits
 
-OpenJML completed all three nearest-smaller properties automatically once it supplied the loop invariants; its Z3 backend handled the complex third invariant (section 3.3, p. 10). The model-checking team completed the part under lists of at most six values, each from four possible values (section 3.3, p. 11). Coq teams made an off-by-one implementation error by popping the first qualifying stack entry, showing that a proof of only the first two properties can miss the “smallest” requirement (section 3.3, p. 10). These are concrete limits on specifications and bounded models.
+OpenJML completed all three nearest-smaller properties automatically once it supplied the loop invariants; its Z3 backend handled the complex third invariant (section 3.3, p. 10). The model-checking team completed the part under lists of at most six values, each from four possible values (section 3.3, p. 11). Both Coq teams (and, as found after the competition, Team The Refiners) implemented an “off-by-one” version that also pops the first stack value satisfying s[y] < s[x]; this did not affect tasks 1 and 2, and the Coq teams did not notice it (section 3.3, p. 10). Inference: a proof of only the first two properties can miss such an error, which is why the third (smallest) property matters. These are concrete limits on specifications and bounded models.
 
 ## technique 4: relational refinement and nondeterministic-order reasoning for sparse parallel multiplication
 
@@ -89,13 +89,13 @@ how to apply it
 
 1. Specify COO-to-dense correspondence, including whether duplicate coordinates sum (section 4.3, p. 13)
 2. Prove the sequential fold computes standard matrix multiplication
-3. Add locks or atomic blocks around each output update and prove race freedom (section 4.1, p. 12)
-4. To avoid reasoning about a fixed schedule, model processed entries as a set or multiset and prove that every order yields the same sum; Isabelle used a multiset to model nondeterministic order (section 4.3, p. 14)
+3. Add synchronization of the participant’s choice (the task lists “lock, atomic block”) and verify the absence of concurrency issues such as data races and deadlocks (verification task 2, section 4.1, p. 12); both VerCors teams used parallel loops with an atomic block around the output update (section 4.3, p. 14)
+4. To avoid reasoning about a fixed schedule, model processed entries as a set or multiset so that the result does not depend on processing order. Team Viper tracked the set of processed elements with an axiomatized summation function, Team The Refiners’ Isabelle model took a multiset as input, whose elements are processed in nondeterministic order, and Team Coinductive Sorcery compared the COO-list version with a binary-tree version (section 4.3, p. 14)
 5. Prove the concurrent result equals the sequential result, under explicit bounds if using a finite-state model checker
 
 Verus form
 
-Inference: use a Verus state machine or a lock/atomic protocol for ownership of output cells. Specify a ghost set or multiset of processed COO entries and an invariant equating each output component to the sum over that set. Use `atomic` blocks or a state-machine transition invariant for each update; prove commutativity/associativity assumptions for the numeric domain explicitly. A `Seq` model can express the sequential fold; it does not by itself prove thread interference safety.
+Inference: use a Verus state machine or a lock/atomic protocol for ownership of output cells. Specify a ghost set or multiset of processed COO entries and an invariant equating each output component to the sum over that set. Use atomic operations with ghost state or a state-machine transition invariant for each update; prove commutativity/associativity assumptions for the numeric domain explicitly. A `Seq` model can express the sequential fold; it does not by itself prove thread interference safety.
 
 evidence, trust, and threat
 
@@ -103,9 +103,9 @@ No team solved all of challenge 3. Six of 12 teams in the final session attempte
 
 ## what is proved, what remains trusted, and reuse for VL
 
-The event proves what each submitted tool and specification establishes; it does not validate that the natural-language challenge captures every desired property. Model-checking results are bounded, and SMT results depend on solver assumptions and supplied invariants. The report’s regression covers 21 challenges; it found that mutable input, outlined or recursive algorithms, and matrix inputs correlate with fewer complete solutions (section 5.3, pp. 17–18). Table 3 reports complete-solution percentages; for example, Monotonic segments and GHC sort had 85% partial and 15% complete, Cartesian trees 69% partial and 15% complete, and sparse matrix multiplication 85% partial and 0% complete, each denominator being participating teams for that challenge (Table 3, p. 17).
+Inference: the event shows what each submitted tool and specification establishes; it does not validate that the natural-language challenge captures every desired property. The paper notes that “correctness is relative to a specification, and hence, different ways of formalizing a specification drastically change the hardness of establishing correctness” (section 1.4, p. 3), and that judging used no fixed quantitative scoring. Model-checking results are bounded (sections 2.3 and 3.3, 4.3), and SMT proofs depend on supplied invariants. The report’s regression covers 21 challenges; it found that mutable input, outlined or recursive algorithms, and matrix inputs correlate with fewer complete solutions (section 5.3, pp. 17–18). Table 3 reports complete-solution percentages; for example, Monotonic segments and GHC sort had 85% partial and 15% complete, Cartesian trees 69% partial and 15% complete, and sparse matrix multiplication 85% partial and 0% complete, each denominator being participating teams for that challenge (Table 3, p. 17).
 
-Inference: VL should use staged tasks, explicit denominator-labeled metrics, and challenge families covering arrays, recursive structures, and concurrency. It should record assumptions such as bounded domains, unproved algebraic laws, and omitted maximality. The report also says that high-level languages let teams focus on behavioral properties while low-level languages spend effort on memory separation (section 5.4, p. 18); this is directly relevant to deciding which Rust safety obligations Verus should discharge automatically.
+Inference: VL should use staged tasks, explicit denominator-labeled metrics, and challenge families covering arrays, recursive structures, and concurrency. It should record assumptions such as bounded domains, unproved algebraic laws, and omitted maximality. The report also says that high-level languages let teams focus on behavioral properties while low-level languages spend effort on memory separation (section 5.2, p. 16; the paper’s examples are memory safety and separation); this is directly relevant to deciding which Rust safety obligations Verus should discharge automatically.
 
 ## techniques for the catalog
 
@@ -120,4 +120,4 @@ Inference: VL should use staged tasks, explicit denominator-labeled metrics, and
 
 - benchmark-based evaluation — compare tools with fixed time, challenge order, solution categories, and denominator-labeled results
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Instead of using a concrete data structure, Team Viper defined stacks in a pure logic fashion using uninterpreted function symbols and axioms that postulate the result of popping, pushing, and peeking on a stack."): I read the whole paper text and checked every quotation, number, team result, section and page reference, and the algorithm and task descriptions against it; I changed the misattributed "a few key invariants" quote (it describes an incomplete proof, not successful ones), several page numbers (section 2.2 items are on p. 6, VerCors sequences on p. 7), the claim that the Refiners used the refinement framework for challenge 1 (the paper ties it to challenges 2 and 3), the "high-level languages" citation (section 5.2, p. 16, not 5.4), the OpenJML SMT claim, and I marked proof steps that the paper does not state as "Inference:"; I did not check the cited external works, the Verus mappings (inferences by the study author, not in the paper), or the figures beyond their text and captions. The link is the arXiv identifier printed in the paper (2008.13610v3).
