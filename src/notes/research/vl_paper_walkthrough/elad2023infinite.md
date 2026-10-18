@@ -11,7 +11,7 @@ Inference: the relevant VeruLaw lesson is a diagnostic fallback for quantified p
 
 ## technique 1: write the verification failure as a satisfiability problem
 
-What it is: encode invariant inductiveness as unsatisfiability of a transition VC. For invariant `INV` and transition `TR_i`, the paper checks `INV ∧ TR_i ∧ ¬INV'`; a satisfying model is a counterexample to induction (Section 2.2, pp. 5–6). The Echo Machine example has a strict linear order `≺`, a `prev` witness function, and a safety invariant.
+What it is: encode invariant inductiveness as unsatisfiability of a transition VC. For invariant `INV` and transition `TR_i`, the paper checks `INV ∧ TR_i ∧ ¬INV'`; a satisfying model is a counterexample to induction (Section 2.2, pp. 5–6). The Echo Machine example has a strict linear order `≺`, a `prev_echoed` definition (an existential witness round that becomes a Skolem function `prev` in the counterexample, Section 2.3, p. 6), and a safety invariant.
 
 How to apply:
 
@@ -19,9 +19,9 @@ How to apply:
 2. Write initial-state, transition, and invariant formulas in many-sorted first-order logic (Figure 1, p. 6)
 3. For each transition, conjoin the pre-state invariant and transition relation with the negation of the primed invariant (Section 2.2, p. 5)
 4. Ask an SMT solver whether that VC is unsatisfiable; a model means the invariant is not inductive (Section 2.2, p. 5)
-5. If the solver diverges, treat the absence of a finite model as a possible infinite-model case rather than as evidence that the invariant is valid (Sections 1–2.3, pp. 2–7)
+5. Inference: if the solver diverges, treat the absence of a finite model as a possible infinite-model case rather than as evidence that the invariant is valid; the paper says solvers “diverge, leaving the user with an inconclusive result and no actionable information” when an axiom such as an induction principle is missing (Section 1, p. 2)
 
-The Echo Machine demonstrates why a plausible invariant can fail: the strengthened “every value at a non-start round was previously echoed” invariant admits an infinite descending chain of rounds, so `echo_start` can add a different value at `start` (Section 2.3, pp. 6–7). Adding the induction-scheme instance “if some value is echoed, then there is also a minimal round in which it is echoed” makes the VCs unsatisfiable (Section 2.3, p. 7).
+The Echo Machine demonstrates why a plausible invariant can fail: the strengthened invariant (every value echoed at a round other than `start` was previously echoed) admits an infinite descending chain of rounds, so `echo_start` can add a different value at `start` (Section 2.3, pp. 6–7). Adding the induction-scheme instance “if some value is echoed, then there is also a minimal round in which it is echoed” makes the VCs unsatisfiable (Section 2.3, p. 7).
 
 Verus form: Inference: use a Verus `ensures` property and loop or state-machine `invariant`, then inspect the generated failing obligation. For a diagnostic model, translate the relevant transition and invariant into an external SMT-LIB encoding with explicit pre/post state. Do not add an unconstrained `assume` to the accepted proof: the external model explains a missing premise, while the final Verus proof must establish the original obligation.
 
@@ -43,7 +43,7 @@ The paper's example has one regular `α` node for `start` and one summary `β` n
 
 Verus form: Inference: use a separate diagnostic representation whose summary nodes stand for an unbounded abstract domain, such as all list positions or rounds. A Rust/Verus ghost map or sequence can describe finite proof states, but the paper's node-plus-integer-index semantics is external to Verus. If the result is used to explain a Verus invariant, report the abstraction relation and do not present the symbolic structure as a concrete heap execution.
 
-Evidence and limits: One-dimensional structures capture regular repetition over a copy of the integers. The paper explicitly notes that nested repetition such as an `ω × ω`-like order needs a multidimensional generalization and is outside the single-dimension implementation used in evaluation (Section 4.3, pp. 14–16).
+Evidence and limits: One-dimensional structures capture regular repetition over a copy of the integers. The paper explicitly notes that nested repetition such as an `ω × ω`-like order needs a multidimensional generalization and is not covered by single-dimension structures; the paper sketches the generalization but states “For the remainder of the paper, we exclusively use single-dimension symbolic structures” (Section 4.3, pp. 14–16).
 
 ## technique 3: reduce symbolic-structure model checking to LIA
 
@@ -55,11 +55,11 @@ How to apply:
 2. Replace relation applications by the relation's LIA interpretation after substituting index terms (Figure 3, p. 14)
 3. Replace equality by LIA equality when both terms select the same node; otherwise translate it to false (Figure 3, p. 14)
 4. For `∀x`, conjoin a guarded LIA formula for every node and quantify over indices satisfying that node's bound; for `∃x`, use disjunction and a bound conjunction (Figure 3, p. 14)
-5. Submit the resulting quantified LIA formula to an SMT solver such as Z3 or cvc5 (Sections 2.4 and 4.2, pp. 8, 13–14)
+5. Submit the resulting quantified LIA formula to an SMT solver such as Z3 or cvc5 (Section 1, p. 3; Section 2.5, p. 9; FEST uses cvc5, Section 7, p. 23)
 
 Verus form: Inference: when a failed proof is abstracted into first-order relations, use the same translation as an offline diagnostic checker. Verus itself does not expose a user-level API for replacing arbitrary heap quantifiers by this node-index encoding. Keep the translation tool separate from the checked Rust artifact and validate any proposed missing axiom in the original Verus model.
 
-Evidence: The paper says that LIA “solvers such as Z3 or cvc5 can solve quickly” after uninterpreted functions and relations are removed (Section 2.4, p. 8). Theorem 4.7 provides the formal soundness and completeness statement for a fixed symbolic structure (Section 4.2, p. 14). This theorem concerns the symbolic explication, not the original program.
+Evidence: The paper says “the model checking problem for symbolic structures reduces to checking LIA formulas (Thm. 4.7)” and “Critically, the resulting LIA formula has no uninterpreted functions or relations” (Section 2.4, p. 8). Theorem 4.7 provides the formal soundness and completeness statement for a fixed symbolic structure (Section 4.2, p. 14). This theorem concerns the symbolic explication, not the original program.
 
 ## technique 4: symbolic search over templates
 
@@ -78,7 +78,7 @@ The heuristic family H uses bound formulas `⊤`, `x ≥ d`, and `x ≤ d`; func
 
 Verus form: Inference: generate a bounded family of abstract heap or state-machine summaries and ask an SMT backend to find a countermodel. Candidate terms could encode successor/predecessor relationships in a ghost sequence, but this is a research wrapper rather than a Verus language feature. If a model is found, convert it into a concrete finite witness or a missing invariant candidate before editing Rust proofs.
 
-Evidence and limits: Search is sound for every formula: a found symbolic model satisfies the formula. Completeness is guaranteed only for the OSC fragment with a computable finite template family (Sections 5–6, pp. 16–20). Outside OSC, the heuristic can miss a model.
+Evidence and limits: Search is sound for every formula: a found symbolic model satisfies the formula (Section 5, p. 16). The paper proves completeness for the OSC fragment with a computable finite template family (Section 6, pp. 18–20), and notes that for arbitrary satisfiable formulas “it is not guaranteed that a symbolic model exists” (Section 2.6, p. 9). Inference: outside OSC, the heuristic can therefore miss a model.
 
 ## technique 5: the Ordered Self Cycle (OSC) decision boundary
 
@@ -94,7 +94,7 @@ How to apply:
 
 Verus form: Inference: use OSC as a pre-check for whether an extracted Verus abstraction can receive a completeness guarantee. Most Rust heap and ownership specifications will violate the single-variable and function-nesting restrictions, so the check should usually be reported as “outside fragment,” not forced into an OSC encoding.
 
-Evidence and limits: The paper states that OSC “does not enjoy a finite model property” because cyclic functions can require infinite models (Section 6, p. 19). The guarantee is about first-order satisfiability and does not cover arbitrary quantified theories, concrete Rust memory, or solver bugs.
+Evidence and limits: The paper states “OSC does not enjoy a finite model property, as opposed to many decidable fragments, including EPR” and explains that the number of ground terms is infinite due to the cyclic functions (Section 2.6, p. 10). The guarantee is about first-order satisfiability and does not cover arbitrary quantified theories, concrete Rust memory, or solver bugs.
 
 ## technique 6: FEST evaluation and model explanation
 
@@ -114,7 +114,7 @@ Verus form: Inference: add a diagnostic command that exports a failed abstract o
 
 ## what is proved, measured, and trusted
 
-The paper proves the fixed-structure translation theorem, soundness of symbolic search, and decidability of OSC through a small symbolic model property (Sections 4–6). It measures runtime and solver outcomes on 21 examples. It trusts the correctness of its Python implementation, cvc5's LIA answers, the SMT-LIB encodings, and the abstraction from intended finite structures to first-order models. The authors acknowledge that arbitrary satisfiable formulas need not have symbolic models and that multidimensional patterns exceed the implemented one-dimensional structures (Sections 2.5–2.7 and 4.3).
+The paper proves the fixed-structure translation theorem, soundness of symbolic search, and decidability of OSC through a small symbolic model property (Sections 4–6). It measures runtime and solver outcomes on 21 examples. Inference: it trusts the correctness of its Python implementation, cvc5's LIA answers, the SMT-LIB encodings, and the abstraction from intended finite structures to first-order models; the paper does not discuss these as trust assumptions. The authors acknowledge that arbitrary satisfiable formulas need not have symbolic models and that multidimensional patterns exceed the implemented one-dimensional structures (Sections 2.5–2.7 and 4.3).
 
 Inference: threat to a product emitting agent-written verified Rust is medium for diagnosis and high for assurance. A compact infinite countermodel could explain why a quantified Verus invariant fails and suggest an induction or well-foundedness lemma. It cannot establish that the agent's abstraction preserves Rust ownership, aliasing, integer overflow, or unsafe behavior. VL should not redo a timeout-only baseline for quantified debugging; it should compare actionable model explanations against raw Verus diagnostics, record abstraction assumptions, and test whether developers repair the right invariant without weakening the specification.
 
@@ -126,4 +126,4 @@ Inference: threat to a product emitting agent-written verified Rust is medium fo
 - template-based symbolic search — encode choices of bounds and interpretations with Boolean and integer auxiliaries, then extract a model
 - OSC completeness boundary — use a syntactic fragment with a small symbolic model property to obtain a decision procedure
 - finite diagnostic explanations — attach FEST's compact model to a timeout or unknown result to expose missing induction assumptions
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Current solvers do not detect infinite models, and prior work on SMT-based verification circumvented them in various ways."): read all of the paper text including appendices A-D; checked every quotation, the section and page references (article page numbers 33:1-33:38), Table 2 numbers (Echo Machine 0.18 ± 0.01 s, Paxos 79.69 ± 22.22 s), the 21-example count, Figure 6 template contents, the five OSC restrictions, and the step lists of techniques 1-6; changed the Z3/cvc5 and finite-model-property quotes (wrong location or citations stripped), the pseudo-quote of the strengthened invariant, the `prev` description, the single-dimension claim (paper-wide, not only implementation), the completeness claim (proved for OSC, not asserted as exclusive), and marked three unsupported statements as Inference; did not check the cited external works, the proofs in Appendix A beyond reading them, or the FEST tool itself (not open-sourced in this text); tag year 2023 kept (arXiv 2023, ACM version dated 2024); link kept (arXiv ID from the paper text).

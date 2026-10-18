@@ -12,14 +12,14 @@ Inference: this is a trust-boundary checklist for VL. It is not a Verus soundnes
 
 what it is and when to use it
 
-The paper partitions CompCert’s TCB into Coq checking and extraction, links from user C text to the formal AST, assembly back-end printing and pseudo-instruction expansion, ABI/value models, runtime libraries, and assembling/linking. This decomposition finds bugs that a theorem-prover-only view misses. The authors conclude, "By construction, the bugs of CompCert are located in a limited subpart of the software, called its TCB, which may however not be as small as we may naively expect" (section 7, p. 228).
+The paper partitions CompCert’s TCB into Coq checking and extraction, links from user C text to the formal AST, assembly back-end printing and pseudo-instruction expansion, ABI/value models, runtime libraries, and assembling/linking. Inference: this decomposition surfaces boundaries that a view limited to the theorem prover would miss. The authors conclude, "By construction, the bugs of CompCert are located in a limited subpart of the software, called its TCB, which may however not be as small as we may naively expect" (section 7, p. 228).
 
 how to apply it
 
 1. list every formal theorem and its exact preconditions
 2. draw each boundary from user artifact to modeled artifact and from modeled output to executed artifact (sections 4–6, pp. 217–227)
 3. mark code that is trusted because it is unverified, extracted, generated, linked, or supplied by hardware/runtime
-4. search commits, bug reports, fuzzing results, and tests for failures at each boundary (sections 4.1, 5.1, 5.2, pp. 217–223)
+4. search commits, bug reports, fuzzing results, and tests for failures at each boundary (sections 4, 5.1, 5.2, pp. 217–223)
 5. state which failures can produce wrong code, merely reject compilation, or affect performance (section 5.3, p. 224)
 
 Verus form
@@ -28,13 +28,13 @@ Inference: for a Verus project, inventory the verifier, SMT solver, proof erasur
 
 evidence and limits
 
-The authors found no bugs in CompCert’s verified Coq phases, but found front-end elaboration and numerous back-end printer/expansion issues (section 7, p. 228). This is an empirical audit of the analyzed releases and forks, not a universal frequency claim. Inference: VL should measure defects by boundary and severity, retaining denominator and release information.
+The authors write, "None of the problems found were in the verified parts of CompCert"; they report two bugs in the front-end elaboration rules, a few subtle semantic bugs in some back-ends, and "most bugs were found in the very last part of the back-end, which expands and prints assembly instructions" (section 7, p. 228). This is an empirical audit of the analyzed releases and forks, not a universal frequency claim. Inference: VL should measure defects by boundary and severity, retaining denominator and release information.
 
 ## technique 2: keep external oracles untrusted and check their results
 
 what it is and when to use it
 
-CompCert calls OCaml algorithms such as register allocation as oracles: their results guide choices but can be checked. For mutable or nondeterministic external code, the paper describes a may-return monad that models possible outputs and preserves proved invariants. It states, "The functions are ‘oracles’, in the sense that they are not trusted to return correct results; their results are used to guide compilation choices, and may be submitted to checks" (section 3.3, p. 212).
+CompCert calls OCaml algorithms such as register allocation as oracles: their results guide choices but can be checked. For mutable or nondeterministic external code, the paper describes a may-return monad that models possible outputs and preserves proved invariants. The paper says, "These functions are “oracles”, in the sense that they are not trusted to return correct results; their results are used to guide compilation choices, and may be submitted to checks" (section 3.3, p. 212).
 
 how to apply it
 
@@ -42,7 +42,7 @@ how to apply it
 2. call the function as an oracle
 3. validate its output with a proved checker before using it in a semantic transformation (section 3.3, pp. 212–216)
 4. if behavior may vary between equal calls, model it with a nondeterministic/may-return monad instead of a pure function (section 3.3, p. 212)
-5. keep the trusted escape from the monad explicit and audit it; the paper notes that unsafe exits weaken the argument (section 3.4, p. 215)
+5. keep the trusted escape from the monad explicit and audit it; for CompCert-KVX's symbolic execution checker the paper says "The only cause for unsoundness in such an approach could be the unsafe exit" (section 3.4, p. 215)
 
 Verus form
 
@@ -50,7 +50,7 @@ Inference: model an unverified Rust helper with a `spec fn` describing an allowe
 
 evidence and limits
 
-The may-return approach increases proof effort and propagates impurity through callers (section 3.3, pp. 212–213). The paper reports no observed CompCert bug from axioms or extraction, but explicitly says that absence is not evidence that the boundary is safe (section 7, p. 228). Inference: checking oracle outputs reduces trust in the oracle but adds checker complexity and does not remove trust in the checker or runtime.
+The may-return approach increases proof effort and propagates impurity through callers (section 3.3, p. 212). The paper reports that "no bugs due to the use of axioms for interfacing untrusted code, or the use of the extractor to OCaml, were found" and adds that academic attention to removing axioms and the extractor "may not reflect the most pressing needs" (section 7, p. 228). It does not say the boundary is safe; for the extractor it says that it is "perhaps the only major project using the extractor, which is thus not thoroughly tested" (section 2.2, p. 207). Inference: checking oracle outputs reduces trust in the oracle but adds checker complexity and does not remove trust in the checker or runtime.
 
 ## technique 3: hash-consing and pointer equality with a proved/checking interface
 
@@ -60,7 +60,7 @@ Pointer equality is tempting as a fast equality test for functional trees, but a
 
 how to apply it
 
-1. never axiomatize runtime pointer equality as a deterministic function over pure values (section 3.4, p. 214)
+1. do not axiomatize runtime pointer equality as a deterministic function over pure values; the paper shows the naive axiom "is however unsound" (section 3.4, p. 214)
 2. choose a may-return model when the runtime may return either result, and prove only implications that hold for every allowed result (section 3.4, pp. 215–216)
 3. alternatively, force all nodes through a smart constructor and maintain the invariant that reachable structurally equal nodes share one pointer (section 3.4, pp. 216–217)
 4. expose only constructor, matcher, and equality operations so clients cannot violate hash-consing (section 3.4, p. 216)
@@ -71,13 +71,13 @@ Inference: use owned Rust IDs or ghost hashes rather than raw pointer equality i
 
 evidence and limits
 
-The smart-constructor approach adds more OCaml TCB code but is small and auditable; it assumes weak hash-table correctness (section 3.4, p. 217). The monadic approach adds less trusted code but spreads proof complexity and needs a safe exit discipline (section 3.4, pp. 215–216).
+The smart-constructor approach adds more OCaml TCB code but is small and auditable; it assumes weak hash-table correctness (section 3.4, p. 216). The monadic approach adds less trusted code but spreads proof complexity and needs a safe exit discipline (section 3.4, pp. 215–216).
 
 ## technique 4: audit front-end semantics, assembly expansion, ABI, and runtime assumptions
 
 what it is and when to use it
 
-CompCert’s verified core begins after unverified preprocessing, parsing/elaboration, and type annotation; even a formally verified parser can rely on an unverified pre-parser and elaboration pass (section 4, p. 217). At the back end, verified code emits an abstract assembly data structure; unverified OCaml prints text and expands pseudo-instructions. The paper identifies wrong operand order, wrong mnemonics, immediate-size errors, register-clobber omissions, and aliasing mistakes. One concrete finding was a builtin bug that produced successfully linked but incorrect code on four architectures (section 5.2, p. 222).
+CompCert’s verified core begins after unverified preprocessing, parsing/elaboration, and type annotation; the verified parser relies on an unverified pre-parser and is followed by an unverified elaboration pass, and the verified front end starts at the typechecker (section 4, p. 217). At the back end, verified code emits an abstract assembly data structure; unverified OCaml prints text and expands pseudo-instructions. The paper identifies wrong operand order, wrong mnemonics, immediate-size errors, register-clobber omissions, and aliasing mistakes. One concrete finding was a builtin bug that produced successfully linked but incorrect code on four architectures (section 5.2, p. 222).
 
 how to apply it
 
@@ -85,7 +85,7 @@ how to apply it
 2. test every instruction printer and operand permutation, including rare instructions (section 5.1, p. 220)
 3. make pseudo-instruction expansions carry explicit size, alignment, aliasing, and clobber cases; keep specification and expansion synchronized (section 5.2, pp. 221–223)
 4. where possible, move case distinctions into verified tagged pseudo-instructions selected by Coq code (section 5.2, p. 223)
-5. validate ABI conventions, register widths, linker behavior, and runtime allocator assumptions against the target platform (sections 6.1–6.3, pp. 225–227)
+5. validate ABI conventions, register widths, linker behavior, and runtime allocator assumptions against the target platform (sections 5.4, 6.1–6.3, pp. 224–227)
 6. classify pipeline-model errors as performance-only only when the processor preserves sequential semantics; non-interlocked pipelines need stronger modeling (section 5.3, p. 224)
 
 Verus form
@@ -94,11 +94,11 @@ Inference: for VL, treat serialization, FFI, allocator, and generated-machine-co
 
 evidence and limits
 
-The paper reports that all known bugs in the studied releases were in the TCB, especially the last back-end stage; it attributes many to tedious printers, many expansion cases, and unsynchronized specifications (section 7, p. 228). It also records that CompCert assumes `malloc` always succeeds and never returns null, and assumes IEEE-754 round-to-nearest and stable rounding mode (section 6.3, p. 227). These assumptions can invalidate defensive checks if an optimization relies on them.
+The paper reports that none of the problems found were in the verified parts, with most bugs in the last back-end stage; it attributes them to tedious printers, many expansion cases, and unsynchronized specifications (section 7, p. 228). It also records that CompCert assumes `malloc` always succeeds and never returns null, and assumes IEEE-754 round-to-nearest and stable rounding mode (section 6.3, p. 227). For malloc, the paper says an optimization could "in theory" remove defensive checks against heap overflow, but "we do not know of any optimization in CompCert exploiting this model of malloc" (section 6.3, p. 227).
 
 ## what is proved, what remains trusted, and threat to VL
 
-CompCert’s theorem is conditional on defined source behavior, formal language semantics, assembly semantics, ABI, runtime, extraction, assembler/linker, and platform behavior. The audit finds that proof-checker and extractor concerns received more attention than the more failure-prone printer and expansion code (section 7, pp. 228–228). Inference: this is a high threat to a product that promises agent-written verified Rust if the product boundary is defined as deployed behavior rather than Verus-accepted source. VL should publish a TCB ledger, test generated artifacts and FFI boundaries, and distinguish proof failure, executable rejection, performance-only mismatch, and semantic miscompilation.
+CompCert’s theorem is conditional on defined source behavior, formal language semantics, assembly semantics, ABI, runtime, extraction, assembler/linker, and platform behavior. The authors say that "much attention is often given to doing away with such axioms and the extractor; this may not reflect the most pressing needs", while the bugs they found were in specification and unverified back-end parts (section 7, p. 228). Inference: this is a high threat to a product that promises agent-written verified Rust if the product boundary is defined as deployed behavior rather than Verus-accepted source. VL should publish a TCB ledger, test generated artifacts and FFI boundaries, and distinguish proof failure, executable rejection, performance-only mismatch, and semantic miscompilation.
 
 ## techniques for the catalog
 
@@ -113,4 +113,4 @@ CompCert’s theorem is conditional on defined source behavior, formal language 
 
 - back-end case audit — test printers, pseudo-instruction expansions, clobbers, ABI conventions, and runtime assumptions separately
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Yet, this OCaml code is small, with few execution paths, and can be easily tested and audited."): I read the whole paper text (pp. 204–228) and the whole study, and checked every quotation, page and section reference, and technique step against it. I fixed the oracle quotation (wrong words), a nonexistent "section 4.1", several page ranges (3.3 drawbacks p. 212, hash-table assumption p. 216, section 7 p. 228), and removed claims the paper does not make (that absence of axiom/extractor bugs is "not evidence" of safety, that the decomposition "finds bugs", and a defensive-check claim for IEEE rounding). I tied "do not axiomatize pointer equality" to the paper's "unsound" finding and marked the decomposition benefit as Inference. I did not check the Verus mappings (marked Inference), the cited commits or external works, or the code examples by running Coq.
