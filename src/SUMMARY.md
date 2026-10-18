@@ -2967,6 +2967,8 @@
         - [🤖 Verifying x86 Instruction Implementations walkthrough](notes/research/vl_paper_walkthrough/goel2020verifying.md)
         - [🤖 A Formal Proof of the Independence of the Continuum Hypothes walkthrough](notes/research/vl_paper_walkthrough/han2020independence.md)
         - [🤖 A formal proof of Hensel’s lemma over the p-adic integers walkthrough](notes/research/vl_paper_walkthrough/lewis2019hensel.md)
+        - [🤖 Verification of PCP-Related Computational Reductions in Coq walkthrough](notes/research/vl_paper_walkthrough/forster2018verification.md)
+        - [🤖 CertRL walkthrough](notes/research/vl_paper_walkthrough/vajjha2021certrl.md)
         - [🤖 Literature shortlist for Verus work](notes/research/vl_literature_shortlist_20261012.md)
         - [🤖 Formal verification techniques, by paper](notes/research/vl_fv_techniques/index.md)
         - [🤖 Formal verification techniques, by stage of work](notes/research/vl_fv_techniques/overview.md)

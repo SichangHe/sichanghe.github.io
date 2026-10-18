@@ -1,6 +1,6 @@
 # Learning to Reason in Large Theories without Imitation
 (authored by agents unless marked 🧑)
-Tag: `bansal2019learning`, [paper](https://www.semanticscholar.org/paper/689ccf061a30494bc907c9ccca8b869be4a74564)
+Tag: `bansal2019learning`, [paper](https://arxiv.org/abs/1905.10501)
 
 ## scope and result
 Bansal et al. address theorem proving when a goal has a very large repository of possible premises and no human proof traces for training. They combine deep reinforcement learning (RL), learned tactic/premise scores, and a tf-idf retrieval list used for exploration. The abstract states: "We suggest an exploration mechanism that mixes in additional premises selected by a tf-idf (term frequency-inverse document frequency) based lookup in a deep reinforcement learning scenario." (Abstract, p.1)
@@ -28,7 +28,7 @@ Use this when human proof data is unavailable and a prover can generate new succ
 4. For a goal, select a learned exploitation list `{P1,…,Pk1}` and an exploration list `{Q1,…,Qk2}`; interleave them before proposing tactic actions (§4)
 5. Tune `k1` upward for exploitation and `k2` upward for exploration; the Reference setup has `k2=0` (§4)
 
-The authors explain the purpose: "The provers try to prove the statements in the training set using the model for proof guidance as it is training." (§4, p.4) They also warn that the loop can stall if it cannot prove any new theorem, so exploration is needed to expand the horizon (§4.1, p.5). Inference: in Verus, this means generating alternative lemma contexts or trigger sets for a verification condition, then accepting only contexts for which Verus produces a proof. Inference: unlike HOL Light's premise arguments, Rust code and specifications may constrain which facts can be made visible, so this requires a Verus-specific interface.
+The authors explain the purpose: "The provers try to prove the statements in the training set using the model for proof guidance as it is training." (§4, p.4) They also warn that the loop can stall if it cannot prove any new theorem, so exploration is needed to expand the horizon (§4.1, pp.4–5). For zero-human loops the training needs some non-empty starting data; the authors generate it by trying all training theorems with a randomly initialized model (Appendix A.2, p.13). Inference: in Verus, this means generating alternative lemma contexts or trigger sets for a verification condition, then accepting only contexts for which Verus produces a proof. Inference: unlike HOL Light's premise arguments, Rust code and specifications may constrain which facts can be made visible, so this requires a Verus-specific interface.
 
 ## technique: tf-idf retrieval for exploration
 
@@ -40,7 +40,7 @@ Use this when learned scores are initially weak and a symbolic retrieval signal 
 4. Evaluate offline on 20% of the complex-corpus training proofs using average relative maximum rank and recall@k, then choose the best weighting before an expensive RL run (§4.1)
 5. Add dropout `p=0.1` to zero components of the goal representation and vary retrieval results across repeated attempts (§4.1)
 
-Table 1 chooses boolean weighting: recall@128 is 0.31, versus 0.21 logarithmic and 0.11 natural; each denominator is the sampled retrieval tasks from 20% of the training set, not all 16,623 benchmark theorems (§4.1, p.5). Inference: a Verus tool could tokenize spec-function names, field names, and quantified predicates, but lexical similarity may miss semantic equivalence and should only propose lemmas.
+Table 1 chooses boolean weighting: recall@128 is 0.31, versus 0.21 logarithmic and 0.11 natural, and boolean has the lowest average relative maximum rank (0.24, versus 0.35 and 0.46) (§4.1, p.5). The text names k = 8, 16, 32 and 64, but Table 1 columns are recall@16, @32, @64 and @128; this mismatch is in the paper. Inference: a Verus tool could tokenize spec-function names, field names, and quantified predicates, but lexical similarity may miss semantic equivalence and should only propose lemmas.
 
 ## technique: safe over-approximation of premises
 
@@ -49,7 +49,7 @@ Use this when a tactic tolerates extra premises and trying a larger set is cheap
 1. Sample successful human proof steps for MESON and REWRITE (§4.2)
 2. Append random irrelevant premises of lengths 1, 2, 4, 8, 16, and 32 (§4.2)
 3. For MESON, measure whether the proof still succeeds within a one-second timeout; for REWRITE, measure whether the result is unchanged (§4.2)
-4. Use the measured tolerance to choose an exploration list size (§4.2)
+4. Use the measured tolerance to inform the design of exploration; the paper states that it designed experiments "to inform different choices" (§4, p.4), and does not state a rule that maps these tables to a list size (§4.2). In the appendix, `k2` is derived as max(ceil(k/2), k2') with `k2'` in [0, 8] for exploration loops (Appendix A.2, p.13)
 
 The experiment sampled until it had 250 successful steps and used five random lists for each length (§4.2, p.6). Table 2 reports MESON success rates 0.995, 0.986, 0.97, 0.873, 0.53, and 0.06 for 1–32 extra premises; REWRITE unchanged rates are 0.99, 0.979, 0.954, 0.93, 0.858, and 0.731. The paper says: "However, MESON tends to time out with more than 32 extra premises." (§4.2, p.6)
 
@@ -62,7 +62,7 @@ Use this when successful proofs contain irrelevant premises that would teach the
 1. For a successful step with premises `{Pi}`, rerun it without the last premise `Pn` (§4.3)
 2. If the result is unchanged, drop `Pn`; continue backward through the list (§4.3)
 3. Use dropped premises as hard negatives so highly ranked but useless premises are demoted (§4.3)
-4. Repeat after exploration so unnecessary exploratory premises are not learned (§4.3)
+4. Pruning also ensures that unnecessary premises added for exploration are not learned from (§4.3)
 
 Inference: in Verus, remove one `requires` fact, lemma invocation, or trigger candidate at a time and rerun verification; record removed facts as negative training examples. This is a proposed transfer, not a procedure in the paper's Rust setting.
 

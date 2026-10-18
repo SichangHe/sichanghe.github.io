@@ -14,7 +14,7 @@ PE specializes CHCs for constrained calls while preserving derivations. The pape
 
 Steps from the paper.
 
-1. Start with the constrained goal, such as `false ← true` (Section 3.1.1, p. 7)
+1. Start with the constrained goal, such as `S0 = {false ← true}` (Example 1, p. 7)
 2. Unfold deterministic atoms whose constraints remain satisfiable; do not unfold initial or recursive predicates (Section 3.1.1, p. 7)
 3. Abstract each resulting constrained fact using a finite property set `Ψ`; retain the properties implied by its constraint (Section 3.1.1, p. 7)
 4. Rename predicate versions by their abstract properties and iterate until the finite sequence reaches a limit (Section 3.1.1, p. 7)
@@ -22,7 +22,7 @@ Steps from the paper.
 
 The running example yields three specialized `init` versions, but PE alone produces the trivial precondition `false`; subsequent constraint specialization is needed (Example 1 and Lemma 2, pp. 8–9).
 
-Verus form. Inference: specialize a Rust function by generating helper functions or ghost predicates for distinct call contexts, then preserve the original executable body. Use `requires` to state the inferred initial condition and `ensures` for safety; use `invariant` declarations for loops. Inference: Verus does not perform CHC partial evaluation, so PE must be an external preprocessing step or an agent-generated decomposition.
+Verus form. Inference: specialize a Rust function by generating helper functions or ghost predicates for distinct call contexts, then preserve the original executable body. Inference: use `requires` to state the inferred initial condition and `ensures` for safety; use `invariant` declarations for loops. Inference: Verus does not perform CHC partial evaluation, so PE must be an external preprocessing step or an agent-generated decomposition.
 
 ## technique 2: constraint specialization (CS)
 
@@ -42,30 +42,30 @@ Verus form. Inference: encode each propagated polyhedral fact as a `spec fn` ove
 
 ## technique 3: trace elimination (TE)
 
-TE removes a selected AND-tree derivation of `false` while preserving the others, using finite tree-automata difference. Eliminating a feasible trace adds the negation of its initial-state constraint to the eventual precondition (Section 3.1.3, pp. 10–11). The paper states: “The usefulness of trace elimination is twofold. Firstly, it can cause splitting of the initial predicates, resulting in disjunctive pre-conditions. Secondly, the elimination of a feasible trace acts as a decomposition of the problem.” (Section 3.1.3, p. 11).
+TE removes a selected AND-tree derivation of `false` while preserving the others, using finite tree-automata difference. Eliminating a feasible trace adds the negation of its initial-state constraint to the eventual precondition (Section 3.1.3, pp. 9–11; Lemma 4, p. 10). The paper states: “The usefulness of trace elimination is twofold. Firstly, it can cause splitting of the initial predicates, resulting in disjunctive pre-conditions. Secondly, the elimination of a feasible trace acts as a decomposition of the problem.” (Section 3.1.3, p. 10).
 
 Steps.
 
 1. Obtain an AND-tree for `false` after PE or CS (Section 3.1.3, p. 10)
 2. Decide whether its constraint conjunction is feasible
 3. Remove the tree by automata difference while preserving other derivations
-4. If feasible, project its initial-node constraint `θ` onto initial variables and conjoin `¬θ` with the precondition (Lemma 4, p. 10)
+4. If feasible, take `θ = constr(t)|x`, the constraint of the whole tree projected onto the variables `x` of the atom labelling its initial node, and conjoin `¬θ` with the precondition (Lemma 4, p. 10). Eliminating an infeasible tree leaves the precondition at least as weak (Lemma 3, p. 10). Lemma 4 is stated as `presafe(P) = presafe(P′) ∧ ¬θ`, but its proof only argues that the conjunction is a safe precondition
 5. Continue specialization on the resulting split predicates
 
-Verus form. Inference: treat each eliminated trace as a concrete counterexample path and add a disjunctive precondition excluding its initial-state condition. A Verus `requires` clause can encode the resulting Boolean formula; helper `proof fn`s establish that the excluded path is unreachable under the precondition. Inference: Verus has no tree-automata difference primitive.
+Verus form. Inference: treat each eliminated trace as a concrete counterexample path and add a disjunctive precondition excluding its initial-state condition. Inference: a Verus `requires` clause can encode the resulting Boolean formula, and helper `proof fn`s can establish that the excluded path is unreachable under the precondition. Inference: Verus has no tree-automata difference primitive.
 
 ## technique 4: iterative refinement schedule
 
-Proposition 2 permits any sequence of PE, CS, and TE, carrying a conjunction `ψ` of negated feasible-trace conditions. The implementation uses `cs ◦ pe ◦ (te ◦ cs ◦ pe)^n`, with `n ≥ 0` (Section 4.2, p. 14). PE and CS are repeated first; TE is delayed because it is expensive.
+Proposition 2 permits any sequence of PE, CS, and TE, carrying a conjunction `ψ` of negated feasible-trace conditions. The implementation uses `cs ◦ pe ◦ (te ◦ cs ◦ pe)^n`, with `n ≥ 0` (Section 4.2, p. 14). The paper's rationale: CS “is most effective when performed just after partial evaluation”, and TE “is more expensive and is performed only after the first iteration” (Section 4.2, p. 14). The sequence has length `3n + 2` (Section 4.2, p. 13).
 
 Steps.
 
 1. Run PE, then CS
 2. For each further iteration, run TE, PE, and CS in that order (Section 4.2, p. 14)
-3. Compute `presafe` from the final initial clauses and conjoin the accumulated `ψ`
-4. Stop when the precondition is adequate or when added iterations no longer improve precision
+3. Compute `presafe` from the final initial clauses and conjoin the accumulated `ψ` (Proposition 2, p. 11)
+4. Stop after the chosen `n`; the paper says “we can stop at any iteration and still derive a precondition” (Section 4.3, p. 15). Better termination criteria are listed as future work (Section 5, p. 16)
 
-The authors chose three iterations because literature and hand-crafted benchmarks reproduced earlier results by then, while later iterations gave negligible improvements and more timeouts (Section 4.3, p. 15).
+The authors chose three iterations because for the literature and hand-crafted benchmarks 3 iterations suffice to reproduce earlier results, and iterations beyond the third yield negligible improvements but more timeouts (Section 4.3, p. 15). On a timeout, the precondition from the previous iteration is used (Section 4.3, p. 14). For the Fischer protocol, 4 PE-then-CS iterations give the optimal precondition in about 8 seconds, while with TE 3 iterations suffice but take about 35 seconds (Section 3.2, pp. 12–13).
 
 Verus form. Inference: use the inferred formula as a candidate `requires`, then verify the actual Rust implementation with `ensures`, loop `invariant`, `assert`, and `proof fn` helpers. Inference: each refinement round can propose a weaker precondition, but Verus must still prove that the executable function satisfies its contract.
 

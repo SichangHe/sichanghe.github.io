@@ -1,6 +1,6 @@
 # Synthesis of Parametric Programs using Genetic Programming and Model Checking
 (authored by agents unless marked 🧑)
-Tag: `katz2014synthesis`, [paper](https://www.semanticscholar.org/paper/16238b9bc633ae2df196125b4428082fe4eee7c5)
+Tag: `katz2014synthesis`, [paper](https://doi.org/10.4204/EPTCS.140.5)
 
 ## what the paper establishes
 The paper presents a generate-and-check synthesis framework in which genetic programming (GP) proposes legal programs and an enhanced verifier scores them. Its abstract states: “The use of genetic programming, in combination of model checking and testing, provides a powerful heuristic to synthesize programs.” (Abstract, p. 70.) The authors explicitly bound the claim: “The method is not completely automatic, as it is fine tuned by a user that sets up the specification and parameters.” (Abstract, p. 70.) They also state: “It also does not guarantee to always succeed and converge towards a solution that satisfies all the required properties.” (Abstract, p. 70.)
@@ -8,19 +8,19 @@ The paper presents a generate-and-check synthesis framework in which genetic pro
 ## technique: genetic-programming synthesis guided by enhanced model checking
 
 what it is and when to use it
-The method searches a constrained syntax space rather than synthesizing arbitrary source. The user supplies “the formal specification of the problem, as well as the required architecture and constraints on the structure of the desired solutions.” (Section 2, p. 71.) The verifier can be “a model checker, often enhanced to provide more information than yes/no (and counterexample), or a SAT solver.” (Section 2, p. 71.) Use this when the target can be expressed with a finite grammar and the verifier can cheaply evaluate many candidates.
+The method searches a constrained syntax space rather than synthesizing arbitrary source; the paper calls it “a heuristic search in the space of syntactically fitting programs.” (Section 1, p. 70.) The user supplies: “The formal specification of the problem, as well as the required architecture and constraints on the structure of the desired solutions is provided by the user.” (Section 2, p. 71.) The verifier can be “a model checker, often enhanced to provide more information than yes/no (and counterexample), or a SAT solver.” (Section 2, p. 71.) Inference: use this when the target can be expressed with a finite grammar and the verifier can cheaply evaluate many candidates.
 
 how to do it
 1. Define a candidate grammar and resource bounds. The paper requires function literals and instructions, process count and communication methods, program-size and iteration limits, and optionally initial code (Section 2, pp. 71–72).
 2. Give a formal specification consisting of linear-temporal-logic properties and quantitative requirements (Section 2, p. 72).
 3. Generate an initial population randomly from the grammar and constraints (Section 2, p. 72).
 4. Verify every candidate and calculate fitness from how much of the specification it satisfies (Section 2, p. 72).
-5. Select μ candidates, create λ offspring with mutation and optional crossover, score the μ+λ set, and probabilistically retain higher-fitness candidates (Section 2, p. 72). The paper’s exact loop is: “Steps 4 and 5 are repeated until either a perfect program is found (fully satisfying the specification), or until the maximal number of iterations is reached.” (Section 2, p. 72.)
+5. Randomly select μ candidates, create λ new candidates with mutation (and optionally crossover), score the new candidates by enhanced model checking, and choose new μ candidates from the μ+λ set with higher-fitness candidates selected with higher probability (Section 2, p. 72). The paper’s exact loop is: “Steps 4 and 5 are repeated until either a perfect program is found (fully satisfying the specification), or until the maximal number of iterations is reached.” (Section 2, p. 72.)
 6. Return a fully satisfying program when one exists, or the best partially correct programs with verification results (Section 2, p. 72).
 
-Mutation operates on a program tree. The paper lists four operations: “(a) Replace the subtree with root s with a new randomly generated subtree. (b) Add an immediate parent to s. Randomly create other offspring to the new parent, if needed. (c) Replace the node s by one of its offspring. Delete the remaining offspring of that node. (d) Delete the subtree with root s.” (Section 2, p. 73.) Crossover chooses same-typed nodes in two trees and exchanges their subtrees (Section 2, pp. 73–74), but “Crossover is not used in our work.” (Section 2, p. 74.)
+Mutation operates on a program tree. The paper lists four operations: “(a) Replace the subtree with root s with a new randomly generated subtree. (b) Add an immediate parent to s. Randomly create other offspring to the new parent, if needed. (c) Replace the node s by one of its offspring. Delete the remaining offspring of that node. (d) Delete the subtree with root s.” (Section 2, p. 73.) Crossover chooses same-typed nodes in two trees and exchanges their subtrees (Section 2, pp. 73–74), but “Crossover is not used in our work.” (Section 2, p. 74.) The conclusion says the same: “crossover is also extensively used, but we did not implement it” (Section 8, p. 83), where “also extensively used” refers to genetic programming in general.
 
-Fitness is multi-level rather than binary. For each LTL property the four example levels range from no executions satisfying it, through partial satisfaction, to all executions satisfying it (Section 2, pp. 74–75). The authors generate levels with Streett automata and strongly connected component analysis, enhanced model-checking logic, or probabilistic model checking (Section 2, p. 74). They prioritize safety over liveness and subtract a value related to program length to discourage useless growth (Section 2, p. 75).
+Fitness is multi-level rather than binary. For each LTL property the four example levels range from no executions satisfying it, through partial satisfaction, to all executions satisfying it (Section 2, p. 74). The authors generate levels with Streett automata and strongly connected component analysis, enhanced model-checking logic, or probabilistic model checking (Section 2, p. 74). They prioritize safety over liveness and subtract a value related to program length to discourage useless growth (Section 2, p. 75).
 
 Verus form
 Inference: represent each candidate as a fixed Rust/Verus function skeleton with holes selected from a finite set of expressions or statements. Keep executable code in `fn`, state properties in `requires`/`ensures`, and prove helper facts in `proof fn` or `lemma` bodies using only constructs documented for Verus. A candidate cannot be accepted merely because a test harness passes: invoke Verus for each candidate and retain the verifier result. Verus does not provide the paper’s GP engine, mutation tree, or graded Streett-automaton fitness, so these must be an external generator and driver. A Verus contract can express safety and functional postconditions; liveness and probabilistic fitness need a separate model and are not carried over automatically.
@@ -40,7 +40,7 @@ how to do it
 2. Check each instance with model checking; retain instances on which a candidate fails as counterexamples (Section 4, p. 78).
 3. Evaluate a program by closeness to satisfying the accumulated properties and evaluate a counterexample by how strongly it falsifies the candidate (Section 4, p. 78).
 4. Check every new candidate against the retained failed instances before spending effort on fresh instances (Section 4, p. 78).
-5. Stop only when the accumulated evidence is judged strong enough; the conclusion repeats that parametric verification is undecidable in general and that the method “finish[es] if we obtain a strong enough evidence that the solution is correct on the accumulated cases.” (Section 8, p. 83.)
+5. Stop only when the accumulated evidence is judged strong enough; the conclusion repeats that parametric verification is undecidable in general and says: “we finish if we obtain a strong enough evidence that the solution is correct on the accumulated cases.” (Section 8, p. 83.) Section 4 (p. 78) states the assumption: “we assume that a solution that is checked for a large number of instances/parameters is acceptable. This is not a guarantee of correctness”.
 
 Verus form
 Inference: instantiate a Verus function over bounded sizes or concrete model states, run `assert`/contract proofs for each instance, and store failing inputs as regression cases. Universal quantification over an unbounded collection requires a separately proved inductive invariant or a finite abstraction; accumulating examples alone cannot establish it. Counterexamples can guide candidate generation, but they do not become Verus specifications unless encoded as explicit assertions or lemmas.
@@ -51,7 +51,7 @@ The paper gives leader election and concurrent sorting as examples where each fi
 ## technique: co-evolving architectures to find and repair protocol bugs
 
 what it is and when to use it
-The correction method evolves both code and the architecture that exercises it. The paper lists two ideas: “Use the genetic engine not only to generate programs, but also to evolve different architectures on which programs can run.” and “Apply a co-evolution process, where candidate programs, and test cases (architectures) that may fail these programs, are evolved in parallel.” (Section 5, p. 79.) Use this when a protocol’s failure depends on process topology, interaction choices, or message routing that is itself variable.
+The correction method evolves both code and the architecture that exercises it. The paper lists two ideas: “Use the genetic engine not only to generate programs, but also to evolve different architectures on which programs can run.” and “Apply a co-evolution process, where candidate programs, and test cases (architectures) that may fail these programs, are evolved in parallel.” (Section 5, p. 79.) Inference: use this when a protocol’s failure depends on process topology, interaction choices, or message routing that is itself variable.
 
 how to do it
 1. Encode the architecture, including processes and interactions, as a mutable syntax tree (Section 5, p. 79).
@@ -60,7 +60,7 @@ how to do it
 4. Add every architecture that defeats a candidate to the retained set; repairing one architecture is insufficient (Section 5, p. 79).
 5. Maintain separate fitness functions for architecture falsification and program correction (Section 5, p. 79).
 
-The paper’s concrete repair changes `if n>0 then n:=n-1` to `if sender∈shared then n:=n-1` (Section 5, p. 79), after a generated architecture and message sequence exposed an assertion violation (Figures 4–5, pp. 79–80).
+The paper’s concrete repair changes `if n>0 then n:=n-1` to `if sender∈shared then n:=n-1` (Section 5, p. 79), after a generated architecture and message sequence exposed an assertion violation (Figures 4–5, p. 80). The paper attributes this case study to its earlier work [11] (Section 5, p. 79).
 
 Verus form
 Inference: model each architecture as a test harness or a Verus state-machine instance, and express the repaired protocol’s safety as `invariant` declarations inside the state-machine proof. A generated architecture can produce a concrete counterexample trace; the repair must then be proved against an abstract transition relation and all allowed participants. Verus does not infer arbitrary network topologies, so architecture mutation and trace generation remain external.
@@ -71,7 +71,7 @@ The α-core protocol is described as a practical multiparty synchronization prot
 ## technique: replacing model checking with SAT/SMT for loop-free programs
 
 what it is and when to use it
-The SAT/SMT variant restricts generation to straight-line programs over decidable theories. The paper states: “Only loop-free programs are generated.” (Section 7, p. 81.) The user supplies first-order preconditions and postconditions; a prover translates each candidate into a logical relation and asks Z3 for satisfiability (Section 7, pp. 81–82). Use this when the program grammar is loop-free and its operators fit a decidable theory such as bounded bit-vectors, arrays, equalities, or uninterpreted functions.
+The SAT/SMT variant restricts generation to straight-line programs over decidable theories. The paper states: “Only loop-free programs are generated.” (Section 7, p. 81.) The user supplies first-order preconditions and postconditions; a prover translates each candidate into a logical relation and asks Z3 for satisfiability (Section 7, pp. 81–82). Inference: use this when the program grammar is loop-free and its operators fit a decidable theory such as bounded bit-vectors, arrays, equalities, or uninterpreted functions.
 
 how to do it
 1. Select theory-compatible variables, functions, and operators as building blocks; generate only loop-free programs (Section 7, p. 81).
