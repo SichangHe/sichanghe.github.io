@@ -1,59 +1,59 @@
 # A Verified Algebraic Representation of Cairo Program Execution
 (authored by agents unless marked 🧑)
-Tag: `avigad2022verified`, [paper](https://doi.org/10.1145/3497775.3503675)
+Tag: `avigad2022verified`, [paper](https://arxiv.org/abs/2109.14534)
 
 ## what the paper proves or measures
 
 The paper formalizes the algebraic intermediate representation (AIR) used by the Cairo STARK prover and proves that satisfying the AIR constraints implies a valid Cairo execution trace. The abstract states: “Here we report on a verification of the correctness of such an encoding of the Cairo model of computation with respect to the STARK interactive proof system, using the Lean 3 proof assistant.” (Abstract, p. 1)
 
-The result is an implication theorem, not a proof of the cryptographic protocol or a proof that every Cairo program meets a high-level specification. The authors state: “This paper reports on the successful completion of the second task, a fully verified proof that data satisfying the AIR implies the corresponding computational claim.” (Introduction, p. 2) The AIR is generated directly from the Cairo implementation, so the formalization can be rerun as the production encoding changes.
+The result is an implication theorem, not a proof of the cryptographic protocol or a proof that every Cairo program meets a high-level specification. The authors state: “This paper reports on the successful completion of the second task, a fully verified proof that data satisfying the AIR implies the corresponding computational claim.” (Introduction, p. 2) The paper says: “The AIR verified by the proof is directly generated from the Cairo implementation, allowing for continuous verification of the AIR used in production.” (Introduction, p. 2) The paper's Conclusions (Section 12, p. 17) add that the encoding is already used by StarkEx and StarkNet and that the verification “went through straightforwardly and confirmed the correctness of the implementation.”
 
 ## technique 1: formalize the machine semantics before the algebraic encoding
 
 what it is: define Cairo instructions, registers, read-only memory, and a nondeterministic next-state relation in Lean. The machine state has `pc`, `ap`, and `fp` in a finite field; an instruction has three 16-bit offsets and 15 flags. A state transition is valid when the memory at `pc` encodes an instruction and the instruction's next registers and assertions agree.
 
 how to do it:
-1. define `instruction` with `off_dst`, `off_op0`, `off_op1`, and `flags` bitvectors, and define `register_state` with `pc`, `ap`, and `fp` (Section 3, pp. 3–4)
-2. define instruction-specific option-valued functions for next `pc`, `ap`, and `fp`; `none` represents undefined behavior (Section 3, p. 4)
-3. define `instruction.next_state` as agreement of these option results plus the instruction's assertions, then define `next_state` by existentially selecting the instruction stored at `mem s.pc` (Section 3, p. 4)
-4. prove helper lemmas for each flag case. The paper's `next_fp` definition maps call to `ap+2`, return to the decoded destination, ordinary instructions to unchanged `fp`, and invalid flag combinations to `none` (Section 3, p. 4)
-5. use the resulting relation as the target semantics for the AIR correctness theorem.
+1. define `instruction` with `off_dst`, `off_op0`, `off_op1`, and `flags` bitvectors, and define `register_state` with `pc`, `ap`, and `fp` (Section 3, p. 4)
+2. define instruction-specific option-valued functions `next_pc`, `next_ap`, and `next_fp`; `none` represents undefined behavior (Section 3, pp. 4–5)
+3. define `instruction.next_state` as agreement of these option results plus the instruction's assertions, then define `next_state` by existentially selecting an instruction `i` with `mem s.pc = ↑i.to_nat` (Section 3, pp. 4–5)
+4. define each next-register function by case distinction on the instruction flags. The paper's `next_fp` maps call to `ap+2`, return to the decoded destination `i.dst mem s`, assert to unchanged `fp`, no opcode flag set to unchanged `fp`, and every other flag combination to `none` (Section 3, p. 5). Later, the AIR-side theorem `next_fp_agrees` shows the constraint-computed value agrees with this definition; the paper says its proof takes about eight lines of tactics (Section 8, p. 12)
+5. use the resulting relation as the target semantics for the AIR correctness theorem (Section 5, p. 8).
 
 The model deliberately uses read-only memory. The paper says: “The fact that memory is read only means that we do not need to verify claims about memory management.” (Section 3, p. 3) It also does not prove high-level termination; the trace certificate supplies a finite claimed run.
 
 Verus form: Inference: define a Rust ghost state struct and a `spec fn next_state` relation. Use `requires` for finite-field and well-formed-instruction assumptions, `ensures` for each deterministic flag branch, and a proof function for the existential instruction step. Keep the relation nondeterministic where the Cairo semantics allows undefined instructions. Verus can model bitvectors and finite fields only through suitable libraries or mathematical abstractions; those abstractions become trusted assumptions unless separately proved.
 
-evidence and limits: the CPU file is reported as less than 200 lines, but the paper provides no proof-time or defect-count benchmark. The formal theorem depends on the CPU semantics matching the intended Cairo machine and on Lean's foundations.
+evidence and limits: the paper says `cpu.lean` is “less than 200 lines” (Section 3, p. 4); I found no proof-time or defect-count benchmark in the paper. The formal theorem depends on the CPU semantics matching the intended Cairo machine and on Lean's foundations.
 
 ## technique 2: compile trace meaning into AIR polynomial constraints
 
 what it is: encode a trace of `T+1` register states, instruction data, memory accesses, and auxiliary values in a `16(T+1) × 25` field array. Each constraint is a polynomial equation required on a specified set of rows. The main correctness theorem says that a satisfying table, under public assumptions and nonexceptional interaction elements, yields a Cairo execution trace.
 
 how to do it:
-1. agree on input data: trace length, initial and final `pc`/`ap`, and a partial memory map `m*` (Section 4, pp. 6–7)
-2. generate the polynomial constraints from the Cairo implementation. The autogenerated file `constraints_autogen.lean` is also used to produce verifier code (Section 4, p. 7)
-3. split constraints into decoding, operand and register updates, opcodes, memory, range checks, public memory, and initial/final conditions (Section 5, p. 9)
-4. prove in Lean that the constraints imply an execution trace. Glue the whitepaper layout to the autogenerated layout with `glue.lean` (Section 4, p. 7)
-5. state the probabilistic side condition using bad sets. If interaction elements avoid `bad1`, `bad2`, and `bad3`, and the field and trace assumptions hold, conclude existence of a memory extension and a trace of `T=(T'−1)/16` steps (Section 5, pp. 8–9).
+1. agree on input data: trace length, initial and final `pc`/`ap`, and a partial memory map `m*` (Section 4, p. 7)
+2. generate the polynomial constraints from the Cairo implementation. The paper says `constraints_autogen.lean` “is generated by the same code that produces the code for the verifier” (Section 4, pp. 6–7)
+3. split constraints into the eight groups `cpu__decode`, `cpu__operands`, `cpu__update_registers`, `cpu__opcodes`, `memory`, `rc16`, `public_memory`, and `initial_and_final` (Section 5, p. 9); Section 6 (pp. 9–10) groups them informally as instruction decoding, next-step relation, memory consistency, and integer-range constraints
+4. prove in Lean that the constraints imply an execution trace. The proof first follows the whitepaper's layout (`constraints.lean`, `correctness.lean`); `glue.lean` then connects it to the autogenerated layout, giving `final_correctness.lean` (Section 4, p. 8; Section 6, p. 10). The paper says the 16(T+1) × 25 table has 23 columns committed first, then the interaction elements are computed by hash, then 2 more columns are committed (Section 4, p. 8)
+5. state the probabilistic side condition using bad sets. If interaction elements avoid `bad1`, `bad2`, and `bad3`, and the field and trace assumptions hold, conclude existence of a memory extension and a trace of `T` steps (Section 5, pp. 8–9; Figure 1, p. 21). The text of Section 5 writes “Let T be (T ′ − 1)/16”, but Section 4 (p. 8) says to recover `T` “by dividing by 16 and subtracting one” and Figure 1 uses `inp.trace_length / 16 - 1`. Inference: `T = T'/16 − 1` is the intended relation and the Section 5 text is a slip. Figure 1 also requires `pd.interaction_elm ≠ 0`.
 
-The theorem bounds the bad sets by `(T'/2)^2`, `T'/2`, and `T'` respectively (Section 5, p. 8). The bounds are symbolic in the paper; no measured field size or empirical failure probability is reported. The STARK protocol and its hash security are treated as a black box, as stated: “For the purposes of this paper, the details of the STARK protocol and the precise complexity and probabilistic claims can be treated as a black box.” (Section 4, p. 6)
+The theorem bounds the bad sets by `(T'/2)^2`, `T'/2`, and `T'` respectively (Section 5, p. 8). The bounds are symbolic in the paper; no measured field size or empirical failure probability is reported. The STARK protocol and its hash security are treated as a black box, as stated in Section 4: “For the purposes of this paper, the details of the STARK protocol and the precise complexity and probabilistic claims can be treated as a black box.” (Section 4, p. 6)
 
 Verus form: Inference: represent each polynomial constraint as a `spec fn` over a ghost trace and prove local-to-global lemmas over row indices. Use `invariant` clauses on loops that scan rows, `assert` for polynomial equalities, and `ensures` for the reconstructed state relation. Do not place `ensures` on a `spec fn`; the executable checker and cryptographic assumptions remain external to the Verus proof.
 
 ## technique 3: decode packed instructions with finite-field identities
 
-what it is: recover a unique Cairo instruction from field elements encoding offsets and flags. Offsets are shifted into `[0,2^16)`. The flags are represented by cumulative values `f~i`; the identity `fi = f~i − 2 f~i+1` recovers each bit. The packed instruction is a base-`2^16` expression over the three offsets and flag word (Section 7, pp. 10–11).
+what it is: recover a unique Cairo instruction from field elements encoding offsets and flags. Offsets are stored as `off~ = off + 2^15`, to be constrained to `[0,2^16)`. The flags are represented by suffix-sum values `f~i`; the identity `fi = f~i − 2 f~i+1` recovers each bit. The packed instruction is `off_dst~ + 2^16 · off_op0~ + 2^32 · off_op1~ + 2^48 · f~0`, a base-`2^16` expression over the three shifted offsets and the flag word (Section 7, p. 10). The `f~i` are defined as `Σ_{j=i}^{14} 2^(j−i) · fj`, and the AIR stores `f~0 … f~15` with `f~15 = 0`. The offsets are range-checked separately (Section 10).
 
 how to do it:
-1. assume field constraints that each recovered bit is 0 or 1 and that the final cumulative flag is zero (Section 7, p. 10)
+1. assume field constraints that each recovered bit is 0 or 1 (`h_bit`) and that the final flag value is zero (`h_last_value`), together with the packing identity `h_instruction` (Section 7, pp. 10–11)
 2. define `the_instruction` from the constrained field elements
 3. prove `inst_eq`, showing the field element equals the cast of `the_instruction.to_nat`, and prove component-cast lemmas such as `off_dst_tilde_eq` (Section 7, p. 11)
 4. prove `inst_unique`, which establishes that no two instructions share an encoding under the constraints (Section 7, p. 11)
 5. use the decoded instruction in the next-state proof.
 
-Verus form: Inference: encode the bit and range conditions as ghost predicates and prove uniqueness by arithmetic lemmas over a bounded integer representation. Rust bitvector operations can execute, but the field-cast correspondence needs a separate specification lemma. The Cairo paper's uniqueness is stronger than the final trace-existence theorem and is useful when proving a particular program's behavior.
+Verus form: Inference: encode the bit and range conditions as ghost predicates and prove uniqueness by arithmetic lemmas over a bounded integer representation. Rust bitvector operations can execute, but the field-cast correspondence needs a separate specification lemma. The paper says uniqueness is not needed for the final theorem but is used in the authors' subsequent work on proving particular programs correct.
 
-evidence and limits: uniqueness is independently important but “is not required for the correctness theorem in Figure 1” (Section 7, p. 11). The field characteristic assumption, at least `2^63`, is essential for unique instruction representation (Sections 3 and 5, pp. 3, 8).
+evidence and limits: the paper says “uniqueness is not required for the correctness theorem in Figure 1” but that “it is independently important to know that this nondeterminism does not arise” (Section 7, p. 11). Section 3 (p. 3) says the semantics assumes a field characteristic greater than `2^63`, “which means that instructions have a unique representation in the field”, and Section 5 (p. 8) assumes characteristic at least `2^63`.
 
 ## technique 4: use polynomial fingerprints for permutations
 
@@ -61,19 +61,19 @@ what it is: replace a global sequence-equality or permutation claim with a polyn
 
 how to do it:
 1. define `p(x)=∏(x−ai)` and `p'(x)=∏(x−a'i)` for the original and reordered sequences (Section 9, p. 13)
-2. prove that equality at a point outside `exceptional_set(a,b)` implies equality of the polynomials using `all_eq_of_not_mem_exceptional_set`
-3. prove the exceptional set cardinality bound `card_exceptional_set_le ≤ fintype.card n` (Section 9, p. 13)
-4. use the STARK hash output as the interaction element and put the resulting equality into the AIR constraints.
+2. prove that equality at a point outside `exceptional_set(a,b)` implies equality of the polynomials using `all_eq_of_not_mem_exceptional_set` (Section 9, pp. 13–14)
+3. prove the exceptional set cardinality bound `card_exceptional_set_le`, which states `card (exceptional_set a b) ≤ fintype.card n` (Section 9, p. 13)
+4. use the STARK hash output as the interaction element `α`; the prover publishes a certificate that `p(α) − p′(α) = 0` (Section 9, p. 13). Section 10 adds the product-chain constraints that enforce the equality in the AIR (p. 14).
 
 Verus form: Inference: model the fingerprint as a ghost fold over a finite sequence and prove the exceptional-root bound with a finite-field polynomial library. The random/hash sampling argument is outside Verus unless the cryptographic model is formalized; state it as an explicit assumption in the top-level contract.
 
-evidence and limits: the theorem's bad sets are existentially quantified and need only be small; the paper does not provide a concrete probability estimate for a deployed field. The method requires the field to be much larger than the sequence length.
+evidence and limits: the theorem's bad sets are existentially quantified and need only be small (Section 9, p. 14); the paper gives no concrete probability estimate for a deployed field. The argument assumes `n` is much smaller than the field size (Section 9, p. 13). In the final proof `bad2` and `bad3` are instances of `exceptional_set`, while `bad1` is the set of zeros of another polynomial (Section 9, p. 14).
 
 ## technique 5: range-check and memory-consistency encodings
 
-range checks: sort or permute offset values into a sequence from `rc_min` to `rc_max`; constrain adjacent values to stay equal or increase by one, and constrain endpoints to the declared minimum and maximum (Section 10, p. 14). The permutation fingerprint then proves every original offset occurs in that interval, yielding `off_op0_tilde` and analogous in-range lemmas.
+range checks: sort or permute offset values into a sequence from `rc_min` to `rc_max`; constrain adjacent values to stay equal or increase by one, and constrain endpoints to the declared minimum and maximum (Section 10, pp. 14–15). The permutation fingerprint (lemma `rc_permutation`) then shows each original value occurs in the sorted sequence, yielding `off_op0_in_range` and the analogous lemmas (Section 10, p. 15).
 
-memory: pair each accessed address with its value, permute the pairs into an ordered sequence, require adjacent addresses to be equal or increase by one, and require equal adjacent addresses to have equal values (Section 11, pp. 15–16). To bind a partial assignment `m*` without adding a constraint per public entry, add dummy `(0,0)` pairs and replace the final fingerprint condition with a product over `mem_dom mem_star` (Section 11, p. 16). Define the reconstructed memory `mem` by selecting the unique value associated with an address and return zero when absent.
+memory: pair each accessed address with its value, permute the pairs into an ordered sequence, require adjacent addresses to be equal or increase by one, and require equal adjacent addresses to have equal values (Section 11, pp. 15–16). The paper compresses the pair check by testing `a'i + α·v'i` against `ai + α·vi`, which gives the sets `bad1` (misleading `α`) and `bad2` (misleading `z`) (Section 11, p. 16). To bind a partial assignment `m*` without adding a constraint per public entry, add `|dom(m*)|` dummy `(0,0)` pairs and change the final constraint `p (fin.last n) = 1` to a product over `mem_dom mem_star` (Section 11, p. 16). Define the reconstructed memory `mem` as the value paired with an address in `a'`, and `0` when the address is absent; the paper says it later shows this value is unique (Section 11, p. 16).
 
 Verus form: Inference: use ghost sequences and sortedness/adjacency invariants for range and memory proofs. A Verus `invariant` can maintain uniqueness of equal addresses and consistency with the partial map; a final lemma can show every CPU access returns its encoded value. The hash fingerprint still needs an explicit cryptographic assumption.
 
@@ -81,9 +81,9 @@ evidence and limits: these constraints prove consistency of the formal memory ex
 
 ## trusted boundary, contradictions, and VL implications
 
-The formal proof checks the CPU semantics, generated constraints, glue, finite-field facts, and Lean's proof kernel. The trusted boundary also includes the code generator that emits `constraints_autogen.lean`, the production verifier's use of the same polynomials, the STARK protocol and hash assumptions, the correctness of the Cairo whitepaper formalization, and the claim that a high-level program has the intended specification. The authors list these directly in Section 5: “What needs to be trusted?”
+The formal proof is stated only in terms of `cpu.lean` and `constraints_autogen.lean`, plus basic library facts (Section 4, p. 7; Section 5, p. 8). The paper's trust list in Section 5 (p. 9), under “What needs to be trusted?”, has these items: the polynomials in `constraints_autogen.lean` “should match the polynomials used by the verifier”; the definitions of fields, integers, and finite sequences are formalized correctly; the formal CPU semantics matches “our informal understanding”; “the soundness of the axiomatic foundation and its implementation in Lean”; and the STARK protocol and “the means used to verify the STARK certificates”. The paper says that once programs are proved against high-level specifications, “only the higher-level specification matters” (Section 5, p. 9). Inference: this also leaves the generator that emits `constraints_autogen.lean` and the Cairo toolchain's compilation outside the proof; the paper does not list the generator separately, and says only that the same code produces the verifier code (Section 4, p. 7).
 
-The paper's numerical bounds are symbolic, so there is no denominator-based experimental success rate to reconcile. The `16(T+1) × 25` array and `T=(T'−1)/16` relation are definitions of the encoding, not measurements (Section 4, p. 7). Inference: a VL implementation should copy the architecture of a small executable semantics plus generated constraints and a proved glue layer, but it should not treat a Verus proof of algebraic constraints as a proof of the cryptographic verifier or of application-level intent. Threat to agent-written verified Rust is high where the specification-to-encoding boundary is generated or opaque: a wrong generator can produce a consistently proved but wrong algebraic model unless generation and correspondence are checked.
+The paper's numerical bounds are symbolic, so there is no denominator-based experimental success rate to reconcile. The `16(T+1) × 25` array and the relation between `T` and `T'` are definitions of the encoding, not measurements (Section 4, p. 8; Section 5, p. 9; Figure 1, p. 21). Inference: a VL implementation should copy the architecture of a small executable semantics plus generated constraints and a proved glue layer, but it should not treat a Verus proof of algebraic constraints as a proof of the cryptographic verifier or of application-level intent. Inference: the threat to agent-written verified Rust is high where the specification-to-encoding boundary is generated or opaque, because a wrong generator can produce a consistently proved but wrong algebraic model unless generation and correspondence are checked.
 
 What VL should not redo (Inference): the polynomial fingerprint pattern for proving permutations, bounded bit decoding, and memory consistency are established techniques. A useful adaptation would make the generated Rust/Verus constraints auditable and prove the generator's correspondence to the executable verifier.
 
@@ -95,4 +95,4 @@ What VL should not redo (Inference): the polynomial fingerprint pattern for prov
 - polynomial permutation fingerprints — reduce sequence permutation claims to random evaluations outside bounded bad sets
 - range-check encoding — prove integer intervals with sorted adjacency and permutation constraints
 - memory-consistency encoding — reconstruct a read-only memory map from permuted address/value pairs
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This is not problematic, because the program itself is part of the specification shared by the prover and the verifier."): I read the whole paper text (pp. 1–21 incl. Figure 1) and checked every quotation, section and page reference, the Lean names, and the technique steps against it. I changed the tag link to the arXiv page (arXiv:2109.14534 is the identifier printed in the paper; the previous DOI is not in the paper text), corrected several page references (the next_fp definition is on p. 5, the 16(T+1) × 25 array and glue.lean are on p. 8), replaced an unsupported "prove helper lemmas" step and an unsupported trusted-boundary list (code generator and whitepaper formalization are not in the paper's list) with what the paper says, noted that Section 5's "(T′ − 1)/16" conflicts with Section 4 and Figure 1 (`T'/16 − 1`), marked own conclusions as Inference, and added details (23+2 column commitment, α/z fingerprint for memory pairs, Section 12 claims). I did not check the Lean repository, the Cairo whitepaper, the STARK paper, the Verus-form suggestions (my own inference, not tested), or the published CPP 2022 version, which may differ from the arXiv v3 text.

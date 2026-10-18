@@ -1,6 +1,6 @@
 # LAGC Semantics of Concurrent Programming Languages
 (authored by agents unless marked 🧑)
-Tag: `din2022lagc`, [paper](https://doi.org/10.48550/arxiv.2202.12195)
+Tag: `din2022lagc`, [paper](https://arxiv.org/abs/2202.12195)
 
 ## what the paper proves or measures
 
@@ -19,13 +19,13 @@ when to use it: use this separation when a component’s local behavior is reusa
 how to do it:
 1. Represent unknown state values with `*` and keep symbolic expressions simplified (Definitions 1–6, pp. 2–4).
 2. Evaluate each local statement against the symbolic state, producing a finite conditioned trace and a continuation (Section 2.5, p. 7).
-3. At composition time, choose a mapping `ρ` for the symbols in the trace (Definitions 13–16, pp. 6–7).
+3. At composition time, choose a mapping `ρ` for the symbols in the trace (Definitions 13–16, p. 6).
 4. Require the instantiated path condition to be consistent and the extended trace to be well formed.
 5. Chop the concretised trace onto the existing global trace (composition rules (13), (23), and (37), pp. 8, 16, and 23).
 
 Verus form (Inference): represent symbolic inputs as ghost/spec values and make a function contract quantify over them with `requires`; prove the concrete implementation’s `ensures` for every supplied value. For a message receive, a proof `fn` can take the received value and establish the post-state relation. Verus has no general symbolic-trace evaluator, so the mapping and substitution must be modeled as executable or ghost data and proved correct.
 
-evidence and limits: Proposition 2 proves that local WHILE evaluation from a concrete, fully initialized state yields exactly one trace with a consistent path condition (Section 3.1, p. 8). Symbolic values are needed when that premise fails; the input rule introduces a fresh `Y` and assigns it to `x` (Section 5.4, p. 16). The approach assumes well-formed symbolic states and a complete mapping at composition; it does not itself solve the underlying first-order constraints.
+evidence and limits: Proposition 2 states that, for a concrete state σ with vars(s) ⊆ dom(σ), valσ(s) is a set of concrete continuation traces with exactly one continuation trace whose path condition is consistent (Section 3.1, p. 8); the paper text gives no proof of it. Symbolic values are needed when that premise fails; the input rule introduces a fresh `Y` and assigns it to `x` (Section 5.4, p. 16). The approach assumes well-formed symbolic states and a complete mapping at composition; it does not itself solve the underlying first-order constraints.
 
 ## technique 2: continuation traces and semantic chop
 
@@ -35,7 +35,7 @@ when to use it: use continuations to make one independent rule per syntax constr
 
 how to do it:
 1. Define a continuation marker for the remaining code (Definition 17, p. 7).
-2. For assignment, emit the old state and an updated state, followed by `K( )`; for conditionals, emit two path-conditioned traces (rules (7)–(8), p. 8).
+2. For assignment, emit the old state and an updated state, followed by `K( )`; for conditionals, emit two path-conditioned traces (rules (7)–(8), pp. 7–8).
 3. For sequencing, append the second statement to the first statement’s continuation (rule (10), p. 8).
 4. At global composition, evaluate the continuation in the final state and apply semantic chop (rule (13), p. 8).
 5. Repeat to a maximal finite or infinite trace (Definition 18, p. 9).
@@ -44,11 +44,11 @@ Verus form (Inference): a Rust proof can mirror this with a ghost sequence of st
 
 evidence: Example 12 derives the trace of `x := 1; y := x + 1`, ending with `y = 2` through two applications of the composition rule (Section 3.3, p. 9). The paper’s sound calculus relies on the same correspondence between local rules and composed traces.
 
-limits: chop is undefined for an empty or infinite first trace and when the second initial state cannot extend the first final state (Definition 10, p. 5). The framework therefore needs explicit treatment of nontermination and state-domain initialization.
+limits: chop is undefined for an empty or infinite first trace and when the second initial state cannot extend the first final state (Definition 10, p. 5). The paper avoids the initialization problem by “simply assuming that last(sh) defines all variables of s”, achieved by initialising all variables to default values at program start (Section 3.2, p. 8). Inference: nontermination and state-domain initialization therefore need explicit treatment in any reuse.
 
 ## technique 3: declarative event well-formedness for scheduling and communication
 
-what it is: events are inserted between identical states, optionally introducing fresh symbols. A well-formedness predicate over the concrete trace constrains event order. Scheduling is therefore a property of traces rather than a fixed local evaluator. The paper says: “Events turn out to be a flexible and intuitive mechanism, which can be used to express a range of dependencies between processes beyond synchronous communication (for example, object generation).” (Section 2, p. 2).
+what it is: events are inserted between identical states, optionally introducing fresh symbols. A well-formedness predicate over the concrete trace constrains event order. Scheduling is therefore a property of traces rather than a fixed local evaluator. The paper says: “Events turn out to be a flexible and intuitive mechanism, which can be used to express a range of dependencies between processes beyond synchronous communication (for example, object generation).” (Section 1, p. 2).
 
 when to use it: use events for input, calls, process creation, sends, receives, and any synchronization point whose legality depends on global history.
 
@@ -61,11 +61,11 @@ how to do it:
 
 Verus form (Inference): represent events as a ghost enum and the trace as a ghost sequence. Prove each Rust operation appends the required event and preserve a `wf` predicate in a proof `fn`. The event log can be erased from executable code only after the proof establishes that the logged sequence corresponds to actual operations.
 
-evidence and limits: well-formedness is inductive and decidable for the event-counting predicates used in the paper (Section 5.5, p. 18). The authors note that causal ordering is harder because the basic event structure does not record causality; they derive a `Chain` predicate instead (Section 6.2, pp. 24–25). A richer event model would increase expressiveness but also complexity.
+evidence and limits: well-formedness is defined inductively over the trace, and the paper states “It follows that well-formedness is always a simple, decidable property.” (Section 5.5, p. 18). The authors note that causal ordering is harder to characterise because “Our event structure does not record causal ordering”; recording it “would add considerable complexity to the evaluation rules”, so they use a `Chain` predicate over the existing events instead (Section 6.2, pp. 24–25).
 
 ## technique 4: a sound dynamic-logic calculus over symbolic traces
 
-what it is: formulas have the form `ψ → τ [s] φ`, where `τ` is a finite symbolic trace and `[s]` quantifies over terminating executions of the continuation. The calculus symbolically executes assignments, conditionals, loops, and skip, producing first-order verification conditions. Theorem 1 states that a derivable sequent is valid (Section 4.2, p. 11). The theorem is titled “Theorem 1 (Soundness).”
+what it is: formulas have the form `ψ → τ [s] φ`, where `τ` is a finite symbolic trace and `[s]` quantifies over terminating executions of the continuation. The calculus symbolically executes assignments, conditionals, loops, and skip, producing first-order verification conditions. Theorem 1 (Soundness) states that if ⊢ ψ ⇒ τ φ is derivable then |= ψ ⇒ τ φ (Section 4.2, p. 11).
 
 when to use it: use this when deriving deductive rules that must be sound for all concretisations and all terminating executions, rather than checking one concrete trace.
 
@@ -78,7 +78,7 @@ how to do it:
 
 Verus form (Inference): each dynamic-logic rule corresponds to a proof `fn` whose `requires` is the antecedent and whose `ensures` is the postcondition after an abstract state transition. Use `assert` for branch path facts and `invariant` for loops. Verus can prove the resulting first-order arithmetic and sequence facts, but it does not provide the paper’s `[s]` modality.
 
-evidence: Theorem 1’s proof is by induction on the formula and explicitly uses the local semantics/composition equations (Section 4.2, pp. 11–12). The paper warns that the calculus is incomplete until a sound calculus for residual first-order sequents is supplied (Section 4.2, p. 11).
+evidence: Theorem 1’s proof is by induction on the formula and explicitly uses the local semantics/composition equations (Section 4.2, pp. 11–12). The paper says the rule set “is incomplete as it leaves open how a sequent of the form Γ, pc ⇒ τ φ should be derived, where φ is a first-order formula”; the soundness proof assumes a sound calculus for those (Section 4.2, p. 11). Section 9.1 (p. 38) calls Theorem 1 a soundness proof “for the sequential fragment”.
 
 ## technique 5: model parallel interleavings and atomic blocks
 
@@ -88,14 +88,14 @@ when to use it: use interleaving when shared-memory concurrency permits arbitrar
 
 how to do it:
 1. Define local parallel evaluation as the union of traces that advance the left or right branch (rule (16), p. 12).
-2. Rewrite away empty branch continuations (rule (17), p. 12).
+2. Rewrite away empty branch continuations (rule (17), p. 13).
 3. Let the unchanged global composition rule choose one continuation at each scheduling point.
 4. For `atomic`, recursively evaluate its body and chop the internal prefixes before returning control (rule (19), p. 14).
 5. Prove properties over the resulting set of traces.
 
 Verus form (Inference): model each thread’s state and a scheduler choice in ghost state; prove an atomic operation’s contract over its complete body and preserve a shared-state invariant at scheduler boundaries. Verus’s concurrency/state-machine APIs may encode the invariant, but the paper’s arbitrary interleaving generator is not automatic.
 
-evidence and limits: Example 13 yields three interleavings for `x := 1; y := x + 1 || x := 2` (Section 5.1, p. 12). With the first statement atomic, Example 15 reports exactly two traces and no final `y = 3` trace (Section 5.2, p. 15). The calculus rules for parallelism are sound relative to LAGC but “quickly lead to path explosion” (Section 5.1, p. 14); atomic blocks exclude loops in the presented rule because nonterminating atomic evaluation is undefined (Section 5.2, p. 14).
+evidence and limits: Example 13 yields three interleavings for `x := 1; y := x + 1 || x := 2` (Section 5.1, p. 12). With the first statement atomic, Example 15 reports exactly two traces and no final `y = 3` trace (Section 5.2, p. 15). The paper calls the soundness of the calculus rules for parallelism “evident” (no proof given) but says they “quickly lead to path explosion” (Section 5.1, p. 14); atomic blocks exclude loops in the presented rule because nonterminating atomic evaluation is undefined (Section 5.2, p. 14).
 
 ## technique 6: procedure calls, tasks, and message semantics
 
@@ -107,12 +107,12 @@ how to do it:
 1. Emit `invEv(m,v)` at the call site (rule (24), p. 17).
 2. Permit composition to add the matching invocation-reaction event and a fresh-parameter method continuation only when the trace is well formed (rule (26), p. 17).
 3. For each process, maintain a task multiset `Ω(p)` and choose one continuation for the next step (rules (37)–(38), p. 23).
-4. Emit send, receive, and spawn events; bind unknown values to fresh symbols in local evaluation (rules (34)–(36), pp. 22–23).
+4. Emit send, receive, and spawn events; bind unknown values to fresh symbols in local evaluation (rules (34)–(36), p. 22).
 5. Concretise and check well-formedness before extending the global trace.
 
 Verus form (Inference): represent task queues and process IDs in ghost/spec sequences, and prove each Rust API operation’s contract against queue and event updates. A function `ensures` clause can state message payload preservation; a proof `fn` can show that a receive corresponds to a prior send. External scheduler behavior remains a modeled assumption unless verified.
 
-evidence and limits: Definition 27 generates traces from an initial main-process spawn and rules (37)–(38) (Section 6.1, pp. 23–24). The paper’s constraints prevent duplicate message IDs, duplicate receives, and duplicate process IDs (Definition 26, p. 23). The semantics does not choose a single scheduler; it denotes all traces satisfying the selected constraints.
+evidence and limits: Definition 27 generates traces from an initial main-process spawn and rules (37)–(38) (Section 6.1, p. 23). The paper’s constraints prevent duplicate message IDs, duplicate receives, and duplicate process IDs (Definition 26, p. 23). The semantics does not choose a single scheduler; it denotes all traces satisfying the selected constraints.
 
 ## technique 7: specify communication patterns as trace predicates
 
@@ -133,7 +133,7 @@ evidence and limits: the predicates are mathematical constraints on traces, not 
 
 ## technique 8: actor isolation and future-based active objects
 
-what it is: the paper instantiates LAGC for actors with private object memory and run-to-completion method calls, then for active objects with futures, `await`, `return`, and `get`. Actor calls are asynchronous events; each object has a task queue. Active-object tasks may suspend at guards, allowing another task to run, while a future completion event makes a returned value available. The paper states: “With active objects, there is no data-race among concurrent tasks, because each data item belongs to one single active object and there is at most a single active task for each active object.” (Section 7.3, p. 32).
+what it is: the paper instantiates LAGC for actors with private object memory and run-to-completion method calls, then for active objects with futures, `await`, `return`, and `get`. Actor calls are asynchronous events; each object has a task queue. Active-object tasks may suspend at guards, allowing another task to run, while a future completion event makes a returned value available. The paper states: “With active objects, there is no data-race among concurrent tasks, because each data item belongs to one single active object and there is at most a single active task for each active object.” (Section 7.3, pp. 31–32).
 
 when to use it: use actor isolation when shared mutable state should be confined to an owner object; use futures when asynchronous calls return values and tasks must release a processor while waiting.
 
@@ -158,18 +158,18 @@ when to use it: use this when a language has side-effecting guards, rendezvous c
 how to do it:
 1. map language values to finite integer types and initialize every declared process continuation (Section 7.1, pp. 25–26).
 2. represent each guarded choice as a path-conditioned branch; if several guards hold, retain every enabled choice (Section 7.1, p. 26).
-3. for a guarded atomic block, re-evaluate a false guard later and execute the body atomically when it is true (rule (41), p. 27).
-4. constrain channel events with visibility, single-consumption, strict-synchronous, or bounded-FIFO predicates (Section 7.1, pp. 27–28).
+3. for a guarded atomic block, re-evaluate a false guard later and execute the body atomically when it is true (rule (41), p. 26).
+4. constrain channel events with visibility, single-consumption, strict-synchronous, or bounded-FIFO predicates (Section 7.1, p. 27).
 
 Verus form (Inference): represent channel buffers and visibility capabilities as ghost state and prove send/receive transitions against the selected state-machine invariant. A blocked operation should return a proved error or await a verified scheduler condition; an unconstrained `assume` would bypass the channel proof.
 
-evidence and limits: the ProMeLa model supports globally visible channels and local channels whose identifiers must have been declared or received (Section 7.1, p. 27). The paper does not provide a separate completeness or performance measurement for this instantiation; it demonstrates that the same local rules and trace predicates can express the language’s semantics.
+evidence and limits: the ProMeLa model supports globally visible channels and local channels whose identifiers must have been declared or received (Section 7.1, p. 27). The paper says “We do not give a full LAGC-style semantics of ProMeLa” and gives no DL calculus for it (Section 7.1, p. 25); it discusses the main features and shows they can be formalised with minor variations of the earlier concepts. It reports no completeness or performance measurement for this instantiation.
 
 ## trusted boundary, contradictions, and scope
 
-The paper proves soundness of the WHILE dynamic-logic calculus relative to its trace semantics and proves local properties such as concrete-trace preservation. It does not prove the correctness of a Rust compiler, a Verus encoding, external schedulers, or hardware (Inference). The semantic framework assumes well-formed states, consistent path conditions, and that the chosen communication predicates describe the intended concurrency model. The calculus is explicitly incomplete for residual first-order obligations, and parallel proof search can suffer path explosion.
+The paper proves soundness of the WHILE dynamic-logic calculus relative to its trace semantics (Theorem 1, pp. 11–12) and proves Proposition 3 (at most one active task per object, p. 32). Propositions 1 and 2 are stated without proof in the paper text. Section 9.1 (p. 38) says that “all definitions and theorems from Sections 2, 3, and 5 have been mechanized and proven in Isabelle/HOL” and that Sections 6, 7.2 and 7.3 are not yet mechanized. It does not prove the correctness of a Rust compiler, a Verus encoding, external schedulers, or hardware (Inference). The semantic framework assumes well-formed states, consistent path conditions, and that the chosen communication predicates describe the intended concurrency model. The calculus is explicitly incomplete for residual first-order obligations, and parallel proof search can suffer path explosion.
 
-No experimental denominators, success rates, or timing numbers are reported. The evidence is formal: Proposition 1 (concretisation), Proposition 2 (concrete local evaluation), Theorem 1 (calculus soundness), and concrete trace examples. Case studies show expressiveness rather than measured coverage.
+No experimental denominators, success rates, or timing numbers are reported. The evidence is formal: Proposition 1 (concretisation), Proposition 2 (concrete local evaluation), Theorem 1 (calculus soundness), Proposition 3 (one active task per object), and concrete trace examples. Case studies show expressiveness rather than measured coverage.
 
 Inference: LAGC poses a high design threat to any VL concurrency feature that relies on an implicit scheduler or informal message assumptions. VL should make task, event, and channel invariants explicit and retain independent Verus proofs for implementation contracts. Rebuilding a generic trace semantics is unnecessary if Verus state-machine specifications already cover a target API; the reusable contribution is the separation of local symbolic contracts from global well-formedness constraints.
 
@@ -182,6 +182,6 @@ Inference: LAGC poses a high design threat to any VL concurrency feature that re
 - interleaving and atomic semantics — generate scheduler interleavings while recursively removing preemption inside atomic blocks
 - task and message composition — model calls, processes, sends, receives, and spawns with event matching and symbolic payloads
 - declarative channel models — obtain asynchronous, FIFO, bounded, causal, and synchronous semantics by adding trace predicates
-- actor isolation and futures — preserve owner-local state, match asynchronous calls, and gate future reads on completion
+- actor isolation and futures — preserve owner-local state, match asynchronous calls, and restrict future reads to completed futures
 - guarded language instantiation — express ProMeLa guards, channel visibility, blocking, and consumption through events and well-formedness
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Message identifiers are used to avoid sending or receiving the same message (i.e. two messages with the same identifier) twice."): read the whole paper text (Sections 1–9, Figures 1–10, Examples 1–19, references) and compared every quotation, section, page and rule/definition reference, and each technique step against it; changed one wrong section reference (Section 1, not 2), several page references (Definitions 13–16, rules (7), (17), (34)–(36), (41), Definition 27, ProMeLa constraints, the p. 31–32 quotation), the tag link (now the arXiv abstract page named in the paper text), the claims that Propositions 1–2 are proved and that a richer event model gives more expressiveness (the paper says only that recording causality adds complexity), and added the paper’s statements on ProMeLa being only partly formalised, soundness covering only the sequential fragment, and the Isabelle/HOL mechanization of Sections 2, 3 and 5; Verus-form paragraphs are my own proposals marked Inference and were not checked against Verus; I did not check the cited related work, the Isabelle repository, or any claim about Verus itself.

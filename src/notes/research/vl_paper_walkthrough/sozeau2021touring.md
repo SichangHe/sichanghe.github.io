@@ -1,6 +1,6 @@
 # Touring the MetaCoq Project (Invited Paper)
 (authored by agents unless marked 🧑)
-Tag: `sozeau2021touring`, [paper](http://arxiv.org/abs/2107.07670v1)
+Tag: `sozeau2021touring`, [paper](https://doi.org/10.4204/EPTCS.337.2) (DOI from the paper text)
 
 ## takeaway
 
@@ -21,22 +21,22 @@ How to do it.
 4. Encapsulate global-environment updates and proof obligations in a monad; provide an interpreter and an extraction-friendly variant (§2.1, p. 16).
 5. Build plugins such as parametricity and induction derivation on this API, so their implementations can themselves become proof targets (§2.1, p. 16).
 
-"We need a monadic abstraction to encapsulate the handling of the global state of the C OQ system that is being manipulated." (§2.1, p. 16)
+"We need a monadic abstraction to encapsulate the handling of the global state of the C OQ system that is being manipulated" (§2.1, p. 16; the sentence continues after a colon)
 
 Verus form. Inference: encode an AST as Rust enums and environments as immutable maps or ghost sequences; use spec functions for lookup, substitution, and well-formedness. A Rust API can return a result carrying a value and a proof-relevant ghost predicate, while executable proof values are erased. Verus does not provide dependent inductive types or Coq's universe checker, so the type-indexing and proof irrelevance must be modeled explicitly.
 
-Evidence and limits. The paper says the syntax “corresponds closely to C OQ’s internal syntax” (§2, p. 15), but exact correspondence is a modeling claim backed by the formal definitions, not a measured byte-for-byte comparison. Quotation, OCaml interpretation, and the host compiler are part of the trusted integration unless separately verified.
+Evidence and limits. The paper says the syntax “corresponds closely to C OQ’s internal syntax” (§2, p. 15). Inference: this is a modeling claim backed by the formal definitions, not a measured comparison, and quotation, the OCaml interpreter of the monad, and the host compiler are part of the trusted integration unless separately verified.
 
 ## technique 2: specify PCUIC and prove its metatheory
 
 What it is. PCUIC is the Polymorphic Cumulative Calculus of (Co-)Inductive Constructions underlying Coq. MetaCoq defines reduction, alpha-cumulativity, typing, contexts, and inductive declarations as predicates in Coq, then proves properties needed by the checker and erasure.
 
 How to do it.
-1. Define one-step reduction for beta, iota, zeta, (co-)fixpoint, delta, and congruence rules; close it under alpha-equivalence and a universe relation (§2.2.1, pp. 17–18).
-2. Define typing and cumulativity judgments inductively over well-formed global/local contexts (§2.2.2, pp. 18–19).
+1. Define one-step reduction for beta, iota, zeta, (co-)fixpoint, delta, and congruence rules; close it under alpha-equivalence and a universe relation (§2.2.1, p. 17).
+2. Define typing and cumulativity judgments inductively over well-formed global/local contexts (§2.2.2, pp. 17–18).
 3. Define parallel reduction and use a triangle property to prove confluence (§3.2.3, pp. 20–21).
-4. Prove subject reduction: reduction preserves typing; prove principality: any two types of a term have a common more-principal type (§3.2.2–§3.2.4, pp. 20–22).
-5. Prove strengthening (thinning) where unused context variables can be removed, or record where the proof is blocked by undirected conversion (§3.3, pp. 21–22).
+4. Prove subject reduction: reduction preserves typing; prove principality: a well-typed term has a unique type T such that T ≤ U for any other typing U of the term (§3.2.2–§3.2.4, pp. 20–21). Subject reduction is stated only for judgments where no dependent case analysis is performed on co-inductive types (§3.2.2, p. 20).
+5. Prove strengthening (thinning) where unused context variables can be removed, or record where the proof is blocked by undirected conversion: the paper says strengthening "cannot be proven by a simple induction on the typing derivation" (§3.3, p. 21).
 
 "To verify the sanity of the specification we develop the meta-theory (§3) of the PCUIC calculus and show that it enjoys type preservation (§3.2.2) and principality (§3.2.4) of types, along with the expected confluence of reduction (§3.2.3) and proof that conversion is a congruence." (§1.2, p. 15)
 
@@ -46,18 +46,18 @@ Verus form. Inference: represent typing and reduction as ghost relations over AS
 
 ## technique 3: recover principality with bidirectional typing
 
-What it is. Undirected conversion made strengthening and principality difficult. MetaCoq reifies a bidirectional presentation that separates synthesis (infer a type from a term) from checking (check a term against an expected type). The resulting derivations are canonical and move conversion to a controlled phase.
+What it is. The free-floating conversion rule made strengthening hard to prove by induction (§3.3, p. 21). The paper reifies principality and the checking strategy as a bidirectional typing definition that separates synthesis (the term is input, the type output) from checking (both are input). It cites Meven Lennon-Bertrand's bidirectional variant of PCUIC [32], shown equivalent to the original, in which strengthening and principality "become trivial to derive". Derivations are canonical for a given term and conversion moves to the top of the derivation.
 
 How to do it.
 1. Define a synthesis judgment where the term is input and a type is output (§3.4, p. 22).
 2. Define a checking judgment where term and expected type are inputs (§3.4, p. 22).
-3. Add one phase-change rule for cumulativity rather than allowing many conversion rules throughout a derivation (§3.4, p. 22).
-4. Prove equivalence with the original PCUIC typing relation (§3.4, p. 22).
-5. Use the bidirectional form to derive strengthening and principality by straightforward induction (§3.4, p. 22).
+3. Compress multiple cumulativity rules into a single change-of-phase rule, relying on transitivity of cumulativity (§3.4, p. 22).
+4. Show the bidirectional system equivalent to the original PCUIC typing relation (done in [32], §3.4, p. 22).
+5. Derive strengthening and principality from the bidirectional form, where the paper calls them trivial (§3.4, p. 22).
 
 "The crux of these argument is that bidrectional typing derivations are ”canonical” for a given term, and move uses of the conversion rule to the top of the derivation, where they are strictly necessary." (§3.4, p. 22)
 
-The method also found a real Coq bug: the dependent `match` rule compared universe instances and parameters by convertibility when cumulativity was required, causing a loss of subject reduction. The fix stores the eliminator's universe instance and parameters in the match node and checks cumulativity against the reconstructed expected type (§3.5, pp. 22–23).
+The paper reports that this work exposed a problem in Coq's typing rule for dependent `match`, found while proving completeness of the type checker and designing the bidirectional rules. The rule checked the scrutinee's universe instance convertible (rather than only cumulative) to the eliminator's, and compared the parameters by convertibility after lifting, although the two instances did not necessarily live in the same type. This loses subject reduction when cumulativity lowers the scrutinee's universes. The fix, a change of the `match` representation in Coq (CEP 34, Coq PR 13563, integrated in Coq 8.14), stores the universe instance and parameters at the match node and does a cumulativity test of the inferred scrutinee type against the reconstructed expected type; the MetaCoq development was still being updated to this change (§3.5, p. 22).
 
 Inference: this is a practical verification workflow: designing a canonical algorithmic judgment can expose specification ambiguities that ordinary theorem proving hides. The bug discovery is evidence of specification value, not a quantified bug-detection rate.
 
@@ -65,15 +65,15 @@ Verus form. Inference: implement `synth(term, ctx) -> Result<Type, Error>` and `
 
 ## technique 4: decide universe constraints and conversion with verified algorithms
 
-What it is. The checker has separate algorithms for universe consistency, weak-head reduction, and conversion. Each is developed with a termination argument and connected to PCUIC's declarative judgments.
+What it is. The checker has separate algorithms for universe consistency, weak-head reduction, and conversion. The conversion algorithm is developed as a dependently typed program; reduction relies on a strong-normalization axiom.
 
-Universe constraints. Universe variables obey tropical-algebra constraints over `(N, max, +k, ≤)`. The paper's algorithm builds a constraint graph and assigns each variable the weight of its longest simple path from `Type@{0}` (§4.1, p. 23). It handles arbitrary `+k ≤ l'+k'` constraints, more expressively than the current Coq implementation (§4.1, p. 23).
+Universe constraints. Universe variables obey tropical-algebra constraints over `(N, max, +k, ≤)`. The paper's algorithm builds a constraint graph and assigns each variable the weight of its longest simple path from `Type@{0}` (§4.1, p. 23). The paper calls this "a naı̈ve model and implementation" of the algorithm used in Coq, which derives from incremental cycle detection and whose formal verification is work in progress (§4.1, p. 23). It handles arbitrary `ℓ+k ≤ ℓ'+k'` constraints, more expressively than the current Coq implementation (§4.1, p. 23).
 
-Reduction. A weak-head reduction stack machine computes weak-head normal forms. Its definition assumes strong normalization for well-typed terms; the paper calls this the only axiom used in the development (§4.1, p. 23).
+Reduction. A weak-head reduction stack machine computes weak-head normal forms. Its definition assumes strong normalization for well-typed terms; the paper calls this "the only axiom used in the development" (§4.1, p. 23).
 
-Conversion. The algorithm incrementally reduces both terms to weak-head normal forms, compares heads, tries to unify arguments for equal constants, and unfolds only when needed. It is a dependently typed program taking well-typed terms, with a lexicographic termination measure, and returns a proof of convertibility or non-convertibility (§4.1, pp. 23–24).
+Conversion. The algorithm incrementally reduces both terms to weak-head normal forms, compares heads, tries to unify arguments for equal constants, and unfolds only when needed. It is a dependently typed program taking well-typed terms, with a dependent lexicographic termination measure due to Théo Winterhalter, and returns a proof of convertibility or non-convertibility (§4.1, p. 23).
 
-"In other words it is proven sound and complete by construction." (§4.1, p. 24)
+"In other words it is proven sound and complete by construction." (§4.1, p. 23)
 
 Verus form. Inference: encode universe constraints as a finite graph and prove longest-path consistency with arithmetic lemmas; encode conversion as a recursive function over a decreasing fuel/measure with a ghost proof that the measure decreases. Verus `decreases` clauses can justify recursion, while `requires`/`ensures` state soundness and completeness relative to a separately defined relation. Strong normalization, foreign compiler behavior, and the exact Coq conversion semantics remain assumptions unless modeled.
 
@@ -82,15 +82,15 @@ Verus form. Inference: encode universe constraints as a finite graph and prove l
 What it is. Type inference follows the head constructor of a raw term and returns either an inferred type with a squashed proof or a type error. Type checking is inference followed by conversion; global environments are checked with a monad that verifies inductive declarations, positivity, and universe constraints.
 
 How to do it.
-1. Require a well-formed global and local context (§4.2, p. 24).
-2. Pattern-match on the term head and recursively infer subterm types (§4.2, p. 24).
+1. Require a well-formed global and local context and a raw term (§4.2, p. 23).
+2. Check whether the rule determined by the head of the term applies, recursing structurally (§4.2, p. 23).
 3. Return `ret` with a sigma-type containing the inferred type and a squashed proof, or `raise` on failure (§4.2, p. 24).
 4. Run the conversion test against an expected type to obtain the checking judgment (§4.2, p. 24).
 5. For global environments, build a constraint graph, run positivity and context-cumulativity checks, and return either an error or a proof-bearing well-formed environment (§4.3, p. 24).
 
 The paper says the extracted inference function “returns an error or an infered type, just like in C OQ’s implementation.” (§4.2, p. 24)
 
-Inference: squashing proofs into `Prop` prevents computational code from inspecting proof shape; extraction therefore removes proof arguments while preserving the decision result. The completeness argument depends on the bidirectional presentation and the metatheory above.
+The paper says the elimination rules for propositional inductives ensure programs "cannot make computational choices based on the shape of the squashed derivations" and that extraction removes these arguments (§4.2, p. 24). It says the bidirectional presentation simplifies the correctness and completeness proof of [45] because the algorithm follows the structure of bidirectional derivations (§4.2, p. 24).
 
 Verus form. Inference: use an executable Rust `Result<Type, Error>` and ghost predicates for `WellTyped` and `WellFormedEnv`. Prove that `Ok` implies typing and that every declaratively typable input produces `Ok` under the checker preconditions. Use `proof fn`s only in verification; never call them from runtime code. The global-environment graph and positivity checks need explicit data structures and lemmas.
 
@@ -100,33 +100,33 @@ What it is. Erasure traverses a well-typed PCUIC term. Types and proofs are repl
 
 How to do it.
 1. Require a well-formed environment and a well-typed term (§5, pp. 24–25).
-2. If a subterm's type is `Prop` or `Type`, or the subterm proves a proposition, emit dummy `□`; otherwise recursively erase its structure (§5, p. 25).
-3. Prove that if the source term reduces to a value under weak call-by-value, the erased term reduces to an observationally equivalent value (§5, p. 25).
+2. If the subterm is a type (its type is a sort, Prop or Type) or a proof of a proposition (its type has sort Prop), emit the dummy `□`; otherwise recurse, copying the structure of the term (§5, p. 25).
+3. Prove that if a well-typed term reduces to a value under weak call-by-value, the erased term reduces to an observationally equivalent value; the proof follows Letouzey's pen-and-paper proof (§5, p. 25). §1.2 (p. 15) states this for a well-typed closed term.
 4. Prune unused environment definitions and remove dummy pattern matches as verified optimization passes (§5, p. 25).
-5. Feed the untyped term to CertiCoq and CompCert for certified assembly generation (§5, p. 25).
+5. The paper says the untyped term can be compiled further with CertiCoq and CompCert to produce certified assembly (§5, p. 25); §1.2 (p. 15) says that combination "will provide" an end-to-end verified kernel, not that it exists.
 
 "The result of erasure hence contains no type information anymore, and all propositional content is replaced with ." (§5, p. 25)
 
 Verus form. Inference: implement erasure as a Rust recursive function over an AST with a `decreases` measure and prove a simulation relation between source and target evaluation. Use a ghost typing predicate to justify the branch that emits `□`; do not claim that runtime Rust types preserve erased proofs. The paper's observational equivalence is a semantic relation that must be defined and proved; `ensures` over a final AST alone is insufficient.
 
-Evidence and limits. The extracted checker successfully checked the HoTT prelude, including a large adjoint-equivalence proof (§4.2, p. 24). The paper reports no runtime benchmark denominator for that example. The erasure theorem is conditional on well-typedness and well-formed environments, and the entire reduction argument assumes strong normalization.
+Evidence and limits. The paper says the extracted checker "can be used to successfully check the prelude of the HoTT library", including a large adjoint-equivalence proof (§5, p. 24). The first extraction attempt failed: the Coq definitions had to be changed so OCaml could typecheck the generated code, because of a limitation of Coq's extraction with dependently-typed variadic functions (§5, p. 24). The paper reports no runtime benchmark for that example. The erasure theorem is conditional on well-typedness and a well-formed environment (the extraction precondition, §5, p. 25). Inference: since the checker's reduction assumes strong normalization, the erasure result inherits that assumption only where it relies on it; the paper does not say this.
 
 ## what is proved, measured, and trusted
 
 - proved
-  - PCUIC confluence, subject reduction, principality, and conversion congruence (§3, pp. 19–22)
+  - PCUIC confluence, subject reduction, principality, and conversion congruence (§3, pp. 19–22; subject reduction excludes dependent case analysis on co-inductive types, §3.2.2, p. 20)
   - type-checker soundness and completeness with respect to the specification (§4, pp. 23–24)
-  - erasure preservation of observations for well-typed closed terms (§5, p. 25)
+  - erasure preservation of observations for well-typed terms (§5, p. 25; closed terms in §1.2, p. 15)
   - verified environment checking and two erasure optimizations (§4.3 and §5, pp. 24–25)
 - measured or demonstrated
-  - extracted checker runs on the HoTT library prelude (§4.2, p. 24)
+  - extracted checker runs on the HoTT library prelude (§5, p. 24)
   - project scale of about 100k lines of OCaml and Coq code (§6, p. 25)
   - no denominator for bug-finding rate, checker throughput, or extraction success percentage
 - trusted or assumed
-  - strong normalization; the paper calls it the only axiom in the checker development (§4.1, p. 23)
+  - strong normalization; the paper calls it the only axiom used in the development (§4.1, p. 23)
   - correctness of unformalized guard checking, because it relies on oracles (§6.1, p. 26)
-  - omitted eta conversion, SProp, module system, and template polymorphism (§6.1, pp. 25–26)
-  - Coq/OCaml runtime, extraction and compiler integration, and the formal theory's consistency foundation
+  - omitted eta conversion, SProp, module system, and template polymorphism (§6.1, pp. 25–26); SProp and primitive types are in the syntax but not the specification (§2.2, p. 17)
+  - Inference: the Coq/OCaml runtime, extraction and compiler integration, and the consistency of the formal theory remain trusted; the paper says the trusted base moves from Coq's unverified kernel to the formalized PCUIC typing rules plus the strong-normalization axiom (§6, p. 25)
   - Inference: in VL, Verus, Z3, Rust compilation, FFI, and hardware would add analogous trust components
 
 ## limitations and product implications
@@ -146,4 +146,4 @@ Inference: VL should not redo MetaCoq's general metatheory, bidirectional type-c
 - verified erasure — erase types/proofs to untyped lambda calculus and prove observational preservation
 - trust-base inventory — record strong normalization, guard checking, omitted features, extraction, and compiler assumptions explicitly
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In a bidirectional synthesis derivation, if a variable does not appear in the term position, then it cannot appear in the inferred type."): I read the whole paper text and viewed printed p. 21 of the PDF to confirm page placement; I checked every quotation, the section and page references (printed pages 13–29; the PDF has 17 pages), and each technique step against the paper. I changed: the link to the DOI from the paper text; page references for §2.2.1, §2.2.2, §3.2.4, §3.3, §3.5, §4.1 conversion, §4.2 and the HoTT example (which is in §5, p. 24, not §4.2); the description of principality, of the bidirectional variant (credited to Lennon-Bertrand [32], strengthening and principality "trivial to derive"), of the `match` bug and its fix, of the erasure test for types and proofs, and of what the paper claims about CertiCoq and CompCert ("will provide"); I added the subject-reduction restriction on co-inductive types, the failed first extraction attempt, and the "naive" universe algorithm; and I marked my own conclusions "Inference:". I did not check the Verus-form paragraphs beyond their being marked as inference, nor the cited works or the formal development online; the figures (Fig. 1 to Fig. 3 and the embedded rule excerpts) were not read in detail.

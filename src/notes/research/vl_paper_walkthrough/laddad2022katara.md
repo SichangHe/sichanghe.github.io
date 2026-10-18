@@ -1,6 +1,6 @@
 # Katara: synthesizing CRDTs with verified lifting
 (authored by agents unless marked 🧑)
-Tag: `laddad2022katara`, [paper](https://doi.org/10.1145/3563336)
+Tag: `laddad2022katara`, [paper](https://arxiv.org/abs/2205.12425)
 
 ## result and boundary
 
@@ -43,7 +43,7 @@ How to apply it.
 
 Verus form. Inference: write `spec fn equivalent(s: SeqState, c: CrdtState, q: Query) -> bool`, and a `proof fn` with `requires equivalent(...) && op_precondition(op)` and `ensures equivalent(next_seq, next_crdt, q)`. A second lemma proves query equality. Use `invariant` on any sequence-processing loop to preserve equivalence for the processed prefix. Inference: the query parameter should be explicit when a whole-state relation is too expensive.
 
-Evidence. Figure 3 gives the exact three verification rules (§4.1, p.8). The paper reports that all nine benchmarks obtain inductive invariants and provably correct CRDTs over unbounded executions (§7.1, p.21).
+Evidence. Figure 3 gives the exact three verification rules (§4.1, p.8). The paper reports that for all nine benchmarks it identifies the inductive invariants needed to prove correctness over unbounded executions (§7.1, p.20).
 
 Limits. Equivalence is a user-observable relation, not necessarily representation equality. A weak relation can be vacuous unless the query rule and reachable-state invariant constrain it; the paper notes that the relation may need to be stronger because it also reasons about future states (§4.1, p.8).
 
@@ -51,11 +51,11 @@ Limits. Equivalence is a user-observable relation, not necessarily representatio
 
 What it is. Katara restricts CRDT state to compositions of join-semilattices. The merge operation is the lattice join, so associativity, commutativity, and idempotence follow from the chosen state representation. The paper says: “By limiting the search space of state types to compositions of join-semilattices, we are able to achieve convergence—normally the most difficult property of CRDTs to verify—entirely by construction.” (§1, p.3)
 
-How to apply it. Enumerate lattice compositions such as `MaxInt`, `OrBool`, `Set`, `Map`, `LexicalProduct`, and `FreeTuple` (§5.1, pp.13–14). Define state transition as `merge(state, f*(operation))`; synthesize only `f*` and queries (§5.2.1, p.13). For a non-idempotent operation, enable node IDs and store per-node portions in maps; queries reduce those portions (§5.2.2, pp.15–16).
+How to apply it. Enumerate lattice compositions such as `MaxInt`, `OrBool`, `Set`, `Map`, `LexicalProduct`, and `FreeTuple` (§5.1, pp.12–13; Figure 7, p.13). Define state transition as `merge(state, f*(operation))`; synthesize only `f*` and queries (§5.2.1, p.13). For a non-idempotent operation, enable node IDs and store per-node portions in maps; queries reduce those portions (§5.2.2, pp.14–15).
 
 Verus form. Inference: define a ghost/specification `join` and prove `commutative`, `associative`, and `idempotent` lemmas once for each state component. The executable update calls the join with a synthesized or hand-written delta. Use `ensures` to preserve the lattice laws and `proof fn` lemmas to show merge convergence. Node-owned maps need a key-ownership invariant and a proof that gossip cannot overwrite another node's owned region. Inference: Rust's `HashMap` behavior and iteration order need explicit specifications if used in executable code.
 
-Evidence. Katara synthesized General Counter using two node-keyed maps and reductions, and Add-Wins Set using two timestamped maps (Figure 12, pp.21–22). All generated designs in Table 1 were verified (§7.1, p.21).
+Evidence. Katara synthesized General Counter using node-keyed maps with reductions in the query, and Add-Wins Set using two timestamped maps (Figure 12, p.21; state types in Table 2, p.20). The paper says the algorithm “is able to successfully generate designs that conform to all of the specifications, and it identifies the inductive invariants necessary to prove correctness of each CRDT over unbounded executions.” (§7.1, p.20)
 
 Limits. The grammar restricts the design space. Maps are not handled by CVC5's unbounded theory; the implementation falls back to bounded Rosette verification with a large bound (§6.2, p.19). Inference: “verified” for map-heavy candidates depends on the adequacy of that bound unless an independent unbounded proof is supplied.
 
@@ -76,34 +76,34 @@ What it is. Katara uses two verification encodings. The first stores a bounded o
 How to apply it.
 
 1. Choose a small `logBound` (Algorithm 1 starts at 2) and enumerate semilattice state structures (§5.3, pp.17–18).
-2. Reject candidates whose bounded log is not valid, in-order, or coherent with the candidate state; the log is a verification variable and cannot be used by synthesized code (§4.4, pp.10–11).
+2. In the bounded rules, assume the log is in-order/valid and coherent with the CRDT state, and that the new operation is in-order after the last logged one; the log is a verification variable and cannot be used by synthesized code. If no logic can be synthesized for a state structure under these bounded rules, drop that structure (§4.4, pp.10–11; §5.3, p.17).
 3. Synthesize state transition, query, and relation with bounded rules.
 4. Re-synthesize `invariant*` and `orderWithState*` against unbounded rules (§5.2.4, pp.16–17).
 5. If unbounded synthesis fails, increase log bound and invariant grammar depth, then retry; return only a candidate with a successful unbounded proof (Algorithm 1, p.18).
 
 Verus form. Inference: use a ghost sequence of operations for bounded search and separate `proof fn` lemmas for the unbounded induction. The final Rust proof should quantify over arbitrary next operations and use loop `invariant` clauses for prefixes; a finite test log is only a pruning heuristic. Inference: never expose the ghost log to executable behavior.
 
-Evidence. For Add-Wins Set, pruning evaluates all 86 candidates in under 15 minutes, while unpruned candidates can take up to an hour each (Figure 13, p.22). Table 2 reports up to a 5× speedup for sets (§7.2, p.22). The numbers are benchmark-specific: 86 candidates is the denominator for that Add-Wins Set plot.
+Evidence. For Add-Wins Set, with pruning all 86 candidate structures are processed in under 15 minutes; without pruning, “many state candidates take up to 20 minutes to be evaluated and there is a long tail of candidates that take up to an hour each” (Figure 13 and §7.2, p.22). The text reports “up to a 5x speedup” for the sets (§7.2, p.22; Table 2, p.20: Add-Wins Set 21m 17s ± 11s with pruning vs 1hr 58m ± 1m without). Pruning is not always faster: Grow-Only Counter took 1m 46s ± 0.7s by default vs 52s ± 0.3s with no pruning (Table 2, p.20). The numbers are benchmark-specific; 86 is the candidate count for the Add-Wins Set plot only.
 
 Limits. Bounded success alone is not a proof. If the unbounded invariant grammar is too small, the process retries with larger depth; some candidate may remain undiscovered (§5.3, p.18).
 
 ## technique 6: typed grammars and solver encodings
 
-What it is. Katara synthesizes state transitions, queries, relations, and invariants from type-directed grammars. Specialized integer types—`OpaqueInt`, `ClockInt`, and `EnumInt`—remove semantically impossible expressions and shrink the search (§5.2.3, pp.15–16). Runtime logic is lowered to SMT; CVC5 handles sets, while Rosette/Z3 handles bounded structures (§6, pp.18–19).
+What it is. Katara synthesizes state transitions, queries, relations, and invariants from type-directed grammars. Specialized integer types—`OpaqueInt`, `ClockInt`, and `EnumInt`—remove semantically impossible expressions and shrink the search (§5.2.3, pp.15–16). Runtime logic is lowered to SMT; Rosette performs synthesis with bounded data structures, and CVC5 then verifies with unbounded sets (§6.2, p.19).
 
 How to apply it. Extract LLVM IR from the sequential C/C++ source, inline user-defined functions, map primitive and collection APIs to SMT theories, and turn basic blocks into conditional specifications (§6.1, p.18). Generate grammar productions consistent with argument and return types; increase expression depth iteratively. For non-idempotent operations, add node-ID map reads, writes, and reductions (Figure 9, p.15).
 
 Verus form. Inference: model the same restriction with Rust types and `spec fn` signatures so impossible expressions are rejected before proof search. Use `assert` and `broadcast proof fn` only where solver facts are needed; keep collection specifications explicit. Inference: Verus does not synthesize Rust from a grammar automatically, so a VL implementation would need a separate generator whose output is then verified.
 
-Evidence. Table 2 reports default and no-pruning times for nine benchmarks on an AMD Ryzen 9 3900X, 12 threads, 48 GB RAM, LLVM 11, Rosette 4.1, and CVC5 1.0.2 (§7.1, p.20). Times range from 21 seconds for Add-Wins Set to 21m17s ±11s, and from 26 seconds for LWW Register to 11m3s ±4s for General Counter (Table 2, p.20); each denominator is repeated synthesis runs summarized by the reported standard deviation.
+Evidence. Table 2 reports default and no-pruning times for nine benchmarks, run on an AMD Ryzen 9 3900X (12C/24T) with 48 GB memory, up to 12 threads, LLVM 11, Rosette 4.1, and CVC5 1.0.2 (§7.1, pp.19–20). Default times range from 26s ± 0.2s (Last-Writer-Wins Register) to 21m 17s ± 11s (Add-Wins Set); General Counter takes 11m 3s ± 4s (Table 2, p.20). The paper reports averages with standard deviations and does not state the number of runs in the text I read.
 
 Limits. CVC5 has no map theory in this implementation; “the bounds we use for the fallback are sufficiently large to consistently produce correct synthesized results,” the authors report (§6.2, p.19). This is empirical evidence, not a universal completeness guarantee.
 
 ## what is proved, trusted, and already done
 
-The proved claim is that generated CRDT operations and queries match the sequential reference under the declared ordering and that the state merge converges for the supported semilattice construction. The measured claims are synthesis success, time, pruning speed, and alternative designs for nine benchmark specifications (§7, pp.19–23). Trusted or bounded parts include LLVM semantic extraction, Rosette/CVC5/Z3, collection theories and axioms, the grammar, the sequential reference, operation-ordering policy, and hardware/runtime behavior. Inference: the reference implementation and ordering policy are the dominant product trust boundary because a wrong reference can be proved perfectly.
+The proved claim is that generated CRDT operations and queries match the sequential reference under the declared ordering and that the state merge converges for the supported semilattice construction. The measured claims are synthesis success, time, pruning speed, and alternative designs for nine benchmark specifications (§7, pp.19–23). Inference: trusted or bounded parts include LLVM semantic extraction, Rosette/CVC5/Z3, collection theories and axioms, the grammar, the sequential reference, operation-ordering policy, and hardware/runtime behavior. Inference: the reference implementation and ordering policy are the dominant product trust boundary because a wrong reference can be proved perfectly.
 
-The paper reports a novel map-based Two-Phase Set using an `OrBool` map and default `true`, alongside the classic design (Figures 14, pp.22–23). Inference: VL should not redo generic synthesis of CRDTs from sequential types, semilattice-based convergence, query-parameterized equivalence, or two-phase bounded/unbounded pruning without a new Rust/Verus result. A product of agent-written verified Rust still faces specification omission, unsupported library semantics, bounded fallback proofs, and synthesis timeouts. Inference: the strongest reusable idea is to force a small reference contract and have the generator return only after an independent unbounded proof.
+The paper reports a novel map-based Two-Phase Set using an `OrBool` map and default `true`, as the first design generated for the Two-Phase Set benchmark, “to our knowledge” novel; continued search emits the classic 2P-Set (Figure 14, p.22; §7.3, pp.22–23). Inference: VL should not redo generic synthesis of CRDTs from sequential types, semilattice-based convergence, query-parameterized equivalence, or two-phase bounded/unbounded pruning without a new Rust/Verus result. A product of agent-written verified Rust still faces specification omission, unsupported library semantics, bounded fallback proofs, and synthesis timeouts. Inference: the strongest reusable idea is to force a small reference contract and have the generator return only after an independent unbounded proof.
 
 ## techniques for the catalog
 
@@ -114,4 +114,4 @@ The paper reports a novel map-based Two-Phase Set using an `OrBool` map and defa
 - bounded-log pruning — reject candidates with finite operation logs before unbounded invariant synthesis
 - typed SMT grammars — constrain generated expressions by specialized types and lower supported APIs to solver theories
 - node-owned non-idempotent state — use node-keyed maps and reductions to synthesize counters and related operations
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We derive significant power from our choice to implement the internal state of the CRDT via a semilattice."): read the paper text from first line to last and checked every quotation, page and section reference, Table 1/Table 2 numbers, Figure 13 numbers and the technique steps; changed the link to the arXiv page given in the paper text (arXiv:2205.12425), corrected page references for §5.1, §5.2.2, Figure 12 and Figure 14, rewrote the bounded-log step (the log is assumed in-order and coherent, not checked as a rejection test), fixed the garbled Table 2 time range, added the Grow-Only Counter counterexample to pruning speedups, and marked the trust-boundary sentence as Inference; did not check the Verus translations beyond marking them Inference, did not check cited works, and did not verify the DOI of the published OOPSLA version.

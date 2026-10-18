@@ -1,76 +1,77 @@
 # Natural Hoare Logic: Towards formal verification of programs from logical forms of natural language specifications
 (authored by agents unless marked 🧑)
-Tag: `poroor2021naturalhoare`, [paper](https://doi.org/10.48550/arxiv.2103.05779)
+Tag: `poroor2021naturalhoare`, [paper](https://arxiv.org/abs/2103.05779)
 
 ## purpose
 
-Natural Hoare Logic (NHL) connects a domain expert's natural-language requirement to a conventional Hoare-logic proof. The paper's objective is explicit: “This enables formal verification of software directly against requirements specified by a domain expert in natural language.” (Abstract, PDF p. 1.) NHL does not prove the semantic parser correct. It defines how a parsed higher-order logical form is related to program variables and then derives preconditions, postconditions, and invariants that ordinary Hoare rules can check.
+Natural Hoare Logic (NHL) connects a domain expert's natural-language requirement to a conventional Hoare-logic proof. The paper's objective is explicit: “This enables formal verification of software directly against safety requirements specified by a domain expert in natural language.” (Abstract, PDF p. 1.) NHL does not prove the semantic parser correct. It defines how a parsed higher-order logical form is related to program variables, and which Hoare triples must then be proved for invariants, imperative commands, conditional commands, and pre/post-condition declaratives.
 
-The logical forms are simply typed λ-calculus expressions with constants for predicates and quantifiers. For example, “All balances must be greater than zero” is parsed as `∀x · balance(x) > 0`. The bridge is an LFPL (logical-form–program-logic) relation `R`, such as `∃x · balance(x) = _balance`, that identifies the logical entity with a concrete program variable. The paper warns that leaving this correspondence inside every Hoare assertion causes it to become inconsistent as predicate-transformer rules rewrite program variables (Section 2.1, PDF p. 2).
+The logical forms are simply typed λ-calculus expressions with constants for logical connectives and quantifiers (Section 1, PDF p. 1). For example, “All balances must be greater than zero” is parsed as `∀x · balance(x) > 0` (Equation 1, PDF p. 2). The bridge is an LFPL (logical form - program logic) relation `R`, such as `∃x · balance(x) = _balance`, that identifies the logical entity with a concrete program variable. The paper warns that leaving this correspondence inside Hoare assertions can make the proof fail, because Hoare rules transform program variables while the variables in the logical forms stay unchanged, so the relation becomes inconsistent (Section 2.1, PDF p. 2).
 
 ## technique 1: declarative invariants through LFPL relations
 
 when to use it
 
-Use this for a natural-language invariant that should hold before and after a command or loop body. The method is suited to sequential imperative programs and partial correctness; the paper does not require termination.
+Use this for a natural-language invariant that should hold before and after the program `S`. The paper's footnote 4 says: “We consider the invariant to hold true only before and after the program execution, not in the intermediate states.” The paper considers only partial correctness, so termination is not proved (Section 1, PDF p. 1). The paper believes the approach is “useful enough for specifying pre-condition/post-conditions assertions on sequential imperative programs” (Section 2.2, PDF p. 3).
 
 steps
 
-1. Parse the sentence compositionally into a logical form `L`; define the semantic functions used by its words (Section 2, PDF pp. 1–2).
-2. Write an LFPL relation `R` associating each logical variable with a program variable. For the balance example, `R ≜ ∃x · balance(x) = _balance` (Section 2.1, PDF p. 2).
-3. Choose the strongest program assertion `I` satisfying `L ∧ R ⇒ I` and `I ⇒ ¬R` (Equation 4, PDF p. 2). Eliminating `R` ensures that later Hoare substitutions affect only program variables.
-4. Prove `{I} S {I}` with standard assignment, consequence, and sequencing rules. In the increment example, strengthen the postcondition to `_balance > 1`, apply the assignment rule, then weaken it back to `_balance > 0` (Section 2.1, PDF p. 2).
+1. Parse the sentence compositionally into a logical form `L`; define the semantic functions or constants used by its words (Section 2, PDF p. 2).
+2. Write an LFPL relation `R` associating each logical variable with a program variable. For the balance example, `R ≜ ∃x · balance(x) = _balance` (Equation 3, PDF p. 2).
+3. Choose `I` as the strongest condition satisfying `L ∧ R ⇒ I` and `I ⇏ R` (I does not imply R) (Equation 4, PDF p. 2). The paper says the second condition “is required to remove the correspondance relation from the Hoare logic assertions”, and that `I` should be an assertion on program variables only. The strongest-`I` requirement ensures that “a weakened form of the user requirement is not take up for proof”.
+4. Prove `{I} S {I}` (Section 2.1, PDF p. 2). In the increment example (`_balance := _balance + 1`), the paper says to consider the stronger postcondition `_balance > 1`, apply the assignment rule, and then apply the consequence rule to weaken the postcondition back to the invariant (PDF p. 3).
 
 evidence and Verus form
 
-The paper's worked proof establishes that incrementing a positive balance preserves positivity. Inference: a Verus encoding would make `I` a `spec fn` over the Rust state, state the LFPL correspondence as a ghost predicate, and put `invariant I` on the loop. The relation-to-program-variable proof would be an ordinary `assert` or lemma; Verus cannot check that an English parser produced the intended `L`.
+The paper's worked example is a short proof sketch, in prose, that incrementing a positive balance preserves positivity (Equations 5-9, PDF pp. 2-3); it is not mechanized. Inference: a Verus encoding would make `I` a `spec fn` over the Rust state, state the LFPL correspondence as a ghost predicate, and put `invariant I` on the loop if the program has one. The relation-to-program-variable proof would be an ordinary `assert` or lemma; Verus cannot check that an English parser produced the intended `L`.
 
 ## technique 2: imperative and conditional natural-language commands
 
 when to use it
 
-Use this for requirements that change state, such as “Increment the balance,” or conditional commands. NHL deliberately restricts imperatives to operations on program state rather than arbitrary modal language.
+Use this for requirements that change state, such as “Increment the balance,” or conditional commands. NHL deliberately restricts imperatives to those that specify operations on program state; the paper says “Of course we are unable to model general imperative statements such as: you may increment the balance.” (Section 2.2, PDF p. 3.)
 
 steps for an imperative
 
-1. Give the command a before/after logical relation with a `post` function. The paper defines `increment = λf · ∀x · f(post(x)) = f(x) + 1` (Section 2.2, PDF p. 3).
-2. Define `R` for the pre-state and `R′` by replacing each logical variable with `post(variable)` for the post-state (Equation 12, PDF p. 3).
-3. Prove `{L ∧ R} S {L ∧ R′}` (Equation 13, PDF p. 3). This keeps the logical form stable while the relation changes with the command.
+1. Give the command a before/after logical relation with a `post` function, which maps elements to their after-state. The paper defines `increment = λf · ∀x · f(post(x)) = f(x) + 1` (Section 2.2, PDF p. 3).
+2. Define `R` for the before-state and `R′` for the after-state. `R′` is obtained by replacing the logical variable `x` by `post(x)` in the body of `R`; for the example, `R′ ≜ ∃x · balance(post(x)) = _balance` (Equation 12, PDF p. 3).
+3. Prove `{L ∧ R} S {L ∧ R′}` (Equation 13, PDF p. 3). The paper says this is simpler than the invariant case “because post-condition and pre-condition use different LFPL relations”.
 
 steps for a conditional imperative
 
-1. Parse the conditional `E` and command logical form `L` separately.
-2. Prove `{L ∧ R ∧ E} S {L ∧ R′}` (Equation 19, PDF p. 3), so the command is required only when its condition holds.
-3. Use the same `R/R′` correspondence and ordinary Hoare consequence rules.
+1. Parse the conditional part, with logical form `E`, and the imperative part, with logical form `L`, separately (Section 2.3, PDF p. 3).
+2. Prove `{L ∧ R ∧ E} S {L ∧ R′}` (Equation 19, PDF p. 3). The paper says the imperative proof approach extends to conditional imperatives “in a straightforward manner”; Figure 3 illustrates the rule.
 
-Inference: in Verus, `post` is naturally a ghost snapshot represented by `old(...)` in an `ensures` clause; the executable command remains ordinary Rust. The method's two-state logical relation is a useful pattern for API contracts, but the paper provides no Rust or Verus implementation.
+Inference: this rule makes the command's logical form `L` a proof obligation only under the stated condition `E` in the precondition. Inference: in Verus, `post` is naturally a ghost snapshot represented by `old(...)` in an `ensures` clause; the executable command remains ordinary Rust. The method's two-state logical relation is a useful pattern for API contracts, but the paper provides no Rust or Verus implementation.
 
 ## technique 3: pre/post declaratives and domain knowledge
 
-For a requirement with separate precondition and postcondition, parse `L` and `L′`, define `R` and `R′`, and prove `{L ∧ R} S {L′ ∧ R′}` (Equation 21, PDF p. 4). This is simpler than imperative semantics because no `post` interpretation of a command phrase is needed.
+For a requirement with separate precondition and postcondition (example: “IF: the balance is greater than 0 THEN AFTER: balance must be remain non-negative”), parse the precondition `L` and postcondition `L′`, and prove `{L ∧ R} S {L′ ∧ R′}` (Equation 21, PDF p. 4). The paper calls this case “simpler than the imperative specification”; it does not give a reason.
 
-NHL can reuse proofs through domain knowledge. If an invariant about `valueof(x)` has already been proved and an ontology supplies `∀x · balance(x) = valueof(x)`, the prior proof implies the new balance invariant without repeating the program proof (Section 2.5, PDF p. 4). The paper also gives implication-shaped ontology facts, `∀x · A(x) ⇒ B(x)`, as reusable knowledge.
+NHL can reuse proofs through domain knowledge (Section 2.5, PDF p. 4). If the invariant `∀x · valueof(x) > 0` has already been proved for a program `S` with the relation `∃x · valueof(x) = _balance`, and the domain knowledge `∀x · balance(x) = valueof(x)` is available, the paper says “We may use this and our previous proof to now infer, that program S satisfies new invariant in Equation 25, without having to go through the proof again.” (Equation 25 is `∀x · balance(x) > 0`.) The paper also notes that ontological assertions that A isa B can be expressed as `∀x · A(x) ⇒ B(x)` (Equation 27) and that bringing such knowledge into the reasoning “is likely to be quite beneficial”. The paper gives no formal derivation or soundness proof for this reuse.
 
 Inference: Verus can encode domain facts as reusable `proof fn` lemmas with `ensures`, then invoke them at call sites. Such lemmas must be proof-only; calling a `proof fn` at runtime would not implement the command.
 
 ## technique 4: parser-error guard by paraphrase
 
-The highest-probability semantic parse can be wrong. NHL therefore defines a reverse function `N` from logical forms to natural language and asks the user to confirm the paraphrase. The paper states: “Given a natural language sentence S input by a user and if its logical form generated by a semantic parser is S, then we could ask back the user: Did you mean: N(S)?” (Section 2.6, PDF p. 4.) If the user rejects it, show other probable parses; if none is acceptable, ask for a simpler rephrasing. Accepted choices can label parser retraining.
+The highest-probability semantic parse can be wrong. NHL therefore defines a function `N` from logical forms to natural language and asks the user to confirm the paraphrase. The paper states: “Given a natural language sentence S input by a user and if its logical form generated by a semantic parser is S, then we could ask back the user: Did you mean: N(S)?” (Section 2.6, PDF p. 4.) If the answer is no, the system “could show the N-mappings of other probable logical forms (if available) for user to choose from”; the user's selection may serve as a label for retraining the model. If the user is unable to choose, “the system may prompt the user to rephrase the specification (perhaps as simpler sentences)”.
 
-This guard is a product workflow rather than a proof rule. Its assumption is that `N` produces a consistent, understandable paraphrase; the paper calls that easier than parsing but does not measure error rates. Inference: VL should expose the generated contract and its English paraphrase for review before verification, because a successful Verus proof only establishes the generated contract.
+This guard is a product workflow rather than a proof rule. Its assumption is that `N` generates a consistent and understandable paraphrase; the paper calls this “usually a simpler problem than the semantic parsing itself” and points to semantic parsing based on synchronous context-free grammars as a way to obtain `N` by inverting the learnt grammar. The paper reports no error rates. Inference: VL should expose the generated contract and its English paraphrase for review before verification, because a successful Verus proof only establishes the generated contract.
 
 ## what is proved, trusted, and missing
 
-The paper proves derivation rules on paper and supplies examples, but reports no implementation, benchmark denominator, parser accuracy, or mechanized soundness theorem. Its stated future work includes “formal soundess proof” and mechanization (Conclusion, PDF p. 6). Trusted components therefore include the semantic parser, λ-calculus meanings, LFPL relations, domain facts, Hoare-rule implementation, and the user's acceptance of the paraphrase. NHL covers invariants, state-changing commands, conditionals, pre/post assertions, and ontology reuse; it does not cover arbitrary imperative modality or prove parser correctness.
+The paper proposes proof rules and gives small worked examples, but reports no implementation, benchmark, parser accuracy, formal soundness proof, or mechanization. Its conclusion lists as future work: “We intend to further validate the NHL framework with more elaborate examples and case studies. Exploring the use of domain knowledge to aid reasoning, investigating approaches for a formal soundess proof, and mechanization of the framework are other lines of future work.” (Section 4, PDF p. 6.) The paper does not cover general imperative modality, and does not prove parser correctness.
+
+Inference: the components one would have to trust in an NHL pipeline are the semantic parser, the λ-calculus meanings of words, the LFPL relations, any domain facts, the Hoare-rule application, and the user's acceptance of the paraphrase.
 
 Inference: the threat to agent-written verified Rust is specification drift at the natural-language-to-contract boundary. A parser can produce a valid but unintended `L`, and Verus will still certify code against it. Existing NHL work means VL should not present English-to-contract confirmation as a novel idea; it should measure whether explicit paraphrase review catches realistic parser errors and whether the accepted relation remains true after Rust refactoring.
 
 ## techniques for the catalog
 
-- LFPL invariant bridge — relate a parsed logical form to program variables, eliminate the relation, and prove the resulting strongest invariant with Hoare rules
-- before/after imperative relation — model state-changing commands with `post` and prove `{L ∧ R} S {L ∧ R′}`
-- conditional imperative rule — include the parsed condition in the precondition before applying the command proof
-- domain-knowledge reuse — transfer an existing proof through logical ontology implications
-- parser paraphrase guard — translate candidate logical forms back to natural language and require user confirmation or rephrasing
+- LFPL invariant bridge: relate a parsed logical form to program variables, eliminate the relation, and prove the resulting strongest invariant with Hoare rules
+- before/after imperative relation: model state-changing commands with `post` and prove `{L ∧ R} S {L ∧ R′}`
+- conditional imperative rule: include the parsed condition in the precondition before applying the command proof
+- domain-knowledge reuse: transfer an existing proof to a new invariant through a domain-knowledge equality or implication
+- parser paraphrase guard: translate candidate logical forms back to natural language and require user confirmation or rephrasing
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Of course it is important for the N-function to generate a consistent and understandable natural language representation."): read the whole text (7 pages incl. references) and checked every quotation, equation number, section and PDF page reference, and each technique's steps against it. Changed: the abstract quote (restored "safety"); the condition `I ⇏ R` (was written as `I ⇒ ¬R`); invariant scope (before/after the program, not a loop body); removed unsupported "sequencing rule", "consequence rules" in the conditional case and "proves derivation rules"; paper's rephrase fallback (user unable to choose); page references (stronger-postcondition step is on p. 3, Section 2 starts on p. 2); the link now points to arXiv 2103.05779 (arXiv id from the paper text); the Verus and VL remarks are marked Inference. Not checked: external works cited by the paper, and whether the Verus mappings work in practice.

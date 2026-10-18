@@ -6,7 +6,7 @@ Tag: `fasse2022modular`, [paper](http://arxiv.org/abs/2212.14126v1)
 
 This report by Justus Fasse and Bart Jacobs extends Iris, a mechanized higher-order concurrent separation logic, from partial correctness to a method for proving safe termination of non-blocking programs. The paper's result is a meta-level termination argument plus an Iris safety proof. It does not present a Verus implementation, and the paper calls the work an intermediate report. Its central guarantee is conditional: a program must pass a conservative syntactic check, and its instrumented version must be proved safe in Iris. The paper states the goal precisely: “This preliminary report presents our approach for reasoning about total correctness of non-blocking programs.” (Section 1, p. 4)
 
-The method adds a ghost-like stock of call permissions and explicit `Burn` commands to HeapLang. Each call consumes a permission; a `Burn` replaces one permission at level `cp` with a finite number at strictly lower level `cp0`. A well-founded multiset measure then rules out infinite executions. Iris proves that the instrumented code cannot get stuck and that its state interpretation agrees with the permission stock. An erasure argument is intended to transfer the result to the original program, but the report says that erasure is not yet implemented in Coq (Section 2, p. 8; Section 1.1, p. 6).
+The method adds a ghost-like stock of call permissions and explicit `Burn` commands to HeapLang. In the checked programs each function application is protected by a `Burn`, which replaces one permission at level `cp` with a finite number at strictly lower level `cp0`. A well-founded multiset measure then rules out infinite executions. Iris proves that the instrumented code cannot get stuck and that its state interpretation agrees with the permission stock. An erasure argument is intended to transfer the result to the original program, but the report says that erasure is not yet implemented in Coq (Section 2, p. 8; Section 1.1, p. 6); the meta-theorem in Section 1.1 is also marked "Not yet formalized" (footnote 1, p. 5).
 
 ## technique 1: explicit call-permission instrumentation
 
@@ -16,13 +16,13 @@ Call permissions are a finite multiset in the operational state. The syntax adds
 
 when to use it
 
-Use this when recursive calls or retries make a direct data-size variant unavailable, especially in non-blocking code. Levels follow the static module or call dependency order, so a module may make arbitrarily many calls to earlier modules while still decreasing the global permission multiset. The paper explains the purpose: “By choosing the names of the program's modules (functions/procedures/classes/. . . ) as levels, ordered by their order in the program text (or the module dependency graph), and requiring in a module's precondition a call permission qualified by that module's name, a module can always perform arbitrarily many calls into earlier modules (‘upcalls’).” (Section 1.1, pp. 5–6)
+Inference: use this when recursive calls or retries make a direct data-size variant unavailable, especially in non-blocking code; the paper notes that for the stack's push "there is no straightforward termination measure" (Section 4, p. 21). Levels follow the static module or call dependency order, so a module may make arbitrarily many calls to earlier modules while still decreasing the global permission multiset. The paper explains the purpose: “By choosing the names of the program's modules (functions/procedures/classes/. . . ) as levels, ordered by their order in the program text (or the module dependency graph), and requiring in a module's precondition a call permission qualified by that module's name, a module can always perform arbitrarily many calls into earlier modules (‘upcalls’).” (Section 1.1, pp. 5–6)
 
 how to apply it
 
-1. Choose a well-founded level for every recursive module or operation, following the call graph (Section 1.1, pp. 5–6).
-2. Put an initial permission multiset in the program state and require the appropriate fragment in each function's precondition (Sections 2.1 and 3.1, pp. 8, 18).
-3. Insert `Burn` immediately before each function application that could otherwise be unbounded. The report's conservative check requires every application to be syntactically preceded by a wrapping burn (Section 2.3, pp. 14–15).
+1. Choose a well-founded level for every module or operation, ordered by the program text or call graph (Section 1.1, pp. 5–6; Figures 4.1 and 4.4, pp. 20, 25). The Coq development uses natural numbers.
+2. The program state holds a multiset of call permissions (Figure 2.1, p. 8); require the appropriate fragment in each function's precondition, as the stack specs do with `◦[STACK_OP]` (Figure 4.2, p. 21; Section 3.1, p. 18).
+3. Insert `Burn` immediately before each function application that could otherwise be unbounded. The report's conservative check essentially requires every application to be syntactically preceded by a wrapping burn (Section 2.3, p. 14); even `let` and sequencing, which are sugar for applications, need one (Section 6.2, p. 30).
 4. For a retry or recursive call, burn a higher-level permission and create the lower-level permission needed by the call. The concurrent-stack code uses `CP_SUCCESS`, `CP_TRY`, and `CP_PUT` in this way (Figure 4.5, p. 26).
 5. Prove in Iris that the executing thread owns the fragment being burned, so the operational side condition cannot fail (Lemma 3, Section 3.1.1, p. 19).
 
@@ -30,26 +30,26 @@ Verus form (Inference): represent permission levels and multisets as ghost state
 
 evidence and limits
 
-The paper proves a language-level theorem, not an end-to-end Rust result: “Theorem 1 (No infinite executions). ∀ρ. enough_burns_cfg ρ =⇒ ¬(div ρ)” (Section 2.3.1, p. 16). The companion lemma says every step decreases the lexicographic size and preserves the syntactic check (Lemma 2, p. 17). The well-founded multiset order is adapted from Dershowitz and Manna, but “it is currently admitted in our development” (Section 2.3.1, p. 16), so that order remains trusted in this report. The erasure proof is also absent: “The erasure and related proofs is not yet implemented in the Coq development” (footnote, Section 2, p. 8). The check is conservative and rejects programs whose burns are sufficient semantically but not syntactically visible.
+The paper proves a language-level theorem, not an end-to-end Rust result: “Theorem 1 (No infinite executions). ∀ρ. enough_burns_cfg ρ =⇒ ¬(div ρ)” (Section 2.3.1, p. 16). The companion lemma says every step decreases the lexicographic size and preserves the syntactic check (Lemma 2, p. 17). The multiset order is a Coq translation of Blanchette, Fleury, and Traytel's definition of the Dershowitz–Manna order (Figure 2.12, p. 16). Its well-foundedness has been proven in Isabelle/HOL and Coq elsewhere, but “it is currently admitted in our development” (Section 2.3.1, p. 16), so that fact is assumed in this report. The erasure proof is also absent: “The erasure and related proofs is not yet implemented in the Coq development” (footnote, Section 2, p. 8). The check is conservative: Section 6.2 (p. 30) calls it "overly restrictive". Inference: it therefore rejects programs whose burns would suffice semantically but are not syntactically visible.
 
 ## technique 2: a lexicographic termination measure with syntactic checking
 
 what it is
 
-The checker `enough_burns_expr`, `enough_burns_val`, and `enough_burns_heap` recursively requires that every reachable function application is protected by a burn (Figures 2.7–2.10, pp. 14–15). The termination measure is a triple: the call-permission multiset, the number of unprotected applications, and a pseudo-size of the expression, ordered lexicographically (Figures 2.6, 2.7, and 2.11, pp. 13–16). A burn may increase the latter components only after strictly decreasing the permission multiset; consuming an unprotected-application allowance may increase pseudo-size; all other reductions decrease pseudo-size.
+The checker `enough_burns_expr`, `enough_burns_val`, and `enough_burns_heap` recursively requires that every function body has no unprotected function application, counted by `nb_unprotected_apps` (Figures 2.7–2.10, pp. 14–15). The termination measure is a triple: the call-permission multiset, the number of unprotected applications, and a pseudo-size of the expression, ordered lexicographically (Figures 2.6, 2.7, and 2.11, pp. 13–16). A burn may increase the latter components only after strictly decreasing the permission multiset; consuming an unprotected-application allowance may increase pseudo-size; all other reductions decrease pseudo-size.
 
 how to apply it
 
 1. Define a structural pseudo-size for expressions; the paper counts compound syntax and gives `match` an extra two because it reduces to a function application (Figure 2.6, p. 13).
 2. Define an over-approximation of unprotected applications that does not recurse into recursive function bodies (Figure 2.7, p. 14).
-3. Check every thread expression and every function value stored in the heap with `enough_burns_cfg` (Figures 2.8–2.10, p. 15).
+3. Check every thread expression and every function value stored in the heap, the requirement named `enough_burns_cfg` in Theorem 1 (Figures 2.8–2.10, p. 15).
 4. Prove preservation of the check under substitution and evaluation-context filling, then prove that each primitive, head, and program-level step decreases the triple (Section 2.3.1, pp. 14–17).
 
 Verus form (Inference): encode the triple as a ghost `spec fn` returning a tuple or nested mathematical measure. Use a loop `invariant` to preserve the burn-protection predicate and a `decreases` clause for the lexicographic measure. Recursive syntax needs an inductive ghost datatype and `proof fn`s for substitution and context preservation. Verus's integer and sequence measures are usable, but the exact Dershowitz–Manna multiset relation must be defined and proved in the project; it is not a built-in Verus construct.
 
 evidence and limits
 
-The proof is explicitly conservative: “We currently overapproximate the property of a program having enough Burns by essentially requiring every function application to be syntactically preceded by a Burn.” (Section 2.3, p. 14). The current development cannot support a direct structural-decrease argument for the stack's recursive retry; Section 4 instead uses compensation. The outlook also identifies finite acyclic structures as a limitation because the present overapproximation cannot reason precisely about them (Section 6.3, pp. 30–31).
+The check is explicitly conservative: “Currently, we overapproximate the property of a program having enough Burns by essentially requiring every function application to be syntactically preceded by a Burn.” (Section 2.3, p. 14). The paper lists "the function's arguments do not structurally decrease" as a reason the stack's recursive retry has no straightforward measure, and says such an argument is not currently supported (Section 4, p. 22, footnote 3); Section 4 instead uses compensation. The outlook names the inability to prove termination justified by traversing finite data structures, e.g. a recursive list length function, as a shortcoming (Section 6.3, p. 30).
 
 ## technique 3: Iris state interpretation for permission resources
 
@@ -61,14 +61,14 @@ how to apply it
 
 1. Instantiate the multiset-union camera with an `Auth` wrapper (Section 3.1, p. 18).
 2. Put the authoritative multiset in the state interpretation so every logical step matches the physical state (p. 18).
-3. Give a function a fragment for the permission it may burn; require a fragment for newly created lower-level permissions in the postcondition.
+3. Give the burning code a fragment `◦[cp]` for the permission it burns; the continuation then receives the fragment `◦[n · cp0]` for the newly created permissions (Lemma 3, p. 19).
 4. Apply the `Burn` weakest-precondition lemma: `0 ≤ n`, `cp0 < cp`, and ownership of `◦[cp]` imply the weakest precondition for `Burn e cp n cp0` (Lemma 3, p. 19).
 
 Verus form (Inference): use ghost fields or a protocol state machine to track a multiset of permission tokens. A transition proof can require membership of the token being consumed and ensure the post-state contains exactly the lower-level tokens. `proof fn` lemmas can split and combine abstract sets or sequences. Verus ownership and ghost state can enforce exclusivity, but it does not expose Iris's camera algebra; the algebraic laws must be stated as `spec fn`s and proved.
 
 evidence and limits
 
-The authors report that weakest preconditions and adequacy are reused with “minor adaption to account for call permissions” (Section 3, p. 18). Atomic-block weakest preconditions are currently lifted directly with `wp_lift_atomic_step`; a dedicated supporting lemma is future work (Section 3.2, p. 19). Thus the logic integration is partial rather than a completed reusable library.
+The authors report that weakest preconditions and adequacy are reused with “minor adaption to account for call permissions” (Section 3, p. 18). Atomic-block weakest preconditions are currently lifted directly with `wp_lift_atomic_step`; a dedicated supporting lemma is future work (Section 3.2, p. 19). Inference: the logic integration is therefore partial rather than a completed reusable library.
 
 ## technique 4: compensation for helping retries in a concurrent stack
 
@@ -79,8 +79,8 @@ The case study modifies a lock-free stack whose `push` retries after a failed CA
 how to apply it
 
 1. On entry to a stack operation, register the thread's current head in `in_progress` and increment the upper-bound location atomically (Figure 4.5, lines 10–15, p. 26).
-2. On CAS success, atomically read the bound, burn `CP_SUCCESS` into that many `CP_TRY` tokens, update the head, and re-establish the invariant (lines 18–25, p. 26).
-3. On CAS failure, remove the thread's registration using its receipt; this exposes one `CP_TRY` token that justifies the recursive retry (lines 26–37, p. 26).
+2. On CAS success, atomically read the bound, burn `CP_SUCCESS` into that many `CP_TRY` tokens, update the head, and re-establish the invariant (lines 19–25, p. 26; Section 4, p. 24).
+3. On CAS failure, remove the thread's registration using its receipt; this yields one `CP_TRY` token that justifies the recursive retry (lines 26–37, p. 26; Section 4, pp. 24–25).
 4. Hide `CP_TRY` and `CP_SUCCESS` behind a wrapper that exposes only `STACK_OP` to clients (Figure 4.6, p. 27), then close the proof with Löb induction (Section 4, pp. 24–27).
 
 Verus form (Inference): model `in_progress`, the head bound, and compensation tokens in a ghost state-machine invariant. The CAS operation should have a `requires`/`ensures` contract relating the concrete atomic update to the ghost transition; a `proof fn` can show that every invalidated registration receives a retry token. A recursive `push_inner` needs a `decreases` measure supplied by the token or global permission state. Verus can express the invariant and atomic refinement, but the paper's Iris receipt and mask machinery do not carry over directly.
@@ -91,7 +91,7 @@ The paper says the original helping proof “could essentially be reused verbati
 
 ## what is proved, measured, and trusted
 
-No runtime benchmark, paper-wide success rate, or denominator is reported. The evidence is mechanized Coq definitions and theorems, plus a concurrent-stack proof sketch. Trusted or unfinished components include Coq's admitted well-founded multiset theorem, the missing erasure proof, the admitted `pop`, the Iris/Coq kernel and tactics, and the correctness of the conservative syntactic checker implementation. Atomic-block adequacy is claimed as a straightforward adaptation, while the dedicated `AtomicBlock` weakest-precondition lemma is future work. The assumptions are non-blocking execution, a well-founded permission order, enough syntactic burns, and (for the stack) the compensation invariant and atomicity of the update that reads the interference bound.
+No runtime benchmark, paper-wide success rate, or denominator is reported. The evidence is Coq definitions and proofs (the paper says the proofs are formalized in the accompanying code, Section 1.1, p. 7), plus a concurrent-stack proof sketch. Admitted or unfinished components include the well-foundedness of the multiset order, the missing erasure proof, the unformalized meta-theorem of Section 1.1, and the admitted `pop`; Inference: the Iris/Coq kernel is also trusted. Atomic-block adequacy is claimed as a straightforward adaptation, while the dedicated `AtomicBlock` weakest-precondition lemma is future work. The assumptions are non-blocking execution, a well-founded permission order, enough syntactic burns, and (for the stack) the compensation invariant and atomicity of the update that reads the interference bound.
 
 ## implications for VL
 
@@ -103,4 +103,4 @@ Inference: the technique is a useful design for agent-written verified Rust when
 - lexicographic burn checker — combine permission multisets, unprotected-call counts, and pseudo-size into a well-founded measure preserved by a syntactic check
 - authoritative permission state — tie physical permission multisets to Iris weakest preconditions with an authoritative multiset camera and splittable fragments
 - compensation for helping — register concurrent observations and mint retry permissions for every thread invalidated by a successful atomic update
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This theorem proves the soundness of our approach. Its proof follows directly from the well-foundedness of the order shown in Figure 2.11 and the following lemma."): read the paper text from the first line through the bibliography and checked every quotation, section/figure/lemma reference, page number and technique step against it; changed one misquoted sentence (Section 2.3, p. 14), the attribution of the multiset order (Blanchette, Fleury, and Traytel's definition, not Dershowitz and Manna's directly), the claim that each call consumes a permission, the stated limitation from Section 6.3, the unsupported claim about checker-implementation trust, and added the unformalized meta-theorem footnote; marked own conclusions as Inference. Did not check the Coq development, the bibliography entries, or the Verus-form paragraphs beyond marking them as Inference; the arXiv link is from the paper text.

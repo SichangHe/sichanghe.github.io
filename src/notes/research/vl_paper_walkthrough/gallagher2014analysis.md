@@ -8,7 +8,7 @@ Gallagher and Kafle study whether off-the-shelf Constraint Logic Programming (CL
 
 A CHC set is safe when `false` is not derivable. Equivalently, if an over-approximation of the least model contains no `false` fact, safety is proved. The paper states: "It is sufficient to find a set of constrained facts M′ such that M[[P ]] ⊆ M′, where false 6∈ M′. This technique is called proof by over-approximation of the minimal model." [§2.1, PDF p.3]
 
-The practical chain is redundant-argument filtering (RAF), forward unfolding (FU), query-answer transformation (QA), predicate splitting (PS), threshold constraints (TC), then convex-hull/polyhedron analysis (CHA), as Figure 6 shows (§4.1, PDF p.8). The components preserve the original safety query, while the abstract interpreter over-approximates the transformed least model.
+The practical chain is redundant-argument filtering (RAF), forward unfolding (FU), query-answer transformation (QA), predicate splitting (PS), threshold constraints (TC), then convex-hull/polyhedron analysis (CHA), as Figure 6 shows (§4.1, PDF p.8; the authors found this ordering most effective, p.7). The components preserve the original safety query, while the abstract interpreter over-approximates the transformed least model.
 
 ## technique 1: preserve the CHC query while transforming it
 
@@ -18,19 +18,19 @@ Specialisation with RAF. Specialise a program for the safety query, removing pre
 
 Query-answer transformation. For query `A`, create `p_query` and `p_ans` predicates for each predicate `p`. Query predicates model calls reachable from the initial goal; answer predicates model successful answers. The transformed program satisfies `P |= A` iff `P_A^qa |= A_ans` (§3, PDF p.4). For verification, transform the goal `false`, so constraints from integrity clauses propagate through `query` and `ans` predicates.
 
-Predicate splitting. Partition the clauses defining a predicate into mutually exclusive groups, create a fresh predicate for each group, add a dispatcher predicate, and unfold dispatcher calls. The paper's example splits `new3` on `A <= 99` versus `A >= 100`, so the analyzer maintains separate polyhedra for the disjoint cases (§3, PDF pp.4–5).
+Predicate splitting. Partition the clauses defining a predicate, create a fresh predicate for each group, add one clause per group that calls the group's predicate, and unfold every call to the original predicate with those clauses. The paper applies this to clauses whose constraints are mutually exclusive, and its example splits `new3` on `A <= 99` versus `A >= 100`, so the analyzer maintains separate polyhedra for the disjoint cases (§3, PDF pp.4–5).
 
 Procedure.
 
 1. Represent the safety property as clauses with `false` in the head (§2, PDF p.2).
-2. Build the predicate dependency graph and unfold forward calls until recursive/backward edges remain (§4.1, PDF p.6).
-3. Apply RAF with respect to the `false` goal (§3, PDF p.4).
+2. Apply RAF with respect to the `false` goal (§3, PDF p.4; first stage in Figure 6, PDF p.8).
+3. Build the predicate dependency graph, depth-first search from `false`, and unfold every body call whose predicate is not at the end of a backward edge (§4.1, PDF p.6).
 4. Apply query-answer transformation to expose reachable calls and answer constraints (§3–§4.1, PDF pp.4, 6–7).
 5. Split predicates where clause constraints are mutually exclusive, then unfold dispatcher calls (§3–§4.1, PDF pp.4–7).
 
 Verus form (inference). Treat the Rust program's safety obligation as a Horn-style relation over ghost state, then use specialization-like preprocessing to remove irrelevant arguments before proving invariants. Unfolding corresponds to expanding helper relations; predicate splitting corresponds to case-specific lemmas. Verus itself does not perform CHC query-answer transformation, so this would be an external VC preprocessing or proof-generation layer. This is an inference.
 
-Evidence and limits. Each transformation has a stated minimal-model or query equivalence. Transformations can increase program size; the paper warns that query-answer transformation, splitting, and unfolding may cause blow-up and require heuristics (§6, PDF p.10).
+Evidence and limits. Each transformation has a stated minimal-model or query equivalence, cited to standard results rather than proved in the paper. Transformations can increase program size; the paper warns that query-answer transformation, splitting, and unfolding may cause blow-up and require heuristics (§6, PDF p.10).
 
 ## technique 2: convex-polyhedron abstract interpretation with thresholds
 
@@ -43,33 +43,33 @@ How to apply it.
 1. Set `I_top` to one `p(X) <- true` fact per predicate (§3, PDF p.5).
 2. Run three concrete `T_P` iterations from `I_top` and extract each atomic constraint (§3, PDF p.5).
 3. Run abstract interpretation over convex polyhedra, applying widening with the extracted thresholds (§3, PDF p.5).
-4. Inspect the resulting approximate model. If no constrained fact for `false` (or `false_ans` after QA) occurs, report safe; otherwise report unknown (§4, PDF p.6).
+4. Inspect the resulting approximate model. If no constrained fact for `false` (or `false_ans` after QA) occurs, the problem is solved; otherwise the paper says a "don't know" answer is returned (§4, PDF p.6).
 
 Verus form (inference). Use linear arithmetic invariants on loops or state-machine transitions and introduce threshold candidate lemmas derived from early symbolic executions. Verus/Z3 can discharge many linear consequences, but the polyhedral widening algorithm and `false` model test would be an external analyzer. Do not call a successful over-approximation a Verus proof unless the generated invariant is actually checked by Verus.
 
-Evidence. In the running MAP-disj example, direct polyhedral analysis of the original/intermediate programs fails, but after the full chain it produces `new3_query_1(A,B)` with `0 <= A <= 50, B = 50` and `new3_query_2(A,B)` with `51 <= A <= 100, A = B`; no `false_ans` fact appears (§4.1, PDF pp.7–8). The scaled variant changes constants from 50/49/100/101 to 5000/4999/10000/10001 and is solved in essentially the same time, unlike finite enumeration (§4.1, PDF p.8).
+Evidence. In the running MAP-disj example, direct polyhedral analysis of the original/intermediate programs fails, but after the full chain it produces `new3_query_1(A,B)` with `0 <= A <= 50, B = 50` and `new3_query_2(A,B)` with `51 <= A <= 100, A = B`; no `false_ans` fact appears (§4.1, PDF pp.7–8; Figure 5 on p.8). The scaled variant changes constants from 50/49/100/101 to 5000/4999/10000/10001 and gives an essentially similar polyhedron in the same time, whereas the paper says some tools solve the original only by enumerating the finite set of values, which "does not scale well" (§4.1, PDF pp.7–8).
 
 ## technique 3: assemble and tune the tool chain
 
-The paper's running example shows why composition matters: "Application of the convex polyhedron tool to the original, or the intermediate programs, does not solve the problem; all the transformations are needed in this case, apart from redundant argument filtering, which only affects efficiency." [§4.1, PDF p.8] The practical ordering can vary, but the authors found Figure 6's chain most effective.
+The paper's running example shows why composition matters: "Application of the convex polyhedron tool to the original, or the intermediate programs, does not solve the problem; all the transformations are needed in this case, apart from redundant argument filtering, which only affects efficiency." [§4.1, PDF p.7] The practical ordering can vary, but the authors found Figure 6's chain most effective.
 
 Apply it to a benchmark set as follows.
 
 1. Translate imperative or other source models to CHCs (§1, PDF p.1; §5, PDF p.8).
 2. Run RAF, FU, QA, PS, threshold generation, and CHA (§5, PDF p.8).
 3. Preserve a safe result only when the final over-approximation excludes `false`; retain `unknown` for an over-approximation that includes it (§4–§5, PDF pp.6, 8–9).
-4. Record unsupported numerical ranges and structures rather than silently treating them as safe. The implementation's Ciao Prolog uses 32-bit numbers; entries marked `*` exceed that limit, and `**` require ad hoc chain changes (§5, PDF p.9).
-5. Choose transformation order and heuristics per benchmark; the paper proposes lazy/implicit transformed programs and fixpoint engines to control blow-up (§6, PDF p.10).
+4. Report unsupported numerical ranges as unsolved rather than safe (inference). The paper says problems marked `*` "contain numbers which do not fit in 32 bits, the limit of our Ciao Prolog implementation", and problems marked `**` "are solvable by simple ad hoc modification of the tool-chain" (§5, PDF p.8; Table 1, p.9).
+5. Choose transformation order and heuristics per benchmark; the paper lists this as future work (§7, PDF p.10) and proposes better heuristics plus lazy or implicit generation of transformed programs, for example a fixpoint engine that simulates query-answer programs, to control blow-up (§6, PDF p.10).
 
 Verus form (inference). For VL, use the chain as a proof-obligation scheduler: specialize generated Rust specs, split disjoint cases, infer candidate linear invariants, then feed explicit lemmas and `invariant` clauses to Verus. The chain can reduce solver load but does not replace Verus's checked proof. This is an inference.
 
-Evidence. Table 1 contains 32 benchmarks: 25 marked verified, 7 marked NOT; two verified rows (`amebsa.smt2`, `DAGGER-barbr.map.c`) are marked as solvable by a simple ad hoc modification, while three NOT rows are marked 32-bit overflows and the others fail to derive needed invariants (§5, PDF p.9). The authors report no timings: "We do not report timings, though all these results are obtained in a matter of seconds, since our tool-chain is not at all optimised, relying on file input-output and the individual components are often prototypes." [§5, PDF p.9]
+Evidence. Table 1 contains 32 benchmarks: 27 marked verified, 5 marked NOT. Two verified rows (`amebsa.smt2`, `DAGGER-barbr.map.c`) carry the `**` mark (ad hoc modification of the chain); three NOT rows (`sshsimpl-s3-srvr-1a-safeil.c`, `bandec.smt2`, `crank.smt2`) carry the `*` mark (numbers over 32 bits). Of the other two NOT rows, the text explains only `systemc-token-ring.01-safeil.c`: its loop structure has "large strongly connected components" and the polyhedron tool "is unable to derive the required invariant"; no reason is given for `sshsimpl-s3-srvr-1b-safeil.c` (§5, PDF pp.8–9). The authors report no timings: "We do not report timings, though all these results are obtained in a matter of seconds, since our tool-chain is not at all optimised, relying on file input-output and the individual components are often prototypes." [§5, PDF pp.8–9]
 
 ## what is proved, trusted, and incomplete
 
-The mathematical result proved by the chain is conditional safety: semantics-preserving transformations preserve the `false` query, and convex-polyhedron analysis over-approximates the least model. A `false`-free abstract model therefore establishes that the original CHC set has a model and that the integrity constraints are unreachable. The work does not prove completeness: an abstract model containing `false` returns unknown even when the program is safe.
+The paper argues safety conditionally, by citing standard correctness results: the transformations preserve the `false` query, and convex-polyhedron analysis over-approximates the least model. It concludes for its example: "false is not a consequence of the original program" (§4.1, PDF p.7). Inference: a `false`-free abstract model therefore shows the original CHC set has a model. The method is incomplete: when `false` is in the approximate model, the paper returns "don't know" (§4, PDF p.6), which can happen for a safe program.
 
-The trusted base includes CHC translation, each transformation's correctness, the abstract interpreter and widening implementation, the background linear-arithmetic theory, and the assumption that numerical limits or prototype failures are reported correctly. The benchmark denominator is 32 programs, with 25 verified and 7 NOT in Table 1; the paper gives no per-program timing denominator beyond “a matter of seconds.”
+Inference: the trusted base includes CHC translation, each transformation's correctness, the abstract interpreter and widening implementation, the background linear-arithmetic theory, and the assumption that numerical limits or prototype failures are reported correctly; the paper says the components "are often prototypes" (§5, PDF p.9). The benchmark denominator is 32 programs, with 27 verified and 5 NOT in Table 1; the paper gives no per-program timings, only "a matter of seconds".
 
 Inference: For agent-written verified Rust, the threat is indirect but substantial when an inferred invariant over-approximates the wrong state relation or when a transformation drops a dependency. VL should not redo generic CHC transformations, query-answer logic, or convex-polyhedron abstract interpretation as if new. A Verus integration could instead reuse these as candidate-invariant and obligation-prioritization components, then require Verus to check the final executable code and contracts.
 
@@ -80,4 +80,4 @@ Inference: For agent-written verified Rust, the threat is indirect but substanti
 - predicate splitting: separate mutually exclusive clauses so each case gets a precise abstract polyhedron
 - thresholded polyhedral analysis: compute widening thresholds from three concrete iterations and exclude `false` from the over-approximation
 - compositional CHC tool chain: order transformations and analysis, reporting safe versus unknown with explicit numerical limits
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We have found that polyhedron analysis alone is seldom precise enough to solve non-trivial CHC verification problems; in combination with the other tools, it is very effective."): read the whole paper text and checked quotations, page and section references, technique steps, Figure 5 polyhedra, and Table 1 counts; changed the chain order in the procedure (RAF before unfolding), the Table 1 counts (27 verified, 5 NOT, not 25 and 7), several page references, the splitting description, and marked unsupported claims as inference; did not check the cited external works or the PDF figures beyond the text layer.

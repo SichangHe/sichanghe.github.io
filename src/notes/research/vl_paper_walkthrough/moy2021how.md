@@ -1,10 +1,10 @@
 # How the Analyzer can Help the User Help the Analyzer
 (authored by agents unless marked 🧑)
-Tag: `moy2021how`, [paper](http://arxiv.org/abs/2108.02969v1)
+Tag: `moy2021how`, [paper](https://doi.org/10.4204/EPTCS.338.12)
 
 ## scope and result
 
-Moy describes interaction patterns in SPARK/GNATprove for the cases where automatic proof stops. The analyzer progressively exposes (1) the immediate failing property, (2) a likely root cause, (3) a suggested repair, and (4) the underlying verification condition when expert investigation is needed. The paper's core claim is practical rather than a benchmark theorem: “The SPARK proof tool tries to help the user by providing the right information, so that the user can help the tool complete the proof.” (Abstract, p. 97). Evidence is a worked `Erase` procedure whose diagnostics lead from an array-index counterexample to a loop invariant, a contract for a recursive function, and finally an initialization invariant.
+Moy describes interaction patterns in SPARK/GNATprove for the cases where automatic proof stops. The analyzer progressively exposes (1) the immediate failing property, (2) a likely root cause, (3) a suggested repair, and (4) the underlying verification condition when expert investigation is needed. The paper's core claim is practical rather than a benchmark theorem: “The SPARK proof tool tries to help the user by providing the right information, so that the user can help the tool complete the proof.” (Abstract, p. 97). Evidence is a worked `Erase` procedure whose diagnostics lead from an array-index counterexample, through a missing loop invariant and a recursive `All_Blanks` that cannot be used as an axiom, to a suggestion to give `All_Blanks` a postcondition or make it an expression function, and finally to an initialization invariant (`'Initialized`) found by inspecting the verification condition.
 
 Inference: this feedback design transfers directly to VL because Verus diagnostics also identify failed assertions and missing proof facts. The transfer requires preserving Rust source names, ownership context, and exact verifier assumptions.
 
@@ -34,8 +34,8 @@ Steps from Section 3 (pp. 98–100):
 2. traverse control flow in reverse from the program point where the property should hold
 3. find a loop or call that modifies those variables
 4. compare the available frame (contract or invariant) with the needed relation
-5. report a likely fix, such as “loop ... should mention S in a loop invariant”
-6. optionally report when the analyzer could not unroll a loop or could not use a recursive expression function as an axiom
+5. report a likely fix, such as “possible fix: loop at strings.adb:5 should mention S in a loop invariant”
+6. optionally report (GNATprove switch `--info`, off by default because the information confused beginners) when the analyzer could not unroll a loop or could not use a recursive expression function as an axiom; a separate switch `--proof-warnings` makes it try to detect inconsistencies by proving that the context of a branch entails False, at extra running time
 
 In `Erase`, the postcondition `All_Blanks(S)` fails because the loop changes `S` without an invariant describing that change. The analyzer says it cannot unroll the loop because a string ranges over 32-bit positive indices, and it says a recursive expression function body is unavailable for proof unless termination is established (Section 3, pp. 99–100). The article calls this a frame problem: an automated proof frame exposes only contracts and invariants, not the whole operational program.
 
@@ -51,15 +51,15 @@ Verus form: Inference: analogous suggestions can include adding a `requires`/`en
 
 ## technique: expose verification-condition internals
 
-When user-facing explanations are insufficient, SPARK offers manual proof of a single verification condition. The IDE shows a proof tree of transformations and subgoals, a current goal with source variable names, and a command panel. In the example, the user runs `split_vc`, `print get2`, and `search __attr_init` to inspect the initialization encoding (Section 5, pp. 101–102).
+When user-facing explanations are insufficient, SPARK offers manual proof of a single verification condition. The IDE shows a proof tree of transformations and subgoals, a current goal with source variable names, and a command panel. In the example, the user runs `split_vc`, `print get2`, and `search __attr__init` to inspect the initialization encoding (Section 5, pp. 101–102).
 
-The investigation discovers that an assignment proves only the current character initialized. The missing fact is that all positions up to `J` are initialized. Adding `pragma Loop_Invariant (for all K in S'First .. J ⇒ S (K)'Initialized);` proves the complete postcondition and initialization guarantee (Section 5, p. 102).
+The investigation discovers that an assignment proves only the current character initialized. The missing fact is that all positions up to `J` are initialized. Adding `pragma Loop_Invariant (for all K in S'First .. J ⇒ S (K)'Initialized);` proves everything about `Erase`, including the added postcondition that `S` is fully initialized on return (Section 5, p. 102). Before that, the user had declared `Relaxed_Initialization => S` so that initialization is shown by proof rather than data-flow analysis (Section 5, pp. 101–102).
 
 Verus form: Inference: expose the failed obligation, normalized assumptions, trigger choices, and source-to-VC mapping, while hiding solver-specific internals by default. Let an expert inspect quantifier instantiations and call lemmas manually. The corresponding Rust proof should add an `invariant` over the initialized prefix and a lemma or `assert` for each write; use only supported Verus constructs and rerun the verifier after each change.
 
 ## counterexamples, trust, and limits
 
-Moy warns that counterexamples can be spurious when they reflect solver limits, such as nonlinear arithmetic, or a frame abstraction rather than an executable path (Section 6, p. 103). SPARK therefore enables them by default only at higher proof-effort levels and is working on symbolic execution to validate traces. The paper provides anecdotal positive feedback from industrial support discussions, but no controlled user study or success-rate denominator (Section 1, p. 97). It concludes that complete automation is not achievable and proof remains an interaction between human and machine (Section 7, p. 104).
+Moy warns that counterexamples can be spurious when they reflect solver limits, such as nonlinear arithmetic, or a frame abstraction rather than an executable path (Section 6, p. 103). SPARK therefore enables them by default only at higher proof-effort levels and is working on symbolic execution to validate traces. The paper's evidence for usefulness is anecdotal: “We have lots of anecdotal evidence that this helps users, in the form of positive feedback to our message improvements.” (Section 1, p. 97). Inference: it reports no controlled user study and no success rates. It concludes that “Program proof is intrinsically an interactive effort between a human and a machine, as complete automation is not achievable.” (Section 7, p. 103).
 
 Inference: the threat to VL is high for usability and repair latency, not for the soundness boundary. A model that receives the exact failing obligation, probable cause, and candidate invariant should need fewer blind edits. The diagnostic itself remains advisory; Verus's final check, Rust's type system, solver soundness, imported specifications, and correctness of the user's contract remain trusted boundaries.
 
@@ -75,4 +75,4 @@ The paper already covers local counterexample messages, minimal-property splitti
 - proof-frame disclosure: explain unrolling, contract abstraction, and unavailable recursive definitions when they affect proof
 - VC inspection: expose a proof tree, source-mapped goal, and commands for searching the logical encoding
 - initialization invariants: state and prove that every progressively written element is initialized before it is read
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Indeed, GNATprove handles differently regular functions, which may themselves contain imperative constructs like loops, and so-called expression functions, which can be readily interpreted in logical terms."): read the whole paper (pp. 97-104) and checked every quotation, section and page reference, the Erase example steps, the switches (--info, --proof-warnings), the command names and the claims about counterexamples and evidence; changed the link to the DOI printed in the paper (doi:10.4204/EPTCS.338.12), expanded the Erase evidence summary, restored the full wording of the "possible fix" message, fixed `__attr__init`, added the Relaxed_Initialization step, quoted the anecdotal-evidence and conclusion sentences and corrected the conclusion page (103, not 104), marked the no-user-study remark as Inference; did not check the Verus/VL inferences against any Verus documentation, nor the cited references beyond the paper text.

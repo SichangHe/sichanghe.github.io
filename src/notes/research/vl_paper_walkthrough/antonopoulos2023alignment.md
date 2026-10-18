@@ -6,27 +6,27 @@ Tag: `antonopoulos2023alignment`, [paper](http://arxiv.org/abs/2202.04278v4)
 
 The paper introduces BiKAT, a two-sided extension of Kleene Algebra with Tests (KAT), for deriving alignments between two program executions. The purpose is to turn relational verification into algebraic rewriting plus ordinary and relational Hoare-style obligations. The abstract states: “This article shows how a simple extension of Kleene Algebra with Tests (KAT), called BiKAT, subsumes prior formulations, including alignment witnesses for forall-exists properties, which brings to light new RHL-style rules for such properties.” (Abstract, p. 1). It covers relational noninterference, regression and compiler-translation validation, equivalence, simulation, and data refinement.
 
-The paper’s key separation is between (1) proving a chosen aligned product satisfies the desired relation and (2) proving that the aligned product is adequate, meaning that it represents all computations that matter. It says: “The proof of a given relational property has two parts: the chosen aligned product satisfies the property, and the aligned product is adequate, in the sense that it represents all computations of the program(s) of interest.” (Section 1, p. 2). The extended version includes an appendix with proofs and a Coq formalization; it is a theory and worked-example paper rather than a benchmark study.
+The paper’s key separation is between (1) proving a chosen aligned product satisfies the desired relation and (2) proving that the aligned product is adequate, meaning that it represents all computations that matter. It says: “The proof of a given relational property has two parts: the chosen aligned product satisfies the property, and the aligned product is adequate, in the sense that it represents all computations of the program(s) of interest.” (Section 1, p. 2). The extended version adds an appendix (Section 9) with many proofs and examples (Section 1, p. 3), and a separate Coq formalization “includes the basic definitions and results about BiKATs” (Section 1, p. 3). It is a theory and worked-example paper rather than a benchmark study.
 
 Inference: in Verus, the direct analogue is a pair of executable Rust functions or two executions of one function, related by a relational specification. BiKAT is not a Verus library or syntax. Its value for VL is a disciplined way to choose intermediate relational states and to separate adequacy from the easy-to-automate invariant proof.
 
 ## technique 1: encode a program and its relational goal in BiKAT
 
-what it is: KAT represents atomic commands as actions, conditions as tests, sequencing with `·`, choice with `+`, and iteration with `*`. BiKAT adds left and right embeddings of a unary KAT and primitive “bitests” over pairs of states. For a relational judgment `c | c′ : R ≈> S`, the paper uses the equation `R; ⟨c | c′⟩; ¬S = 0` (Definition 4.1 and Equation (2), p. 7). The abstract describes the reason: “An explicit algebra enables constructive proof by equational reasoning.” (Abstract, p. 1).
+what it is: KAT represents atomic commands as actions, conditions as tests, sequencing with `·`, choice with `+`, and iteration with `*`. BiKAT adds left and right embeddings of a unary KAT and primitive “bitests” over pairs of states. For a relational judgment `c | c′ : R ≈> S`, the paper uses the equation `R; ⟨c | c′⟩; ¬S = 0` (Equation (2), Section 4.1, p. 7). The abstract says that the adequacy of an alignment “must be proved” and that “an explicit algebra enables constructive proof by equational reasoning” (Abstract, p. 1).
 
 when to use it: use this representation when the requirement relates every pair of executions (∀∀, or 2-safety), such as equal outputs for equal inputs or low-input/low-output noninterference. It is also the starting representation before selecting a more useful alignment.
 
 how to do it:
 1. Express each program as a KAT term; the factorial example is assignment sequencing followed by a starred loop body and a terminating test (Section 2, p. 3).
-2. Put the left and right terms into the BiKAT two-argument embedding `⟨c | c′⟩` (Definition 4.1, p. 7).
+2. Put the left and right terms into the BiKAT two-argument embedding `⟨c | c′⟩`, which the paper defines right after Definition 4.1 as `⟨a] # [b⟩` (Section 4.1, p. 7).
 3. State a pre-relation `R` and post-relation `S` as bitests over the paired state.
-4. Prove the zero equation, or an equivalent inclusion ending in `S`; the relational-model soundness theorem says this is equivalent to the semantic ∀∀ judgment (Theorem 4.6, p. 10).
+4. Prove the zero equation, or an equivalent inclusion ending in `S`; the relational-model soundness theorem says this is equivalent to the semantic ∀∀ judgment (Theorem 4.6(a), p. 10). Alternatively, per Theorem 4.6(b), find an aligned term `B` with `R; ⟨c | d⟩ ≤ R; B` (the adequacy condition) and `R; B; ¬S = 0` (p. 10).
 
 Verus form (Inference): represent the pre- and post-relations with predicates over paired mathematical values, then prove a Rust function’s `requires` and `ensures` for each side. For two distinct implementations, use a proof `fn` that takes both input states and establishes the relational postcondition. Loop alignment facts become `invariant` clauses on each loop and assertions relating the two ghost/specification states. Verus does not provide BiKAT’s embeddings; the relation and any paired state must be encoded explicitly.
 
 evidence: Theorem 4.6(a) states that, in a relational BiKAT, the semantic condition holds iff `R; ⟨c | d⟩; ¬S = 0` (p. 10). This is a formal soundness theorem under the paper’s relational-model assumptions. In the factorial noninterference example, the authors use `[n =¥ n]` as the pre-bitest and `[r =¥ r]` as the post-bitest (Section 2, pp. 3–4).
 
-limits: the theorem assumes that the relevant state relations are represented as BiKAT tests and that the embeddings have the required homomorphism properties. The paper also proves that validity of an arbitrary identity in all *-continuous BiKATs is undecidable (Theorem 4.4, p. 8). Therefore, the algebra does not make alignment search or all verification obligations decidable.
+limits: Theorem 4.6 is stated for relational BiKATs in which the sub-identity relations representing `R` and `S` are among the BiKAT’s tests (p. 10); the paper says “Lemma 4.5 and Theorem 4.6 can be straightforwardly adapted to trace models.” (Section 4.2, p. 10). The paper also proves that it is undecidable whether a given identity holds in all *-continuous BiKATs (Theorem 4.4, p. 8). Inference: the algebra therefore does not make alignment search or all verification obligations decidable; the paper itself says “We do not need decidability in order to derive useful alignments for specific programs” (Section 4.1, p. 8).
 
 ## technique 2: derive a lockstep loop alignment by equational rewriting
 
@@ -45,28 +45,28 @@ The factorial example illustrates the pattern: both copies of the loop are align
 
 Verus form (Inference): preserve the paired invariant by proving an `ensures` relation for each loop body or by a `proof fn` that combines the two body facts. If a single Rust function is run twice, represent each run’s mutable state with separate ghost/spec values. Use the concrete loop’s `invariant` for each side and `assert` the relational invariant after corresponding iterations. The paper’s algebraic star is a proof derivation; it is not a runtime loop transformation.
 
-evidence: Theorem 6.1 proves the selected relational Hoare rules sound in any BiKAT (Section 6, p. 14), and the examples derive equivalence without proving the full functional result. For the two sum programs, the text states that “a simple relational loop invariant, [x =¥ x] [i =¥ i], suffices to establish equivalence.” (Section 5, p. 10). These are formal derivations, not measured success rates.
+evidence: the loop rule `dWh` of Fig. 1 is proved sound using Equation (3), and Theorem 6.1 proves the rules of Fig. 1 sound in any BiKAT (Section 6, pp. 13–14); the sum example derives equivalence without proving the full functional result. For the two sum programs, the text states that “a simple relational loop invariant, [x =¥ x] [i =¥ i], suffices to establish equivalence.” (Section 5, p. 10). These are formal derivations, not measured success rates.
 
-limits: lockstep can fail when iteration counts differ or when control paths do not line up. The authors explicitly introduce more flexible alignments for those cases. Remainder branches must still be proved adequate; simply dropping unmatched iterations would be unsound.
+limits: Inference: lockstep alone does not suffice when iteration counts differ or when control paths do not line up; the paper’s sum example unrolls one left iteration first (Section 5, p. 10), and Sections 5 and 6 give more flexible alignments for other cases. Inference: the remainder terms of Equation (3) must still be handled in the proof; dropping unmatched iterations would not be justified by the law.
 
 ## technique 3: align unequal loop rates by algebraic tiling
 
-what it is: rewrite one loop so that two iterations on one side correspond to one on the other. The “Double Square” example aligns two iterations of `D1` with one iteration of `D2`, preserving `z_left = 2 z_right` and `y_right = 2 y_left` (Section 5, pp. 11–12). The transformed KAT expression groups two left bodies before applying Equation (3).
+what it is: rewrite one loop so that two iterations on one side correspond to one on the other. The “Double Square” example aligns two iterations of `D1` (which loops 2x times) with one iteration of `D2` (which loops x times). Section 2 describes the invariant as `z` on the left being twice `z` on the right and `y` on the right being twice `y` on the left (Example 2.2, p. 4); Section 5 writes it as `I = [y =¥ 2y]; [z =¥ 2z]` (p. 11), so the two places use different orientation for `y`. The transformed KAT expression groups two left bodies before applying Equation (3) (Section 5, p. 11).
 
 when to use it: use unequal-rate alignment for optimizations or refactorings where one implementation performs a fixed multiple of the other’s work, such as loop unrolling or batching.
 
 how to do it:
-1. Use unary KAT laws to rewrite the faster loop as a repeated group, for example `(guard; body; guard; body)*` (Section 5, p. 11).
-2. Apply the loop expansion to the grouped left body and the single right body.
+1. Use unary KAT laws to rewrite the loop with more iterations (here `D1`) as a repeated group, for example `([z>0]; b; [z>0]; b)*` followed by `([z>0]; b + 1); [z>0]`, where `b` is the loop body (Section 5, p. 11).
+2. Apply the loop expansion (3) to the grouped left body and the single right body (Section 5, p. 11).
 3. Choose a relational invariant expressing the scale change; the paper uses `I = [y =¥ 2y]; [z =¥ 2z]` (Section 5, p. 11).
-4. Prove three obligations: paired grouped iterations preserve `I`, a left-only grouped iteration preserves `I`, and a right-only iteration preserves `I` (Section 5, p. 11).
-5. Prove the post-relation from the invariant and terminal tests.
+4. Prove three obligations: the grouped left body paired with the right body preserves `I`; the grouped left body with only the right guard test `[z>0]` preserves `I`; and the left guard test with the right body preserves `I` (Section 5, p. 11).
+5. Inference: prove the post-relation from the invariant and the terminal tests; the paper’s Double Square derivation stops at the invariant-preservation obligations and does not display this step.
 
 Verus form (Inference): write a proof `fn` for the grouped step and establish that two concrete iterations of one Rust loop imply the relational state after one iteration of the other. Keep the scale relation in loop `invariant` clauses or ghost variables. A Verus loop still executes one body per iteration; the two-for-one correspondence belongs to the proof relation.
 
 evidence: the paper’s worked derivation explicitly states that “This example uses an alignment where two iterations of the loop in the first program are related to one iteration of the second one” (Section 2, p. 4). The invariant-preservation decomposition is displayed in Section 5 (p. 11). No independent benchmark measures this technique.
 
-limits: fixed-rate grouping does not cover data-dependent iteration ratios. The paper treats those with conditional alignments. Grouping also requires a semantic side condition that the unrolled expression is equivalent to the original loop.
+limits: fixed-rate grouping does not cover data-dependent iteration ratios; the paper treats those with conditional alignments (Section 6, Example 6.3). Inference: the grouped rewrite of the loop must be justified by KAT laws, as the paper does in Section 5 (p. 11), before the alignment is valid.
 
 ## technique 4: normalize different loop shapes before alignment
 
@@ -83,7 +83,7 @@ how to do it:
 
 Verus form (Inference): expose a mathematical sequence or map specification for each array representation, then prove index correspondence and element equality with `requires`, `ensures`, `invariant`, and `assert`. The algebraic normalization itself is not available in Verus, so the equivalent loop-shape facts must be proved manually or packaged as proof `fn`s.
 
-evidence and limits: the paper presents the derivation and names the two invariants, but reports no runtime or benchmark denominator. The approach depends on finding a terminating KAT rewrite and on having a precise representation relation; it does not infer that relation automatically.
+evidence and limits: the paper presents the derivation and names the two invariants, but reports no runtime or benchmark denominator. Inference: the approach depends on finding a KAT rewrite that gives both programs the same nested shape and on supplying the representation relation by hand; the paper does not infer that relation automatically (it defers automation to future work, Section 8.1, p. 25).
 
 ## technique 5: conditionally align data-dependent loops
 
@@ -97,17 +97,17 @@ how to do it:
 3. Prove left-body-versus-skip preserves the invariant under `Q`.
 4. Prove skip-versus-right-body preserves it under `R`.
 5. Prove the side condition that the two loop guards agree except in the allowed `Q` or `R` cases (rule `caWh`, p. 14).
-6. Use Equation (7) to assemble the three cases and prove the terminating post-relation.
+6. Use Equation (7), whose body has five alternatives (left-only under `Q`, right-only under `R`, paired when neither holds, and two guard-mismatch cases), to assemble the cases and obtain the terminating post-relation (Section 6, p. 15).
 
 Verus form (Inference): encode stuttering as separate proof branches around the two loop-step specifications. A proof `fn` can establish the relation for left-body/right-skip and left-skip/right-body; the main loop proof maintains the disjunction or guarded invariant. Verus does not have a paired scheduler primitive, so the correspondence is a ghost proof structure.
 
-evidence: the paper’s example proves `y =¥ y′ ∧ z > z′ > 0` as an invariant and uses it to establish that factorial output majorizes the other program’s output (Section 6, p. 15). Theorem 6.2 says Equation (7) holds in any *-continuous BiKAT and that `caWh` is sound in a BiKAT satisfying it (p. 15).
+evidence: for the example, the paper states that y =¥ y′ ∧ z > z ′ > 0 “is invariant and sufficient to establish the postrelation” (the majorization `z > z′`), and that “This reasoning is done using rule caWh in Nagasamudram and Naumann [2021]”; it then gives a BiKAT alignment derived from Equation (7) (Section 6, p. 15). The invariant is therefore asserted and attributed to prior work, not proved in this paper’s main text. Theorem 6.2 says Equation (7) holds in any *-continuous BiKAT and that `caWh` is sound in a BiKAT satisfying it (p. 15).
 
 limits: Equation (7) is not asserted for every BiKAT: “We do not know whether (7) holds in all BiKATs, but it holds in relational BiKATs and trace BiKATs.” (Section 6, p. 15). A proof must therefore establish the model assumptions and all three case obligations.
 
 ## technique 6: ∀∃ witnesses for nondeterminism and simulation
 
-what it is: for forward simulation, every left execution must have some right execution that reaches the related post-state; for backward simulation, every right execution must have some matching left execution. BiKAT uses a witness `W` consisting of an aligned product plus bitest restrictions. The three witness conditions are: WC, the ∀∀ property on `W`; WO, `W` over-approximates left behavior; and WU, `W` under-approximates right behavior (Example 2.4 and Theorem 7.1, pp. 5 and 16).
+what it is: forward simulation is `∀σ,σ′,τ. σRσ′ ∧ σcτ ⇒ ∃τ′. σ′dτ′ ∧ τSτ′`: for every left execution from related initial states, some right execution reaches a related final state. Backward simulation is `∀σ,τ,τ′. σcτ ∧ τSτ′ ⇒ ∃σ′. σRσ′ ∧ σ′dτ′`: for every left execution and every final state `τ′` related to its final state, some right execution ending in `τ′` starts from a state related to `σ` (Section 7.1, p. 16). BiKAT uses a witness `W` consisting of an aligned product plus bitest restrictions. The three witness conditions are: WC, the ∀∀ property on `W`; WO, `W` over-approximates left behavior; and WU, `W` under-approximates right behavior (Example 2.4, p. 5; Theorem 7.1, pp. 16–17). Theorem 7.1 is stated for a relational BiKAT over a KAT with top.
 
 when to use it: use this for nondeterministic code, possibilistic noninterference, data refinement, and refinement proofs where matching executions are existential rather than pairwise universal.
 
@@ -117,19 +117,19 @@ how to do it:
 3. Prove WC: the restricted product satisfies the universal relational postcondition.
 4. Prove WO: every left behavior is represented by the witness (over-approximation).
 5. Prove WU: every witness right behavior is permitted by the right program (under-approximation).
-6. Use the forward-simulation theorem; reverse the direction for backward simulation.
+6. Conclude by Theorem 7.1 (forward simulation). For backward simulation use Theorem 7.2, whose b-validity conditions WCb, WOb and WUb are different inequalities (`W; S ≤ R; W; S`, `⟨c]; S ≤ [hav⟩; W`, `W; S ≤ ⟨hav | d⟩`), not a mere reversal of the forward ones (p. 17).
 
-The nondeterministic example chooses `t := x-1` after the right-side `any` assignment so that `y = z` holds. The paper says this is sufficient because the bitest “does not restrict the behaviors of the left program (WO), nor does it add behaviors on the right that are not already allowed by the right program (WU).” (Section 2, p. 5).
+In the nondeterministic example (`E1: x:=any; y:=x`, `E2: t:=any; z:=t+1`, pre-relation true, post-relation `[y =¥ z]`) the paper aligns the programs in lockstep and uses the bitest `[x-1 =¥ t]` after the `any` assignments, so that `t` is restricted to `x-1` and `y = z` holds. The paper says this is sufficient because the bitest “does not restrict the behaviors of the left program (WO), nor does it add behaviors on the right that are not already allowed by the right program (WU).” (Section 2, p. 5).
 
 Verus form (Inference): model the witness choice as a ghost value or an explicit existential witness passed to a proof `fn`; prove that the chosen right execution satisfies its function contract and that the witness is permitted by the implementation. Verus’s `ensures` can express the resulting relation for a supplied witness, but an executable nondeterministic search is outside this proof pattern. Do not encode the witness with an unproved `assume`.
 
-evidence: The paper derives new forward- and backward-simulation proof rules and states their relational characterizations in Section 7. The abstract claims these are “the first deductive system for backward simulation judgments.” (Abstract, p. 1); this is the authors’ novelty claim. The Coq formalization includes “the basic definitions and results about BiKATs” (Section 1, p. 3), providing machine-checked support for the algebraic core.
+evidence: The paper derives new forward- and backward-simulation proof rules and states their relational characterizations in Section 7. The contributions list says “To our knowledge this provides the first deductive system for backward simulation judgments.” (Section 1, p. 2); this is the authors’ hedged novelty claim. Fig. 2 gives forward-simulation rules (Theorem 7.8) and Fig. 3 backward-simulation rules (Theorem 7.9), both for relational BiKATs over a KAT with top; Theorem 7.3 shows that a simulation judgment holds if and only if it has a valid witness (p. 17). The Coq formalization covers “the basic definitions and results about BiKATs” (Section 1, p. 3); the paper says “Our Coq development already provides the basic BiKAT laws/lemmas” and that it “could be extended” to the forward/backward simulation rules (Section 8.1, p. 25), so those rules are not stated to be machine-checked.
 
-limits: witness restrictions must satisfy both over- and under-approximation obligations. A witness that merely finds one convenient pair of executions is insufficient. The paper also explores ∃∀ and ∃∃ properties and sketches TriKAT, but does not provide the same completed development for every quantifier pattern (Sections 7.5–7.6).
+limits: witness restrictions must satisfy both over- and under-approximation obligations; Inference: a witness that merely finds one convenient pair of executions is insufficient. The paper says that “Thorough investigation of loop rules for backward simulation is beyond the scope of this paper.” (Section 7.4.2, p. 23) and that it has “not investigated their completeness” for the simulation rules (Section 8.4, p. 29). It explores ∃∀ and ∃∃ properties and sketches TriKAT, but “we do not formally define TriKAT” (Sections 7.5–7.6, pp. 23–25), so the same completed development is not provided for every quantifier pattern.
 
 ## technique 7: derive relational Hoare rules and use procedure summaries
 
-what it is: standard relational Hoare rules for sequencing, conditionals, loops, consequence, and one-sided `skip` are derived from the BiKAT equation. Theorem 6.1 states: “The rules of Fig. 1 are sound in any BiKAT.” (Section 6, p. 14). BiKAT also accepts unary procedure summaries or relational hypotheses as primitive action assumptions, so alignment can occur at procedure boundaries (Section 5, pp. 12–13).
+what it is: standard relational Hoare rules for sequencing, conditionals, loops, consequence, and one-sided `skip` are derived from the BiKAT equation. Theorem 6.1 states: “The rules of Fig. 1 are sound in any BiKAT.” (Section 6, p. 14). BiKAT can also take unary procedure summaries or relational hypotheses as hypotheses about primitive actions, so alignment can occur at procedure boundaries (Section 5, pp. 12–13).
 
 how to do it:
 1. Translate a desired relational judgment to `P; ⟨c | c′⟩; ¬Q = 0` (Section 6, p. 13).
@@ -140,13 +140,13 @@ how to do it:
 
 Verus form (Inference): use executable function `requires`/`ensures` contracts and proof `fn`s for relational procedure summaries. Keep pre-state values in ghost/spec variables rather than inventing unsupported syntax. Loop rules become explicit `invariant` clauses; conditional branches require separate `assert` facts. Verus’s contracts must still be proved for each implementation, so importing a summary is a trusted boundary unless its proof is present.
 
-evidence and limits: the paper gives a worked `arrayInsert` example where both executions are aligned at three procedure/loop boundaries and a summary for `shift_array` preserves `len` agreement (Section 5, pp. 12–13). This is a formal example, not an empirical evaluation. The summary itself is an assumption until justified by a unary or relational proof.
+evidence and limits: the paper gives a worked `arrayInsert` example, with goal `[len =¥ len] [A =¥ A] ≈> [i =¥ i]`, where both executions are aligned at three places (after both first loops, after both `shift_array` calls, after both second loops) and either a relational hypothesis or unary specification of `shift_array` is used to keep `len` in agreement (Section 5, pp. 12–13). This is a formal example, not an empirical evaluation. The summary itself is an assumption until justified by a unary or relational proof.
 
 ## trusted boundary, contradictions, and scope
 
-The formal guarantees are conditional on the KAT/BiKAT algebra, the semantics of primitive actions and tests, and the adequacy proofs for any chosen alignment. The paper’s Coq artifact covers the basic definitions and results, but the implementation semantics of a target Rust program, external procedure summaries, and Verus’s verifier remain outside this paper (Inference). Theorem 4.4’s undecidability result means automation can search or simplify but cannot decide all identities.
+The formal guarantees are conditional on the KAT/BiKAT algebra, the semantics of primitive actions and tests, and the adequacy proofs for any chosen alignment. The paper’s Coq artifact covers the basic definitions and results, but the implementation semantics of a target Rust program, external procedure summaries, and Verus’s verifier remain outside this paper (Inference). Inference: Theorem 4.4’s undecidability result means automation can search or simplify but cannot decide all identities. The paper says “We save automation for future work” (Section 8.1, p. 25); its only tool experiment is a manual encoding of one concrete BiKAT, minus LRC, in which KMT “was able to verify some equivalence queries” (Section 8.1, p. 25).
 
-No benchmark denominator, verification-time table, or success percentage is reported. The concrete evidence consists of algebraic soundness theorems, worked derivations, and the accompanying Coq formalization. The paper distinguishes proving a relational property from proving alignment adequacy; omitting adequacy would leave a gap even when a simple invariant proves the aligned product.
+No benchmark denominator, verification-time table, or success percentage is reported. The concrete evidence consists of algebraic soundness theorems, worked derivations, and the accompanying Coq formalization. The paper distinguishes proving a relational property from proving alignment adequacy. Section 8.2 adds that BiKAT “cannot directly encode adequacy checks expressed as assertions” (p. 26). Inference: omitting adequacy would leave a gap even when a simple invariant proves the aligned product.
 
 Inference: a product generating verified Rust should treat BiKAT’s alignment catalog as a design aid for regression and translation-equivalence proofs. It reduces relational invariants when loop rates, shapes, or stuttering differ, but it does not remove the need to specify representation relations, prove procedure summaries, or check the exact quantifier pattern. VL should not redo a generic lockstep relational-logic derivation as a new contribution; a useful product experiment would instead measure how often agent-generated alignments preserve adequacy under real Rust refactorings.
 
@@ -159,4 +159,4 @@ Inference: a product generating verified Rust should treat BiKAT’s alignment c
 - conditional stuttering alignment — prove left-only, right-only, and paired steps under data-dependent guards
 - ∀∃ witness alignment — restrict nondeterministic choices and prove universal correctness plus over- and under-approximation
 - derived relational Hoare rules — use BiKAT equations to justify sequence, branch, loop, consequence, and procedure-summary rules
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Of course we interactively use LRC to obtain the desired alignment and do not give KMT instances of the LRC axiom, owing to undecidability."): I read the whole paper text (main text, references and the appendix, Section 9) and checked every quotation, theorem, figure, example and page reference against it, and the arXiv v4 link and tag. I changed: the appendix/Coq description; the abstract quotation (now lowercase and with its context) and the misplaced attribution of the backward-simulation novelty claim (it is in Section 1 p. 2, not the abstract, and is hedged); which loop is regrouped in the unequal-rate technique, the Double Square page range and invariant orientation, and its three obligations; the backward-simulation definition and Theorem 7.2 conditions; the `[x-1 =¥ t]` bitest description; the caWh example (the paper cites prior work for its proof); the Coq claim (not stated to cover the simulation rules); added limits from Sections 7.4.2, 8.1, 8.2 and 8.4; and labeled my own conclusions Inference. I did not check the Verus-form paragraphs beyond confirming they are labeled Inference, did not re-derive the proofs or the Coq artifact, and did not read the cited external papers.

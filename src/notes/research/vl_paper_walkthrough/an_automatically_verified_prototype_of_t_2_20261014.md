@@ -1,6 +1,6 @@
 # An Automatically Verified Prototype of the Android Permissions System
 (authored by agents unless marked 🧑)
-Tag: `cristia2022verified`, [paper](https://doi.org/10.21203/rs.3.rs-2088594/v1)
+Tag: `cristia2022verified`, [paper](https://arxiv.org/abs/2209.10278) (arXiv:2209.10278v1, as printed on the paper's first page)
 
 ## scope and contribution
 
@@ -18,7 +18,7 @@ How to do it.
 
 1. Define a record for dynamic state and a record for static environment (section 2.2.1, PDF pages 4–5).
 2. Define validity predicates such as uniqueness (`notDupPerm`) and partial-map checks (`allMapsCorrect`) over the record (Figures 2–3, PDF pages 5–6).
-3. For each action, define precondition and postcondition, then state that every valid pre-state and successful transition imply a valid post-state (Lemma 1, PDF page 7).
+3. For each action, define precondition and postcondition, then state that every valid pre-state and successful transition imply a valid post-state (Lemma 1, PDF page 6; grantAuto example in Figure 4, PDF page 7).
 4. In {log}, encode each invariant separately and query `neg(I_k(S) & a(S,S_) implies I_k(S_))` (section 4.1, PDF page 15). The authors explain why: “This is so because attempting to prove Lemma 1 may make {log} to incur in a lengthy computation due to the presence of unnecessary hypothesis.” (section 4.1, PDF page 15).
 
 Verus form. Inference: model `System` as a Rust struct containing state and environment, make the transition a `spec fn` or proof-level relation, and state each invariant as a `spec fn` predicate. A verified executable operation can use `requires` for the precondition, `ensures` for the postcondition, and `assert`/`assert forall` to expose facts needed by the SMT solver. For a loop, use a `while` invariant; do not model a `spec fn` as executable code. The decomposition into separate lemmas carries over, while {log}’s relational `pfun` primitive does not.
@@ -27,15 +27,15 @@ Evidence and limits. {log} discharged all 13 invariance lemmas, represented by 7
 
 ## technique: translate records and quantified predicates into solver-native sets and relations
 
-What it is. Coq lists and mappings are represented as finite sets and binary relations in {log}; fields are tuple components accessed through predicates. The paper notes: “More importantly, the type of each component of system is different from (although equivalent, in some sense) to the corresponding Coq type.” (section 3, PDF page 12). For example, a Coq list is represented by a finite set, and a mapping by `rel(idApp,set(idGrp))` constrained with `pfun`.
+What it is. Coq lists and mappings are represented as finite sets and binary relations in {log}; fields are tuple components accessed through predicates. The paper notes: “More importantly, the type of each component of system is different from (although equivalent, in some sense, to) the corresponding Coq type.” (section 3, PDF page 11). For example, a Coq list is represented by a finite set, and a mapping by `rel(idApp,set(idGrp))` constrained with `pfun`.
 
 How to do it.
 
-1. Make all implicit Coq parameters explicit in each {log} clause (section 3, PDF pages 10–11).
-2. Encode records as tuples and define field-access predicates using unification (Figure 7 and section 3, PDF page 12).
-3. Replace list membership and map lookup with set membership, relation composition, and `applyTo` (section 3, PDF pages 12–13).
+1. Make all implicit Coq parameters explicit in each {log} clause; the paper says “{log} does not support implicit parameters so they have to be explicitly included in every clause where they are needed.” (section 3, PDF page 11).
+2. Encode records as tuples and define field-access predicates using unification (section 3, PDF page 11).
+3. Replace list membership and map lookup with set membership, relation composition, and `applyTo` (section 3, PDF pages 11–12).
 4. Replace unrestricted Coq universal quantifiers with restricted universal quantifiers (RUQs) over finite sets. The paper’s rule is: “Therefore, as a general rule, we turn Coq’s universal quantifications into {log}’s RUQ.” (section 4.1, PDF page 14).
-5. Split a predicate with disjunctive cases into separate clauses; `notDupPerm` becomes three clauses according to whether permissions come from application definitions or the system image (section 4.1, PDF pages 14–15).
+5. Split a predicate with disjunctive cases into separate clauses; `notDupPerm` becomes three clauses, according to whether the two permission-defining entries are both from `defPerms`, both from `systemImage`, or one of each (section 4.1, PDF pages 14–15).
 
 Verus form. Inference: use Rust `Seq`/`Set` specifications only where the Verus library and existing VL patterns support them; otherwise represent maps with a sequence plus uniqueness invariant or a map abstraction already documented for Verus. State map-function properties as predicates and prove them with `requires`/`ensures`; use quantified `forall` in `assert` or invariant blocks, not {log}-specific RUQ syntax. The semantic warning carries over: changing list semantics to set semantics loses order and duplicates, so the invariant must state when that abstraction is sound.
 
@@ -43,11 +43,11 @@ Evidence and limits. The translation enables the exact same clause to execute as
 
 ## technique: encode updates as primitive relational constraints
 
-What it is. Rather than copy Coq’s quantified `grantPerm` definition, the {log} model uses `foplus` to replace one relation image. Figure 7 encodes `grantAuto` by checking manifest membership, dangerous protection level, group authorization, and then applying `foplus(Perms,A,{P/PS},Perms_)` (section 3, PDF pages 10–13). The authors explain: “Therefore, line 11 is equivalent to state that (perms (state s)) is equal to (perms (state s’)) except in app where either (app,{p}) is added to (perms (state s)) or the new image of app is its old image plus {p}.” (section 3, PDF page 13).
+What it is. Rather than copy Coq’s quantified `grantPerm` definition, the {log} model uses `foplus` to replace one relation image. Figure 7 encodes `grantAuto` by checking manifest membership, dangerous protection level, group authorization, and then applying `foplus(Perms,A,{P/PS},Perms_)` (section 3, PDF pages 10–13). The authors explain: “Hence, line 11 is equivalent to state that (perms (state s)) is equal to (perms (state s’)) except in app where either (app,{p}) is added to (perms (state s)) or the new image of app is its old image plus {p}.” (section 3, PDF page 13).
 
 How to do it.
 
-1. Identify a quantified update relation in the source model (Figure 4, PDF pages 7–8).
+1. Identify a quantified update relation in the source model (`grantPerm`, Figure 4, PDF page 7).
 2. Replace it with a primitive update constraint whose semantics is known to the solver (`foplus`) (section 3, PDF page 13).
 3. Keep unchanged state components tied by an update predicate (`updateGrantAuto`) (section 3, PDF page 13).
 4. Query the resulting transition both for execution and for satisfiability proofs (Remark 3, PDF page 13).
@@ -56,12 +56,12 @@ Verus form. Inference: write a pure Rust update function returning a new struct 
 
 ## technique: prove properties by negated satisfiability queries and classify obligations
 
-What it is. A property is proved by asking {log} to satisfy its negation. `false` means no counterexample exists; a returned assignment is a witness/counterexample. The authors state: “Every time we get a false answer we know that the query is unsatisfiable meaning that its negation is a theorem.” (section 4, PDF page 13). They classify properties as operation-sequence properties, existential properties, and universal properties (section 4.2, PDF page 16).
+What it is. A property is proved by asking {log} to satisfy its negation. `false` means no counterexample exists; a returned assignment is a witness/counterexample. The authors state: “Every time we get a false answer we know that the query is unsatisfiable meaning that its negation is a theorem.” (section 4, PDF page 13). They classify properties as operation-sequence properties (A), existential properties (B), and universal properties (C) (section 4.2, PDF pages 15–16).
 
 How to do it.
 
 1. For an invariant, query the negation of preservation (`neg(I_k(S) & a(S,S_) implies I_k(S_))`) (section 4.1, PDF page 15).
-2. For an existential claim, execute a clause and inspect the generated witness; `ExecAutoGrantWithoutIndividualPerms` returns a concrete vulnerable state (section 4.2, PDF pages 16–17).
+2. For an existential claim, execute a clause and inspect the generated witness; `ExecAutoGrantWithoutIndividualPerms` returns a witness that still contains existential variables (`V?`, `Q?`); the authors note it can be made more concrete by replacing every `Q?` with the empty set (section 4.2, PDF pages 16–17).
 3. For a universal safety claim, encode the negated implication; `CannotAutoGrantWithoutGroup` returns `false` when no violating transition exists (section 4.2, PDF page 17).
 4. If a query is satisfiable unexpectedly, use its assignment as a counterexample to the model or property (section 4.2, PDF page 17).
 5. For sequence properties that cannot be expressed directly, first prove an invariant for every operation, then use that invariant to establish the sequence claim (section 4.2, PDF page 16).
@@ -72,26 +72,26 @@ Evidence. Of 27 Coq properties, {log} discharged 24 (13 invariance and 11 securi
 
 ## technique: control solver complexity by minimizing hypotheses and delaying predicates
 
-What it is. The authors reduce search by removing assumptions that do not contribute to a proof and delaying expansion of predicates until other constraints are processed (section 5, PDF pages 20–21). This addresses the computational complexity wall reached by automated proof.
+What it is. The authors reduce search by removing assumptions that do not contribute to a proof and delaying the processing of a predicate “until nothing else can be done” (section 5, PDF page 20). This addresses the computational complexity wall reached by automated proof.
 
 How to do it.
 
 1. Determine which hypotheses are needed for the target conclusion.
 2. Drop irrelevant conjuncts from the query (hypothesis minimization) (section 5, PDF page 20).
 3. Mark expensive predicates for delayed processing with {log}’s `delay` directive (section 5, PDF page 20).
-4. Generate invariant queries automatically from annotated operation and invariant clauses; the paper reports that 90% of {log} proof text consists of generated invariance statements (section 4.3, PDF page 19).
+4. Separately from the two techniques above, the paper states that “90% of the proof text in {log} corresponds to the statement of the invariance lemmas” and that such statements “can be automatically generated” by a verification condition generator from annotated clauses (section 4.3, PDF page 18); the paper does not say that this generator was used for the reported queries.
 
 Verus form. Inference: expose only relevant facts with local `assert` statements, keep expensive definitions opaque until a lemma needs them, and split large proofs into lemmas with narrow `requires`. The exact {log} `delay` directive is unavailable; Verus’s trigger and opacity behavior must be used according to the project’s documented constructs.
 
 ## what is proved, measured, and trusted
 
-The proved claims are properties of the encoded Android abstract model: valid-state preservation and selected security properties. The measured claims are code size and solver time under one machine/tool setup. The trusted base includes the semantics and implementation of Coq, {log}, SWI-Prolog, the translation, and the correctness of the model’s abstraction from Android. Inference: a VL product would additionally trust the Verus verifier, SMT solver, Rust compiler/runtime assumptions, and any external-body declarations; those are outside this paper.
+The proved claims are properties of the encoded Android abstract model: valid-state preservation and selected security properties. The measured claims are code size and solver time under one machine/tool setup. Inference: the trusted base (the paper does not discuss it) includes the semantics and implementation of Coq, {log}, SWI-Prolog, the translation, and the correctness of the model’s abstraction from Android. Inference: a VL product would additionally trust the Verus verifier, SMT solver, Rust compiler/runtime assumptions, and any external-body declarations; those are outside this paper.
 
-The paper’s central limitation is incomplete automation: 3 of 14 security properties were not discharged by {log}. It also warns that the Coq and {log} data types are only equivalent “in some sense,” and that formula-program duality reduces efficiency. Inference: VL should reuse the pattern of solver-native encodings and counterexample queries, but should not claim that automatic proof of a model establishes correctness of Android or of generated Rust without a refinement proof.
+The paper’s central limitation is incomplete automation: 3 of 14 security properties were not discharged by {log}. The paper also notes that the Coq and {log} data types are only equivalent “in some sense,” and that formula-program duality “pays the price of reduced efficiency.” Inference: VL should reuse the pattern of solver-native encodings and counterexample queries, but should not claim that automatic proof of a model establishes correctness of Android or of generated Rust without a refinement proof.
 
 ## what VL should not redo
 
-The paper already supplies a complete state-machine decomposition, finite-set/relational encoding strategy, negated-query proof pattern, and empirical accounting for an Android permission model. Inference: VL should avoid re-deriving these generic patterns; effort should target a Verus-specific library for frame conditions, map invariants, witness construction, and controlled solver exposure.
+The paper already supplies a state-machine decomposition, a finite-set/relational encoding strategy, a negated-query proof pattern, and empirical accounting for an Android permission model (the full {log} code is only linked, not printed). Inference: VL should avoid re-deriving these generic patterns; effort should target a Verus-specific library for frame conditions, map invariants, witness construction, and controlled solver exposure.
 
 Inference: threat to agent-written verified Rust is moderate. The paper demonstrates that automated proof can cover about 89% of model properties, but the remaining properties, abstraction choices, and trusted toolchain show that automation does not remove specification or refinement risk.
 
@@ -100,6 +100,6 @@ Inference: threat to agent-written verified Rust is moderate. The paper demonstr
 - state invariant decomposition — split a record’s validity into independent predicates and prove each operation preserves each predicate
 - solver-native relational encoding — translate maps, updates, and quantifiers into finite sets, relations, RUQs, and primitive constraints
 - negated satisfiability proving — prove universal properties by asking the solver for a counterexample to their negation
-- staged fallback verification — discharge easy obligations automatically, then export the remaining model to a stronger interactive prover
+- staged fallback verification — discharge easy obligations automatically, then export the remaining model to a stronger interactive prover (proposed methodology, section 5, PDF pages 19–20: “we envision the following methodology”; the paper does not implement the {log}-to-Coq translation, and the authors call a literal translation “overwhelming” in the Coq-to-{log} direction)
 - hypothesis minimization and predicate delay — reduce automated-search cost by retaining only necessary assumptions and delaying expensive predicates
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Clearly, the Coq theorem based on proving a universal property becomes a {log} query attempting to satisfy the negation of that property."): read the whole paper text (arXiv:2209.10278v1) and checked every quotation, number (13 components, 22 operations, 14 properties, 13 predicates, 756/45/801 queries, 920/381/1,302 s, 24 of 27, under 500 LOC, about 2%), page reference and technique step against it; changed one misquoted passage (Section 3 type-equivalence quote), one altered opening word ("Hence"), several page references (Lemma 1 is on page 6, grantPerm and Figure 4 on page 7, the Section 3 encoding text on page 11, the 90% statement on page 18), the overstated claims about a "concrete" witness, "complete" decomposition, generated invariance statements, delay "expansion" and the staged Coq fallback (which the paper only proposes); marked the trusted-base statement as inference; replaced the Research Square DOI (not in the paper text) with the arXiv link printed in the paper. Did not check: the Verus-form paragraphs (my own inference, not claims of the paper), the reference list, the {log} code in the online archive, or the cited prior work.

@@ -6,7 +6,7 @@ source: Khazeev, Rivera, Mazzara, Tchitchigin (Innopolis University), arXiv:1605
 
 ## what the paper is, in one paragraph
 
-Four authors re-implemented one protocol of the Tokeneer ID Station (enrolment) in Eiffel, wrote contracts for it, and ran the AutoProof verifier on it. AutoProof is an auto-active verifier: the user never steers the prover, and only writes annotations in the source. The paper is a short experience report. It teaches contract-writing devices by example (Figures 2 to 8) and gives one measurement, a three-way count of 38 proof obligations. It has no method section, no algorithm, no user study with participants, and no timing.
+Four authors re-implemented one protocol of the Tokeneer ID Station (enrolment) in Eiffel, wrote contracts for it, and ran the AutoProof verifier on it. AutoProof is an auto-active verifier: the user never steers the prover, and only writes annotations in the source. The paper is a short experience report. It teaches contract-writing devices by example (Figures 2 to 8) and gives one measurement, a three-way count of 38 proof obligations. It has no algorithm, no user study with participants, and no timing. Section III, which the introduction calls the methodology, is a walk through the classes and their annotations, not a protocol for how the verification was carried out. The paper counts “38 generated proof” and the abstract speaks of “verification conditions”; this study says “obligations” for both.
 
 The tool pipeline, as the paper states it: “It translates Eiffel code to Boogie programs [10] and calls the Boogie tool to generate verification conditions: logic formulas whose validity entails correctness of the input programs.” (Section II.C, p.3)
 
@@ -16,9 +16,9 @@ What AutoProof checks, without the user asking for each item: “AutoProof verif
 
 what it is: each routine states what callers owe (`require`) and what it gives back (`ensure`); the class states one predicate over its fields that holds whenever an object is visible from outside.
 
-when to use it: any type whose fields must stay in a legal range across calls; the paper's example is a bank account whose balance never goes below zero.
+when to use it (Inference as to scope): any type whose fields must stay in a legal range across calls; the paper's example is a bank account whose balance never goes below zero.
 
-how it is done, from the paper's `ACCOUNT` example (Figure 2 and the text after it, Section II.B, pp.2-3):
+how it is done, from the paper's `ACCOUNT` example (Figure 2 on p.2 and the text after it, Section II.B, pp.2-3). Inference: the paper shows the finished class and states no order of work; the order of the steps below is this study's reading of it:
 1. write the invariant first: `invariant non_negative_balance: balance >= 0`
 2. give the creation routine a postcondition that makes the invariant true: `make` ensures `balance = 0`
 3. for each routine that changes a field, find the argument values that would break the invariant, and exclude them with a precondition. `withdraw (amount)` requires `amount <= balance`; `deposit (amount)` requires `amount >= 0`. The paper's reason for the second: a negative value might invalidate the invariant of the class
@@ -67,7 +67,7 @@ Verus form (Inference): no annotation is needed. A constructor is an ordinary `f
 
 what it is: the class names a subset of its attributes as its abstract state (the model). Contracts speak about the model; a routine lists which model parts it may change.
 
-when to use it: a routine changes one field of an object with several, and callers need to know the others are untouched.
+when to use it (Inference; the paper gives no such guidance): a routine changes one field of an object with several, and callers need to know the others are untouched.
 
 how it is done (Section III, p.4; Figure 7):
 1. at the top of the class, add a `note` clause with the keyword `model:` followed by one or more attributes
@@ -80,26 +80,26 @@ Verus form (Inference): the model is a `spec fn view(&self)` (written `self@` th
 
 ## technique 4: derive contracts line by line from a formal specification
 
-what it is: the Tokeneer system has a published Z specification. Each Z schema line becomes one contract clause on the routine that implements the schema.
+what it is: the Tokeneer system has a published Z specification (the paper cites [7], file “41 2.pdf”). Inference: the paper shows this for one schema, `RequestEnrolment`, and does not state a rule that each schema line becomes one clause; the procedure below is the study's generalisation of that one case.
 
 how it is done, on the `RequestEnrolment` schema (Section III, p.4; Figures 4 and 5):
-1. read the schema's lower part, which relates values and variables: `enclaveStatus = notEnrolled`, `floppyPresence = absent`, and two primed lines for the screen message and the display
+1. read the schema's lower part, which relates values and variables: `enclaveStatus = notEnrolled`, `floppyPresence = absent`, and two further lines for the screen message and the display (the text extraction of Figure 4 renders their prime as `0`; I take them to be primed, per the paper's remark on apostrophes)
 2. separate state that is fixed from state that changes. The paper's reading of the Z marks: “The notation Ξ indicates an operation in which the state does not change, and the apostrophe indicates the state of the variable after the change [12].” (Section III, p.4)
 3. write the unprimed conditions as postconditions of the creation routine, so they hold initially. Figure 5 has three: `enclave_status = cons_floppy.not_enrolled`, `floppy_presence = cons_internal.absent`, `token_removal_timeout = 0`
 4. collect the specification's enumerated values (the real-world types, such as screen and display messages) in one constants class, `CONST`, and state membership in the invariant: `constants.display_message.has(current_display)` (Figure 6)
 5. give each setter the membership test as a precondition, so that the invariant survives the assignment: `set_current_display(v)` requires `constants.display_message.has(v)` (Figure 7)
 
-Not in the paper: any check that the Eiffel contracts say the same as the Z schema. The correspondence is by hand. The two primed lines of Figure 4 (`currentScreen'.screenMsg = insertEnrolmentData`, `currentDisplay' = blank`) have no counterpart in the `ensure` of Figure 5; the body of `make` in Figure 8 does assign `current_display := constants.blank`, but no postcondition says so. The third postcondition, `token_removal_timeout = 0`, is not in the schema of Figure 4.
+Not in the paper: any check that the Eiffel contracts say the same as the Z schema. The correspondence is by hand. The two further lines of Figure 4 (`currentScreen'.screenMsg = insertEnrolmentData`, `currentDisplay' = blank`) have no counterpart in the `ensure` of Figure 5; the body of `make` in Figure 8 does assign `current_display := constants.blank`, but no postcondition says so. The third postcondition, `token_removal_timeout = 0`, is not in the schema of Figure 4.
 
 Verus form (Inference): step 4 is a Rust `enum` for the message set, which makes the membership invariant and the setter's precondition unnecessary, because an ill-formed message cannot be constructed. This is a case where the Rust type system removes a proof obligation that the Eiffel version, using `STRING`, has to carry. Steps 1 to 3 are the same: one `ensures` line per schema equation, with `old(self)` for unprimed and `self` for primed variables, and one explicit equality for each component under Ξ.
 
 ## technique 5: report verifier usability as a three-way count of proof obligations
 
-what it is: run the verifier on the finished code and sort every obligation into proved automatically, not proved, or tool error.
+what it is (Inference: the paper does not name this as a technique): run the verifier on the finished code and sort every obligation into proved automatically, not proved, or tool error. The paper's words for the buckets are “discharged automatically”, “could not be satisfied” and “failed due to internal errors”.
 
 evidence, the paper's only measurement (Section IV, p.5): “In total there were 38 generated proof. Of these, 22 (58%) were discharged automatically, 8 (21%) could not be satisfied, and the rest (21%) failed due to internal errors, which in our case were basically caused by the attempt to create objects in the contract, and that is not allowed by the tool.” The fractions check: 22/38 = 57.9%, 8/38 = 21.1%, and the rest is 38 - 22 - 8 = 8, again 21.1%. Setup: one Eiffel implementation of the enrolment part only; “This research work encompasses only the enrolment process of the whole Tokeneer System therefore it implements only the entities involved in this process.” (Section III, p.3). The paper gives no code size, no solver time, no count of annotation lines, and no hours of effort.
 
-A lesson that follows from the third bucket: a contract that constructs an object is rejected by AutoProof with an internal error, not with a failed proof. Inference: the Verus analogue is that `requires` and `ensures` are spec expressions and cannot call exec functions; Verus reports this as a mode error at the offending expression, which is the kind of feedback the paper asks for.
+A lesson that follows from the third bucket: the paper says the internal errors “were basically caused by the attempt to create objects in the contract”, which the tool does not allow, so such a contract ends in an internal error, not in a failed proof. Inference: the Verus analogue is that `requires` and `ensures` are spec expressions and cannot call exec functions; Verus reports this as a mode error at the offending expression, which is the kind of feedback the paper asks for.
 
 The paper's stated criterion for such tools: “Verification tools should require minimal annotational effort and give valuable feedback when verification fails.” (Section IV, p.4)
 
@@ -108,7 +108,7 @@ The paper's stated criterion for such tools: “Verification tools should requir
 - proved: for 22 of 38 obligations, that the Eiffel routine meets its contract, as judged by Boogie. Which 22 is not listed
 - not proved: 16 of 38. The paper does not say which routines these belong to, nor whether the 8 unsatisfied ones are bugs in the code, errors in the contracts, or missing annotations
 - trusted (Inference; the paper has no discussion of trust): the AutoProof translation from Eiffel to Boogie, Boogie, the solver behind it, and the hand translation from the Z specification to contracts
-- not addressed: the security properties of Tokeneer. The contracts shown are initial-state equalities and one membership invariant
+- not addressed: the security properties of Tokeneer. The contracts shown are initial-state equalities, one membership invariant, and `constants /= Void`
 
 ## statements that do not fit together
 
@@ -120,7 +120,7 @@ The paper's stated criterion for such tools: “Verification tools should requir
 
 ## obstacles to adoption that the paper names
 
-These are opinions of the authors, drawn from doing the case study; none is measured (Section VI, p.6).
+These are opinions of the authors; the paper gives no measurement for any of them (Section VI, pp.5-6). Inference: they come from the authors' experience of the case study, which the paper does not say outright.
 - too few worked examples: the paper says the tutorials on the official website are useful but not enough
 - code must be changed to be verified: “First, existing implementations need to be modified in order to be verified.”
 - the environment: “Second, the Eiffel IDE - necessary for functioning - calls for increased stability and robustness.”
@@ -140,9 +140,9 @@ Inference: none. The work is a 2016 partial case study in Eiffel with 22 of 38 o
 ## techniques for the catalog
 
 - contract triple with old: write the invariant first, make the constructor establish it, give each mutator a precondition that excludes the arguments breaking it and a postcondition equating the new state with `old` state.
-- constructor status annotation: tell the verifier which routine creates objects so it is checked without assuming the invariant on entry; in Verus the constructor signature already expresses this.
+- constructor status annotation: tell the verifier which routine creates objects (the paper's stated effect: it is verified only once; the reason, that the invariant is not assumed on entry, is this study's inference); in Verus the constructor signature already expresses this.
 - model queries with frame clauses: name the abstract state of a class and list per routine which part may change; in Verus a view `spec fn` plus explicit unchanged-field postconditions.
 - contracts from a formal specification, clause by clause: turn each schema equation into one postcondition, unchanged-state marks into frame equalities, enumerated real-world types into a constants type with a membership invariant.
 - three-way obligation count: report proved, unproved and tool-error obligations separately, with the total, when stating how automatic a verifier was on a code base.
-- no object construction inside contracts: keep contracts to pure expressions, since AutoProof answers a contract that creates an object with an internal error.
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- no object construction inside contracts: keep contracts to pure expressions; the paper says attempts to create objects in a contract were the basic cause of the tool's internal errors (8 of 38).
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Second, and this aspect is less general and more peculiar to the auto-active verification approach, a tool like AutoProof is as much effective and usable as is its ability to discharge verification conditions completely automatically, without feeding the code of annotation overhead or requiring particular tweaking."): I read all six pages and checked every quotation, page and section reference, the figure contents (Figures 2 to 8), the 38/22/8/8 counts and percentages, the cited work [13] and [14], and the arXiv link against the paper text; I changed the "no method section" claim, marked the step order and "when to use" lines as inferences, softened the claim that each Z line becomes a clause, noted the paper says "proof" not "obligations", and corrected the list of contract contents; I did not check the Verus code or Verus claims (not run, not in the paper), did not read the cited Tokeneer documents or [13], and did not view Figure 4 as an image (the prime marks come from text extraction only).

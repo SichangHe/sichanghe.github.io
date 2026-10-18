@@ -17,14 +17,14 @@ How to apply it (Section 2, pp. 3–6):
 2. Define event markers for calls, returns, and context changes. Use a call identifier to associate each return with its call.
 3. Evaluate each statement locally to a finite small-step trace plus a continuation marker `K(s)` for the remaining code.
 4. Compose traces by semantic chop, requiring the final state of the first trace to equal the initial state of the next.
-5. On a call, emit the call event, push a context, substitute the argument into the callee body, and continue with the caller continuation. On return, assign the return value to the call's result variable, emit the return event, pop the context, and resume the caller.
+5. On a call, emit the call event, then (Call rule) push a context and inline the callee body with the argument substituted, ahead of the caller's continuation `x = res_id`. A `return e` emits the return event; the Return rule then assigns the returned value to the result variable `res_id` of the current context and emits the pop event, which switches back to the caller's context.
 6. Define a program trace as the maximal sequence of composition steps for terminating programs. Restrict specifications to adequate traces whose call/return context switches and fresh identifiers are consistent.
 
 The paper defines semantic chop as follows: “When σ 6= σ ′ the result is undefined.” (Definition 5, Section 2, p. 4). This endpoint condition makes sequential trace composition reflect state passing rather than mere list concatenation.
 
 Verus form: Inference: represent a trace and event sequence as ghost data, and state a `spec fn` predicate for valid event/state transitions. Executable Rust functions can maintain concrete state; proof functions/lemmas can show that each call and return appends the required event. Use `requires` and `ensures` for endpoint relations and loop `invariant` clauses for trace prefixes. Inference: Verus does not provide the paper's trace semantics or semantic chop, so a library or external generator must define them.
 
-Evidence and limits: Example 3 evaluates recursive `m(1)` and shows fresh local states and context switches through six intermediate states (Section 2, pp. 5–6). The semantics is defined only for terminating programs (Definition 9, p. 6), and side effects/aliasing are omitted from the formal language.
+Evidence and limits: Example 3 applies the progress and call rules to `x = m(1)` for the first two steps only (Section 2, p. 6); Example 4 and Fig. 3 then show the full semantics of `x = m(1)` with intermediate states σ1 to σ6, fresh local variables and context switches (Section 2, pp. 6–7). The semantics is defined only for terminating programs (Definition 9, p. 6), and side effects/aliasing are omitted from the formal language.
 
 ## technique 2: fixed-point trace contracts with event abstraction
 
@@ -33,12 +33,12 @@ What it is: Contracts are formulas over finite traces, built from state predicat
 Procedure (Section 3, pp. 6–10):
 
 1. Write a state predicate `P` as `⌈P⌉`, an event formula such as `startEv(m,e,i)` or `finishEv(m,e,i)`, and combine formulas with `·` or `∗∗`.
-2. Use a recursion variable `X(t)` and a least fixed point `(µX(y).Φ)(t)` for cyclic call structure. The paper excludes negation and uses least fixed points so the semantic transformer is monotone.
+2. Use a recursion variable `X(t)` and a least fixed point `(µX(y).Φ)(t)` for cyclic call structure. The paper considers the syntax fragment without negation, “which guarantees that fixed-point formulas indeed denote fixed points of the corresponding sematic transformers”, and uses least fixed-point recursion only (Section 3, p. 6).
 3. Define a no-event pattern `Ψm = µX.(NoEv(m) ∨ NoEv(m)·X)` when an interval must contain no event involving procedure m.
 4. For a recursive procedure, give a base case for nonrecursive execution and an inductive case containing a recursive `X` call. The pattern `Hm` relates precondition, start event, recursive call, finish event, and return state.
 5. Add state predicates after an internal call when the contract must expose an intermediate result, such as `res#(i)=n−1`; otherwise the contract remains independent of implementation details.
 
-The paper states the abstraction goal directly: “Trace formulas (by design) completely abstract away from a specified program, to which they are only connected via events.” (Section 3.3, p. 10). Its running factorial-like contract uses `n=0` as the base and `n>0` with a call at `n−1` as the inductive case (Example 6, pp. 9–10).
+The paper states the abstraction goal directly: “Trace formulas (by design) completely abstract away from a specified program, to which they are only connected via events.” (Section 3.3, p. 10). Its running contract (Example 6, p. 9) is for the procedure of Example 1, which returns its argument `k` via `k` recursive calls; it uses `n=0` as the base case and `n>0` with a recursive call at `n−1` as the inductive case.
 
 Verus form: Inference: encode a trace contract as a ghost predicate over a sequence of event records and use recursive `spec fn` definitions for the contract cases. Prove the implementation's `ensures` relation to the trace predicate; a `decreases` measure can justify recursive proof lemmas. Positive least fixed points are not a direct Verus construct, so finite unfoldings or inductive predicates must be encoded explicitly. Inference: event abstraction is useful for VL API protocols, but the ghost trace must include every state fact needed by the security claim.
 
@@ -46,7 +46,7 @@ Evidence and limits: The logic can express procedure scope, recursive calls, and
 
 ## technique 3: symbolic execution as a sequent calculus
 
-What it is: The calculus reduces a program to explicit state and event updates preceding the remaining code. A judgment `U s : Φ` means that executing the residual statement s after updates U yields a trace satisfying Φ. Sequents carry first-order assumptions and are discharged by symbolic rules for assignment, conditionals, scopes, returns, variable declarations, and fixed-point unfolding.
+What it is: The calculus reduces a program to explicit state and event updates preceding the remaining code. A judgment `U s : Φ` means that executing the residual statement s after updates U yields a trace satisfying Φ. A sequent `Γ ⊢ U s : Φ` carries a set Γ of assertions (first-order predicates or judgments) and is reduced by symbolic rules for assignment, conditionals, scopes, returns, variable declarations, prestate predicates, and fixed-point unfolding.
 
 How to apply it (Section 4.1–4.2, pp. 10–13):
 
@@ -54,13 +54,13 @@ How to apply it (Section 4.1–4.2, pp. 10–13):
 2. Start with a sequent `Γ ⊢ U s : Φ`, where Γ contains state assumptions and Φ is the target trace formula.
 3. Apply `Assign` to replace an assignment with an update, `Scope` to enter a block, `Cond` to split on `e` and `!e`, and `Return` to append a matching finish event and result assignment.
 4. Use `Prestate` to establish a state predicate before continuing and `Unfold` to replace a fixed-point formula with its body instantiated at the current arguments.
-5. Close the resulting first-order obligations with ordinary arithmetic or theorem-prover rules.
+5. Close the remaining first-order and update-simplification obligations. The paper omits the standard first-order sequent rules for space and gives some update simplification rules in Appendix B (Example 15).
 
-The semantic definition deliberately treats nontermination conservatively: “A judgment U s : Φ is true in σ … when [[U s]]hσi is undefined or [[U s]]hσi ∈ [[Φ]].” (Definition 13, Section 4.2, p. 12). Thus a nonterminating residual program does not falsify a partial-correctness judgment.
+The semantic definition deliberately treats nontermination conservatively: “A judgment U s : Φ is true in σ … when [[U s]]hσi is undefined or [[U s]]hσi ∈ [[Φ]].” (Definition 13, Section 4.2, p. 12). Inference: a nonterminating residual program therefore does not falsify a judgment, which matches the paper's remark that the procedure-contract approach "yields partial correctness" (Section 4.3, p. 13).
 
 Verus form: Inference: represent U as a ghost list of updates and prove each symbolic-execution rule as a lemma transforming a pre-state predicate into a post-state predicate. Executable Rust statements remain ordinary code; proof functions establish the corresponding ghost update. Use `requires`/`ensures` and arithmetic lemmas rather than inventing unsupported Verus syntax. Inference: condition splitting maps to separate proof branches, and `invariant` clauses are used for actual loops rather than as calls.
 
-Evidence: Example 10 symbolically executes a conditional recursive body under `k>0`, applies assignment twice, and appends a finish event (Section 4.2, pp. 12–13). The rules are syntax-directed and local, making their soundness checkable rule by rule.
+Evidence: Example 10 symbolically executes a conditional recursive body under `k>0`, applies assignment twice, and appends a finish event (Section 4.2, pp. 12–13). The paper says soundness of the calculus is a "direct consequence of the local soundness of each rule" (Theorem 1, p. 15).
 
 ## technique 4: modular recursive contracts and trace abstraction
 
@@ -72,19 +72,19 @@ Procedure (Sections 4.3–4.4, pp. 13–15):
 2. Apply `ProcedureContract` to inline a fresh call context and symbolically execute the procedure body under `Cm` as an induction hypothesis.
 3. At a recursive call, reduce the caller to updates before the call, the callee trace formula, and updates after it.
 4. Apply `TrAbs` using three premises: the prefix conforms to its trace formula, the callee precondition holds, and the post-call result assignment plus suffix conforms to the remaining formula.
-5. For every procedure in a mutually recursive program, include its contract among the assumptions.
+5. When the program has several procedures, the assumption should be the conjunction of the contracts Cm of all procedures of the program (Section 4.3, p. 13).
 
-The rule's purpose is modularity: “Contract-based approach works for recursive procedures … It requires an induction principle.” (Section 1, p. 1). The paper's `TrAbs` rule makes that induction explicit while retaining events around the call.
+The paper motivates modularity with ordinary contracts: “The contract-based approach works for recursive procedures [19,37]. It requires an induction principle [5,26]” (Section 1, p. 1). In the calculus, `ProcedureContract` carries the induction (assuming `Cm` for recursive calls), and `TrAbs` uses `Cm` at the call site while keeping the events around the call in the trace formula.
 
 Verus form: Inference: write each Rust procedure's contract as `requires`/`ensures` plus a ghost trace postcondition, then prove recursive calls using a lemma with a decreasing argument. At a call site, prove the callee `requires`, invoke its verified `ensures`, and establish the caller's suffix invariant. Verus's recursive termination measure supplies the induction well-foundedness; trace abstraction itself remains a ghost proof pattern.
 
-Evidence and limits: Example 12 decomposes the recursive `m(n−1)` call into three sequents and proves the precondition and suffix obligations (Section 4.4, pp. 14–15). The authors explicitly omit loop rules: “For space reasons, we do not provide rules for dealing with loops.” (Section 4.4, p. 15). They say adapting contract rules to loops is future work, so the method is incomplete for loop-heavy VL code without an extension.
+Evidence and limits: Example 12 decomposes the recursive `m(n−1)` call into three sequents; the paper says the first is provable with `Prestate` and a simplification rule, the second is trivial, and the third needs simplification rules from Appendix B (Section 4.4, pp. 14–15). Only the rules are sketched there, not a complete derivation. The authors explicitly omit loop rules: “For space reasons, we do not provide rules for dealing with loops.” (Section 4.4, p. 15). They say adapting contract rules to loops is future work, Inference: the method is therefore incomplete for loop-heavy VL code without an extension (the language grammar has `while`, but the calculus has no loop rule).
 
 ## what is proved, measured, and trusted
 
-Theorem 1 states that the presented sequent calculus is sound: each rule preserves validity, and therefore derivable statements are valid (Section 4.5, p. 15). The appendix supplies local trace adequacy and soundness proofs, including adequacy of program semantics. No runtime or benchmark measurements are reported; evidence consists of formal definitions, examples, and the theorem. Trusted assumptions include the local operational semantics, first-order predicate reasoning, termination for the defined program traces, and the restriction to side-effect-free procedures.
+Theorem 1 states that the presented sequent calculus is sound: each rule preserves validity, and therefore derivable statements are valid (Section 4.5, p. 15). The appendix proves trace adequacy (Lemma 2, Theorem 2) and gives soundness arguments only “for selected rules”: Assign, Cond, Unfold and TrAbs are argued, while ProcedureContract is only sketched by reference to the approach of [37] (Appendix A.2, pp. 20–23). Soundness of Prestate, Scope, Return and VarDecl is not shown in the paper text. No runtime or benchmark measurements are reported; evidence consists of formal definitions, examples, and the theorem. Inference: trusted assumptions include the local operational semantics, first-order predicate reasoning, and the restriction to side-effect-free procedures; program semantics is defined only for terminating programs (Definition 9, p. 6), and judgments are vacuously true when the program trace is undefined (Definition 13).
 
-Inference: the technique threatens an agent-written verified Rust product when a protocol or safety property depends on intermediate events that ordinary `ensures` omit. A Verus proof of only the final state can miss call ordering, repeated callbacks, or forbidden internal transitions. Existing Verus studies cover contracts, loop invariants, recursive lemmas, and state machines; VL should reuse those foundations and add ghost event traces only where the product claim actually depends on behavior during execution. The paper has already done the abstract trace-contract and recursive-call decomposition work; VL should not redo it without adapting the missing loops, effects, and aliasing.
+Inference: the technique threatens an agent-written verified Rust product when a protocol or safety property depends on intermediate events that ordinary `ensures` omit. A Verus proof of only the final state can miss call ordering, repeated callbacks, or forbidden internal transitions. VL should add ghost event traces only where the product claim actually depends on behavior during execution. The paper supplies an abstract trace-contract and recursive-call decomposition for a restricted sequential language; reuse would need adaptation for loops, side effects, and aliasing, which the paper leaves out.
 
 ## techniques for the catalog
 
@@ -93,4 +93,4 @@ Inference: the technique threatens an agent-written verified Rust product when a
 - symbolic update calculus — reduce code to substitutions and event updates, splitting paths and unfolding contracts with sequent rules
 - recursive trace abstraction — prove procedure contracts by induction and replace recursive calls with their verified trace summaries
 - event-level abstraction — expose only selected interface events while keeping implementation states hidden unless a contract names them
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Specifying and verifying trace contracts for each procedure allows us to verify procedure calls in a modular way."): I read the whole paper text (main text and appendix) and the whole study, and compared every quotation, section and page reference, and the steps of the four techniques against it. I changed: the return-rule step order (retEv, then result assignment, then popEv); Example 3 versus Example 4/Fig. 3 attribution; the monotonicity claim (replaced by the paper's own wording on negation-free fixed points); the "factorial-like" description of the running example (it is the identity procedure); what Γ holds; the "mutually recursive" claim; a misquotation of the Section 1 sentence on contract-based recursion (restored word for word); the overstatement that Example 12 proves its obligations; the appendix soundness coverage (only selected rules, ProcedureContract sketched); and I marked the partial-correctness, loop, trusted-assumption and Verus remarks as Inference, and dropped the unsupported remark about existing Verus studies. I did not check: the Verus mappings (own inferences), the appendix proofs in logical detail, the cited references, or the claims about other VL work.
