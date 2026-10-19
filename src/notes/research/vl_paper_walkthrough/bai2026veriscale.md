@@ -1,10 +1,10 @@
 # VeriScale: Adversarial Test-Suite Scaling for Verifiable Code Generation
 (authored by agents unless marked 🧑)
-Tag: `bai2026veriscale`, [paper](https://www.semanticscholar.org/paper/6014a095c1dfe48c9b0ecc503c732c6aeb53f51d)
+Tag: `bai2026veriscale`, [paper](https://arxiv.org/abs/2605.22368)
 
 ## scope and result
 
-VeriScale is a benchmark-construction method for verifiable code generation. It expands sparse tests with type-aware inputs and adversarial outputs, then reduces them while preserving discriminative power. The paper instantiates it on VERINA as VERINA PLUS and VERINA LITE. Its central claim is that sparse tests overestimate model capability: “Our experiments across eight state-of-the-art LLMs demonstrate that VERINA PLUS exposes substantial model weaknesses hidden by the original benchmark” (abstract, PDF p. 1). The method assumes each task has a ground-truth precondition and reference implementation (section 3.1, PDF p. 3).
+VeriScale is a benchmark-construction method for verifiable code generation. It expands sparse tests with type-aware inputs and adversarial outputs, then reduces them to retain coverage of synthesized adversaries and representative input boundaries. The paper instantiates it on VERINA as VERINA PLUS and VERINA LITE. Its central claim is that sparse tests overestimate model capability: “Our experiments across eight state-of-the-art LLMs demonstrate that VERINA PLUS exposes substantial model weaknesses hidden by the original benchmark” (abstract, PDF p. 1). The method assumes each task has a ground-truth precondition and reference implementation (section 3.1, PDF p. 3).
 
 ## technique: seed generation and type-aware mutation
 
@@ -16,7 +16,7 @@ Use this to enlarge expected and unexpected input pools while preserving paramet
 4. At each bounded mutation step, choose one parameter, sample a type-specific mutation schema and parameters, and apply it; schemas preserve the parameter's type (section 3.1, PDF pp. 3–4)
 5. Apply a syntax filter and classify each candidate against the ground-truth precondition (section 3.1, PDF p. 4)
 
-The paper formalizes mutation as a five-tuple: “M = (T , D, O, p, q).” Here T is input types, D maps a type to its domain, O gives finite mutation schemas, p selects a schema, and q samples its parameters (section 3.1, PDF p. 4). For a candidate expression, first run `#check <expr>`. Then run both `#guard decide <expr>` and `#guard decide (¬ <expr>)`; unresolved cases are unfolded and simplified with `simp_all!`, and bidirectional `plausible` examples decide them (section 3.1, PDF p. 4). Candidates that time out or exhaust search are excluded (section 3.1, PDF p. 4).
+The paper formalizes mutation as a five-tuple: “M = (T , D, O, p, q).” Here T is input types, D maps a type to its domain, O gives finite mutation schemas, p selects a schema, and q samples its parameters (section 3.1, PDF pp. 3–4). For a candidate expression, first run `#check <expr>`. Then run both `#guard decide <expr>` and `#guard decide (¬ <expr>)`; unresolved cases are unfolded and simplified with `simp_all!`, and bidirectional `plausible` examples seek counterexamples (section 3.1, PDF p. 4). Candidates that time out or exhaust search are excluded (section 3.1, PDF p. 4).
 
 Inference: a Verus implementation can generate Rust values using the same type-directed mutator, then check each value with a Rust/Verus precondition predicate. Keep generation outside verified code; use `requires` and `ensures` on the target function and run Verus on each retained case. Type preservation is an input-generation invariant, while semantic validity still requires the precondition check. Lean commands and `simp_all!` do not carry over to Verus.
 
@@ -30,19 +30,19 @@ Use this to test whether specifications reject incorrect outputs that ordinary r
 4. If synthesis fails, drop constraints from the ground-truth specification to expose an attack target (section 3.1, PDF p. 5)
 5. Execute each adversarial implementation on expected inputs. Retain an output only when it differs from the reference output and is accepted by the generated postcondition (section 3.1, PDF p. 5)
 
-The retention rule makes the negative case specification-relevant: “Outputs are retained only when they differ from the reference outputs while being falsely accepted by the generated postconditions” (abstract, PDF p. 1). The insertion-sort example records seven adversaries; one produces the expected sorted output, while six produce different outputs, so the input kills 6/7 adversaries (Figure 4, PDF p. 6).
+The retention rule makes the negative case specification-relevant: “Outputs are retained only when they differ from the reference outputs while being falsely accepted by the generated postconditions” (section 1, PDF p. 2). The insertion-sort example records seven adversaries; one produces the expected sorted output, while six produce different outputs, so the input kills 6/7 adversaries (Figure 4, PDF p. 6).
 
 Inference: in Verus, represent the reference implementation and candidate postcondition as separate verified functions. Run a candidate implementation on a concrete input, compare its result with the reference result, and retain the case only if the candidate violates the intended result while satisfying the candidate specification. A Verus proof that a specification accepts the case establishes only acceptance by that specification; it does not establish intended correctness. The red-team generator and fallback constraint dropping remain trusted test-generation components.
 
 ## technique: precondition-guided bidirectional classification
 
-The method's two-stage classifier rejects malformed expressions before logical evaluation. Syntax failures from missing arguments, type mismatches, or parse errors are discarded. Stage one evaluates both the precondition and its negation with executable decision procedures. Stage two handles unresolved candidates by creating examples, unfolding the precondition, simplifying, and asking `plausible` in both directions (section 3.1, PDF p. 4). In the paper's binary-list example, `[1, 2, 1]` passes `#check`, fails the positive `decide`, and passes the negative `decide`, so it is an unexpected input (Figure 2, PDF p. 4).
+The method's two-stage classifier rejects malformed expressions before logical evaluation. Syntax failures from missing arguments, type mismatches, or parse errors are discarded. Stage one evaluates both the precondition and its negation with executable decision procedures. Stage two handles unresolved candidates by creating examples, unfolding the precondition, simplifying, and asking `plausible` in both directions. A counterexample to the negated precondition classifies the input as expected; a counterexample to the positive precondition classifies it as unexpected. Unresolved cases are excluded (section 3.1, PDF p. 4). In the paper's binary-list example, `[1, 2, 1]` passes `#check`, fails the positive `decide`, and passes the negative `decide`, so it is an unexpected input (Figure 2, PDF p. 4).
 
-Inference: Verus can use executable Rust checks for decidable preconditions and a separate proof obligation for symbolic cases. A case should enter the unexpected-input set only after either a verified positive or verified negated precondition result; unknown cases should remain explicitly unknown rather than being silently assigned a class. Verus's proof obligations do not provide Lean's `plausible` command.
+Inference: Verus can use executable Rust checks for decidable preconditions and a separate proof obligation for symbolic cases. Classify a case as expected after establishing its precondition, and as unexpected after establishing its negation; unresolved cases should be excluded, as in the paper. Verus's proof obligations do not provide Lean's `plausible` command.
 
 ## technique: boundary-preserving reduction
 
-Use this to shrink unexpected-input tests without losing common failure modes.
+Use this to shrink unexpected-input tests while retaining representative common boundary violations.
 
 1. Extract structural signatures such as empty containers, zero or negative values, mismatched lengths, and ordering patterns (section 3.2, PDF p. 5)
 2. Place inputs into boundary buckets and retain representative examples from each critical bucket first (section 3.2, PDF p. 5)
@@ -59,7 +59,7 @@ Use this to reduce expected input-output pairs while preserving the ability to e
 1. Treat every synthesized adversarial implementation as a mutant (section 3.2, PDF p. 5)
 2. For each expected pair, record which mutants produce a different output, i.e., which mutants the pair kills (section 3.2, PDF p. 5)
 3. Greedily select pairs covering the largest number of currently unkilled mutants until every mutant detected by the expanded suite remains covered (section 3.2, PDF p. 5)
-4. Under a fixed per-task budget, add pairs that kill the highest number of remaining implementations (section 3.2, PDF p. 5)
+4. Under a fixed per-task budget, add pairs that kill the highest number of implementations (section 3.2, PDF p. 5)
 
 The paper describes this as a set-cover formulation and says it avoids coverage loss from random or diversity-only reduction (section 3.2, PDF p. 5). In Figure 4, one pair kills six of seven mutants, making it high quality (PDF p. 6).
 
@@ -69,11 +69,11 @@ Inference: for Verus tasks, define a mutant's killed relation by unequal referen
 
 The expansion uses GPT-5.3-Codex for seeds, decomposition, and adversarial implementations, and six additional models for candidate specifications; expansion cost was $58.89 (section 4.1, PDF p. 6). VERINA PLUS has mean 370.07 expected pairs, 1114.01 unexpected outputs, and 119.00 unexpected inputs, versus VERINA's 5.89, 12.69, and 0.65; the table reports multipliers of 62.83×, 87.79×, and 183.08× respectively (Table 1, PDF p. 6). VERINA LITE has means 52.34, 202.35, and 15.80, with 8.89×, 15.95×, and 24.31× multipliers (Table 1, PDF p. 6). These are means over benchmark tasks; the table also gives min–max ranges.
 
-Eight models are evaluated with Lean 4.24.0 on 80 physical CPU cores, using pass@1 and removing VERINA's original 2-shot setting (section 4.2, PDF p. 6). GPT-5.5's Code Score drops from 96.83 on VERINA to 86.24 on PLUS; its Spec Sound&Complete Score drops from 68.78 to 44.44 (Figure 5, PDF p. 7). Across models, average evaluation time rises from 1032 to 1860 seconds for SpecGen (1.80×) and from 244 to 365 seconds for CodeGen (1.50×); LITE reduces these to 1427 seconds (1.38×) and 255 seconds (1.05×) (Table 2, PDF p. 8). The paper reports a Claude-Opus baseline specification gap of 13.23% as 77.78% versus 64.55%, then a PLUS gap of 4.76% as 50.26% versus 45.50% (section 4.3, PDF p. 7). The displayed Figure 5 values should be treated as the source for those settings; the text does not provide per-model denominators beyond benchmark tasks and pass@1.
+Eight models are evaluated with Lean 4.24.0 on 80 physical CPU cores, using pass@1 and removing VERINA's original 2-shot setting (section 4.2, PDF pp. 6–7). GPT-5.5's Code Score drops from 96.83 on VERINA to 86.24 on PLUS; its Spec Sound&Complete Score drops from 68.78 to 44.44 (Figure 5, PDF p. 7). Across models, average evaluation time rises from 1032 to 1860 seconds for SpecGen (1.80×) and from 244 to 365 seconds for CodeGen (1.50×); LITE reduces these to 1427 seconds (1.38×) and 255 seconds (1.05×) (Table 2, PDF p. 8). For Claude-Opus-4.7, the paper reports lower/upper specification-score bounds of 64.55%/77.78% on VERINA and 45.50%/50.26% on PLUS, gaps of 13.23 and 4.76 percentage points (section 4.3, PDF p. 7). Figure 5 defines the lower bound by treating unknown cases as not holding, and the upper bound by treating them as holding (caption, PDF p. 7).
 
-The ground-truth preconditions and reference implementations are required (Limitations, PDF p. 8). Unexpected-output quality is bounded by the red-team LLM's reasoning and Lean typing, and expansion is compute-intensive (Limitations, PDF p. 8). The evaluation trusts Lean, the reference implementations, the ground-truth specifications, model-generated adversaries, and the benchmark harness. No theorem proves that the generated test suite is complete.
+The ground-truth preconditions and reference implementations are required (Limitations, PDF p. 9). Unexpected-output quality is bounded by the red-team LLM's reasoning and Lean typing, and expansion is compute-intensive (Limitations, PDF p. 9). Inference: the evaluation depends on Lean, the reference implementations, the ground-truth preconditions, and the benchmark harness. The generated adversaries determine which flaws reduction preserves; covering them does not establish test-suite completeness.
 
-Inference: VeriScale is a high threat to any claim that agent-written verified Rust succeeds based on sparse examples: a model can satisfy a few tests while failing adversarial cases. The method is directly reusable for VL evaluation, but its Lean-specific classifier and LLM-dependent adversaries require a Verus adapter and independent checks. VL should reuse the expansion/reduction design rather than redo the benchmark-quality idea; it still needs Rust ownership cases, panic/overflow behavior, unsafe boundaries, and specification review. The paper does not establish production correctness of generated Rust.
+Inference: sparse examples alone would be weak evidence for VL evaluation. VeriScale provides an expansion/reduction design worth adapting to Verus, but the paper evaluates Lean tasks, so transfer to Rust remains untested. A Verus adaptation would need to address Rust ownership, panic/overflow behavior, unsafe boundaries, and specification review.
 
 ## techniques for the catalog
 
@@ -82,6 +82,6 @@ Inference: VeriScale is a high threat to any claim that agent-written verified R
 - adversarial-output synthesis — red-team generated specifications and retain divergent outputs they falsely accept
 - boundary-preserving reduction — keep representative empty, zero, sign, length, and ordering boundary cases
 - adversary-killing set cover — greedily retain expected pairs that kill the most synthesized mutants
-- specification benchmark scaling — compare expanded and reduced suites with pass@1 scores and evaluation-time denominators
+- specification benchmark scaling — compare expanded and reduced suites with pass@1 scores and wall-clock evaluation times
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "First, the pipeline relies fundamentally on the availability of ground-truth preconditions and the reference implementations."): checked all paper text, quotations, numerical results, section/page references, and technique steps; corrected the paper link, quote attribution, page references, classifier explanation, reduction step, and unsupported conclusions; did not reproduce experiments, inspect source code, or validate the proposed Verus adaptations.
