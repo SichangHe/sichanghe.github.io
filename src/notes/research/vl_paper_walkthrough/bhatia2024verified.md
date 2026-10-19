@@ -1,6 +1,6 @@
 # Verified Code Transpilation with LLMs
 (authored by agents unless marked 🧑)
-Tag: `bhatia2024verified`, [paper](https://doi.org/10.52202/079017-1310)
+Tag: `bhatia2024verified`, [paper](https://arxiv.org/abs/2406.03003)
 ## technique: verified lifting as a three-phase pipeline
 
 what it is
@@ -9,7 +9,7 @@ The paper decomposes verified transpilation into Search, Verification, and Code 
 
 when to use
 
-Use this pipeline when direct LLM translation to a low-resource DSL is unreliable or when concrete target syntax is too detailed for the model to reason about. The paper reports that direct generation can hallucinate nonexistent DSL functions, while an IR exposes only the intended high-level operators (section 3.2, pp. 5–6).
+Inference: use this pipeline when direct LLM translation to a low-resource DSL is unreliable or when concrete target syntax is too detailed for the model to reason about. The paper reports that direct generation can hallucinate nonexistent DSL functions, while an IR exposes only the intended high-level operators (section 3.2, p. 5).
 
 how to do it
 
@@ -23,7 +23,7 @@ how to do it
 
 Verus form
 
-Inference: represent the source semantics and target operator semantics with executable Rust plus Verus `spec fn` abstractions. Inference: give each generated target function `requires` and `ensures` clauses stating the source-level relation, and use `proof fn` lemmas to establish equivalence. Inference: a verified summary can be lowered to ordinary Rust only after Verus verifies the summary-to-source theorem; concrete syntax rewriting must preserve the verified operator structure. Inference: unlike this paper’s functional source programs, Rust with mutable state, ownership, I/O, or concurrency needs a richer state model and may require loop invariants and `decreases` clauses.
+Inference: represent the source semantics and target operator semantics with executable Rust plus Verus `spec fn` abstractions. Inference: give each generated target function `requires` and `ensures` clauses stating the source-level relation, and use `proof fn` lemmas to establish equivalence. Inference: a verified summary can be lowered to ordinary Rust only after Verus verifies the summary-to-source theorem; concrete syntax rewriting must preserve the verified operator structure. Inference: Rust APIs with externally visible mutation, ownership-sensitive behavior, I/O, or concurrency require modeling those effects beyond this paper’s input/output equivalence. The paper already handles loops and local mutation; Verus may additionally require termination arguments such as `decreases` clauses.
 
 ## technique: Python IR for LLM synthesis
 
@@ -33,7 +33,7 @@ LLMLIFT defines each target DSL operator in Python, using Python as the prompt-v
 
 when to use
 
-Use a familiar, expressive IR when the target DSL is underrepresented in model training or has difficult concrete syntax. The IR should expose only the target’s semantic operators, so generated expressions are already in the target operator vocabulary.
+Inference: use a familiar, expressive IR when the target DSL is underrepresented in model training or has difficult concrete syntax. The IR should expose only the target’s semantic operators, so generated expressions are already in the target operator vocabulary.
 
 how to do it
 
@@ -80,13 +80,15 @@ LLMLIFT first generates PS and then generates invariants while showing the previ
 how to do it
 
 1. generate PS
-2. insert PS into the invariant prompt
-3. ask for an invariant whose assertion equates the loop result with PS
+2. include S in the invariant prompt with an added assertion equating its return variable to PS
+3. ask for invariants that prove that assertion
 4. translate PS and Inv to the theorem prover
 5. verify equivalence
-6. if verification fails, generate another candidate within the query budget
+6. try further invariants for that PS; if none verifies, mark the PS as incorrect for subsequent summary generation
 
-In the tensor-processing experiment, the unified one-phase prompt solved 20/23 benchmarks, while the two-phase method solved all 23/23 under the same query budget (section 4.5, p. 9). The paper hypothesizes that simultaneous generation is harder and that access to PS helps the model reason about the needed constraints. This is a benchmark result, not a proof that two phases always dominate.
+In the tensor-processing experiment, the unified one-phase prompt solved 20/23 benchmarks, while the two-phase method solved all 23/23 under the same query budget (section 4.5, p. 9). The paper hypothesizes that simultaneous generation is harder and that access to PS helps the model reason about the needed constraints. Inference: this benchmark result does not establish that two phases always perform better.
+
+Appendix A (pp. 13–14) describes the retry procedure: generate summaries while supplying previously unsuccessful summaries as feedback, skip summaries already processed, discard unparsable summaries, and generate invariants for each remaining summary. Skip previously checked invariants and discard unparsable ones. Return PS only if verification succeeds; return `None` if the iteration budget is exhausted. The authors explicitly describe the fallback as an assumption: “If none of the generated Invs for a PS are found to be valid, the algorithm assumes that the PS itself is incorrect.” (Appendix A, p. 13). Inference: failure to find a proving invariant does not establish that the summary is wrong.
 
 Verus form
 
@@ -96,8 +98,6 @@ Inference: generate a `spec fn` summary first, then write loop `invariant` claus
 
 what it is
 
-Python PS and invariants are translated by pattern-matching rules into the syntax accepted by an automated theorem prover. After verification, the same structural approach rewrites PS into target DSL syntax. The paper uses cvc5 and Z3 for verification (section 2, p. 3).
-
 how to do it
 
 1. parse Python expressions into their operator structure
@@ -106,7 +106,7 @@ how to do it
 4. retain only candidates with a successful proof
 5. rewrite the verified operator tree into concrete DSL calls
 
-The paper states: “To verify the functional equivalence of the generated program for all program states, we translate both the generated program and the proof to the syntax of an automated theorem prover.” (section 1, p. 2). It later says that “The translation process is simplified due to Python’s highly structured syntax.” (section 3.3, p. 6).
+The paper states: “To verify the functional equivalence of the generated program to the given source program for all program states, we translate both the generated program and the proof to the syntax of an automated theorem prover.” (section 1, p. 2). It later says that “The translation process is simplified due to Python’s highly structured syntax.” (section 3.3, p. 6).
 
 Verus form
 
@@ -114,11 +114,11 @@ Inference: the Verus backend can consume Rust/Verus source directly, with `spec 
 
 ## evaluation and evidence
 
-The evaluation uses GPT-4 through APIs with temperature 0.7, a budget of 50 PS queries and 10 invariant queries per PS (section 4, p. 7). It covers four DSL domains. For Spark, LLMLIFT solved 44/45 benchmarks, compared with MetaLift’s 40/45, and averaged under one minute per solved benchmark versus MetaLift’s three minutes; MetaLift required over approximately 1,000 lines to describe its search space (section 4.1, p. 7). For Domino network processing, both systems solved 10/10, with LLMLIFT averaging 2 seconds versus MetaLift’s 6 seconds; MetaLift again required over approximately 1,100 lines (section 4.2, pp. 7–8). For TACO, LLMLIFT solved 60/60 versus C2TACO’s 57/60, with average times of 2 seconds versus 41 seconds; C2TACO used over 1,000 lines of heuristics (section 4.3, p. 8). For tensor processing, both LLMLIFT and Tenspiler solved 23/23, but LLMLIFT averaged 95.89 seconds versus Tenspiler’s 115.14 seconds; removing Tenspiler’s optimizations reduced it to 5/23 within one hour (section 4.4, p. 8).
+The evaluation uses GPT-4 through APIs with temperature 0.7 (section 4, p. 7). The paper states: “We keep a budget of 50 queries for the PS and a budget of 10 queries for each PS.” (section 4, p. 7). In context, the latter budget is for invariant generation. It covers four DSL domains. For Spark, with a one-hour MetaLift timeout, LLMLIFT solved 44/45 benchmarks, compared with MetaLift’s 40/45, and averaged under one minute per solved benchmark versus MetaLift’s three minutes; MetaLift required over approximately 1,000 lines to describe its search space (section 4.1, p. 7). For Domino network processing, both systems solved 10/10, with LLMLIFT averaging 2 seconds versus MetaLift’s 6 seconds; MetaLift again required over approximately 1,100 lines (section 4.2, pp. 7–8). For TACO, with a 90-minute timeout per benchmark, LLMLIFT solved 60/60 versus C2TACO’s 57/60, with average times of 2 seconds versus 41 seconds; C2TACO used over 1,000 lines of heuristics (section 4.3, p. 8). For tensor processing, both LLMLIFT and Tenspiler solved 23/23, but LLMLIFT averaged 95.89 seconds versus Tenspiler’s 115.14 seconds; removing Tenspiler’s optimizations reduced it to 5/23 within one hour (section 4.4, pp. 8–9).
 
-Inference: the denominators and settings are important because the 44/45, 40/45, 10/10, 60/60, and 23/23 figures are benchmark counts in their respective domains, while times are per-benchmark averages under the stated tools and timeouts. The paper’s Table 1 reports tensor-processing accuracy by named suites; LLMLIFT is 100% in every listed suite, while C2TACO is below 100% on mathfu (91.6%), simpl_array (90%), and darknet (92.8%).
+Inference: the denominators and settings are important because the 44/45, 40/45, 10/10, 60/60, and 23/23 figures are benchmark counts in their respective domains, while times are per-benchmark averages under the stated tools and timeouts. The paper’s Table 1 (p. 9) reports TACO benchmark accuracy by named suites; LLMLIFT is 100% in every listed suite, while C2TACO is below 100% on mathfu (91.6%), simpl_array (90%), and darknet (92.8%).
 
-The evaluation demonstrates that an LLM can generate summaries and invariants that pass formal equivalence checks in these selected functional DSL tasks. Inference: it does not measure arbitrary Rust, mutable aliasing, unsafe code, concurrency, or specification discovery from ordinary user intent. Inference: the source programs and operator semantics are supplied as specifications, so wrong source behavior or wrong operator definitions would be proved consistently rather than detected.
+Inference: the evaluation shows that an LLM can generate summaries and invariants that pass formal equivalence checks in these selected functional DSL tasks. Inference: it does not measure arbitrary Rust, mutable aliasing, unsafe code, concurrency, or specification discovery from ordinary user intent. Inference: the source programs and operator semantics are supplied as specifications, so wrong source behavior or wrong operator definitions would be proved consistently rather than detected.
 
 ## techniques for the catalog
 
@@ -127,4 +127,4 @@ The evaluation demonstrates that an LLM can generate summaries and invariants th
 - parser-constrained generation — reject summaries that use operators outside the supplied DSL vocabulary
 - few-shot invariant synthesis — prompt the model with operator semantics, source specification, and an invariant example
 - two-phase summary/invariant generation — generate PS first and use it to guide loop-invariant synthesis
-- prover-gated lowering — translate candidates to an automated prover and rewrite only verified summaries into executable target syntax
+- verification before lowering — translate candidates to an automated prover and rewrite only verified summaries into executable target syntax
