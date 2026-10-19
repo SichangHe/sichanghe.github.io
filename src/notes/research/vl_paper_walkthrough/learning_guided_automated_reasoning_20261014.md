@@ -1,11 +1,11 @@
 # Learning Guided Automated Reasoning: A Brief Survey
 (authored by agents unless marked 🧑)
-Tag: `blaauwbroek2024learningguided`, [paper](https://www.semanticscholar.org/paper/edd3e9d9347a3866e1a5a913733f1d9477ec7a2c)
+Tag: `blaauwbroek2024learningguided`, [paper](https://arxiv.org/abs/2403.04017)
 
 ## what the paper proves or measures
-This is a survey, not a new verifier. It organizes learning methods that guide automated theorem provers (ATPs), interactive theorem provers (ITPs), tableaux, instantiation-based systems, and related symbolic classifiers. Its central engineering fact is that proof calculi may be complete while search still faces combinatorial explosion. The introduction says, “These choices do not typically influence the theoretical correctness and completeness of the proof mechanisms but rather the systems’ efficiency and practical performance.” (Section 1, PDF p. 2). Learning therefore chooses premises, clauses, instantiations, tactics, or strategies; a trusted kernel or prover still checks the resulting proof.
+This is a survey, not a new verifier. It organizes learning methods that guide automated theorem provers (ATPs), interactive theorem provers (ITPs), tableaux, instantiation-based systems, and related symbolic classifiers. Its central engineering fact is that proof calculi may be complete while search still faces combinatorial explosion. The introduction says, “These choices do not typically influence the theoretical correctness and completeness of the proof mechanisms but rather the systems’ efficiency and practical performance.” (Section 1, PDF p. 2). The survey covers learned selection of premises, clauses, instantiations, tactics, and strategies. Inference: proof acceptance should remain with the underlying prover or proof assistant.
 
-The survey explicitly limits scope: “Automated Reasoning is however a large field and this brief survey does not make claims to be exhaustive.” (Section 1, p. 2). The evidence is a literature synthesis with reported results from cited systems, not one controlled benchmark. Examples include MaLeCoP avoiding 90% of inferences with guidance, rlCoP solving 40% more test problems than default leanCoP after iterative learning, TacticToe proving 66% of the HOL4 library, iProver neural guidance doubling Mizar performance, and Graph2Tac giving a 50% improvement over baselines that omit background definitions (Sections 5–7, pp. 11, 15–18). Each number belongs to the cited system's corpus and comparison; the survey does not supply common denominators across them.
+The survey explicitly limits scope: “Automated Reasoning is however a large field and this brief survey does not make claims to be exhaustive.” (Section 1, p. 2). The evidence is a literature synthesis with reported results from cited systems, not one controlled benchmark. Examples include MaLeCoP avoiding 90% of inferences with guidance, rlCoP solving 40% more test problems than default leanCoP after iterative learning, TacticToe proving 66% of the HOL4 library, iProver neural guidance doubling Mizar performance, and Graph2Tac giving a 50% improvement over baselines that omit background definitions (Sections 6–7, pp. 15–18). Each number belongs to the cited system's corpus and comparison; the survey does not supply common denominators across them.
 
 ## technique 1: represent formulas with features that preserve useful structure
 
@@ -15,16 +15,16 @@ Turn formulas or clauses into vectors so a learner can compare goals and candida
 
 how to do it
 
-1. Extract symbols, subterms, types, and normalized term walks from each goal and premise; variable names can be replaced by types, de Bruijn numbers, or one merged variable (Section 3.1, p. 4)
+1. Extract symbols, subterms, and types from each goal and premise; normalize variables by their types, de Bruijn numbers, or merging all variables, and add walks through term graphs (Section 3.1, pp. 4–5)
 2. Weight sparse features with TF-IDF; the survey gives inverse-document frequency as `log(|D| / |{d in D : t in d}|)` (Section 3.1, p. 5)
 3. For ENIGMA, traverse each clause's syntax tree and collect top-down symbol paths of length three; rename variables to `d` and Skolem symbols to `g`, then count triples in a vector (Section 3.2, p. 5)
 4. Add clause length, positive/negative literal counts, horizontal top-symbol features, and conjecture features for goal-specific predictions (Section 3.2, pp. 5–6)
-5. Hash feature strings into a fixed vector to bound memory; optionally anonymize symbols by arity to transfer across signatures, accepting collisions (Section 3.2, p. 6)
-6. For semantic features, mine distinguishing finite models, unifiability-index nodes, latent co-occurrences, tree neural networks, or name-invariant graph embeddings (Sections 3.3–3.4, pp. 7–8)
+5. Hash feature strings into a fixed vector to limit vector size; optionally anonymize symbols by arity while retaining whether each is a function or predicate, accepting collisions (Section 3.2, p. 6)
+6. For semantic features, use distinguishing finite models, unifiability-index nodes, or latent co-occurrences; for neural representations, use tree networks or name-invariant graph embeddings (Sections 3.3–3.4, pp. 7–8)
 
 Verus form
 
-Inference: represent a Verus proof state, goal, and candidate lemma by deterministic Rust structures and a `spec fn` feature extractor. Use `ensures` to state that extraction preserves the input's structural facts, then prove hash-index bounds with `assert` and arithmetic lemmas. The learned score is advisory; Verus proof checking remains the acceptance criterion. A neural embedding and training corpus are external trusted inputs unless separately specified.
+Inference: represent a Verus proof state, goal, and candidate lemma by deterministic Rust structures and a `spec fn` feature extractor. Use `ensures` to state that extraction preserves the input's structural facts, then prove hash-index bounds with `assert` and arithmetic lemmas. The learned score is advisory; Verus proof checking remains the acceptance criterion. The embedding and training corpus affect search quality; checking the proposed proof need not trust their predictions.
 
 evidence and limits
 
@@ -39,11 +39,11 @@ Select a small set of likely useful facts before invoking an ATP. This is essent
 how to do it
 
 1. Build a feature vector for every premise and goal from Technique 1
-2. For k-nearest neighbors, compute weighted feature similarity and rank premises by similarity to the goal; adapt k to the requested number of premises (Section 4.1, p. 9)
-3. Add dependency-aware relevance: discount a fact when proofs that use it have many dependencies and add similarity from those dependencies (Section 4.1, p. 9)
-4. For naive Bayes, estimate `P(premise relevant | goal features)` as a prior multiplied by per-feature likelihoods learned from proof dependencies; optionally include related absent features (Section 4.2, p. 10)
-5. For tree ensembles, create positive examples from proof dependencies and pseudo-negative examples from nonselected facts; train random forests or gradient-boosted trees, using hashing for millions of sparse features (Section 4.3, p. 10)
-6. Pass the selected premises to the prover and retain only kernel-checked proofs; iterate training on newly found proofs in a MaLARea-style loop (Sections 2 and 5, pp. 3, 14)
+2. For k-nearest neighbors, find the k facts most similar to the goal using weighted shared features; adapt k to the requested number of premises (Section 4.1, p. 9)
+3. Rank a candidate fact by contributions from those neighbors whose proofs use it: divide each neighbor’s similarity to the goal by its dependency count, sum, and apply the scaling factor. Add the candidate’s own similarity to the goal if it is itself a neighbor (Section 4.1, p. 9)
+4. For naive Bayes, estimate `P(premise relevant | goal features)` as a prior multiplied by per-feature likelihoods learned from proof dependencies; optionally include related absent features (Section 4.2, pp. 9–10)
+5. For binary tree classifiers, obtain positive and pseudo-negative training examples; ATPBoost interleaves training with proving to improve both. Hashing millions of sparse symbolic features into a smaller space supports efficient training (Section 4.3, p. 10)
+6. Pass the selected premises to the prover and iterate training on newly found proofs in a MaLARea-style loop (Sections 2 and 5, pp. 3, 14)
 
 Verus form
 
@@ -51,22 +51,22 @@ Inference: maintain a candidate lemma index outside the verifier, then have an a
 
 evidence and limits
 
-The survey attributes considerable gains to MePo, SInE, and MaLARea in large theories (Section 2, p. 3), but gives no common cross-system denominator. Premise selection can omit the only useful lemma, yielding a timeout or failed proof; it does not make the underlying logic incomplete.
+The survey attributes considerable gains to MePo, SInE, and MaLARea in large theories (Section 2, p. 3), but gives no common cross-system denominator.
 
 ## technique 3: guide saturation-based ATP clause selection
 
 what it is and when to use it
 
-Predict which generated clause should enter the active set next. Use it when a saturation prover's branching dominates runtime. The survey says, “The central idea behind improving clause selection by ML ... is to learn from successes.” (Section 5, p. 11).
+Predict which generated clause should enter the active set next. Use it when a saturation prover's branching dominates runtime. The survey says, “The central idea behind improving clause selection by ML, which goes back at least to the early work of Schulz [134,31,136], is to learn from successes.” (Section 5, p. 11).
 
 how to do it
 
 1. Collect clauses appearing in prior proofs as positive examples and other selected clauses as negative examples (Section 5, p. 11)
 2. Train a classifier using syntactic, graph, derivation-history, or conjecture-conditioned features (Sections 3.2, 5, pp. 5–6, 13–14)
-3. Convert scores to a total clause order; combine learned order with the original heuristic by linear score, positive-before-negative plus age, alternation, or layered selection (Section 5, pp. 12–13)
-4. Evaluate expensive models lazily and keep fast heuristics in the loop when prediction cost would erase search gains (Section 5, pp. 11–13)
+3. Order a learned clause queue using a combination of classification and clause length, positive-before-negative classification with age as tiebreaker, or continuous model scores. Combine this queue with original heuristics by alternating queues or using layered selection (Section 5, pp. 12–13)
+4. With Deepire’s layered selection, apply the original heuristic to positively classified clauses and alternate with its application to all clauses; lazy evaluation avoids immediately evaluating every available clause (Section 5, p. 13)
 5. After new proofs, retrain and repeat; reward intermediate proof clauses rather than only the final proof step to avoid prohibitively expensive trial-and-error (Section 5, p. 14)
-6. Optionally predict term orderings, symbol weights, prover strategies, or schedules in an initialization phase (Section 5, p. 14)
+6. Optionally predict term orderings or symbol weights, or synthesize and select prover strategies or schedules. Symbol-weight prediction influences clause selection indirectly before proof search starts (Section 5, p. 14)
 
 Verus form
 
@@ -74,21 +74,21 @@ Inference: treat clause prioritization as a search policy for generating Verus p
 
 evidence and limits
 
-The survey reports a recurring speed/quality tradeoff: neural models can be more accurate but too slow to replace a tightly optimized selection loop (Section 5, pp. 11–12). Deepire's layered selection and iProver's neural guidance are cited as successful alternatives.
+The survey reports a recurring speed/quality tradeoff: neural models can be more accurate but too slow to replace a tightly optimized selection loop (Section 5, pp. 11–12). Deepire's layered selection and iProver's neural guidance are cited as successful alternatives (Section 5, p. 13). Deepire uses derivation history independently of the problem signature, but still relies on a fixed initial axiom set (Section 5, p. 13).
 
 ## technique 4: guide tableaux, instantiation, and tactic-level proof search
 
 what it is and when to use it
 
-Apply learning at a higher-level action: choose a connection-tableaux extension, an SMT instantiation, or an ITP tactic. This can reduce the action space and exploit domain-specific procedures. The survey reports, “With good guidance, one can avoid 90% of the inferences.” (Section 6, p. 15).
+Apply learning at a higher-level action: choose a connection-tableaux extension, an SMT instantiation, or an ITP tactic. This can reduce the action space and exploit domain-specific procedures. The survey reports, “This showed that with good guidance, one can avoid 90% of the inferences.” (Section 6, p. 15).
 
 how to do it
 
-1. For tableaux, train naive Bayes, Monte Carlo, or policy/value models on partial proof states and select promising extension branches; rlCoP iterates proving and learning (Section 6, p. 15)
+1. For tableaux, use FEMaLeCoP’s sparse naive Bayes to guide extension steps, MonteCoP’s Monte Carlo simulations to select promising branches, or rlCoP’s learned policy and value models to guide subtree exploration. rlCoP replaces leanCoP’s iterative deepening with an Alpha-Zero-like architecture and iterates proving and learning (Section 6, p. 15)
 2. For instantiation-based ATPs and SMT, learn portfolio choices, strategies, or instantiation priorities from problem features; recent neural iProver guidance uses the given-clause loop (Section 6, p. 15)
-3. For ITPs, learn a tactic from prior tactic-goal pairs using k-NN, clustering, neural state encodings, or Monte Carlo tree search (Section 7.1, p. 16)
-4. Execute the chosen tactic, feed the resulting proof state back to search, and let the proof assistant kernel check the final proof (Section 7, p. 16)
-5. Orthogonalize tactic-goal training data: compare nearby pairs, retain a tactic that subsumes the goal and has broad coverage, and avoid duplicate actions (Section 7.3, pp. 17–18)
+3. For ITPs, learn tactic recommendations from existing proofs using clustering, k-NN, or neural models; TacticToe combines tactic prediction with Monte Carlo tree search (Section 7.1, p. 16)
+4. Search by executing recommended tactics, which generate kernel inference steps or partial proof terms to advance the proof (Section 7, p. 16)
+5. In TacticToe, before storing a new tactic-goal pair, compare the k closest pairs including the new one. Store the tactic that subsumes the original tactic on that goal and occurs in the most database pairs (Section 7.3, p. 17)
 
 Verus form
 
@@ -104,4 +104,4 @@ The survey cites rlCoP solving 40% more test problems than default leanCoP and T
 - learned premise selection — rank a small relevant subset with k-NN, Bayes, trees, or neural models before proof search
 - clause-selection guidance — prioritize saturation clauses using proof-derived labels while mixing learned and classical queues
 - tactic and policy guidance — rank tableaux extensions, SMT instantiations, or ITP tactics and let the kernel check the result
-- iterative learning loop — retrain guidance from newly discovered proofs while preserving the verifier as the acceptance gate
+- iterative learning loop — retrain guidance from newly discovered proofs while checking proposed proofs with the underlying prover or proof assistant
