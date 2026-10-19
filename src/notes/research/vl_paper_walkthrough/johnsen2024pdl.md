@@ -8,7 +8,7 @@ The paper sketches a deductive proof system for probabilistic dynamic logic (pDL
 
 A pDL box formula `[s]p φ` means that program s reaches a state satisfying φ with probability at least p. The paper’s semantics interprets this as a lower bound on an expectation over a Markov decision process. The formal system’s soundness result is Theorem 1: if a judgment has a proof tree whose generated side constraints are satisfiable, then the pDL implication is valid. The paper does not prove completeness, termination of proof search, or a general method for discovering loop invariants.
 
-Trusted elements are the pGCL/MDP semantics, arithmetic and expectation definitions, the soundness of the symbolic-execution rules, Crowbar’s translation, and Z3’s handling of generated constraints. The paper assumes almost-sure termination when discussing probabilistic reachability and initially simplifies probabilistic expressions so they do not depend on state variables (section 5). Inference: a successful Z3 result proves the encoded pDL judgment under these semantics; it does not by itself establish that a Rust program’s probability model, scheduler, random source, or specification is correct.
+The semantics assumes termination with probability one under every policy: “In this paper, we assume that MDPs (and the programs we derive them from) arrive at final states with probability 1 under all policies.” (section 3.1, p. 4) Section 5 further assumes that probabilistic expressions do not depend on state variables, simplifying the generated constraints to ordinary arithmetic inequalities. Inference: trusting the prototype requires trusting its encoding, symbolic execution, and solver results. A successful constraint check establishes an encoded judgment only when the other proof obligations also close; connecting that judgment to executable Rust would require a separate justification.
 
 ## technique 1: express probabilistic reachability with pDL and symbolic updates
 
@@ -28,17 +28,17 @@ The semantics supplies useful rules: assignments become state updates, demonic c
 
 Verus form (inference)
 
-Inference: model a probabilistic Rust routine with a ghost state containing symbolic variables and a probability expression, and state its postcondition as a mathematical predicate over the final state. Verus has specifications and proof functions but no native pDL modality or MDP expectation engine; probability distributions, random draws, and scheduler choices would need explicit spec models and lemmas. A symbolic update can be represented by a spec function returning an updated ghost state, not by mutating executable Rust state.
+Inference: a possible Rust/Verus adaptation would model the program state, probability bounds, and final-state predicate mathematically. Represent symbolic updates as functions on that model and justify each probabilistic and demonic choice. This paper does not describe or validate a Verus encoding.
 
 what shows it works and limits
 
-The Monty Hall example specifies that switching reaches `choice = prize` with probability 2/3. The paper’s pDL semantics supports reachability in almost-surely terminating programs (section 4.2, p. 7). Inference: programs with nontermination or state-dependent expectations require extensions beyond the paper’s simplifying assumption.
+The Monty Hall prototype proves a lower bound of 2/3 when the player switches (section 6, pp. 13–14). The paper’s pDL semantics supports reachability in almost-surely terminating programs (section 4.2, p. 7). Inference: reasoning about termination requires adapting these semantics. State-dependent lower-bound expectations are already permitted by Definition 2; state-dependent probabilistic expressions fall outside section 5’s simplified constraint treatment.
 
 ## technique 2: syntax-directed proof rules that accumulate constraints
 
 what it is and when to use it
 
-A judgment `Γ ⊢ φ` means that Γ implies φ for every valuation. For a program modality, rules symbolically execute the first command, produce a premise for the continuation, and add a pDL constraint as a side condition. A proof tree closes when all constraints are satisfiable. The paper states: “The application of the inference rules creates a proof tree in which pDL-constraints are generated as side conditions to rule applications.” (section 5, p. 8)
+A judgment `Γ ⊢ φ` means that Γ implies φ for every valuation. For a program modality, rules symbolically execute the first command and produce premises for the continuation; some rules also add probability constraints. Logical proof obligations must close and the generated side constraints must be satisfiable. The paper states: “The application of the inference rules creates a proof tree in which pDL-constraints are generated as side conditions to rule applications.” (section 5, p. 8)
 
 how to do it
 
@@ -47,15 +47,16 @@ how to do it
 3. Apply `assign` by extending U with the assignment (section 5 and Figure 3).
 4. For demonic choice, prove both branches and add `p ≤ min(p1,p2)` (section 5 and Figure 3).
 5. For probabilistic choice with branch probability e, prove both branches and add `p ≤ e·p1 + (1−e)·p2` (section 5 and Figure 3).
-6. For if, add the guard to one premise and its negation to the other (section 5).
+6. For if, add the guard after applying U to one premise and its negation to the other (section 5 and Figure 3).
 7. Unroll a while loop into an if with the body followed by the loop (rule `loopUnroll`, section 5).
-8. Send the resulting arithmetic constraints to an SMT solver; accept only if they are satisfiable (section 5).
+8. At a terminal `skip`, use `empty1` to require the updated postcondition and `p = 1`, or `empty0` to impose `p = 0` without requiring the postcondition (Figure 3, p. 10).
+9. Once the other proof obligations close, send the arithmetic constraints to an SMT solver and check satisfiability (section 6, p. 13).
 
-The paper proves soundness by induction on proof-tree height. It checks each rule against the pDL semantics, including the weighted expectation equation for probabilistic choice. The theorem says: “For all Γ and φ, if Γ ⊢ φ then |= ( Γ ) → φ.” (Theorem 1, p. 9)
+Theorem 1 states that derivability of `Γ ⊢ φ` implies validity of `(∧Γ) → φ` (section 5, p. 8). Its proof begins: “By induction on the height of the proof tree that justifies the judgment Γ ⊢ φ, with an analysis of the rule that justifies the root of the proof tree.” (p. 9) The proof checks each rule against the pDL semantics, including the weighted expectation equation for probabilistic choice.
 
 Verus form (inference)
 
-Inference: encode the same branch decomposition with `proof fn` lemmas over ghost probability bounds. For each branch, prove an `ensures` lower bound; combine demonic branches with a minimum lemma and probabilistic branches with a weighted-sum lemma. Verus’s solver can discharge arithmetic side conditions when expressed in supported integer/real theories, but it does not execute pDL modalities or discover branch policies automatically.
+Inference: a possible Verus adaptation would use proof lemmas over modeled probability bounds. Prove a lower bound for each branch, then combine demonic branches with a minimum lemma and probabilistic branches with a weighted-sum lemma. The paper supplies no evidence about which resulting arithmetic obligations Verus could discharge.
 
 Monty Hall walk-through
 
@@ -65,19 +66,19 @@ The paper’s proof first splits the three demonic prize assignments, adds `p �
 
 what it is and when to use it
 
-The basic `loopUnroll` rule only unfolds a loop and may not terminate proof search. The paper relates its system to classic loop-invariant reasoning. The key step is to invent both an invariant and a substitution describing the symbolic state at loop termination. Its qualitative rule uses probability one; its quantitative rule requires preservation of the successor expectation. The paper says: “The key aspect is to invent both an invariant and the substitution at termination, which (roughly) correspond to proposing a loop invariant in Hoare logics.” (section 5 discussion, p. 12)
+The basic `loopUnroll` rule only unfolds a loop. Inference: repeated unfolding need not yield a finite proof. The discussion relates the system to classic loop-invariant reasoning rather than providing a general probabilistic loop method. Its qualitative rule uses probability one; its quantitative `loopPreserving` rule is discussed for a non-probabilistic loop body and preserves the continuation’s expectation. The paper says: “The key aspect is to invent both an invariant and the substitution at termination, which (roughly) correspond to proposing a loop invariant in Hoare logics.” (section 5 discussion, p. 12)
 
 how to do it
 
 1. Choose an invariant I and a symbolic update U′ representing the loop state (section 5 discussion).
 2. Prove I initially under U (the first premise of `loopInvariant`/`loopQual`).
-3. Under `¬e ∧ I`, prove the continuation postcondition (second premise).
-4. Under `e ∧ I`, prove that the loop body re-establishes I (third premise).
-5. For qualitative correctness, use probability bound 1; for a quantitative bound p, prove the loop successor preserves the expected postcondition (rules `loopQual` and `loopPreserving`, p. 12).
+3. Under `U′(¬e ∧ I)`, prove the continuation postcondition with the same update U′ (second premise).
+4. Under `U′(e ∧ I)`, prove that the loop body re-establishes I with probability 1 (third premise of `loopQual` and `loopPreserving`).
+5. For `loopQual`, require the continuation’s bound to be 1. For `loopPreserving`, restrict the body to be non-probabilistic and prove the continuation’s bound p from the abstract loop state, with its expectation preserved by the loop (p. 12).
 
 Verus form (inference)
 
-Inference: state I as a Verus loop `invariant`, prove initialization and preservation, and use a ghost probability bound in the method’s `ensures`. The termination substitution corresponds to a ghost function describing abstract state after the loop. Verus’s loop invariants prove safety/functional facts; quantitative probability preservation still requires a separately modeled distribution and arithmetic lemmas.
+Inference: a possible Verus adaptation would state I as a loop invariant, prove initialization and preservation, and model the abstract loop state and continuation’s probability bound separately. Ordinary invariant preservation alone would not establish the quantitative bound; a probability model and preservation lemmas would also be needed.
 
 limits
 
@@ -95,13 +96,13 @@ how to do it
 2. Annotate the final property and probability bound (Figure 4, p. 13).
 3. Mark demonic and probabilistic branches with their annotations (section 6).
 4. Run Crowbar to generate the proof tree and constraints (section 6).
-5. Pass arithmetic constraints to Z3 after modalities have been eliminated (section 6).
+5. Use Z3 to discharge formulas without modalities; if the proof can otherwise close, pass the accumulated probability constraints to Z3 (section 6, p. 13).
 
-The paper uses this prototype to automatically generate the complete Monty Hall proof and constraints (section 5 example, p. 12), but reports no runtime, number of constraints, or success denominator. The prototype front end is not a verified compiler from pGCL to ABS; its encoding and annotations remain trusted.
+The paper uses this prototype to automatically generate the complete Monty Hall proof and constraints (section 5 example, p. 12), but reports no runtime, number of constraints, or success denominator. For the 2/3 bound in Figure 4, it reports: “If sw is set to 1, denoting that the player always switches, the proof obligation can be discharged, as expected. If sw is set to 0, denoting that the player never switches, the proof attempt fails.” (section 6, pp. 13–14) Inference: the paper gives no translation-correctness proof for the ABS encoding, so using the prototype requires trusting that encoding and its annotations.
 
 Verus form (inference)
 
-Inference: a Verus integration would generate proof obligations directly in Rust/Verus or in a verified intermediate model, then use Verus’s underlying solver for arithmetic. Crowbar’s ABS annotation syntax and modality elimination do not carry over. A separate checked translation would be needed before claiming that generated obligations correspond to executable Rust.
+Inference: a possible Verus integration would generate obligations over an explicit program model and justify their connection to executable Rust. Crowbar’s ABS annotations alone do not supply that connection. This integration is not implemented or tested in the paper.
 
 ## what VL should retain and threat assessment
 
@@ -111,7 +112,7 @@ The paper already develops the forward symbolic-execution pattern, branch-wise p
 
 - symbolic-update pDL: represent probabilistic reachability and forward state changes with `[s]p φ` and `{U}φ`
 - constraint-generating execution: execute syntax-directed rules and combine branch probability bounds into SMT constraints
-- probabilistic loop invariants: prove initialization, preservation, termination substitution, and expectation preservation
+- loop-invariant discussion: use probability-one preservation; restrict the quantitative `loopPreserving` rule to a non-probabilistic body
 - solver-backed prototype: encode pGCL annotations in a symbolic executor and discharge modality-free arithmetic with Z3
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The rules symbolically execute the first statement of the box-modality, generating a premise that must hold for the symbolic execution of the remaining program s."): checked all quotations, numerical bounds, section/page references, semantics, proof rules, loop discussion, and prototype claims; corrected the soundness quotation and page, added terminal rules and the non-probabilistic-body restriction, distinguished state-dependent semantics from the constraint simplification, and marked proposed Verus adaptations as inference; did not run Crowbar or Z3, independently prove soundness, or validate the proposed Verus adaptations.

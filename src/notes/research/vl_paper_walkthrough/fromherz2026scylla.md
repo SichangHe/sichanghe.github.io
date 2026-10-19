@@ -1,95 +1,95 @@
 # Scylla: Translating an Applicative Subset of C to Safe Rust
 (authored by agents unless marked 🧑)
-Tag: `fromherz2026scylla`, [paper](http://arxiv.org/abs/2412.15042v2)
+Tag: `fromherz2026scylla`, [paper](https://doi.org/10.1145/3798229)
 
 ## scope and result
 The paper presents Scylla, a compiler from a structured, applicative subset of C to safe Rust. Its workflow asks the programmer to refactor C until it fits Mini-C, then emits Rust using slices, splitting, inferred mutability, and ownership-aware pointer representations. The paper states: “We instead advocate for a different approach, where the programmer iterates on the original C, gradually making the code more structured until it becomes eligible for compilation to safe Rust.” (abstract, p.1)
 
-Inference: this is a translation and memory-safety technique rather than a functional-correctness verifier. The authors explicitly state in the conclusion: “While the various steps of our translation are formalized with pen-and-paper, and our case studies empirically show that codebases translated by Scylla pass functional tests, we currently do not have any formal guarantees about the correctness of the translation.” (conclusion, p.24) A Verus user should therefore treat Scylla output as safe Rust input whose functional specification still needs to be proved.
+Inference: this is a translation and memory-safety technique rather than a functional-correctness verifier. The authors explicitly state in the conclusion: “While the various steps of our translation are formalized with pen-and-paper, and our case studies empirically show that codebases translated by Scylla pass functional tests, we currently do not have any formal guarantees about the correctness of the translation.” (conclusion, p.24) Inference: a Verus user would still need to specify and prove functional behavior; the paper does not evaluate Verus integration.
 
 ## technique: typed Mini-C normalization
-Use this before generating Rust whenever C's implicit behavior would make direct translation ambiguous. Scylla obtains Clang's typed AST and translates it to Mini-C, an expression language with fixed-width integers, explicit casts, boolean conditions, typed array indices, pointers, and explicit sequencing.
+Inference: use this normalization before Rust generation when implicit C conversions would obscure the intended types. Scylla obtains Clang's typed AST and translates it to Mini-C, an expression language with fixed-width integers, explicit casts, boolean conditions, typed array indices, pointers, and explicit sequencing.
 
 Steps from the paper:
 1. Parse the compilation unit with Clang and obtain its typed AST (Sec. 2.2, p.3).
 2. Replace typedefs with definitions and translate C types to Mini-C types (Sec. 2.2, p.5).
-3. Materialize implicit conversions: compare synthesized and expected types, insert a cast when they differ, and apply the C usual-arithmetic-promotion algorithm (Sec. 2.3, pp.5–6).
+3. Materialize implicit conversions: compare synthesized and expected types, insert a cast when they differ, and apply integer promotions and the usual arithmetic conversions (Sec. 2.3, p.5; Fig. 3, p.6).
 4. Reject or rewrite constructs outside the subset: unstructured goto, integer-to-pointer representation tricks, bitfields, and untagged unions (introduction, p.2).
-5. Require portable fixed-width behavior; configure the target data model so, for example, unsigned int maps to uint32_t (Sec. 2.3, p.5).
+5. Assume behavior independent of C data-model widths; detect the architecture's data model at configure time to map types such as unsigned int to uint32_t (Sec. 2.3, p.5).
 
 The paper's formal rule is: “if the synthesized (bottom-up) type differs from the expected (top-down) type, a cast is inserted (ConvertNeq), otherwise, the expression remains as-is (ConvertEq).” (Sec. 2.3, p.5)
 
-Verus form (Inference): preserve the normalized Rust types and explicit casts, then add `spec fn` models and `ensures` clauses for the C function's behavior. Mini-C's fixed-width arithmetic maps to Verus integer types plus range lemmas; the normalization itself does not prove those lemmas.
+Inference: a possible Verus adaptation would retain explicit integer types and casts, then add `spec fn` models and `ensures` clauses for functional behavior. Range and overflow obligations would need separate proofs; this adaptation is not demonstrated in the paper.
 
 Evidence and limits: the implementation uses about 7,200 lines of OCaml and all case studies compiled and passed manually ported tests (Sec. 4.1, p.16). The method assumes portable C and structured control flow; it does not formally establish semantic equivalence.
 
 ## technique: annotated ADT and tuple reconstruction
-Use annotations when a C struct encodes a tagged union or when tuple structural typing will make Rust borrowing possible.
+Scylla uses annotations to identify tagged unions and structs that should become tuples. Tuple structural typing avoids sharing mutability requirements across unrelated uses (Sec. 2.4, pp.6–7; Sec. 3.3, p.15).
 
 Steps:
-1. Mark a tagged-union struct with `__attribute__((annotate("scylla_adt")))` (Fig. 4, p.7).
+1. Require tags from 0 to N matching the order of union cases, and mark the tagged-union struct with `__attribute__((annotate("scylla_adt")))` (Fig. 4, p.7).
 2. Check that a constructor's integer tag agrees with the selected union field; translate the payload and emit a Mini-C variant constructor (Sec. 2.4, p.7).
-3. Track tag values with flow-sensitive equations. For `if (x.tag == i) { ... x.casei ... }` or an equivalent switch, emit a Rust-style pattern match and bind the payload; reject a case access inconsistent with the current tag (Sec. 2.4, p.7).
+3. Track tag values with flow-sensitive equations. For `if (x.tag == i) { ... x.casei ... }` or an equivalent switch, emit a Mini-C pattern match and bind the payload; reject a case access inconsistent with the current tag (Sec. 2.4, p.7).
 4. Annotate ordinary structs for tuple reconstruction when structural, rather than nominal, typing is needed; translate fields to tuple projections (Sec. 2.4, p.7).
 
-The paper says: “We store and propagate the state of tagged union x, and translate all occurrences of x.casei to the constructor payload v inside the branch (line 7, right); accesses to different union cases are considered invalid and the translation errors out.” (Sec. 2.4, p.7)
+The paper says: “We store and propagate the state of tagged union 𝑥, and translate all occurrences of x.casei to the constructor payload 𝑣 inside the branch (line 7, right); accesses to different union cases are considered invalid and the translation errors out.” (Sec. 2.4, p.7)
 
-Verus form (Inference): represent the variant as a Rust `enum`, use `match`, and state branch-specific facts with `requires` or `assert` before proving payload properties. Tuple reconstruction carries over directly as tuples; the annotation and flow equations are Scylla-specific.
+Inference: a Verus adaptation could retain enums, matches, and tuples, then prove payload properties within each case. The paper supplies no Verus encoding or validation.
 
 Evidence: EverParse CBOR-DET required 19 added annotation lines; tagged unions became Rust ADTs and additional types became tuples (Sec. 4.2.5, p.20). The assumption is that tags are in range and correspond to union-case order.
 
 ## technique: ownership-directed pointer representation
-Use this when C pointers may refer to stack data, borrowed data, or fresh heap allocations. Scylla maps ordinary pointers to slice borrows and uses a fixed-point analysis plus annotations to identify owned allocations.
+The representation distinguishes borrowed data from owned allocations in Rust (Sec. 3.1, p.8). Scylla maps ordinary pointers to slice borrows and uses a fixed-point analysis plus annotations to identify owned allocations.
 
 Steps:
 1. Default every C pointer to a Rust slice borrow `&[T]` (later refined to `&mut [T]`), regardless of whether C points to one element or many (Sec. 3.1, p.8).
-2. Recognize a function that allocates fresh storage and has no global references; translate its return pointer to `Box<T>` (Sec. 3.1, p.8).
+2. Use a limited heuristic: a function `T *create()` without references to globals must return a fresh allocation, so translate it to `fn create() -> Box<T>`; manual annotations can also request boxes (Sec. 3.1, p.8).
 3. Recurse through structs and variants with a fixed point to decide whether each pointer field is a `Box` or a lifetime-parameterized borrow (Sec. 3.1, p.8).
-4. Insert type-directed array/slice/box coercions. If conversion would copy a value, remove the original variable from the output environment so later use is rejected (Fig. 6 and Sec. 3.1, pp.8–9).
+4. Insert type-directed array/slice/box coercions. For slice-to-box and array-to-box conversions, remove the original variable from the output environment so later use is rejected (Fig. 6 and Sec. 3.1, pp.8–9).
 
-Verus form (Inference): use `&[T]`, `&mut [T]`, and `Box<T>` in executable Rust, then specify ownership-sensitive behavior with `requires`/`ensures`; Verus proof code cannot make a C aliasing pattern valid after Rust rejects it. `Box::new` copying an array must be reflected in the specification.
+Inference: functional specifications for the translated code must account for the ownership conversions and source-use restrictions. Whether a particular generated slice or box operation is supported by Verus needs a separate check.
 
-The paper's concrete warning is: “These copies cannot be avoided, as in our translation scheme, it might truly be the case that what initially started as a stack allocation needs to be promoted to a heap allocation.” (Sec. 3.1, p.9)
+The paper's concrete warning is: “These copies cannot be avoided, as in our translation scheme, it might truly be the case that what initially started as a stack allocation needs to be promoted to a heap allocation.” (Sec. 3.1, p.8)
 
 ## technique: split trees for pointer arithmetic
-Use this for disjoint C pointer offsets that must become safe Rust slice operations. The input must have non-overlapping chunks; true aliasing is rejected or can panic at runtime.
+Split trees turn C pointer offsets into safe Rust slice operations. Scylla assumes the intended chunks are disjoint; statically distinguishable overlap produces a compilation error, while other overlap can cause a runtime bounds panic (Sec. 3.2, pp.12–13).
 
 Steps:
 1. Initialize each pointer's split tree as a leaf with no base and empty path (Fig. 8, p.11).
 2. For `let x = base + index`, binary-search the base tree for the offset, add a split node, record `Base(x)` and its path, locate the in-scope parent slice, compute any right-side offset, and emit `split_at` or `split_at_mut` (Fig. 8, p.11).
-3. For a later pointer variable, look up its recorded base/path and select the corresponding slice component; subtract ancestor offsets when the local slice index restarts at zero (Secs. 3.2, pp.10–12).
-4. Reset a tree when the base is used as a non-pointer-arithmetic expression; Scylla recognizes `(void)base` as a source-level lifetime/reset hint and optimizes it away (Sec. 3.2, p.12).
+3. For a later pointer use, find the nearest in-scope variable whose recorded base/path makes the required slice accessible, and select its tuple component. When splitting a right subslice, adjust the split offset because its indices restart at zero (Fig. 8, pp.11–12; Fig. 9, p.12).
+4. Reset a tree when the base is used as a non-pointer-arithmetic expression; a programmer can insert `(void)base` as a source-level lifetime/reset hint, which the compiler optimizes away (Sec. 3.2, p.12).
 5. Compare symbolic offsets with the deterministic solver. If comparison fails, issue a warning, rewrite the C expression if possible, and finally use the monotonic-left-to-right heuristic (Sec. 3.2, p.12).
 
-The paper defines the key invariant: “each C pointer maps to a (possibly singleton) split tree, which evolves in a flow-dependent fashion.” (Sec. 3.2, p.11) Its example translates `abcd + 0`, `+16`, `+8`, `+24` into successive `split_at_mut` calls (Fig. 7, p.10).
+The paper describes its representation: “each C pointer maps to a (possibly singleton) split tree, which evolves in a flow-dependent fashion.” (Sec. 3.2, p.10) Its example translates `abcd + 0`, `+16`, `+8`, `+24` into successive `split_at_mut` calls (Fig. 7, p.10).
 
-Verus form (Inference): retain the generated slices and prove index bounds and disjointness with slice-length facts and `assert`/`requires`. Verus does not provide Scylla's split-tree analysis; implementing an equivalent proof-side model would be new infrastructure.
+Inference: a Verus adaptation would need bounds and slice-length obligations to rule out the runtime panics described here. The paper does not show a proof model for split trees or a Verus implementation.
 
 Limits: “If there is true aliasing, i.e., the C program contains both a[8] and b[0] in our earlier example, the translated Rust code will perform an out-of-bounds array access.” (Sec. 3.2, p.12) The symbolic solver is explicitly incomplete.
 
 ## technique: backward mutability inference
-Use this after Rust generation to add the minimum `mut` qualifiers required by the borrow checker.
+After Rust generation, the analysis adds `mut` qualifiers required for memory updates. Inference: adding qualifiers alone cannot repair arbitrary borrowing errors.
 
 Steps:
 1. Start every borrow immutable and define sets V (variables that must be mutable) and R (variables that must have mutable-borrow types) (Sec. 3.3, p.13).
-2. Analyze the expression body backward: translate the continuation first, then use its V/R requirements to choose whether each `let` binding is mutable (Fig. 10 and p.14).
+2. Analyze a `let` continuation first. If its variable belongs to R, analyze the initializer in mutable-borrow mode; if it belongs to V, make the binding `let mut` (Fig. 10, p.14).
 3. For a slice update, analyze the left side in `mut` mode and the index/value in `imm` mode; propagate the resulting sets (Fig. 10, p.14).
-4. At calls, inspect each callee parameter type, analyze arguments under the required mutability, union their sets, and update function signatures (Sec. 3.3, pp.14–15).
-5. Iterate mutually recursive function equations to a fixed point; only additions of `mut` occur, so iterations are bounded by the number of parameters (Sec. 3.3, p.15).
+4. At calls, inspect each callee parameter type, analyze arguments under the required mutability, union their sets, and, when the result must be a mutable borrow, update the callee return type (Sec. 3.3, pp.14–15).
+5. Update parameter types from each analyzed body and iterate mutually recursive function equations to a least fixed point. The paper argues termination because qualifiers are only added, with iterations bounded by the total number of function parameters; the implementation uses an optimized fixed-point library (Sec. 3.3, pp.13–15).
 
 The paper states: “Applying this analysis to the output of our translation yields a Rust program that has been annotated with the minimum amount of mut qualifiers in variables, types, and function parameters, in order to type-check.” (Sec. 3.3, p.13)
 
-Verus form (Inference): use the inferred Rust signatures unchanged, then add Verus specifications. A mutable executable borrow is not a Verus proof mutable state; proofs still require explicit invariants and lemmas.
+Inference: inferred signatures could supply the executable borrowing interface for a later Verus proof. Adding `mut` does not establish the functional invariants or postconditions that proof would require.
 
 ## technique: automatic trait derivation
-Use a fixed-point traversal of generated structs and enums to derive `Copy`, `Clone`, and `PartialEq` only when every field supports the trait (Sec. 3.4, pp.15–16). A mutable borrow or `Box` prevents `Copy`; immutable borrows and basic types permit it. In Verus, derived traits affect executable ergonomics but do not establish semantic properties.
+Traverse generated struct and enum definitions to derive `Copy` when every field implements it; a fixed-point computation handles recursive type dependencies. A mutable borrow or `Box` prevents `Copy`, while immutable borrows and basic types permit it. Scylla also derives `PartialEq` and `Clone` when possible; `Clone` is required for `Copy` (Sec. 3.4, pp.15–16). Inference: deriving these traits does not prove functional specifications for a later Verus adaptation.
 
 ## evidence, trust, and product threat
-The evaluation used five codebases: SymCrypt, FrodoKEM, HACL★, bzip2, and EverParse. Compilation used Clang and rustc on macOS 15.5, ARM M3 Max, 96 GB RAM, `-O2`/release opt-level 2, and LTO for both languages (Sec. 4.2, p.17). The normalized table reports, for example, Rust/C ratios of 0.97–1.01 for three FrodoKEM operations, 0.77 for HACL★ ECDH-P256, 1.08 for bzip2 compression, and 0.65–1.22 for CBOR variants (Table 1, p.17). These are performance ratios, not proof rates.
+The evaluation used five codebases: SymCrypt, FrodoKEM, HACL★, bzip2, and EverParse. Compilation used Clang and rustc on macOS 15.5, ARM M3 Max, 96 GB RAM, `-O2`/release opt-level 2, and LTO for both languages (Sec. 4.2, p.17). The normalized table reports, for example, Rust/C ratios of 0.97–0.99 for three FrodoKEM operations, 0.77 for HACL★ ECDH-P256, 1.08 for bzip2 compression, and 0.65–1.22 for CBOR variants (Table 1, p.17). These results compare performance; the paper reports no formal translation-correctness proof (Sec. 7, p.24).
 
-The translation found alignment and strict-aliasing undefined behavior in FrodoKEM and bzip2 (Secs. 4.2.2 and 4.2.4, pp.18–20). HACL★ retained its existing formal guarantees by changing Low★ and proofs; the reported 35,879 source/Low★ lines had 1,296 insertions and 318 deletions (4.5%) (Sec. 4.2.3, p.19). CBOR had 4.1% of its code affected by default-value additions, plus 19 annotation lines (Sec. 4.2.5, p.20). The bzip2 result translated only compression, 2,969 C lines (34% of source), and had 8% overhead while using a hybrid FFI build (Sec. 4.2.4, p.20).
+The translation found alignment and strict-aliasing undefined behavior in FrodoKEM and bzip2 (Secs. 4.2.2 and 4.2.4, pp.18–20). HACL★ retained its existing formal guarantees by changing Low★ and proofs; the reported 35,879 source/Low★ lines had 1,296 insertions and 318 deletions (4.5%) (Sec. 4.2.3, p.19). CBOR had 4.1% of its code affected by default-value additions, plus 19 annotation lines (Sec. 4.2.5, p.20). The bzip2 result translated only compression, 2,969 C lines (34% of source, excluding tests and bzip2recover), and had 8% overhead while using a hybrid FFI build (Sec. 4.2.4, p.20). FrodoKEM also used a hybrid build: SHA3 was translated, while AES remained in C because its implementations used unsupported intrinsics or violated strict aliasing (Sec. 4.2.2, p.18).
 
-Trusted components are Clang parsing, Scylla's unproved compiler and analyses, rustc's type and borrow checks, the original tests, and (for HACL★/EverParse) their existing proof toolchains. Inference: a VeruLaw product that adopts Scylla gains a practical safe-Rust migration path and useful UB discovery, but still faces threat from translation bugs, unsupported C idioms, incomplete offset reasoning, and the absence of semantic-equivalence proofs. Existing work already covers C-to-safe-Rust restructuring, split-tree pointer lowering, and mutability inference; VL should reuse these ideas rather than re-invent source translation.
+Inference: confidence in the reported migration depends on Clang, Scylla, rustc, and testing; the HACL★ source changes also depend on its proof toolchain. Inference: a VeruLaw product that adopts Scylla gains a practical safe-Rust migration path and useful UB discovery, but still faces threat from translation bugs, unsupported C idioms, incomplete offset reasoning, and the absence of semantic-equivalence proofs. Inference: VL could reuse the restructuring, split-tree, and mutability-inference ideas, while separately validating translation correctness and Verus compatibility.
 
 ## techniques for the catalog
 - typed Mini-C normalization — translate Clang C ASTs into fixed-width, explicitly converted expression language before Rust generation
@@ -97,5 +97,5 @@ Trusted components are Clang parsing, Scylla's unproved compiler and analyses, r
 - ownership-directed pointer lowering — map pointers to slices by default and infer `Box` ownership with a fixed point
 - split-tree pointer arithmetic — compile disjoint C offsets into deterministic `split_at`/`split_at_mut` chains
 - backward mutability inference — propagate update requirements from uses to Rust bindings and function signatures
-- trait fixed-point derivation — derive `Copy`, `Clone`, and `PartialEq` only when recursive field constraints permit
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- trait derivation — resolve recursive `Copy` dependencies with a fixed point; also derive `Clone` and `PartialEq` when possible
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The environment is initially populated with the output of our translation, meaning there are no mut qualifiers anywhere."): read the full paper text from first line to last (mid-paper quote: Sec. 3.3, p.15); checked quotations, numerical results, section/page references, and technique steps; corrected the FrodoKEM range, quotation pages, ownership and mutability details, and inference labels; replaced the link with the DOI printed in the paper; did not run Scylla, reproduce experiments, inspect the artifact, or validate Verus compatibility.

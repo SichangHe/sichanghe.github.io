@@ -4,7 +4,7 @@ Tag: `gu2024cruxeval`, [paper](https://arxiv.org/abs/2401.03065)
 
 ## benchmark purpose
 
-CRUXEval measures whether code language models can execute short programs mentally. It contains 800 Python functions, each paired with an input and deterministic output. CRUXEval-O asks for the output of a given input; CRUXEval-I asks for any input producing a given output. The paper states, “For both tasks, we use an execution-based correctness metric.” (Section 3, PDF p. 5).
+CRUXEval tests code language models on input and output prediction for short programs. It contains 800 Python functions, each paired with an input and deterministic output. CRUXEval-O asks for the output of a given input; CRUXEval-I asks for any input producing a given output. The paper states, “For both tasks, we use an execution-based correctness metric.” (Section 3, PDF p. 5).
 
 Inference: this is a useful pre-verification diagnostic for VL. A model that cannot reliably trace tiny programs should not be trusted to invent Rust invariants or proof steps, but benchmark success still does not prove Verus correctness.
 
@@ -16,43 +16,44 @@ Steps:
 1. Select a standard-library function and include two few-shot examples in the prompt (Section 3.1).
 2. Generate a function and five inputs; execute each to obtain outputs.
 3. Keep code 75–300 characters long, syntactically valid, using all arguments and proper assertions (Section 3.2).
-4. Reject floats, true division, large integer or string/list operands, runs over two seconds, exceptions, imports, nondeterminism, and side effects (Section 3.2).
-5. Draw 800 distinct functions after filtering.
+4. Exclude floating-point operations, true division, and exponentiation. Require at least one argument ≤ 3 for other integer operations and at least one argument of length ≤ 3 for string/list operations. Require completion within two seconds and no uncaught exceptions (Section 3.2).
+5. Make a best effort to remove imports, nondeterminism, and side effects (Section 3.2). The paper labels this criterion “Best effort to remove other undesirable code”.
+6. Randomly select 800 samples passing the filters (Introduction, PDF p. 2); the benchmark contains 800 distinct functions (Section 3, PDF p. 5).
 
-The resulting tasks are executable ground truth: an input prediction passes iff `assert f(generated input) == output`, and output prediction passes iff `assert f(input) == generated output` (Section 3).
+An input prediction passes if `assert f(generated input) == output` passes; an output prediction passes if `assert f(input) == generated output` passes (Section 3, PDF p. 5).
 
 Verus form: Inference: generate small Rust/Verus functions and inputs, execute only trusted reference code to obtain outputs, and filter for deterministic, bounded examples. For production code, Verus proofs replace execution as evidence; the benchmark can test model tracing before proof synthesis.
 
 ## technique 2: statistical dataset-size selection
 
-The paper overgenerates, then bootstraps samples of size N from roughly 1,700 candidates to estimate the probability that model rankings reverse. It finds 800 examples sufficient to distinguish Code Llama 34B from 13B and CoT variants (Section 3.3). Sampling noise from selected data is about 1.5% per model, versus about 0.2% from temperature sampling at N=800 (Section 3.3). These are uncertainty estimates for this benchmark construction, not universal confidence intervals.
+The paper overgenerates, then bootstraps samples of size N from roughly 1,700 candidates to estimate the probability that model rankings reverse. It finds 800 examples sufficient for comparisons of Code Llama 34B versus 13B, Code Llama with versus without CoT, and DeepSeek 33B versus Code Llama 34B on output prediction (Section 3.3, PDF p. 6). Sampling noise from selected data is about 1.5% per model, versus about 0.2% from temperature sampling at N=800 (Section 3.3). These are uncertainty estimates for this benchmark construction, not universal confidence intervals.
 
-Steps: choose candidate pool; repeatedly sample N; measure ranking reversal; increase N until comparisons stabilize; publish the fixed set and noise estimates. Inference: VL evaluations should report denominators and bootstrap uncertainty instead of treating a single pass rate as a proof capability.
+The authors compare model-score differences across bootstrap sample sizes; Figure 1 reports the (2.5, 97.5) and (25, 75) percentiles (Section 3.3, PDF p. 6). Inference: VL evaluations should report sample counts and bootstrap uncertainty; a pass rate does not establish proof capability.
 
 ## technique 3: chain-of-thought execution prompting
 
 The authors evaluate direct prompting and chain-of-thought (CoT) prompts, using N=10 samples except Code Llama without CoT (N=100), temperature 0.2 for pass@1 and 0.8 for pass@5 (Section 5.1, PDF p. 10). The paper reports, “GPT-4 benefits significantly more from CoT than other models, achieving the highest pass@1 of 74.8% on input prediction and 81.9% on output prediction but still far from acing the benchmark.” (Section 5.1).
 
-How to apply it: provide the function and target; request a step-by-step execution trace; parse the final input or output; execute the answer against the assertion; repeat for pass@k. CoT helps Code Llama 34B and GPT-4 on both tasks, GPT-3.5 only on output, and Code Llama 13B on neither (Section 5.1).
+The prompts provide the function and input or target output, request step-by-step reasoning, and require a final answer between `[ANSWER]` and `[/ANSWER]` tags (Appendix D.3, PDF pp. 48–49). Code Llama receives one-shot prompts and GPT models receive zero-shot prompts. The final prediction is checked by execution (Section 3). CoT helps Code Llama 34B and GPT-4 on both tasks, GPT-3.5 only on output, and Code Llama 13B on neither (Section 5.1).
 
 Verus form: Inference: ask the model to emit intermediate proof obligations or loop-state calculations, then check the final Rust with Verus. CoT text is untrusted guidance; only verifier results establish the contract.
 
 ## technique 4: execution-oriented fine-tuning
 
-They fine-tune Code Llama 34B on nearly 140K unfiltered Python samples generated by the same procedure, mixing 50% functions absent from the benchmark and 50% benchmark functions with different input-output pairs (Section 5.2). The model can match GPT-4, but accuracy plateaus below 70% on both tasks (Section 5.2). The paper cautions that exact-string decontamination may leave semantic duplicates (Limitations, PDF p. 15).
+They fine-tune Code Llama 34B on nearly 140K unfiltered Python samples generated by the same procedure, mixing 50% functions absent from the benchmark and 50% benchmark functions with different input-output pairs (Section 5.2). The paper reports, “After fine-tuning on samples very similar to those in our benchmark, Code Llama 34B can match the performance of GPT-4 on both input and output prediction.” It adds, “However, accuracy plateaus at under 70% for both tasks, so simple finetuning is far from solving the benchmark.” (Section 5.2, PDF p. 13). The authors caution, “there may still be semantic duplication or similar programs with small modifications” after exact-string decontamination (Section 7, PDF p. 16). Appendix C.7 specifies assertion training: `assert f(input) == output` for output prediction and `assert output == f(input)` for input prediction (PDF p. 41).
 
 Inference: for VL, fine-tune on verified traces or proof states only after semantic deduplication. A model trained on execution examples may learn patterns without learning invariant discovery.
 
 ## measured failures and product threat
 
-The best headline values differ by setting: the abstract reports GPT-4 with CoT pass@1 of 75% input and 81% output, while the introduction reports GPT-4 without CoT at 67% input and 63% output (Abstract and Introduction, PDF pp. 1–2). These denominators are the 800 benchmark functions, with pass@1 measured under the stated sampling temperatures. Code Llama 34B reaches 50% input and 46% output in the abstract's comparison (Abstract, PDF p. 1). GPT-4 CoT still scores 0/10 on 54 output and 65 input tasks, with 22 tasks failing both (Section 6, PDF p. 15).
+The best headline values differ by setting: the abstract reports GPT-4 with CoT pass@1 of 75% input and 81% output, while the introduction reports GPT-4 without CoT at 67% input and 63% output (Abstract, PDF p. 1; Introduction, PDF p. 3). Table 3 gives GPT-4 with CoT at 74.8% input and 81.9% output; Table 2 gives GPT-4 without CoT at 67.1% and 63.4% (PDF pp. 31, 33). Scores average across 800 benchmark functions, with pass@1 evaluated at temperature 0.2. The abstract's Code Llama 34B comparison gives 50% input and 46% output; Table 3 identifies these as CoT results, 50.4% and 46.0%. GPT-4 CoT scores 0/10 on 54 output and 65 input tasks, with 22 tasks failing both (Section 6, PDF p. 13).
 
-The benchmark is limited to short, self-contained Python generated from Code Llama 34B. It does not measure Rust ownership, concurrency, solver interaction, or proof validity. The authors warn, “pass@k is only one perspective of measuring execution ability.” (Limitations, PDF p. 15). Inference: threat to agent-written verified Rust is high for unreviewed proof synthesis because simple execution errors remain common; lower for code already accepted by Verus. Existing work already provides this generate/filter recipe, CoT study, and failure taxonomy. VL should reuse the evaluation idea rather than redo a generic Python benchmark.
+The authors describe the scope as “relatively simple and self-contained Python functions distilled from a single model (Code Llama 34B).” (Section 7, PDF p. 15). Inference: these tasks do not establish ability in Rust ownership, concurrency, solver interaction, or proof validity. The authors warn, “pass@k is only one perspective of measuring execution ability.” (Limitations, PDF p. 15). Inference: threat to agent-written verified Rust is high for unreviewed proof synthesis because simple execution errors remain common; lower for code already accepted by Verus. Inference: VL could reuse the execution-evaluation idea to test reasoning on Rust/Verus examples.
 
 ## techniques for the catalog
 - generate-and-filter execution benchmark — overgenerate deterministic functions, filter for human-solvable programs, and retain a statistically sized set
 - execution assertions — score input and output predictions by running the function and checking an assertion
 - bootstrap size selection — estimate ranking noise and choose a benchmark denominator that separates models
 - chain-of-thought tracing — prompt stepwise execution and evaluate the final answer under fixed temperatures
-- execution fine-tuning — train on generated function/input-output traces while checking contamination
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- execution fine-tuning — train on generated functions and input-output assertions, with explicit decontamination rules
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These samples were generated using a different prompt and a much more relaxed filter, so the raw scores differ from those in the main text."): checked the complete paper text, study claims, quotations, numbers, sections, page references, technique steps, author/year tag, and arXiv link; corrected filtering rules, sampling descriptions, fine-tuning details, page references, and CoT result attribution, and marked recommendations as inferences; did not reproduce experiments or inspect external code and data.
