@@ -4,94 +4,107 @@ Tag: `skalka2024lowlevel`, [paper](http://arxiv.org/abs/2407.16504v1)
 
 ## what the paper proves or measures
 
-Skalka and Near present a language-and-analysis stack for low-level secure multiparty computation (MPC). Overture is a small probabilistic protocol language over a finite field; Prelude is a metalanguage that generates composable Overture code. The paper's central claim is an end-to-end methodology with “(1) A low-level language for defining MPC primitives (Section 2) with an associated metalanguage to ease programming (Section 6). (2) A fully-automated verification method for low-level MPC primitives in F2 (Section 5). (3) A partially-automated verification method for MPC protocols, which leverages automated proofs for low-level primitives (Section 7).” (Section 1.1, p. 2). It instantiates the method on Shamir addition, GMW Boolean circuits, and BDOZ-authenticated Beaver multiplication.
+Skalka and Near present Overture, a language for synchronous finite-field MPC protocols, and Prelude, a metalanguage that generates Overture programs. Their methodology combines automatic verification of small binary-field primitives with partially automated proofs for larger protocols. Section 1.1 states: “The complete methodology enables the verification of real-world MPC protocols like GMW.” (p. 2). Examples include three-party Shamir addition, two-party GMW Boolean circuits, and two-party BDOZ-authenticated Beaver multiplication. The paper identifies itself as arXiv:2407.16504v1, dated 23 July 2024 (p. 1), supporting the link above.
 
-The paper proves semantic lemmas about the language, the correspondence between truth-table and Datalog execution, hyperproperty implications, and GMW/BDOZ protocol properties. It does not report a benchmark denominator or wall-clock evaluation in the extracted text. The verified artifacts are protocol models and their properties; the trust boundary includes the semantics, finite-field arithmetic, the Datalog/least-Herbrand-model implementation, and the correctness of the encoded protocol. Inference: a Rust/Verus implementation would need an explicit refinement argument from real network/cryptographic code to this model before these model theorems establish product security.
+The results include semantic lemmas, exact truth-table/Datalog correspondence, implications between security properties, and a compositional argument for GMW noninterference modulo output. The BDOZ discussion models preprocessing and authentication and relates cheating detection to integrity. There are no reported runtime measurements, benchmark counts, or implementation experiments. Proof-assistant integration is future work: “To support better verification, integration of our tactics with a proof assistant is a compelling direction that resonate with previous work [22].” (Section 8, p. 13).
+
+Inference: these are results about protocol models. Applying them to executable Rust/Verus networking and cryptography would require a separate argument that the implementation follows the model. The paper does not supply that argument.
 
 ## technique 1: model low-level protocols in Overture
 
-what it is: Overture represents synchronous protocols as assignment sequences over a finite field `F_p`. Variables distinguish secrets `s[w]@i`, random tapes `r[w]@i`, messages `m[w]@i`, public reveals `p[w]`, and outputs `out@i`; commands are message sends, public broadcasts, and outputs. The authors deliberately omit concurrency and complex control: “The lack of sophisticated control structures in Overture is intentional, since minimizing features eases analysis and control abstractions such as function definitions can be integrated into a metalanguage that generates Overture programs.” (Section 2, p. 3).
+what it is: Overture represents protocols as assignment sequences over a prime finite field `F_p`. Variables distinguish secrets `s[w]@i`, random inputs `r[w]@i`, received messages `m[w]@i`, public reveals `p[w]`, and outputs `out@i`. The three initial command forms send a message, broadcast a public value, and record a local output (Sections 2.1–2.2, pp. 3–4). Section 3.5 adds assertions and abort for malicious execution (p. 6).
 
-when to use: use it for synchronous, finite-field protocols whose security can be stated over complete message/reveal views. The threat model statically partitions clients into honest and corrupt sets; randomness is an explicit uniform tape and execution is deterministic once the tape is fixed.
+when to use: the language models synchronous finite-field protocols with a statically given federation of clients. Honest and corrupt clients form a partition of that federation. The semantics uses a uniformly sampled random tape; execution is deterministic once the initial memory is fixed. The authors state: “Concurrency is out of scope in this work but an avenue for future work.” (Section 2, p. 3).
 
 how to do it:
 
-1. Choose the finite field and static federation and partition clients into honest `H` and corrupt `C` (Section 2, p. 3)
-2. Declare secret and random input variables and use the three command forms for messages, public reveals, and outputs (Sections 2.1–2.2, pp. 3–4)
-3. Execute the small-step semantics on memories that record all inputs and views; define `runs(π)` as the possible final memories (Section 3.2, p. 5)
-4. Encode the intended ideal functionality and compare protocol outputs and corrupt views against it (Sections 3.4–3.5, pp. 5–6)
+1. Choose the prime field and static federation; identify honest `H` and corrupt `C` for the security property being checked (Section 2, p. 3)
+2. Declare secret and random inputs, then encode message sends, public reveals, and local outputs as assignments (Section 2.1, p. 3)
+3. Use memories that retain inputs and every assigned value; assignment extends memory rather than overwriting an existing variable (Definition 2.2, p. 4)
+4. Describe any preprocessing constraints on initial memories and define `runs(π)` as the resulting final memories (Definition 3.5, p. 5)
+5. Specify the ideal functionality and compare the protocol's outputs and views with its security policy (Sections 3.4–3.5, pp. 5–6)
 
-example: for three-party Shamir addition, each client samples `r[local]`, sends one-time-pad shares, publicly reveals sums, and outputs the sum of the three reveals (Section 2.3, p. 4). The paper says, “This scheme guarantees that messages are viewed as random noise by any observer besides ι.” (Section 2.3, p. 4).
+example: the three-party addition protocol has each client choose `r[local]` and another random value `r[x]`, retain the first as its local share, and send the other two shares. Each client then reveals the sum of its shares. Finally, all clients output the sum of the three reveals (Section 2.3, p. 4). The paper explicitly distinguishes the sharing phase from the revealing phase: “This step does reveal information about secrets” (p. 4). It notes that `r[local]` is reused at reveal, so it is no longer a one-time pad.
 
-Verus form: Inference: represent field values and protocol state as Rust structs with ghost views for messages and public reveals. Put protocol preconditions and postconditions in `requires` and `ensures`; use loop `invariant` clauses for repeated rounds and `proof fn` lemmas for field algebra and view relations. Overture's syntax, synchronous scheduler, and explicit random tape do not carry over automatically to Rust networking or cryptographic APIs; each API needs a contract and a refinement proof.
+Verus form: Inference: represent field values and protocol memories with Rust data and ghost projections for messages, reveals, and outputs. State field identities and view relations in specifications and proof functions. A specification for synchronous execution and uniform randomness would need to be related explicitly to the actual scheduler and randomness API.
 
-evidence and limits: Overture's semantics is exact for the modeled finite-field, synchronous programs. Concurrency is explicitly out of scope (Section 2, p. 3). The one-time-pad example assumes uniform fresh randomness; reuse of `r[local]` during reveal is accounted for as deliberate declassification. Inference: failing those assumptions invalidates the security conclusion even if the Overture proof succeeds.
+evidence and limits: the syntax supports general prime fields, while the automated analysis in Section 5 is restricted to `F2`. Concurrency and universal composability are future directions (Section 8, p. 13). Inference: neither a model proof nor a local Rust contract alone establishes the behavior of an unmodeled network implementation.
 
 ## technique 2: express security as probabilistic hyperproperties
 
-what it is: the authors define a joint probability mass function (pmf) over complete memories, then use marginal and conditional distributions to state passive correctness/security, malicious simulation, conditional noninterference, gradual release, declassification, robust declassification, and integrity. The basic distribution is uniform over `runs(π)` because protocol execution is deterministic given secrets and random tape (Section 3.2, p. 5).
+what it is: the authors use joint probability mass functions (pmfs), marginalization, and conditioning to express relations among secrets, messages, reveals, and outputs. Definition 3.5 assigns equal probability to each admitted complete run; by default, secret inputs and random tapes are uniform. A preprocessing predicate can restrict initial memories (Sections 3.1–3.2, pp. 4–5). Uniformity is part of this distribution definition, rather than a consequence of deterministic execution alone.
 
-when to use: use this when outputs necessarily reveal a permitted function of secrets and ordinary noninterference would be too strong. Passive security compares the distribution of corrupt views in the real protocol with a simulator given corrupt inputs and ideal output; malicious security adds adversarial rewriting and abort.
-
-how to do it:
-
-1. Define `runs(π)` from all secret and random memories satisfying preprocessing, and set `BD(π)(σ) = 1/|runs(π)|` for runs (Section 3.2, p. 5)
-2. Project complete memories to honest/corrupt views and define marginals and conditional pmfs (Sections 3.1–3.3, pp. 4–5)
-3. State passive correctness as ideal output with probability one and passive security as equality between simulator and real corrupt-view distributions (Section 3.4, p. 5)
-4. For malicious security, add an adversary that rewrites corrupt expressions and model failed assertions as `⊥` abort memories (Section 3.5, pp. 6–7)
-5. State information-flow properties conditioned on allowed outputs; pair passive security with integrity properties to derive malicious security (Section 4, pp. 7–8)
-
-The paper's key result is that probabilistic conditional noninterference is sound for passive security, while a new integrity property paired with passive security implies malicious security (Section 1.1, p. 2). It also shows BDOZ/SPDZ-style MACs establish the weaker property “cheating detection,” which implies integrity (Lemma 7.10, pp. 12–13).
-
-Verus form: Inference: define pure `spec fn` predicates for view projections, marginal/conditional relations, and allowed declassification; state local preservation with `ensures` and prove algebraic lemmas with `proof fn`. Verus's SMT logic does not provide a probabilistic pmf library equivalent to the paper, so a finite model, ghost maps, or externally verified probability kernel is needed. `spec fn` remains pure; executable code must not be replaced by an unproved model.
-
-evidence and limits: The theorems are semantic implications over finite distributions, not measurements on deployed MPC. The model assumes a static federation and finite field, and malicious behavior is represented by a rewrite function plus abort. Inference: cryptographic assumptions (uniform randomness, MAC secrecy, and field operations) remain trusted unless separately formalized.
-
-## technique 3: compute exact pmfs by truth tables and stratifed Datalog
-
-what it is: for protocols over `F2`, the paper computes exact runs by filtering sets of memories with `models Σ ε i`, then folds assignment commands. To scale, it converts each command to stratified Datalog clauses; a least Herbrand model for each secret/random fact base yields exactly the protocol runs. The correctness statement is explicit: “For all π, datalog(π) is a normal, stratified program [7], and σ is the unique Least Herbrand Model of: (facts(σsecrets(π)∪rands(π)), datalog(π)) iff σ ∈ runs(π).” (Lemma 5.6, p. 8).
-
-when to use: use exact truth tables for small primitives and Datalog/HPC parallelization when the protocol's state space is large but finite and Boolean.
+when to use: these properties permit outputs to reveal a specified function of secrets. Passive security compares real corrupt views with a simulator that receives corrupt inputs and ideal outputs. Malicious security additionally permits adversarial rewriting of corrupt computations and abort (Sections 3.4–3.5, pp. 5–6).
 
 how to do it:
 
-1. For an expression, filter a candidate memory set with the recursive `models` operation (Section 5.1, p. 8)
-2. For each assignment `x := ε@i`, set `x` to one on models satisfying `ε` and to zero on the complement; fold this transformer over the protocol (Lemma 5.2, p. 8)
-3. Convert each assignment to a Datalog body and each possible memory to a conjunction of positive/negative literals (Section 5.2, p. 8)
-4. Add secret/random facts for one initial memory, compute the unique least Herbrand model, and repeat over all fact bases; distinct bases can be computed in parallel (Section 5.2, p. 8)
-5. Query the resulting `runs(π)` with marginalization/conditioning implementations to check the hyperproperties (Section 5.2, p. 8)
+1. Construct `BD(π)` from admitted initial memories and complete runs (Definition 3.5, p. 5)
+2. Distinguish corrupt views, sent from honest to corrupt clients, from honest views, sent from corrupt to honest clients; include public broadcasts by the relevant senders (Definition 3.6, p. 5)
+3. Check passive correctness: the ideal output occurs with probability one for each input (Definition 3.7, p. 5)
+4. State noninterference modulo output: conditioning on corrupt views adds no information about honest secrets beyond corrupt inputs and outputs (Definition 4.1, p. 6)
+5. To derive passive security via Theorem 4.3, establish correctness and the paper's assumption that the ideal functionality is pre-imageable, meaning its sets of inputs producing given outputs can be computed tractably (Definition 4.2 and Theorem 4.3, p. 7)
+6. For malicious execution, add adversarial rewriting and assertions; pad unexecuted views and outputs with `⊥` after abort (Definitions 3.10–3.11, p. 6)
+7. Establish integrity, which requires adversarial behavior to match a passive input choice in the specified conditional distributions, up to abort (Definition 4.6, p. 7)
 
-Verus form: Inference: encode a bounded finite-field model with ghost maps or sequences, write a `spec fn` for `models`, and prove each assignment transformer preserves the relation between the abstract memory and executable protocol state. The Datalog solver is not a Verus construct; a Verus proof can check a finite certificate or a refinement lemma, while solver execution remains an external trusted component unless its results are independently checked.
+The central implication is explicit: “If a protocol is passive secure and has integrity, then it is malicious secure.” (Theorem 4.8, p. 7). Gradual release requires corrupt messages to be independent of honest secrets; robust declassification combines gradual release with integrity. These properties alone do not enforce the ideal functionality's release bounds. Theorem 4.10 states that robust declassification does not imply malicious security, while passive security together with robust declassification does (Section 4.3, p. 7).
 
-evidence and limits: the approach is “perfectly accurate but has high complexity” (Section 1.1, p. 2). Datalog permits parallel least-model computation, but the paper gives no runtime, instance count, or denominator. It applies directly to `F2`; arbitrary fields require the paper's more general semantics but not necessarily the same Boolean Datalog encoding.
+Verus form: Inference: finite memories and exact probability relations could be represented as ghost data and pure specification functions. A translation would need proofs for conditioning and marginalization, rather than treating security as a predicate with no established connection to execution. The paper provides no Verus encoding.
 
-## technique 4: compositional gate tactics for GMW and BDOZ
+evidence and limits: passive-security soundness has explicit correctness and pre-imageability assumptions. The malicious model uses a rewrite function and abort; it does not model arbitrary concurrent network behavior. These are semantic implications, not empirical measurements of deployed MPC.
 
-what it is: prove local invariants for each circuit gate, then compose them by induction over Prelude evaluation. For GMW, each gate preserves distribution of the reconstructed value, uniformity of each party's share, and the relation between reconstructed value and shares (Lemma 7.4, p. 10). Conditioning lemmas transfer distribution, uniformity, and independence facts from inputs to outputs (Lemma 7.5, p. 11). Theorem 7.6 concludes noninterference modulo output for arbitrary GMW circuits (pp. 11–12).
+## technique 3: compute exact pmfs by truth tables and stratified Datalog
+
+what it is: in `F2`, `models Σ ε i` filters candidate memories to those where expression `ε`, evaluated by client `i`, is one. Folding assignment transformers over all initial memories computes `runs(π)` exactly (Lemmas 5.1–5.2, p. 8). A second construction translates assignments into stratified Datalog and computes a least Herbrand model for each input fact base (Section 5.2, p. 8).
+
+when to use: exact enumeration is intended for small Boolean primitives. The authors warn: “Since runs(π) is exponential in the size of secrets(π) ∪ rands(π), this strategy is feasible only for smaller protocols.” (Section 5, p. 7). Datalog permits parallel computation over independent input fact bases. It does not remove the exponential number of input combinations. The conversion is described for passive protocols without assertions (p. 7).
 
 how to do it:
 
-1. Define Prelude functions for gate construction and a decoder that maps shared messages to reconstructed values (Section 7, pp. 9–10)
-2. Prove the base invariant for inputs and the local `And Gate Tactic` conditions for every gate (Lemma 7.4, p. 10)
-3. Induct over the small-step evaluation of the generated protocol; use conditioning-composition lemmas to combine the two input invariants (Lemma 7.5 and proof of Lemma 7.3, pp. 10–11)
-4. At output, show public reveals expose only the allowed reconstructed value and apply Theorem 7.6 (p. 12)
-5. For BDOZ, encode preprocessing for shares, MACs, keys, and Beaver triples, then authenticate opened shares with `assert` (Section 7.2, pp. 12–13)
+1. Recursively evaluate the `models` filter for Boolean expressions using set operations (Figure 4 and Section 5.1, p. 8)
+2. For each assignment, extend satisfying memories with output one and the complement with output zero; fold over the assignment sequence (Lemma 5.2, p. 8)
+3. For Datalog conversion, compute the satisfying memories for each assignment's expression and turn each into a conjunction of positive or negated variable literals (Definitions 5.3–5.4, p. 8)
+4. Supply facts for the variables equal to one in a chosen secret/random input memory (Definition 5.5, p. 8)
+5. Compute its unique least Herbrand model; repeat over all secret/random memories, potentially in parallel. Lemma 5.6 relates these models exactly to `runs(π)` (p. 8)
+6. Query the resulting runs through marginalization and conditioning to check passive correctness and security properties (Section 5.2, p. 8)
 
-Verus form: Inference: represent each gate's share invariant as a `spec fn`; give a verified Rust gate function an `ensures` relating input and output ghost shares, and prove composition with `proof fn` induction over a circuit AST. Use `assert` for local field identities and loop `invariant` for gate traversal. Authentication checks should be executable predicates with explicit failure postconditions, not `external_body` on the verified function.
+The authors report using this method for Shamir addition in `F2`, individual AND and XOR computations, and compositional circuit properties (Section 5.2, p. 8). Section 7 gives the GMW library with abstract oblivious transfer. It states: “Critically, the sender learns nothing about ε₁ and the receiver learns nothing about the unselected value” (p. 10). The implementation of oblivious transfer itself is abstracted there.
 
-evidence and limits: Theorem 7.6 is a model theorem for Prelude-generated GMW circuits. BDOZ's result assumes a trusted client in the shown multiplication and claims symmetry can authenticate either party; it relies on information-theoretic MAC assumptions. The authors explicitly note that “The authentication scheme can also be run symmetrically on client 2.” (Section 7.2, p. 13). Inference: this is a protocol-design and proof pattern, not evidence that an unmodeled Rust implementation has the same security.
+Verus form: Inference: a finite Boolean model could expose the enumeration and assignment transformer as specification functions. A proof would need to relate the computed runs to executable state. An external Datalog engine would need either a correctness argument or independently checked results before its answers could support an implementation theorem.
+
+evidence and limits: the paper proposes HPC acceleration but reports no timings or scalability measurements. Generalizing automated analysis from `F2` to larger arithmetic fields is future work (Section 8, p. 13).
+
+## technique 4: compose local circuit proofs and authenticate BDOZ shares
+
+what it is: Prelude adds functions, records, identifiers, and expression construction. Evaluation accumulates a residual Overture program, allowing a library to generate complete circuits (Section 6, p. 9). For two-party GMW, the library splits inputs into additive Boolean shares, computes XOR locally and AND via one-of-four oblivious transfer, and reveals final shares during decoding (Figure 6, p. 10).
+
+how to do it:
+
+1. Give circuit outputs unique identifiers and construct a sequence of Prelude bindings followed by decoding (Section 7, p. 10)
+2. Establish the circuit invariant: reconstructed intermediate values are deterministic given secrets, corrupt messages are conditionally uniform, and reconstructed values satisfy the stated conditional independence from their share pairs (Lemma 7.3, p. 10)
+3. Automatically prove the local AND conditions: conditional determinism of the reconstructed output, conditional uniformity of each output share, and conditional independence of the reconstructed output from its share pair, given reconstructed inputs (Lemma 7.4, p. 11)
+4. Use the conditioning lemmas for determinism, uniformity, and independence to combine local results by induction over Prelude evaluation (Lemma 7.5 and proof of Lemma 7.3, p. 11)
+5. Reason about the final public reveals to obtain noninterference modulo output for the generated GMW circuit (Theorem 7.6, p. 11)
+6. For BDOZ multiplication, impose preprocessing constraints on shares, MACs, keys, and a Beaver triple whose reconstructed values satisfy `a*b=c` (Definition 7.7, p. 12)
+7. Locally form masked sums and their authentication data, open and authenticate them on honest client 1, compute product shares, and authenticate client 2's revealed product share before client 1 outputs (Figures 7–8 and Section 7.2, pp. 11–12)
+
+For BDOZ, each client holds a share and its MAC; the other client holds the authentication key. Per-share keys are distinct, while the authentication multiplier is shared across MACs checked by the same client (Section 7.2, pp. 11–12). The shown multiplication assumes trusted client 1. The authors state: “The authentication scheme can also be run symmetrically on client 2.” (p. 12).
+
+Verus form: Inference: express local share and distribution properties as specifications, then prove composition by induction over the circuit representation. Authentication must correspond to executable checks and an explicit failure path. A Rust assertion or proof of field algebra alone would not supply the probabilistic secrecy assumptions used by the protocol model.
+
+evidence and limits: Theorem 7.6 concludes noninterference modulo output. It should be combined with the assumptions of Theorem 4.3 when invoking that theorem to derive passive security. Section 7.3 discusses cheating detection and integrity for BDOZ; it does not provide a benchmark or a machine-checked implementation proof.
 
 ## trusted boundary, contradictions, and product threat
 
-What is proved: the paper proves Overture operational facts, exact truth-table/Datalog correspondence, hyperproperty implications, local GMW gate invariants, arbitrary-circuit noninterference modulo output, and BDOZ cheating-detection/integrity lemmas. What remains trusted includes the finite-field and probability model, the Datalog engine and least-model computation, cryptographic preprocessing assumptions, and the refinement from implementation to protocol model. No experimental denominator or runtime number is supplied, so claims of automation are qualitative.
+The paper contains inconsistent wording about cheating detection. Section 1.1 calls it a “strictly weaker property” (p. 2), while Section 7.3 calls it “a stronger property” (p. 12). The formal direction is: “If cheating is detectable in π, then π has integrity.” (Lemma 7.10, p. 12). Inference: the study should use this stated implication, without asserting the reverse implication or strictness. BDOZ security is argued using preprocessing and information-theoretic authentication assumptions (Section 7.3, p. 12).
 
-Inference: VL should reuse the paper's small-kernel language design, explicit views, compositional gate contracts, and separation between passive confidentiality and active integrity. VL should not redo generic observations that local primitives can compose; it should test whether a Rust/Verus implementation's contracts are complete and whether its network/cryptographic boundary refines the modeled protocol. The threat to agent-written verified Rust is high when the agent silently weakens declassification, randomness, abort, or MAC assumptions, even if Verus proves the resulting local contracts.
+Inference: the implementation trust boundary would include the encoding of finite-field arithmetic and probability, the correctness of the analysis engine, the realization of preprocessing and oblivious transfer, and the relation between executable behavior and the protocol semantics. VL could reuse the explicit views and compositional proof structure, but would still need to justify randomness, permitted disclosures, authentication, and abort behavior in its Rust/Verus contracts. A proof about weakened contracts would not establish the protocol's stated security policy.
 
 ## techniques for the catalog
 
-- Overture protocol modeling — encode synchronous finite-field messages, reveals, outputs, and random tapes in a minimal language
-- pmf hyperproperty security — state passive/malicious MPC security and declassification as marginal and conditional distribution relations
-- truth-table and Datalog execution — compute exact finite protocol runs and scale least-model evaluation over independent fact bases
-- compositional gate tactics — prove local share/distribution invariants and compose them into whole-circuit security
-- BDOZ cheating detection — authenticate Beaver-shared values with MAC checks so malformed corrupt messages abort
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- Overture protocol modeling — encode synchronous finite-field messages, reveals, outputs, and explicit random tapes
+- pmf security properties — relate passive and malicious MPC security to conditional distributions, integrity, and permitted disclosures
+- truth-table and Datalog execution — compute exact Boolean runs and parallelize independent input fact bases
+- compositional circuit proofs — combine local determinism, uniformity, and independence facts into circuit noninterference
+- BDOZ authentication — model preprocessing and verify opened shares with MAC checks and abort
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In addition to converting view deﬁnitions to logic clauses, we also need to convert secrets and random tapes."): checked all paper text, study quotations, technique steps, theorem assumptions, and page and section references; corrected the cheating-detection implication, missing passive-security assumptions, distribution explanation, GMW proof descriptions, and page references; did not independently reprove the theorems, run the authors' analysis implementation, or validate Rust/Verus adaptations.

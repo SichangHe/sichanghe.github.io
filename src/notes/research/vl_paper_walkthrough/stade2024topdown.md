@@ -2,73 +2,79 @@
 (authored by agents unless marked 🧑)
 Tag: `stade2024topdown`, [paper](https://doi.org/10.1007/978-3-031-65627-9_15)
 
-This paper gives a machine-checked partial-correctness proof for the top-down (TD) local fixpoint solver used in static analyzers. A solver receives an equation system whose right-hand sides may discover dependencies while evaluating. The TD recursively descends into queried unknowns, caches stable values, and destabilizes transitive dependants after a change. The abstract states: “The top-down solver (TD) is a local ﬁxpoint algorithm for arbitrary equation systems.” (Abstract, PDF p.1.) Partial correctness means that, if TD terminates, its result is a partial solution for the unknowns reached.
+This paper gives a machine-checked partial-correctness proof for the top-down (TD) local fixpoint solver. Its abstract states: “The top-down solver (TD) is a local ﬁxpoint algorithm for arbitrary equation systems.” (p.303.) TD recursively descends into queried unknowns, records dependencies during evaluation, skips stable unknowns, and destabilizes transitive dependants when a value changes. Partial correctness means that termination yields a partial solution, not that every input terminates. Page references below use the printed page numbers, 303–324.
 
 ## technique: represent black-box right-hand sides as strategy trees
 
-Use this when an equation solver must support dynamically varying dependencies. Let U be unknowns and D abstract values with bottom ⊥. Represent each pure right-hand side as a finite strategy tree: `Answer d` or `Query y g`, where g chooses the next subtree from the value returned for y (Section 2, PDF pp.2–3). A system is T: U→strategy-tree. Define `dep x σ` as the unknowns encountered while evaluating T x under mapping σ; a partial solution on s requires closure under reflexive-transitive dependencies and equation satisfaction (Equation 4, p.3).
+The equation system maps unknowns U to right-hand sides over a value domain D. D needs an initial element ⊥ and equality; neither an order nor joins are required. Section 2 states: “Following Fecht and Seidl [11], the right-hand side function fx is considered as a black box functional.” (pp.305–306.) The development assumes pure right-hand sides represented by finite-depth strategy trees: `Answer d` returns a value, while `Query y g` queries y and chooses the next subtree by applying g to its returned value (p.306). Inference: finite depth does not require the entire tree to have finitely many nodes when D is infinite.
 
 Steps:
 
-1. Choose U, D, bottom, and pure strategy trees.
-2. Define evaluation of an answer node and query node under the current σ.
-3. Compute dependencies from the actual traversal, rather than a predeclared graph.
-4. State the partial-solution predicate over the reached dependency closure.
+1. Choose U, D, an initial element, and pure right-hand sides.
+2. Represent evaluation with answer nodes and value-dependent query nodes.
+3. Define `dep x σ` from the unknowns actually queried while traversing x’s right-hand side under mapping σ.
+4. Define a partial solution on s by requiring dependency closure and equation satisfaction for every x in s (Equation 4, p.307).
 
-The paper’s motivation is explicit: “Fecht and Seidl [11], the right-hand side function fx is considered as a black box functional.” (Section 2, p.3.) Purity is required; side effects are outside this development. Finite strategy-tree depth bounds each right-hand-side evaluation.
+The paper makes the bound explicit: “In this work, we assume the depth of strategy trees to be ﬁnite, i.e., only ﬁnitely many unknowns may be queried in a right-hand side.” (Section 2, p.306.) This permits dependencies to vary with the values encountered during evaluation.
 
-Verus form (Inference:): encode strategy trees as a recursive datatype and evaluation as a `spec fn` over an immutable map. Use a ghost `dep` set and prove evaluation preserves a `decreases` measure (tree height). Model purity by making the function depend only on the tree and σ. If executable evaluation is needed, prove its result refines the spec function.
+Inference: a Verus adaptation could give a mathematical query/answer specification and a ghost dependency set. Executable evaluation would need a refinement proof and a suitable representation of the value-dependent continuation. The paper supplies an Isabelle model, not a Verus encoding.
 
 ## technique: prove the plain TD first
 
-Use this staged proof when optimization obscures the solver invariant. The plain TD maintains a called set c (to stop recursive descent) and mapping σ. Its mutually recursive functions are:
+The plain TD maintains a called set c and a value mapping σ. Its three mutually recursive functions are defined on p.308:
 
-- `iterateplain x c σ`: evaluate x; if the new value differs from σ x, update σ and recurse until equal
-- `evalplain x t c σ`: traverse a strategy tree
-- `queryplain x y c σ`: look up σ y when y∈c; otherwise call `iterateplain y (c∪{y}) σ`
+- `iterateplain x c σ`: evaluate x’s right-hand side; return if its value equals σ x, otherwise update σ and repeat
+- `evalplain x t c σ`: traverse the strategy tree t, invoking `queryplain` at query nodes
+- `queryplain x y c σ`: return σ y when y is already called; otherwise invoke `iterateplain y (c∪{y}) σ`
 
-The paper gives the core update: “The function iterateplain iterates one unknown x until a ﬁxpoint is reached for it, i. e., the newly computed value and the value from the previous iteration coincide.” (Section 3, PDF p.4.) `solveplain` starts with `{x}` and bottom mapping.
+The authors explain: “The function iterateplain iterates one unknown x until a ﬁxpoint is reached for it, i. e., the newly computed value and the value from the previous iteration coincide.” (Section 3, p.308.) `solveplain x` starts with called set `{x}` and a mapping that assigns ⊥ to every unknown. The called set prevents infinite recursive descent through a cycle; it does not ensure that repeated value updates terminate.
 
-The proof follows the computation trace, a tree of calls. For each trace node, define a set s of unknowns in the reaching left-context that are stable under re-evaluation. The key invariant `validplain c s σ` requires (i) dependencies of each truly stable unknown remain in s and (ii) T x σ = σ x for each x∈s−c (Definition 1, PDF p.6). The proof uses mutual induction over query, iterate, and eval calls; Lemma 1 preserves partial solutions after updates, and Lemma 2 shows a changed value cannot belong to s. On termination with c empty, Corollary 1 yields a partial solution for the reached closure.
+The proof uses mutual induction over a computation trace. Nested calls become children; recursive calls to the same function become siblings. The reaching left-context comprises calls in progress on the path to the root and completed subtrees to its left (p.309). A proof set s collects called unknowns and unknowns from last iterations in that context. Called unknowns are looked up; unknowns in s−c are truly stable. The invariant `validplain c s σ` requires dependencies of each unknown in s−c to lie in s and its equation to hold (Definition 1, p.310).
 
-Verus form (Inference:): write three mutually recursive proof/spec functions with explicit decreasing measures, or use an iterative executable loop plus ghost trace. Maintain `validplain` as a loop invariant over ghost sets/maps. Prove that any update preserves stable equations and that the final called set is empty. The trace induction is a proof device; production Rust need only execute the solver.
+Lemma 1 preserves those equations when values on s remain unchanged. Lemma 2 excludes an unknown with an unsatisfied equation from a set on which σ is a partial solution. Theorem 1 establishes invariant preservation and preservation of values already in s across query, iterate, and eval calls (pp.310–312). Corollary 1 states that a terminating `solveplain x` returns a partial solution on the reflexive-transitive dependency closure of x (p.312).
+
+Inference: a Verus proof could expose a ghost call trace and these stable-set invariants. Since arbitrary iterations may diverge, a total recursive proof function would need an explicitly supplied finite trace or another justified termination measure. The paper does not provide an unconditional measure for all solver inputs.
 
 ## technique: optimize with stable and influence maps
 
-Use this when repeated evaluation is expensive and dependencies can change. The full TD adds:
+TD adds a `stable` set and an `infl` map, which records the reverse dependencies observed during evaluation (Section 4, pp.312–314). At the end of a query, it records the querying unknown among the unknowns influenced by the queried one. The optimization is explicit: “If iterate is invoked for an unknown that is already in stable, its right-hand side is not evaluated; instead, its value is simply looked up in σ.” (p.313.)
 
-1. `stable`, the set of unknowns whose current values need not be reevaluated
-2. `infl`, a reverse dependency map recording which unknowns are influenced by each queried unknown
-3. `destab`, which recursively removes all transitive dependants from stable when a value changes
+For an unstable x, `iterate` first inserts x optimistically into `stable`, then evaluates its right-hand side. If its value changes, it invokes `destab`, updates σ x, and repeats. `destab x` clears x’s outgoing influence set, removes its directly influenced unknowns from `stable`, and recursively processes them. It removes x itself only if there is an influence cycle back to x (pp.313–314). Reevaluation occurs when a removed unknown is queried again.
 
-A query records its parent in `infl`; `iterate` returns σ x immediately when x is stable, otherwise optimistically inserts x into stable, evaluates it, and calls `destab` if the value changed. The paper states: “If iterate is invoked for an unknown that is already in stable, its right-hand side is not evaluated; instead, its value is simply looked up in σ.” (Section 4, PDF p.8.)
+The invariant `valid c σ infl stable` requires:
 
-The crucial TD invariant `valid c σ infl stable` requires called⊆stable, stable equations hold outside c, nonempty influence-map keys lie in stable, and every dependency of a stable unknown is recorded in `infl` (Definition 2, PDF p.10). The update relation requires stable to grow, old influence entries to persist for old stable nodes, and new dependencies to involve only unstable nodes or the current x (Definition 3, p.10).
+1. c⊆stable
+2. equations hold for unknowns in stable−c
+3. keys with nonempty influence sets belong to stable
+4. every dependency of an unknown in stable−c is recorded in `infl`
 
-Prove `destab` is both thorough and specific: it removes every possibly outdated stable node, but does not remove an unaffected stable node. Lemma 4 establishes preservation of the TD invariant. Lemma 5 shows stable lookups return exactly the value plain TD would compute. Theorem 2 proves that termination of plain TD implies termination of TD with the same value; Theorem 3 proves the converse under finite stable; Corollary 2 concludes equivalence and Corollary 3 gives TD partial correctness (PDF pp.11–13).
+These are Definition 2’s four conditions (p.315); the dependency-recording condition excludes currently called unknowns. The update relation describes a completed call relative to its input: previously stable unknowns remain stable, new influence targets exclude previously stable unknowns other than the current x, and influence entries for previously stable keys persist (Definition 3, pp.315–316). This does not assert that `stable` grows at every internal step: `destab` removes entries.
 
-Verus form (Inference:): store `stable` and `infl` in ghost sets/maps alongside executable σ. Specify `destab` with postconditions stating the removed set is exactly the transitive influence closure and that unaffected stable nodes remain. Use map/set extensionality lemmas and a termination variant based on the finite stable set. Do not treat destabilization as an unproved optimization: prove equivalence to the plain solver first.
+Lemma 4 supplies preservation properties for destabilization. Lemma 5 says that, if a plain-TD call on an already stable unknown terminates, it leaves σ unchanged (p.316). Lemma 6 additionally proves termination of that stable lookup’s plain-TD counterpart using finiteness of `stable` (pp.318–319). Theorem 2 proves the direction from terminating plain TD to TD; Theorem 3 proves the reverse with a finite input stable set. Starting from the initial empty stable set, the solvers terminate together and return equal value mappings. Corollary 3 gives a partial solution on TD’s returned stable set, which contains the requested unknown (pp.317–320).
+
+Inference: an executable Rust adaptation needs runtime `stable` and `infl` structures to perform these optimizations; ghost sets alone cannot drive execution. Ghost predicates could express their invariants. The useful proof obligation is that skipping a stable unknown preserves the reference solver’s result and termination behavior.
 
 ## technique: refine Isabelle definitions into executable code
 
-The Isabelle function package supports domain predicates and mutual recursion but its code generator cannot directly extract this combination. The authors therefore prove the abstract algorithms, then refine them to equivalent partial-function versions returning options for code generation (Introduction, PDF p.2). They extract executable programs for both plain TD and TD and run a small example.
+The introduction states: “For our formalization, we use the function package with domain predicates and mutual recursion to deﬁne the solver algorithms in Isabelle.” It then explains: “The combination of features is, however, not supported by the code generation framework provided by Isabelle.” (p.305.) The authors refine the algorithms into equivalent partial-function versions using options, extract executable code for both solvers, and demonstrate a small example.
 
-Verus form (Inference:): similarly separate a mathematically convenient `spec fn` from executable Rust with explicit `Option`/result states. Prove a refinement lemma that every executable step corresponds to a spec step and that termination/error behavior is preserved. This keeps code-generation restrictions from weakening the proof model.
+Inference: separating a proof specification from an executable representation could also help a Verus implementation. The correspondence between the two representations would need proof; returning an option does not itself establish that correspondence.
 
 ## evidence, trusted parts, and limits
 
-Evidence is formal rather than statistical: the Isabelle/HOL development proves the stated partial-correctness and equivalence theorems and is archived publicly. The paper demonstrates the solver on a variable-initialization equation system with unknowns w,z,y,x (Example 1, PDF p.3) and a computation trace; it reports that in this example TD skips more than half of the computations (Section 4, p.9), but gives no benchmark denominator or runtime table. The formal guarantees assume pure right-hand sides, finite strategy-tree depth, and termination when partial correctness is invoked. For complete correctness, the authors note that complete lattices, monotonic right-hand sides, finite unknown sets, and an ascending-chain condition suffice for termination (Conclusion, PDF p.13). Widening, narrowing, and side-effecting equation systems remain future work.
+The paper reports an Isabelle/HOL formalization archived in the Archive of Formal Proofs (Introduction, p.305; reference 27, p.323). Example 1 models variable initialization with unknowns w, z, y, and x (pp.306–307). Figure 4 compares computation traces, and the authors state: “In this example, the TD saves more than half of the computations.” (p.314.) Inference: this trace comparison alone does not establish a general runtime improvement.
 
-What is proved: if TD terminates, its stable values satisfy the reached equations; TD and plain TD terminate together and return the same result. What remains trusted: Isabelle’s kernel and extraction toolchain, the purity/modeling assumptions, and any external analyzer that supplies equation systems. The paper does not prove least-fixpoint optimality for arbitrary domains; that needs additional order/monotonicity assumptions.
+The general theorem assumes pure right-hand sides and finite-depth strategy trees, and provides partial correctness without order or monotonicity assumptions. The conclusion states: “When the complete lattice additionally satisﬁes the ascending chain condition and the set of unknowns is ﬁnite, the TD is guaranteed to terminate.” (p.321.) This follows the discussion of complete lattices and monotonic right-hand sides. The authors describe extending their invariants to prove agreement with the least solution; they do not present that extension as part of the established general theorem. Incorporating widening, narrowing, and side-effecting equation systems remains future work (Section 6, p.321).
 
-Inference: this is a strong pattern for VL’s verified Rust analyses. Agent-written optimizations should be proved equivalent to a simpler reference algorithm, with computation-trace invariants exposing hidden mutable state. The threat to a product is moderate: an incorrect dependency cache or invalidation policy can silently reuse stale proofs, while a too-conservative `destab` harms performance. Existing work already provides the TD proof architecture; VL should reuse its staged invariant method rather than invent another generic fixpoint proof without a concrete gap.
+Inference: confidence in an analyzer additionally depends on the proof checker, code extraction, and whether its equations meet the model’s assumptions. For verified Rust analyses, the reusable method is to prove a simple reference solver correct, then prove that caching and invalidation preserve its behavior.
 
 ## techniques for the catalog
 
-- strategy-tree equation model — represent pure black-box right-hand sides as finite query/answer trees with dynamic dependencies
-- plain TD reference solver — prove recursive descent and fixpoint iteration correct before optimization
+- strategy-tree equation model — represent pure black-box right-hand sides as finite-depth query/answer trees with dynamic dependencies
+- plain TD reference solver — establish partial correctness before adding dependency tracking and stable-value reuse
 - trace-based mutual induction — derive invariants over the computation trace of mutually recursive calls
-- stable-value caching — skip reevaluation when an unknown depends only on unchanged stable values
-- influence-map destabilization — invalidate transitive dependants precisely after a value changes
-- executable refinement — extract option-based executable code from a proof-friendly recursive specification
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- stable-value caching — justify skipped evaluations by equivalence to the plain solver
+- influence-map destabilization — remove transitively influenced unknowns while preserving the solver invariants
+- executable refinement — obtain option-based executable versions from the recursive proof definitions
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This includes proving that destabilization is thorough enough to remove all unknowns possibly aﬀected by a changed value from stable, such that no evaluation builds on possibly outdated values of stable unknowns."): read the full paper text from first line to last and the full study; checked quotations, DOI, authors/year tag, numbers, page and theorem references, assumptions, solver steps, and proof scope; corrected page references, finite-depth terminology, stable/influence invariants, the distinction between Lemmas 5 and 6, and speculative Verus claims; removed unsupported product-risk judgments; did not inspect the archived Isabelle proofs, execute extracted solvers, or validate a Verus implementation.

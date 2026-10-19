@@ -1,85 +1,90 @@
 # Automated Strategy Invention for Confluence of Term Rewrite Systems
 (authored by agents unless marked 🧑)
-Tag: `zhang2024strategy`, [paper](http://arxiv.org/abs/2411.06409v2)
+Tag: `zhang2024strategy`, [paper](https://arxiv.org/abs/2411.06409v2)
 
 ## scope and result
-This paper trains a strategy portfolio for CSI, an automatic confluence prover for term-rewrite systems (TRSs). The abstract says: “We apply AI techniques to invent strategies for automatic confluence proving.” (abstract, p. 1). CSI has many processors, flags, transformations, schedules, and parallel branches; manually selecting them is difficult because confluence is undecidable and a random combination may be unsound (Introduction and Section 3.1, pp. 1, 3–4).
 
-A TRS is a finite set of rules `l → r`; confluence means every pair of reductions from one term can be joined. CSI returns YES, NO, or MAYBE. It emits certificates that the external CeTA certifier can check, but “Not all processors implemented in CSI are verifiable because CSI cannot produce certificates for all processors, and CeTA does not implement the verification procedures for all processors.” (Section 2.2, p. 2).
+This paper invents complementary strategies for CSI, an automatic confluence prover for term rewrite systems (TRSs). The abstract says: “In this paper, we focus on confluence of term rewrite systems, and apply AI techniques to invent strategies for automatic confluence proving.” (p. 1). CSI has many processors, flags, transformations, schedules, and parallel branches. The authors explain why arbitrary strategies can be unsound and design a restricted search space (Section 3.1, pp. 3–4).
+
+A TRS consists of rewrite rules `l → r`; confluence means every pair of reductions from one term can be joined (Section 2.1, p. 2). CSI returns YES, NO, or MAYBE. It can emit certificates for the external CeTA certifier, but “Not all processors implemented in CSI are verifiable because CSI cannot produce certificates for all processors, and CeTA does not implement the verification procedures for all processors.” (Section 2.2, p. 2).
 
 ## technique 1: sound strategy-space design
 
 what it is
 
-Before learning, constrain the parameter space so every generated strategy is intended for confluence and preserves soundness. The paper identifies three unsoundness routes: a processor intended for termination, flags proving a different property, and transformations changing the goal to relative termination (Section 3.1, pp. 3–4).
+Constrain strategy invention using the structure of CSI's expert competition strategy. The paper identifies three possible causes of unsoundness: processors intended for other properties, flags that change the property proved, and transformations that change the goal, for example to relative termination (Section 3.1, p. 3).
 
 how to apply it
 
-1. Enumerate the prover's processors and classify them by the property they prove or transform (Section 2.2, p. 2; Section 3.1, p. 4).
-2. Remove processors and flag combinations that cannot certify confluence.
-3. Decompose the expert competition strategy into 23 sub-strategies: nine mainly for confluence and 14 for non-confluence (Section 3.1, p. 4).
-4. Encode each remaining processor, parameter, sequencing, repetition, parallelism, timeout, and result-discarding operation in Grackle's strategy language.
-5. Treat generated proofs as provisional until CSI's certificate is checked by CeTA; manually inspect proofs that CeTA cannot certify (Section 2.2, p. 2; Section 5.2, pp. 8–9).
+1. Start with CSI's competition strategy and its decomposition into 23 sub-strategies, nine mainly for confluence and 14 for non-confluence. These 24 strategies initialize Grackle (Section 3.1, p. 3).
+2. Define discrete choices for processor flags, iteration parameters such as time limits and repetition counts, and boolean parameters controlling whether sub-strategies execute (Section 3.1, pp. 3–4).
+3. Construct a CSI configuration by substituting the chosen parameters and disabling selected sub-strategies. Generally preserve processor order and strategy structure; Appendix D.2 also describes deliberate simplifications, including replacing NOTCR's multiple branches with one parameterized non-confluence processor (pp. 12–24).
+4. Keep flags required by surrounding transformations. For example, after the usable-rule transformation in MAINTRS, the termination processors must retain the `-ur` flag (Appendix D.2, pp. 15–16).
+5. Forbid specified parameter combinations for soundness or to reduce the search space, such as negative polynomial coefficients combined with the default linear interpretation (Appendix D.2–D.3, pp. 17, 23–24).
 
-Inference: For Verus, this is the analogue of restricting proof-search tactics to sound constructs. A strategy generator should emit only combinations whose postconditions are expressible as Verus lemmas, then require Verus checking of each generated proof. The training score must never treat an unverified “YES” as a proof.
+Inference: For Verus, a comparable design would restrict proof-plan transformations to constructs accepted by Verus and use successful verification as the search score. Restricting search and checking its outputs serve different purposes; soundness does not imply that a particular external certifier supports every operation.
 
 evidence and limits
 
-The strategy-space restriction is methodological rather than a theorem. CeTA certification is incomplete, so a passing CSI answer can remain outside the certified subset. The paper reports that only 234 (one CPU) and 226 (four CPUs) proofs could be verified by CeTA in one portfolio evaluation (Section 5.2, p. 9); the denominator is all proofs generated by the corresponding final portfolio, while the exact total is not stated in that sentence.
+The authors give parameter-specific explanations and references in Appendix D, rather than a single formal proof of the entire strategy generator. They also check results against competition answers, attempt CeTA certification, and manually investigate unsupported proofs (Section 5.2, pp. 6–7; Appendix H, pp. 27–30). On problems mastered by the final ARI-COPS strategies, they report only 234 certifiable proofs for the one-CPU run and 226 for the four-CPU run; that sentence does not provide a denominator (Section 5.2, p. 7).
 
-## technique 2: Grackle portfolio invention loop
+## technique 2: Grackle portfolio invention and combination
 
 what it is
 
-Grackle searches for complementary strategies with a genetic algorithm and parameter tuning. Definition 1 requires a bounded set `S'` in which each strategy masters a subset of benchmark problems that no other selected strategy solves faster. Algorithm 1, “GrackleLoop”, gives the operational loop (Section 2.3, pp. 2–3).
+Grackle uses a genetic algorithm and randomized parameter tuning to search for complementary strategies. Definition 1 describes a bounded set in which each strategy masters problems that no other strategy in the set solves faster. Algorithm 1 gives the search loop (Section 2.3, pp. 2–3).
 
 how to apply it
 
-1. Set initial strategy set `S`, benchmark problems `P`, and hyperparameters `β` (Algorithm 1, p. 3).
-2. Initialize portfolio `Φ` with `S`.
-3. Repeatedly evaluate `(P, Φ, β)`, reduce redundant strategies, and select a candidate `s` (Algorithm 1, lines 1–6).
-4. If no candidate remains, stop; otherwise specialize `s` with ParamILS/randomized parameter tuning to obtain `s0` (Algorithm 1, lines 6–8; Section 5.1, p. 8).
-5. Add `s0` to the portfolio and continue until the termination criterion.
-6. Combine the retained strategies into a unified CSI strategy, assigning CPU/time slices to each (Section 5.2, pp. 9–10).
+1. Supply initial strategies `S`, benchmark problems `P`, and hyperparameters `β`; initialize the strategy portfolio with `S` (Algorithm 1, p. 3).
+2. Evaluate the portfolio on `P`, caching results to avoid duplicate execution. Score strategies and retain a configurable number of the highest-scoring strategies as the current generation (Section 2.3, p. 3).
+3. Select a strategy from that generation. Stop if none can be selected; otherwise specialize it on the problems it performs best on. The experiments use ParamILS for this randomized parameter tuning (Sections 2.3 and 5.1, pp. 3, 6).
+4. Add the new strategy to the portfolio and repeat until termination (Algorithm 1, p. 3).
+5. After invention, divide a one-minute budget into time slices. Greedily assign each slice a strategy that solves the most problems still unsolved by previous selections. Shuffle the slice sequence 100 times and repeat selection; try multiple divisions and choose the schedule with greatest problem coverage (Section 3.2, p. 4).
+6. Execute the chosen strategies sequentially under their assigned time limits. A Python program invokes CSI with separate configuration documents to avoid naming conflicts (Appendix G, pp. 26–27).
 
-Inference: For VL, replace CSI processors by proof-plan transformations (invariant candidates, lemma ordering, solver settings), use verified proof success as the fitness signal, and retain several complementary plans rather than one brittle heuristic. The genetic search remains an orchestration layer; Verus checking is the soundness boundary.
+Inference: For VL, candidate proof plans could vary invariant candidates, lemma order, and solver settings. Retaining several plans can cover different obligations; the portfolio search would organize attempts while Verus checks each result.
 
 ## technique 3: balanced random dataset generation
 
 what it is
 
-The authors enlarge the small ARI-COPS corpus with random TRSs, then rebalance examples so learning does not optimize for one confluence technique. Their generator fills undefined function arguments randomly while respecting linearity constraints (Algorithm 2, Section 4.1, pp. 5–6).
+The authors generate random TRSs and sample them using CSI outcomes and the strategy that solves each fastest. The aim is relative balance across confluence techniques, rather than a distribution dominated by a few strategies (Section 4, pp. 4–5).
 
 how to apply it
 
-1. Generate terms from chosen root symbols, functions, constants, and variables; repeatedly replace undefined arguments with random symbols (Algorithm 2, lines 8–20, p. 5).
-2. Run CSI's competition strategy for one minute on every generated TRS and label each as NO, YES, or MAYBE (Section 4.2, p. 6).
-3. Sample 5,000 from each label, remove syntactic duplicates against ARI-COPS, and run 26 labeling strategies (Section 4.2, pp. 6–7).
-4. For each strategy, retain at most 300 problems it solves fastest and add 1,200 unsolved-by-any-label problems.
-5. The resulting dataset has 5,267 TRSs: 1,647 confluent, 1,910 non-confluent, and 1,710 indeterminate under the one-CPU, one-minute CSI run (Section 4.2, p. 7).
+1. Generate 100,000 TRSs with maximum counts of 12 function symbols, five constants, eight variables, and 15 rules; maximum function arity is eight. Set the left-linear generation probability to 0.6 and the complex-term parameter to 1.6. Generated terms have at most 15 symbols (Sections 4.1–4.2, p. 4).
+2. Choose a root and fill undefined function arguments with random symbols. Prevent variable reuse on the left when generating a left-linear rule, and allow only variables occurring on the left to occur on the right (Algorithm 2 and Section 4.1, pp. 4–5).
+3. Run CSI's competition strategy for one minute per TRS on one CPU. It returns 69,317 NO, 25,012 YES, and 5,671 MAYBE answers. Randomly select 5,000 from each group (Section 4.2, p. 5).
+4. Remove duplicates within the selected random systems and against the 566 ARI-COPS TRSs, using equivalence of syntactic structures modulo variable renaming and a special function-symbol renaming. When an equivalence class occurs in both datasets, remove only the random examples (Section 4.2, p. 5).
+5. Run 26 labeling strategies: the 24 initial strategies and two additional decompositions isolating development closedness and decreasing diagrams. Allow one minute for the competition strategy and 30 seconds for the others (Section 4.2, p. 5).
+6. Randomly retain at most 300 problems mastered by each labeling strategy, and add 1,200 problems unsolved by every labeling strategy. The resulting random dataset contains 5,267 TRSs: 1,647 confluent, 1,910 non-confluent, and 1,710 indeterminate under the one-CPU, one-minute competition-strategy run (Section 4.2, p. 5).
 
-The final dataset is relatively, not perfectly, balanced; four strategies master over 1,000 problems and 16 master under 250 before capping (Section 4.2, p. 7). Inference: A VL dataset should similarly record solver, CPU/time limit, label source, and train/test identity; otherwise “success rate” conflates search budget with proof quality.
+The paper says the final distribution is “not perfectly balanced” (Section 4.2, p. 5). Before capping, four strategies master over 1,000 problems each and 16 master fewer than 250 each. Inference: A VL dataset should record the solver, budget, label source, and train/test membership, since an indeterminate answer reflects a particular search attempt rather than the underlying mathematical truth.
 
-## technique 4: portfolio evaluation and certification
+## technique 4: evaluation and incomplete certification
 
 what it is and how to apply it
 
-Train on a disjoint subset, evaluate on held-out problems, compare the invented portfolio with the expert competition strategy, and certify every available proof. For ARI-COPS, training uses 283 examples and testing 283 different examples; the augmented dataset uses 800 training and 800 test random examples (Section 5.1, p. 8). Grackle allows 30 seconds per strategy evaluation, 45 minutes per specialization, and two days total; runs use one or four CPUs on an AMD EPYC 7513 (Section 5.1, p. 8).
+Keep evaluation settings separate. Section 5.1 describes splitting the 566 ARI-COPS TRSs into 283 training and 283 testing examples and selecting 800 disjoint random examples for each augmented split (p. 6). Each augmented split therefore has 1,083 examples. However, Section 5.2 explicitly says: “Notice that here the training examples are disjoint from the testing examples, whereas in the evaluation for ARI-COPS, they are the same.” (p. 7). Inference: The ARI-COPS results should not be presented as held-out performance; the paper's descriptions of that evaluation are inconsistent.
 
-Results must retain denominators and settings. On ARI-COPS, Table 2 reports 469 solved by the competition strategy versus 478 with the combined invented strategy at one CPU, and 477 versus 483 at four CPUs. On the augmented test set, Table 4 reports 802 versus 862 solved at one CPU and 854 versus 867 at four CPUs. The paper notes that the ARI-COPS comparison reuses the same dataset for portfolio evaluation, while the augmented comparison is held out (Section 5.2, p. 10).
+Grackle allows 30 seconds per strategy evaluation, 45 minutes per specialization, and two days per run. Each CSI execution receives one or four CPU cores; Grackle receives 52 or 66 cores in total, respectively, on AMD EPYC 7513 processors. It stores at most 200 best strategies (Section 5.1, p. 6).
 
-Inference: For Verus, report verified obligations over total obligations and separate cached proofs, timeout failures, and untrusted solver answers. A learned plan that solves more examples but has fewer machine-checked certificates is not a product improvement.
+On all 566 ARI-COPS TRSs, Table 2 reports 469 solved by the competition strategy versus 478 by the combined invented strategy with one CPU, and 477 versus 483 with four CPUs. The union of all final portfolio strategies solves 479 and 484, respectively (p. 6). On the 1,083 augmented test examples, Table 4 reports 802 versus 862 with one CPU and 854 versus 867 with four CPUs (p. 7).
 
-## trust, contradictions, and VL threat
+Across the one- and four-CPU final portfolios, nine ARI-COPS problems had not been solved by any CSI version; five had not been solved by any participant in CoCo. Of those five, three have CeTA-certifiable proofs (Table 3, p. 6). The checks also include consistency with competition results and manual examination of certification errors. Unsupported cases include unavailable CSI certificate output and techniques absent from CeTA (Appendix H, pp. 27–30).
 
-The proved property is each accepted TRS certificate, not the learning algorithm. Trust includes CSI processor soundness, CeTA's implemented checkers, random-data representativeness, and the assumption that benchmark labels are correct. The paper itself says its generated strategies “surpass CSI’s competition strategy” (abstract, p. 1), but gains depend on CPU count, time limits, and dataset: one CPU gives larger augmented gains (60 problems) than four CPUs (13), while unified four-CPU strategies solve more in another setting (Section 5.2, pp. 9–10). These are not contradictory once the denominators and evaluation settings are distinguished.
+## interpretation for VL
 
-Inference: Agent-written verified Rust faces a high orchestration threat: strategy search may exploit unsound specifications, vacuous lemmas, or timeout-dependent scoring. VL should copy the paper's separation of invention, held-out evaluation, and independent certification, while rejecting any candidate that lacks a Verus proof artifact. Existing work already demonstrates portfolio search and balanced data generation; VL should not reimplement generic genetic tuning without a verification-specific fitness and certificate pipeline.
+Inference: The transferable idea is to search over an existing prover's strategies, retain complementary configurations, schedule them under a fixed budget, and measure checked success on held-out obligations. The paper's certification limits mean its solved counts should not be equated with independently certified proof counts.
+
+The paper provides a concrete example of useful parameter search: replacing `redundant -narrowfwd -narrowbwd -size 7` with `redundant -development 6 -size 7` enables a non-confluence proof for 846.ari (Introduction, pp. 1–2). Appendix H.2 reports certifiable proofs for both 846.ari and 852.ari using this change (p. 28). Inference: For VL, parameter choices that initially appear unhelpful can merit reconsideration as the benchmark changes. Verus acceptance would still establish only the supplied specification; a search score should not reward weakening that specification.
 
 ## techniques for the catalog
 
-- sound strategy-space restriction — constrain learned processor combinations to confluence-preserving, certifiable operations
-- complementary portfolio invention — evolve and specialize a bounded set of strategies, then combine them under a schedule
-- balanced synthetic benchmarks — generate random systems, label them under fixed budgets, deduplicate, and cap dominant classes
-- independent certificate evaluation — compare on held-out instances and verify outputs with an external checker
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- sound strategy-space restriction — preserve required strategy structure and flags, and forbid unsound parameter combinations
+- complementary portfolio invention — specialize strategies on their strongest problems and combine them under a time schedule
+- balanced synthetic benchmarks — generate systems, label under fixed budgets, remove duplicates, and cap dominant strategy groups
+- separate result and certificate evaluation — distinguish held-out coverage, competition consistency, external certification, and manual analysis
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The structures are also kept unchanged, meaning that we first execute dp and then edg, etc."): read all 33 PDF pages, including appendices and references; checked quotations, numbers, section and PDF-page references, strategy steps, dataset construction, evaluation scope, and certification limits; corrected quotations and page references, distinguished CSI's strategy language from Grackle's parameter encoding, removed a certifiability restriction absent from the method, and identified the inconsistent ARI-COPS split descriptions; retained the tag and linked the arXiv identifier printed on page 1; did not rerun experiments, inspect implementation code, or independently verify mathematical proofs.

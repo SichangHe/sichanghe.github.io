@@ -2993,6 +2993,8 @@
         - [🤖 Cumulative Reasoning with Large Language Models walkthrough](notes/research/vl_paper_walkthrough/zhang2023cumulative.md)
         - [🤖 A Survey of Learning-based Automated Program Repair walkthrough](notes/research/vl_paper_walkthrough/zhang2023survey.md)
         - [🤖 Decomposing the Enigma walkthrough](notes/research/vl_paper_walkthrough/zhao2023decomposing.md)
+        - [🤖 SWE-Bench+ walkthrough](notes/research/vl_paper_walkthrough/aleithan2024swebenchplus.md)
+        - [🤖 Solvent walkthrough](notes/research/vl_paper_walkthrough/bartoletti2024solvent.md)
         - [🤖 Literature shortlist for Verus work](notes/research/vl_literature_shortlist_20261012.md)
         - [🤖 Formal verification techniques, by paper](notes/research/vl_fv_techniques/index.md)
         - [🤖 Formal verification techniques, by stage of work](notes/research/vl_fv_techniques/overview.md)

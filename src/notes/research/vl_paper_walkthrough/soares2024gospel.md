@@ -6,9 +6,9 @@ Tag: `soares2024gospel`, [paper](http://arxiv.org/abs/2407.17289v2)
 
 The paper presents a common specification language and a staged workflow combining runtime assertion checking (RAC), deductive verification, and interactive separation-logic proofs. Gospel contracts describe OCaml behavior; Ortac tests implementations dynamically; Cameleer translates Gospel plus OCaml to WhyML and discharges verification conditions; CFML translates OCaml and Gospel to Coq separation logic when mutable heap structures exceed Cameleer’s scope. The paper states: “We use Gospel, the OCaml specification language, as the key ingredient to achieve collaboration between the two analysis approaches.” (section 6, p. 15)
 
-The graph path-checking case study uses an implementation of breadth-first search, plus Queue and Hashtbl standard-library structures. Table 1 reports Path checking with 213 Cameleer VCs, 50 lines of code and 118 lines of specification/script, and 26.63 seconds replay time; Queue with 4 CFML theorems/lemmas, 19/72 lines, and 47 Cameleer VCs with 31/25 lines and 1.93 seconds; Hashtbl with 89 CFML theorems/lemmas and 186/1397 lines. The caption says measurements were on a Lenovo Thinkpad X1 Carbon 8th Generation with four 1.80 GHz CPUs and 16 GB RAM, averaging five runs. Ortac results are random traces that passed the supplied contracts, not exhaustive proofs.
+The graph path-checking case study uses an implementation of breadth-first search, plus Queue and Hashtbl standard-library structures. Table 1 reports Path checking with 213 Cameleer VCs, 50 lines of code and 118 lines of specification/script, and 26.63 seconds replay time; Queue with 4 CFML theorems/lemmas, 19/72 lines, and 47 Cameleer VCs with 31/25 lines and 1.93 seconds; Hashtbl with 89 CFML theorems/lemmas and 186/1397 lines. The paragraph following Table 1 says measurements used a Lenovo Thinkpad X1 Carbon 8th Generation, Linux kernel 5.4.0-60-generic, four Intel 1.80 GHz CPUs, and 16 Gb RAM; Cameleer replay times average five runs measured with hyperfine (p. 14). Ortac results are random traces that passed the supplied contracts, not exhaustive proofs.
 
-Trusted components include user-written Gospel contracts, model fields and representation predicates, OCaml compiler/runtime behavior, Ortac’s generated wrappers and random generators, Why3 and Alt-Ergo, Coq/CFML, and the abstraction that the model accurately represents concrete state. Inference: this workflow provides layered evidence and reusable contracts, but does not prove that a contract captures the intended product requirement or that tested traces cover all executions.
+Inference: the assurance depends on the supplied Gospel contracts and representation predicates, the OCaml execution environment, Ortac’s translation and testing machinery, and the deductive tools and their proof-checking foundations. The paper does not give a complete trusted-component audit. Inference: this workflow provides layered evidence and reusable contracts, but does not prove that a contract captures the intended product requirement or that tested traces cover all executions.
 
 ## technique 1: one behavioral contract with a logical model
 
@@ -22,7 +22,7 @@ how to do it
 2. Write postconditions against the model: `create` ensures `elems = []`, `push` ensures `q.elems = old q.elems @ [x]`, and `pop` relates the returned head to the old list (Figure 1, p. 3).
 3. State mutation and exceptional behavior explicitly with `modifies` and `raises` (Figure 1).
 4. Use type invariants to connect concrete fields to the model. The queue implementation uses `x.elems = x.front @ List.rev x.rear` and an empty-front invariant (section 2.3, p. 5).
-5. Reuse the same interface contract in runtime and deductive tools (sections 2–3).
+5. Reuse Gospel specifications across runtime and deductive tools, adapting them to each tool’s supported fragment (sections 2–3 and 4.2).
 
 Gospel assumes separated parameters and caller ownership by default, avoiding explicit separation predicates in everyday contracts (section 2.1). It is concise, but the paper notes that equivalent Separation Logic must make ownership explicit.
 
@@ -32,7 +32,7 @@ Inference: model a Rust structure with a ghost/spec representation and expose be
 
 what shows it works and limits
 
-The Queue and path-checking contracts are shared by Ortac and Cameleer/CFML, but the paper explicitly identifies a remaining gap: “it would be interesting to derive a formal argument of such relationship” between RAC and deductive specifications (section 6, p. 16). Inference: contract reuse is an engineering integration claim, not a proved equivalence theorem.
+The path proof uses Queue and Hashtbl specifications checked by Ortac; Ortac does not test the complete path contract (sections 4.3 and 6). Queue specifications need adaptations for Ortac. The paper explicitly identifies a remaining gap: “Even if we argue, informally, that the two sorts of specification are logically equivalent, it would be interesting to derive a formal argument of such relationship.” (section 6, p. 16) Inference: contract reuse is an engineering integration claim, not a proved equivalence theorem.
 
 ## technique 2: runtime assertion checking before proof
 
@@ -60,7 +60,7 @@ The authors report that randomly generated traces for Queue and Hashtbl did not 
 
 what it is and when to use it
 
-Cameleer translates Gospel-annotated OCaml into WhyML and invokes Why3 provers. For the queue implementation, the authors run `cameleer queue.ml`; Why3 generates 40 VCs, “all quickly discharged by the Alt-Ergo SMT solver.” (section 2.3, p. 5) Use it for code whose mutable structures fit Why3’s model and whose contracts can be expressed with automated VCs.
+Cameleer translates Gospel-annotated OCaml into WhyML and invokes Why3 provers. For the queue implementation, the authors run `cameleer queue.ml`; Why3 generates 40 VCs, “all quickly discharged by the Alt-Ergo [18] SMT solver.” (section 2.3, p. 5) Table 1 separately reports 47 VCs for Queue; the paper does not explain this difference. Use it for code whose mutable structures fit Why3’s model and whose contracts can be expressed with automated VCs.
 
 how to do it
 
@@ -100,17 +100,17 @@ Inference: use Verus proof-oriented ownership and ghost state to relate linked n
 
 what shows it works and limits
 
-The Queue CFML proof uses four theorems/lemmas and 19 implementation lines plus 72 specification/script lines; Hashtbl uses 89 and 186/1397 (Table 1, p. 14). Hashtbl’s implementation proof was reused from prior work, so this paper does not establish it anew (section 4.4). Inference: the rising proof-script ratio for Hashtbl shows that heap precision can dominate implementation size.
+The Queue CFML proof uses four theorems/lemmas and 19 implementation lines plus 72 specification/script lines; Hashtbl uses 89 and 186/1397 (Table 1, p. 14). Hashtbl’s implementation proof was reused from prior work, so this paper does not establish it anew (section 4.4). Inference: these examples show that specification/script size can exceed implementation size substantially. They do not isolate the cause of that difference.
 
 ## what VL should retain and threat assessment
 
-The work already demonstrates a mature pattern VL should not redo as a generic novelty: one behavioral contract feeds testing, automated proof, and separation-logic proof, with the least interactive check first and stronger methods added only where needed. Inference: for agent-written verified Rust, the strongest transferable ideas are executable contract subsets for fast feedback, a shared abstract model, explicit loop invariants for correctness/completeness, and a fallback ownership proof for pointer-heavy code. Inference: threat to VL is moderate as a workflow precedent and low as direct product competition; the paper targets OCaml and does not verify Rust, Verus, unsafe boundaries, or production concurrency.
+Inference: VL should treat this workflow as prior work: Gospel specifications connect testing, automated proof, and separation-logic proof, with tool-specific adaptations and the least interactive check first. Inference: for agent-written verified Rust, the strongest transferable ideas are executable contract subsets for fast feedback, a shared abstract model, explicit loop invariants for correctness/completeness, and a fallback ownership proof for pointer-heavy code. Inference: threat to VL is moderate as a workflow precedent and low as direct product competition; this paper evaluates OCaml examples, with no Rust, Verus, or production-concurrency evaluation.
 
 ## techniques for the catalog
 
-- shared behavioral model: write one typed contract with a logical model and reuse it across runtime and deductive analyses
+- shared behavioral model: reuse a typed contract and logical model across runtime and deductive analyses, adapting specifications to tool restrictions
 - runtime contract testing: generate state-machine traces against executable contracts before proof effort
 - automated VC discharge: translate contracts to WhyML and solve routine verification conditions with SMT
 - separation-logic fallback: define heap representation predicates and prove mutable pointer structures interactively
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Finally, the specification of successor function states it returns the complete list of successors of node source."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected contract-sharing scope, measurement attribution, an omitted citation inside a quotation, and unsupported conclusions; distinguished the 40-VC example from the 47-VC table entry; did not run the artifact, audit tool soundness, or validate the proposed Verus adaptations.
