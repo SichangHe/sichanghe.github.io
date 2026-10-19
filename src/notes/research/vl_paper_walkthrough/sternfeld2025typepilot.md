@@ -5,93 +5,86 @@ Tag: `sternfeld2025typepilot`, [paper](https://doi.org/10.26615/978-954-452-101-
 
 ## what the paper does
 
-Sternfeld, Kucharavy, and Dolamic introduce TypePilot, a three-stage agentic workflow for LLM-generated Scala. One model generates code, a second describes vulnerabilities, and a third revises the code using Scala's type system. They evaluate Stainless verification tasks and general input-constraint and injection tasks. The abstract says the “type-focused agentic pipeline substantially mitigates input validation and injection vulnerabilities” (abstract, p.95), while the conclusion says the Stainless experiments did not yield consistently compilable code and the broader Scala setting was therefore emphasized (sec.6, p.102).
+Sternfeld, Kucharavy, and Dolamic introduce TypePilot, a three-stage workflow for LLM-generated Scala. Separate instances generate code, describe its vulnerabilities, and revise it using Scala's type system (sec.3.3, pp.97–98). The abstract says the “type-focused agentic pipeline substantially mitigates input validation and injection vulnerabilities” (p.95). The Stainless experiments instead find that no model consistently generates compilable code (sec.4.1, p.99).
 
-Models include Qwen-2.5-Coder-32B, CodeLlama-70B, DeepSeek-Coder-33B, and conversational models (sec.3.1, p.96). General tests cover Fibonacci, factorial, sublists, matrix operations, HTML, Bash, and URL redirects (Table 1, p.97). Results are manual checkmarks, crosses, and partial marks rather than a statistical benchmark. For input constraints, Qwen-2.5-Coder with TypePilot passes all listed checks in Table 2; CodeLlama remains vulnerable in several cases (sec.4.2.1, p.99). For injection, baseline generations are “virtually all” vulnerable, while TypePilot is robust in almost all settings (sec.4.2.2, p.99).
+Section 3.1 lists Qwen2.5-Coder-32B-Instruct, DeepSeek-Coder-33B-Instruct, CodeLlama-70B-Instruct-hf, Meta-Llama-3-70B, DeepSeek-R1-Distill-Llama-70B, and Qwen3-32B (p.96). Tables 2–3 report the three coding models. Table 1 lists Fibonacci, factorial, and sublists for Stainless; Fibonacci, factorial, matrix multiplication, and convolution for general input constraints; and HTML, Bash, and URL tasks for injection (p.97). Table 2 instead reports average age, Fibonacci, multiplication, and convolution (p.98). The paper does not explain the factorial/average-age discrepancy.
+
+Results are manual evaluations. Qwen-2.5-Coder with TypePilot passes every Table 2 check, while CodeLlama retains several failures (sec.4.2.1, p.100). For injection, the authors say baseline code is “virtually all” vulnerable and TypePilot produces robust code in almost all settings (sec.4.2.2, p.100). Table 3 still records a compilation/correctness failure for DeepSeek's TypePilot HTML greeting, partial correctness for CodeLlama's HTML comments, and partial injection resistance for Qwen's URL redirect (p.99).
 
 ## technique: generate, diagnose, and revise with a three-agent pipeline
 
-What it is: separate implementation generation, vulnerability analysis, and remediation. Figure 1 and Figure 4 show the flow (sec.3.3, pp.97–98).
+What it is: separate implementation generation, vulnerability analysis, and remediation. Figures 1 and 4 show the flow (pp.97–98).
 
-When to use it: use this when one-shot code generation routinely misses edge cases or injection boundaries and the target language has type features that can encode constraints.
+How to do it, following Figure 4 (p.98):
 
-How to do it:
+1. Give a first LLM instance the task and request Scala code
+2. Give a second instance the task and generated code; request vulnerability descriptions without code
+3. Give a third instance the task, original code, and vulnerability list; request a revision using Scala features such as ADTs, refined types, traits, and sealed traits
 
-1. Prompt a first LLM with the task and request code delimited as Scala (sec.3.3, p.98)
-2. Give the task and generated code to a second LLM; request vulnerability descriptions only, with no replacement code (sec.3.3, p.98)
-3. Give task, original code, and vulnerability list to a third LLM; request a revised implementation using ADTs, refined types, traits, and sealed traits (sec.3.3, p.98)
-4. Compile or manually inspect the result against the test cases (secs.3.2–4.2, pp.96–101)
-5. Compare baseline, robust-prompting, TypePilot, and Self-Planning outputs (sec.4.4, p.102)
+The robust-prompting comparison directly requests safe code using the type system; the baseline uses TypePilot's initial-generation prompt (sec.3.3, pp.97–98). Self-Planning first produces a plan and then implements it, with explicit security instructions. TypePilot performs better on both input constraints and injection in the reported comparison (secs.3.4 and 4.4, pp.99, 101–102).
 
-Verus form: Inference: use an analogous generator–diagnoser–repair loop for Rust/Verus, but make Verus compile and verification the acceptance gate. The paper's vulnerability descriptions are not proofs; every repaired contract and implementation still needs Verus checking.
+Verus form: Inference: use an analogous generation, diagnosis, and repair loop for Rust/Verus, with compilation and verification as prerequisite checks. Vulnerability descriptions do not establish that contracts or implementations are correct. This transfer was not evaluated in the paper.
 
-Evidence and limits: TypePilot outperforms Self-Planning on both input constraints and injection in the reported comparisons (sec.4.4, p.102). The tasks are simple and the paper says real codebases require future scaling work (sec.5, p.102).
-
-Quote: “After prompting a first LLM to generate the initial code, we ask a second LLM to detect the vulnerabilities in this code.” (sec.3.3, p.98)
+Evidence and limits: “After prompting a first LLM to generate the initial code, we ask a second LLM to detect the vulnerabilities in this code.” (sec.3.3, p.98). Section 5 identifies context management and dependency reasoning across files and modules as scaling challenges. Object metadata and lightweight symbolic reasoning or type inference are proposed future work, not evaluated components (pp.102).
 
 ## technique: use Stainless as a formal-verification target
 
-What it is: ask the model to generate Scala in Stainless's verification-oriented subset with explicit conditions and proofs. Stainless attempts to prove user-stated safety properties (sec.3.2, p.96).
+What it is: request Scala in Stainless's restricted subset, with explicit properties and the logical structure needed for verification (sec.3.2, p.96).
 
-How to do it:
+How the paper tries it (sec.3.2, p.96):
 
-1. Prompt with two Stainless examples: maximum of two values and list size (sec.3.2, p.96)
-2. Request verifiable code and its conditions for Fibonacci, factorial, and sublist tasks (sec.3.2, p.96)
-3. Run Stainless and inspect compilation/proof failures (sec.3.2, p.96; sec.4.1, p.99)
-4. Reject outputs using unavailable full-Scala methods or bypass annotations; the paper notes `List.sliding`, `println`, and `@library` misuse (sec.4.1, pp.99–100)
+1. Use zero-shot and two-shot prompting
+2. In the two-shot setting, provide examples for the maximum of two values and list size
+3. Request code and conditions for Fibonacci, factorial, and sublist tasks, accounting for invalid inputs and overflow (pp.96–97)
+4. Inspect generated code for failures; Section 4.1 reports unavailable Scala operations such as `List.sliding` and `println`, plus syntax errors (p.99)
 
-Verus form: Inference: provide few-shot Verus examples containing executable functions, `requires`, `ensures`, and proof blocks, then run Verus after generation. Stainless's subset and annotations do not carry over; use only constructs documented in the Verus library.
+Evidence and limits: “In general, we see that none of the models is capable of consistently generating Stainless code that correctly compiles.” (sec.4.1, p.99). The authors hypothesize insufficient Stainless training data. They also mention an example avoiding verification through `@library` annotations in Appendix B; that appendix is absent from the supplied paper. The paper does not report successful proof rates.
 
-Evidence and limits: none of the models consistently generated Stainless code that compiled (sec.4.1, p.99). The authors therefore shift to general Scala tests. This is a negative result about model/framework fit, not proof that Stainless is unsound.
-
-Quote: “In general, we see that none of the models is capable of consistently generating Stainless code that correctly compiles.” (sec.4.1, p.99)
+Verus form: Inference: provide examples using Verus contracts and proofs, then run Verus on generated output. Check that properties are actually verified rather than assumed or excluded. The paper's Stainless results do not establish effectiveness for Verus.
 
 ## technique: encode domain invariants in types
 
-What it is: replace unconstrained primitive parameters with types whose constructors enforce valid values, and make failure explicit in return types. The paper's example defines a sealed `Age`, `ValidAge`, and `Age.apply` returning `Option[Age]`, then accepts `List[Age]` and returns `Option[Double]` (sec.4.2.3, pp.100–101).
+What it is: use domain types and explicit failure results instead of unconstrained primitive interfaces. The authors write: “By prompting LLMs to leverage features such as sealed traits, smart constructors, and refined return types, we enable the generation of programs that encode correctness directly into their type signatures.” (sec.4.2.3, p.100).
 
-When to use it: use smart constructors and sealed ADTs when invalid ranges, empty inputs, or representation variants should be impossible or explicit at API boundaries.
+Figure 5 displays these changes (p.100):
 
-How to do it:
+1. Define a sealed `Age` trait with an integer value
+2. Define `final case class ValidAge(value: Int) extends Age`
+3. Define `Age.apply` returning `Some(ValidAge(value))` for values from 0 through 120, otherwise `None`
+4. Change the average function's input from `List[Int]` to `List[Age]` and its declared result from `Double` to `Option[Double]`
+5. Return `None` for an empty list and accumulate ages with a `Long` sum for nonempty input
 
-1. Define a sealed trait carrying the logical value (sec.4.2.3, p.100)
-2. Define a valid case class, such as `ValidAge(value: Int)` (sec.4.2.3, p.100)
-3. Implement a smart constructor that returns `Some` only for values in the allowed range and `None` otherwise (sec.4.2.3, p.100)
-4. Accept the validated type in downstream functions and return `Option` when no result exists, such as for an empty list (sec.4.2.3, p.100)
-5. Use the resulting type signatures as static constraints during composition (sec.4.2.3, pp.100–101)
+Evidence and limits: the authors say the design “transforms what would otherwise be runtime checks and ad hoc validations into statically enforced contracts” (sec.4.2.3, p.101). Inference: Figure 5 does not establish that guarantee. Its public `ValidAge` constructor permits bypassing `Age.apply`, and the nonempty branch ends after binding `(sum, count)` without returning an average. The figure therefore does not supply a complete, compilable implementation of its declared result. The 0–120 check belongs to `Age.apply`, not to every construction of `Age`.
 
-Verus form: Inference: represent the same invariant with a Rust struct whose constructor requires the range and establishes a `spec fn` predicate; use `Option` for absence and `requires`/`ensures` to preserve validity. Verus's type invariants and proof functions need explicit syntax; Scala sealed traits are not Verus constructs.
-
-Evidence and limits: TypePilot's generated average-age code rejects ages outside 0–120 and returns `None` for an empty list (Fig.5, p.101). The authors say this “transforms what would otherwise be runtime checks and ad hoc validations into statically enforced contracts” (sec.4.2.3, p.101). The checks are manual and do not prove all behavior.
-
-Quote: “By prompting LLMs to leverage features such as sealed traits, smart constructors, and refined return types, we enable the generation of programs that encode correctness directly into their type signatures.” (sec.4.2.3, p.100)
+Verus form: Inference: put the range property in an explicit predicate and prove that constructors and consuming functions preserve it. Use `Option` for absence. Encapsulation and verified contracts must prevent unchecked construction; merely introducing a wrapper type is insufficient.
 
 ## technique: evaluate security by explicit edge-case matrices
 
-What it is: test normal behavior and named vulnerability cases separately, recording ✓, ✗, or ∼ for each model and setting (Tables 2–3, pp.98–99).
+What it is: inspect ordinary behavior and named vulnerability cases separately. Tables 2–3 show manual results across baseline, robust prompting, and TypePilot (pp.98–99).
 
-How to do it:
+How the evaluation works:
 
-1. Define ordinary correctness cases and edge cases such as negative ages, empty matrices, rectangular kernels, and even-sized kernels (Table 2, p.98)
-2. Define injection cases for HTML greetings/comments, Bash search/ping, and URL redirects (Table 3, pp.97–99)
-3. Run baseline, robust prompting, and TypePilot for each model (sec.3.3, pp.97–98)
-4. Mark output correctness/compilation and vulnerability resistance independently (Tables 2–3, pp.98–99)
-5. Average secure-output fractions across the three LLMs for vulnerability categories (sec.4.3, p.101)
+1. Check regular inputs and cases including negative ages or Fibonacci inputs, large Fibonacci inputs, empty or mismatched matrices, and rectangular or even-sized kernels (Table 2, p.98)
+2. Check HTML greetings/comments, Bash file search/host ping, and URL redirects (Table 3, p.99)
+3. Record correctness/compilation separately from injection resistance in Table 3; `∼` denotes partial robustness in the injection discussion (sec.4.2.2, p.100)
+4. Categorize observed vulnerabilities as shape violations, null dereferences, boundary violations, HTML injection, Bash injection, and path traversal; average secure-output fractions across the three LLMs (sec.4.3, p.101)
 
-Verus form: Inference: apply the same matrix to generated Rust: ordinary tests, boundary inputs, and adversarial strings, plus a clean Verus proof run. Separate runtime test outcomes from contract verification.
+Evidence and limits: the paper does not specify repeated-generation counts or confidence intervals. Inference: the listed manual checks support conclusions about these outputs, not estimated reliability across arbitrary tasks. Attention analysis is attributed to Appendix D, which is absent from the supplied paper (sec.4.3, p.101).
 
-Evidence and limits: baseline code often works for regular inputs but fails negative or empty cases; TypePilot improves these checks (sec.4.2.1, p.99). The paper gives no sample size beyond the listed cases and no confidence intervals, so percentages should not be generalized.
+Verus form: Inference: retain ordinary and adversarial tests alongside verification, and report them separately. A proof establishes specified properties; the test matrix can expose missing specifications.
 
 ## trust, limits, and product implication
 
-Stainless, Scala's compiler/type checker, manual vulnerability labels, and the authors' interpretation of generated code are trusted. The paper does not establish that type-guided generation proves functional correctness; its Stainless stage mostly failed to compile. Inference: for agent-written Verus Rust, TypePilot's strongest transferable lesson is staged diagnosis plus invariant-carrying APIs, but Verus verification must replace manual checkmarks and Scala's type system cannot substitute for complete contracts. Threat is reduced for input-range and injection classes when constructors and contracts are independently checked; residual risk includes incomplete vulnerability lists, wrong invariants, unsupported libraries, and model-specific failures.
+The paper evaluates simple tasks and calls for testing larger codebases and use by engineers in active development (sec.6, p.102). Its general Scala results rely on manual inspection, rather than successful Stainless verification. The DOI above appears on p.95.
+
+Inference: the transferable ideas are staged vulnerability diagnosis and explicit domain constraints. For agent-written Verus code, these are candidate generation strategies, not evidence that the resulting program is verified. Verification still depends on adequate contracts, checked constructors, and an appropriate trusted library boundary.
 
 ## techniques for the catalog
 
-- staged generation and diagnosis — generate code, have a separate model list vulnerabilities, then repair
-- Stainless-targeted prompting — use verification examples and explicit conditions for a restricted proof language
-- invariant-carrying types — encode valid ranges and absence with smart constructors, ADTs, and option results
-- edge-case security matrices — score normal behavior and each vulnerability separately across models
-- verifier gate inference — treat framework compilation/proof as acceptance and manual labels as evidence only
+- staged generation and diagnosis — generate code, describe vulnerabilities in a separate instance, then revise using types
+- Stainless-targeted prompting — test zero-shot and two-shot generation for a restricted verification language; record the compilation failures
+- domain types and explicit absence — use constrained constructors and option results; check that construction cannot bypass validation
+- edge-case security matrices — inspect ordinary behavior and named vulnerabilities separately across models
+- verification prerequisite checks — Inference: require compilation and proofs when transferring the workflow to Verus
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In general, we see that none of the models is capable of consistently generating Stainless code that correctly compiles."): checked the complete supplied paper text, quotations, task/model lists, numbers, section/page references, workflow steps, and DOI; corrected task scope and page references, separated recommendations from reported methods, and qualified the incomplete average-age example; did not rerun experiments, inspect the external repository, or check appendices B–D, which are absent from the supplied paper.

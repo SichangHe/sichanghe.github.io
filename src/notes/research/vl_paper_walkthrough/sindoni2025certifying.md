@@ -1,57 +1,69 @@
 # Certifying rlive: A New Proof Strategy for Liveness Model Checking
 (authored by agents unless marked 🧑)
-Tag: `sindoni2025certifying`, [paper](https://doi.org/10.1007/978-3-032-04167-8_21)
+Tag: `sindoni2026certifying`, [paper](https://doi.org/10.1007/978-3-032-04167-8_21)
 
 ## target and trust boundary
-The paper certifies a “yes” result from rlive, a SAT-based liveness checker for finite-state symbolic transition systems. The property is M |= FGq: eventually q remains true. rlive searches for lasso counterexamples while accumulating shoals, sets of states from which ¬q cannot recur infinitely often. The authors' central claim is: “the shoals are sufficient to generate a proof in a deductive system for temporal properties.” (Introduction, pp. 386–387). The certificate is checked in PVS, so the model-checking algorithm itself need not be trusted for a positive answer; the transition-system specification, generated theory, PVS kernel, and SAT/SMT proof steps remain trusted or checked components.
+The paper certifies a “yes” result from rlive, a SAT-based liveness checker for finite-state symbolic transition systems. The property is M |= FGq: on every path, eventually q remains true. rlive incrementally searches for lasso counterexamples while accumulating shoals, sets of states from which ¬q cannot recur infinitely often. The abstract states: “Despite the complexity of the algorithm, we show that the shoals are sufficient to generate a proof in a deductive system for temporal properties.” (p. 386). The authors explain the intended trust boundary: “In our work, we produce a temporal proof of the fact that the original system satisfies the property, so that only the theorem prover performing the proof, and not the model checking algorithms used, has to be trusted.” (Section 2, p. 388). Inference: this assurance still depends on the generated PVS theory faithfully representing the intended model and property, and on PVS and its Yices-backed proof steps. The paper describes the Python translator but does not report verifying it (Section 5, p. 398).
+
+The publication year is 2026, although the conference is FroCoS 2025: the first-page publication line reads “FroCoS 2025, LNAI 15979, pp. 386–403, 2026.” (p. 386).
 
 ## technique 1: shoal-producing rlive search
-What it is: rlive reduces liveness to repeated safety/invariant checks. It finds a reachable ¬q state, recursively searches successors, returns Unsafe on a repeated state (a lasso), or obtains an inductive invariant shoal when no further ¬q state is reachable (Section 3.3, pp. 390–391).
+What it is: rlive reduces liveness to repeated safety/invariant checks. It searches depth first for successive occurrences of ¬q, returns Unsafe when a state on its search stack recurs, or obtains an inductive invariant shoal when its restricted search cannot reach another target (Section 3.3, pp. 390–391).
 
 Steps from Algorithm 1 (Section 3.3, pp. 390–391):
 1. Initialize accumulated shoal C to false and stack B empty.
-2. Ask an invariant checker for a reachable state satisfying ¬q outside C. If none exists, return Safe.
-3. Push the found state and repeatedly inspect the stack top.
-4. Search for a successor ¬q state outside C. If a previously visited stack state recurs, return Unsafe with a lasso counterexample; otherwise push the successor.
-5. If no successor exists, obtain an inductive invariant `inv`, add it to C by disjunction, and pop the stack.
-6. Continue until all reachable ¬q states are eliminated.
+2. Check the invariant `T⁻¹(¬C) → q` from I using the restricted transition relation `T ∧ ¬C ∧ ¬C′`. Here `T⁻¹(¬C)` denotes states with a successor outside C. An unsafe result supplies a reachable ¬q state with such a successor; if the check is safe, return Safe.
+3. Push the final state of the returned counterexample and inspect the stack top s.
+4. Run the same invariant check starting from T(s), the immediate successors of s. This searches for a reachable target, potentially several transitions away. If its final state is already on B, return Unsafe; otherwise push it and continue.
+5. If that check is safe, obtain its inductive invariant `inv`, set `C := C ∨ inv`, and pop s.
+6. Once B is empty, repeat the check from I with the updated C.
 
-Evidence and limits: shoals are inductive invariants for modified transitions, not arbitrary sets. A finite-state counterexample must be lasso-shaped (Section 3.2, p. 390). The algorithm handles a single fairness condition ¬q; the conclusion lists multiple fairness constraints as future work (Section 6, p. 401). It is a model-checking search, not by itself a proof artifact accepted by an independent kernel.
+Evidence and limits: shoals are inductive invariants for modified transitions, not arbitrary sets. A violation in the finite-state setting has a lasso-shaped witness (Section 3.2, p. 390). The conclusion states: “our approach is currently limited to a single fairness condition (namely ¬q).” (Section 6, p. 401). The search artifacts are inputs to the later PVS certification procedure.
 
-Verus form (inference): model states and transitions as ghost data, define a predicate `q`, and prove each shoal is inductive with `requires`/`ensures` on a transition function. A stack-based executable search can produce candidate shoals, but Verus does not prove liveness from an unbounded search automatically; the certificate obligations must be separately stated and proved.
+Inference: a possible Verus adaptation would represent states and transitions as ghost data, define q and the shoals as predicates, and state their transition obligations in lemmas. This paper does not implement or evaluate a Verus adaptation; deriving FGq would also require temporal semantics and a proof of the temporal rule.
 
 ## technique 2: the RL temporal deductive rule
-What it is: the paper introduces rule RL with premises Pi, P0, and paired Pki/Ppi obligations for a sequence C0…Cn of shoals. P0 says the initial shoal is empty; Pki says the cumulative shoal is inductive; Ppi says a ¬q transition from the cumulative shoal enters an earlier shoal. The conclusion is `(I ∧ G(T)) → FGq` (Section 4.1, pp. 392–394). The first premise captures the remaining system after shoals are removed. The paper says: “Pi expresses that the formula q is an invariant for the model”. (Section 4.5, p. 397).
+What it is: RL concludes `(I ∧ G(T)) → FGq` from Pi, P0, and paired Pki/Ppi obligations for shoals C0,…,Cn (Section 4.1, pp. 392–394). Write `C≤i := C0 ∨ … ∨ Ci` and `C := C≤n`. Its premises are:
+- `Pi := (I ∧ GT ∧ G¬C) → Gq`
+- `P0 := G(C0 ↔ ⊥)`
+- `Pki := G((C≤i ∧ T) → X(C≤i))`, for 1 ≤ i ≤ n
+- `Ppi := G((C≤i ∧ T ∧ ¬q) → X(C≤i−1))`, for 1 ≤ i ≤ n
+
+Pki keeps the cumulative shoal closed under transitions; Ppi requires each ¬q transition within it to enter an earlier cumulative shoal. Pi covers paths that stay outside the final shoal.
 
 Steps to apply it:
-1. Record the shoals C0,…,Cn emitted by rlive, with C0 false (Section 4.3, p. 395).
-2. Prove each cumulative disjunction C≤i is inductive under T (Pki) (Section 4.1, p. 393).
-3. Prove that a state in C≤i with ¬q transitions to C≤i−1 (Ppi), so repeated ¬q cannot stay in the newest shoal (Section 4.1, p. 393).
-4. Prove Pi using the final invariant ψ returned by the last invariant check; ψ implies q under T with C removed (Section 4.3, pp. 395–396).
-5. Instantiate RL in the deductive system to derive the liveness conclusion (Section 4.5, pp. 397–398).
+1. Record the shoals emitted by rlive, with C0 false (Section 4.3, p. 395).
+2. Prove P0 and the cumulative-shoal closure and descent obligations (Sections 4.1 and 4.5, pp. 392–393, 397).
+3. Prove Pi using the final inductive invariant ψ returned by the last invariant check. In particular, ψ implies `(T ∧ ¬C′) → q`, and its invariant proof establishes `I ∧ G(T ∧ ¬C) → Gψ` (Theorem 2, pp. 395–396).
+4. Instantiate the proved RL lemma to derive the liveness conclusion (Section 4.5, pp. 397–398).
 
-Correctness evidence: the authors formalized and proved `valid((Pi ∧ P0 ∧ Π) → (I ∧ GT → FGq))` in PVS (Section 4.2, p. 394). Theorem 1 derives the cumulative-shoal obligations by induction, and Theorem 2 derives Pi from ψ (Sections 4.3, pp. 395–396). These are universal logical results over formulas, not benchmark percentages.
+Correctness evidence: Section 4.2 reports a PVS proof of `valid((Pi ∧ P0 ∧ Π) → (I ∧ GT → FGq))`, where Π contains the paired obligations (p. 394). Theorem 1 derives cumulative-shoal closure and descent from the invariants obtained on restricted transitions; Theorem 2 derives Pi using ψ (Section 4.3, pp. 395–396). Completeness here means that rlive can supply the information needed for these premises: “In this section, we show that the rule is complete to provide a proof for the property proved by rlive, in the sense that rlive can be easily extended to generate the premises of the rule.” (Section 4.3, p. 395).
 
-Verus form (inference): encode each C_i as a `spec fn` over a ghost state and prove induction lemmas for cumulative disjunction and descent under ¬q. A finite decreasing shoal index can support a `decreases` proof for bounded recurrence; the full FGq theorem needs a separately formalized temporal semantics. Verus's `ensures` can state transition obligations, but RL's LTL rule is not a built-in Verus construct.
+Inference: a Verus encoding could use `spec fn` predicates and lemmas for cumulative-shoal closure and descent under ¬q. A finite shoal index describes the descent argument, but an FGq theorem also needs a formal account of infinite traces. The paper provides no Verus implementation.
 
 ## technique 3: proof-certificate pipeline
-What it is: three stages make a checker result independently auditable. (1) nuXmv dumps shoal invariants C and final ψ; (2) a Python script generates a PVS theory containing the model, property, parameters, theorem, and proof script; (3) PVS runs the fixed RL strategy and emits a proof certificate (Section 4.4, p. 396). The paper emphasizes that “The structural part remains identical regardless of the specific model and property being certified.” (Section 4.4, p. 396) The leaves discharge propositional implications with Yices.
+What it is: three stages connect the model-checking result to a PVS proof. First, the model checker dumps the shoal invariants and final ψ. Second, a generated PVS theory contains the model, property, parameters, theorem, and proof script. Third, PVS runs the strategy and generates the proof certificate (Section 4.4, p. 396). The paper states: “This part remains identical regardless of the specific model and property being certified.” Here “This part” refers to the structural part that applies LTL definitions and proved temporal lemmas (Section 4.4, p. 396). Propositional implications at the proof leaves are discharged with Yices.
 
 Steps from the paper:
-1. Run nuXmv on an AIGER model and export C and ψ (Section 5, p. 398).
-2. Translate model and invariants to PVS theory with the supplied Python script (Section 5, p. 398).
-3. Start PVS goal `valid(I ∧ GT → FGq)`, split branches for RL premises, and rewrite definitions (Section 4.5, pp. 397–398).
-4. Use PVS's Yices-backed SAT solver to discharge propositional leaves; alternatively use `prop` or `bdd-simp`, which scale less well (Section 4.4, p. 396).
-5. Retain the PVS proof object as the certificate, with PVS checking the original model/property theorem (Section 2, p. 388).
+1. Run nuXmv on an Aiger model and export the shoal invariants and ψ as Aiger combinational circuits over the model's state variables (Section 5, p. 398).
+2. Translate the model and invariants into a PVS theory with the supplied Python script (Section 5, p. 398).
+3. Start from `valid(I ∧ GT → FGq)`. Use PVS Case to assume and separately prove Pi, and likewise the remaining premises. Apply RL in the branch assuming all premises (Section 4.5, p. 397).
+4. Expand and rewrite definitions, and use Yices to discharge the propositional leaves for P0 and Π. Prove Pi with the invariant subroutine parameterized by ψ (Section 4.5, pp. 397–398).
+5. Complete the PVS proof of the original model/property theorem. The paper also permits `prop` or `bdd-simp` for propositional discharge, reporting poorer scaling for large formulas (Section 4.4, p. 396).
 
-Verus form (inference): treat the emitted shoals and ψ as untrusted input, parse them into ghost predicates, and verify each obligation in Verus lemmas. Keep the translator outside the trusted kernel unless its output is checked. A Verus proof can replace PVS only after encoding LTL traces and the RL soundness lemma; Yices certificates do not directly become Verus proofs.
+Inference: a Verus adaptation would need to prove the emitted predicates satisfy the obligations, establish RL over encoded traces, and ensure that the encoded model matches the intended input. Translating a certificate does not by itself establish these facts.
 
 ## measured evidence, limitations, and VL impact
-The evaluation used 53 safe HWMCC instances successfully proved by nuXmv within 1200 seconds. PVS certified 41/53 (77.4%) within 3600 seconds and 8 GB, while 12/53 exceeded memory (Section 5, pp. 398–399). The denominator is the 53-instance safe benchmark set; this is certification throughput, not model-checking correctness. PVS proof time was usually higher than model-checking time, with bottlenecks in LTL expansion and bookkeeping rather than Yices (Section 5, pp. 399–400). Inference: the threat to VL is low for direct Rust functional verification but high for any VL liveness checker whose “verified” result lacks a replayable certificate. Inference: VL should preserve the separation between untrusted search output and a small proof checker. Already done here: do not redo a bespoke liveness search without exporting inductive certificates and checking the original transition system.
+The evaluation selected 53 safe HWMCC instances that nuXmv could prove within 1200 seconds. PVS certified 41 within 3600 seconds and 8 GB; the remaining 12 exceeded memory (Section 5, pp. 398–399). The paper reports: “of the 53 total test cases, 41 in total were successfully proved by PVS within the allotted time and memory constraints, whilst remaining 12 cases exceeded the available memory resources.” (p. 399). These results concern that selected safe set. Translation time was excluded from the comparison because the authors describe it as negligible (p. 398).
+
+PVS proof time was generally higher than model-checking time (Figure 1, pp. 399–400). The authors identify the main bottleneck: “Our analysis reveals that PVS performance bottlenecks occur primarily within proof steps other than the Yices solver component.” (Section 5, p. 400). They attribute costs to LTL expansion, installing and rewriting definitions, typechecking, and bookkeeping. Multiple fairness conditions and infinite-state/SMT certification are future work (Section 6, p. 401).
+
+Inference: the relevant lesson for a VL liveness checker is to export search artifacts that support a proof of the original transition system's property. This paper establishes and prototypes that pattern in PVS; it does not establish a result about Rust functional verification or Verus performance.
 
 ## techniques for the catalog
 - shoal-based rlive search — iteratively block inductive regions that cannot yield infinitely many fairness violations
-- RL temporal rule — prove liveness from cumulative-shoal induction, descent, and a final invariant
-- PVS certificate replay — regenerate a theory and discharge rule leaves with a theorem prover and SAT solver
-- untrusted-search trusted-checker split — accept model-checker artifacts only after independent proof replay
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- RL temporal rule — prove liveness from cumulative-shoal closure, descent, and a final invariant
+- PVS certificate generation — translate a model and invariants into a theory and discharge rule premises
+- untrusted-search trusted-checker split — prove the original model/property theorem independently of the search algorithm
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These proofs give an alternative demonstration of the correctness of the rlive algorithm, when the property is proved correct, using the rule RL."): checked all paper text, study quotations, numbers, section and printed-page references, technique steps, and publication metadata; corrected quotations, search targets and reachability steps, RL obligations, trust-boundary wording, and the tag year, and labeled adaptations as inferences; did not execute the authors' toolchain, inspect its repository, or independently reprove the results.
