@@ -4,61 +4,65 @@ Tag: `faella2025verifying`: [paper](http://arxiv.org/abs/2505.14092v1)
 
 ## what the paper proves
 
-Faella and Parlato reduce memory-safety checking for heap programs whose heaps have a tree-shaped backbone to constrained Horn-clause (CHC) satisfiability. The central representation is a knitted-tree: one data tree contains the input heap and a log of every intermediate program state. The abstract states the purpose exactly: “The knitted-tree encoding, modeling each program execution as a tree structure capturing input, output, and intermediate states” (Abstract, p. 1). The target property is memory safety, defined as executions terminating without an error configuration (Section 2, p. 6). Their sound semi-algorithm can report safety when it terminates; undecidability means nontermination remains possible.
+Faella and Parlato reduce memory-safety checking for programs starting from tree-shaped heaps to constrained Horn-clause (CHC) satisfiability. Pointer updates may change the heap's shape during execution. The central representation is a knitted-tree: one data tree records the input, output, and intermediate configurations, subject to finite encoding bounds. The abstract states: “Central to our approach is the knitted-tree encoding, modeling each program execution as a tree structure capturing input, output, and intermediate states” (Abstract, p. 1). The target includes termination: “A program P is memory safe if all its executions terminate without reaching an error configuration” (Problem 1, Section 2, p. 6). Their sound semi-algorithm reports safety or unsafety if it terminates; it need not terminate (Theorem 7, Section 5.1, p. 17).
 
 ## technique 1: encode an execution as a knitted-tree
 
-Use this when mutable pointers, allocation, freeing, and revisits make a flat trace or ordinary tree invariant hard to maintain.
+Inference: use this representation when mutable pointers, allocation, freeing, and revisits make an ordinary tree invariant hard to maintain.
 
-1. Choose parameters `m` and `n` (Section 3, pp. 7, 11). `m` is the number of inactive child slots available for allocation; `n` bounds frames, or visits, recorded per node. The paper says “m bounds the number of allocations” and that “The parameter n limits the passes and instructions executed per node” (Section 3.1, p. 11).
+1. Choose parameters `m` and `n` (Section 3, pp. 7, 11). Each internal backbone node has `m` auxiliary child slots for allocation; `n` bounds the frames used per node before overflow. Frames count instructions and rewinding steps, not just visits. The paper says: “The parameter n limits the passes and instructions executed per node” (Section 3.1, p. 11).
 2. Build a backbone containing the input tree, making every input node internal and every internal node degree `k+m`; mark input nodes active and added nodes inactive (Section 3, p. 7).
-3. Give every backbone node a log of `n+1` frames. A frame stores availability, allocation state, data, program counter, program variables, nil flags, pointer-update flags, an event, and `next`/`prev` links (Section 3, pp. 7–8). Unavailable frames form the global doubly linked lace in execution order.
-4. Initialize the first frame of each input node from its data and child activity, then initialize the root's second frame with the starting configuration (Section 3.1, p. 8).
-5. For every instruction, push the next frame at the first available slot. Copy defaults from the preceding lace frame or the frame below in the same log; override the program counter, event, variables, and flags required by that instruction (Section 3.1, pp. 9–11).
+3. Give every backbone node a log of `n+1` frames; frame `n+1` detects overflow. A frame stores availability, allocation state, node data, program counter, data variables, nil flags, pointer-update flags, child allocation flags, an event, and `next`/`prev` links (Section 3, pp. 7–8). Unavailable frames with index greater than one form the global doubly linked lace in execution order.
+4. Initialize the first frame of every backbone node with activity information and, for input nodes, their data; then initialize the root's second frame with the starting configuration. The first pointer variable points to the input root, or is nil for an empty input; other pointer variables are nil (Section 3.1, p. 8).
+5. An instruction may push several frames, each at the first available slot in its node's log. Copy defaults from the preceding lace frame or the frame below in the same log; override fields required by that instruction. Stop the encoding on a terminal status, including overflow or allocation failure (Section 3.1, pp. 9–11; Section 3.2, p. 12).
 
 The running example reverses a list prefix. A concrete execution of `1→2→3→4→5` with key `3` produces `3→2→1→4→5` (Section 1, p. 2). The paper's encoding stores a pointer-field update in its node and stores a pointer-variable update in the node the variable points to (Section 1, p. 2).
 
-Verus form (Inference): represent the heap with a Verus-owned model such as a `Map` from node identifiers to node records plus a ghost execution log. Use `ghost` state and `Seq`/`Map` invariants to relate each concrete pointer update to the model. A Rust function's `requires` states the initial tree and bounds; `ensures` states the resulting heap relation. The knitted-tree's mutable lace is a proof model, not a run-time data structure. Verus has no direct CHC relation declaration, so CHC predicates become ghost predicates or `spec fn`s and their closure obligations become `proof fn`s.
+Inference: a possible Verus adaptation would model the heap with a `Map` from node identifiers to node records and keep the execution history in ghost state. Preconditions would describe the initial tree; postconditions would relate the resulting heap to the model. This would require a separate proof connecting Rust operations to the model. The paper does not provide this translation.
 
 ## technique 2: rewind the lace to resolve pointers
 
-Use this when a statement must dereference a pointer or find a pointer-field value that may have been updated earlier at another node.
+Inference: use rewinding when a statement needs a pointer value whose latest assignment is recorded at another node.
 
 1. Starting at the current frame, walk backward through `prev` links.
 2. `find_ptr(p,id)` stops at the most recent frame containing the event `⟨p := here⟩`; it shortcuts through node changes, retaining only relevant cross-node frames identified by `upd_p` (Section 3.1, p. 10).
 3. Push rewind frames (`rwd`) for each cross-node move, without advancing the program counter, then push the instruction's effect frame (Section 3.1, pp. 10–11).
-4. For `p := q → pfield`, first rewind to `q`, then search that node's log for the largest active index containing `⟨pfield := α⟩`; absent an explicit update, use the original child pointer if the child is active, otherwise set `p` nil (Section 3.1, p. 11).
+4. For `p := q → pfield`, first rewind to `q`, then find the latest occupied frame assigning `pfield`. An explicit nil assignment sets `p` nil. An assignment `⟨pfield := r⟩` requires recovering the value of `r` at that assignment, potentially through a second rewind; it does not use `r`'s later value. Absent an explicit update, use the original child pointer if the child is active, otherwise set `p` nil (Section 3.1, p. 11; Appendix C.5, pp. 42–43; Appendix C.7, p. 45).
 5. For equality `p=q`, compare nil flags first; if inconclusive, rewind to assignments and check that no `upd` flag changed the value between the two frames (Section 3.1, p. 11).
 
-The paper's example records `find_ptr(head,(u4,2))=(u3,2),(u2,2),(u1,2)` and then adds rewind frames before applying `head→next:=tmp` (Section 3.1, p. 10). This is an operational recipe, not a heuristic.
+The paper's example records `find_ptr(head,(u4,2))=(u3,2),(u2,2),(u1,2)` and then adds frames 16–18, with the last recording the effect of `head→next:=tmp` (Section 3.1, p. 10; Fig. 2, p. 3). The authors explain the basic search: “For example, to identify the node a pointer variable p points to, we rewind the lace until we find a frame with the event ⟨p := here⟩” (Section 3.1, p. 10).
 
-Verus form (Inference): make `find_ptr` a terminating `spec fn` over a finite ghost `Seq<Frame>` and prove that the returned index is the latest matching assignment. A loop that searches the concrete structure needs a `while` invariant and a decreasing `decreases` clause. Pointer alias facts belong in invariants over the model map; do not call a `proof fn` at run time.
+Inference: a possible Verus adaptation would search a finite ghost sequence and prove that the result identifies the latest relevant assignment. Pointer-field reads would also need a proof that the recovered value belongs to the earlier field-assignment time. This is a proposed proof structure, not a checked Verus implementation.
 
 ## technique 3: local compositional CHCs
 
-Use this when one wants automatic invariant synthesis while avoiding enumeration of complete executions. The paper proves a locality lemma: each next frame depends only on the current node and one neighboring node (Section 4, p. 13). It then defines `consistent_child` to check the parent/child boundary and proves subtree replacement: “If consistent_child (σ2, j, σ1) holds true for some j … there is an (m,n)-knitted-tree prefix” (Lemma 3, p. 14).
+Inference: use the local CHC construction to seek node-label invariants without enumerating complete executions. The paper states: “The following lemma states that each new frame in a knitted-tree depends only on local information from neighboring nodes” (Section 4, p. 13). Lemma 1 provides `Internal`, `Up`, and `Down` functions. The `consistent_child` predicate checks interactions between parent and child logs. Lemma 3 allows replacing a child subtree with another knitted-tree prefix's subtree when its root log is consistent with the parent log (Section 4, p. 13; proof, p. 14).
 
 Construct the CHC system as follows (Section 5, pp. 15–16):
 
 1. Add base facts `Lab(σ)` for initial non-root and root labels.
 2. Add an internal-step clause using `ΨInternal` to append a frame in one node.
 3. Add an upward clause using `consistent_child` and `ΨUp` when the lace moves from a child to its parent.
-4. Add a downward clause using `ΨDown` when it moves from parent to child.
-5. Add a query rejecting labels whose final status is in the selected error set.
+4. Add a downward clause using both `consistent_child` and `ΨDown` when it moves from parent to child.
+5. Add a query forbidding a label with a terminal frame whose status belongs to the selected set `Ex`.
 
-Theorem 3 states that the minimal model of `Lab` is exactly labels occurring in knitted-tree prefixes (Section 5, p. 15). The exit-status query is unsatisfiable exactly when no represented execution has a selected status (Theorem 4, p. 16).
+Theorem 3 states that the minimal model of `Lab` consists exactly of labels occurring in knitted-tree prefixes (Section 5, p. 15). The CHC system including the exit-status query is unsatisfiable exactly when a represented execution has a selected status. Conversely, satisfiability means no represented execution has that status (Theorem 4, p. 16).
 
-Verus form (Inference): encode `Lab` as a ghost predicate over a label type, and prove each base/transition clause as a lemma. `consistent_child` becomes a `spec fn`; transition lemmas use `requires` for local labels and `ensures` for the extended label. A Verus proof cannot inherit a CHC solver's least-model computation automatically, so the induction measure and closure of the ghost relation must be explicit.
+Inference: a possible Verus adaptation would define an invariant over labels and prove the base facts, transition closure, and exclusion of error statuses. A proof claiming the exact correspondence of Theorem 3 would additionally need both directions of that correspondence; closure alone does not identify the minimal model.
 
 ## technique 4: sound memory-safety semi-algorithm
 
-Run `ExitStatus(P,m,n,{E})` first. If satisfiable (the paper phrases the positive answer as a bad execution), report unsafe by Theorem 5 (Section 5.1, p. 17). If no null dereference is found, check `{M}` for out-of-memory and `{O}` for label overflow. If either is found, increment `m` or `n` and restart. If all three checks are negative, Theorem 6 gives safety for the covered executions. The algorithm is sound if it terminates (Theorem 7, p. 17). It may run forever because verification is undecidable or because no finite parameters capture all executions.
+Run `ExitStatus(P,m,n,{E})` first. A positive answer means an error execution exists, equivalently the corresponding CHC system is unsatisfiable; report unsafe by Theorem 5 (Section 5.1, p. 17). Otherwise check `{M}` for allocation failure. If found, increment `m` and restart. If absent, check `{O}` for label overflow; if found, increment `n` and restart. If all three checks are negative, Theorem 6 establishes safety for all executions, because neither encoding limit can hide an error or infinite execution. The paper states: “Algorithm MemSafety is a sound solution to the memory safety problem, i.e., if it terminates, it yields the correct answer” (Theorem 7, p. 17). The algorithm or an underlying CHC-solving attempt may fail to terminate, and finite parameters may not suffice to establish safety.
 
 ## evidence, trust, and limits
 
-The paper gives theorems and a worked list-reversal encoding, rather than an experimental benchmark table; therefore there are no performance denominators to report. What is proved is the representation correspondence (Theorems 1–2), CHC minimal-model correspondence (Theorem 3), and soundness of the terminating safety algorithm (Theorem 7). The CHC solver, arithmetic/data-theory semantics, and the chosen finite bounds remain trusted components. The authors explicitly warn that “the knitted-tree’s parameters … may not capture every possible execution” (Section 1, p. 2), and that verification “may not terminate” (Section 1, p. 4). Structural postconditions and termination require additional encodings (Conclusion, p. 20).
+The paper supplies correspondence and soundness proofs, a worked list example, and detailed encoding predicates; it reports no implementation benchmark results. Section 7 presents efficient implementation as future work (p. 19). Its scope is an imperative language without direct procedure calls. Appendix A handles nonrecursive calls by inlining and describes restricted recursion along unchanged input-tree child links, with at most one invocation per node (pp. 27–29). It does not establish support for arbitrary recursion.
 
-Inference: the threat to VeruLaw is medium for pointer-heavy agents. The paper supplies a reusable ghost-trace and locality pattern, but it does not verify Rust, does not address Rust ownership, and leaves solver/model encodings to an implementation. VL should reuse the bounded-log and local parent/child proof decomposition rather than rebuild a generic heap trace without bounds.
+The bounds restrict represented executions, but the algorithm checks for both allocation failure and overflow before reporting safety. Under the paper's semantics, `free` resets pointers to the freed node to nil (Section 2, p. 5); dereferencing or deallocating nil is an error (p. 6). This semantics must be preserved by any application. Structural and functional pre/postconditions are future work; termination is already included in memory safety through the overflow check. The authors state: “Termination can be verified by ensuring that labels do not overflow” (Section 7, p. 20).
+
+Inference: an implementation would need a correct program-to-CHC translation and sound CHC answers under the selected data theory. Finite bounds alone are not evidence of whole-program safety; the absence of `M` and `O` statuses is essential.
+
+Inference: the reusable idea for VeruLaw is the bounded log and local parent/child proof decomposition. Applying it to Rust would require separate ownership and memory-semantics arguments; this study does not establish a Verus implementation or a quantitative competitive threat.
 
 ## techniques for the catalog
 
@@ -67,4 +71,4 @@ Inference: the threat to VeruLaw is medium for pointer-heavy agents. The paper s
 - local CHC composition: synthesize node-label invariants from internal, upward, and downward transition clauses
 - parameter-increment safety loop: distinguish errors, out-of-memory, and truncation, increasing bounds until a sound result is obtained
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Preconditions are easy to encode as they involve only the first frame of each node in the knitted-tree, while postconditions require more effort due to the complexity of encoding the output heap within the knitted-tree structure."): read the full paper including references and appendices; checked quotations, numbers, section/page references, and technique steps; corrected CHC satisfiability polarity, whole-program safety scope, frame bounds, pointer-field historical values, locality references, and termination claims; marked proposed Verus adaptations as inference; did not independently reprove the theorems, run a verifier implementation, or validate Verus code.

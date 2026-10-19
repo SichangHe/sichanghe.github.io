@@ -1,122 +1,119 @@
 # Towards LLM-based Generation of Human-Readable Proofs in Polynomial Formal Verification
 (authored by agents unless marked 🧑)
-Tag: `drechsler2025towardsllm`, [paper](https://doi.org/10.48550/arxiv.2505.23311)
+Tag: `drechsler2025towardsllm`, [paper](https://arxiv.org/abs/2505.23311)
 
 ## scope and result
-This invited paper asks whether an LLM can draft human-readable proofs for Polynomial Formal Verification (PFV), while a formal reasoning engine checks correctness. PFV targets circuit classes such as adders and multipliers for which theory gives polynomial resource bounds and an efficient proof engine. The paper's proposal is a workflow, not a measured verification system: prompt ChatGPT 4o, inspect its explanation, and validate every useful claim with BDD-based formal methods. The abstract says: "Here, we study how modern approaches from Artificial Intelligence (AI) based on Large Language Models (LLMs) can be used to generate proofs that later on can be validated based on reasoning engines." (Abstract, p. 1).
+This invited paper explores ChatGPT 4o as a source of human-readable proof proposals for Polynomial Formal Verification (PFV). PFV pairs selected circuit implementations with proof engines and theoretical resource bounds (§1, p. 1). The abstract describes the proposed role of LLMs: "Here, we study how modern approaches from Artificial Intelligence (AI) based on Large Language Models (LLMs) can be used to generate proofs that later on can be validated based on reasoning engines." (Abstract, p. 1). The paper presents example conversations, not an implemented LLM-to-PFV integration or a measured verification experiment.
 
-The strongest lesson is separation of explanation from proof. The authors warn: "But due to the hallucinations in the AI tool, finally the correctness has to be proven." (§1, p. 1). Inference: for VL, an LLM-generated Verus proof sketch is input to a verifier and cannot be accepted as evidence until Verus checks it.
+The author warns: "But due to the hallucinations in the AI tool, finally the correctness has to be proven." (§1, p. 1). Inference: for VL, an LLM-generated Verus proof sketch is a proposal whose claims require verification.
 
 ## technique 1: induction proof templates for BDD properties
 
 what it is
-- prove a structural BDD property by mathematical induction on variables or BDD size
-- generate a readable explanation with an LLM, then connect it to a graph-based proof engine
+- prompt an LLM for mathematical induction on a structural property of a binary decision diagram (BDD)
+- use the generated explanation as a candidate proof, with formal validation still required
 
 when to use it
-- adders or Boolean functions whose BDD size or construction follows a recursive pattern
-- functions where a root split reduces the problem to smaller Then/Else BDDs
+- the appendix suggests properties measured by the number of variables or BDD size
+- Inference: the chosen property must support the proposed decomposition and induction hypothesis
 
 how to do it
-1. state the property and induction measure, such as number of variables (§2, p. 1–2)
-2. prove a base BDD with zero or one variable (Appendix Q1, p. 4)
-3. state the inductive hypothesis for all BDDs up to `n` variables (Appendix Q1, p. 4)
-4. split an `n+1`-variable BDD at its root into branches with at most `n` variables (Appendix Q1, p. 4)
-5. apply the hypothesis to the branches and conclude the property for `n+1` (Appendix Q1, p. 4)
-6. ask the LLM to render these steps in readable prose, then validate node counts and logical implications with the BDD method (§2, p. 2)
+1. Ask how to perform an induction proof for BDDs (Appendix Q1, p. 4).
+2. The quoted answer proposes a base case with zero or one variable (Appendix Q1, p. 4).
+3. Assume the property for all BDDs with up to `n` variables (Appendix Q1, p. 4).
+4. Split an `n+1`-variable BDD at its root into Then/Else branches with at most `n` variables, and apply the hypothesis (Appendix Q1, p. 4).
+5. Inference: check whether the branch properties actually imply the desired property of the whole BDD; the generic template alone does not establish this.
 
-The paper gives the generic sequence verbatim: "Step 1: Base Case: Prove the property holds for a trivial BDD, such as one with 0 or 1 variable. Step 2: Inductive Hypothesis: Assume the property holds for all BDDs with up to n variables. Step 3: Inductive Step: Prove it holds for n + 1 variables." (Appendix Q1, p. 4).
+The quoted ChatGPT answer begins: "Step 1: Base Case: Prove the property holds for a trivial BDD, such as one with 0 or 1 variable." (Appendix Q1, p. 4). It then says: "Step 2: Inductive Hypothesis: Assume the property holds for all BDDs with up to n variables." (Appendix Q1, p. 4).
 
 Verus form
-Inference: encode the induction measure and property as a `spec fn`; use a recursive proof `fn` with `requires` and `ensures`, and prove the base and recursive cases with `decreases`. BDD nodes and sharing need a model (for example, a finite sequence or map) and invariants. Verus can check the resulting arithmetic and structural lemmas, but the paper's BDD reasoning engine is not a Verus construct.
+Inference: express the property and induction measure in specifications, and use a recursive proof function with a decreasing measure. A model of BDD nodes, branches, and sharing would be needed to connect these lemmas to BDDs. The paper contains no Verus encoding.
 
 evidence and limits
-- For `f_n = Σ x_{2i-1}x_{2i}`, Q2 claims a base of three internal nodes, an inductive addition of three nodes, and size `3n+1` (Appendix Q2, p. 4).
-- For three-variable monomials, Q3 groups three variables in the base and adds four nodes per term, concluding `O(n)` (Appendix Q3, p. 4).
-- These are illustrative examples, not an evaluation set. No number of prompts, success fraction, runtime, or independent checker failures is reported.
+- Q1 supplies a generic induction outline, not a checked proof of a particular property.
+- The paper reports four appendix questions and excerpts from a multiplication conversation; it supplies no systematic prompt benchmark, success rate, or timing for LLM-assisted verification.
 
 ## technique 2: adapt induction to grouped monomials and symmetry
 
 what it is
-- choose an induction unit matching the function's repeated structure: two variables for `f2`, three for `f3`, and Hamming-weight states for totally symmetric functions
+- match the induction step to pairs or triples of variables, or count states by the number of input ones
 
 when to use it
-- the induction step is invalid if it adds only one variable while the function's monomial or state structure requires a group
+- the illustrated families are disjunctions of disjoint two-variable or three-variable conjunctions, and totally symmetric Boolean functions (§2, p. 2)
 
 how to do it
-1. identify the repeated term size (§2, p. 2)
-2. make the base case contain one complete term (Appendix Q2–Q3, p. 4)
-3. add one complete term in each inductive step and count the newly created BDD nodes (Appendix Q2–Q3, p. 4)
-4. for a totally symmetric function, track the number of ones seen at each level; level `i` has `i+1` possible counts (Appendix Q4, p. 4)
-5. sum levels `Σ(i+1)` to obtain `(n+1)(n+2)/2 = O(n²)` (Appendix Q4, p. 4)
+1. For `f_n = Σ_{i=1}^n x_{2i-1}x_{2i}`, Q2 fixes the ordering `x1 < x2 < ... < x2n` and adds a two-variable term at each step (Appendix Q2, p. 4).
+2. Q2's answer claims three internal nodes for the base case, an inductive hypothesis of size `≤ 3k+1`, and three added nodes giving `3(k+1)+1` (Appendix Q2, p. 4).
+3. For `n = 3k` and `f_k = Σ_{i=1}^k x_{3i-2}x_{3i-1}x_{3i}`, Q3's answer claims three internal nodes in the base and four added nodes per term, including an OR node (Appendix Q3, p. 4).
+4. For a totally symmetric function, Q4 tracks how many ones have been seen. Its answer counts `i+1` nodes at level `i` and sums from `i=0` to `n` to obtain `(n+1)(n+2)/2 = O(n²)` (Appendix Q4, p. 4).
+5. Require a formal proof of these candidate arguments (§2, p. 2).
 
-The paper explicitly cautions for `f2`: "Here, it is important to do the induction step not only for a single but for two variables." (§2, p. 2). It states the symmetry result: "For totally symmetric functions (see Q4) it is known that BDDs only require a quadratic number of nodes, i.e. O(n2) [9]." (§2, p. 2).
+The author says of the two-variable example: "Here, it is important to do the induction step not only for a single but for two variables." (§2, p. 2). After discussing the examples, he adds: "Of course, in all cases a formal proof that should be tool assisted is required." (§2, p. 2).
 
 Verus form
-Inference: represent the level and Hamming weight as ghost or specification state, prove the node-count recurrence by arithmetic lemmas, and use a `decreases` measure for recursive construction. The BDD package's canonical reduction and sharing remain an external model unless reimplemented and verified.
+Inference: model the construction, state the variable ordering, and prove the node-count bound with structural and arithmetic lemmas. For symmetric functions, a specification can track the level and number of ones seen.
 
 evidence and limits
-- The only denominators are the explicit formulas for one function family and the `O(n²)` level sum; no empirical BDD-size table is given.
-- Inference: an LLM can suggest a grouping, but a verifier must check that the grouping corresponds to the actual BDD construction and variable ordering.
+- The exact node counts above are claims in reproduced ChatGPT answers. The paper gives no checker output establishing them.
+- Inference: the node convention, reduction, sharing, and treatment of terminal nodes must be fixed before using these counts as verified bounds. In particular, Q3's reference to an OR node needs justification in a BDD model.
+- The author cites prior work for quadratic BDD bounds for symmetric functions (§2, p. 2); this paper does not newly verify that theorem.
 
-## technique 3: adversarial prompting and correction of an LLM's false proof
+## technique 3: follow-up prompts to expose false complexity claims
 
 what it is
-- ask the model a broad complexity question, inspect the answer for an overclaim, and issue a follow-up prompt targeting the disputed condition
+- challenge an LLM's qualification of a known theorem and inspect the proposed exception
 
 when to use it
-- whenever an LLM generalizes from a few variable orderings or examples to a universal theorem
+- Inference: use this when a generated answer weakens a universal theorem or offers empirical behavior as an asymptotic bound
 
 how to do it
-1. ask whether induction can prove polynomial BDD bounds for multiplication (§2, p. 2)
-2. detect the model's unsupported claim that only “most” orderings cause exponential size (§2, p. 2)
-3. ask for a counterexample or ordering that avoids blow-up (§2, p. 2)
-4. compare the answer with the established theorem; the paper says multiplication is exponential for every variable ordering, so the generated “polynomial in practice” claim is wrong (§2, pp. 2–3)
-5. send the corrected statement to the formal proof process rather than retaining the prose as evidence (§3, p. 3)
+1. Ask whether induction can prove polynomial BDD size for multiplication (§2, p. 2).
+2. Inspect the model's initial answer: it denies a general polynomial bound but says exponential size occurs under most variable orderings (§2, p. 2).
+3. Ask for a case avoiding exponential growth (§2, p. 2).
+4. Compare the proposed ordering with the known result. The author states that multiplication has exponential BDD size independently of variable ordering and cites Bryant's 1991 work (§2, p. 2).
+5. Inference: reject the unsupported exception; the follow-up answer is not a correction or a verified proof.
 
-The model's wrong generalization is preserved in the paper: "A poor ordering like: a0, b0, a1, b1, a2, b2, . . . leads to exponential size." (§2, p. 2). The authors then correct its conclusion: "From a complexity analysis point of view the last sentence is not correct, while the core message is clear." (§2, p. 3).
+The initial answer includes: "In fact, under most variable orderings, BDDs for multiplication require exponential space." (§2, p. 2). The follow-up question is: "But many cases does not mean all, right? can you give me a case where you can avoid the exponential blow-up." (§2, p. 2). The author rejects the follow-up's complexity claim: "From a complexity analysis point of view the last sentence is not correct, while the core message is clear: for a small number of variables the program might terminate within the given resources." (§2, p. 3).
 
 Verus form
-Inference: encode the theorem as a Verus lemma whose postcondition quantifies over every permitted variable ordering, and reject a proof that establishes only an existential or empirical ordering. The model's prose can be a comment or proof plan; only solver-checked `ensures` clauses and lemmas count.
+Inference: preserve a theorem's quantification over permitted variable orderings in its specification. A proof about one ordering or a finite set of small inputs cannot establish the universal asymptotic claim.
 
 evidence and limits
-- One multiplication prompt generated a wrong answer; one follow-up exposed the error. This is a 1/1 reported failure for that showcased prompt, not a general hallucination rate.
-- The paper does not report automatic correction, checker integration, or a reproducible prompt benchmark.
+- The paper shows an initial multiplication answer and an erroneous follow-up, with the author's corrections. This conversation supplies no general error rate.
+- There is no demonstrated automatic correction, checker integration, or verified replacement proof.
 
-## technique 4: connect LLM explanations to a formal reasoning engine
+## technique 4: proposed connection to formal reasoning engines
 
 what it is
-- use LLM text to explain induction or graph patterns, then validate the underlying mathematical claim with PFV's BDD proof machinery
+- connect readable LLM proof proposals to formal validation; the connection is a research direction
 
 when to use it
-- a proof needs readable exposition but its correctness depends on exact graph transformations and complexity bounds
+- Inference: a generated explanation needs an independent correctness check before supporting a verification claim
 
 how to do it
-1. select a PFV instance and its BDD representation (§1, p. 1)
-2. prompt the LLM for an explanation or proof outline (§2, p. 1–2)
-3. translate the outline into the graph-based proof patterns from prior PFV work (§2, p. 2)
-4. run the formal engine and retain the explanation only if the engine proves the property (§2, p. 2; §3, p. 3)
-5. feed tool feedback back into later prompts; the authors list feedback and chain-of-thought as future improvements (§3, p. 3)
+1. Generate an induction argument as in the illustrated conversations (§2, pp. 1–2).
+2. Seek formal validation through patterns from prior BDD work or an explanation based on logical reasoning; the paper proposes these alternatives (§3, p. 3).
+3. As future work, consider modern data structures, retrieval of tailored proofs, chain-of-thought reasoning, and feedback from a formal tool (§3, p. 3).
 
-The conclusion is explicit: "LLMs are a very powerful tool in the context of text generation." (§3, p. 3) but "the correctness has to be checked by some formal tools." (§3, p. 3).
+The conclusion says: "While the suggestions for proofs — at least for induction — are promising, a formal approach has to be applied." (§3, p. 3). It describes feedback as a possibility: "Using techniques like chain of thought reasoning and feedback from the formal tool can further aid the LLMs in proof generation." (§3, p. 3).
 
 Verus form
-Inference: the corresponding VL workflow is prompt or generate a proof outline, encode its claims as Verus specifications and lemmas, run Verus/Z3, and present only checked obligations plus the model's explanation. Retrieval of prior Verus lemmas can supply context, but retrieved text is not trusted until checked.
+Inference: a corresponding VL experiment could generate proof outlines, encode their claims as Verus specifications and lemmas, and run Verus. Retrieved lemmas and tool feedback could inform later attempts. Neither this translation nor a feedback loop is implemented or evaluated in the paper.
 
 evidence and limits
-- The paper offers examples and future directions, not an implemented LLM-to-PFV tool or performance result.
-- Trusted parts include the BDD implementation, PFV theorem and resource analysis, proof-engine translation, LLM output filtering, and the verifier itself. The specification and the correspondence between circuit and BDD remain assumptions unless proved.
+- The paper concludes: "For PFV a linking of formal tools with the LLM is a promising direction for future work." (§3, p. 3).
+- Inference: an implementation would need to justify the correspondence between a circuit, its BDD model, and the property checked by the formal engine. The paper provides no implemented trust analysis for that connection.
 
 ## what is proved, trusted, and relevant to VL
-The paper proves or relies on known PFV/BDD facts for the example families; it measures neither proof success nor resource use in this invited paper. What remains trusted includes ChatGPT 4o's generated text until checked, the BDD engine, the circuit-to-BDD encoding, and all underlying PFV theorems and implementations. Inference: the threat to an agent-written verified-Rust product is indirect but real: a language model can produce persuasive false lemmas or weaken a universal claim to an empirical one. The mitigation is architectural—make Verus the acceptance gate and treat LLM text as an untrusted explanation/proof proposal.
+The paper illustrates proof suggestions and cites established PFV/BDD results; it does not report machine-checked proofs of the generated answers. It identifies ChatGPT 4o as the model (§1, p. 1). Its introductory timing example concerns earlier PFV work on adders, not an LLM experiment. Its future directions remain proposals (§3, p. 3).
 
-The paper already demonstrates induction prompts, grouped-variable reasoning, symmetry node counting, adversarial follow-up, and formal-tool feedback as a workflow. VL should not redo these as novel techniques. A useful new experiment would measure Verus proof success and repair effort over a fixed corpus of generated lemmas, with denominators for accepted, rejected, and corrected proposals; this paper supplies no such numbers.
+Inference: VL can use the examples as motivation to check generated proof claims, including their quantifiers and complexity assumptions. LLM prose should remain untrusted; Verus acceptance also depends on the specification and any assumptions. A further experiment could measure accepted, rejected, and repaired Verus proposals over a fixed corpus. This paper provides no such measurements.
 
 ## techniques for the catalog
-- induction proof prompting — ask for base, hypothesis, and recursive BDD proof steps, then check them formally
-- structure-matched induction — group variables or track Hamming weight so the induction measure matches the BDD construction
-- adversarial correction — challenge broad LLM complexity claims with follow-up prompts and theorem checks
-- explanation-plus-verification — use LLM prose for readability while a BDD or Verus engine is the authority
-- feedback-driven generation — feed formal-tool feedback and retrieved prior proofs into subsequent proof prompts
+- induction proof prompting — demonstrated generic base, hypothesis, and recursive-step suggestions
+- structure-matched induction — demonstrated suggestions for pairs, triples, and Hamming-weight state counts; exact counts remain unchecked
+- follow-up questioning — demonstrated challenge to a multiplication claim that elicits another erroneous answer
+- explanation plus formal validation — proposed connection to proof engines, without an implemented integration
+- retrieval and formal-tool feedback — future directions, not demonstrated techniques
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While the suggestions for proofs — at least for induction — are promising, a formal approach has to be applied."): checked all four pages, quotations, numbers, section and page references, technique steps, model identity, and link; changed the link to the paper's arXiv identifier, distinguished reproduced model claims from verified results and future work from demonstrated behavior, removed unsupported error rates and trust claims, and marked VL conclusions as Inference; did not independently prove the BDD bounds, reproduce the conversations, or inspect the cited works.

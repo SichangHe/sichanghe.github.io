@@ -1,76 +1,83 @@
 # Reasoning about External Calls
 (authored by agents unless marked 🧑)
-Tag: `drossopoulou2025external`, [paper](https://doi.org/10.1145/nnnnnnn.nnnnnnn)
+Tag: `drossopoulou2025external`, [paper](https://doi.org/10.1145/3763064)
 
 ## scope and result
 
-The paper gives a formal method for proving what trusted module code can guarantee when it calls arbitrary, unknown external objects. Its central claim is that encapsulation plus lack of eventual access to a capability limits the effects of an external call. The paper defines protection assertions, scoped invariants, a specification language, and a Hoare logic with intermediate-state obligations. It proves the logic sound and reports a mechanised Coq proof for the running example (sections 2, 6, 7). The target language is a small sequential class-based language with private fields, public methods, and unforgeable addresses; the paper does not model Rust.
+The supplied paper is *Reasoning about External Calls – Extended Version*, arXiv:2506.06544v2, 90 pages. Its first-page footnote says, "Citations should use the original version of the paper, [42]." Reference [42] supplies the DOI above. Page references below refer to the supplied extended version.
 
-The motivating `Shop::buy` stores the old account balance, calls `buyer.pay(account, price)`, and sends the item only when the balance increased. The proof obligation is to show that an arbitrary buyer cannot withdraw money during `pay`. The paper states the sufficient assumptions exactly: "Prior to the call of buy, the buyer has no eventual access to the account’s key" and the module does not leak keys and permits withdrawal only to an entity that eventually has the key (section 2.1, p. 4). Under those assumptions, "The external call on line 9 can never result in a decrease in the shop’s account balance" (section 2.1, p. 4).
+The paper specifies and verifies trusted modules that call unknown, untrusted external code. Its central aim is: "Lack of eventual access implies that certain properties will be preserved, even in the presence of external calls" (section 8, p. 23). It introduces protection assertions, scoped invariants, and a Hoare logic with conditions on intermediate external states. Section 7 proves soundness assuming sound assertion and underlying Hoare logics. Section 6.4 (p. 21) reports a mechanised Coq proof that `Mgood` satisfies `S2 ∧ S3`, and lists assumptions about the underlying logic, assertion logic, and types. This study checks the paper's account, not the artifact itself.
+
+The model is a sequential, class-based language with module-private fields, public and private methods, and unforgeable addresses. Section 2 (p. 3) states that "external code interacts with the internal code only through public methods"; this is a language or platform guarantee. Section 3.1 (p. 9) also requires no ambient authority. Rust and Verus are not the modeled language.
+
+The motivating `Shop::buy` saves its account balance, calls `buyer.pay(account, price)`, and sends the item only if the new balance equals the old balance plus the price (section 2.1, p. 3). The intended guarantee is that this external call cannot decrease the balance. The sufficient assumptions include "Prior to the call of buy, the buyer has no eventual access to the account’s key", no leakage of keys, and withdrawal requiring eventual access to the key (section 2.1, p. 4). The conclusion is: "The external call on line 9 can never result in a decrease in the shop’s account balance" (p. 4).
 
 ## technique 1: protection and protected-from assertions
 
-What it is. Direct access is a field edge; indirect access is a path of field edges. `o` is protected from `o'` when no external object reachable from `o'` has a field pointing to `o`. `o` is protected when no external object reachable from the current frame can point to it, with an extra condition that an external receiver may not receive it as an argument (section 2.2.1, p. 5; formal Definition 4.4, p. 13). Protection is deliberately frame-relative: pushing an external call can reduce the current frame’s reachable set.
+What it is. Direct access is a field pointing to an object; indirect access follows a sequence of fields. Definition 4.4 (p. 13) defines `o` protected from `o'` by two requirements: the objects differ, and no external object reachable from `o'` has a field pointing to `o`. An object is protected relative to the current frame if no locally reachable external object has a field pointing to it; if the receiver is external, no variable in that frame may refer to it either. Definition 3.4 (p. 12) defines reachability and local reachability. These assertions describe reference structure, not permanent inability to obtain a reference.
 
-When to use it. Use protection for a capability whose possession controls an effect, such as an account key. Use protected-from when a particular external caller may have some capabilities but must not reach this one. The paper explicitly distinguishes these from global “nobody ever gets access” properties, which would forbid the intended future operation.
+The preservation requirement matters: "Thus, protection together with protection preservation (i.e. no internal object gives access) guarantee lack of eventual external access" (section 4.2, p. 13). Protection can become true when a call narrows the reachable set, and cease to hold when returning to an older frame (Example 4.7, p. 14).
 
 How to apply it.
-1. Identify the capability object and the effect it controls (the account key controls withdrawal) (section 2.2, pp. 4–5).
-2. Compute reachability from the current frame and classify external objects and their field edges (Definition 3.7 and Definition 4.4, pp. 11–14).
-3. State `⟨key⟩⟩` when no reachable external object has direct access, or `⟨key⟩⟩←×−buyer` when only the buyer-relative condition is needed (section 2.2.1, p. 5).
-4. Prove that internal assignments and calls preserve the assertion using the protection rules `Prot-1` through `Prot-4` (Figure 6, p. 18).
-5. Re-establish protection after any operation that may expose a reference; a proof cannot silently assume that a capability remains protected after it is passed.
 
-Verus form (Inference: the paper is not about Verus). Represent the capability as a private field and expose only methods whose `requires` clauses establish the caller-side capability fact. Use a `spec fn` over an abstract ownership/reachability set, and prove preservation with `ensures` on every internal method. A Verus proof function can establish a set-disjointness lemma; executable Rust must never call that proof function. Rust borrowing helps with aliasing but does not by itself express this dynamic reachability predicate. `old(...)` in a postcondition can relate pre-call reachability to post-call reachability. The Verus reference used by this project uses loop `invariant` syntax and does not list `modifies`; this study therefore avoids inventing either construct.
+1. Identify the capability and the effect it controls, such as an account key and withdrawal (section 2.1, pp. 3–4).
+2. State either `⟨key⟩⟩` for protection relative to the frame, or `⟨key⟩⟩←×−buyer` for protection from a particular object. Include the inequality requirement for protected-from (Definition 4.4, p. 13).
+3. For call-free internal statements, use the protection rules in Figure 6 (p. 18). `Prot-1` requires a proof that the expression still denotes the same object. `Prot-2` and `Prot-3` address variable assignments and field reads; `Prot-4` preserves relative protection across a field write when the capability is also protected from the stored value.
+4. Treat method calls with the call rules in Figure 7 (p. 19), rather than assuming the call-free rules cover them. Module-wide preservation must also rule out leakage through callbacks and return values (Figure 8, pp. 20–21).
 
-Evidence and limits. The paper gives formal definitions, preservation lemmas, and a soundness theorem rather than benchmark percentages. Its Coq artifact mechanises the illustrative proof (section 2, p. 2; section 6, p. 20). The model assumes unforgeable, un-enumerable addresses and that external code can interact with the module only through public methods (section 2, p. 3). Inference: a Rust implementation must account for unsafe code, FFI, shared mutable state, and library contracts, all outside this model.
+Verus form (Inference: proposed modeling work, not a checked implementation). A VL model could represent references and external objects using ghost state, define the protection predicate, and prove that each modeled public operation preserves it. A caller-supplied precondition alone would not establish the paper's guarantee against arbitrary clients: section 2.2, Example 2.2 (p. 7), warns that a public method "can be invoked by external code that ignores all specifications". The public implementation and its module-wide proof must justify the guarantee.
+
+Evidence and limits. The model depends on encapsulation and reference unforgeability. Inference: applying the idea to Rust with unsafe code or FFI requires a separate argument that those boundaries obey the modeled access rules.
 
 ## technique 2: scoped invariants
 
-What it is. A scoped invariant `x:C.{A}` says that if an external state satisfies `x:C ∧ A`, every external state in the scoped future of that state also satisfies `A`. The scoped future includes nested calls until the current method returns, but excludes states after the current frame is popped (Definition 5.1 and Example 2.1, pp. 6–7). This temporal boundary avoids the over-strong requirement of history invariants.
+What it is. A scoped invariant `x:C.{A}` conditionally preserves `A` between external states. Its scope includes nested calls and returns, stopping before returning from the call active in the starting state (Definition 3.2, p. 12; Definition 5.4, p. 15). It need not hold in intermediate internal states. The paper emphasizes: "They are preserved during execution of a specific method but not beyond its return" (section 2.2.2, p. 6).
 
-The paper’s examples are directly reusable: `S1` says accounts are not leaked, `S2` says keys are not leaked, and `S3` says the balance is at least `b` while the key is protected. The paper emphasizes that these invariants are conditional, scoped, and modular: "They are preserved during execution of a specific method but not beyond its return" (section 2.2.2, p. 7).
+Example 2.1 (p. 6) defines `S1` to preserve account protection, `S2` to preserve key protection, and `S3` to preserve both key protection and a lower balance bound. These are conditional guarantees, not claims that every account or key is always protected. The main text says that none of the three example modules satisfies `S1`, because `pay` could leak an account (Example 2.3, p. 7).
 
 How to apply it.
-1. Choose the object variables and an assertion whose free variables are among them (well-formedness Definition 5.6, p. 16).
-2. State the invariant as a conditional property, for example `a:Account.{⟨a.key⟩⟩ ∧ a.blnce ≥ b}` (Example 2.1, p. 7).
-3. Require each public method to preserve the invariant in its precondition, postcondition, and mid-condition; the module rule `Invariant` strengthens the external-call precondition with protection from the receiver and arguments (Figure 8, p. 21).
-4. Permit the invariant to fail after return when an older quiescent frame regains access; do not turn this scoped promise into a global postcondition (section 5.3, p. 17).
 
-Verus form (Inference). Encode the state predicate as a `spec fn` over a ghost snapshot or abstract map. Put the method’s normal postcondition in `ensures` and maintain a loop invariant with `invariant` syntax on the loop itself. For nested external calls, use a trait or abstract function contract whose `requires` and `ensures` describe the permitted intermediate state; the caller proves the predicate before and after the call. Verus has no direct scoped-future quantifier, so the frame stack and callback boundary must be represented explicitly in the model. This is an inference, not a feature claimed by the paper.
+1. Choose quantified object variables and an assertion whose free variables are among them. Check encapsulation: scoped invariants may inspect internal fields and use positive protection assertions, but not relative protection assertions (Definition 5.6, p. 16; section 4.3.2, p. 15).
+2. For an account, use the conditional assertion `⟨a.key⟩⟩ ∧ a.blnce ≥ b`, quantifying `a:Account` and `b:int` (Example 2.1, p. 6).
+3. For every public method, prove a quadruple whose precondition includes `A` and its adaptation for the receiver and arguments, whose postcondition includes `A` and its adaptation for the result, and whose mid-condition is `A` (Figure 8, p. 20).
+4. Keep the temporal boundary explicit. An older frame can regain access after return, so preservation during the call does not imply preservation afterward (section 5.3, pp. 16–17).
 
-Evidence and limits. The logic’s soundness proof relies on “deep satisfaction,” which requires an assertion to hold from a selected stack frame onward (section 8, p. 23). Inference: the model does not cover real-world scheduling, threads, or crashes.
+Verus form (Inference). A proposed VL encoding could use an explicit model of call frames, external observations, and callbacks. Ordinary preconditions and final postconditions would need additional obligations for intermediate external states. This study does not establish an encoding or a corresponding Verus feature.
+
+Evidence and limits. Soundness uses deep satisfaction: an assertion must hold when viewed from every frame starting at a selected frame through the top frame (section 7, p. 22; Definition H.3, pp. 51–52). Inference: a sequential proof does not establish correctness under concurrent scheduling or crashes.
 
 ## technique 3: Hoare quadruples and adaptation
 
-What it is. Classical triples specify only terminating states. The paper extends them to quadruples `{A} stmt {A'} || {A''}`, where `A'` holds in every terminating state and `A''` holds in every intermediate external state reachable while executing `stmt` (Definition 5.2, p. 8). This is essential because an external callback can observe the heap before the trusted method terminates.
+What it is. The quadruple `{A} stmt {A'} || {A''}` promises `A'` on terminating scoped executions and `A''` at reachable external states during that scope, assuming `A` initially (Definition 5.2, p. 15). Section 2.3.1 (p. 8) explains: "we consider not only states at termination but also external states reachable during execution of statements". This captures observations during callbacks.
 
-The proof workflow is:
-1. Prove ordinary triples for call-free statements using the underlying Hoare logic and embed them with `Mid` (Figure 6, p. 18).
-2. Use `Prot-1`–`Prot-4` to show assignments preserve protection (Figure 6, p. 18).
-3. For calls, use `Call_Int` for internal methods and `Call_Ext` for external methods; adapt assertions from caller variables to callee variables with the adaptation operator (Figures 7 and 19, pp. 19, 54).
-4. Use `seq`, `conseq`, `combine`, `Cases`, and `Absurd` to compose quadruples and discharge branches (section 6.2.1, p. 18).
-5. Apply the module `Method` rule to prove each method specification and `Invariant` to prove each scoped invariant for all public methods (Figure 8, p. 21).
+How to apply it.
 
-The Shop proof first establishes the mid-condition for `buyer.pay`, then uses the protected key and account invariant to show the balance cannot decrease. The paper says: "To capture this, we extend traditional Hoare triples to quadruples" (section 2.3.1, p. 8).
+1. Prove call-free triples in the underlying Hoare logic and embed them using `embed_ul` (Figure 6, p. 18). Use `Mid` to obtain quadruples. Arbitrary mid-conditions are possible here because these statements execute internally without method calls (section 6.2.1, p. 18).
+2. Use the protection rules to establish the required capability facts, with their premises about unchanged expressions and protection from stored values (Figure 6).
+3. For internal calls, use the method specification and substitute actual for formal parameters with `Call_Int`. For external calls, use a module scoped invariant and `Call_Ext_Adapt` or `Call_Ext_Adapt_Strong` (Figure 7, p. 19).
+4. Adapt the callee's assertion into a caller-side obligation. The operator replaces protection of an object with protection from every receiver and argument; it leaves ordinary expressions unchanged (Definition 6.1, pp. 18–19). It is not merely variable substitution. `Call_Ext_Adapt` requires and returns the adapted invariant, while its mid-condition is the unadapted invariant. The stronger rule additionally preserves the unadapted invariant when it also held initially.
+5. Compose proofs with `seq`, `conseq`, `combine`, `Cases`, and `Absurd` (Figure 19, p. 47). Use `Method` and `Invariant` for method and module adherence, including the result-protection obligations (Figure 8, pp. 20–21).
 
-Verus form (Inference). Use `requires` for the precondition, `ensures` for the terminal postcondition, and an explicit abstract callback contract for the external method. If intermediate states matter, split the Rust operation around the call and prove a predicate before and after each boundary; model the callback’s allowed effects with a ghost state machine or map. Adaptation is a proof lemma that rewrites caller-owned expressions into callee arguments. Verus can prove sequential compositions but does not automatically quantify over arbitrary foreign implementations; the external call must remain an assumed contract or an abstract trait specification.
+For `buyer.pay`, the proof uses `S3` and establishes that the key is protected from the buyer, account argument, and scalar price. The buyer condition is a precondition; the other two follow from the example's type information. Adaptation then gives protection at entry to `pay`, allowing the scoped invariant to preserve the balance bound (section 2.3.2, p. 8; Example 6.4, p. 20).
 
-Evidence and limits. Section 7 proves soundness of the rules relative to the small-step semantics. There are no runtime performance measurements. The guarantees depend on encapsulation and the modeled call discipline; violating either assumption invalidates the proof.
+Verus form (Inference). A possible VL design would prove capability non-leakage and effects at each callback boundary using an explicit external-execution model. Assuming an external function contract would leave that contract trusted; it would not reproduce this paper's quantification over arbitrary external modules. No Rust implementation or Verus proof is checked here.
+
+Evidence and limits. Theorem 7.3 (p. 23) states soundness for quadruples and specification adherence. Its proof combines external steps that preserve encapsulated assertions with summaries of internal public-method executions (section 7, pp. 22–23). Section 6.4 reports the Coq example proof separately from the general soundness argument. The paper reports no performance benchmark or experimental success rate.
 
 ## what is proved, trusted, and relevant to VL
 
-Proved: protection preservation, scoped-invariant preservation, method and module adherence, and soundness of the Hoare quadruple logic (sections 4–7). Mechanised evidence: a Coq development for the running example (section 2, p. 2; section 6, p. 20). Trusted: the language semantics, unforgeable addresses, module privacy, the external-call discipline, the underlying Hoare logic, the Coq kernel, and the user’s specifications. No empirical denominator or percentage exists, so a numerical effectiveness claim would be unsupported.
+The reported formal results cover protection preservation and soundness of the triples, quadruples, and specification rules. Their assumptions include sound assertion and underlying Hoare logics: "We require a sound logic of assertions" (Axiom H.1, p. 51). Section 6.4 (p. 21) states that the example mechanisation assumes properties of those logics and of the type system: "All assumptions are clearly indicated in the associated artifact." This study did not inspect or rerun that artifact or independently validate the metatheory.
 
-Inference: the direct VL value is a specification pattern for Rust APIs that call plugins, callbacks, or FFI. It suggests separating capability non-leakage, temporal validity across callbacks, and terminal functional behavior. The threat to a product of agent-written verified Rust is substantial when the agent can edit tests or supply an overly permissive external contract: Verus can prove the contract, not the unmodeled foreign implementation. Existing ownership and borrow checking already address some aliasing cases; VL should not redo ordinary memory-safety proofs as if they were this paper’s contribution. It should focus on explicit effect and callback contracts.
+The supplied version has conflicting example claims. Example 2.3 (p. 7) says `Mgood` and `Mfine` satisfy `S2` and `S3`, and none satisfies `S1`. Appendix E, Example E.3 (p. 36), instead lists `Mfine ̸ |= 𝑆 3` and lists all three modules as satisfying `S1`. The study follows the main text's explanation of the intended invariants; it does not resolve these conflicting statements by checking Coq.
 
-Contradictions or arithmetic checks: the paper reports no experimental rates, so none can be cross-checked. “Soundness” is relative to the formal semantics and assumptions, not a claim that arbitrary Rust or external libraries are safe.
+Inference: VL could use this specification pattern for Rust APIs that invoke callbacks or foreign code. The useful distinction is between protection of a capability, preservation during external observations, and a final functional postcondition. An overly permissive external contract would weaken that guarantee. Establishing compatibility with Rust's actual access and execution rules remains separate work.
 
 ## techniques for the catalog
 
-- protection assertions: express that a capability is unreachable by relevant external objects, then prove assignments and calls preserve the predicate
-- scoped invariants: preserve a conditional property across nested external states until the current method returns
-- Hoare quadruples: prove both terminal postconditions and intermediate external-state conditions
-- adaptation and deep satisfaction: translate assertions across call frames and require them from a selected stack frame onward
-- module adherence: combine method proofs and invariant rules to obtain a whole-module effect guarantee
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- protection assertions: describe the absence of direct access by relevant reachable external objects, then prove preservation and prevent leakage
+- scoped invariants: conditionally preserve an assertion at external states across nested calls until the active call returns
+- Hoare quadruples: prove final postconditions and conditions at intermediate external states
+- adaptation and deep satisfaction: relate protection across caller and callee frames and require satisfaction from a selected frame onward
+- module adherence: prove method specifications and preservation of scoped invariants by every public method
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Rule types-2 generalizes types-1 to any statement, provided that there already exists a triple for that statement."): checked quotations, definitions, technique steps, example claims, page and section references, and reported proof scope; corrected the DOI, Shop payment condition, protection definition, adaptation, call and module proof obligations, references, and unsupported Verus claims; noted conflicting example claims; did not inspect or rerun the Coq artifact, independently validate the metatheory, or implement the proposed Verus model.

@@ -4,55 +4,59 @@ Tag: `chakraborty2025formalspeccpp`, [paper](https://arxiv.org/abs/2502.15217)
 
 ## scope and claim
 
-FormalSpecCpp is a dataset and translation workflow for C++ programs with preconditions, postconditions, and tests. The authors state that it is “a dataset designed to fill the gap in standardized benchmarks for verifying formal specifications in C++ programs” (abstract, PDF p. 1). It starts from verified Dafny-synthesis programs rather than asking an LLM to invent specifications. The result is useful for evaluating specification inference and translation, but it does not prove that generated C++ contracts preserve Dafny semantics.
+FormalSpecCpp is a dataset and translation workflow for C++ programs with preconditions, postconditions, and tests. The authors call it “a dataset designed to fill the gap in standardized benchmarks for verifying formal specifications in C++ programs” (abstract, PDF p. 1). They translate verified Dafny-synthesis programs instead of inferring C++ specifications directly: “Instead of inferring formal specifications directly for C++ using LLMs, we used LLMs for a structured translation process from Dafny to C++” (section III.A, PDF p. 2).
+
+Inference: this provides a benchmark-construction method, but the reported testing and partial manual review do not establish semantic equivalence between every C++ translation and its Dafny source.
 
 ## technique: verified-source translation
 
-Use this when a target language lacks a mature specification corpus and a verified source language is available.
+The paper's workflow is:
 
-1. Select source programs from Dafny-synthesis that already have preconditions and postconditions (section III.A, PDF p. 3)
-2. Give an LLM a structured prompt containing the Dafny program, contracts, type rules, and required C++ format (section III.A, PDF pp. 3–4)
-3. Translate Dafny types to C++ types, formal properties to target assertions, and executable code while preserving intended behavior (section II.C, PDF p. 3)
-4. Represent contracts consistently in C++ with `#define REQUIRE(cond) assert(cond)` and `#define ENSURE(cond) assert(cond)` (section III.A, PDF p. 4)
-5. Compile and test every generated translation, then manually inspect a subset and repair semantic errors (sections III.C–D, PDF pp. 4–5)
+1. Select Dafny-synthesis programs with both preconditions and postconditions, totaling 105 programs (section III.A, PDF pp. 2–3)
+2. Use GPT-4-turbo for translation (introduction, PDF p. 1; section II.B, PDF p. 2). Figure 2 supplies the Dafny-to-C++ translation prompt (PDF p. 3)
+3. Ask the model to translate the program and assertions, identify conditions under which C++ may fail, and select signed or unsigned integer types according to possible negative values and constraints from preconditions or invariants (Figure 2, PDF p. 3)
+4. Map preconditions to `REQUIRE`, loop invariants to `assert`, and postconditions to `ENSURE`; require the definitions `#define REQUIRE(cond) assert(cond)` and `#define ENSURE(cond) assert(cond)`. Output only the final code without a main function (Figure 2 and section III.A, PDF p. 3)
+5. Generate associated tests, execute them, and manually review and refine a subset of programs and tests (sections III.B–D, PDF p. 3)
 
-The rationale is explicit: “Since Dafny programs in the benchmark are already verified, translating their specifications directly to C++ ensures that formal and logical correctness is maintained rather than relying on speculative inference by the LLM” (section III.A, PDF p. 3). This is a useful benchmark-design technique, but translation can change semantics. Dafny integers are unbounded, while C++ has fixed-size types and signed/unsigned behavior (section VI.A, PDF p. 6).
+The authors' rationale is: “Since Dafny programs in the benchmark are already verified, translating their specifications directly to C++ ensures that formal and logical correctness is maintained rather than relying on speculative inference by the LLM” (section III.A, PDF p. 2). They also note a translation problem: “Dafny supports an unbounded integer type, which can represent any integer value without overflow, whereas C++ offers multiple fixed-size integer types” (section VI.A, PDF p. 4).
 
-Inference: for Verus, translate from a verified Dafny or Lean source into Rust plus Verus contracts only as a dataset-generation aid. Replace macro assertions with `requires` and `ensures`, use `assert` for local facts, and verify each function in Verus. Source verification does not carry across language semantics, ownership, overflow, or panic behavior; those require new proofs.
+Inference: for Verus, translating verified Dafny or Lean programs into Rust plus Verus contracts could seed a dataset. Use `requires` and `ensures` for contracts and verify each function in Verus. Source verification does not establish correctness after changes in language semantics, ownership, integer ranges, or panic behavior.
 
 ## technique: prompt constraints for type and assertion mapping
 
-The paper identifies three prompt goals: “Specification Preservation,” “Type Safety,” and “Assertion Mapping” (section II.C, PDF p. 3). Apply them by making the prompt specify (a) which pre/postcondition expressions must remain logically equivalent, (b) the target type for every source type, and (c) the target construct for every source assertion. The authors report that prompt refinement explicitly addressed types, preconditions, invariants, postconditions, and correct C++ constructs after early syntax and misalignment errors (section VI.B, PDF p. 6).
+The paper identifies three prompt goals: “Specification Preservation,” “Type Safety,” and “Assertion Mapping” (section II.C, PDF p. 2). Section VI.B describes refinement after early assertion and syntax errors: “The iterative process focused on explicitly specifying rules around types, preconditions, invariants, and postconditions, ensuring consistency and correctness across the translations” (PDF p. 4). Figure 2 supplies the concrete integer-type and assertion-mapping rules above (PDF p. 3).
 
-Inference: a Verus prompt should require a contract table mapping each source `requires`/`ensures` clause to Verus syntax, identify integer-width changes, and forbid unsupported constructs. The model's output remains untrusted until Verus verifies it and a reviewer checks that the contract states intended behavior rather than an easier property.
+Inference: a Verus prompt could map every source contract clause to Verus syntax and identify integer-width changes. Verus verification should be accompanied by a review of whether the translated contract retains the intended behavior.
 
 ## technique: direct test translation and execution feedback
 
-Use source tests to detect translation defects and contract mismatches.
+1. Translate original MBPP tests directly into C++: “we used LLM to directly convert the original MBPP test cases into C++, translating test input, expected output, and assertions while maintaining functional equivalence” (section III.B, PDF p. 3)
+2. Execute the generated programs and tests. Reported failures include inconsistent contracts, incomplete or ill-formed tests, expected/actual output mismatches, assertion errors, linker errors, and compilation errors (section III.C, PDF p. 3)
+3. Inspect and repair a subset manually, including successful programs. The authors describe “Correcting errors detected by automated tests,” “Inspecting a subset of successful programs,” and “Refining specifications and tests to better capture intended function behavior” (section III.D, PDF p. 3)
 
-1. Translate original MBPP tests directly, preserving input, expected output, and assertions (section III.B, PDF p. 4)
-2. Compile and execute all translated programs and tests (section III.C, PDF p. 4)
-3. Classify failures: inconsistent contracts, incomplete tests, expected/actual output mismatches, linker errors, or compilation errors (section III.C, PDF p. 4)
-4. Feed failures into contract, code, and test repairs, then rerun the suite (section III.D, PDF p. 5)
+The testing result is: “In our initial run, 62 programs passed all tests, while 43 failed due to assertion errors, linker errors, and compilation errors” (section III.C, PDF p. 3). The limitation is explicit: “Some programs were compiled successfully but contained incorrect specifications or logical inconsistencies that required manual review” (section III.C, PDF p. 3).
 
-Automated tests found structural defects but missed semantically wrong specifications: “Some programs compiled successfully but contained incorrect specifications or logical inconsistencies that required manual review” (section III.C, PDF p. 5). In the initial run, 62 programs passed all tests and 43 failed; after refinement, all 105 converted programs compiled on the first attempt (sections III.C and IV, PDF pp. 4–5). The 62/43 split is the initial test run, whereas 105/105 is first-attempt compilation after the workflow; they are different denominators and must not be conflated.
+Section IV separately reports “all converted programs successfully compiling on the first attempt, achieving a 100% success rate” (PDF p. 4), and Table I lists 105 programs. The paper does not explain how this first-attempt compilation result relates to the initial run's compilation errors. It does not say that the 105/105 result followed refinement or give a final all-tests-passing count.
 
-Inference: in VL, run Verus verification in addition to concrete tests. A passing test is evidence about those inputs only; a passing Verus proof is evidence conditional on the contract. Add adversarial tests for overflow, aliasing, panic, and boundary inputs because this dataset does not cover Rust-specific failure modes.
+Inference: in VL, run Verus verification alongside concrete tests. Tests cover their inputs; proofs depend on the stated contracts. Check boundary inputs and Rust-specific behavior when adapting this method.
 
 ## evidence, cost, and trust boundary
 
-The dataset contains 105 programs with both preconditions and postconditions (section III.A, PDF p. 4). The pipeline used GPT-4-turbo (introduction, PDF p. 1; section II.B, PDF p. 3). Conversion of programs cost $2.07, averaged $0.02 per file, and took about 27 minutes; test generation cost $1.31 and took about 15 minutes (section IV, PDF p. 5). Dafny files averaged 17.3 lines and converted C++ averaged 33.1 lines, a reported 91.2% increase (section IV, PDF p. 5). Table I reports 105 total files and 105 successfully compiled programs on the first attempt (100%) (PDF p. 5). The paper gives no denominator for the manually reviewed subset and no formal semantic-equivalence proof.
+The dataset has 105 programs with both preconditions and postconditions (section III.A, PDF p. 3). Section IV reports program conversion cost of $2.07, averaging $0.02 per file, and approximately 27 minutes. Test generation cost an additional $1.31 and took around 15 minutes (PDF p. 4). The reported code sizes are: “Dafny files averaged 17.3 lines of code, while the converted C++ code showed a 91.2% increase in size, with an average of 33.1 lines per file” (section IV, PDF p. 4). Table I reports 105 processed files and 105 first-attempt compilations (100%) (PDF p. 4).
 
-The trusted components are the original Dafny specifications, the LLM translation, C++ compiler and assertion macros, test-oracle expected values, and manual review. Tests exposed assertion and output failures, but manual review was needed for misaligned assertions and faulty preconditions (section III.D, PDF p. 5). What remains unproved is that every C++ contract means the same thing as its Dafny source or that tests cover all behaviors.
+Manual checking was partial: one author “manually reviewed and refined a subset of translated programs and test cases” (section III.D, PDF p. 3). The paper does not give that subset's size or a formal proof of source-to-target semantic equivalence.
 
-Inference: threat to VeruLaw is moderate. The dataset and workflow provide a useful source-to-target contract corpus and a concrete validation loop, but the 105-program scale and C++ compilation evidence do not establish verified Rust correctness. VL should reuse verified-source seeding, explicit type/assertion mapping, compile-test feedback, and manual contract review. It should not redo the idea as if direct LLM specification inference were equivalent to translation; the paper deliberately avoids that problem.
+Inference: the reliability of the resulting corpus depends on source specifications, LLM translations, compiler and assertion behavior, test expected values, and manual review. Neither compilation nor passing tests establishes that every translated contract retains its source meaning.
+
+Inference: FormalSpecCpp offers VeruLaw a method for seeding a contract corpus and checking translations. Its reported evidence does not establish verified Rust correctness. Reusable parts are verified-source selection, explicit type and assertion mapping, translated tests, and manual semantic review. Translating existing verified specifications addresses a different problem from inferring new ones.
 
 ## techniques for the catalog
 
 - verified-source seeding — build a target-language specification dataset by translating already verified source programs
-- contract-preserving prompt — require explicit preservation, type mapping, and assertion mapping rules
-- contract macro normalization — represent target preconditions and postconditions in a uniform format before verification
-- test translation — carry source inputs, expected outputs, and assertions into the target language
-- compile-and-test feedback — classify generated failures and iterate on code, contracts, and tests
-- manual semantic review — inspect successful compilations because tests cannot detect every logically wrong specification
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- contract-preserving prompt — specify preservation, type mapping, and assertion mapping goals
+- contract macro normalization — represent C++ preconditions and postconditions with uniform assertion macros
+- test translation — translate source test inputs, expected outputs, and assertions into the target language
+- execution feedback and repair — use failures to identify problems in translations and tests for manual correction
+- manual semantic review — inspect a subset of successful programs for logically incorrect specifications
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Some programs were compiled successfully but contained incorrect specifications or logical inconsistencies that required manual review."): checked the entire paper text, PDF Figure 2, quotations, numbers, section and PDF page references, and technique steps; corrected page references and a quotation, removed an unsupported refinement chronology and rerun step, distinguished the compilation and test results, and marked recommendations as inferences; did not inspect the dataset repository, rerun the experiments, or prove translation equivalence.

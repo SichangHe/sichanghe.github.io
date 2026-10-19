@@ -1,31 +1,31 @@
 # Formal Verification of Blockchain Nonforking in DAG-Based BFT Consensus with Dynamic Stake
 (authored by agents unless marked 🧑)
-Tag: `coglio2025formal`, [paper](https://doi.org/10.48550/arxiv.2504.16853)
+Tag: `coglio2025formal`, [paper](https://arxiv.org/abs/2504.16853)
 
 ## what the paper proves or measures
 
-The paper formalizes a Narwhal-style DAG and Bullshark-style blockchain protocol in ACL2, allowing validators to bond and unbond at every block and to carry different stakes. It proves blockchain nonforking under a per-active-committee Byzantine-stake bound. The abstract states: “We formally proved that blockchains never fork in the model, also clarifying how BFT bounds on faulty participants generalize to these highly dynamic sets of participants.” (Abstract, p.1). The proof applies to arbitrarily long executions and arbitrarily large modeled states; ACL2 checks the complete development in less than one minute on the reported hardware (Abstract, p.1; Section 4, p.15).
+The paper formalizes a Narwhal-style DAG and Bullshark-style blockchain protocol in ACL2, allowing validators to bond and unbond at every block and to carry different stakes. It proves blockchain nonforking under a per-active-committee Byzantine-stake bound. The abstract states: “We formally proved that blockchains never fork in the model, also clarifying how BFT bounds on faulty participants generalize to these highly dynamic sets of participants.” (Abstract, p.1). The proof applies to arbitrarily long executions and arbitrarily large modeled states; ACL2 checks the complete development in less than one minute on the reported hardware (Abstract, p.1; Section 4, p.16).
 
-The model is deliberately an abstract labeled state-transition system. A state contains correct-validator states and a network message set; nondeterministic events create or accept certificates, advance rounds and commit anchors. The model permits more executions than a concrete implementation, so a property proved for every modeled execution applies to an implementation’s subset (Section 2, p.2). Liveness and denial-of-service behavior are not proved; the paper focuses on safety/nonforking.
+The model is deliberately an abstract labeled state-transition system. A state contains correct-validator states and a network message set; nondeterministic events create or accept certificates, advance rounds and commit anchors. The model permits more executions than a concrete implementation, so a property proved for every modeled execution applies to an implementation’s subset (Section 2, p.2). Liveness is left for future work (Section 6, p.17). The model-to-implementation correspondence is trusted rather than proved (Section 4, p.16).
 
 ## technique 1: model dynamic stake with lookback committees
 
-what it is: a blockchain’s bonding and unbonding transactions determine a bonded committee, but the active committee for a round is the committee from a fixed number `lkbk` of rounds earlier. This lookback avoids circular dependence between a block’s committee decision and the block that changes that committee (Sections 2.6 and Introduction, pp.7 and 2).
+what it is: a blockchain’s bonding and unbonding transactions determine a bonded committee, but the active committee for a round is the committee from a fixed number `lkbk` of rounds earlier. This lookback handles the dependency between DAG construction and blockchain construction (Sections 2.6 and Introduction, pp.7 and 2).
 
 how it is done:
 1. represent a committee as a finite map from validator addresses to positive stakes
 2. apply each block’s transactions in order: bonding inserts or increases stake, unbonding deletes a validator, and other transactions leave the committee unchanged (Section 2.6, p.7)
-3. define `bcmt` to calculate the bonded committee only through the known blockchain prefix; return undefined for later rounds
+3. define `bcmt(r,b)` using the blocks before round `r`; return undefined when `r > last(b) + 2` (Figure 3, p.5; Section 2.6, p.7)
 4. define the active committee `acmt(r)` by looking back `lkbk` rounds, so bonding waits `lkbk` rounds before participation and unbonding remains active for that delay (Section 2.6, pp.7–8)
-5. define quorum stake as the complement of the maximum tolerated faulty stake, where `fstk(w)` is the largest integer strictly below one third of total stake and `qstk(w)` is the required quorum (Section 2.6, p.8)
+5. define `fstk(w)` as the largest nonnegative integer strictly below one third of total stake for a nonempty committee, or zero for an empty committee; define quorum stake `qstk(w) = nstk(w) - fstk(w)` (Section 2.6, p.8)
 
-The paper emphasizes that committees can change completely in one block: “There are no restrictions on how a committee can change: it is possible to replace a committee completely in a single block.” (Section 3, p.15). The lookback delay, rather than gradual membership change, is what lets proofs use one well-defined committee per round.
+The paper emphasizes that committees can change completely in one block: “There are no restrictions on how a committee can change: it is possible to replace a committee completely in a single block.” (Section 3, p.15). Committee agreement is proved together with nonforking; lookback alone does not establish agreement (Section 3, p.15).
 
 evidence: The formal nonforking theorem assumes every active committee along the execution has faulty stake at most `fstk`. The result therefore generalizes the usual “less than one third of validators” condition to weighted, changing committees (Section 3, pp.14–15).
 
-limits: the model treats all transactions as valid and does not model cryptographic details beyond unforgeability of correct-validator signatures. Faulty validators may send arbitrary messages, but cannot forge a correct validator’s signature (Sections 2.2–2.3, pp.3–6). The model can deadlock because events may advance without creating certificates; deadlock does not affect nonforking (Section 2.11, p.13).
+limits: the model treats all transactions as valid and does not model cryptographic details beyond unforgeability of correct-validator signatures. Faulty certificate authors may omit the author’s checks, but any correct endorsers still perform their checks; faulty validators cannot forge a correct validator’s signature (Sections 2.2–2.3 and 2.8, pp.3, 6, 11). The model can deadlock because events may advance without creating certificates; deadlock does not affect nonforking (Section 2.11, p.14, footnote 8).
 
-Verus form: Inference: represent committee maps and stakes with ghost maps, specify `acmt` as a pure function, and prove that extending a blockchain preserves already defined active committees. Use `requires` for the per-round fault-stake bound and `ensures` for quorum-stake arithmetic. Dynamic map updates and finite sums can be verified in Verus, but cryptographic signature assumptions remain external contracts.
+Verus form: Inference: represent committee maps and stakes with ghost maps, specify `acmt` as a pure function, and prove that extending a blockchain preserves already defined active committees. Use `requires` for the per-round fault-stake bound and `ensures` for quorum-stake arithmetic. Keep signature unforgeability as an explicit assumption in such a translation.
 
 ## technique 2: represent protocol executions as labeled transitions
 
@@ -36,14 +36,14 @@ how it is done:
 2. define messages as certificates addressed to one validator and allow arbitrary network delay
 3. define `event-possiblep(event,state)` to check an event’s premises
 4. define `event-next(event,state)` to produce the unique successor when the event is possible
-5. define reachable states by the reflexive-transitive execution relation `T*` from an initial state (Sections 2.1 and 4, pp.3, 15)
-6. define protocol properties as predicates over states, so safety is independent of a particular scheduler or implementation code
+5. define reachable states by the reflexive-transitive execution relation `T*` from an initial state (Sections 2.1 and 4, pp.3, 15–16)
+6. define protocol properties as predicates over states; prove them for all modeled event sequences (Section 3, p.14)
 
 The paper says: “The protocol is modeled as a labeled state transition system, which moves from state to state via nondeterministic events.” (Section 2, p.2). In ACL2, state and event variants are typed with macros; `event-possiblep` dispatches to event-specific predicates and `event-next` dispatches to state updates (Appendix D.1 and D.3, pp.26–29).
 
-evidence: ACL2 verifies the full approximately 20,000-line formalization in less than one minute on an Apple M3 Max with 16 cores and less than two minutes on one core (Section 4, p.15). The event model is executable enough to define reachable-state theorems while abstract enough to cover arbitrarily large states.
+evidence: ACL2 verifies the full approximately 20,000-line formalization in less than one minute on an Apple M3 Max with 16 cores and less than two minutes on one core (Section 4, p.16). The authors report: “The proofs are carried out efficiently, and apply to arbitrarily long executions with arbitrarily large states.” (Section 4, p.16).
 
-Verus form: Inference: encode events as an enum and state transitions as a `spec fn` relation plus a proof function for deterministic successor updates. A Rust implementation can expose executable transition code with `requires` matching `event-possiblep` and `ensures` matching `event-next`; a ghost sequence can represent `T*`. Verus cannot quantify over all executions without explicit induction lemmas, so the invariant proof must be structured as transition preservation.
+Verus form: Inference: encode events as an enum and state transitions as a `spec fn` relation plus a proof function for deterministic successor updates. A Rust implementation can expose executable transition code with `requires` matching `event-possiblep` and `ensures` matching `event-next`; a ghost sequence can represent `T*`. Structure the proof as initial establishment, transition preservation and induction over event sequences.
 
 ## technique 3: prove nonforking through mutually dependent invariants
 
@@ -53,21 +53,21 @@ how it is done:
 1. define fault-tolerant-reachable states as executions in which every active committee meets the faulty-stake bound
 2. prove base invariants for empty initial DAGs and blockchains
 3. prove transition invariants such as even/increasing block rounds, backward closure of DAG references, signer quorum, signer records and no self-endorsement (Appendix B.2–B.6, pp.18–20)
-4. prove signed nonequivocation: a correct signer never signs two certificates with the same author and round (Appendix B.7, p.20)
+4. prove signed nonequivocation: a correct signer never signs two different certificates with the same author and round (Appendix B.7, p.20)
 5. prove DAG nonequivocation with quorum intersection; if two certificates share author and round, their signer quorums intersect in a correct validator, which cannot sign both (Appendix B.8, pp.20–21)
-6. prove anchor nonforking by intersecting the stake of voters that elected an anchor with the stake of predecessor certificate authors; the intersection creates a DAG path forcing every later committing validator to include the same anchor (Section 3, p.14)
-7. prove blockchain nonforking because blockchains are generated from nonforking committed-anchor sequences (Section 3, p.14)
+6. prove anchor paths by intersecting voting stake greater than `fstk` with predecessor stake at least `qstk`, both measured in the committee at the voters’ round; every certificate at least two rounds after the elected anchor has a path to it. Then prove that committed-anchor sequences do not fork (Section 3, p.15; Appendix B.12–B.13, pp.22–23)
+7. prove committed-certificate and blockchain redundancy, so the blockchain can be reconstructed from committed anchors. Prove transition preservation of blockchain nonforking using preservation of anchor nonforking and the implication in the new state; a direct implication alone would leave an unresolved proof cycle (Appendix B.14–B.16, pp.23–24)
 8. discharge the circular dependency by simultaneous induction: committee agreement enables the quorum argument for DAG nonequivocation, while DAG nonequivocation enables blockchain agreement (Section 3, pp.14–15)
 
-The key result is stated as a prefix relation: two correct validators’ blockchains are equal or one is a prefix of the other (Section 3, p.14). The authors explain the cycle directly: “This seeming circularity actually means that blockchain nonforking and certificate nonequivocation are interdependent invariants, along with other related invariants like committee agreement, which are all proved in a single induction.” (Section 3, p.15).
+The key result is stated as a prefix relation: two correct validators’ blockchains are equal or one is a prefix of the other (Section 3, p.15). The authors explain the cycle directly: “This seeming circularity actually means that blockchain nonforking and certificate nonequivocation are interdependent invariants, along with other related invariants like committee agreement, which are all proved in a single induction.” (Section 3, p.15).
 
-evidence: ACL2 theorem `nonforking-blockchain-p-when-reachable` assumes an initial state, a possible event sequence and fault-tolerant committees, then concludes `nonforking-blockchains-p` (Appendix D.5, p.30). The proof is machine checked, not a finite simulation; it applies to arbitrary execution length.
+evidence: ACL2 theorem `nonforking-blockchain-p-when-reachable` assumes an initial state, a possible event sequence and fault-tolerant committees, then concludes `nonforking-blockchains-p` (Appendix D.5, p.31). The proof is machine checked, not a finite simulation; it applies to arbitrary execution length.
 
-limits: the conclusion depends on the model’s transition rules and fault assumption. Liveness, message delivery and implementation-specific round advancement are omitted. The proof does not establish that a deployed implementation conforms to this model; that conformance is a separate obligation.
+limits: the conclusion depends on the model’s transition rules and fault assumption. Liveness is not proved; eventual message delivery is not required, and implementation-specific round-advancement conditions are abstracted away (Sections 2.3–2.4, p.6; Section 6, p.17). The proof does not establish that a deployed implementation conforms to this model; that conformance is a separate obligation.
 
 Verus form: Inference: state each invariant as a `spec fn` over a ghost protocol state. Use proof functions for base and per-event preservation, and prove mutually dependent invariants in one lemma whose precondition includes all old-state invariants. A final induction over an event sequence can establish nonforking. Avoid treating `invariant` as a Verus call; use loop invariants only for executable loops and separate proof lemmas for transition induction.
 
-## technique 4: machine-check executable definitions and proof guidance in ACL2
+## technique 4: machine-check model definitions and guided proofs in ACL2
 
 what it is: ACL2’s untyped first-order logic and total Common Lisp functions encode records, sets, maps, predicates and transitions. Users guide automation with rewrite lemmas and theorem-specific hints; ACL2 supplies simplification and induction (Section 4, p.15).
 
@@ -76,19 +76,19 @@ how it is done:
 2. define total recursive functions for set filtering, committee updates and state transitions; add monotonicity and algebraic helper theorems (Appendix D.1–D.3, pp.27–29)
 3. define invariant predicates such as `nonforking-blockchains-p` and `unequivocal-dags-p` using quantified specifications (`define-sk`) (Appendix D.4, p.30)
 4. state top-level reachable-state theorems with initial-state, event-possibility and fault-tolerance hypotheses
-5. provide rewrite lemmas and hints where automatic simplification cannot close preservation obligations (Section 4, p.15)
+5. provide rewrite lemmas and hints where automatic simplification cannot close preservation obligations (Section 4, pp.15–16)
 
-The paper’s sample transition split is explicit: `event-possiblep` checks a tagged event and `event-next` updates the state only under a guard (Appendix D.3, pp.29–30). ACL2’s total-function discipline uses fixing functions for malformed inputs, while guards document intended types (Appendix D.1–D.2, pp.27–28).
+The paper’s sample transition split is explicit: `event-possiblep` checks a tagged event and `event-next` has a guard requiring that the event be possible (Appendix D.3, pp.29–30). ACL2’s total-function discipline uses fixing functions for malformed inputs, while guards document intended types (Appendix D.1–D.2, pp.27–28).
 
-evidence: approximately 20,000 physical lines include extensive documentation; ACL2’s one-minute verification time is for the complete formalization, not a sampled subset (Section 4, p.15). The authors trust only the ACL2 kernel and the model/property definitions; “Everything else, i.e. the other invariants and all the proofs, are not trusted (assuming that ACL2 is sound)” (Section 4, p.16).
+evidence: approximately 20,000 physical lines include extensive documentation; ACL2’s one-minute verification time is for the complete formalization, not a sampled subset (Section 4, p.16). The authors trust the transition-system and nonforking definitions to express the intended protocol and property. They state: “Everything else, i.e. the other invariants and all the proofs, are not trusted (assuming that ACL2 is sound), being mere instruments to show that blockchains do not fork.” (Section 4, p.16).
 
-Verus form: Inference: Rust structs/enums and total `spec fn`s can replace ACL2 records and predicates; `requires` provides event guards and `ensures` state updates. Verus’s typed logic removes ACL2’s untyped fixing idiom, but every helper theorem still needs explicit proof. The ACL2 model itself is not a verified Rust implementation.
+Verus form: Inference: Rust structs/enums and total `spec fn`s can replace ACL2 records and predicates; `requires` provides event guards and `ensures` state updates. Use typed specifications and prove helper properties for maps, sets and stake sums. The ACL2 model itself is not a verified Rust implementation.
 
 ## trusted boundary, contradictions, and VL implications
 
 The paper proves a safety property of an abstract model under weighted Byzantine bounds. It does not prove liveness, cryptographic security, parser correctness or implementation refinement. The one-minute figure is a verification time for ACL2 on the stated machine, not a runtime guarantee for an implementation. The paper’s model intentionally includes deadlocking executions, yet nonforking remains meaningful because it is a safety invariant.
 
-What has already been done that VL should not redo (Inference): the paper supplies a reusable recipe for transition-system invariants with circular dependencies, quorum-intersection proofs and dynamic membership. A VL consensus component can borrow these proof obligations instead of relying on tests or a single top-level lemma. Threat to agent-written verified Rust (Inference): high for distributed-safety code if an agent omits a dependency invariant or misstates the fault bound; Verus can check the Rust proof only after the state model and implementation correspondence are made explicit.
+Inference: the paper supplies a reusable recipe for transition-system invariants with circular dependencies, quorum-intersection proofs and dynamic membership. A VL consensus component can borrow these proof obligations instead of relying on tests or a single top-level lemma. Inference: omitting a dependency invariant or misstating the fault bound could invalidate a distributed-safety argument; an adaptation to verified Rust should make the model and its correspondence to the implementation explicit.
 
 ## techniques for the catalog
 
@@ -97,4 +97,4 @@ What has already been done that VL should not redo (Inference): the paper suppli
 - simultaneous invariant induction — prove interdependent nonforking, committee-agreement and nonequivocation invariants together
 - quorum-intersection reasoning — turn weighted stake overlap into a correct signer and then into certificate uniqueness
 - ACL2 executable formalization — encode typed records, total transitions and quantified invariants with machine-checked reachable-state theorems
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The no self-endorsement invariant in Figure 7 says that each validator’s set of endorsed pairs does not contain any pair with the validator as author."): checked the entire paper, quotations, numbers, section and page references, assumptions and technique steps; corrected page references, the empty-committee bound, transition-function guard wording and the trusted boundary; added the redundancy and transition-preservation steps; removed unsupported Verus claims and used the paper’s arXiv identifier for the link; did not rerun ACL2, inspect the external formalization, validate a deployed implementation or test the proposed Verus adaptations.
