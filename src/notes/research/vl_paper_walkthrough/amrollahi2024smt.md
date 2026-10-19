@@ -3,139 +3,135 @@
 Tag: `amrollahi2024smt`, [paper](https://arxiv.org/abs/2410.22419)
 ## paper and result
 
-Amrollahi et al. study solver instability: semantically equivalent or nearly equivalent SMT formulas can take very different times, or one can solve while another times out. The abstract states, "We introduce an approach for mitigating the stability problem based on normalizing solver inputs." (Abstract, p. 1) The target is input variation, not a faster solver. The paper considers four semantics-preserving mutations: assertion reordering, commutative-operand reordering, user-symbol declaration reordering and renaming, and replacement of an anti-symmetric operator by its converse (Section I, pp. 1–2).
+Amrollahi et al. study variation in SMT solving time caused by small input changes. The abstract states, "We introduce an approach for mitigating the stability problem based on normalizing solver inputs." (Abstract, p. 1) The supplied paper identifies itself as `arXiv:2410.22419v2 [cs.LO] 15 May 2025`; the link uses that arXiv identifier. The tag retains the original submission year encoded in the identifier.
 
-The ideal normalizer maps every mutated version of one formula set to one canonical form. The paper proves that this ideal exists, but that computing it for arbitrary formulas is at least as hard as graph isomorphism (Section III-A, p. 4). It then implements an approximation for assertion shuffling and symbol renaming. The approximation has three stages: sort assertions by a name-independent pattern, rename all symbols canonically, and sort again lexicographically within each pattern class (Section IV, pp. 5–6).
+The paper considers four semantics-preserving mutations: assertion reordering, commutative-operand reordering, user-symbol declaration reordering and renaming, and replacement of an anti-symmetric operator by its converse (Section I, p. 2). It defines an ideal normalizer for mutated variants and proves that computing such a normalizer is at least as hard as graph isomorphism (Section III-A, p. 4; Appendix VII, p. 10). Its practical approximation handles assertion shuffling and symbol renaming. Operand swapping and anti-symmetric replacement remain future implementation work (Section IV, p. 4; Section VI, p. 8).
 
-The evaluation uses two benchmark sets. `smtlib` starts with 41,166 benchmarks from 1,581 families; after excluding algebraic-datatype inputs and stage timeouts, 41,075 are eligible. `mariposa` contains 16,622 verification benchmarks; 16,620 are eligible after two normalization timeouts. Each eligible benchmark receives ten randomly seeded mutations. Experiments use 48 AMD Ryzen 9 7950X machines, an independent 60-second and 8-GB limit for mutation, normalization, and solving, and cvc5 and Z3 for the SMT-LIB set; Mariposa is evaluated with Z3 because most inputs are unsolvable by cvc5 (Section V, pp. 6–7).
+The implementation is C++. Its three stages sort assertions using patterns and super-patterns, rename user-defined symbols, and sort each pattern class again. The authors explicitly caution, "It is important to note that our algorithm does not guarantee the normalization property." (Section IV concluding discussion, p. 6) Distinct mutated inputs can retain different outputs.
 
 ## technique 1: define a canonical normal form
 
-what it is: represent a formula as a prefix sequence, separate theory symbols from user-defined symbols, and erase user-symbol names into pattern symbols based on first occurrence. For a formula sequence `A`, form every assertion shuffle `S(A)`, every commutative-operand variant `C(A)`, and the pattern sequence `P(A)`. Order these pattern sequences lexicographically and choose the least element. Rename the chosen pattern symbols to canonical names. Definition III.7 calls this least element `N(A)` (Section III, p. 4).
+what it is: represent formulas as prefix symbol sequences and replace user-defined symbols with numbered pattern symbols according to first occurrence. Theory symbols retain their identity. For an assertion sequence `A`, consider all assertion permutations `S(A)` and all commutative-operand variants of those permutations, `C(S(A))`. Definition III.7 defines `N(A)` as the lexicographically least element of `P(C(S(A)))` (Section III, pp. 3–4).
 
-when to use: use this ideal definition when correctness of normalization matters more than cost, for example to state what an implementation should approximate or to check a small formula set. It is also the reference against which the paper's heuristic is measured.
+when to use: Inference: use the ideal definition as a specification for an approximate normalizer or as a reference implementation on very small inputs. Enumeration need not be practical on real verification queries.
 
 how to do it:
 
-1. Parse the SMT-LIB formula into assertion sequences and prefix symbol sequences. Theory symbols keep their identity; user-defined symbols are placeholders whose identity is determined by occurrence order (Section II, pp. 2–3).
-2. Generate `S(A)`, all permutations of the assertions. Generate `C(A)`, all variants formed by swapping zero or more operands of binary commutative operators such as `+` and `*` (Definitions III.1–III.2, p. 3).
-3. Conjoin each sequence and unconjoin it again to compute `P`, replacing the first user symbol by `@1`, the next new symbol by `@2`, and later occurrences by the corresponding earlier pattern symbol (Definition III.3, p. 3).
-4. Choose the lexicographically minimal pattern sequence, then apply an injective renaming from `@k` to canonical variables. The result is the normal form (Definitions III.5–III.7, p. 4).
-5. For anti-symmetric pairs, choose one representative operator and rewrite the other direction by swapping operands. For example, normalize `A < B` and `B > A` to the same chosen orientation (Section III-B, p. 4).
+1. Represent each assertion as a prefix sequence. Separate fixed theory symbols from user-defined symbols (Section II, p. 2).
+2. Enumerate assertion permutations. For each permutation, enumerate variants obtained by swapping operands of zero or more binary commutative operators (Definitions III.1–III.2, p. 3).
+3. Compute each sequence's pattern by conjoining its assertions, replacing successive new user symbols with `@1`, `@2`, and so on, reusing the same replacement for repeated occurrences, and unconjoining the result. Numbering is shared across the assertion sequence (Definitions III.3–III.4, p. 3).
+4. Choose the lexicographically least resulting pattern sequence. This is `N(A)` itself. Definition III.5 separately permits injective renaming of pattern symbols; canonical variable names are not an additional requirement of Definition III.7 (pp. 3–4).
+5. Handle anti-symmetric pairs separately by choosing one representative operator and rewriting the converse with swapped operands. For example, choosing `>` maps `A < B` to `B > A` (Section III-B, p. 4).
 
-The paper proves invariance under the considered mutations. Its formal complexity result says, "Then, computing N (A) for an arbitrary A is as hard as solving graph isomorphism." (Theorem III.9, Section III-A, p. 4) The proof encodes graph vertices as user symbols and edges as equality assertions, so equal normal forms imply isomorphic encoded graphs (Appendix VII, pp. 8–9).
+Theorem III.8 establishes that this `N` is normalizing. Theorem III.9 states, "Let N be a normalizing function. Then, computing N (A) for an arbitrary A is as hard as solving graph isomorphism." (Section III-A, p. 4) Its proof encodes vertices with user symbols and edges with equality formulas, reducing graph isomorphism to equality of normal forms. Even normalization for shuffling and renaming alone has this lower bound (Section III-A, p. 4; Appendix VII, p. 10).
 
-Verus form. Inference: this is a preprocessing function around Verus rather than a Verus proof annotation. A VL build could serialize the solver query or a selected assertion context into a canonical AST, sort declarations and assertions, and invoke Verus on the normalized source or SMT input. Inference: if normalization changes only logically equivalent order, the Verus contract stays unchanged; the product must nevertheless verify that the serializer preserves sorts, triggers, names, and source locations. A `spec fn` can describe a small canonicalization model for tests, while the executable normalizer should remain ordinary Rust and be tested against equivalence-preserving mutations.
+Verus form. Inference: a solver-query preprocessing pass could use the definition as its target behavior. A small reference implementation could test whether an optimized pass preserves normalization under selected mutations. Applying this to Verus would require checking how the pass handles the actual generated SMT syntax; the paper contains no Verus implementation or evaluation.
 
-evidence: the existence theorem and graph-isomorphism lower bound are formal results in the paper, while the implementation evaluates the approximation empirically. The paper omits the detailed proof from the main body and places it in Appendix VII. The ideal method is therefore a specification and proof baseline, not the practical algorithm used in the experiments.
+evidence: the existence and lower-bound results have proofs in Appendix VII, p. 10. The main text notes that whether graph isomorphism has a polynomial-time algorithm is open (Section III-A, p. 4). The lower bound therefore does not prove that polynomial-time normalization is impossible.
 
-where it fails or assumes: full enumeration is computationally expensive, and the lower bound makes a general efficient implementation unlikely. The definition assumes the selected mutation class preserves semantics. It does not normalize arbitrary rewrites, quantifier-trigger changes, solver options, or changes in the underlying solver.
+where it fails or assumes: the definition covers the stated mutation relation, not every logically equivalent formula. The paper targets changes in inputs, rather than changes in solver versions or random seeds (Section I, pp. 1–2).
 
 ## technique 2: pattern sorting, renaming, and super-pattern tie breaking
 
-what it is: approximate the ideal normalizer with a deterministic three-step algorithm. Pattern sorting groups assertions whose name-erased structures match. Within a group, super-patterns summarize where each symbol appears across all groups. A multiset lexicographic order then resolves many ties without enumerating every permutation.
+what it is: approximate canonical normalization without enumerating all assertion orders. A pattern removes dependence on user-symbol names. A super-pattern describes a symbol's roles across the pattern classes of the entire input (Section IV, pp. 4–5).
 
-when to use: use it for large verification queries where assertion order and user-symbol names vary across generated code, but the formulas are too large for ideal enumeration. The paper's implementation handles shuffling and renaming; commutative operand reordering and anti-symmetric rewrites are discussed but not all implemented (Section IV, p. 5).
+when to use: Inference: this is suitable for queries whose assertion order and user-symbol names vary while their underlying formulas remain the same. Its usefulness must be measured on the target query generator.
 
 how to do it:
 
-1. Compute each assertion's pattern `P(α)` and sort assertions by the lexicographic order of that pattern. Equal patterns form equivalence classes `EC1 ... ECn` (Section IV, pp. 5–6).
-2. For each user symbol in each equivalence class, compute its role: zero when absent, otherwise the first position at which the symbol occurs in the assertion's user-symbol sequence. The super-pattern is the sequence of these role multisets across equivalence classes (Definitions IV.1–IV.2, p. 5).
-3. Compare two assertions in the same pattern class by scanning their user-symbol positions. At the first differing pair, compare the symbols' super-patterns under the integer-multiset lexicographic order. If all pairs tie, return `inconclusive` and preserve their current order (Algorithm 1, p. 5).
-4. Rename every pattern symbol to a canonical `Xk` after the first sorting pass. This removes original user names while preserving the pattern structure (Section IV, p. 6).
-5. Sort each equivalence class again after renaming. This resolves ties that become distinguishable only after symbols have canonical names (Section IV, p. 6).
-6. Record that the result is heuristic. The authors explicitly say that when super-patterns cannot distinguish assertions, the algorithm can leave different normal forms for mutated inputs (Section IV, p. 6).
+1. Compute each assertion's pattern independently. Sort these patterns lexicographically; equal patterns form ordered equivalence classes `EC1 ... ECn` (Section IV, p. 4).
+2. Define a symbol's role in one assertion as zero if absent, otherwise its first position in that assertion's sequence of user symbols. Its role in a class is the multiset of its roles in every assertion in that class (Definition IV.1, p. 4).
+3. Form the symbol's super-pattern as the sequence of these role multisets across the ordered classes. Compare multisets by sorting their integer elements and comparing lexicographically. Compare super-patterns lexicographically using that multiset order (Definitions IV.2–IV.4, p. 5).
+4. For assertions with the same pattern, scan corresponding user-symbol positions. The worked example continues past pairs with equal super-patterns, eventually comparing symbols `v` and `w` to order the assertions. If all corresponding super-patterns coincide, preserve the original assertion order (Section IV, p. 5).
+5. After the first sorting pass, compute the pattern of the entire assertion sequence and rename its pattern symbols from `@k` to `Xk`. This preserves shared symbol identity across assertions (Section IV, p. 5).
+6. Lexicographically sort each equivalence class again using the renamed assertions. This makes outputs identical when the first two stages produced the same assertion set in different orders, but does not guarantee a unique output for every mutation (Section IV, pp. 5–6).
 
-The running example changes six assertions with reordered operands, symbols, and assertion order into a stable arrangement shown in Figures 4 and 5 (pp. 5–6). The paper reports that super-patterns are especially useful for symmetric benchmarks, although they cannot solve every tie.
+Algorithm 1 displays an equality condition on super-patterns before returning their strict comparison. Inference: that condition appears to be a typographical error; with equal super-patterns, the strict comparison cannot distinguish the assertions. The steps above follow the accompanying worked example, which passes over equal super-patterns before finding unequal ones (Algorithm 1 and surrounding prose, p. 5).
 
-Verus form. Inference: implement the three passes over a typed Rust AST or a solver-query intermediate representation, and keep the canonical form as a ghost/spec value only where a proof needs to compare queries. Inference: a `proof fn` can establish that two small test ASTs have equal canonical forms after a permitted mutation; it cannot prove the general graph-isomorphism-hard algorithm efficient. A VL pipeline should compare normalized solver logs or query hashes while retaining the original source for diagnostics.
+Figures 4 and 5 show the running example's assertions after pattern sorting and after sorting plus renaming, respectively; both figures are on p. 5. They do not demonstrate implemented normalization of operand swapping. The experiments show that super-patterns help some categories substantially, but numerous symmetric assertions can still defeat tie breaking (Section V-A, p. 6).
 
-evidence: Table I reports the normalized-output count over ten mutations, and the text explains exactly how patterns and super-patterns produce that count. The implementation is C++, not Verus, and the paper gives no formal proof that the heuristic always reaches the ideal form.
+Verus form. Inference: implement the three stages over a representation of generated SMT queries, preserving symbol identity and required syntax. Compare outputs across declaration-order and symbol-renaming mutations. Keep source-to-query mappings if diagnostics need to identify the original proof.
 
-where it fails or assumes: symmetric assertions can have identical super-patterns, so the final order can depend on the input order. The current implementation excludes algebraic datatypes and does not implement all four mutation classes. Normalization also cannot repair a semantically bad query; it only makes equivalent input presentations more alike.
+evidence: the paper evaluates this heuristic empirically, without claiming completeness. The current implementation does not support normalization of algebraic datatypes, and its mutations cover only shuffling and renaming (Sections IV–V, pp. 4–6).
+
+where it fails or assumes: identical super-patterns can leave the result dependent on input order. The final sorting pass resolves only some such cases (Section IV, pp. 5–6).
 
 ## technique 3: evaluate normalization by uniqueness and similarity
 
-what it is: measure how many distinct outputs ten mutations produce and how textually similar those outputs are. One unique output is ideal; ten unique outputs means no convergence. Similarity is the average percentage of identical lines over all output pairs.
+what it is: count distinct outputs across ten mutations and measure their textual similarity. One distinct output is ideal; ten distinct outputs means that all ten remain different. Similarity is the average percentage of identical lines among all output pairs (Section V-A, p. 6).
 
 how to do it:
 
-1. For each eligible benchmark, generate ten mutated inputs with fixed random seeds by shuffling assertions and renaming user symbols (Section V, p. 6).
-2. Run the normalizer on all ten inputs. Count distinct outputs before normalization, after pattern sorting without super-patterns, and after super-patterns (Table I, p. 7).
-3. Compute pairwise identical-line percentages and average the pairs. Report average and maximum normalization time under the 60-second limit (Table I, p. 7).
-4. Report denominators explicitly. Each Table I row gives excluded/total and `#Bench = total − excluded`; for example, Arith is 0/883 and therefore 883 considered benchmarks, while BitVec is 5/793 and therefore 788 considered benchmarks (Table I, p. 7).
+1. Sample up to 50 benchmarks from each SMT-LIB leaf-directory family. After excluding algebraic-datatype benchmarks, the `smtlib` set contains 41,166 benchmarks from 1,581 families. The separate `mariposa` set contains 16,622 benchmarks from six verification families (Section V, p. 6).
+2. Generate ten mutations per benchmark by assertion shuffling and symbol renaming. Renaming uses a fixed enumeration of names but shuffles their occurrence order, which also determines declaration order (Section V, p. 6).
+3. Apply separate 60-second and 8-GB limits to mutation, normalization, and solving. The experiments use a cluster of 48 machines with AMD Ryzen 9 7950X CPUs (Section V, p. 6).
+4. Exclude inputs timing out during mutation or normalization for any mutation. SMT-LIB loses six benchmarks to mutation timeouts and 85 to normalization timeouts, including 58 during parsing; Mariposa loses two to normalization timeouts. This leaves 41,075 and 16,620 eligible benchmarks, respectively (Section V, p. 6).
+5. Compare output counts and similarity before normalization, after normalization without super-patterns, and after normalization with super-patterns. Report normalization times and the excluded/total denominator for each category (Table I, p. 7).
 
-For the complete eligible sets, the paper reports 41,075 SMT-LIB and 16,620 Mariposa benchmarks, each with ten mutations. In the SMT-LIB subset of 4,461 benchmarks used to compare against Weber's earlier normalizer, the earlier tool produces unique outputs for 12% of benchmarks and the paper's approach for 87% (Section V-A, p. 8). Inference: these percentages use the 4,461-benchmark subset as denominator, so they mean approximately 535 and 3,883 benchmarks respectively; the paper gives rounded percentages rather than exact counts.
+For Equality, all 1,570 benchmarks are eligible. The average unique-output count falls from 10.00 before normalization to 2.79 with super-patterns; similarity rises from 0.05% to 98.48%. For QF LinearIntArith, 10,795 of 10,801 are eligible; the corresponding values are 9.98 to 4.21 and 8.62% to 88.67% (Table I, p. 7). These counts concern textual outputs, not solved formulas.
 
-Table I's per-category denominators matter. In Equality, 1,570/1,570 are eligible; the average number of unique outputs falls from 10.00 pre-normalization to 2.79 with super-patterns, and similarity rises from 0.05% to 98.48%. In QF LinearIntArith, 10,795 of 10,801 are eligible; unique outputs fall from 9.98 to 4.21 and similarity rises from 8.62% to 88.67%. These are averages over ten mutations for each benchmark, not percentages of solved formulas (Table I, p. 7).
+On a random 4,461-benchmark SMT-LIB subset, Weber's earlier normalizer produces unique outputs for 12% of benchmarks, compared with 87% for this approach. Those rounded percentages describe that subset, not the entire evaluation (Section V-A, p. 7).
 
-Verus form. Inference: expose these metrics in VL's proof CI: record the normalized-query hash, the number of hashes across semantically equivalent source mutations, and line or AST similarity. A Rust harness can generate declaration/order/name mutations, while Verus rechecks each candidate. Inference: a stable hash does not prove the query is equivalent; a separate Verus proof or differential test must establish the mutation relation.
+The aggregate normalization overhead is less than 0.8%, defined as total normalization time divided by total normalization plus solving time. This is an aggregate ratio, not a bound on individual queries (Section V-A, p. 7). Table I reports category averages and maxima; for example, Dice∗F averages 5.4847 seconds and QF Bitvec has a maximum of 38.7570 seconds (p. 7).
 
-evidence: Table I covers the eligible benchmark denominators and runtime. The aggregate normalization overhead is less than 0.8% of normalization plus solving time (Section V-A, p. 8). The paper reports this as a sum over all eligible benchmarks, so it is not a per-query percentile.
+Verus form. Inference: record the number of distinct normalized queries across controlled source or query mutations, together with normalization cost. Check separately that the selected mutations preserve the intended problem; textual similarity alone does not establish that.
 
-where it fails or assumes: text similarity can improve even when no unique normal form is found. The authors note Mariposa families where normalization leaves ten distinct outputs but still improves similarity and stability. The metric measures presentation convergence, not semantic equivalence or proof correctness.
+evidence and limits: Table I reports the denominators and the output metrics. Some Mariposa families retain ten distinct outputs after normalization, despite greater similarity. The paper therefore also measures solver behavior rather than equating textual convergence with stability (Sections V-A–V-B, pp. 6–8).
 
 ## technique 4: measure solver stability with penalized runtime and MAD
 
-what it is: run each mutated query on a solver and summarize both solving cost and failures with penalized runtime (`PR-2`) and variation with median absolute deviation (`MAD`). `PR-2` adds twice the timeout to every unsolved benchmark, so a solver that fails more often cannot look fast merely because failed runs stop early. Lower MAD means less variation across the ten mutation seeds.
+what it is: penalized runtime (`PR-2`) sums solved runtimes and adds twice the timeout for each unsolved benchmark, including timeouts, memory exhaustion, and other errors. Median absolute deviation (`MAD`) measures variation across the resulting scores (Section V-B, p. 8).
 
 how to do it:
 
-1. For each benchmark and each of ten mutations, run the solver with the same 60-second and 8-GB limits before normalization and after normalization (Section V, p. 7).
-2. For one seed, sum solved runtimes and add two times the timeout for each timeout, memory-out, or other error. This is the seed's cumulative PR-2 score (Section V-B, p. 8).
-3. Average the ten seed scores. Compute MAD over those same ten cumulative scores. Report separate averages and MADs for cvc5 and Z3 on SMT-LIB and Z3 on Mariposa (Table II, p. 8).
-4. Compare normalized and unnormalized scores. A lower MAD with a similar average indicates more predictable runtime; a lower average also indicates a performance gain.
+1. Run cvc5 and Z3 on SMT-LIB mutations before and after normalization. Run only Z3 on Mariposa, because most of those benchmarks are unsolvable by cvc5 (Section V-B, p. 7).
+2. For each seed, sum PR-2 over all benchmarks in the category. With the 60-second timeout, an unsolved run contributes 120 seconds (Sections V–V-B, pp. 6, 8).
+3. Average the ten cumulative seed scores. Compute MAD over those same ten cumulative scores, rather than over individual query runtimes (Section V-B, p. 8).
+4. Report the mean and MAD separately. Inference: interpret lower MAD as lower variation in these category totals; it does not establish lower variability for every individual query.
 
-Table II gives concrete denominators through the ten-seed construction, not through a new task count. For SMT-LIB Equality, cvc5's average PR-2 changes from 101,912 with MAD 286.0 to 101,778 with MAD 4.0; Z3 changes from 107,718 with MAD 108.8 to 107,885 with MAD 10.7. For QF NonLinearIntArith, Z3 changes from average 23,914 and MAD 194.7 to 22,265 and MAD 6.8. For Mariposa KomodoD, Z3 changes from 12,561 and MAD 264.2 to 13,327 and MAD 59.9. These are cumulative scores over ten mutations per benchmark; they are not per-instance seconds (Table II, p. 8).
+For SMT-LIB Equality, cvc5's average PR-2 changes from 101,912 with MAD 286.0 to 101,778 with MAD 4.0. Z3 changes from 107,718 with MAD 108.8 to 107,885 with MAD 10.7. For QF NonLinearIntArith, Z3 changes from 23,914 and MAD 194.7 to 22,265 and MAD 6.8. For Mariposa KomodoD, Z3 changes from 12,561 and MAD 264.2 to 13,327 and MAD 59.9 (Table II, p. 8). The averages summarize cumulative category scores for one mutation seed, averaged over ten seeds; they are not per-query times or totals summed across all ten seeds.
 
-The authors conclude, "More importantly, the MAD score improves significantly in all cases, sometimes by more than an order of magnitude (e.g., in the Equality division)." (Section V-B, p. 8) The table also shows exceptions in average PR-2, such as the KomodoD increase, so lower variance does not guarantee lower total runtime.
+The authors state, "More importantly, the MAD score improves significantly in all cases, sometimes by more than an order of magnitude (e.g., in the Equality division)." (Section V-B, p. 8) Table II also contains increased average PR-2 values, including KomodoD, so reduced variation does not imply a universal speedup.
 
-Verus form. Inference: apply normalization before each Z3-backed Verus check, then log per-proof PR-2 and MAD over controlled source mutations or repeated CI runs. Keep solver version, options, timeout, hardware, and query set fixed. Inference: the Verus proof result remains the acceptance criterion; PR-2 and MAD diagnose brittle or expensive automation. A normalized query that changes triggers or quantifier instantiations must be rejected unless Verus re-verifies the same contract.
+Verus form. Inference: repeat the experiment on a fixed set of Verus queries while controlling solver version, options, timeout, and hardware. Report both cumulative scores and individual-query behavior if the aim is to diagnose unstable proofs.
 
-evidence: the two solvers and exact metric definitions are reported in Section V-B, and Table II supplies per-division/family values. The experiment does not establish universal solver stability: it covers two solvers, selected theories, one mutation generator, and fixed limits.
-
-where it fails or assumes: PR-2 depends on the chosen timeout penalty, while MAD can fall because all runs become uniformly slow. Results are solver- and benchmark-specific. cvc5 is omitted for Mariposa because most of those inputs are unsolvable by cvc5, so the two benchmark sets do not have identical solver coverage.
+evidence and limits: Table II covers the two solvers with the stated difference in benchmark coverage. Inference: a small MAD can coexist with uniformly expensive or unsuccessful runs, so the mean and failure count remain relevant. The experiment does not test solver-version changes or claim universal stability.
 
 ## technique 5: make the normalizer scale with DAG sharing and indexed roles
 
-what it is: optimize representation and super-pattern computation for very large formulas. The implementation stores repeated subterms as dictionary indices, indexes only assertions in which each symbol appears, and compresses long super-patterns by storing nonzero roles plus runs of zeros.
+what it is: three implementation optimizations support benchmarks up to hundreds of megabytes, with hundreds of thousands of user-defined symbols and assertions (Section V-C, p. 8).
 
 how to do it:
 
-1. Represent a pattern as an index into a dictionary of its subterms rather than as a fully expanded tree. This preserves DAG sharing and avoids exponential duplication (Section V-C, p. 8).
-2. During one indexing pass, build for each symbol a list of assertions in which it occurs. Compute its super-pattern only over that list instead of traversing every assertion (Section V-C, p. 8).
-3. Compress sparse super-patterns as nonzero role values interleaved with counts of zero roles. Large benchmarks generally contain many absent-symbol positions, so this reduces memory and lookup work (Section V-C, p. 8).
-4. Keep the same semantic ordering and output as the unoptimized algorithm. These are data-structure optimizations, not new normalization rules.
+1. Preserve sharing of repeated subterms. Represent a pattern as an index into a dictionary of its subterms, rather than expanding its abstract syntax tree. The paper notes that a directed acyclic graph (`DAG`) can be exponentially more concise than a tree (Section V-C(a), p. 8).
+2. In one indexing pass, build each symbol's list of assertions containing it. Compute its super-pattern using these occurrence lists instead of looking up its role in every assertion (Section V-C(b), p. 8).
+3. Represent sparse super-patterns as nonzero role values interleaved with counts of zeros (Section V-C(c), p. 8).
 
-The paper says the symbol index can reduce lookups from hundreds of millions to hundreds of thousands on some problematic benchmarks and improve normalization time by more than an order of magnitude (Section V-C, p. 8). It does not give a single denominator for that statement; it describes worst-case examples among the evaluated inputs.
+The indexing optimization reduces lookups from hundreds of millions to hundreds of thousands on some problematic benchmarks, improving normalization time by more than an order of magnitude. The paper gives no separate per-optimization results table or memory evaluation (Section V-C, p. 8).
 
-Verus form. Inference: use hash-consed or indexed AST nodes in a Rust normalization pass, and cache symbol occurrence lists across repeated proofs. Inference: these optimizations belong outside the Verus proof and should be covered by executable differential tests against a simple reference normalizer. A small `proof fn` can check equality of outputs for bounded ASTs, but it cannot replace testing the hash-consing implementation at production scale.
+Verus form. Inference: retain sharing in a Rust query representation and index symbol occurrences. Differential testing against a simple representation can check that these optimizations preserve the output; the paper does not establish correctness for a Rust implementation.
 
-evidence: the three optimizations are described as implementation details and tied to the paper's large-input setting. The benchmark collection contains inputs up to hundreds of megabytes and hundreds of thousands of symbols/assertions (Section V-C, p. 8).
-
-where it fails or assumes: hash-consing and compressed role arrays add implementation complexity and can create bugs in the normalizer itself. The paper does not provide a machine-checked proof of the C++ implementation, nor does it measure memory separately for every optimization.
+evidence and limits: these are implementation descriptions, not additional normalization rules or proofs of a unique output. The paper does not report a machine-checked correctness proof of its C++ implementation.
 
 ## what is proved, measured, and trusted
 
-The paper proves the mathematical existence of a normalizing function, its invariance under the mutation class, and a graph-isomorphism lower bound. It measures output uniqueness, line similarity, normalization time, PR-2, and MAD over the stated benchmark sets and ten random mutations per benchmark. It does not prove the C++ heuristic complete, prove that every normalized query is semantically equivalent in the presence of unsupported syntax, or show that solver versions with different heuristics behave identically.
+The paper proves existence of an ideal normalizing function and the graph-isomorphism lower bound (Section III, p. 4; Appendix VII, p. 10). It measures output uniqueness, similarity, normalization time, and mean/MAD of cumulative PR-2 scores for the practical heuristic (Section V, pp. 6–8). Its conclusion proposes extending the implementation to the other mutations and investigating normalization for formula-cache reuse; those are future work (Section VI, p. 8).
 
-Inference: the trusted boundary for a Verus product includes the query generator, serializer, normalizer implementation, Verus's translation to SMT, the selected solver, and the contract itself. Normalization reduces one source of variation but does not validate a wrong `requires` or `ensures`, and it cannot detect a model that silently omits a memory or arithmetic fact. Inference: VL should report normalization as a stability aid, not as an additional correctness proof.
+Inference: a Verus integration would add the normalizer to the query-processing code whose behavior must be checked. Stable query presentation does not validate a contract or establish that a query generator captured the intended program behavior.
 
 ## contradictions, reuse, and product risk
 
-The paper's headline says normalization improves stability with minimal overhead. Table II shows that the claim is mainly about variation: some average PR-2 values increase after normalization, such as Z3 KomodoD (12,561 to 13,327), even while MAD drops (264.2 to 59.9). The paper's conclusion is therefore consistent if “improves stability” means lower variation, but it should not be read as a universal speedup.
+The results distinguish stability from speed. For example, Z3 KomodoD's mean increases from 12,561 to 13,327 while MAD decreases from 264.2 to 59.9 (Table II, p. 8). This is consistent with the introduction's distinction between consistent performance and faster performance (Section I, p. 1).
 
-Inference: VL should reuse the mutation taxonomy, canonical symbol naming, super-pattern tie breaking, PR-2/MAD reporting, and the three scalability optimizations. VL should not redo the paper's exact C++ benchmark collection as a novelty claim; the paper already evaluates 41,075 eligible SMT-LIB and 16,620 eligible Mariposa inputs under ten mutations each. A new study should instead test Verus-specific mutations such as harmless Rust refactoring, module reordering, trigger-preserving edits, and dependency upgrades.
-
-Inference: the threat to agent-written verified Rust is medium. Solver instability can make an actually valid proof fail after declaration order, generated-name, or harmless refactoring changes, which increases repair cost and can tempt an agent to weaken a contract. Input normalization directly addresses that brittleness. It does not address specification mistakes, invalid unsafe assumptions, or a proof that passes for the wrong reason.
+Inference: reuse the mutation taxonomy, pattern and super-pattern construction, canonical naming, scalability optimizations, and evaluation method in an experiment on Verus-generated queries. Measure effects before adopting normalization in a proof pipeline. The paper supplies no direct evidence about Verus, Rust refactorings, or specification mistakes.
 
 ## techniques for the catalog
 
-- ideal canonical normalization — enumerate permitted equivalent forms, erase names into patterns, and choose the lexicographically minimal form
-- pattern/super-pattern normalization — sort assertions by name-independent patterns, tie-break with super-pattern roles, rename symbols, and sort again
-- uniqueness and similarity evaluation — compare distinct normalized outputs and identical-line similarity across ten mutated versions per benchmark
-- penalized-runtime stability — combine solved time and twice-timeout penalties into PR-2 and use MAD over ten seeds to measure variability
-- DAG pattern compression — hash-cons repeated subterms so formula patterns retain sharing instead of expanding trees
-- indexed super-pattern computation — index each symbol's assertion occurrences and compute roles only where the symbol appears
-- sparse super-pattern compression — store nonzero roles and zero-run counts to reduce memory and lookup cost on large formulas
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- ideal canonical normalization — enumerate assertion and operand permutations, replace user names with patterns, and select the lexicographically least pattern sequence
+- pattern/super-pattern normalization — sort assertions using patterns and symbol roles, rename user symbols, and sort each class again
+- uniqueness and similarity evaluation — measure distinct outputs and identical-line similarity across ten mutations per benchmark
+- penalized-runtime stability — compute mean PR-2 and MAD across ten cumulative mutation-seed scores
+- DAG pattern compression — represent shared subterms using dictionary indices
+- indexed super-pattern computation — visit a symbol's indexed assertion occurrences when computing its roles
+- sparse super-pattern compression — represent nonzero roles interleaved with zero counts
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The reason for this incompleteness is that when assertions cannot be distinguished by super-patterns, there can be different normal forms for benchmarks, even if one is a mutation of the other (via shuffling and renaming)."): checked the full ten-page paper, quotations, numbers, section and page references, mutation scope, algorithm steps, and evaluation definitions; corrected the appendix and other page references, datatype-exclusion order, tie-breaking description, unsupported operand-swapping example, and cumulative-score interpretation; removed unsupported claims and marked proposed Verus uses as Inference; did not inspect implementation code, reproduce experiments, or verify external references.

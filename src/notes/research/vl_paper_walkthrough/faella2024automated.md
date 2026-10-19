@@ -2,71 +2,82 @@
 (authored by agents unless marked 🧑)
 Tag: `faella2024automated`, [paper](https://doi.org/10.48550/arxiv.2410.09668)
 
-## scope and result
-This paper models executions of heap programs that manipulate trees as knitted-trees and reduces safety questions to constrained Horn clause (CHC) solving. Its abstract states: “At the core of our methodology is the knitted-tree encoding, which maps a program execution into a tree data structure encapsulating input, output, and intermediate configurations, within a single structure.” (abstract, p. 1). The main demonstrated property is memory safety: no null dereference, use-after-free, uninitialized access, illegal free, or non-termination for inputs accepted by a symbolic data-tree automaton (SDTA).
+Link from the fetch record. The supplied manuscript identifies Marco Faella and Gennaro Parlato as authors and gives October 2024, but prints only the placeholder DOI `https://doi.org/10.1145/nnnnnnn.nnnnnnn` (p. 1).
 
-The method is parameterized by `m` spare backbone nodes and `n` frames per node. Those bounds are an explicit completeness assumption. The authors say: “the parameters defining a knitted-tree – namely, the number of spare nodes added to the backbone and the number of frames in a node label – may not suffice to encompass all possible program executions.” (Sec. 1, p. 2)
+## scope and result
+The paper encodes executions of programs operating on input trees as knitted-trees, then reduces questions about those encodings to constrained Horn clause (CHC) satisfiability. A knitted-tree retains the input, output, and intermediate heap states in one tree of node histories (Secs. 4–6). The input tree may have arbitrary finite size; the bounds concern spare nodes and history length at each node.
+
+The formal memory-safety problem requires every execution satisfying the precondition to terminate normally (Sec. 3, p. 6). Dereferencing nil or using nil for deallocation produces an error configuration. The language gives `free` special semantics: pointers to the freed node become nil (Sec. 3, pp. 5–6). Thus the result concerns this language and memory model. The introduction also discusses use-after-free and uninitialized-memory errors, but the formal semantics should not be read as a general model of C or Rust memory.
+
+The method has two adjustable parameters: `m` spare allocation children per internal backbone node, and a log of `n+1` frames per node. Frame `n+1` detects overflow. A successful safety proof checks that no execution reaches an error, allocation exhaustion, or log overflow for the chosen parameters (Theorem 8.2, p. 21). Merely finding no represented error does not suffice.
 
 ## technique 1: knitted-tree execution encoding
-What it is. Start with the input tree as a backbone, add `m` inactive child slots to every internal node, and attach an `n+1`-frame log to each node. Frames record pointer/data updates, pointer-variable assignments, program counter, and predecessor/successor links. The chronological linked sequence of frames is the “lace”; it can move within a node or between adjacent nodes. The backbone remains tree-shaped even when the final heap graph differs.
+The backbone preserves the input tree's structure while its node logs record mutations and pointer rewiring. The chronological doubly linked sequence of frames is the lace. Consecutive lace frames belong to the same node or adjacent backbone nodes. The final heap can have a different graph structure (Secs. 4.1–4.3, pp. 6–12).
 
-When to use it. Use it for bounded-pass tree traversals, allocation/free, and pointer rewiring where execution history can be represented with bounded local logs. The paper notes that every instruction gets at least one frame, so frame bounds can also prove termination.
+How to do it:
 
-How to do it.
-1. Choose `m` and `n`; form the smallest `(arity+m)`-ary backbone containing the input tree and making every input node internal (Sec. 4.1, pp. 6–7)
-2. Mark input nodes active and spare nodes inactive (Sec. 4.1, p. 7)
-3. Allocate a fixed log of frames to every backbone node; keep frames ordered by index and connect them with `prev`/`next` lace links (Sec. 4.2, pp. 7–8)
-4. For the initial configuration, populate the root and pointer-variable fields; leave other frame fields unspecified where the definition permits (Sec. 4.3.1, pp. 9–10)
-5. For each instruction, push the smallest available frame, update its program counter and event fields, and rewind the lace to find the latest assignment when a pointer value is needed (Sec. 4.3.2, pp. 10–14)
-6. Encode `new` by selecting an inactive child, `free` by moving to the pointed node and marking it inactive, and null dereferences by assigning an error exit status (Sec. 4.3.2, pp. 13–15)
-7. Encode conditionals and loops by evaluating the condition in the current frame and pushing the appropriate successor program counter (Sec. 4.3.2, pp. 15–16)
+1. Choose `m` and `n`. Construct the smallest backbone containing the input tree, making every input node internal and giving every internal node `k+m` children, where `k` is the input arity. Require at least one internal node; an empty input gets a root and its children (Sec. 4.1, pp. 6–7).
+2. Mark input nodes initially active and auxiliary nodes inactive. Store the initial data and child-activity information in each node's first frame. Start the lace at the root's second frame, with the first declared pointer at the input root, or nil for empty input; the other pointers are nil (Sec. 4.3.1, p. 8).
+3. Push updates into the smallest available frame of the relevant log. Preserve index order: “Frames within the same node are sorted temporally by index.” (Sec. 4.2, p. 7). Maintain data variables, program counter, nil flags, allocation flags, symbolic instructions, and lace links.
+4. Encode local instructions in one new frame. For walking instructions, rewind the recorded history to locate a pointer's most recent assignment. The `upd` flags allow shortcuts within a log; intermediate rewind frames keep the program counter unchanged (Sec. 4.3.2, pp. 9–11).
+5. For a pointer-field read, first find the source node, then its most recent field assignment in that node's log. An explicit assignment can require another rewind to recover the stored pointer value; an unchanged field refers to its original input child when that child is active (p. 11).
+6. For `new`, use the smallest inactive allocation child with index in `[k+1,k+m]` of the current node. If none exists, record out-of-memory status `M`. For `free`, locate the pointed node, mark it inactive, and set nil flags for pointer variables currently pointing there. A nil dereference records runtime-error status `E` (pp. 10–12).
+7. Resolve data conditions locally. Resolve pointer equality using nil flags when possible; otherwise rewind to find assignments and compare the referenced nodes. Advance the program counter according to the condition (p. 12).
 
-Verus form (Inference: the paper is CHC/automata based, not Verus based). Represent a heap node and its history with Rust ghost state; use executable pointer operations wrapped by proof functions. Use `requires` to state non-null and ownership preconditions, `ensures` for pointer/data postconditions, and loop `invariant` clauses for traversal facts. The bounded frame log is a ghost history, not runtime storage. Verus ownership may enforce local alias discipline, but the knitted-tree lace and inactive allocation slots still require a separately proved ghost encoding.
-
-Evidence. The formal encoding proves computability and an execution correspondence theorem: “This paper introduces an automatic technique for analyzing such programs.” (abstract, p. 1). It also proves execution correspondence under the selected bounds (Theorem 2, Sec. 3.2, p. 15). These are mathematical results; they do not show that fixed bounds cover every program.
+The paper's execution correspondence is in Lemma 5.3 (p. 15), with error and infinite-execution properties in Lemmas 5.4–5.5. It is not a theorem that any fixed parameters cover every program.
 
 ## technique 2: compositional CHC encoding
-What it is. Introduce one relation `Lab(σ)` for labels (node logs). CHCs generate all labels that can occur in a valid knitted-tree prefix. Local predicates `ΨInternal`, `ΨUp`, and `ΨDown` constrain one-frame extensions within a node, to its parent, or to a child. The compositionality lemma lets locally consistent labels be combined into a complete knitted-tree.
+Local parent-child consistency enables subtree replacement: Lemma 5.2 (pp. 13–14) combines subtrees from different knitted-tree prefixes when their root logs satisfy `consistent_child`. This predicate checks the interactions across their shared backbone edge using the upward and downward frame rules. Appendix C gives the detailed constraints (pp. 32–44).
 
-How to do it.
-1. Add base CHC facts for zero-length executions: one rule for non-root labels and one for the root label (Sec. 5, p. 16)
-2. Add an internal-step rule that extends a log when the next lace frame stays in the same node (Sec. 5, p. 16)
-3. Add upward and downward rules that extend parent/child logs when the lace crosses an edge; guard them with `consistent_child` and `ΨUp`/`ΨDown` (Sec. 5, p. 16)
-4. Add query CHC VI encoding an exit status set `Ex`; solve the resulting system with a CHC solver (Sec. 5, pp. 16–17)
-5. Use the minimal model: `Lab(σ)` holds exactly for labels appearing in some knitted-tree prefix (Theorem 3, Sec. 5, p. 16)
+How to do it (Sec. 6.1, Fig. 5, pp. 15–17):
 
-The reduction uses solver technology: “This reduction allows us to capitalize on advancements in CHC solvers.” (Sec. 1, p. 1). Theorem 3 states the minimal-model correspondence for the bounded representation.
+1. Introduce the relation `Lab`, whose argument is a complete node log.
+2. Add base facts for non-root logs with only the first frame used, and root logs with the first two frames used.
+3. Add a rule for an internal extension of a log. Add separate upward and downward extension rules, using `consistent_child` to combine compatible logs before extending the lace.
+4. Interpret the rules through their minimal model. Theorem 6.1 states that `Lab` contains exactly the logs appearing in some knitted-tree prefix for the chosen parameters.
+5. Add query VI to reject a log whose exit status belongs to a selected set `Ex`. Theorem 6.2 (p. 18) says the resulting CHC system is unsatisfiable exactly when such a knitted-tree exists.
 
-Verus form (Inference). A Verus implementation could define ghost predicates for label consistency and prove frame-extension lemmas as `proof fn`s. CHC minimal-model reasoning does not carry over directly; Verus would need explicit induction over lace length and a finite bound. Use only supported contracts and loop invariants; do not put proof-only functions in executable code.
+The direction matters: satisfiable means the selected exit status is absent; unsatisfiable means it is reachable within the representation. Clean termination `C` is also an exit status, so an unsatisfiable query is not inherently a bug report (Secs. 5.2 and 6.2).
 
-## technique 3: semi-algorithm for memory safety
-What it is. Query exit statuses in stages. First detect null dereferences; then test out-of-memory and label overflow. If no error is found, increase `m` or `n` and repeat. The method is sound when it terminates, but may run forever because memory safety is undecidable.
+## technique 3: parameter refinement and memory safety
+Figure 7 and Theorem 8.3 (Sec. 8, p. 21) give a sound procedure that may not terminate:
 
-Steps from Algorithm MemSafety (Sec. 5.1, p. 17).
-1. Set `m=m0`, `n=n0`
-2. Solve `ExitStatus(P,m,n,{E})`; if positive, report memory unsafe
-3. Solve `{M}` for out-of-memory; if positive, increase `m` and restart
-4. Solve `{O}` for label overflow; if positive, increase `n` and restart
-5. If both are negative, report memory safe; Theorem 6 justifies this result for the current bounded representation
+1. Initialize `m=m0` and `n=n0`.
+2. Query whether status `E` occurs. If yes, report memory unsafe.
+3. Query whether status `M` occurs. If yes, increase `m` and restart.
+4. Query whether status `O`, log overflow, occurs. If yes, increase `n` and restart.
+5. If all three statuses are absent, report memory safe.
 
-The paper emphasizes undecidability: “The memory safety problem is undecidable.” (Sec. 3, p. 6). Theorem 7 nevertheless proves soundness when the semi-algorithm terminates.
+Theorems 8.1–8.2 justify the negative and positive results. The procedure may run forever because a CHC query never returns, or because no finite parameter choice suffices for a safe program (p. 21). The parameters therefore limit each attempt, but a completed safety proof explicitly establishes that those limits exclude no relevant execution.
 
-Verus form (Inference). Use a verified bounded checker with ghost counters and a termination measure only when a finite bound is known. Otherwise state the checker as a partial procedure and expose the bound as a trusted assumption. A Verus proof of one bound does not establish safety for larger executions.
+Termination uses the finite backbone and logs: “Each step of an execution adds at least one frame to the lace of its knitted-tree.” (Lemma 5.5, p. 15). Infinite executions must overflow. For a safety proof, allocation exhaustion must also be ruled out, so execution cannot escape the encoding through a failed allocation.
 
-## technique 4: automaton preconditions and termination
-SDTAs specify accepted input trees bottom-up. Cross-product the automaton state with knitted-tree label state, adding CHCs that constrain the backbone’s first frames. This supports binary-search, red-black, AVL, and heap preconditions (Sec. 7). Termination follows when no label reaches the overflow frame: each executed instruction consumes a frame, so a bounded lace implies a bounded execution.
+## technique 4: automaton preconditions
+Symbolic data-tree automata (SDTAs) specify input trees through bottom-up transitions over data and symbolic states (Sec. 2.1, pp. 3–4). Section 1 (p. 2) lists binary-search, red-black, AVL, and heap data structures as supported specification examples, citing prior work.
 
-Inference: in Verus, encode the input-tree predicate as a recursive `spec fn` and prove it is preserved by each pointer update with `ensures`; this is a translation of the paper’s automaton idea, not a result reported by the paper.
+Section 7 (pp. 18–20) extends the CHCs:
+
+1. Introduce `Pre(log,state,flag)` alongside `Lab`. The state describes a run of the precondition automaton on the input subtree recovered from first frames.
+2. Label auxiliary leaves with nil state. Combine child summaries using `consistent_child`; apply the automaton transition at initially active nodes.
+3. Propagate a Boolean flag recording whether the subtree contains the queried exit status.
+4. At the root, query a final automaton state together with a true flag. Theorem 7.2 makes unsatisfiability equivalent to an execution satisfying the precondition and reaching that status.
+
+The memory-safety procedure uses this precondition-aware query at every stage (Sec. 8, pp. 21–22).
 
 ## evidence, trust, and limitations
-The prototype checks memory safety on tree procedures and can discover bugs, but the provided text reports no aggregate denominator or runtime table in the sections establishing the reduction. CHC solver correctness, the data theory, the SDTA specification, and chosen `m,n` remain trusted or assumed. If no bounds suffice, the semi-algorithm may not terminate. The authors summarize the contribution: “While we focus on the memory safety problem for illustration, our technique applies broadly to various verification tasks involving tree data structures.” (abstract, p. 1)
+Section 9 (pp. 22–23) reports a Python prototype using Z3, tested on list removal and binary-search-tree insertion, each with a correct and buggy version. The machine was an AMD Ryzen 5900X Windows PC with 32 GB RAM. Reported times are the lowest among Z3 4.12.0 and 4.12.6.
 
-Inference: threat to agent-written verified Rust is moderate for pointer-heavy tree code. The useful pattern is a compositional history encoding that turns heap executions into solver-friendly relations. The main gap is bounded completeness: a passing bounded CHC query can miss an execution requiring more spare nodes or frames, so a VL product must report those bounds and overflow outcomes explicitly.
+Both correct versions require `n=4`; the bugs are detected with `n=3`. The list-removal bug takes 2 seconds and the insertion bug 26 seconds. At `n=4`, absence of runtime errors takes 31 seconds for list removal and 17 seconds for insertion. Insertion's overflow and allocation checks take 44:53 and 50:58 respectively. Table 2 specifies: “Time is in mm:ss format and does not include the time to generate the system of CHCs.” (p. 23). These four cases demonstrate feasibility, not broad scalability.
+
+The discussion of other properties is explicitly high-level, with formal details deferred (Sec. 10, pp. 23–24). It sketches automata that detect contract violations, check output tree structure, and check other output properties. It also states: “This limitation arises because we can only handle a bounded number of passages through each node.” (p. 24). Summarizing internal lace steps and handling broader data structures are future work (Sec. 12, pp. 25–26).
+
+Inference: applying the encoding to verified Rust would require a proved connection between Rust's heap operations and the paper's language, plus proofs of the log and consistency rules. The paper supplies no Verus implementation or verified frontend. Its useful transferable idea is the local execution-history representation; checking one error query alone would omit the completeness checks needed for an unbounded safety claim. Trust in the prototype additionally depends on its CHC translation, solver, and supplied precondition matching the intended program and inputs.
 
 ## techniques for the catalog
-- knitted-tree encoding: represent input, output, and every heap update in a bounded tree of node logs
-- compositional CHCs: generate local frame-extension clauses whose minimal model equals valid execution labels
-- staged memory-safety queries: test error and overflow exit statuses, increasing bounds until a sound terminating result
-- SDTA cross-product: constrain accepted input-tree shapes and data values through bottom-up automaton states
-- frame-bounded termination: infer termination when no execution reaches the log-overflow frame
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- knitted-tree encoding: retain heap executions in a fixed backbone with bounded node logs
+- compositional CHCs: combine compatible logs and extend them one frame at a time
+- staged memory-safety queries: check runtime errors, allocation exhaustion, and log overflow before claiming safety
+- SDTA preconditions: combine input-tree acceptance with exit-status queries
+- frame-bounded termination: exclude infinite executions by ruling out log overflow and allocation exhaustion
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Time is in mm:ss format and does not include the time to generate the system of CHCs."): read all 44 pages, including references and appendices; checked quotations, numbers, section/page/theorem references, encoding steps, query direction, preconditions, completeness, and reported experiments; corrected references and safety claims, clarified allocation and deallocation semantics, added runtime evidence, and removed unsupported Verus prescriptions; did not reproduce experiments, audit implementation, independently prove the theorems, or verify the fetch-record link externally.

@@ -1,9 +1,9 @@
 # Algorithms and Complexity of Difference Logic
 (authored by agents unless marked 🧑)
-Tag: `dabrowski2024difference`, [paper](http://arxiv.org/abs/2402.03273v1)
+Tag: `dabrowski2024difference`, [paper](https://arxiv.org/abs/2402.03273v1)
 
 ## scope
-Difference Logic (DL) uses atoms `x + k ≤ y` over rational or integer variables. The paper studies existential satisfiability, focusing on CNF relations bounded by arity `a` and coefficient magnitude `k`, then adds arbitrary formulas and integer domains. Its abstract says: “We study the complexity of deciding the truth of existential DL sentences.” (abstract, p. 1). For a verifier, the contribution is a method for selecting algorithms from structural parameters and for recognizing when an SMT difference-constraint fragment is inherently expensive.
+Difference Logic (DL) uses atoms `x + k ≤ y` over rational or integer variables, with integer constants. The paper studies existential satisfiability, focusing on conjunctive normal form (CNF) relations bounded by arity `a` and coefficient magnitude `k`, then adds arbitrary existential formulas and integer domains. Its abstract says: “We study the complexity of deciding the truth of existential DL sentences.” (abstract, p. 1). Inference: For a verifier, the results can help classify arithmetic obligations by their logical form, constants, and variable interactions.
 
 A conjunction of difference atoms is polynomial-time solvable (for example by Floyd–Warshall), but disjunctions cause hardness (Section 1.1, p. 3). The paper models restricted CNF DL as a CSP over a language `D_{a,k}`: arity bounds distinct variables per relation and `k` bounds absolute numeric constants (Section 1.1, pp. 4–5).
 
@@ -11,45 +11,46 @@ A conjunction of difference atoms is polynomial-time solvable (for example by Fl
 
 what it is
 
-Translate each arithmetic condition into a relation over variable differences, record the largest arity and coefficient bound, and solve the resulting CSP with the matching algorithmic regime. This exposes whether a VC is a tractable conjunction, a bounded-arity disjunction, or a hard unrestricted instance.
+Represent a DL formula in CNF as a constraint satisfaction problem (CSP), with one constraint per clause. Inference: This representation can classify a verification condition (VC) that lies within DL; it does not cover arbitrary linear arithmetic.
 
 how to apply it
 
-1. Rewrite each linear atom as `x − y ∈ I` or `x + c ≤ y`; collect variables and integer bounds (Section 1.1, p. 4).
+1. Express each DL atom as an interval condition `x − y ∈ I`; collect variables and integer bounds (Section 1.1, p. 4). Rational bounds can be scaled to integers (Section 2.1, p. 10).
 2. Convert a CNF formula into a CSP whose constraint language contains the allowed disjunctions of interval differences.
 3. Compute `a`, the maximum number of distinct variables in one relation, and `k = max |constant|`.
-4. If every relation is a conjunction (`k=0` point-algebra cases), use graph closure/Floyd–Warshall. Otherwise classify using Table 1 and the time/parameterized tables (pp. 5, 8).
+4. For a conjunction of difference atoms, use a polynomial-time temporal-constraint algorithm such as Floyd–Warshall (Section 1.1, p. 3). Separately, binary `D_{2,0}` is the polynomial-time point algebra, including disjunctions; `k=0` alone does not imply tractability at higher arities. Classify other cases using Tables 1–3 (pp. 5, 7, 9).
 5. Preserve strict/open interval endpoints; the paper allows open, closed, half-closed, and singleton intervals (Section 1.1, p. 4).
 
 Verus form
 
-Inference: In Verus, keep arithmetic contracts in linear difference form where possible. Use `requires`/`ensures` and loop `invariant` clauses for the source obligations; let Verus's SMT backend solve the resulting linear arithmetic. A VC containing disjunctions should be split into branch lemmas or represented by an explicit enum, because Verus does not expose the paper's CSP language as a user API. This normalization does not prove memory ownership or termination; it only classifies arithmetic obligations.
+Inference: A Verus workflow could classify arithmetic contracts that use variable differences before choosing a solver or generating lemmas. This is a proposed use of the complexity results, not a Verus integration evaluated by the paper.
 
 evidence
 
-The paper states that “The satisfiability problem for conjunctions of difference atoms is solvable in polynomial time (by, for instance, the Floyd-Warshall algorithm)” (Section 1.1, p. 3). It reports `CSP(D_{2,0}) ∈ P`, while `CSP(D_{2,k})` is NP-complete for finite positive `k` and unbounded `k` (Table 1, p. 5). These classifications are complexity theorems, not benchmark timings.
+Table 1 (p. 5) reports `CSP(D_{2,0}) ∈ P`; all its other cases are NP-complete, including `a ≥ 3, k=0`. These are worst-case complexity classifications. The paper also states: “We remark that one may equally well use the reals instead of the rationals as the underlying domain.” (Section 1.1, p. 4).
 
 ## technique 2: bounded-span divide and conquer for binary relations
 
 what it is
 
-For `D_{2,k}`, the upper bound uses short certificates for variable differences, a bounded-span subproblem, and recursive splitting. Section 3.2 names the components “Certificates”, “Instances with Bounded Span”, and “Divide-and-Conquer Strategy” (contents, p. 2).
+For fixed finite `k`, the binary algorithm uses certificates, a bounded-span solver, and recursive splitting (Sections 3.2.1–3.2.3, pp. 15–20). Its finite candidate domain comes from Theorem 6 (p. 14): every satisfiable `n`-variable instance of `CSP(D)` has a solution in `C_D(n,k) = {z + q/n : 0 ≤ z ≤ (n−1)(k+1), 0 ≤ q < n}`, where `z,q` are integers. The proof caps successive gaps between ordered integer parts at `k+1` and replaces fractional parts by order-preserving ranks divided by `n` (pp. 13–14).
 
 how to apply it
 
-1. Guess/list a certificate assigning each variable a representative difference value from the finite set of bounds (Section 3.2.1, pp. 15–16).
-2. For an instance whose values lie in a span of at most `k`, call the bounded-span solver; it checks all allowed binary intervals against that compressed range (Section 3.2.2, pp. 15–16).
-3. If the span is larger, choose a middle variable/value and partition variables into left, middle, and right sets according to their constrained differences.
-4. Add bridge constraints fixing each side's relation to the chosen middle value, recursively solve both sides, and accept when both are satisfiable (Section 3.2.3, pp. 16–19; Algorithms `ThreeSplit` and `FiveSplit`).
-5. Enumerate all admissible certificates and splits; reject only after all fail.
+1. Intersect the allowed interval unions to leave at most one constraint per variable pair (pp. 14–15).
+2. Use `ListCert` to enumerate assignments from `C_D(n,k)`. For each satisfying assignment, its certificate is the set of simple constraints appearing in the input disjunctions that it satisfies, not an assignment of difference values (Section 3.2.1, p. 15; Theorem 8).
+3. For solutions restricted to `[0,w)`, enumerate the `w^n` integer-part assignments. For each, test whether fractional parts in `[0,1)` satisfy the resulting inequalities and disequalities, which takes polynomial time. This gives `SolveBounded` running time `O*(w^n)`; `O*` hides polynomial factors (Lemma 9, pp. 15–16).
+4. To motivate the splits, partition a hypothetical solution into intervals of length `k`. Call an interval sparse when it contains at most `n/log n` variables. Lemma 12 (p. 18) guarantees either a sparse interval with at least `n/3` variables on each side, or two sparse intervals enclosing only dense intervals, with fewer than `n/3` variables outside each end.
+5. Enumerate the corresponding three-part or five-part partitions. `ThreeSplit` recursively solves two overlapping subinstances. `FiveSplit` recursively solves the two outer subinstances and calls `SolveBounded` on the middle with `w = k(log n+2)`. Enumerate certificates on the sparse overlaps, adding fresh boundary variables and constraints. Lemma 10 supplies the conditions for combining solutions; arbitrary independently satisfiable parts are insufficient (pp. 16–20; Algorithm 1, p. 19).
+6. Accept if a tested decomposition succeeds; reject after exhausting both splitting procedures. Instances with fewer than eight variables use `ListCert` directly.
 
-The resulting bound is `2^{O(n log log n)}` for `CSP(D_{2,k})` (Theorem 13, p. 5), while unrestricted `D` is `2^{O(n(log n + log k))}` (Corollary 7, p. 5).
+The resulting bound is `2^{O(n log log n)}` for fixed finite `k` (Theorem 13, pp. 18–20). Enumerating all candidate assignments gives `2^{O(n(log n + log k))}` for unrestricted `D` (Corollary 7, p. 14); its polynomial factors are suppressed as in the paper's `O*` convention (Section 2.2, p. 11).
 
-Inference: A Verus tool could use this as an offline VC preprocessor: generate finite certificates, prove each branch's arithmetic lemma, and combine them by exhaustive ghost recursion. The recursive solver itself is not a Verus proof of the program; its output must be reflected by a lemma that the chosen certificate entails the contract.
+Inference: A Verus integration could explore certificate generation for arithmetic obligations. To prove a contract, it would need to connect satisfiability reasoning to the obligation's logical form, for example by refuting a negated contract under its assumptions. A satisfying certificate alone does not establish a contract for all permitted inputs.
 
 limits and evidence
 
-The upper bound is close to lower bounds but not tight for all `D_{2,k}`. The paper notes that the bounded-span algorithm is the dominant term and that improving it would lower the overall bound (Conclusion, p. 41). Under ETH, `CSP(D_{2,k})` has no uniform single-exponential algorithm (Section 1.2, p. 6). Numeric bounds and the number of variables are the denominator for these asymptotic claims; no experimental denominator is supplied.
+The bounded-span solver dominates this algorithm's running time (Section 8, p. 41). Under the Exponential-Time Hypothesis (ETH), no one bound `O(c^n)` works across all finite coefficient bounds: for every `c>1`, some fixed `k` rules it out (Section 1.2, pp. 5–6; Theorem 19, pp. 23–24). This leaves open single-exponential algorithms whose exponential constant depends on `k`. The bounds describe worst-case running time, not measured solver performance.
 
 ## technique 3: structural parameterization by treewidth
 
@@ -59,20 +60,20 @@ Build the incidence graph (variables and constraints as bipartite vertices) or p
 
 how to apply it
 
-1. Construct the incidence graph and obtain a nice tree decomposition of width `w` (Section 1.3, pp. 7–8).
-2. At each bag, maintain partial assignments for variables and constraints whose values come from the bounded solution domain.
-3. Introduce, forget, and join nodes update the table while checking local difference relations.
-4. At the root, accept if a complete consistent assignment remains.
+1. Construct the incidence graph and obtain a nice tree decomposition of width `w`, with introduce, forget, and join nodes (Section 5.1, pp. 24–26).
+2. At each bag, record an assignment `α` of its variables into `C_D(n,k)`. For each constraint in the bag, `β` records satisfied (`S`), unsatisfied (`U`), or an unsatisfied constraint with one remembered forgotten variable and its value `(v,d)`. The latter may combine with a future variable to satisfy a disjunct (Section 5.2, pp. 26–27).
+3. Process nodes from leaves to root. Introducing a variable tests newly satisfied disjuncts; forgetting one can remember its value for selected constraints. Forget a constraint only if satisfied. Join compatible child records, including disjuncts satisfied by remembered variables from opposite children (Lemmas 24–30, pp. 27–30).
+4. Accept if the root's record set is nonempty. A second top-down traversal can recover a solution (p. 27).
 
-The paper gives runtime `(n k)^{O(w)}` for `CSP(D)` with bounded numeric values and incidence treewidth (Section 1.3, p. 8). It also proves `CSP(D_{2,k})` W[1]-hard by primal treewidth for `1 ≤ k < ∞`, and `CSP(D_{2,∞})` pNP-hard (Table 3, p. 8).
+Theorem 22 (p. 26) gives runtime `(nk)^{O(w)}`, suppressing polynomial input-size factors, for incidence treewidth `w`. For fixed `k`, this is XP: polynomial time for each fixed `w`, with the exponent depending on `w`. It is not a fixed-parameter tractability result. Table 3 (p. 9) and Theorem 33 (pp. 33–38) give W[1]-hardness already for `CSP(D_{2,1})` by primal treewidth, ruling out fixed-parameter tractability assuming `FPT ≠ W[1]`. With unbounded constants, Theorem 31 (p. 31) proves NP-hardness even at primal treewidth two by encoding Subset Sum along a cycle. This establishes pNP-hardness.
 
-Inference: For VL, treewidth can guide splitting of large verification conditions: low-width arithmetic dependency graphs are candidates for specialized ghost dynamic programming; high-width or unbounded-constant obligations should be escalated to stronger automation or redesigned invariants. Verus has no tree-decomposition primitive, so this is a preprocessing and lemma-generation layer.
+Inference: For VL, small incidence treewidth and bounded constants could identify candidates for this specialized solver. The hardness results limit general worst-case guarantees; they do not predict whether a particular VC will be difficult.
 
 ## trust, contradictions, and product implications
 
-The proved objects are satisfiability algorithms, reductions, and conditional lower bounds under ETH/W[1] assumptions. The trusted mathematical basis includes the CSP encoding, small-solution lemma, reductions, and the complexity hypotheses. The paper explicitly warns that a finite candidate value set does not handle universal quantifiers: “the formula ∀x∃y. y − x ≥ 1 is false when interpreted over any finite D ⊆ Q while it is true when interpreted over Q.” (Conclusion, p. 41).
+The paper presents satisfiability algorithms, reductions, and conditional complexity lower bounds, not a verified implementation or a Verus evaluation. For arbitrary existential formulas, Theorem 35 (p. 39) uses the small-solution property without constructing an exponentially larger CNF formula: “Note, however, that we do not need to compute the CNF formula explicitly in the proof of Theorem 35.” Section 7.2 (pp. 40–41) transfers the complexity classifications to integer domains through reductions without additional variables; strict integer inequalities become non-strict inequalities with shifted bounds.
 
-Inference: Product threat from agent-written verified Rust is indirect but material: an arithmetic VC can be solver-valid while ownership, aliasing, termination, or an abstraction boundary remains unproved. VL should record `(a,k)`, domain (Q or Z), graph width, and branch count with every generated VC. Existing work already maps these complexity regimes; VL should not claim that all difference constraints are polynomial merely because conjunctions are.
+The finite candidate domain does not justify enumerating values for universally quantified DL. Section 8 (p. 42) gives `∀x∃y. y−x ≥ 1`, which is true over the rationals but false over every finite rational domain. Inference: VL should preserve the distinction between existential satisfiability and program correctness for all inputs. The paper supports classifying DL obligations by form and structure; it supplies no evidence about ownership, aliasing, or termination proofs in Rust.
 
 ## techniques for the catalog
 
@@ -80,4 +81,4 @@ Inference: Product threat from agent-written verified Rust is indirect but mater
 - bounded-span recursion — solve binary disjunctive constraints by certificates, bounded-span cases, and recursive splits
 - treewidth dynamic programming — exploit incidence-tree decompositions with `(n k)^{O(w)}` tables when numeric values are bounded
 - hardness triage — use ETH and W[1]/pNP results to detect VC fragments that cannot have the desired fast automation
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The treewidth of such graphs has been used extensively and it has been successfully employed for many application areas."): read the full paper, including references; checked quotations, numbers, section and page references, algorithm steps, and complexity assumptions; corrected point-algebra scope, certificates, both splitting cases, dynamic-programming records, fixed-k qualifications, page references, and unsupported Verus claims; did not independently prove the paper's theorems, inspect cited works, or test a Verus implementation. The mid-paper sentence is from Section 5, p. 24; the link uses the arXiv identifier printed on p. 1.

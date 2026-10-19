@@ -1,77 +1,97 @@
 # A Program Instrumentation Framework for Automatic Verification
 (authored by agents unless marked 🧑)
-Tag: `amilon2024program`, [paper](http://arxiv.org/abs/2412.06431v1)
+Tag: `amilon2024program`, [paper](https://arxiv.org/abs/2412.06431v1)
 
 ## scope and contribution
-The paper presents instrumentation as a semantics-preserving translation from rich specifications to simpler assertions. It states: “This article proposes the first general framework to automate the translation of rich program specifications to simpler program assertions, using a process called instrumentation.” (section 1, p. 3). The framework represents an operator as ghost variables, rewrite rules, and an instrumentation invariant. The authors state that operators use “(manually designed) rewriting rules that define how the evaluation of the operator can be achieved using simpler program statements and ghost variables.” (section 1, p. 3)
 
-Inference: This is applicable to Verus when a specification uses a quantifier, fold, or arithmetic relation that is difficult for the SMT solver: introduce ghost state and prove a local invariant connecting that state to the original expression, then expose only solver-friendly assertions.
+The paper defines a framework for translating rich specifications into simpler assertions using ghost variables, rewrite rules, and an instrumentation invariant. It states: “This article proposes the first general framework to automate the translation of rich program specifications to simpler program assertions, using a process called instrumentation.” (section 1, p. 2). Operators are manually designed; their application can be searched automatically. The authors write: “While instrumentation operators are manually written, their application to programs can be performed in a fully automatic way by means of a search procedure.” (section 1, p. 2)
+
+Inference: For Verus, the reusable idea is to maintain ghost state representing a difficult specification expression, prove that connection, and use the tracked value in subsequent proof obligations. The paper does not implement or evaluate this in Verus.
 
 ## technique 1: ghost instrumentation for array aggregates
 
 what it is
 
-An instrumentation operator is a tuple Ω=(G,R,I). The paper defines it exactly: “Definition 1 (Instrumentation Operator). An instrumentation operator is a tuple Ω = (G, R, I), where:” (section 2.2, p. 8). G initializes ghost variables, R contains rewrite rules for matching source statements, and I is a formula over the ghosts. The paper's array maximum example tracks a running maximum and the interval of the array already processed. Its array quantifier example tracks lower and upper bounds, an array index, and the quantified predicate.
+An instrumentation operator is a tuple Ω=(G,R,I): G gives fresh ghost variables and initial values, R gives assignment rewrite rules, and I is a formula over the ghost variables only (section 2.2, Definition 1, p. 8). The authors emphasize: “Importantly, an instrumentation operator Ω does itself not define which occurrences of program statements are to be rewritten, but only how they are rewritten.” (section 2.2, p. 8)
+
+The array operators track an interval, a shadow array, and an aggregate value. The universal quantifier operator tracks `qu_lo`, `qu_hi`, `qu_ar`, and `qu_P`, where `qu_ar` is the shadow array and `qu_P` records whether the predicate holds throughout the interval (section 3.1, Figure 9, p. 10). Equality assertions connect the shadow array to the program array; the instrumentation invariant itself mentions only ghosts.
 
 when to use it
 
-Use this when a backend cannot directly reason about an aggregate or quantifier over an array, but the aggregate can be updated from one store/select step. The paper covers universal and existential quantification, product, minimum, maximum, sum, and number-of-elements through monoids. For non-cancellative monoids it keeps an explicit interval and aggregate value; for commutative cancellative monoids it updates the aggregate by cancellation.
+The array construction handles aggregations represented by monoid homomorphisms: mappings from finite sequences that preserve concatenation through an associative operation with an identity element. Table 1 covers universal and existential quantification, product, minimum, maximum, sum, and counting elements satisfying a predicate (section 3.2, pp. 11–13).
+
+The general construction resets tracking to a singleton when an access cannot extend the tracked interval. For commutative cancellative monoids, an overwritten element inside the interval can instead be removed from the aggregate and its replacement added. The paper explains: “Since the monoid is cancellative and commutative, when storing inside of the tracked interval, we first remove the current value at the index being written to using ◦−1, and then add the new value using ◦.” (section 3.2.3, p. 15). Sum and counting use this construction. Section 3.2.4 also constructs cancellative representations for quantification through counts, and for product by separately tracking nonzero products and zero counts (p. 16).
 
 how to apply it
 
-1. Choose ghost variables and initial values. The paper requires that the invariant hold for those initial values (section 2.2).
-2. Write rewrite rules for each source assignment, select, and aggregate expression. A rule replaces a matched statement with ghost updates and the original statement.
-3. State I, relating the ghosts to the source array and processed interval. For universal quantification, the paper's operator tracks `qu_lo`, `qu_hi`, `qu_ar`, and `qu_P`; the result is an assertion that the tracked predicate holds over the interval (section 3.1, Figure 9 and Figure 10).
-4. Rewrite the program using the operator. The paper says: “The result of rewriting v = e using the rule r = t s is defined as follows:” (section 2.2, p. 9).
-5. Verify the instrumented assertions with the ordinary backend. A failed assertion introduced by instrumentation means that this choice of rewrite is insufficient; a failed original assertion means the original program is incorrect under weak completeness.
+1. Choose ghost variables, initial values, and an invariant over the ghosts. Establish that invariant initially (section 2.2, Definition 1).
+2. Prove each rewrite terminates normally or abnormally under the invariant, assigns only to the original assignment target and ghosts, and preserves the invariant and original assignment value when introduced assertions are treated as assumptions (Definition 1).
+3. Normalize array operations and quantifiers into simple assignments. If an assignment target also occurs in its right-hand side, introduce a fresh target first so the expression remains stable during rewriting (Definition 2, pp. 8–9; section 3.1, p. 10).
+4. Select assignment occurrences to rewrite and initialize the ghosts at program entry. Array reads and writes update tracked state; aggregate evaluations are replaced by ghost values after checks of the shadow array and interval. For universal quantification, a true tracked predicate permits a requested subinterval, while a false one permits a requested superinterval; an empty requested interval yields true (Figures 9–10, pp. 10–11).
+5. Verify the resulting program. A proved instrumented program establishes correctness of the original. An actual counterexample ending at an original assertion transfers to the original program; failure at an introduced assertion can instead require another instrumentation (sections 5.1 and 6).
 
-The paper's non-linear arithmetic example tracks `i*i` in a ghost variable and rewrites later uses to that variable (section 1.1, Figure 3; section 1.2, Figure 4). The operator's invariant states that the ghost square equals the mathematical square.
+The arithmetic example similarly tracks a square with ghost variables `x_sq` and `x_shad`, maintaining `x_sq = x_shad²`. Rewriting an increment updates the square using linear arithmetic; a later square expression is replaced by `x_sq` after an equality check against the shadow variable (section 1.1, Figures 3–4, pp. 4–6).
 
 Verus form
 
-Inference: In Verus, represent the tracked value with a ghost `spec`-level relation and prove an `invariant` on the loop that relates the ghost or ordinary accumulator to the processed array range. Use `ensures` on a proof function or executable function to state the aggregate result, and `assert`/`assert forall`-style quantified facts supported by Verus. Verus has no paper-defined rewrite-operator datatype, so source rewriting would be a preprocessing pass or manually inserted ghost assignments. The paper's “ghost variables” are therefore a design pattern, not a Verus syntax claim.
+Inference: A Verus adaptation could maintain a ghost accumulator and a loop invariant relating it to the processed array interval, with proof functions establishing each update. The paper's invariant over ghost variables and its explicit checks connecting ghosts to program state should remain separate obligations. This is a proposed adaptation, not a verified Verus implementation.
 
 what evidence shows it works
 
-The implementation is MonoCera over constrained Horn clauses. The evaluation compares MonoCera, TriCera, SeaHorn, and CPAchecker on SV-COMP and crafted array programs. The paper reports: “MonoCera verified in total 42 programs from SV-COMP.” (section 7.2, p. 23). For crafted benchmarks with array size 100 or unbounded, “only MonoCera succeeded,” because it inferred quantified invariants (section 7.2, p. 23). These denominators are the SV-COMP programs and the crafted benchmark instances respectively; the text does not give a single total for the latter in the quoted sentence.
+MonoCera combines TriCera's C-to-constrained-Horn-clause translation with instrumentation implemented in Eldarica (section 7.1, p. 22). The authors state: “The operators described in this article, i.e., operators for the (extended) quantifiers listed in Table 1 and the operator in Figure 4, have been verified in the verification tool Frama-C [15].” Those proofs use adaptations to C native arrays rather than functional arrays (section 3.3, p. 17).
+
+Table 2 reports verified programs for MonoCera/TriCera/SeaHorn/CPAchecker: minimum 9/2/2/2 of 17 tests, maximum 8/2/3/3 of 12, sum 16/3/3/3 of 26, and universal quantification 30/1/0/2 of 96 (section 7.2, p. 23). Tests used a 300-second timeout, AMD Opteron 2220 SE at 2.8 GHz, and 6 GB RAM. The comparison used mathematical integers and, as far as possible, equivalent array configurations (pp. 22–23).
+
+The authors report: “MonoCera verified in total 42 programs from SV-COMP.” They also write: “However, when the array size was 100 or unbounded, only MonoCera succeeded.” (section 7.2, p. 23). This latter statement does not say every such case succeeded: Table 6 lists timeouts for `sum_eq-100` and `two_arrays_sum-100` (Appendix A, p. 31). MonoCera received specifications rewritten with quantifiers or aggregation; the other tools received the original or corresponding loop versions (section 7.2, p. 23).
+
+Inference: The benchmark totals are inconsistent: section 7.2 describes 117 SV-COMP programs plus 26 crafted programs, totaling 143, whereas Table 2's category counts total 151. The paper does not reconcile these totals.
 
 limits and assumptions
 
-The operator must satisfy its invariant and rewrite constraints; soundness is proved once per operator. The paper explicitly warns: “There are still various other benchmarks that MonoCera (as well as other tools) cannot verify.” (section 9, p. 24). Completeness is conditional: weak completeness prevents a correct-looking result from being created by instrumentation, while full completeness requires class-specific conditions (sections 5.1–5.2). Operators are manually designed, and incorrect or incomplete designs can leave obligations unproved. Inference: Verus automation will inherit the need to prove each instrumentation invariant and may become brittle when array access patterns do not match the operator.
+Soundness means that an incorrect original program cannot become a correct instrumented program. Weak completeness means that a failing assertion originally present in the program still demonstrates an original failure; it does not guarantee a successful instrumentation exists. Stronger completeness results require restricted access patterns (section 5, pp. 18–20). The authors caution: “There are still various other benchmarks that MonoCera (as well as other tools) cannot verify.” (section 9, p. 24)
+
+Inference: In Verus, irregular array access may require stronger tracking or additional operator instances. Neither an unproved obligation nor a solver timeout alone establishes a real program failure.
 
 ## technique 2: counterexample-guided instrumentation search
 
 what it is and when to use it
 
-The paper searches a finite set of possible rewrites instead of requiring the user to select one. “We propose a counterexample-guided algorithm for this purpose, which starts from some arbitrarily chosen instrumentation, checks whether the instrumented program can be verified, and otherwise attempts…” (section 1.2, p. 4). Use it when several rewrite sites or operators are possible and only some expose enough facts.
+The search chooses rewrite sites and rules from a finite instrumentation space. The paper states: “We will now define a counterexample-guided search procedure to discover applications of instrumentation operators that make it possible to verify a program.” (section 6, p. 21). Each eligible statement has applicable rewrite rules plus the option to leave it unchanged. Use this when several placements are possible (section 6).
 
 steps
 
-1. Set `Cand` to the instrumentation space R and choose a candidate r.
-2. Ask a correctness oracle to verify the instrumented program.
-3. If it verifies, return the instrumentation; soundness transfers correctness to the original program.
-4. If it fails at an original assertion, return incorrect because weak completeness transfers the counterexample.
-5. If it fails at an introduced assertion, extract the counterexample and remove every candidate agreeing with that candidate on the counterexample; repeat. Algorithm 1 is described as maintaining “a set Cand ⊆ R of remaining ways to instrument P” (section 6, p. 20).
-6. Return inconclusive when the oracle cannot classify a candidate or candidates are exhausted.
+1. Initialize `Cand` to all candidate instrumentations and choose one.
+2. Ask a correctness oracle about the instrumented program. Algorithm 1 assumes an oracle; a model checker is an approximation.
+3. If the program is correct, return its instrumentation. Soundness establishes original correctness.
+4. Otherwise obtain a counterexample path. If its failing assertion existed in the original program, return `Incorrect` by weak completeness.
+5. If the failing assertion was introduced, remove all candidates whose rewrite choices agree with the current candidate at every control point occurring on that path. Repeat with a remaining candidate.
+6. Return `Inconclusive` when no candidates remain. This is Algorithm 1's exhaustion result, not a separate branch for solver uncertainty (pp. 21–22).
+
+The finite search terminates because each refinement removes at least one candidate. Its candidate set can be exponential; the paper suggests symbolic representation using BDDs or SMT constraints (section 6, pp. 21–22). In the implementation, oracle checks can time out and be retried with larger timeouts. Multiple operator instances can be applied, increasing their number after `Inconclusive` (sections 7.1–7.2, pp. 22–23).
 
 Verus form
 
-Inference: Generate a finite set of candidate ghost-update placements or lemma choices, run `cargo verus` on each, and use failed assertions or counterexample traces to eliminate candidates. Verus does not expose the paper's oracle protocol, so a harness must classify solver success and preserve the original assertion separately from instrumentation assertions.
+Inference: A Verus harness could enumerate ghost-update placements or lemma choices and try to verify each. Eliminating other candidates using a failed path would require suitable counterexample information and a justification that agreement on that path preserves failure. A failed verification attempt alone cannot be classified as the paper's `Incorrect` result.
 
 proof and threat assessment
 
-The paper states: “Algorithm 1 will return Incorrect only when it has discovered a counterexample for Pr that ends in a failing assertion.” (section 6, Lemma 2). Inference: This is useful for VL's repair loop because it separates a real specification failure from an instrumentation failure. It does not remove trust in the verifier, the operator proofs, or the candidate-generation space. Inference: Product threat is medium: unsound operators could invalidate generated Rust proofs, whereas a sound operator only adds proof obligations; the paper's one-time operator proof is the key assurance boundary.
+Lemma 2 establishes that a returned instrumentation proves both programs correct, `Incorrect` demonstrates original incorrectness, and the search finds a correct instrumentation if one exists in its finite space, under the assumed correctness oracle (section 6, p. 22).
+
+Inference: VL could reuse the separation between original assertion failures and instrumentation failures. Any implementation must preserve that distinction and establish operator correctness; the paper supplies no measured risk rating for a Rust or Verus adaptation.
 
 ## what is proved, measured, and trusted
 
-Theorems 1–5 establish soundness, weak completeness, and conditional completeness for non-cancellative and cancellative monoid operators (sections 3.2–5.2). The implementation results measure successful verification counts and times in Table 2, but the quoted evaluation claims give the denominators explicitly only for 42 SV-COMP programs and the named crafted cases. Trusted components include the CHC verifier, the manually designed operator rules, and the mathematical model of arrays and integers. Inference: Machine arithmetic, aliasing, and Rust ownership are outside the paper's model and need separate Verus lemmas.
+Theorems 1–2 establish the array operators' correctness under Definition 1. Theorem 3 establishes soundness and weak completeness for every operator satisfying that definition. Theorems 4–5 establish completeness for specified program classes, and Lemma 2 covers search correctness (sections 3.2, 5, and 6).
+
+Inference: The formal guarantees depend on the rewrite constraints, array and integer semantics, and correctness oracle. The experiments measure verification results and runtime; they do not validate a Rust ownership or machine-overflow model. The core presentation uses unbounded integers and functional arrays; section 3.3 separately discusses C-native-array adaptations.
 
 ## what VL should reuse or avoid
 
-Inference: VL should reuse the separation between a reusable instrumentation lemma and per-program assertions, and the counterexample-guided elimination loop. The paper has already addressed generic quantifier and monoid encodings; VL should avoid rebuilding an ad hoc running-maximum encoding without checking the operator's invariant and completeness conditions.
+Inference: Reuse operator proofs independently of each application, explicit checks relating ghost state to program state, and candidate elimination justified by counterexamples. Treat incomplete verification and confirmed original assertion failures separately. A Verus adaptation still needs its own implementation and validation.
 
 ## techniques for the catalog
 
 - ghost instrumentation: rewrite quantifiers and aggregates into ghost updates plus a proved instrumentation invariant
-- counterexample-guided instrumentation search: eliminate candidate rewrites using failed instrumented assertions and retain soundness through the operator theorem
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- counterexample-guided instrumentation search: eliminate candidate rewrites using counterexamples to introduced assertions
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The operators described in this article, i.e., operators for the (extended) quantifiers listed in Table 1 and the operator in Figure 4, have been verified in the verification tool Frama-C [15]."): checked all paper text, quotations, numbers, section and page references, operator constraints, and search steps; corrected references, ghost-array description, soundness versus weak completeness, search exhaustion and timeout handling, and benchmark denominators; marked proposed Verus applications as Inference; did not inspect the artifact, rerun experiments, reproduce proofs, or validate Verus syntax.

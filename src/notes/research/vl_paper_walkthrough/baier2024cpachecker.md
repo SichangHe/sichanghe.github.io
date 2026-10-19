@@ -1,20 +1,20 @@
 # Software Verification with CPAchecker 3.0: Tutorial and User Guide (Extended Version)
 (authored by agents unless marked 🧑)
-Tag: `baier2024cpachecker`, [paper](http://arxiv.org/abs/2409.02094v1)
+Tag: `baier2024cpachecker`, [paper](https://arxiv.org/abs/2409.02094v1)
 
 ## scope and operating model
 
-This tutorial is a practical guide to CPAchecker 3.0. It presents configurable program analysis (CPA), concrete and abstract domains, verification algorithms, witness validation, and test generation. The abstract states the breadth: “The framework provides many abstract domains, such as BDDs, explicit values, intervals, memory graphs, and predicates, and many program-analysis and model-checking algorithms.” (Abstract, p. 1).
+This tutorial is a practical guide to CPAchecker 3.0. It presents configurable program analysis (CPA), abstract domains, verification algorithms, witness validation, and test generation. The abstract states the breadth: “The framework provides many abstract domains, such as BDDs, explicit values, intervals, memory graphs, and predicates, and many program-analysis and model-checking algorithms, such as abstract interpretation, bounded model checking, Impact, interpolation-based model checking, k -induction, PDR, predicate abstraction, and symbolic execution.” (Abstract, p. 1).
 
-CPAchecker takes a C program and specification and returns a verdict, report, and machine-readable witness; it can also validate a witness or generate tests (Sect. 1.1, p. 2). A CPA defines an abstract state domain and precision, and precisions can be adjusted by counterexample-guided abstraction refinement (CEGAR) (Sect. 1.2, pp. 2–3). The tutorial recommends trying several analyses: “none of them always outperforms all of the others” (Sect. 4.1, p. 14).
+As a verifier, CPAchecker takes a program, specification, and configuration and returns a verdict, report, and verification witness; its other main uses are witness validation and test generation (Sect. 1.1, p. 2; Sect. 3, p. 6). A CPA defines an abstract state domain and precision, and precisions can be adjusted by counterexample-guided abstraction refinement (CEGAR) (Sect. 1.2, pp. 2–3). The tutorial recommends trying several analyses: “none of them always outperforms all of the others” (Sect. 4.1, p. 13).
 
 Inference: VeruLaw can reuse this separation between executable code, specification, analysis precision, and independently checkable evidence. Verus itself is contract-and-proof oriented, so CPAchecker configurations are patterns for choosing abstractions and proof certificates rather than drop-in Verus commands.
 
 ## technique 1: choose analysis by specification and proof goal
 
-How it is done. First classify the property: reachability, memory safety, termination, overflow, or data race. Use the table’s specialized configurations: `--smg` for memory safety, `--lassoRankerAnalysis` or `--terminationToSafety` for termination, `--predicateAnalysis--overflow` for overflow, and `--dataRaceAnalysis` for races (Sect. 4, Table 2, p. 13). For ordinary reachability, start with the default meta-configuration, which uses k-induction in the authors’ experience, then compare value analysis, symbolic execution, BMC, predicate abstraction, and interpolation configurations (Sect. 4.1, p. 14).
+How it is done. First classify the property: reachability, memory safety, termination, overflow, or data race. Use the table’s specialized configurations: `--smg` for memory safety, `--lassoRankerAnalysis` or `--terminationToSafety` for termination, `--predicateAnalysis--overflow` for overflow, and `--dataRaceAnalysis` for races (Sect. 4, Table 2, p. 13). For ordinary reachability, start with the default meta-configuration, which uses k-induction for reachability specifications, then compare value analysis, symbolic execution, BMC, predicate abstraction, and interpolation configurations (Sect. 4.1, p. 14).
 
-Value analysis, symbolic execution, and BMC are mainly bug-finders; abstraction or induction is needed for large-program proofs. Value and symbolic analyses do not precisely handle dynamically allocated heaps, while BMC, predicate abstraction, and k-induction can, at the cost of potentially large SMT formulas (Sect. 4.1, pp. 14–15).
+The listed value-analysis configuration without refinement, symbolic execution without refinement, and incremental BMC are mainly bug-finders; abstraction or induction is needed for large-program proofs. Value and symbolic analyses do not precisely handle dynamically allocated heaps, while BMC, predicate abstraction, and k-induction can, at the cost of potentially large SMT formulas (Sect. 4.1, p. 14).
 
 Verus form. Inference: make the property explicit in a Verus contract or state machine before selecting proof tactics. Use executable tests for counterexamples and invariants/lemmas for unbounded proofs. The tradeoff between precise state and solver cost carries over, but Verus constructs and solver behavior differ.
 
@@ -22,15 +22,15 @@ Verus form. Inference: make the property explicit in a Verus contract or state m
 
 What it is. Value analysis tracks concrete assignments. Its three common configurations vary path sensitivity and precision refinement (Table 3, p. 14): `--valueAnalysis-NoCegar-join`, `--valueAnalysis-NoCegar`, and `--valueAnalysis-Cegar`.
 
-How it is done. Run `cpachecker --valueAnalysis-NoCegar-join examples/example-const.c` for path-insensitive constant propagation (Sect. 4.2, p. 15). Joining states keeps values that hold at a merge and can prove the example because `z` remains zero; nonconstant variables may become unknown. Path-sensitive mode keeps assignments per path but can explode. Precision-refined mode starts with a coarse set and uses CEGAR with Craig interpolation to retain only assignments needed for the proof (Sect. 4.2, pp. 15–16). Because nondeterministic values are over-approximated, CPAchecker checks each potential error path with a precise SMT feasibility check before reporting a violation (Sect. 4.2, p. 16).
+How it is done. Run `cpachecker --valueAnalysis-NoCegar-join examples/example-const.c` for path-insensitive constant propagation (Sect. 4.2, p. 15). Joining states keeps values that hold at a merge and can prove the example because `z` remains zero; nonconstant variables may become unknown. Path-sensitive mode keeps assignments per path but can explode. Precision-refined mode starts with a coarse set and uses CEGAR with Craig interpolation to retain only assignments needed for the proof (Sect. 4.2, p. 15). Because nondeterministic values are over-approximated, CPAchecker checks each potential error path with a precise SMT feasibility check before reporting a violation (Sect. 4.2, p. 15).
 
 Verus form. Inference: represent concrete facts as ghost maps or sequences and let loop invariants retain only variables needed by the postcondition. A failed proof is analogous to an imprecise abstraction; add a lemma or invariant rather than weakening the contract. Verus does not use CPAchecker’s command-line CEGAR configuration.
 
-Evidence and limits. The tutorial’s example proves safety only because the needed value is constant. It warns that path-sensitive tracking causes path explosion, and that value analysis does not support precise heap reasoning (Sect. 4.1, pp. 14–15).
+Evidence and limits. The tutorial’s example proves safety only because the needed value is constant. It warns that path-sensitive tracking causes path explosion, and that value analysis does not support precise heap reasoning (Sect. 4.1, p. 14).
 
 ## technique 3: interval data-flow analysis
 
-What it is. Data-flow analysis tracks automatically selected variables with interval expressions such as `[l1,u1] ∪ [l2,u2]` (Sect. 4.3, p. 16).
+What it is. Data-flow analysis tracks automatically selected variables with interval expressions such as `[l1,u1] ∪ [l2,u2]` (Sect. 4.3, pp. 15–16).
 
 How it is done. Run `cpachecker --dataFlowAnalysis examples/example-const.c`. Start with coarse exploration. If an abstract state violates the specification, dynamically increase precision by tracking more variables, allowing more complex interval expressions, and disabling widening (Sect. 4.3, p. 16). Use the result as a lightweight proof or as an invariant generator for k-induction (Sect. 4.3, p. 16).
 
@@ -46,39 +46,39 @@ How it is done. Run `cpachecker --symbolicExecution-NoCegar examples/example-sym
 
 Verus form. Inference: model unknown inputs as quantified or arbitrary spec values, then prove path conditions with `requires` and lemmas. Keep path-specific facts in proof blocks; avoid treating a single counterexample path as a universal proof.
 
-Evidence and limits. The tutorial gives a concrete nontermination example: unrefined symbolic execution of the safe loop does not terminate because it keeps increasingly complex expressions, while CEGAR tracks only the needed relation (Sect. 4.4, p. 17).
+Evidence and limits. Unrefined symbolic execution of example-safe.c (Fig. 2a) does not terminate because its symbolic expressions keep growing. The refinement example is a different program, example-sym.c (Fig. 8), on which CEGAR retains assignments and constraints for x and y and omits z (Sect. 4.4, pp. 16–17).
 
 ## technique 5: predicate abstraction and Impact
 
 What it is. Predicate abstraction learns predicates with CEGAR and Craig interpolation, then abstracts state at selected locations, normally loop heads (Sect. 4.5, p. 17). Large-block encoding reduces the number of abstractions.
 
-How it is done. Run `cpachecker --predicateAnalysis examples/example-safe.c`. The tutorial example learns the loop invariant `x + y == n`, stored in `output/predmap.txt`, and proves the assertion unreachable (Sect. 4.5, p. 17). If learned predicates enumerate concrete values instead of a useful relation, use Impact with `--predicateAnalysis-ImpactRefiner-ABEl`; the authors report predicate abstraction is more effective for proofs, while Impact is more efficient for finding violations (Sect. 4.5, pp. 17–18).
+How it is done. Run `cpachecker --predicateAnalysis examples/example-safe.c`. The tutorial example learns the loop invariant `x + y == n`, stored in `output/predmap.txt`, and proves the assertion unreachable (Sect. 4.5, p. 17). Learned predicates may enumerate concrete values instead of a useful relation. Impact, enabled by `--predicateAnalysis-ImpactRefiner-ABEl`, computes and refines predicate abstractions more lazily; the authors report predicate abstraction is more effective for proofs, while Impact is more efficient for finding violations (Sect. 4.5, p. 17).
 
 Verus form. Inference: write the learned relation directly as a Verus loop invariant and prove initialization, preservation, and postcondition. A Verus proof should record why the relation is sufficient; it does not automatically search arbitrary predicates as CPAchecker does.
 
 ## technique 6: bounded model checking and unbounded extensions
 
-BMC. Given bound `n`, BMC unrolls loops `n` times, encodes all paths and violations as an SMT formula, and reports FALSE when satisfiable. UNSAT proves safety only up to `n`; TRUE requires finite loops fully unrolled, otherwise UNKNOWN (Sect. 4.6, p. 18). `--bmc-incremental` starts at bound 0 and increments until a bug, complete unrolling, or a resource limit. The tutorial’s unsafe example is found on the first loop encounter; the safe unbounded loop reaches UNKNOWN because roughly `2^31` unrollings would be needed (Sect. 4.6, p. 18).
+BMC. Given bound `n`, BMC unrolls loops `n` times, encodes all paths and violations as an SMT formula, and reports FALSE when satisfiable. UNSAT proves safety only up to `n`; TRUE requires finite loops fully unrolled, otherwise UNKNOWN (Sect. 4.6, p. 18). `--bmc-incremental` starts at bound 0 and increments until a bug, complete unrolling, or a resource limit. The tutorial’s unsafe example is found on the first loop encounter; the safe example reaches the time limit with UNKNOWN because roughly `2^31` unrollings would be needed (Sect. 4.6, p. 18).
 
-k-induction. Run `cpachecker --kInduction examples/example-safe.c`. CPAchecker combines k-induction with data-flow invariants to strengthen the induction hypothesis; this proves the safe example that incremental BMC cannot (Sect. 4.7, p. 19).
+k-induction. Run `cpachecker --kInduction examples/example-safe.c`. CPAchecker combines k-induction with data-flow invariants to strengthen the induction hypothesis; this proves the safe example that incremental BMC cannot (Sect. 4.7, pp. 18–19).
 
 Interpolation. IMC, ISMC, and DAR derive interpolants from unsatisfiable BMC queries to construct inductive invariants. Run `--bmc-interpolation`, `--bmc-interpolationSequence`, or `--bmc-interpolationDualSequence`; the tutorial notes these currently support at most one loop (Sect. 4.7, p. 19).
 
-Verus form. Inference: use Verus loop invariants and `decreases` clauses for the k-induction analogue. A bounded test can find a counterexample but cannot establish unbounded safety. Interpolants are solver-generated hints, not Verus language constructs.
+Verus form. Inference: use Verus loop invariants for an inductive safety argument. A bounded test can find a counterexample but cannot establish unbounded safety. Interpolants are solver-generated hints, not Verus language constructs.
 
 ## technique 7: symbolic memory graphs for heap safety
 
 What it is. SMG combines symbolic execution with a graph domain that tracks memory, pointer arithmetic, bit-precise reads, boundaries, and certain arbitrary-length linked lists (Sect. 4.8, pp. 19–20). The tutorial says, “The analysis can detect memory leaks, invalid memory access, and invalid freeing of memory.” (Sect. 4.8, p. 19).
 
-How it is done. Run `cpachecker --preprocess --smg --spec memorysafety examples/example-unsafe-memsafety.c` to detect invalid dereferences. Use `--spec memorycleanup` after fixing the dereference to detect an unfreed allocation (Sect. 4.8, pp. 19–20). The tutorial example finds the first out-of-bounds access and, under the cleanup specification, the leak.
+How it is done. Run `cpachecker --preprocess --smg --spec memorysafety examples/example-unsafe-memsafety.c` to detect invalid dereferences. Detect the unfreed allocation either by fixing the invalid dereference or by selecting `--spec memorycleanup` (Sect. 4.8, pp. 19–20). The tutorial example finds the first out-of-bounds access and, under the cleanup specification, the leak.
 
 Verus form. Inference: model ownership and valid ranges through Rust types and Verus permissions; state pointer access preconditions and prove allocation cleanup. Verus’s ownership model differs from SMG’s graph abstraction, but the separation of memory-safety properties is directly applicable.
 
-Limits. SMG may enumerate all list lengths when it cannot abstract a list, causing path explosion (Sect. 4.8, p. 20).
+Limits. Abstraction of arbitrary-length linked lists is currently limited to lists that terminate in indefinitely repeating equal values. When abstraction fails, SMG enumerates all possible list lengths, which may cause path explosion (Sect. 4.8, p. 19).
 
 ## technique 8: termination analysis
 
-Termination-as-safety. `--terminationToSafety` records states at loop heads and builds an SMT formula when a loop head is visited again. A repeated reachable state proves nontermination. The tutorial’s witness `(n,z): (1,2) → (0,0) → (-1,1) → (-2,2) → (0,0)` demonstrates a repeated `(0,0)` state (Sect. 4.9, pp. 20–21).
+Termination-as-safety. `--terminationToSafety` records states at loop heads and builds an SMT formula when a loop head is visited again. It checks for a reachable state visited twice within the unrolled iterations; finding one proves nontermination. Termination proofs require fully unrolling every loop. The tutorial’s counterexample trace `(n,z): (1,2) → (0,0) → (-1,1) → (-2,2) → (0,0)` demonstrates a repeated `(0,0)` state (Sect. 4.9, pp. 20–21).
 
 Lasso ranking. `--lassoRankerAnalysis` extracts potentially nonterminating lassos and sends them to LassoRanker, which constructs ranking functions or nontermination arguments. For the terminating example it reports `3*z − 3*n + 4`; the function is nonnegative while the loop guard holds and strictly decreases each iteration (Sect. 4.9, p. 22).
 
@@ -92,11 +92,11 @@ Verus form. Inference: state arithmetic range invariants and use checked Rust op
 
 ## technique 10: verification witnesses and independent validation
 
-What it is. A witness is machine-readable evidence for a TRUE or FALSE verdict. Version 1.0 is GraphML; version 2.0 is YAML and more concise (Appendix D, p. 28). Correctness witnesses carry invariants; violation witnesses carry paths and assumptions.
+What it is. A witness provides machine-readable information about a verification result. Correctness witnesses can also accompany UNKNOWN, with partial information (Sect. 3.7, p. 11). Version 1.0 is GraphML; version 2.0 is YAML and more concise (Appendix D, p. 28). Correctness witnesses carry invariants; violation witnesses carry paths and assumptions.
 
-How it is done. Generate a witness with predicate analysis and `--option cpa.arg.proofWitness=witness.graphml`. Validate it using `cpachecker --witnessValidation --witness witness.yml examples/example-safe.c` (Appendix D.2–D.3, pp. 29–30). For violation witnesses, convert the witness to a control automaton and restrict exploration to its paths, using predicate abstraction for sequential programs, SMG for memory properties, and a BDD-based analysis for concurrent programs. For correctness witnesses, extract loop invariants and check them with k-induction; for overflow, use predicate abstraction and block-abstraction memoization (Appendix D.3, pp. 30–31).
+How it is done. Running `cpachecker --predicateAnalysis examples/example-safe.c --option cpa.arg.proofWitness=witness.graphml` generates a GraphML correctness witness in addition to the default YAML correctness witness (Appendix D.1, p. 28; D.2, p. 30). Validate the default YAML witness using `cpachecker --witnessValidation --witness output/witness.yml examples/example-safe.c` (Appendix A, Table 4, p. 24; D.3, p. 30). For violation witnesses, convert the witness to a control automaton and restrict exploration to its paths, using predicate abstraction for sequential programs, SMG for memory properties, and a BDD-based analysis for concurrent programs. For reachability correctness witnesses, extract loop invariants and check them with k-induction, without adding other candidate invariants. Retry an invariant at k+1 if it does not hold for the current k. For no-overflow correctness witnesses, use predicate abstraction, with block-abstraction memoization for recursive programs, and check the supplied invariants in parallel. A proved-invalid invariant causes a violation; otherwise predicate abstraction assumes it (Appendix D.3, p. 31).
 
-Evidence and limits. Validation confirms the claimed verdict only when the validator produces the same verdict for the witness type (Appendix D.3, p. 30). Metadata is checked by default; disabling strict checking can validate a witness whose metadata does not match the analyzed program, which weakens the identity guarantee.
+Evidence and limits. Validation confirms the claimed verdict only when the validator produces the same verdict for the witness type (Appendix D.3, p. 30). Metadata is checked by default; `witness.strictChecking=false` disables these checks (Appendix D.3, p. 30). Inference: disabling them removes this check that the witness metadata matches the program.
 
 Verus form. Inference: export proof-relevant contracts, invariants, and counterexample traces as reviewable artifacts, then replay them in a clean Verus invocation. The Verus verifier remains the checker; a witness format can improve auditability but cannot repair an incorrect specification.
 
@@ -108,7 +108,9 @@ Verus form. Inference: use generated tests to exercise executable Rust and to fi
 
 ## what is proved, trusted, and relevant to VL
 
-CPAchecker can prove properties only under the selected abstraction, specification, resource bounds, and solver assumptions. BMC’s UNSAT result is bounded unless loops are fully unrolled; CEGAR and predicate abstraction depend on learned predicates; k-induction depends on an inductive invariant; SMG’s list abstraction has scope limits; termination proofs require a valid ranking function. Witness validation adds an independent replay step, but it trusts the validator, program identity metadata, specification, and witness semantics.
+BMC’s UNSAT result proves safety only up to the chosen bound unless all loops are fully unrolled (Sect. 4.6, p. 18). Predicate abstraction depends on learning suitable predicates (Sect. 4.5, p. 17). SMG’s list abstraction has scope limits (Sect. 4.8, p. 19). Lasso-based termination analysis constructs ranking functions; termination-as-safety instead requires full loop unrolling for a termination proof (Sect. 4.9, pp. 20–22).
+
+Inference: applying these results requires trusting the implementation of the selected analysis and its solvers, and choosing a specification and platform that match the intended program behavior. Independent witness validation still relies on the validator and the meaning of its inputs.
 
 Inference: the threat to agent-written verified Rust is operational rather than a direct replacement: the tutorial supplies a mature menu for finding counterexamples, proving invariants, checking memory and termination, and validating evidence. VL should reuse witness-style artifacts, denominator-explicit verdicts (TRUE/FALSE/UNKNOWN), and the separation between bug-finding and unbounded proofs. It should not claim that a bounded test, a generated witness, or an SMT result alone establishes Verus contract correctness.
 
@@ -123,4 +125,4 @@ Inference: the threat to agent-written verified Rust is operational rather than 
 - overflow reachability — encode signed/unsigned overflow as error locations and check with a standard analysis
 - witness validation — export correctness/violation evidence and replay it with a restricted, property-specific analysis
 - coverage test generation — generate vectors or harnesses for branch, statement, function-call, or error-call goals
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It gives an overview of the main analysis techniques that CPAchecker offers, together with their strengths and weaknesses, and provides guidance on how to use CPAchecker in several analysis situations."): checked the complete paper text, study quotations, numbers, section and page references, commands, and technique descriptions; corrected the abstract quotation, page references, analysis limits, symbolic-execution examples, memory-cleanup alternatives, and witness-validation details, and marked trust conclusions as inference; did not execute CPAchecker examples or independently validate the Verus applications.
