@@ -1,6 +1,6 @@
 # REAL-Prover: Retrieval Augmented Lean Prover for Mathematical Reasoning
 (authored by agents unless marked 🧑)
-Tag: `shen2025real`, [paper](https://www.semanticscholar.org/paper/4b94c0cdc52a0cb81d4400109a929d5cf97a3c7a)
+Tag: `shen2025real`, [paper](https://arxiv.org/abs/2505.20613v3)
 
 ## what is proved or measured
 REAL-Prover is a Lean 4, retrieval-augmented, stepwise prover. Its paper describes three coupled components: HERALD-AF generates formal statements; Jixia-Interactive applies tactics and returns proof states; LeanSearch-PS retrieves Mathlib premises. The authors state, “Each model invocation is conditioned on the current proof state and enhanced through the retrieval of semantically relevant theorems from Mathlib.” (Introduction, p.3). Their claimed measurements are benchmark pass rates, not a theorem about the neural model.
@@ -30,7 +30,7 @@ how to apply it:
 
 The paper says, “We adopt a best-first search strategy, selecting the node with the highest score to expand further by generating new tactics.” (Section 2.2, p.6). At inference it uses 64 passes, 64 samples per step, temperature 1.5, and `alpha = 0.5` (Section 3.1, p.8).
 
-Verus form: Inference: represent each candidate as a Rust/Verus proof branch, run `verus` after each generated assertion or proof step, and retain only branches whose current obligations verify. Verus proof branches can use `assert`, `requires`, `ensures`, loop `invariant` declarations, and proof functions; a generated branch must end in a checked `ensures`. The search controller is external to Verus and must never substitute for the final verification run.
+Verus form: Inference: use an external search controller to generate alternative Rust/Verus proof candidates and run Verus on each candidate. Retain successful candidates and use diagnostics to guide further attempts. This adapts the search idea; the paper does not establish a Verus interface equivalent to Lean's interactive proof states. Verify the complete final artifact.
 
 ## technique 3: semantic premise retrieval with hard negatives (LeanSearch-PS)
 what it is: dense retrieval maps a proof state and Mathlib theorem into one vector space, then supplies nearest theorems to the tactic model.
@@ -43,7 +43,7 @@ how to apply it:
 
 The paper states, “These selected premises are then supplied as context to our language model, helping it produce more effective and accurate proof steps.” (Section 2.2.1, p.7). The training used E5-mistral-7b-instruct, LoRA, learning rate `2 × 10^-5`, batch 128, and one epoch (Section 3.1, p.8).
 
-Verus form: Inference: build a retrieval index over Verus lemmas, `spec fn` definitions, and verified proof snippets. Retrieve by current verification error and symbolic state, then insert candidate names and signatures into the generation prompt. Retrieval can suggest facts; only `assert`, `lemma`, or a completed proof checked by Verus establishes them. (Inference: exact Verus syntax follows the local Verus reference.)
+Verus form: Inference: build a retrieval index over Verus lemmas, specification definitions, and verified proof snippets. Retrieve using verification diagnostics and available program context, then insert candidate names and signatures into the generation prompt. Recheck the resulting proof with Verus; retrieval alone establishes no proof.
 
 ## technique 4: expert iteration for state–tactic data
 what it is: repeatedly use the current prover to solve formal statements, add verified traces to supervised data, and fine-tune a stronger prover.
@@ -54,7 +54,7 @@ how to apply it:
 3. keep generated state–tactic traces whose proofs pass Lean
 4. add them to the SFT corpus, fine-tune, and repeat on harder statements (Section 2.2.2, p.7)
 
-The resulting corpus has 210,420 state–tactic pairs: 25,818 and 30,589 from two expert-iteration sources, 18,669 human-annotated, 92,152 Mathlib, and 43,192 augmented Lean-Workbook pairs (Section 3.1, p.8). The paper calls its released expert-iteration set 55k pairs in the contribution list, while the full training mixture is 210,420; these are different scopes, not an arithmetic equality.
+The resulting corpus has 210,420 state–tactic pairs: 25,818 and 30,589 from two expert-iteration sources, 18,669 human-annotated, 92,152 Mathlib, and 43,192 augmented Lean-Workbook pairs (Section 3.1, p.8). The contribution list separately says, “We release a comprehensive dataset consisting of 55k state–tactic pairs generated through our expert iteration process.” (Section 1.2, p.4). Inference: 55k describes the released expert-iteration subset rather than the full mixture, but it does not exactly match the 56,407 expert-iteration pairs listed in Section 3.1; the paper does not explain that difference.
 
 Verus form: Inference: collect `(verification_state, generated_step)` traces only after Verus checks the resulting function or lemma. Re-train on proof states plus diagnostics, but preserve independent re-verification because accepted traces still inherit the specification and tool assumptions.
 
