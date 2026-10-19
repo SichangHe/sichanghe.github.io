@@ -4,109 +4,114 @@ Tag: `ankireddy2025lasa`, [paper](http://arxiv.org/abs/2506.17865v1)
 
 ## scope and result
 
-LASA is an LLM-assisted flow for generating security properties and SystemVerilog Assertions (SVAs) for bus-based SoCs, checking them for vacuity and syntax/semantic validity, running formal property verification (FPV), and refining prompts when coverage is low. The paper's abstract says: “LASA integrates commercial EDA tool for FPV to generate coverage metrics and iteratively refines prompts through a feedback loop to enhance coverage.” (Abstract, p. 1.) Its evidence is eight IP designs from the CEP and OpenTitan benchmarks, checked with Cadence JasperGold 2020.12 on a Red Hat Enterprise Linux server (experimental setup, §IV-A, p. 5).
+LASA generates security properties and SystemVerilog Assertions (SVAs) for bus-based systems-on-chip (SoCs), checks candidate properties for vacuity, and uses formal property verification (FPV) and coverage feedback to refine prompts. The abstract states: “LASA integrates commercial EDA tool for FPV to generate coverage metrics and iteratively refines prompts through a feedback loop to enhance coverage.” (p. 1.) The paper evaluates IP designs from CEP and OpenTitan using Cadence JasperGold 2020.12 (§IV-A, p. 4). It compares GPT4o, Gemini-1.5, and Llama-3.1 and selects GPT-4o: “Hence, we selected GPT-4o as our primary LLM for integration with LASA for automation tasks in different stages.” (§IV-A, p. 4.)
 
-Table II reports generated properties and assertions for eight designs. For AES-192, for example, 73 properties were generated, 43 were correct, 41 were non-vacuous, and 41 SVAs were generated, 40 correct. For DES3 the corresponding counts were 37, 31, 29, 29, and 27; for GPS they were 108, 98, 93, 93, and 90 (Table II, p. 6). “#correct” is the number judged relevant/proven by the authors, “#non-vacuous” is the number passing their vacuity rules, and assertion “#correct” is the number of correct translations (Table II caption and §IV-C/D, p. 6). The reported average coverage is approximately 88% (abstract and conclusion, pp. 1, 9); Table III gives checker, stimuli, and formal coverage for each IP, with denominators being the coverage items reported by JasperGold, not a number of properties.
+Table II (p. 5) reports eight designs. Its columns are generated properties, correct properties, non-vacuous properties, generated assertions, and correct assertions. AES-192 has 73, 43, 41, 41, and 40; DES3 has 37, 31, 29, 29, and 27; GPS has 108, 98, 93, 93, and 90. The authors describe correct properties as “proven to be relevant” and “semantically correct”, and state that “‘#non-vacuous’ denotes the number of properties that pass vacuity check rules.” (§IV-C, p. 5.) The paper does not report an independent assessment of requirement correctness.
 
-## technique 1: build a bounded prompt from hierarchical design facts and retrieval
+The abstract reports average coverage of approximately 88%, and the conclusion repeats 88% (pp. 1, 7). Table III (p. 6) reports checker, stimuli, and formal coverage separately; its Average row contains percent signs without numerical values. Inference: the study should preserve 88% as the authors' overall claim without assigning it to a particular coverage column. The paper also reports five detected bugs in the buggy OpenTitan benchmark from Hack@DAC’24 (§IV-G, p. 6; Table IV, p. 7).
 
-What it is. LASA avoids putting an entire large RTL design into one LLM context. It extracts behavioral descriptions from RTL and specification documents, breaks code into modules, functions, or components, and retrieves related manuals or documentation with retrieval-augmented generation (RAG) (§III-A, p. 4). It then processes each IP and submodule independently, preserving local context before aggregating properties at the top level (§IV-B/C, p. 6). The paper states: “LASA breaks down the code into higher-level abstractions (e.g., modules, functions, or components) and uses the summarized descriptions in the creation of prompts.” (§III-A, p. 4.)
+## technique 1: hierarchical design context and retrieval
 
-How to apply it.
+What it is. LASA extracts behavioral descriptions from RTL and specification documents, then combines summaries with information retrieved from related documentation. The paper states: “LASA breaks down the code into higher-level abstractions (e.g., modules, functions, or components) and uses the summarized descriptions in the creation of prompts.” (§III-A, p. 3.) It also states: “Additionally, LASA employs Retrieval-Augmented Generation (RAG) techniques to extract and summarize the relevant information from related documentation or manuals at a high level.” (§III-A, p. 3.)
 
-1. Extract module or submodule behavior from RTL and specification documents (§III-A, p. 4)
-2. Retrieve relevant manuals and documentation with RAG and summarize that material (§III-A, p. 4)
-3. Create a structured design record. Listing 1 uses JSON fields such as SoC name, bus, number of IPs, bus interface, IP operation, and secure assets (Listing 1, §IV-B, p. 6)
-4. Process each IP with its own specification and context, then aggregate submodule properties at the top module (§IV-B/C, p. 6)
-5. Feed the enriched prompt to the chosen LLM for property generation (§III-A/B, pp. 4–5)
+How the paper applies it:
 
-Verus form. Inference: make the structured record contain Rust module names, function signatures, state variables, specifications, trusted inputs, and security assets. Retrieve API and Verus guidance relevant to each module, then ask the model for candidate `requires`, `ensures`, `invariant`, `assert`, `assume`, and `proof fn` annotations. Inference: summarize one Rust module or function at a time and aggregate proof obligations afterward; this follows LASA's hierarchy but is not evaluated in the paper. RAG evidence remains context, not proof.
+1. Extract behavior from RTL and specifications, including block diagrams and text (§III-A, p. 3)
+2. Summarize modules, functions, or components and retrieve relevant documentation (§III-A, p. 3)
+3. Formalize design specifications in a JSON-based `<SPEC_FILE>` (§IV-B, pp. 4–5; Listing 1, p. 5). The example includes SoC name, bus, IP count, bus interface, IP operation, and assets
+4. Process each IP with its own documentation and specification; evaluate large hierarchical IPs at submodule level (§IV-B, pp. 4–5)
+5. Feed enriched prompts sequentially to the LLM for property generation (§IV-B, p. 5). Generate localized properties independently and combine them at the top module (§IV-C, p. 5)
 
-Evidence and limits. The paper reports no isolated RAG ablation. The reason for the design is the LLM input-token limit for designs with thousands of RTL lines (§III-A, p. 4). Inference: retrieval can omit a dependency or threat assumption, so a Verus adaptation must record which specification fragments were supplied and inspect cross-module obligations.
+The paper describes this combination explicitly: “The initial prompt includes high-level design specifications extracted from <SPEC_FILE>, either at the module or submodule level, augmented with contextual information retrieved via RAG-based techniques.” (§IV-B, p. 5.) Appendix A, Prompt 7 (p. 8), requests signal names, port declarations, descriptions, functionality, interconnections, assertion information, and microarchitecture information.
 
-## technique 2: generate security properties, then reject vacuous ones
+Verus form. Inference: a Rust adaptation could summarize one module or function at a time, including signatures, state, security assets, and existing specifications. Retrieved API and Verus documentation could inform candidate `requires`, `ensures`, loop `invariant`, `assert`, and `proof fn` annotations. Cross-module obligations would still need explicit checks. The paper evaluates hardware properties, not this adaptation.
 
-What it is. LASA prompts pretrained LLMs to generate temporal security properties and applies nine vacuity rules/theorems from prior literature. A property is vacuous when the model satisfies it but a subformula does not affect the result; the paper's simple example is `G(p -> F q)` when p never occurs (§II-B, p. 2). The paper explains: “Vacuous properties usually indicate weak, trivial, or incorrect specifications for a given system or design.” (§II-B, p. 2.) Properties that fail vacuity screening are discarded before SVA translation (§III-B/C, pp. 5–6).
+Evidence and limits. The input-token limit motivates decomposition (§III-A, p. 3). The paper does not report a separate RAG ablation or specify a retriever configuration. Inference: summaries can omit relevant dependencies, so retrieved context alone cannot establish that a generated contract captures the full requirement.
 
-How to apply it.
+## technique 2: generate properties and screen for vacuity
 
-1. Give the LLM design, security assets, and threat context (§III-B, p. 5)
-2. Ask for properties in temporal logic and include the nine vacuity rules in the prompt (Appendix A, Prompt 2, p. 10)
-3. For each generated formula, test whether the system satisfies it while a subformula can be replaced without changing satisfaction (§II-B, Theorem 1, p. 2)
-4. Discard formulas classified as vacuous and retain non-vacuous formulas (§III-C, p. 6)
-5. Perform hierarchical checking per submodule and aggregate retained properties (§III-C, p. 6)
+What it is. LASA generates temporal security properties and uses nine vacuity rules/theorems reproduced from prior literature (§II-B, p. 2; §III-B, pp. 3–4). The paper explains: “Vacuous properties usually indicate weak, trivial, or incorrect specifications for a given system or design.” (§II-B, p. 2.) Its example is `G(p → F q)`, which is satisfied vacuously if `p` never occurs. The formal definition requires that the system satisfy the formula and that a subformula not affect its satisfaction (§II-B, p. 2).
 
-The paper's Listing 2 illustrates a vacuous assertion: `validCounter > 1` is never true when the counter is stuck at 1 or 0, so the implication does not exercise the intended decrement behavior (Listing 2, §IV-C, p. 6). The reported AES-192 counts show the filter's effect: 43 correct generated properties become 41 non-vacuous; DES3 goes from 31 to 29, and GPS from 98 to 93 (Table II, p. 6).
+How the paper applies it:
 
-Verus form. Inference: for a Rust function, treat a postcondition whose antecedent is unreachable under the function's `requires` and assumptions as a vacuity candidate. Generate a concrete counterexample obligation or mutate the antecedent to test relevance, then reject specifications that pass only because a precondition is impossible. Verus's `requires` and `ensures` express the contract; `assert` and `invariant` can expose the state needed for a meaningful check. Inference: temporal nine-theorem screening does not transfer directly to first-order Verus contracts, so the adaptation needs a contract-specific reachability and mutation check.
+1. Generate properties using design context and k-shot examples (§III-B, pp. 3–4)
+2. Supply the nine rules/theorems in the prompt for k-shot learning (Appendix A, Prompt 2, p. 8)
+3. Ask the model to classify generated properties as vacuous or non-vacuous using those rules (Appendix A, Prompt 3, p. 8)
+4. Translate properties that pass the vacuity check to SVAs (§IV-D, p. 5)
 
-Evidence and limits. The paper reports the counts above and gives formal definitions/theorems, but does not report false-negative rates for its nine-rule screen. It also acknowledges in §IV-H that stronger vacuity rules may be needed. The text around Prompt 3 contains a wording error: it says “A property must fail at least one vacuity condition among the 9 theorems to be non-vacuous.” (Appendix A, p. 11.) Inference: that sentence should be checked against the formal definition before implementing an automated filter; the surrounding method says to discard vacuous properties.
+The application is described as: “LASA leverages pre-trained LLMs to generate equivalent assertions for all non-vacuous properties that pass the vacuity check.” (§IV-D, p. 5.) Listing 2 (p. 6) illustrates potential vacuity: `validCounter > 1` never holds if the counter is stuck at 1 or 0. Table II (p. 5) reports 43 correct AES-192 properties and 41 non-vacuous ones; the corresponding DES3 counts are 31 and 29, and GPS counts are 98 and 93.
 
-## technique 3: translate retained properties into SVAs with few-shot examples and repair
+Evidence and limits. The description contains inconsistent wording. Section IV-C (p. 5) says to “discard all non-vacuous properties that violate at least one of nine theorems”; Appendix A, Prompt 3 (p. 8), says: “A property must fail at least one vacuity condition among the 9 theorems to be non-vacuous.” Inference: those statements do not give a consistent operational rule when read alongside the stated goal of retaining non-vacuous properties. The paper provides model prompts and formal definitions, but does not establish that its prompted classification implements a sound, complete formal vacuity decision procedure or report classification error rates. Section IV-H acknowledges: “Incorporating more robust vacuity checking rules or refining existing ones could help filter out vacuous properties.” (p. 7.)
 
-What it is. LASA asks an LLM to translate each retained security property into an equivalent SVA. It uses k-shot example assertions, writes each result to an `.sva` file, and re-prompts when syntax or semantics fail (§III-C, p. 5). The paper reports that generated assertions can be syntactically valid but semantically wrong, including non-boolean implication operands, wrong signal scopes, and reset violations (§IV-D, p. 6). JasperGold is then used to discard invalid assertions.
+Verus form. Inference: screen Rust contracts for impossible preconditions and unreachable postcondition antecedents. Use separate reachability or mutation checks to test whether a contract constrains relevant behavior. The temporal theorems do not directly establish a correct screening method for Verus contracts.
 
-How to apply it.
+## technique 3: translate retained properties and repair assertions
 
-1. Select a non-vacuous property and its module-level signals (§III-C, p. 5)
-2. Include a small set of valid SVA examples and the property in the prompt (§III-C, p. 5; Appendix A, Prompt 1, p. 10)
-3. Generate an SVA, append it to the module's `.sva` file, and generate the corresponding TCL evaluation script (§III-C, p. 5)
-4. Run syntax and FPV checks; inspect model-checker counterexamples (§III-C/D, p. 5)
-5. Re-prompt to correct syntax, timing, implication, scope, or reset errors, and retain only assertions that pass (§III-C/D, p. 5–6)
+What it is. LASA translates retained properties into SVAs using examples and re-prompting. The paper states: “The framework employs re-prompting to correct syntax errors in generated assertions and produce revised versions.” (§III-C, p. 4.) It appends assertions to `.sva` files and generates TCL scripts for JasperGold; model checking produces counterexamples for failures (§III-C, p. 4).
 
-The paper's DES3 example has `(!$stable(roundSel)) |=> (K !== $past(K));`; the generated assertion is semantically wrong, and JasperGold produces a counterexample (Listing 3 and Fig. 4, §IV-D, pp. 6–7). Appendix Prompt 5 explicitly asks the model to correct a syntax error and Prompt 6 asks it to generate additional assertions from uncovered coverage cases (Appendix A, pp. 11–12).
+How the paper applies it:
 
-Verus form. Inference: replace the SVA artifact with Rust contracts and proof functions. Ask for a candidate `ensures` clause or `assert` proof, run Verus, feed diagnostics and counterexamples back to the model, and regenerate. Use `invariant` only as a loop invariant and keep `proof fn` in proof code. Inference: a Verus error message is analogous to the SVA syntax/semantic feedback, but Verus does not provide a direct temporal waveform equivalent; counterexamples may need instrumented assertions or bounded test harnesses.
+1. Give the model non-vacuous properties and a small set of example assertions (§III-C, p. 4)
+2. Generate SVAs, append them to their respective `.sva` files, and generate evaluation scripts (§III-C, p. 4)
+3. Run JasperGold and inspect syntax errors and counterexamples (§III-C, p. 4; Appendix A, Prompts 4–5, p. 8)
+4. Re-prompt to correct malformed assertions and discard invalid candidates (§III-C, p. 4; §IV-D, pp. 5–6)
+5. Distinguish incorrectly formulated assertions from failures that indicate potential design bugs (§III-E, p. 4)
 
-Evidence and limits. Table II gives correct SVA counts: AES-192 40/41 generated after screening, DES3 27/29, GPS 90/93, and so on (Table II, p. 6; denominator is the number of retained properties translated for each design). The paper says manual effort was still needed for properties requiring re-prompting (§IV-D, p. 6). Inference: passing syntax and a bounded formal run does not guarantee that a property captures the intended security requirement.
+Section IV-D reports problems with hardware behavior, timing, implication semantics, signal scope, and reset constraints (pp. 5–6). Listing 3 (p. 6) gives the DES3 assertion `(!$stable(roundSel)) |=> (K !== $past(K));`; the authors describe it as semantically incorrect because it violates design behavior and yields a counterexample (Fig. 4, p. 6). A failing assertion therefore requires interpretation: “Failed SVAs indicate a potential issue—either due to incorrect formulation by LLM or uncovered design behavior that leads to potential bugs.” (§III-E, p. 4.)
 
-## technique 4: measure checker, stimuli, and formal coverage and refine until a threshold
+Evidence and limits. Table II (p. 5) reports 40 correct assertions out of 41 generated for AES-192, 27/29 for DES3, and 90/93 for GPS. These denominators are generated assertions, not security vulnerabilities. The authors state: “There were some manual efforts involved for those properties requiring re-prompting for conversion to SVAs.” (§IV-D, p. 5.) Inference: the paper does not demonstrate a wholly autonomous translation-and-repair process.
 
-What it is. LASA runs JasperGold FPV on retained SVAs and collects checker coverage, stimuli coverage, and formal coverage. Its experiments set an 80% minimum coverage threshold; if coverage is below it, the framework adds context-specific prompts, generates more properties, and repeats (§IV-E/F, p. 7). The paper states: “If coverage falls below this threshold, LASA incoprates a feedback loop to generate additional relevant SVAs to improve the coverage.” (§IV-E, p. 7.)
+Verus form. Inference: generate candidate Rust contracts and proof functions, run Verus, and return diagnostics to the model for revision. A failed proof can reflect a code bug, an inadequate proof, or an incorrect specification. The paper's hardware counterexamples do not establish an equivalent Rust counterexample workflow.
 
-How to apply it.
+## technique 4: use coverage feedback to refine prompts
 
-1. Run FPV with the retained assertions and collect branch, statement, expression, toggle, COI, and proof-core metrics (§III-D, p. 5; §IV-E, p. 7)
-2. Compare each relevant metric with the chosen threshold, 80% in the experiment (§IV-E, p. 7)
-3. Identify uncovered signals, states, or paths from the coverage report (§IV-E/F, p. 7)
-4. Add targeted prompts such as reset conditions, boundary cases, sequential behavior, unreachable states, and multi-cycle paths (Listing 4, §IV-F, p. 7)
-5. Generate and check new properties, merge them with the prior set, and repeat until the threshold is met (§IV-F, p. 7)
+What it is. LASA collects checker, stimuli, and formal coverage using JasperGold. Checker coverage includes cone of influence (COI) and proof core; stimuli coverage describes input conditions and includes code and functional coverage; formal coverage combines stimuli and checker coverage (§II-C, p. 2). The methodology lists branch, statement, expression, and toggle coverage (§III-D, p. 4).
 
-Table III reports eight IPs. For example, AES-192 has checker COI 99.02%, proof-core 83.59%, stimuli 99.93%, formal COI 99.37%, and formal proof-core 85.05%; DES3 has 93.97%, 91.70%, 100%, 93.98%, and 91.71% (Table III, p. 7). These are coverage percentages over the JasperGold coverage categories, not pass rates over test cases. The paper's conclusion reports an average near 88% across the evaluated designs (p. 9).
+How the paper applies it:
 
-Verus form. Inference: collect verifier diagnostics, proof-obligation counts, assertion reachability, loop-invariant coverage, and branch/path coverage from Rust harnesses. If an obligation remains uncovered, add a focused lemma or `assert` and rerun Verus. Inference: these metrics are an engineering analogue, not a theorem that all Rust states are covered; Verus's proof success still depends on solver assumptions and trusted configuration.
+1. Verify generated SVAs and collect coverage reports (§III-D, p. 4; §IV-E, p. 6)
+2. Use a configurable coverage threshold, set to 80% in the experiments (§IV-E, p. 6)
+3. When coverage is below the threshold, use reports to refine prompts and generate additional properties and SVAs (§III-E, p. 4; §IV-E/F, p. 6)
+4. Add prompts addressing resets, boundary values, sequential behavior, unreachable states, or multi-cycle paths (Listing 4, p. 6)
+5. Repeat toward the configured threshold (§III-E, p. 4)
 
-Evidence and limits. Coverage indicates exercised or checked design structure, not that every security property is correct. The paper notes that state explosion limits ABV scalability (§II-D, p. 3) and proposes submodule analysis for scalability (§IV-B, p. 6). Inference: repeatedly adding assertions can inflate coverage without improving requirement quality, so the threshold should be paired with a review of property intent and vacuity.
+The paper states: “If coverage falls below this threshold, LASA incoprates a feedback loop to generate additional relevant SVAs to improve the coverage.” (§IV-E, p. 6; spelling as printed.) It maintains an additional prompt database (§III-E, p. 4), and Appendix A, Prompt 6 (p. 8), asks for additional assertions based on uncovered cases in coverage reports.
 
-## technique 5: use counterexamples and tailored context for bug detection
+Table III (p. 6) gives AES-192 checker COI 99.02%, checker proof core 83.59%, stimuli 99.93%, formal COI 99.37%, and formal proof core 85.05%. DES3 has 93.97%, 91.70%, 100%, 93.98%, and 91.71%, respectively. These are coverage metrics, rather than assertion pass rates. Appendix B, Table V (p. 9), gives submodule metrics, including values below 80%, such as FIR's left multiply block formal proof core of 71.78%. Inference: the 80% setting does not show that every reported metric at every hierarchy level meets that threshold; the paper does not specify a precise stopping rule across all columns and levels.
 
-What it is. LASA includes micro-architectural events, threat models, and secure assets in prompts, then uses failed FPV assertions and counterexamples to expose design flaws (§III-G, p. 8). It found five bugs in the buggy OpenTitan SoC from Hack@DAC'24. Examples include incorrect UART parity dependence, wrong write-data assignment, OTP word overflow, HMAC key exposure, and unused error detection logic (Table IV, p. 8).
+Evidence and limits. The discussion proposes custom coverage metrics: “Additionally, adopting custom coverage metrics would offer a more accurate representation of verification completeness, guiding iterative improvements effectively.” (§IV-H, p. 7.) Inference: a high structural coverage value alone does not establish complete security requirements or correct property intent.
 
-How to apply it.
+Verus form. Inference: use failed proof obligations and explicitly recorded requirement gaps to request focused assertions, invariants, or lemmas. Rust test coverage could offer separate feedback, but LASA's hardware metrics and 80% setting do not define a Verus completeness metric.
 
-1. Add threat model, protected assets, and security-relevant micro-architectural events to the prompt (§III-G, p. 8)
-2. Generate targeted properties and translate them to SVAs (§III-G, p. 8)
-3. Run FPV and inspect each counterexample trace for a violated property (§III-C/G, pp. 5, 8)
-4. Map the failing signal and source location back to RTL; revise the assertion or flag a bug (Table IV, p. 8)
-5. Re-run FPV after the design fix or assertion correction (§III-G, p. 8)
+## technique 5: add threat context and inspect failures for bugs
 
-Verus form. Inference: include security invariants and attacker-controlled inputs in a Rust harness, then use failed `assert` or `ensures` checks as bug witnesses. Preserve the counterexample inputs and source location, and rerun Verus after a code or contract change. Inference: a Verus counterexample is useful evidence only under the harness assumptions; it does not by itself establish exploitability in every deployment.
+What it is. LASA augments prompts for bug detection: “For generating tailored SVAs for detecting bugs, LASA includes additional high-level information into the prompts, including micro-architectural events, threat models, secure assets, etc.” (§IV-G, p. 6.) Verification can then expose violations of intended behavior.
 
-Evidence and limits. Table IV lists exactly five bugs and gives code references and SVAs for each (p. 8). This is a demonstration on one buggy OpenTitan benchmark, not an estimate of recall or precision. Inference: LASA's bug count cannot be generalized to all SoCs or to Verus programs.
+How the paper applies it:
+
+1. Add microarchitectural events, threat models, and secure assets to prompts (§IV-G, p. 6)
+2. Generate tailored SVAs and verify them (§IV-G, p. 6)
+3. Use assertion failures and counterexamples to identify potential flaws while considering incorrect assertion formulation (§III-C/E, p. 4)
+4. Report detected bugs with source references, security impact, and detection SVAs (Table IV, p. 7)
+
+Table IV lists five bugs: UART receiver parity checking independent of parity enable; write data assigned the register value rather than the hardware value; potential OTP word overflow; an HMAC hashing key leaked through `reg_rdata_next`; and incorrect error-detection logic involving unused `error_s` (p. 7). The authors say: “This capability is demonstrated through the detection of five bugs in the buggy OpenTitan SoC from the Hack@DAC’24 competition and tabulated in Table IV.” (§IV-G, p. 6.)
+
+Evidence and limits. The paper provides these examples without a bug-detection recall or precision estimate. It does not report fixing the five bugs and re-verifying the repaired designs. Inference: the count supports a demonstration on that benchmark, rather than a general detection rate or a demonstrated repair workflow.
+
+Verus form. Inference: supply security assets, attacker-controlled inputs, and intended invariants when proposing Rust contracts. Inspect failed checks against code and specification intent before labeling them bugs. This adaptation remains unevaluated by LASA.
 
 ## what is proved, measured, and trusted
 
-The paper states formal vacuity theorems and uses JasperGold model checking for generated SVAs. It measures property counts, correct translations, coverage percentages, and five detected benchmark bugs. It trusts the RTL/specification extraction, RAG summaries, LLM outputs as candidates, the nine vacuity rules, Cadence JasperGold 2020.12, benchmark labels, and its coverage definitions. It does not prove that the LLM generated a complete threat model or that high coverage implies security completeness. The authors acknowledge that LLMs struggle with complex specialized tasks and that stronger vacuity checking, syntax checking, domain fine-tuning, and custom coverage metrics remain future work (§IV-H, p. 9).
+The paper reproduces vacuity theorems from prior literature (§II-B, p. 2), runs JasperGold on generated assertions, and reports property counts, assertion counts, coverage, and five benchmark bugs (§IV, pp. 4–7). It does not prove that LLM generation captures every security requirement. The discussion acknowledges: “LLMs struggle with complex, specialized tasks and are constrained by a finite set of use cases in generating SVAs, often leading to incomplete or erroneous responses.” (§IV-H, p. 7.) Fine-tuning, stronger vacuity checks, syntax checking, advanced reasoning, and improved coverage metrics are proposed improvements (§IV-H, p. 7).
 
-Inference: the closest lesson for VeruLaw is a closed loop in which model-written Rust contracts are proposals, Verus diagnostics and proof results are gates, and coverage or obligation gaps drive targeted regeneration. A product should retain the exact prompt context, generated contract, Verus version/configuration, assumptions, and checker result. Inference: the threat to agent-written verified Rust is high for specification omission and vacuity, while mechanical proof checking reduces implementation errors; LASA shows why a passing checker result must be coupled to requirement relevance and coverage review.
-
-The paper's work that VL should not redo is the general architecture: hierarchical context extraction, vacuity screening, few-shot translation, model-checker feedback, coverage-driven prompt refinement, and counterexample-based bug finding. The domain-specific gap is translating temporal SVA concepts and hardware coverage into Rust/Verus contracts and proof obligations.
+Inference: a Rust adaptation would depend on specification extraction, retrieved context, candidate contracts, verifier assumptions, and the verification tool. For VeruLaw, the reusable idea is a loop from structured context to candidate specifications, checker feedback, and targeted revision. Record prompts, assumptions, contracts, and verification results so the basis for a passing check can be inspected. The hardware-specific gap is how to assess contract relevance, vacuity, and coverage for Rust/Verus; LASA does not resolve it.
 
 ## techniques for the catalog
 
-- hierarchical RAG prompting: summarize each RTL module and retrieve relevant documentation before property generation
-- vacuity screening: reject formulas whose subformulas do not affect model satisfaction
-- few-shot assertion translation: convert retained properties to SVA and repair with syntax, semantic, and counterexample feedback
-- coverage-driven refinement: rerun FPV and add targeted properties until configured coverage thresholds are met
-- counterexample bug finding: use model-checker traces plus threat context to identify concrete design flaws
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- hierarchical RAG prompting: summarize design components and retrieve relevant documentation before property generation
+- vacuity screening: prompt classification using supplied temporal rules, while recognizing the paper's inconsistent operational wording
+- few-shot assertion translation: translate retained properties to SVAs and repair malformed candidates with tool feedback
+- coverage-driven refinement: add targeted properties when configured coverage is low
+- counterexample bug finding: combine threat context, assertion failures, and source inspection to identify potential flaws
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "There were some manual efforts involved for those properties requiring re-prompting for conversion to SVAs."): read the complete nine-page paper text and study; checked quotations, counts, coverage values, references, and technique steps; corrected page and section references, clarified prompted vacuity screening and its inconsistent wording, removed unsupported repair steps, qualified average coverage and the stopping rule, and marked Rust/Verus adaptations as Inference; did not independently run LASA, JasperGold, or Verus, validate the cited prior work, or inspect benchmark source code.

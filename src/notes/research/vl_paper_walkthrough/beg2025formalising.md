@@ -1,55 +1,55 @@
 # Working Document - Formalising Software Requirements with Large Language Models
 (authored by agents unless marked 🧑)
-Tag: `beg2025formalising`: [paper](https://www.semanticscholar.org/paper/a62939abfe15a4f6cf4472de88a4327eaf7dac68)
+Tag: `beg2025formalising`: [paper](https://arxiv.org/abs/2506.14627v2)
 
 ## scope and evidence
-This is a structured review and working document, not a new verifier. It surveys 94 papers on LLM-assisted requirements formalisation, traceability, formal methods, and prompting. The authors state: “In this project, we aim to ease the burden of writing specification, helping to bridge the gap between the need for formal verification techniques and their lack of use in the software industry (due to the fast pace of the industry environment).” (Section 1, p.1). Their method searches IEEE Xplore, ACM, Scopus, Springer Link and Google Scholar, then uses Elicit for suggestions followed by manual relevance review (Section 2, pp.2–3). The reported database counts differ: 17 IEEE articles, 20 Scopus, 595 Springer, 1,368 ACM and 14,800 Google Scholar references since 2021; these are search-result counts, not included-paper denominators.
+This is a structured literature review and working document. The opening describes it as “having a summary of nighty-four (94) papers” (p.1); that is the authors’ stated count, not a count independently established here. It covers requirements formalisation (Section 3), traceability (Section 4), formal methods and testing (Section 5), UTP and institutions (Section 6), and future directions including prompting (Section 7).
+
+The authors state: “In this project, we aim to ease the burden of writing specification, helping to bridge the gap between the need for formal verification techniques and their lack of use in the software industry (due to the fast pace of the industry environment).” (Section 1, p.1). Their method searches IEEE Xplore, ACM Digital Library, Scopus, Springer Link and Google Scholar, and uses Elicit followed by manual relevance review (Section 2, p.2). They report: “For example, IEEE Xplore returns 17 peer-reviewed articles, Scopus lists 20, Springer Link filters to 595, ACM Digital Library provides 1,368 results, and Google Scholar shows 14,800 references since 2021.” These are search-result counts. The authors explain: “Abstracts are first assessed to judge suitability. If the abstract lacks clarity or depth, a further examination of the full text is conducted.”
 
 ## technique 1: LLM translation and iterative refinement
-what it is: translate natural-language requirements into a formal notation, then let users refine the translation. The review describes nl2spec as an LLM framework where “Users can iteratively refine translations, making formalization easier.” (Section 3, p.3).
+The review describes nl2spec as an LLM framework for generating formal specifications from natural language: “Users can iteratively refine translations, making formalization easier.” It adds: “The work [17] provides an open-source implementation with a web-based interface.” (Section 3, pp.2–3). The review does not specify a complete prompt or verification procedure for this interaction.
 
-how to apply:
-1. give the requirement and target formal language to the model (the review’s examples include JML, assertions and domain models)
-2. ask for a candidate specification or precondition
-3. expose the result in an interface so a user can inspect and revise it
-4. send the revision back for another translation
-5. pass the accepted artifact to a theorem prover, model checker or code verifier
-
-Inference: in Verus, the target can be `requires`, `ensures`, `invariant`, `spec fn`, and ghost proofs. The model’s text is only a candidate; compile and verify it, and have a human confirm that the contract captures intent. A specification can be syntactically valid yet semantically wrong.
+Inference: to apply this idea in Verus, give the model a requirement and the target contract syntax, inspect its candidate, revise it, and run Verus. Have a human confirm that the resulting contract expresses the intended requirement. Successful verification establishes the encoded contract, so this confirmation remains necessary.
 
 ## technique 2: neuro-symbolic checker feedback
-what it is: combine an LLM or NLI model with a theorem prover. Explanation-Refiner formalises explanatory sentences, asks the prover for a guarantee, and feeds errors back for correction. The paper says: “The theorem prover then provides feedback for further improvements in NLI (Natural Language Inference) model.” (Section 3, p.3).
+Explanation-Refiner combines LLMs and theorem provers for explanatory sentences. The review states: “LLMs and theorem provers are integrated together to formalise explanatory sentences.” It continues: “Theorem prover also provides feedback for further improvements in NLI (Natural Language Inference) model.” (Section 3, p.3). This concerns explanation refinement, rather than a demonstrated Verus workflow.
 
-how to apply:
-1. generate a formal explanation from natural language
-2. encode it in the prover’s logic
-3. run proof checking
-4. return failed obligations or contradictions to the generator
-5. revise and re-check until accepted
+A separate code-repair example gives an explicit verification loop: “The approach used Bounded Model Checking (BMC) to identify errors and generate counterexamples, which were then fed into LLM to repair the code, followed by re-verification with BMC.” This describes ESBMC-AI (Section 3, p.4).
 
-Inference: a Verus implementation can generate a lemma or contract, run `verus`, parse failed obligations, and ask for a patch. Proof functions must remain ghost-only; generated executable code must not call them at runtime. The loop proves only the encoded proposition, not the original requirement.
+Inference: an analogous Verus loop could generate a contract or lemma, run Verus, return failed proof obligations to the model, and check the revision. A successful proof would still depend on the adequacy of the encoded requirement.
 
 ## technique 3: assertions and specification synthesis
-AssertLLM is described as a three-phase hardware flow: “first understanding specifications, mapping signal definitions and generating assertions.” (Section 3, p.4). Its reported result is 89% correct assertions, but the review does not give the test-set denominator or an independent oracle. SpecSyn treats specification generation as sequence-to-sequence learning and reports 21% accuracy improvement over prior tools; the review gives no denominator or confidence interval. Inference: for Verus, map fields and state variables before generating assertions, emit one contract at a time, and verify each against examples and counterexamples.
+AssertLLM uses three customised LLMs for hardware assertions. The review gives its phases as “first understanding specifications, mapping signal definitions and generating assertions.” It reports: “The results show that AssertLLM produced 89% correct assertions with accurate syntax and function.” (Section 3, p.3). This working document does not supply the assertion count or a detailed correctness-assessment procedure.
+
+For SpecSyn, the review states: “It treats specification generation as a sequence-to-sequence learning task and outperforms previous tools by 21% in accuracy, extracting specifications from both single and multiple sentences.” (Section 3, p.3). The working document does not define the denominator or clarify whether this improvement is relative or in percentage points.
+
+Inference: before generating Verus assertions, identify the corresponding program variables and state. Verify the generated contracts and separately inspect whether they capture the requirement. The reported hardware and configuration-specification results do not establish performance for Verus.
 
 ## technique 4: formal testing and model checking
-The review classifies model-based, finite-state, process-algebraic and algebraic methods. Model-based testing partitions inputs using assumptions of uniform behavior; finite-state testing checks language conformance but faces combinatorial state growth; process algebra uses labelled transition systems and state-space reduction. Model checkers can produce counterexamples that become test cases. The paper states: “Formal descriptions of systems can significantly support the testing process.” (Section 5, p.8).
+Section 5 discusses model-based, finite-state, process-algebraic and algebraic approaches (pp.8–9). For model-based testing it states: “In this category, testing often involves partitioning the input domain using assumptions about uniform system behaviour within each partition.” (Section 5.1, p.8). For model checking it states: “Model checkers are highlighted as being capable of producing counterexamples when temporal properties are not satisfied, which can subsequently be re-purposed as test cases.” (Section 5.4, p.9).
 
-Inference: Verus does not replace model checking. Use executable Rust plus contracts for local properties, and a finite model or test generator for transition coverage; import counterexamples as regression tests. The paper’s survey claims are not evidence that any one tool verifies arbitrary Rust.
+Inference: a Verus project could use contracts for program properties and a separate finite model for system transitions. Counterexamples from that model could become regression tests after mapping model states and events to executable inputs. The review does not demonstrate this integration.
 
 ## technique 5: prompt decomposition and retrieval
-Zero-shot, one-shot, few-shot and Chain-of-Thought prompts decompose a task into intermediate steps. Retrieval-augmented generation supplies retrieved facts. The review warns that zero-shot can outperform few-shot in some studies and describes a lost-in-the-middle attention failure (Section 7.1, pp.10–11). Inference: provide Verus API rules and small verified examples as retrieved context, ask for a contract, then ask a separate checker prompt to challenge it; measure acceptance and repair rates rather than trusting fluent output.
+The review distinguishes zero-shot prompting from prompting with one or several examples. It cautions: “But improved results are not assured as some studies e.g. [95] show that zero-shot can outperform the few-shot case [96].” (Section 7.1, p.10). It describes CoT as articulating intermediate reasoning steps and warns about missed information in the middle of long contexts (Section 7.1, p.10).
+
+For retrieval, it states: “Retrieval Augmented Generation (RAG) [52] supplements problem information with specifically retrieved information and is often used in knowledge intensive tasks.” (Section 7.1, p.11).
+
+Inference: supply relevant Verus rules and verified examples, generate a candidate contract, and check it with Verus and human review. Compare prompting variants using measured verification and requirement-correctness results. This review supplies no Verus comparison.
 
 ## trusted boundary, limits and VL implications
-The review’s numbers and claims are second-hand summaries of cited papers. It does not prove that LLM translations are sound, nor report a unified benchmark. Ambiguity, domain adaptation and verification remain open (Section 8). What VL should not redo (Inference): another broad taxonomy of model checking, theorem proving and prompt names. VL needs an auditable translation pipeline with requirement identifiers, generated contracts, prover obligations, counterexamples and human approval. Threat to agent-written verified Rust is high when an agent silently strengthens or weakens a natural-language requirement; the verifier then certifies the wrong statement.
+The numerical results above are this review’s summaries of other papers. Its conclusion identifies continuing challenges: “While LLMs is contributing significantly in improving development cycle, the challenges of ambiguity resolution, verification and domain adaptation shall be the focus areas of future research.” (Section 8, p.11).
+
+Inference: VL could connect each natural-language requirement to its generated contract, proof obligations, counterexamples and human review. An agent that changes the requirement’s meaning can produce a contract whose successful verification does not establish the intended behavior. This review supports investigating translation and refinement techniques; it does not establish their soundness or effectiveness for agent-written Rust.
 
 ## techniques for the catalog
-- iterative LLM formalisation — generate a specification, expose it for revision, and re-check each revision
-- neuro-symbolic feedback — use prover failures as structured corrections to model output
-- assertion synthesis — map signals or program variables, generate assertions, then verify syntax and meaning
-- model-based testing — partition inputs and derive tests oracles from formal descriptions
-- finite-state and process testing — check conformance while controlling state explosion with reduction
-- counterexample-to-test reuse — turn model-checker counterexamples into executable regression cases
-- structured prompting and retrieval — provide examples, intermediate reasoning and retrieved verifier facts before generation
+- iterative LLM formalisation — generate formal specifications from natural language and let users refine translations (nl2spec, Section 3, pp.2–3)
+- neuro-symbolic explanation feedback — formalise explanatory sentences and use theorem-prover feedback for refinement (Explanation-Refiner, Section 3, p.3)
+- verification-guided code repair — detect errors with BMC, supply counterexamples to an LLM, then re-verify repairs (ESBMC-AI, Section 3, p.4)
+- assertion synthesis — understand specifications, map signal definitions and generate hardware assertions (AssertLLM, Section 3, p.3)
+- model-based testing — partition inputs using assumptions of uniform behavior (Section 5.1, p.8)
+- counterexample-to-test reuse — use model-checker counterexamples as test cases (Section 5.4, p.9)
+- prompt decomposition and retrieval — articulate intermediate reasoning steps and supply retrieved information (Section 7.1, pp.10–11)
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Retrieval Augmented Generation (RAG) [52] supplements problem information with specifically retrieved information and is often used in knowledge intensive tasks."): checked the full text including references and appendix, study quotations, numbers, section and page references, technique descriptions, and paper identity; corrected quotations and page references, replaced unsupported procedure details with supported descriptions or explicit inferences, distinguished prompting methods, and changed the link to the paper’s arXiv identifier; did not independently check the cited studies, reproduce experiments, or test the proposed Verus applications.

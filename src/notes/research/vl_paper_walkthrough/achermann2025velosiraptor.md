@@ -24,10 +24,10 @@ The authors decompose hardware into one basic building block and two composition
 2. Define the software-visible interface and its read/write actions. Section 3.2.2 says interface fields can be `mem`, `mmio`, `reg`, or `instr`, with atomic actions that update state.
 3. Define methods (`fn`) for predicates and translation. Methods may call one another and have `requires` clauses; loops and recursion are disallowed (§3.2.3).
 4. Mark boolean mapping predicates with `#[pred]`; define `translate`; define synthesis targets with `synth fn` and preconditions. Listing 2’s `addmap` requires a zero virtual address, a large-page size, and aligned physical address.
-5. Compose segments with `enum` and `static map` to build larger units. The resulting hierarchy drives both data structures and generated code (§2.3–§2.4).
+5. Compose segments with `enum` and `staticmap` to build larger units. The resulting hierarchy drives both data structures and generated code (§2.3–§2.4).
 6. Add an environment specification declaring external OS types and function signatures, such as allocators or capability invocations (§3.3).
 
-The target contracts are explicit. Listing 1’s `addmap` postcondition requires translation to equal `pa + (v−va)` in range and permissions to agree with `allows`; `setperms` preserves translation while changing access; `delmap` removes the range.
+The target contracts are explicit. Listing 1’s `addmap` postcondition requires translation to equal `pa + (v−va)` in range and permissions to agree with `allows`; `setperms` preserves translation while changing access; `delmap` removes the range. Section 2.2.1 also states: “Note, that there is an implicit post-condition ensuring that the behavior outside of the specified address range is not changed.”
 
 ### Verus form
 
@@ -39,14 +39,14 @@ Inference: The DSL’s `enum` and StaticMap composition correspond to Rust enums
 
 ### what it is and when to use it
 
-Section 4 formulates synthesis as finding a sequence of control-interface transitions that works for every valid initial state and argument. The paper states: “Velosiraptor solves the synthesis problem of finding a sequence of control interface invocations that move the state machine from an arbitrary start state into an end state that has the desired mapping behavior.”
+Section 4 formulates synthesis as finding a sequence of control-interface transitions that works for every valid initial state and argument. The paper states: “Velosiraptor solves the synthesis problem of finding a sequence of control interface invocations that move the state machine from an arbitrary start state into an end state that has the desired mapping behavior, i.e., satisfies the post-condition of the synthesis target (Listing 1).”
 
 Inference: Use grammar-constrained synthesis when direct search over arbitrary code is too large but the target API already defines legal operations. The control interface becomes the grammar, so every candidate is a sequence of reads and writes with bit-slice assignments, masks, binary operators, symbolic values, and function parameters.
 
 ### how to apply it
 
 1. Parse the unit and OS specifications into an operational model (§4.2 step 1–2).
-2. Encode the model in SMT-LIB2 bit-vector logic and run a feasibility check (§4.2 step 3). An unsatisfiable model exposes contradictory assumptions before candidate search.
+2. Encode the model in SMT-LIB2 bit-vector logic and run a feasibility check (§4.2 step 3). Section 5.4 checks whether a state satisfies all mapping predicates and extracts an unsat-core to identify conflicting predicates when none does.
 3. Generate candidate programs from the control-interface grammar. Each invocation initializes an argument, sets bit slices, and performs a read/write (§4.3).
 4. Enumerate short sequences first and recursively expand them; for two fields the paper gives `[A,B]`, `[AA,AB,BA,BB]`, and so on (§4.3).
 5. Encode each candidate as an SMT function and check its universal postcondition. Listing 4 asserts, for all initial states and arguments, that assumptions imply the goal, then calls `(check-sat)`.
@@ -64,17 +64,17 @@ The paper has several reductions, each tied to the model.
 
 ### state and API reduction
 
-Section 4.4 first decomposes a large unit into basic blocks, reducing state and interface size. It then projects each subgoal onto only the state fields referenced by that predicate and the interface actions that can change those fields. The paper reports this “drastically reduces the grammar of the candidate programs to only 10-100 candidate programs per subgoal.”
+Section 4.4 first decomposes a large unit into basic blocks, reducing state and interface size. It then projects each subgoal onto only the state fields referenced by that predicate and the interface actions that can change those fields. The paper reports: “This drastically reduces the grammar of the candidate programs to only 10-100 candidate programs per subgoal.”
 
 Inference: Apply this as dependency analysis before synthesis: collect fields read by a goal, find interface actions that write them through ReadActions/WriteActions, and discard unrelated API operations. In Verus, the analogous proof engineering is to keep invariants and lemmas scoped to the fields used by the current postcondition.
 
 ### expression reduction
 
-For each subgoal expression, Velosiraptor extracts whether it is a boolean or address, its bit width, whether it refers to function parameters, and whether it is constant. It excludes expression forms that cannot affect the predicate (§4.4). Inference: This is a typed partial-evaluation pass over the candidate grammar and can be implemented as a Rust enum of admissible expressions with a proof that each generated expression has the required type.
+For each subgoal expression, Velosiraptor extracts whether it returns a boolean or address, the bit-slice width, whether it refers to function parameters, and whether the comparison is a constant expression. Section 4.4 gives this example: “For example, if the expression does not refer to any of the arguments, we can exclude those from the list of possible expressions.” Inference: This is a typed partial-evaluation pass over the candidate grammar and can be implemented as a Rust enum of admissible expressions with a proof that each generated expression has the required type.
 
 ### divide-and-conquer and balanced trees
 
-The paper rewrites conjunctions into conjunctive normal form, solves each subgoal independently, merges partial programs, and verifies the merged program against the original goal (§4.4). It then uses a balanced binary tree so wrong partial programs are rejected early. Its example with four conjuncts and ten candidates each checks 263 candidates with the tree compared with 665 for brute-force combination.
+The paper rewrites conjunctions into conjunctive normal form, solves each subgoal independently, merges partial programs, and verifies the merged program against the original goal (§4.4). It then uses a balanced binary tree so wrong partial programs are rejected early. Section 4.5 illustrates this with four conjuncts, ten candidates each, and an assumption that half of the candidates satisfy each subgoal. It reports 263 checks with the tree versus 665 for brute-force combination. Inference: The illustrative arithmetic is inconsistent: the printed expression `2 × (4 × 10 + 5²)` equals 130, rather than the stated 94, so 263 should be treated as the paper’s reported count rather than a validated calculation.
 
 Inference: This technique is useful whenever a specification is a conjunction of mostly independent obligations. In Verus, each sub-proof can establish a predicate over a subset of state, followed by a final lemma that combines the predicates; the independence assumptions must be stated explicitly.
 
@@ -86,7 +86,7 @@ Inference: The phase split is a general method for keeping hardware timing effec
 
 ## evidence and measured results
 
-The authors implement Velosiraptor in Rust with Z3 4.10.2, run on an Intel Xeon W-2275 (14 cores, two hyperthreads each), Ubuntu 24.04, and use one worker per core (§5.1, §6.1). Table 1 reports median and 95th-percentile synthesis times over 100 runs. x86-64 page tables take 1,137 ms median and 1,171 ms P95; x86 segmentation takes 12,445/12,683 ms; the Ubuntu Linux v6.2.0 kernel build takes 153,831/154,352 ms. These denominators are 100 synthesis runs for each row and one kernel-build measurement setting, as the table and methodology state.
+The authors implement Velosiraptor in Rust with Z3 4.10.2, run on an Intel Xeon W-2275 (14 cores, two hyperthreads each), Ubuntu 24.04, and use one worker per core (§5.1, §6.1). Table 1 reports median and 95th-percentile synthesis and code-generation times over 100 runs. x86-64 page tables take 1,137 ms median and 1,171 ms P95; x86 segmentation takes 12,445/12,683 ms; the Ubuntu Linux v6.2.0 kernel build takes 153,831/154,352 ms. The kernel build uses the default Ubuntu configuration without modules and 28 hardware threads (§6.2).
 
 Table 2 reports base-10 logarithms of calculated search-space sizes under cumulative optimizations. For x86-64 page tables, the size falls from 38 with no optimizations to 13 after expression reduction and remains 13 with the tree; for Simple Page Table it falls from 23 to 3. The paper says interface and state reduction have the largest effect, while the tree primarily eliminates failing programs early rather than reducing the maximum count.
 
@@ -98,7 +98,7 @@ Table 3 measures 200 iterations of `addmap`, `setperms`, and `delmap` in userspa
 
 Inference: The formal check proves candidate transition sequences against the encoded behavioral model for all states and arguments satisfying `assms`; it does not prove the model matches hardware manuals, the SMT solver is sound, generated C/Rust has no backend bug, or the OS environment contracts are true. The paper measures search time, calculated search-space size, boot/integration behavior, and latency, rather than providing a machine-checked end-to-end theorem about physical hardware.
 
-The authors explicitly report a practical limitation: “Potential barriers to integrating the Velosiraptor-generated code into a larger OS are replacing existing, possibly tightly integrated data structures.” They also note that high-level generated functions do not expose some Linux use cases, such as swapped-out entries and NUMA balancing, although the enumeration construct could express them (§6.7).
+The authors explicitly report a practical limitation (§6.7): “Potential barriers to integrating the Velosiraptor-generated code into a larger OS are replacing existing, possibly tightly integrated data structures, e.g., Linux’s paging data types being passed around in the kernel instead of using high-level functions.” They also note that high-level generated functions do not expose some Linux use cases, such as swapped-out entries and NUMA balancing, although the enumeration construct could express them (§6.7).
 
 Inference: The product threat to agent-written verified Rust is specification drift. An agent can produce a proof that satisfies an incorrect mapping contract or an environment stub, while the real MMU, allocator, or OS API behaves differently. Velosiraptor’s separation of behavioral specification, environment specification, synthesis, and final solver checking is a useful architecture for making those assumptions reviewable; its evidence does not remove the trusted hardware and backend boundary.
 
@@ -112,4 +112,4 @@ Inference: The product threat to agent-written verified Rust is specification dr
 - balanced-tree synthesis — combine partial candidates in a tree so failed combinations are rejected before full Cartesian-product search
 - delayed-write modeling — synthesize first under immediate visibility, then add buffers, cache operations, and barriers and re-verify
 - SMT query caching — cache pending and completed candidate checks and schedule higher-level tree queries first
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The query scheduler assigns priorities to the SMT queries based on their position in the tree."): checked every quotation, numerical result, section and listing reference, technique step, tag, and DOI against the full paper; completed truncated quotations, corrected DSL spelling and measurement descriptions, removed an unsupported kernel-build measurement count, added the unchanged-range contract, and flagged inconsistent illustrative arithmetic; did not run the artifact, reproduce benchmarks, or independently validate the proposed Verus adaptations.

@@ -1,16 +1,16 @@
 # From Provable Correctness to Probabilistic Generation: A Comparative Review of Program Synthesis Paradigms
 (authored by agents unless marked 🧑)
-Tag: `arnania2025provable`, [paper](https://doi.org/10.1145/502034.502042)
+Tag: `arnania2025provable`, [paper](https://arxiv.org/abs/2508.00013)
 
 ## what the review covers
 
-Arnania, Kobaladze, and Sanikidze's 2025 thesis surveys five synthesis families: deductive, inductive/example-based, sketch/schema-based, LLM-based, and neuro-symbolic. Its organizing trade-off is correctness versus specification burden, and search complexity versus expressive power. The abstract says, “This thesis presents a comparative literature review of the primary paradigms that have defined and shaped this field.” (abstract, p. i) The review is a synthesis of earlier systems rather than a new implementation or controlled benchmark; its examples and pseudocode are the usable techniques below.
+Arnania, Kobaladze, and Sanikidze's 2025 thesis surveys five synthesis families: deductive, inductive/example-based, sketch/schema-based, LLM-based, and neuro-symbolic. Its organizing trade-off is correctness versus specification burden, and search complexity versus expressive power. The abstract says, “This thesis presents a comparative literature review of the primary paradigms that have defined and shaped this field.” (unnumbered abstract, PDF p. 2) The review synthesizes earlier systems; it reports no new implementation or controlled benchmark. References below use printed page numbers unless marked PDF.
 
 ## technique 1: deductive synthesis as constructive proof
 
 What it is. Start from a logical specification such as `∀x ∃z R(x,z)`. A synthesizer constructs a proof of existence; the constructive proof terms become the program. The review calls this the “proofs-as-programs” paradigm and explains that “A proof of a proposition corresponds to a program (or term) of that type.” (Section 1.2, pp. 4–5)
 
-When to use it. Use it when the desired behavior can be stated completely and unambiguously and the output must carry a machine-checkable correctness argument. The review identifies sorting as a canonical case: output is a permutation of the input and is ordered.
+When to use it. Inference: use it when the desired behavior can be stated completely and unambiguously and the output must carry a machine-checkable correctness argument. The review's sorting specification requires that the output is a permutation of the input and is ordered (Section 1.2, p. 5).
 
 How to do it with the paper's example.
 
@@ -24,41 +24,41 @@ How to do it with the paper's example.
 fun lesall(n, l) =
   case l of
     [] => true
-  | h::t => if n <= h then lesall(n, t) else false
+  | h::t => if n <= h then lesall(n, t) else false;
 ```
 
-These are the paper's base-case, inductive-step, and code shape (Section 1.2.1, p. 5). KIDS instead applies correctness-preserving refinement to a declarative definition, while Coq proves a specification and extracts OCaml, Haskell, or Scheme code (Section 1.3, pp. 6–7). Theorema's sorting method uses multisets to express permutation and a cascading synthesis process that creates an auxiliary `insert` goal when needed.
+These are the paper's base-case, inductive-step, and code shape (Section 1.2.1, p. 5). KIDS instead applies correctness-preserving refinement to a declarative definition, while Coq proves a specification and extracts OCaml, Haskell, or Scheme code (Sections 1.3.1–1.3.2, p. 6). Theorema's sorting method uses multisets to express permutation and a cascading synthesis process that creates an auxiliary `insert` goal when needed (Section 1.3.3, p. 6).
 
 Verus form. Inference: state a Rust `fn` with `requires` and `ensures` over a mathematical sequence, implement the recursive or iterative body, and use `proof fn` lemmas plus `invariant` declarations for induction/loops. A sorting contract can state that the result is ordered and has the same multiset as the input. A `spec fn` can define the orderedness and multiset predicates. Verus proves the written contract but does not synthesize the implementation from the proof automatically; the constructive extraction step does not carry over.
 
-Evidence, assumptions, and limits. The guarantee is relative to the formal specification and trusted proof assistant. The review explicitly lists “Specification Obligation” and “Scalability and Automation” as drawbacks: complete specifications are difficult, and fully automated synthesis is usually limited to simple applications (Section 1.4, p. 7). No denominator or new empirical success rate is reported.
+Evidence, assumptions, and limits. The guarantee is relative to the formal specification. Inference: it also depends on the trusted proof machinery. The review explicitly lists “Specification Obligation” and “Scalability and Automation” as drawbacks: complete specifications are difficult, and fully automated synthesis is usually limited to simple applications (Section 1.4, p. 7). No denominator or new empirical success rate is reported.
 
 ## technique 2: inductive synthesis, DSL restriction, and version spaces
 
-What it is. Inductive synthesis takes incomplete examples, usually input-output pairs, and searches for a program consistent with them. Programming by Example (PBE) gives outputs; Programming by Demonstration (PbD) records an action trace. The method trades logical certainty for easier specification. The review states, “The ultimate goal for both is to find a program that correctly generalizes from the specific examples provided by the user.” (Section 2.1.1, p. 8)
+What it is. Inductive synthesis takes incomplete specifications, usually input-output pairs, and searches for a program consistent with them. Programming by Example (PBE) supplies examples of the desired result; Programming by Demonstration (PbD) supplies an action trace. The method trades logical certainty for easier specification. The review states, “The ultimate goal for both is to find a program that correctly generalizes from the specific examples provided by the user [Lee et al., 2024].” (Section 2.1.1, p. 9)
 
 How to do it.
 
 1. Choose a domain-specific language containing only operators relevant to the task. FlashFill's string DSL includes `Concatenate`, `Substring`, and `Match`, while excluding networking and file-system operations (Section 2.3.1, p. 12).
-2. Provide examples and enumerate candidate programs, or build a compact version space representing all candidates consistent with them.
-3. Use observational equivalence to retain only one of two subprograms that produce identical outputs on every available example.
-4. In Version Space Algebra (VSA), compose spaces instead of testing each program. For `Concat(P1,P2)`, combine the valid spaces for `P1` and `P2` into a composite space.
+2. Provide examples and choose a search method. Section 2.3.2 (p. 13) presents enumeration and Version Space Algebra (VSA) as alternatives.
+3. For enumeration, use observational equivalence to retain only one of two subprograms that produce identical outputs on every available example.
+4. For VSA, compose compact spaces of consistent programs instead of testing each program. For `Concat(P1,P2)`, combine the valid spaces for `P1` and `P2` into a composite space.
 
 Verus form. Inference: treat examples as executable test inputs plus a `proof fn` harness whose `ensures` states the expected result. Encode a DSL as an enum or a restricted generator and interpret it with a `spec fn`; enumerate candidates outside Verus, then submit each candidate to Verus. Example consistency alone is not a proof for unseen inputs, so the candidate still needs a general `ensures` contract.
 
-Evidence and limits. The review presents FlashFill as a successful specialized system, but supplies no fresh subject count, accuracy denominator, or runtime table. It states that inductive generalization is “by definition unsound” for unseen data (Section 2.1.3, pp. 9–10): a finite example set underdetermines the intended program. DSL design therefore becomes a trusted assumption about the task domain.
+Evidence and limits. The review presents FlashFill as a successful specialized system, but supplies no fresh subject count, accuracy denominator, or runtime table. It states that inductive generalization is “by definition unsound” for unseen data (Section 2.1.3, p. 10): a finite example set underdetermines the intended program. Inference: DSL design therefore becomes an assumption about the task domain.
 
 ## technique 3: counterexample-guided inductive synthesis (CEGIS)
 
-What it is. CEGIS adds a verifier to inductive search. The generator proposes a program consistent with current examples; a verifier checks the full specification; a counterexample is added when the candidate fails. The review gives this four-step loop (Section 2.3.2, p. 13): generate, verify, return if correct, otherwise add the counterexample and repeat.
+What it is. CEGIS adds a verifier to inductive search. The review names three stages: “Generator,” “Verifier,” and “Refinement” (Section 2.3.2, p. 13). Algorithm 1 (Section 2.3.4, p. 14) makes the success and failure conditions explicit.
 
 How to do it.
 
-1. Initialize `E` with user examples.
+1. Initialize `E = InitialExamples(S)` from specification `S`.
 2. Generate `P = Synthesize(E)`; stop with failure if no candidate exists.
-3. Run `Verify(P,S)` against the full specification or ask the user for a new test input.
+3. Run `Verify(P,S)` against the full specification. In PBE without a formal specification, the user can instead validate the output on a new input (Section 2.3.2, p. 13).
 4. If the candidate fails, add the returned counterexample to `E` and restart.
-5. Return only when the verifier cannot refute `P`.
+5. Return `P` when the verifier reports success. Inference: a formal guarantee depends on the verifier and its scope; user validation alone does not establish correctness for all inputs.
 
 Verus form. Inference: use a generator outside Verus to produce Rust candidates, then run Verus on each candidate's `requires`/`ensures`. A failing verification obligation or a concrete test counterexample becomes the next example. Unlike the paper's generic pseudocode, Verus does not expose a universal counterexample for every solver failure; the driver may need a test harness or solver diagnostic. The final acceptance condition is a Verus pass, not mere example agreement.
 
@@ -96,7 +96,7 @@ How to apply it.
 3. Compile, test, lint, or formally verify each candidate.
 4. Repair or resample failed candidates and retain evidence for the accepted one.
 
-Inference: for VeruLaw, keep the LLM as a proposal generator and require Verus `requires`, `ensures`, loop `invariant`s, and proof functions as the acceptance gate. Prompt-only confidence is not evidence; contract review and independent compilation remain trusted work.
+Inference: for VeruLaw, keep the LLM as a proposal generator and use Verus verification of contracts, loop invariants, and proof functions as a prerequisite check. Contract review and independent compilation remain necessary assumptions of this proposed workflow.
 
 The review reports no single denominator for LLM synthesis correctness and explicitly identifies the “correctness impasse,” security risks, and reasoning deficits (Section 4.5, pp. 45–47). Any product-level safety claim is therefore an inference beyond this thesis.
 
@@ -110,9 +110,9 @@ Inference: a Verus implementation can use an external neural ranker or beam sear
 
 ## trust, contradictions, and product implications
 
-The review's strongest fact is a taxonomy and a set of mechanisms, not new evidence. Its cited percentages and speedups belong to referenced systems and are not remeasured here. A comparison table places deductive, inductive, sketch, and neuro-symbolic methods side by side but does not normalize datasets, denominators, hardware, or task difficulty. Inference: those numbers cannot establish that one paradigm universally dominates another.
+The thesis supplies a taxonomy and descriptions of mechanisms. Its cited percentages and speedups belong to referenced systems and are not remeasured here. Table 3.1 (p. 29) compares deductive, inductive, sketch, and neuro-symbolic methods qualitatively. Table 4.1 (p. 43) lists results from different LLM systems and benchmarks, without a common experimental setup. Inference: these comparisons cannot establish that one paradigm universally dominates another.
 
-What remains trusted varies: deductive systems trust the specification and proof assistant; inductive systems trust examples and DSL bias; sketch/schema systems trust grammars and applicability conditions; LLM systems trust post-generation checks; neuro-symbolic systems trust both learned guidance and symbolic semantics. Inference: agent-written verified Rust should combine neural proposal, constrained search, tests, and Verus proof, while recording specification and external-library assumptions. VL should not redo the already-established insight that unrestricted generation needs a verifier; a useful new contribution would measure contract repair and dependency drift for real Rust projects.
+Inference: what remains trusted varies: deductive systems depend on the specification and proof assistant; inductive systems depend on examples and DSL bias; sketch/schema systems depend on grammars and applicability conditions. Guarantees from post-generation checks depend on the checker and its scope. Learned guidance can affect search efficiency without establishing semantic correctness. Inference: agent-written verified Rust could combine neural proposals, constrained search, tests, and Verus proofs while recording specification and external-library assumptions. Measuring contract repair and dependency drift in real Rust projects is a possible research direction, not a finding of this thesis.
 
 ## techniques for the catalog
 
@@ -126,4 +126,4 @@ What remains trusted varies: deductive systems trust the specification and proof
 - neural-guided symbolic search — use learned component scores to prioritize a sound symbolic search
 - wake-sleep library learning — solve tasks, compress recurring subprograms into a library, and retrain search on replays and generated tasks
 - constrained neural generation — enforce grammar/type constraints during decoding and semantic verification after generation
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Given that the basic generative process is probabilistic and not guaranteed to produce correct code, a range of techniques has been developed to steer the model towards better solutions and improve overall success rates."): read the full paper, including bibliography, and checked study quotations, numbers, section/page references, and technique steps; corrected the unrelated DOI link using the title-page arXiv identifier, abstract and section page references, one quotation's citation, the listing punctuation, search alternatives, CEGIS steps, and inference labels; did not independently check cited works, reproduce reported results, or validate the proposed Verus adaptations.

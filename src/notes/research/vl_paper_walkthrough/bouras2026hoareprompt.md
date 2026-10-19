@@ -1,26 +1,26 @@
 # HoarePrompt: Structural Reasoning About Program Correctness in Natural Language
 (authored by agents unless marked 🧑)
-Tag: `bouras2026hoareprompt`, [paper](https://doi.org/10.1145/3744916)
+Tag: `bouras2026hoareprompt`, [paper](https://doi.org/10.1145/3744916.3773206)
 
 ## problem and contribution
 HoarePrompt classifies whether a program satisfies a natural-language requirement. The paper's central claim is that an LLM reasons better when it is first given descriptions of reachable states at selected program points. Its abstract says: “HoarePrompt employs a systematic, step-by-step process in which an LLM generates natural language descriptions of reachable program states at various code points.” (Abstract, p. 1.) It represents these descriptions as natural Hoare triples `{Pre} C {Post}` and obtains postconditions by prompting an LLM, rather than by executing the program or proving formulas.
 
-Inference: The method is a useful front end for Verus because it turns prose requirements into candidate state facts and exposes a decomposition into contracts, transitions, and loop summaries. It is not a sound proof: the paper explicitly says, “While this approach does not provide formal correctness guarantees, it generates structured informal proofs.” (Section 2.3.)
+Inference: The method could serve as a front end for Verus because it turns prose requirements into candidate state facts and exposes a decomposition into contracts, transitions, and loop summaries. The paper explicitly says, “While this approach does not provide formal correctness guarantees, it generates structured informal proofs” (Section 2.3, p. 3).
 
 The evaluation benchmark, CoCoClaNeL, contains 645 Codeforces problem-solution pairs, of which 322 (49.9%) are incorrect (Section 5.1). The authors report an average MCC improvement of 61% over Zero-shot-CoT, 72% over Vanilla, and 106% over the test-generation classifier (Section 5.3). These are averages over four models evaluated on the 645 pairs; Table 3 gives each model's MCC and token counts.
 
 ## technique 1: extract a natural precondition
 
-What it is. HoarePrompt first asks an LLM to summarize valid inputs as a natural-language precondition. The paper's example is the Fibonacci task: “given N, write a function that finds the Nth Fibonacci number” produces `{num is a non-negative integer}` (Section 4.1).
+What it is. HoarePrompt first asks an LLM to summarize valid inputs as a natural-language precondition. The paper's example asks for the Nth Fibonacci number and produces `{num is a non-negative integer}` for the signature `def func(num)` (Section 4.1).
 
-When to use it. Use this step whenever the requirement describes an input domain that is not already a machine-checkable contract. It supplies the initial state for later propagation.
+When to use it. Inference: use this step when the requirement describes an input domain that is not already a machine-checkable contract. It supplies the initial state for later propagation.
 
 How to do it.
 1. Give the requirement and function signature to a few-shot prompt (Section 4.1).
 2. Ask for one description of the set of valid input states.
 3. Treat that description as `Pre` for the first statement in the control-flow graph (Section 4.2).
 
-Verus form. Inference: encode the extracted fact as an `requires` clause, for example `requires num >= 0`, and use the same predicate in later `ensures` clauses. The LLM output is a candidate specification; Verus must prove it or reject it. Inference: do not put an English sentence in a Verus contract unless it has been translated into a supported boolean expression.
+Verus form. Inference: encode the extracted input constraint in a `requires` clause. Verus would check the implementation against the candidate contract; this would not establish that the contract faithfully expresses the prose requirement. Translate relevant output facts separately into `ensures` clauses.
 
 Evidence and limits. The paper says implementation uses few-shot learning and points to supplementary Sections B.6 and B.7 (Section 4.1). Inference: because extraction is prompted rather than checked against labeled specifications, it can omit valid inputs or admit invalid ones; the paper does not report precondition-extraction accuracy separately.
 
@@ -34,7 +34,7 @@ How to do it.
 3. Group a configurable number of atomic statements to reduce query count (same section).
 4. Add descriptions after top-level branches and loops, and after return and print statements (Section 4.3).
 
-The paper explains the purpose directly: “HoarePrompt simplifies this task by decomposing it into small, independent subtasks, which are solved step-by-step in the spirit of chain-of-thought reasoning.” (Introduction, p. 2.)
+The paper explains the purpose directly: “In comparison with directly prompting LLMs to analyze programs, HoarePrompt simplifies this task by decomposing it into small, independent subtasks, which are solved step-by-step in the spirit of chain-of-thought reasoning [52].” (Introduction, p. 2.)
 
 Verus form. Inference: each natural triple becomes a Rust function contract or a lemma about a state transition. Use `requires` for `Pre`, `ensures` for `Post`, and `assert` or proof functions for intermediate facts. Inference: executable statements remain ordinary Rust; only the specification and proof annotations change. Verus's solver checks the logical relation, whereas HoarePrompt samples a text description.
 
@@ -48,9 +48,9 @@ Exceptions. Compute the try-block postcondition from `Pre`; compute each excepti
 
 Input streams. For non-interactive stdin, extract the expected stream structure in the precondition, update it after each `x = input()`, and describe it as “stdin is empty” after all data is read (Section 4.2, “Input Stream”).
 
-Verus form. Inference: encode branches with ordinary Rust `if` and branch-specific `assert` facts; encode exceptional outcomes as explicit `Result` or error-state variants. Inference: Verus cannot soundly assume arbitrary handler state unless that nondeterminism is part of the contract, so the paper's unconstrained handler model would weaken a product proof.
+Verus form. Inference: encode branches with ordinary Rust `if` and branch-specific `assert` facts; encode exceptional outcomes as explicit `Result` or error-state variants. A proof must account for every reachable exceptional state; an unconstrained handler model can discard facts needed to prove the required outcome.
 
-Evidence and limits. The stream model applies only to predetermined, non-interactive input (Section 4.2). Inference: interactive I/O, foreign calls, and hidden side effects require a separate state model and remain outside the reported method.
+Evidence and limits. The paper says, “Note that this modeling applies only to non-interactive programs, where stdin is predetermined and does not depend on the execution of the program.” (Section 4.2, p. 7.) Inference: interactive I/O would need a different stream model.
 
 ## technique 4: few-shot-driven k-induction for loops
 
@@ -63,19 +63,19 @@ How to do it.
 4. Prompt an inductive NSP model with all `{Pre_i} S {Post_i}` examples to infer the loop summary.
 5. For Python iterators, explicitly model an index incremented by each `next()`; for `for item in I`, include iterator state in each iteration precondition (Section 4.2).
 
-Verus form. Inference: the corresponding Verus proof needs a loop invariant written with `invariant` on the loop, plus a `decreases` clause when termination is proved. The k unrollings can suggest invariant candidates, but they do not replace the invariant proof. Inference: a Verus `while` loop executes once; proof code establishes preservation for all iterations rather than sampling three examples.
+Verus form. Inference: a corresponding Verus proof would use a loop `invariant`, plus a `decreases` clause when proving termination. The k unrollings can suggest invariant candidates, but they do not replace a proof that the invariant holds initially and is preserved by every iteration.
 
-Evidence and limits. On a 140-entry pilot set, `k=3` achieved MCC 0.262, compared with 0.211 for no unroll, 0.228 for `k=1`, and 0.231 for `k=5`; token increase was 11.29× at `k=3` versus 1× at no unroll (Table 2, Section 5.2). Across the 645-pair benchmark and four models, k-induction improved MCC by an average 25.7% over no-unroll (Section 5.4). Inference: the best `k` is model- and dataset-dependent; the paper's tuning does not prove an invariant is inductive.
+Evidence and limits. On a 140-entry pilot set using Llama3.1-70B, `k=3` achieved MCC 0.262, compared with 0.211 for no unroll, 0.228 for `k=1`, and 0.231 for `k=5`; token increase was 11.29× at `k=3` versus 1× at no unroll (Table 2, Section 5.2). The pilot set was disjoint from the evaluation set. Across the 645-pair benchmark and four models, the authors report that k-induction improved MCC by an average 25.7% over no-unroll (Section 5.4). Inference: the best `k` may depend on the model and dataset; the paper's tuning does not prove an invariant is inductive.
 
 ## technique 5: correctness classification and feedback
 
-After annotation, HoarePrompt asks an LLM to classify the program as Correct or Incorrect (Section 4.3). Baselines are Vanilla, Zero-shot-CoT, and Tester; Tester generates tests, executes the program, and accepts it iff all generated tests pass. The authors also replace AgentCoder's test feedback with HoarePrompt judgments during iterative generation. On 100 randomly sampled CoCoClaNeL problems, Llama3.1-70B achieved 33% fully correct with HoarePrompt versus 29% Testing and 30% Baseline; GPT-4.1 achieved 47%, 42%, and 37%, respectively (Table 5, Section 5.6). The denominator is 100 problems per model.
+After annotation, HoarePrompt asks an LLM to classify the program as Correct or Incorrect (Section 4.3). Baselines are Vanilla, Zero-shot-CoT, and Tester; Tester generates tests, executes the program, and accepts it iff all generated tests pass. The authors also replace AgentCoder's test feedback with HoarePrompt judgments during iterative generation. On 100 randomly sampled CoCoClaNeL problems, excluding problems with multiple valid outputs, Llama3.1-70B achieved 33% fully correct with HoarePrompt versus 29% Testing and 30% Baseline; GPT-4.1 achieved 47%, 42%, and 37%, respectively (Table 5, Section 5.6). The denominator is 100 problems per model; fully correct means passing all hidden tests.
 
 Inference: a VL pipeline could use HoarePrompt annotations to propose Verus contracts and proof obligations, then require Verus to accept generated Rust before release. The paper's token cost is substantial: averaged over models, full HoarePrompt used 85.9× Vanilla tokens and 64.1× Zero-shot-CoT tokens (Section 5.5), while no-unroll used 90% fewer tokens than full unrolling. Inference: this cost and the absence of formal guarantees are direct product risks for agent-written verified Rust.
 
 ## what is proved, trusted, and already done
 
-The paper proves neither program correctness nor soundness of its LLM. It measures MCC, balanced accuracy, TPR/FNR/FPR, token use, and generated-code pass rates. Trusted components include the LLM, prompts and few-shot examples, Python semantics and iterator model, Codeforces labels, and the final classifier. Inference: Verus would move the final safety claim to machine-checked contracts, but the extracted requirements and any external-model assumptions would remain trusted inputs.
+The paper provides no formal correctness guarantee. It measures MCC, balanced accuracy, true positive rate (TPR), false negative rate (FNR), false positive rate (FPR), token use, and generated-code pass rates. Inference: its judgments depend on the LLM, prompts and few-shot examples, Python semantics and iterator model, and final classifier; evaluation also depends on Codeforces labels. Verus could check implementation correctness against translated contracts, but the correspondence between those contracts and the prose requirements would remain a separate obligation.
 
 The paper already covers natural-language state decomposition, branch/loop summaries, and test-free correctness classification. Inference: VL should not redo those as an unqualified novelty claim; a useful extension would measure whether these summaries reduce Verus proof repair on a fixed Rust benchmark, with proof acceptance as the outcome.
 
@@ -85,4 +85,4 @@ The paper already covers natural-language state decomposition, branch/loop summa
 - branch and exception merging — compute path-specific postconditions and merge them at control-flow joins
 - few-shot-driven k-induction — unroll loops, use iteration triples as examples, and infer a whole-loop summary
 - state-annotation classification — classify or refine code after annotating key points with reachable states
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In this section of the Appendix, we include all prompts provided to the LLMs during the evaluation and experiments in our study."): read all 43 pages of extracted text, including appendices; checked quotations, numbers, references, technique steps, and the paper link; completed the DOI and truncated quotation, corrected Verus interpretations, and clarified pilot and code-generation scope; did not reproduce experiments, inspect the implementation, or validate Verus translations.

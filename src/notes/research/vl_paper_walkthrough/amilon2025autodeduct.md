@@ -9,26 +9,26 @@ The required starting condition is explicit: “We assume that programs have an 
 
 ## technique 1: functional contract inference from an entry-point property
 
-What it is: infer preconditions and postconditions that summarize each helper's functional behavior, using the entry-point contract as the property to preserve. AutoDeduct encodes the C program as Horn clauses; each called function has predicates for pre- and post-state, and a model of those predicates yields helper contracts (Section 3, pp. 3–5).
+What it is: infer preconditions and postconditions that summarize each helper's functional behavior, using the entry-point contract as the property to preserve. AutoDeduct encodes the C program as Horn clauses; each called function has predicates for pre- and post-state, and a model of those predicates yields helper contracts (Section 3, pp. 4–5).
 
-When to use: use it for C functions whose behavior contributes to a specified module-level requirement and whose supported language features can be represented by TriCera. The inferred contract can be deliberately call-specific. In the running `saturate` example, `lim == 10` appears because that is the only call-site value.
+Inference: use it for C functions whose behavior contributes to a specified module-level requirement and whose supported language features can be represented by TriCera. The inferred contract can be deliberately call-specific. In the running `saturate` example, `lim == 10` appears because that is the only call-site value.
 
-Steps from Section 3 (pp. 3–5):
+Steps from Section 3 (pp. 4–6):
 
 1. provide C source with an ACSL contract on the entry-point;
 2. invoke the functional plugin (`./autodeduct -func filename.c`);
-3. encode helper calls and control flow as Horn clauses with pre/post predicates;
+3. let TriCera encode the program as Horn clauses, with a precondition and postcondition predicate for each called function;
 4. solve for an interpretation sufficient to establish the entry-point postcondition;
 5. extract each helper's functional `requires` and `ensures` clauses into `tmp_inferred_source_merged.c`;
-6. inspect the generated contracts for context-specific assumptions before relying on them elsewhere.
+6. Inference: inspect the generated contracts for context-specific assumptions before relying on them elsewhere.
 
 The paper's Figure 3 contract for `saturate` includes the functional requirements `lim == 10 && x == in` and postconditions relating the result either to the old input (for input 0–10) or to 10 (for input at least 10). This is a summary sufficient for this call path, not a general mathematical specification of all `saturate(x,lim)` calls.
 
-Verus form (Inference: the paper is C/ACSL, not Rust): let the entry-point's desired behavior be the Rust function's `ensures`; ask a contract-inference tool to propose `requires` and `ensures` for helper functions; then run Verus on the complete Rust program. Verus syntax uses `requires`/`ensures` clauses and proof functions, while the Horn solver remains an external proposal engine. Inference: a Verus helper contract inferred for one call path should be marked as context-specific and not silently reused as a public API contract.
+Inference: a proposed Verus adaptation would supply an entry-point specification, generate helper `requires` and `ensures` clauses, and check the resulting Rust program with Verus. Contracts inferred for one call context would need review before reuse elsewhere. The paper implements and evaluates C/ACSL inference, not this adaptation.
 
-Evidence and limits: the only functional inference evaluation is a 123-line simplified industrial module with five helper functions and five requirements (Section 4, p. 6). The paper reports no separate success count per inferred contract. Functional inference supports neither floating-point arithmetic nor stack pointers and does not support pointer arithmetic, nested pointers, local static variables or general ACSL logic functions (Section 3, p. 6). It supports loops but does not infer loop invariants.
+Evidence and limits: the evaluation in this paper uses a 123-line simplified industrial module with five helper functions and five requirements (Section 4, p. 6). The paper reports no separate success count per inferred contract. Functional inference supports neither floating-point arithmetic nor stack pointers and does not support pointer arithmetic, nested pointers, local static variables or general ACSL logic functions (Section 3, p. 6). It supports loops but does not infer loop invariants.
 
-Quote: “The contract for saturate requires lim == 10, as this is the value of this parameter at the only function call.” (Section 3, p. 5.)
+Quote: “The contract also illustrates that inferred contracts can be highly context-specific; for example, the contract for saturate requires lim == 10, as this is the value of this parameter at the only function call.” (Section 3, p. 5.)
 
 ## technique 2: auxiliary contract inference by abstract interpretation
 
@@ -36,9 +36,9 @@ What it is: infer annotations needed for verification but not directly describin
 
 Steps: run functional inference first; pass its merged source to `./autodeduct -aux tmp_inferred_source_merged.c`; let Eva derive value ranges, valid-pointer facts and modified locations; emit `annotated.c` with auxiliary and functional clauses. In the running `write_output` contract, Eva supplies `\valid(&out)`, `0 <= x <= 100`, `0 <= out <= 100` and `assigns out`.
 
-Verus form (Inference): derive or ask for Rust preconditions such as non-null/index bounds and frame facts about mutable references; encode functional behavior separately in `ensures`. Rust's ownership and borrowing statically constrain many frame conditions, but Verus still needs explicit bounds and loop invariants for array/slice accesses. Inference: Eva's pointer-validity annotations have no direct textual equivalent for a borrowed `&mut` reference; raw-pointer Rust requires separate validity assumptions.
+Inference: a proposed Verus adaptation would infer value bounds and restrictions on modified state alongside functional contracts. Whether Rust ownership reduces the required auxiliary annotations, and how C pointer-validity facts should translate to Rust, require separate investigation; this paper does not test them.
 
-Evidence and limits: the paper says auxiliary inference supports a larger C/ACSL subset than functional inference, but it gives no coverage percentage. Its auxiliary plugin does not solve the missing loop-invariant problem. The generated frame facts are sufficient only for the analyzed program and may depend on Eva's abstract domain precision.
+Evidence and limits: the paper says auxiliary inference supports a larger C/ACSL subset than functional inference, but it gives no coverage percentage. The toolchain does not infer loop invariants (Section 3, p. 6). Inference: annotation precision may depend on the underlying abstract interpretation; the paper does not measure that dependence.
 
 Quote: “All these annotations are derived from an abstract interpretation of the program, using the Frama-C plugin Eva as the backend.” (Section 3, p. 5.)
 
@@ -46,39 +46,39 @@ Quote: “All these annotations are derived from an abstract interpretation of t
 
 What it is: keep inference and checking as independently runnable stages, producing an inspectable annotated artifact. The complete command `./autodeduct filename.c` runs both inference plugins and WP; separate commands expose each intermediate result (Section 3, p. 6).
 
-Steps: run `-func`; run `-aux` on the merged file; run `-wp annotated.c`; if WP fails, inspect the fully annotated C and rerun after correcting the entry contract or unsupported construct. The toolchain's trust base is intended to remain Frama-C WP: “Thus, the necessary trust base for the verification engineer does not extend beyond the mature WP plugin of Frama-C.” (Section 3, p. 4.)
+Steps: run `-func`; run `-aux` on the merged file; run `-wp annotated.c`. Inference: after a failure, inspect the program, annotations and unsupported features before revising the input; the paper does not describe an automated repair procedure. The toolchain's trust base is intended to remain Frama-C WP: “Thus, the necessary trust base for the verification engineer does not extend beyond the mature WP plugin of Frama-C.” (Section 3, p. 3.)
 
-Verus form (Inference): mirror this as a pipeline that first proposes helper `requires`/`ensures`, writes a Rust artifact, and then runs `verus` as the final gate. Retain the generated Rust and diagnostics; never treat the inference stage as proof. Inference: because Verus checks the source directly, no separate equivalent of WP's ACSL parser is needed, but the proposal generator still needs a stable intermediate file for review.
+Inference: a proposed Verus pipeline would generate helper contracts, retain the annotated Rust artifact, and run Verus to check it. A proposed contract should count as verified only after the verifier accepts the resulting program. The paper does not implement this pipeline.
 
-Evidence: the paper reports a fully annotated output and a successful WP result for its case study, but no comparison against another contract-inference tool. A failed run produces either “Verification succeeded” or “Verification failed” in the architecture diagram; no automated repair loop is described.
+Evidence: the paper reports a fully annotated output and a successful WP result for its case study, but no comparison against another contract-inference tool. The architecture diagram labels the possible verification outcomes “Verification succeeded” and “Verification failed” (Figure 2, p. 4); no automated repair loop is described.
 
-## technique 4: contract inference guided by weakest/strongest state summaries
+## related foundations: weakest and strongest conditions
 
-What it is: the paper situates AutoDeduct among specification-inference techniques. Weakest preconditions compute a sufficient pre-state from a postcondition; strongest postconditions characterize final states from a precondition; symbolic execution computes strongest postconditions for loop-free programs; counterexample-guided abstraction refinement and multi-abduction infer preconditions or multiple-function specifications (Section 1, pp. 2–3).
+What it is: the paper situates AutoDeduct among specification-inference techniques. Weakest preconditions give the weakest sufficient condition for a postcondition; strongest postconditions characterize final states reachable from a precondition. The paper describes symbolic execution for programs without unbounded loops, counterexample-guided abstraction refinement for precondition inference, and multi-abduction for inference across multiple functions (Section 1, p. 2).
 
-How to use the applicable idea: start from the module postcondition and propagate it backward through helper calls (weakest-precondition style), or start from entry assumptions and propagate forward (strongest-postcondition style); simplify the resulting predicates; use counterexamples to strengthen a candidate; and solve all helper contracts together when a single-function summary is too weak. The paper presents these as related foundations, not as separate AutoDeduct modes.
+Inference: start from the module postcondition and propagate it backward through helper calls (weakest-precondition style), or start from entry assumptions and propagate forward (strongest-postcondition style); simplify the resulting predicates; use counterexamples to strengthen a candidate; and solve all helper contracts together when a single-function summary is too weak. The paper presents these as related foundations, not as separate AutoDeduct modes.
 
-Verus form (Inference): use Verus `assert` chains and proof functions to propagate postconditions backward or state summaries forward; use failing proof obligations as counterexamples to strengthen `requires` or loop `invariant` clauses. Verus does not expose a built-in generic weakest-precondition command, so this is a specification-generation strategy around the prover.
+Inference: a Verus adaptation could propose assertions or intermediate state predicates from entry assumptions and desired results, then check them with the verifier. This is a proposed specification-generation strategy, not an evaluated AutoDeduct feature; failed proof obligations would require diagnosis rather than automatic treatment as concrete counterexamples.
 
 Evidence and limits: no new numbers are reported for these related techniques. The paper's own inference remains Horn-clause/property-guided rather than a claim that it computes mathematically weakest contracts. It warns that contracts “may not generalise to other contexts” (Section 3, p. 4), which limits reuse.
 
-Quote: “AutoDeduct as a toolchain for property-guided contract inference, meaning that it infers contracts that are strong enough for verifying the current program, but they may not generalise to other contexts.” (Section 3, p. 4.)
+Quote: “In the domain of contract inference tools, we consider AutoDeduct as a toolchain for property-guided contract inference, meaning that it infers contracts that are strong enough for verifying the current program, but they may not generalise to other contexts.” (Section 3, pp. 3–4.)
 
 ## evaluation and denominators
 
-The evaluation uses one automotive C module adapted from industrial software. The original is about 1,400 lines and previously required two person-months of manual annotation. Because unsupported constructs were removed, the tested version is 123 lines, has one contracted entry point, five helper functions without contracts, and five engineer-written requirements represented by separate `ensures` clauses (Section 4, p. 6). On this single 123-line case, verification succeeds in roughly 23 seconds: 18 seconds functional inference, 2 seconds auxiliary inference and 3 seconds WP checking. The denominator is one module; there is no multi-module or per-function success rate.
+The evaluation uses one automotive C module adapted from industrial software. The original is about 1,400 lines; its previous verification with manual annotations took two person-months. After removing code irrelevant to the selected requirements and rewriting some pointer constructs, the tested version is 123 lines, has one contracted entry point, five helper functions without contracts, and five engineer-written requirements represented by separate `ensures` clauses (Section 4, p. 6). On this single 123-line case, verification succeeds in roughly 23 seconds: 18 seconds functional inference, 2 seconds auxiliary inference and 3 seconds WP checking. The denominator is one module; there is no multi-module or per-function success rate.
 
-The paper explicitly says it “did not compare AutoDeduct against other tools, since we are not aware of any existing toolchain for deductive verification that can automatically verify such C programs using contract inference.” (Section 4, p. 6.) Therefore the timing is a prototype measurement, not evidence of superiority. The original 2 person-month effort and the 23-second run use different versions of the module, so they must not be presented as a controlled speedup.
+The authors state: “We did not compare AutoDeduct against other tools, since we are not aware of any existing toolchain for deductive verification that can automatically verify such C programs using contract inference.” (Section 4, pp. 6–7.) Inference: the timing does not establish superiority over other tools. The original two-person-month effort and the 23-second run concern different versions of the module, so they do not establish a controlled speedup.
 
 ## what is proved and what stays trusted
 
-WP proves the entry-point contract and every inferred helper contract for the supplied C artifact. TriCera's Horn-clause solution and Eva's abstract interpretation generate the annotations, but correctness of the generated contracts is established only when WP checks the final program. The entry-point contract, its relationship to the real requirement, and the supported-language assumptions remain trusted. The C parser, ACSL semantics, TriCera encoding, Eva abstraction and WP implementation are part of the toolchain trust base; the paper's stated engineering trust boundary is “beyond the mature WP plugin,” which does not mean the requirement translation is proved.
+The paper states: “The verification with WP ensures that the entry-point function satisfies the provided contract, and that every helper function satisfies its inferred contract.” (Section 3, p. 3.) TriCera and Eva generate annotations that WP then checks. The authors therefore place the necessary trust base at WP, as quoted above. Inference: successful verification establishes the supplied contract; it does not independently establish that the contract captures the intended industrial requirement. This study does not audit WP, its dependencies, the inference implementations or their soundness.
 
 ## what VL should not redo and product threat
 
-Already done here: property-guided helper-contract inference from one entry contract; separate functional and auxiliary inference; abstract-interpretation frame/range/pointer annotations; staged artifact production; and a real industrial-style timing case. VL should test how these patterns map to Rust and Verus, especially whether ownership reduces auxiliary annotations and how to infer loop invariants, which AutoDeduct explicitly leaves unimplemented.
+The demonstrated approach combines property-guided helper-contract inference from one entry contract; separate functional and auxiliary inference; abstract-interpretation frame/range/pointer annotations; staged artifact production; and a timing measurement on a simplified industrial module. Inference: VL should test how these patterns map to Rust and Verus, especially whether ownership reduces auxiliary annotations and how to infer loop invariants, which AutoDeduct explicitly leaves unimplemented.
 
-Inference: threat to a product that emits agent-written verified Rust is moderate. Automatic helper contracts could reduce specification effort, but context-specific contracts can overfit a call graph, and the paper's sole successful case is a reduced 123-line module. The most serious gap for VL is loop invariants and unsupported pointer/alias patterns; a Verus pipeline should require explicit human- or agent-supplied invariants and keep the final verifier run as the only acceptance criterion.
+Inference: threat to a product that emits agent-written verified Rust is moderate. Automatic helper contracts could reduce specification effort, but context-specific contracts can overfit a call graph, and the paper's sole successful case is a reduced 123-line module. Missing loop-invariant inference and the listed unsupported C features limit the demonstrated scope. A proposed Verus pipeline would need a separate method for supplying invariants and a final verifier check against the intended specification.
 
 ## techniques for the catalog
 
@@ -86,5 +86,5 @@ Inference: threat to a product that emits agent-written verified Rust is moderat
 - Horn-clause contract solving — encode calls as pre/post predicates and extract a satisfying interpretation as contracts
 - auxiliary abstract-interpretation inference — derive value ranges, pointer validity and frame conditions with Eva-like analysis
 - staged annotation and verification — run functional inference, auxiliary inference and final proof as inspectable stages
-- state-summary specification inference — use weakest/strongest summaries and counterexamples to strengthen contracts across calls
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- related-work foundation: state-summary specification inference — weakest/strongest conditions and counterexample-guided methods; not a separately implemented AutoDeduct mode
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "By running AutoDeduct on the program, we infer contracts for the helper functions, and verify the program using WP."): checked all paper text, study quotations, numbers, section/page references, technique steps and stated limitations; corrected incomplete quotations, page references, the verification outcomes, evaluation wording and trust claims, and marked proposed adaptations and conclusions as Inference; did not run AutoDeduct, inspect its artifact or implementations, reproduce timings, or verify Verus adaptations.
