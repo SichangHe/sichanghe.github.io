@@ -19,7 +19,7 @@ How to do it.
 1. Restrict the guard function `f` to a continuous interval and choose a candidate point `z` with `f(z) = 0` (Section 3, pp. 5–6).
 2. Compute the maximal zero interval around `z`, written `⟦a;b⟧`, by taking the infimum of points that remain zero to the left and the supremum of points that remain zero to the right (Section 3, p. 5).
 3. Distinguish passing (`a = b`) from staying (`a < b`) behavior (Section 3.1, p. 6).
-4. For a negative-to-positive crossing, choose `z = b` and require zero throughout `[a,b]`, a negative value arbitrarily close to the left of `a`, and a positive value arbitrarily close to the right of `b`. The paper's definition states: “Definition 1. z ∈ R is a zero-crossing for a continuous function f if and only if there exist a ∈ R and b ∈ R with a ≤ b and z = b such that” (Section 3.2, p. 6).
+4. For a negative-to-positive crossing, choose `z = b` and require zero throughout `[a,b]`, a negative value arbitrarily close to the left of `a`, and a positive value arbitrarily close to the right of `b`. The paper's definition states: “Definition 1. z ∈ R is a zero-crossing for a continuous function f if and only if there exist a ∈ R and b ∈ R with a ≤ b and z = b such that:” (Section 3.2, p. 6).
 5. Use the symmetric construction for positive-to-negative crossings if the language needs both directions (Section 3, p. 5).
 
 Verus form. Inference: represent a guard as a ghost `spec fn` over a real-valued state and represent an event candidate with a ghost record containing `a`, `b`, and `z`. Use proof functions with `requires` clauses for continuity and zero-interval facts and `ensures` clauses for the three boundary conditions. Inference: Verus's integer and sequence reasoning does not provide real analysis or ODE continuity automatically; the continuous-function facts must be axioms, imported lemmas, or a discretized model whose assumptions are documented.
@@ -28,14 +28,16 @@ Evidence and limits. The paper lists three desirable properties: a sign change m
 
 ## technique 2: invariant-only refinement types
 
-What it is. A refinement type strengthens a base type with a predicate. In this hybrid setting, the predicate is a trace invariant rather than a point-wise property. The paper says: “A key difference is the omission of ‘point-wise’ temporal predicates such as ⃝ and hd(), which apply instantaneously to a specific point in time and are less useful for continuous programs.” (Section 4.1, p. 8).
+What it is. A refinement type strengthens a base type with a predicate. In this hybrid setting, the predicate is a trace invariant rather than a point-wise property. The paper says (Section 4.1, p. 8):
+
+> A key difference is the omission of “point-wise” temporal predicates such as ⃝ and hd(), which apply instantaneously to a specific point in time and are less useful for continuous programs.
 
 When to use it. Use an invariant refinement when the safety requirement must hold throughout every continuous trajectory and immediately after every reset.
 
 How to do it.
 
 1. Choose a base type `b` for a continuous state or tuple.
-2. Write a state predicate `p` over continuous expressions, using conjunction and negation as needed (Section 4.1, p. 8).
+2. Write a state predicate `p` over continuous expressions, using conjunction and negation as needed (Figure 3, p. 9).
 3. Form the refinement `{v : b | □p}`. The grammar in Figure 3 restricts trace predicates to `□p` (Section 4.1, p. 9).
 4. Require the initial continuous state and every reset result to have the refinement type.
 5. Prove that the predicate holds for all times in each continuous segment, then apply the same type to the next segment (Sections 6.1 and 7.1, pp. 13, 16–17).
@@ -73,17 +75,21 @@ How to do it.
 1. Compute `Active(v,{u1,…,un})` from the current state and each guard's instantaneous value and symbolic derivative (Definition 5, Section 7, p. 14).
 2. Split the target invariant into a part established by differential reasoning and a part protected by active guards. The paper requires a predicate `ϕ` such that `(ϕ ∧ Active(v,{u1,…,un})) ⇒ I` (Section 7, p. 14).
 3. For the finite case, prove the initial state, the continuous segment, and every reset branch under the typing rule `(T-DER-FIN)` (Figure 5, p. 15).
-4. Use a differential invariant to show the remaining part of the invariant throughout the flow. The paper's dL rule checks preservation of the symbolic derivative under the evolution-domain facts (Section 2.3, p. 3).
+4. Use a differential invariant to show the remaining part of the invariant throughout the flow. The paper's dL rule checks preservation of the symbolic derivative under the evolution-domain facts (Section 2.3, pp. 3–4).
 5. Prove every reset restores the refinement type, then apply the argument inductively to the next segment (Section 7, pp. 14–15).
 6. For an infinite segment, use the monitored-domain lemma for all time and type the `[∞]` residual directly (Section 7, p. 15).
 
 Verus form. Inference: encode `Active` as a `spec fn` over a ghost state and a sequence of guards. Prove a lemma that an active guard remains nonpositive until its first crossing, and a second lemma that the differential invariant implies the target predicate under `Active`. Use `requires`/`ensures` on reset proof functions and a loop `invariant` for segment induction. Inference: Verus's supported arithmetic can express the algebraic side conditions, but a derivative and continuous-flow theorem are outside ordinary Rust execution and must be modeled explicitly.
 
-Evidence and limits. The paper proves three preservation lemmas. Continuous Type Preservation states that a well-typed hybrid program preserves `□ϕ` over the segment, gives a well-typed reset value in the finite case, and leaves a well-typed next expression (Lemma 3, Section 7.1, pp. 16–17). The proof combines the operational trace, Lemma 1's active-domain preservation, and the differential invariant rule (Section 7.1, p. 17). The authors note that the existential annotations in the typing rule could be supplied by users or simple heuristics (Section 7, p. 15). Inference: automation of these witnesses is an engineering problem, not supplied by the metatheory.
+Evidence and limits. The paper proves three preservation lemmas. Continuous Type Preservation states that a well-typed hybrid program preserves `□ϕ` over the segment, gives a well-typed reset value in the finite case, and leaves a well-typed next expression (Lemma 3, Section 7.1, pp. 16–17). The proof combines the operational trace, Lemma 1's active-domain preservation, and the differential invariant rule (Section 7.1, p. 17). The authors write: “Although these are expressed as existentials in the typing rule, they can be determined based on user-provided annotations or simple heuristic methods in implementation.” (Section 7, p. 14). Inference: automation of these witnesses is an engineering problem, not supplied by the metatheory.
 
 ## worked examples and measured evidence
 
-The water-tank example uses two upward guards to maintain `1 ≤ level ≤ 9`; the paper says each guard becomes critical before a bound is violated, and each reset drives the dynamics inward (Section 8.1, p. 17). The automatic-braking example proves an invariant that the stopping position remains below the obstacle, then applies a reset that sets acceleration to the required braking value (Section 8.2, p. 17). These are proof sketches, not a benchmark with a denominator of verified programs. Detailed proofs are in the extended version (Section 8, p. 17).
+The water-tank example uses two upward guards to maintain `1 ≤ level ≤ 9`. The paper states: “Each reset then re-establishes (1 ≤ level ≤ 9) and drives the dynamics back inward, yielding a safe starting state for the next segment.” (Section 8.1, p. 17).
+
+The automatic-braking example uses fixed braking acceleration `brake = -0.2` and a `0.1` safety margin in the stopping-position guard (Section 5.2, p. 9; Appendix E.2, pp. 30–31). Its stronger invariant is `□(x − v²/(2 × brake) < xobs)`. After the braking reset, the guard is no longer active: “However, since x and v retain their previous values and the derivative of this guard is zero, this guard is no longer active.” (Appendix E.2, p. 30). The proof then uses differential reasoning.
+
+Section 8 says: “We provide brief proof sketches for using our formalism to verify safety of the examples introduced in Section 5.” (p. 17). This supplied paper also contains detailed proofs in Appendix E, including the decreasing-sawtooth and bouncing-ball examples (pp. 29–34). Inference: these examples demonstrate the method; they do not establish benchmark coverage or performance.
 
 ## what is proved, trusted, and left unresolved
 
@@ -103,4 +109,4 @@ Inference: the threat to agent-written verified Rust is specification drift at t
 - active-guard reasoning — combine guard-protected domains with differential invariants
 - segment induction — prove initial state, flow, reset, and next-segment preservation in sequence
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This is desirable for the proof because it requires no knowledge of the dynamical system’s explicit solution."): checked the complete text including appendices, quotations, numbers, section and page references, and technique steps; corrected quotation punctuation, page references, the braking description, and coverage of the supplied appendices; did not independently validate the mathematical proofs, execute an implementation, or validate the Verus inferences.
