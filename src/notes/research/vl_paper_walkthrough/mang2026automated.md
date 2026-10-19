@@ -16,7 +16,7 @@ A CAQ is a parameterized SQL template with typed placeholders. The paper defines
 
 when to use it
 
-Use CAQs when direct generation of complete test cases is too expensive or too unreliable. Abstract queries reduce the search space and can be checked before expensive concrete instantiation. Two CAQs form an equivalent pair when every valid instantiation returns the same result on every database conforming to their shared schema (Definition 4.2, p. 7).
+Inference: Use CAQs when direct generation of complete test cases is too expensive or too unreliable. Check abstract pairs before reusing them in many concrete tests. Two CAQs form an equivalent pair when every valid instantiation returns the same result on every database conforming to their shared schema (Definition 4.2, p. 7).
 
 how to do it
 
@@ -32,11 +32,11 @@ Inference: Represent a reusable verification pattern as a Rust function skeleton
 
 what the evidence shows
 
-The paper’s central guarantee is conditional: equivalent CAQs can produce many concrete equivalent query pairs when substitutions satisfy the recorded constraints. It provides a contradiction argument and a full proof in Appendix B for the constraints used during instantiation (Sec. 6.2, p. 13). The guarantee is semantic SQL equivalence, not correctness of an LLM proposal by itself.
+The paper’s central guarantee is conditional: equivalent CAQs can produce many concrete equivalent query pairs when substitutions satisfy the recorded constraints. It provides a contradiction argument in Sec. 6.2 (p. 13) and a proof in Appendix B (pp. 29–31). The authors qualify its scope: “Note that, while these proofs do not cover all SQL features, especially for those new features in future SQL standards, we have not found any counterexamples in our experiments that violate the equivalence after instantiating expressions following these constraints.” (Appendix B, p. 31). The guarantee concerns semantic SQL equivalence under the stated conditions.
 
 where it fails or assumes
 
-The method assumes that a placeholder’s type and schema constraints capture the semantic conditions needed after substitution. The authors identify null behavior, empty results, outer joins, and nondeterminism as sources of semantic misalignment (Sec. 6.2, p. 13). Inference: A Verus hole likewise needs more than a Rust type: ownership, aliasing, arithmetic domains, and the exact contract must be preserved. A type-correct substitution can invalidate a proof obligation.
+The method requires both placeholder-specific type/schema constraints and general semantic constraints on substitutions (Definition 4.1, p. 7; Sec. 6.2, p. 13). The authors identify null behavior, empty results, outer joins, and nondeterminism as sources of semantic misalignment (Sec. 6.2, p. 13). Inference: A Verus hole likewise needs more than a Rust type: ownership, aliasing, arithmetic domains, and the exact contract must be preserved. A type-correct substitution can invalidate a proof obligation.
 
 ## technique 2: diversity-directed LLM generation with fail memory
 
@@ -59,13 +59,13 @@ Inference: Maintain two corpora of Rust verification attempts: candidates whose 
 
 what the evidence shows
 
-In a six-hour DuckDB comparison, Argus-5,000 found 10 unique logic bugs while a human-designed baseline found 3; Argus-50 found 2 (Sec. 7.3, p. 19). For generation methods, clustering yielded average similarity 0.617 and 86 valid queries, compared with beam search’s 0.766 and 48 and naive generation’s 0.688 and 81 (Table 4, p. 21). Lower similarity means more diversity according to the table caption.
+In a six-hour comparison on Dolt v1.0.0, Argus-5,000 found 10 unique logic bugs while a human-designed baseline found 3; Argus-50 found 2 (Sec. 7.3, p. 19). For generation methods, clustering yielded average similarity 0.617 and 86 valid queries, compared with beam search’s 0.766 and 48 and naive generation’s 0.688 and 81 (Table 4, p. 21). Lower similarity means more diversity according to the table caption.
 
 where it fails or assumes
 
-The LLM can generate many inequivalent or syntactically invalid candidates. The loop therefore relies on a sound prover and a runtime check. Diversity is measured by plan distance, which may not predict semantic coverage. Inference: For Verus, AST or proof-obligation distance can similarly miss semantically important variation; measure both accepted theorem families and failures by obligation type.
+The LLM can generate many inequivalent or syntactically invalid candidates. The loop therefore relies on a sound prover and a runtime check. Inference: Plan distance may not predict semantic coverage. For Verus, AST or proof-obligation distance can similarly miss semantically important variation; measure both accepted theorem families and failures by obligation type.
 
-## technique 3: formal equivalence gate before concrete testing
+## technique 3: formal equivalence prerequisite check before concrete testing
 
 what it is
 
@@ -89,7 +89,7 @@ When the prover was disabled and GPT-5 judged equivalence, all 20 collected Duck
 
 where it fails or assumes
 
-The prover supports only a subset of SQL, causing false negatives; the authors explicitly use abstract queries first to reduce this limitation (Sec. 5.3, p. 10). Soundness depends on the prover and the correctness of the constraints. Inference: Verus can reject true programs because automation is incomplete, but accepting a fully checked module is a materially stronger gate than an LLM judge. The specification itself remains trusted as the statement of intended behavior.
+The prover supports only a subset of SQL, causing false negatives; the authors explicitly use abstract queries first to reduce this limitation (Sec. 5.3, p. 10). Practical soundness depends on the prover implementation and the instantiation constraints. The authors report 10 bugs in SQLSolver and QED, all fixed during early development (Sec. 8, p. 22). Inference: Verus can reject true programs because automation is incomplete, but accepting a fully checked module supplies stronger evidence than an LLM judge. The specification itself remains trusted as the statement of intended behavior.
 
 ## technique 4: constraint-preserving snippet corpus and instantiation
 
@@ -100,12 +100,12 @@ Argus pre-generates reusable expression and table snippets with a hybrid LLM plu
 how to do it
 
 1. Create a default table containing all target DBMS datatypes (Sec. 6.1, p. 10).
-2. Prompt the LLM with sampled official documentation features to produce typed expressions and tables (p. 10).
+2. Prompt the LLM with sampled official documentation features; generate expressions over the default table and table snippets for each source schema (Sec. 6.1, pp. 11–12).
 3. Execute each snippet using `SELECT {GeneratedExpr} FROM t` or `SELECT * FROM {GeneratedTable}` and discard failures (Listing 4, p. 12).
 4. Cross-combine snippets when replacement types match (Listing 5, p. 12).
 5. For each CAQ expression placeholder, sample a matching datatype and rename referenced columns to compatible columns in the target table (Algorithm 2, lines 3–9, p. 11).
-6. For table placeholders, sample a matching schema and choose direct table replacement, a CTE, or a view (Sec. 6.2, p. 12).
-7. Enforce determinism, null-preservation, and empty-results-preservation; validate these behaviors at runtime (Sec. 6.2, pp. 12–13).
+6. For table placeholders, sample a snippet with the expected output schema and matching source schema; choose direct table replacement, a CTE, or a view (Sec. 6.2, p. 12).
+7. Exclude nondeterministic features using a regular expression. Require expressions to preserve null values on all-null rows and empty results on empty tables; validate types/schemas and null/empty behavior by execution (Sec. 6.2, p. 13).
 8. Populate random tables and indices, execute both queries, and report a logic bug when results differ; report crashes separately (Algorithm 2, lines 17–23, p. 11; Sec. 6.3, p. 13).
 
 Verus form
@@ -114,25 +114,25 @@ Inference: Build a corpus of contract-compatible Rust expressions, data structur
 
 what the evidence shows
 
-Argus ran for three months on Dolt, DuckDB, MySQL, PostgreSQL, and TiDB using o4-mini with an Azure OpenAI service (Sec. 7, p. 14). It found 41 unknown bugs, including 36 logic bugs; 36 were confirmed and 27 fixed (Sec. 7.1, p. 14). Generating CAQ pairs cost about $3, instantiation about $1 per 1,000 tests, and a reusable 100,000-snippet corpus about $12 (Sec. 7.5, p. 21). These are the paper’s reported costs and denominators, not Verus measurements.
+Argus ran for three months on Dolt, DuckDB, MySQL, PostgreSQL, and TiDB using o4-mini with an Azure OpenAI service (Sec. 7, p. 14). The authors report 41 previously unknown bugs, including 36 logic bugs; 36 were confirmed and 27 fixed. Developers later identified 2 reports as duplicates of previously unfixed bugs; 3 remained pending (Table 2; Sec. 7.1, p. 14). Generating CAQ pairs cost about $3, instantiation about $1 per 1,000 tests, and a reusable 100,000-snippet corpus about $12 (Sec. 7.5, p. 21). These are the paper’s reported costs and denominators, not Verus measurements.
 
 ## what is proved, trusted, and left open
 
-The SQL prover establishes equivalence for retained abstract pairs under its supported semantics. Runtime execution establishes syntax and detects DBMS disagreements; it does not prove absence of bugs. The LLM, grammar generator, target DBMS, prover implementation, schema constraints, and random-data generator remain trusted or operational assumptions. Inference: A Verus adaptation can make proof acceptance the soundness boundary, but it still trusts Verus, Rust compiler behavior used by the workflow, and the user’s contract.
+Argus retains abstract pairs accepted by the SQL prover and checks generated queries and snippets by execution (Sec. 5.3, p. 10; Sec. 6.1, p. 12). Instantiated equivalence depends on the semantic constraints in Sec. 6.2 (p. 13), with the proof-scope qualification in Appendix B (p. 31). Inference: These checks rely on the prover implementation and constraint validation; LLM output alone is not trusted evidence. Runtime tests can reveal disagreements but cannot establish absence of bugs. A Verus adaptation still trusts Verus and the user’s contract as the statement of intended behavior.
 
 ## what VL should not redo
 
-Argus already supplies typed skeletons, equal/fail prompting, plan-diversity clustering, formal gating, corpus reuse, runtime snippet validation, and bug-report packaging. VL should adapt these components to Verus diagnostics and proof obligations rather than repeat the SQL experiments or claim their bug counts.
+Inference: VL can adapt Argus’s typed skeletons, equal/fail prompting, plan-diversity clustering, formal prerequisite checks, corpus reuse, runtime snippet validation, and bug-report packaging to Verus diagnostics and proof obligations. The SQL bug counts do not establish effectiveness for Rust verification.
 
 ## threat to agent-written verified Rust
 
-Inference: The threat is low to formal soundness if every instantiated artifact is checked by Verus, and high to engineering throughput if the checker is incomplete or specifications are wrong. A model can generate a syntactically valid but semantically misleading contract, and a corpus can repeatedly encode that mistake. Independent specification review and pinned tool versions are therefore product requirements inferred from the gate structure.
+Inference: The threat is low to formal soundness if every instantiated artifact is checked by Verus, and high to engineering throughput if the checker is incomplete or specifications are wrong. A model can generate a syntactically valid but semantically misleading contract, and a corpus can repeatedly encode that mistake. Independent specification review and pinned tool versions are therefore recommendations for a Verus adaptation.
 
 ## techniques for the catalog
 
 - constrained abstract query — represent reusable typed skeletons with placeholders and explicit instantiation constraints
 - equal/fail prompting — feed verified and rejected generations back to an LLM to improve correctness and diversity
-- formal equivalence gate — retain LLM proposals only after a sound solver proves the abstract relation
+- formal equivalence prerequisite check — retain LLM proposals only after a sound solver proves the abstract relation
 - constraint-preserving instantiation — validate reusable snippets, enforce semantic side conditions, and fill verified skeletons
 - two-stage oracle generation — prove simple abstractions first, then instantiate richer concrete cases
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To further investigate the issue of extremely high false positive rates, we generated 20 candidate CAQ pairs that the LLM judged as equivalent, and manually verified them."): checked the entire paper including appendices, quotations, numbers, section/page references, technique steps, tag and DOI; corrected the Dolt comparison and documentation page reference, clarified instantiation constraints and proof scope, distinguished inference from paper evidence, and qualified duplicate reports and prover trust; did not reproduce experiments, inspect implementation artifacts, or validate the proposed Verus adaptations.

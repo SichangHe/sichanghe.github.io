@@ -1,85 +1,87 @@
 # Requirements Development and Formalization for Reliable Code Generation: A Multi-Agent Vision
 (authored by agents unless marked 🧑)
-Tag: `lu2025requirements`, [paper](https://www.semanticscholar.org/paper/8d31c772f62b23d12d4479885377219ce4b230cb)
+Tag: `lu2025requirements`, [paper](https://arxiv.org/abs/2508.18675v1)
 
 ## what ReDeFo proposes
 
-ReDeFo is a proposed three-agent pipeline from natural-language requirements to verified executable code. The Analyst refines and structures requirements, the Formalizer translates them into formal specifications, and the Coder generates modules and verifies them. The paper's central claim is that “The core of ReDeFo is the use of formal specifications to bridge the gap between potentially ambiguous natural language requirements and precise executable code” (Abstract, p. 1). It is a vision paper, not a benchmarked system: no end-to-end success denominator, runtime, or proof corpus is reported.
+ReDeFo is a proposed three-agent pipeline from natural-language requirements (NLRs) to verified executable code. The Analyst refines and structures requirements, the Formalizer translates them into formal specifications, and the Coder generates modules and verifies them. The paper's central claim is that “The core of ReDeFo is the use of formal specifications to bridge the gap between potentially ambiguous natural language requirements and precise executable code.” (Abstract, p. 1) The paper presents a vision and a case walkthrough; it reports no quantitative evaluation, end-to-end success denominator, runtime, or proof corpus.
 
-The pipeline emits requirement specifications, an architecture model, informal and formal specifications, verified architecture/software components, and verification reports. Feedback can come from verification failures, unmet constraints, and inconsistencies. Humans can review intermediate artifacts or answer clarification questions, so the framework treats requirement interpretation as an interactive engineering activity. The authors write, “ReDeFo advocates human-in-the-loop interaction by incorporating expert judgment at critical points and facilitating more active expert participation beyond post-hoc review” (Section II, p. 2).
+The pipeline emits requirement specifications, an architecture model, informal and formal specifications, verified architecture/software components, and verification reports. Feedback can come from verification failures, unmet constraints, and inconsistencies. Humans can review intermediate artifacts or answer clarification questions, so the framework treats requirement interpretation as an interactive engineering activity. The authors write, “ReDeFo advocates human-in-the-loop interaction by incorporating expert judgment at critical points and facilitating more active expert participation beyond post-hoc review.” (Section II, p. 2)
 
 ## technique 1: analyst refinement, slicing, and architecture modeling
 
-When to use: use this before formalization when requirements are vague, high-level, cross-cutting, or contain hidden constraints.
+Inference: use this before formalization when requirements are vague, high-level, or contain hidden constraints.
 
-Steps from Section II-A (pp. 2–3):
+Steps from Section II-A1 (p. 2):
 
 1. Refine and slice each requirement into self-contained, formalization-ready sub-requirements. Uncover implicit constraints and behaviors.
 2. Elaborate vague or underspecified statements into concrete, actionable descriptions.
 3. Identify constraints and behaviors that are directly formalizable.
-4. Select formalizable content and map it to use cases, goals, scenarios, or similar structured requirement models.
-5. Decompose the system into modular components and construct an initial architecture model, including component and state diagrams.
-6. Organize the result as structured informal specifications that retain links to the original NLR.
+4. Decompose the system into modular components that reflect logical or domain-specific divisions.
 
-The Solar Search case illustrates four operating modes and their switch conditions. The Analyst creates a component diagram and a state diagram, then separates system-level properties from mode-level properties. This decomposition lets later tools model-check the architecture and deductively verify each mode function.
+Section II (p. 2) also describes constructing an initial architecture model and organizing the results into structured informal specifications. Section II-A1 lists use case analysis, goal modeling, and scenario-based modeling as supporting knowledge, rather than additional mandatory steps.
 
-Verus form (Inference): represent each refined sub-requirement as a Rust module contract. Encode modes as an enum or state-machine state, transitions as executable functions, and invariants as state-machine invariants or loop invariants. Use `requires` for trigger conditions and `ensures` for state and output effects. The Analyst's architecture diagram is a design artifact; Verus checks only the formalized model and code, so every diagram edge needs a corresponding transition contract.
+The Solar Search case illustrates four operating modes and their switch conditions. The Analyst creates a component diagram and a state diagram. System-related requirements become system-level properties, while mode-specific requirements become mode-level properties (Section III, p. 4). The case uses model checking for the state model and deductive reasoning for the mode functions.
 
-The paper does not give accuracy measurements for refinement. It explicitly identifies hidden assumptions and corner cases as a completeness challenge (Section IV-A, p. 4), so analyst output remains a reviewable hypothesis.
+Inference: for Verus, represent each refined sub-requirement as a Rust module contract. Encode modes as an enum or state-machine state, transitions as executable functions, and invariants as state-machine invariants or loop invariants. Use `requires` for trigger conditions and `ensures` for state and output effects. The Analyst's architecture diagram is a design artifact; Verus checks only the formalized model and code, so a transition contract would make each diagram edge available for verification.
+
+The paper does not give accuracy measurements for refinement. It explicitly identifies hidden assumptions and corner cases as a completeness challenge (Section IV-A, p. 4). Inference: analyst output should remain open to review.
 
 ## technique 2: formalizer specification synthesis and consistency checks
 
-When to use: use the Formalizer after refinement to choose suitable formalisms and produce a complete, internally coherent specification.
+Inference: use the Formalizer after refinement to choose suitable formalisms and work toward complete, internally coherent specifications.
 
-Steps from Section II-A (pp. 2–3):
+Steps from Section II-A2 (p. 2):
 
-1. Select a formalism appropriate to each slice: model checking for state behavior, theorem proving for high expressiveness and rigor, static analysis, invariants, pre/postconditions, or temporal assertions.
-2. Generate specification segments from the informal slices.
-3. Compose segments by merging overlapping or logically entailed statements, preserving one coherent meaning and reducing redundancy.
-4. Complete the specification by making implicit semantics explicit.
-5. Assess logical soundness and completeness, looking for contradictions, gaps, and ambiguities.
-6. Check traceability and consistency between NLR, architecture, formal specification, and later code.
+1. Select suitable formalisms and generate specification segments from informal requirement slices.
+2. Compose segments by merging similar or overlapping statements that describe identical or logically entailed semantics.
+3. Complete the specification by making implicit semantics explicit.
+4. Assess logical soundness and completeness, looking for contradictions, gaps, and ambiguities.
 
-In the case study, high-level behavior becomes LTL and mode-level function behavior becomes ACSL. NuSMV model-checks the state diagram against LTL; Frama-C performs deductive reasoning on ACSL-annotated C functions (Section III, pp. 3–4). The authors list structural checks, behavioral coverage, and traceability/consistency verification as specification-quality methods.
+The supporting knowledge includes formalisms used in model checking, theorem proving, and static analysis; property descriptions such as invariants, pre/postconditions, and temporal assertions; and specification-quality methods such as structural checks, behavioral coverage analysis, and traceability/consistency verification (Section II-A2, p. 2). The examples of bounded-state model checking and highly expressive theorem proving appear in the Coder knowledge discussion (Section II-A3, p. 3).
 
-Verus form (Inference): use `spec fn` predicates for mathematical properties, executable Rust functions with `requires`/`ensures`, and proof functions with lemmas to establish composition and invariants. For a mode transition, a proof should show that the pre-state mode and trigger imply the permitted next mode and preserve safety invariants. LTL operators are not Verus constructs; encode the relevant transition invariant and induction argument. Keep formal specification segments linked to source requirement identifiers so a passing proof does not conceal an omitted requirement.
+In the case study, high-level behavior becomes Linear Temporal Logic (LTL) specifications and mode-level function behavior becomes ANSI/ISO C Specification Language (ACSL) specifications. NuSMV model-checks the state diagram against LTL; Frama-C performs deductive reasoning on ACSL-annotated C functions (Section III, p. 4).
 
-The key limitation is semantic alignment. The paper states, “Even if the code is formally verified against the specification, any mismatch between the specification and the original intent still renders the system incorrect from the user’s perspective” (Section IV-A, p. 4). This is a claim about the assurance boundary, not an empirical result.
+Inference: for Verus, use `spec fn` predicates for mathematical properties, executable Rust functions with `requires`/`ensures`, and proof functions with lemmas to establish composition and invariants. For a mode transition, a proof should show that the pre-state mode and trigger imply the permitted next mode and preserve safety invariants. A transition invariant covers permitted next states; it does not by itself prove temporal claims about eventual behavior. Keep formal specification segments linked to source requirement identifiers so a passing proof does not conceal an omitted requirement.
+
+The key limitation is semantic alignment. The paper states, “Even if the code is formally verified against the specification, any mismatch between the specification and the original intent still renders the system incorrect from the user’s perspective.” (Section IV-A, pp. 4–5) Inference: verification against a specification alone cannot establish that the specification captures user intent.
 
 ## technique 3: coder generation, modular verification, and assembly
 
-When to use: use the Coder after formal specifications stabilize, while retaining the refined NLR for traceability.
+The Coder uses both refined requirements and formal specifications (Section II, p. 2). The paper does not require specifications to be frozen before code generation.
 
-Steps from Section II-A (p. 3):
+Steps from Section II-A3 (p. 2):
 
 1. Generate executable code modules from the refined requirements and formal specifications.
-2. Verify each generated module and its model against the formal specifications using suitable tools.
+2. Check generated modules and models against the formal specifications using appropriate formal verification techniques.
 3. Assemble modules into a complete system.
-4. Verify system-level behavior and preserve the relation between module proofs and architecture transitions.
-5. Return verification reports and route failures or unmet constraints back to Analyst/Formalizer/human review.
 
-The Coder must choose implementation patterns that remain verifiable and preserve modular composition. The paper warns that verification tools impose restrictions on how code must be structured. In the Solar Search example, the Coder creates C for each mode and a skeleton integrating four modes; model checking covers the state model, while Frama-C handles mode functions (Section III, pp. 3–4).
+Section II (p. 2) separately describes verification reports and feedback, including verification failures, unmet constraints, and inconsistencies. Experts may review artifacts or answer agents’ questions; no fixed feedback-routing algorithm is given.
 
-Verus form (Inference): generate Rust modules whose public functions expose contracts, then prove module invariants before integration. Use ownership and explicit state-machine APIs to make module boundaries visible. A system-level proof should establish that assembly preserves each module's assumptions; do not mark the function being verified `external_body`, because that removes the implementation obligation. External dependencies remain trusted assumptions unless their contracts are themselves verified.
+The Coder must choose implementation patterns that remain verifiable and preserve modular composition. The paper warns that verification tools may restrict how code must be structured (Section IV-B, p. 5). In the Solar Search example, the Coder creates C for each mode and a skeleton integrating four modes; model checking covers the state model, while Frama-C handles mode functions (Section III, p. 4).
+
+Inference: for Verus, generate Rust modules whose public functions expose contracts, then prove module invariants before integration. Use ownership and explicit state-machine APIs to make module boundaries visible. A system-level proof should establish that assembly preserves each module's assumptions; do not mark the function being verified `external_body`, because that removes the implementation obligation. External dependencies remain trusted assumptions unless their contracts are themselves verified.
 
 ## technique 4: knowledge acquisition and human feedback
 
-ReDeFo proposes three knowledge sources: real-world projects, authoritative literature, and professional experts (Section II-B, pp. 3–4). Agents can infer missing informal requirements from code and comments, reconstruct architecture from module boundaries and data flow, and derive candidate formal properties, preconditions, and invariants from implementations. Literature supplies methods for model checking, deductive verification, theorem proving, abstract interpretation, and SMT. Experts validate functional requirements, architecture, formal properties, and tool outcomes.
+ReDeFo proposes three knowledge sources: real-world projects, authoritative literature, and professional experts (Section II-B, p. 3). Agents can infer missing informal requirements from code and comments, reconstruct architecture from module boundaries and data flow, and derive candidate formal properties, preconditions, and invariants from implementations. Literature supplies methods for model checking, deductive verification, theorem proving, abstract interpretation, and Satisfiability Modulo Theories (SMT). Experts validate functional requirements, architecture, formal properties, and tool outcomes.
 
-These inferred artifacts must remain labeled as inference. Code-derived specifications can describe existing behavior without proving that behavior is desired. Expert review is therefore a semantic check, while automated proof is a consistency check against the chosen specification.
+Inference: these code-derived artifacts should remain labeled as inference. Code-derived specifications can describe existing behavior without proving that behavior is desired. Expert review is therefore a semantic check, while automated proof is a consistency check against the chosen specification.
 
 ## what is established, trusted, and missing
 
-The paper establishes a coherent workflow design and a concrete Solar Search walkthrough using LTL, ACSL, NuSMV, and Frama-C. It does not establish that LLM agents can reliably perform the steps. There is no quantitative evaluation, no number of successfully verified modules, and no comparison with a baseline. Trusted elements include agent interpretation, domain knowledge, formalizer choices, generated specifications, verifier soundness, model/code correspondence, and human judgments. The authors identify specification completeness, semantic consistency, code quality, training data, feedback policy, and scalability as open challenges (Section IV, pp. 4–5).
+The paper describes a workflow and a Solar Search walkthrough using LTL, ACSL, NuSMV, and Frama-C (Sections II–III, pp. 2–4). It reports no quantitative evaluation, number of successfully verified modules, or baseline comparison. Inference: the walkthrough does not establish that LLM agents can reliably perform the steps. Elements whose correctness still needs justification include agent interpretation, domain knowledge, formalizer choices, generated specifications, verifier soundness, model/code correspondence, and human judgments. The authors identify specification completeness, semantic consistency, code quality, training data, feedback policy, and scalability as open challenges (Section IV, pp. 4–5).
 
-Inference: the threat to VeruLaw is high at the requirement-to-contract boundary and moderate in code generation. ReDeFo's separation of analyst, formalizer, and coder matches VL's need to distinguish intent extraction, Verus specification writing, and Rust implementation. Its practical contribution is a reviewable artifact chain: every Verus contract should point to a refined requirement and architecture transition, every generated module should discharge its contract, and integration proofs should preserve assumptions. VL should not claim that a verified Rust function satisfies a human requirement until the requirement-to-specification link has evidence and human/domain review.
+Inference: for VeruLaw (VL), the requirement-to-contract boundary needs explicit review. ReDeFo's separation of analyst, formalizer, and coder matches VL's need to distinguish intent extraction, Verus specification writing, and Rust implementation. Its practical contribution is a reviewable artifact chain: every Verus contract should point to a refined requirement and architecture transition, every generated module should discharge its contract, and integration proofs should preserve assumptions. VL should not claim that a verified Rust function satisfies a human requirement until the requirement-to-specification link has evidence and human/domain review.
 
 ## techniques for the catalog
+
+The following summarize the proposed techniques in Sections II–III (pp. 2–4).
 
 - requirement slicing: refine vague natural language into self-contained, formalization-ready sub-requirements
 - architecture modeling: decompose behavior into components, modes, state diagrams, and system constraints
 - specification composition: generate, merge, complete, and consistency-check formal segments with traceability
-- contract-directed code generation: produce modular code from formal specifications and verify modules before assembly
+- contract-directed code generation: produce modular code from requirements and formal specifications, verify modules and models, and assemble the system
 - human-in-the-loop clarification: route ambiguity, contradictions, and verification failures to engineers and formal-methods experts
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "By engaging in the above process, agents can gradually develop a comprehensive understanding of how requirements, architecture, specifications, and code are interrelated."): read the full paper text and study; checked quotations, numbers, section/page references, technique steps, and evaluation claims; corrected the paper link, quotation punctuation, page references, and unsupported step requirements, and labeled recommendations as inference; did not reproduce the case study, run its tools, or validate the Verus adaptations.
