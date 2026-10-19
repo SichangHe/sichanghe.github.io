@@ -4,7 +4,7 @@ Tag: `cazares2026mechanism`, [paper](http://arxiv.org/abs/2607.04534v1)
 
 ## scope and result
 
-This empirical study tests whether models select the fine-grained proof mechanism behind an already verified Lean theorem. FiberRing Set A has 22 clean-anchor items and 13 mechanism labels; each row links a prompt to a named Lean declaration or certificate family. Set B adds six POM/CollisionKernel items and seven labels, for 28 items total. The model classifies a template, a verdict, a reason, and a caveat; it is not asked to generate Lean code. The paper states: “The task requires selecting the correct proof-mechanism label—from a fixed closed template set—for compact mathematical objects drawn from the FiberRing formalization in Lean 4” (Abstract, p. 1). Its central result is that a mechanism-bearing Lean verdict/witness cue improves routing while some granularity errors remain.
+This empirical study tests whether models select the fine-grained proof mechanism behind an already verified Lean theorem. FiberRing Set A has 22 clean-anchor items and 13 mechanism labels; each row links a prompt to a named Lean declaration or certificate family. Set B adds six POM/CollisionKernel items and expands the label set from 13 to 19, for 28 items total (Section 3, pp. 3–4). The model classifies a template, a verdict, a reason, and a caveat; it is not asked to generate Lean code. The paper states: “The benchmark does not ask models to prove the statements or emit Lean code.” (Section 3, p. 3). Its central result is that a mechanism-bearing Lean verdict/witness cue improves routing while some granularity errors remain.
 
 Inference: this isolates an upstream failure relevant to VL. A Verus agent may recognize that a contract is true while choosing the wrong proof architecture—such as a map-preservation lemma instead of a data-structure invariant. Mechanism metadata and source anchors can make that distinction explicit before proof search.
 
@@ -14,19 +14,19 @@ what it is
 
 Every benchmark item is linked to a source snapshot, expected mechanism label, witness-family language, and one or more Lean declaration anchors. Labels are mechanisms rather than broad topics: CRT decomposition, ring equivalence, stable-value transport, ring construction, finite checks, and so on. The manifest separates the natural-language row, the label used for routing, and the formal artifact justifying it.
 
-The paper says the manifest “links a benchmark item to its expected proof-mechanism label, witness-family language, source snapshot, and one or more Lean declaration anchors” (Section 3.1, p. 4). Table 1 reports 22 Set A rows with 7 theorem and 15 theorem-family anchors, 52 source references; Set B has 6 rows, 4 theorem and 2 theorem-family anchors, 10 references (p. 4).
+The paper says: “Each manifest row links a benchmark item to its expected proof-mechanism label, witness-family language, source snapshot, and one or more Lean declaration anchors.” (Section 3.1, p. 4). Table 1 reports 22 Set A rows with 7 theorem and 15 theorem-family anchors, 52 source references; Set B has 6 rows, 4 theorem and 2 theorem-family anchors, 10 references (p. 4).
 
 when to use it
 
-Use this for any verification corpus where broad theorem names conceal distinct proof mechanisms. A closed label set makes confusion matrices interpretable; a manifest makes every label auditable against source code.
+Inference: use this for verification corpora where broad theorem names conceal distinct proof mechanisms. A closed label set supports interpretable confusion matrices; a manifest supports auditing labels against source code.
 
 how to do it
 
-1. Choose a machine-checked corpus and freeze a source snapshot (Section 3, p. 3)
-2. Define mechanism labels at the certificate-family level, not only mathematical topic (Section 3, p. 3)
-3. For each item, record the expected label, witness wording, source snapshot, and declaration anchor (Section 3.1, p. 4)
-4. Store exact prompt rows and metadata separately from the formal source (Section 3.1, p. 4)
-5. Include theorem and theorem-family anchor granularity and report coverage counts (Table 1, p. 4)
+1. Use items anchored to machine-verified artifacts and record the source snapshot (Section 3, pp. 3–4; Table 1, p. 4)
+2. Define mechanism labels at the certificate-family level, rather than only by mathematical topic (Section 3, pp. 3–4)
+3. For each item, record the expected label, witness wording, source snapshot, and declaration anchors (Section 3.1, p. 4)
+4. Store expected templates, verdicts, caveat keywords, and item metadata in the protocol; store exact model inputs in the prompt pack (Section 3, p. 4)
+5. Record anchor granularity and report coverage counts (Section 3.1 and Table 1, p. 4)
 
 Verus form
 
@@ -34,7 +34,7 @@ Inference: attach each Rust verification task to the function, `spec fn`, invari
 
 what shows it works
 
-The manifest covers all 28 rows with zero source-gap rows (Table 1, p. 4). Each Set A evaluation row is anchored to a named Lean artifact, so labels are not free-form judge opinions.
+Table 1 reports 28 rows, 11 theorem and 17 theorem-family anchors, zero source gaps, and 62 source references (p. 4). These counts document anchor coverage; they do not measure an improvement in model performance.
 
 where it fails or assumes
 
@@ -44,19 +44,19 @@ Set A comes from one formalization derived from one equation and has only 22 ite
 
 what it is
 
-The same item is rendered in A1 and A2. A1 provides only the identifier, equation/object, and allowed labels. A2 adds a Lean verdict/witness cue that often names the relevant certificate family. Each model sees both conditions, with three temperature-zero, seed-zero runs per prompt. The paired design attributes changes to the cue for the same item rather than to different samples.
+The same item is rendered in A1 and A2. A1 provides only the identifier, equation/object, and allowed labels. A2 adds a Lean verdict/witness cue that often names the relevant certificate family. Each model sees both conditions, with three temperature-zero, seed-zero runs per prompt. The paired analysis compares A1 and A2 for the same item, model, and run (Section 5, p. 6).
 
-The methodology says A1 is “blind structural routing” and A2 is “mechanism-bearing Lean-cue-conditioned routing” (Section 4, p. 5). The paper reports: “The primary comparison is the A2 − A1 gap, which measures how much explicit formal mechanism metadata improves mechanism selection for the same item distribution” (Section 4, p. 5).
+The methodology says A1 is “blind structural routing” and A2 is “mechanism-bearing Lean-cue-conditioned routing” (Section 4, pp. 4–5). The paper reports: “The primary comparison is the A2 − A1 gap, which measures how much explicit formal mechanism metadata improves mechanism selection for the same item distribution.” (Section 4, p. 5).
 
 when to use it
 
-Use paired ablations when testing retrieval metadata, contracts, or proof hints. Keep task, model, and run fixed; vary one information channel. Treat deterministic repetitions as stability checks rather than independent samples.
+Inference: use paired ablations when testing retrieval metadata, contracts, or proof hints. Keep task, model, and run fixed while varying the supplied information. The authors caution that the repetitions “are best interpreted as deterministic backend-stability repetitions rather than independent samples from a broad item distribution.” (Section 5, p. 6).
 
 how to do it
 
-1. Build A1 with only object text and the closed label set (Section 3, p. 3)
+1. Build A1 with the item identifier, equation or object, and closed label set (Section 3, p. 4)
 2. Build A2 by adding the mechanism-bearing Lean cue (Section 4, p. 5)
-3. Run each prompt three times at temperature 0 and seed 0 for each model (Table 3, p. 5)
+3. Run each prompt three times per model at temperature 0 and seed 0 through Together AI; use low reasoning for gpt-oss-120b and disabled reasoning for Llama 3.3 70B Instruct Turbo (Section 4, p. 4; Table 3, p. 5)
 4. Canonicalize labels and compare exact template accuracy, verdict accuracy, and caveat hits (Section 4, p. 5)
 5. Pair A1 and A2 outputs by item, model, and run; count correct-to-correct, wrong-to-correct, wrong-to-wrong, and correct-to-wrong transitions (Table 5, p. 6)
 
@@ -70,54 +70,54 @@ For Set A, each model-condition cell has n = 66 evaluations (22 items × 3 runs)
 
 where it fails or assumes
 
-The cue is intentionally mechanism-bearing, so A2 tests whether explicit metadata helps rather than whether truth alone suffices. The cue-resistant labels remain wrong even after exposure. The small corpus limits generalization.
+The cue is intentionally mechanism-bearing, so A2 tests whether explicit metadata helps rather than whether truth alone suffices. Some label-pair errors remain after cue exposure; this does not mean every item with those labels is wrong (Table 6, p. 7). The small corpus limits generalization.
 
 ## technique 3: separate template, verdict, and caveat metrics
 
 what it is
 
-The primary metric is exact template accuracy. Verdict accuracy is secondary and distinguishes abstention-accepted from strict matching. Caveat hit rate checks expected keywords in the reason, caveat, and raw response. This prevents a model that knows a statement is true from receiving credit for identifying the proof mechanism.
+The primary metric is exact template accuracy. Verdict accuracy is secondary and distinguishes abstention-accepted from strict matching. Caveat hit rate checks expected keywords in the reason, caveat, and raw response. Inference: separate scores prevent a correct verdict from being mistaken for correct mechanism selection.
 
-The paper states: “Truth inference and proof-mechanism classification are separable capacities” (Section 5, p. 6). For Llama, verdict accuracy is 95.5% in both conditions while template accuracy changes by 13.6 pp (Table 4, p. 6).
+The paper states: “This dissociation confirms that truth inference and proof-mechanism classification are separable capacities.” (Section 5, p. 7). For Llama, verdict accuracy is 95.5% in both conditions while template accuracy changes by 13.6 pp (Table 4, p. 6).
 
 when to use it
 
-Use separate outputs when a verification agent must both establish a property and select a proof plan. Report strict and abstention-accepted verdicts when the blind condition does not expose enough information for a truth judgment.
+Inference: use separate outputs when a verification agent must both establish a property and select a proof plan. The paper distinguishes strict verdict matching from a score accepting Unknown-from-statement in A1 only when the protocol marks it admissible (Section 4, p. 5).
 
 how to do it
 
-1. Require four fields: template, verdict, one-sentence reason, caveat (Section 4, p. 5)
-2. Canonicalize template spelling and verdict variants (Section 4, p. 5)
+1. Require four fields: template, verdict, one-sentence reason, short caveat (Section 4, p. 4)
+2. Canonicalize template case, punctuation, spacing, underscores, and hyphenation; normalize verdict variants (Section 4, p. 5)
 3. Score exact template, strict/abstention-accepted verdict, and caveat keywords separately (Section 4, p. 5)
 4. Inspect the paired gap and confusion matrix rather than aggregate accuracy only (Sections 5 and 6, pp. 6–9)
 
 Verus form
 
-Inference: ask for a certificate-family label, a contract verdict, a concise justification, and assumptions/caveats. Compare the label to the proof declarations that Verus actually uses. A true `ensures` result with a wrong mechanism label should be recorded as a routing error, not a proof success.
+Inference: ask for a certificate-family label, a contract verdict, a concise justification, and assumptions/caveats. Compare the label to the proof declarations that Verus actually uses. Record a wrong mechanism label as a routing error and measure proof success separately.
 
 what shows it works
 
-gpt-oss verdict accuracy increases from 84.8% to 95.5% while template accuracy rises 80.3% to 90.9%; Llama verdict remains 95.5% while template rises 68.2% to 81.8% (Table 4, p. 6). Set B reverses the dissociation: gpt-oss template stays 100.0% while verdict rises 83.3% to 100.0%; Llama template rises 50.0% to 77.8% while verdict stays 100.0% (Table 7, p. 8).
+gpt-oss abstention-accepted verdict accuracy increases from 84.8% to 95.5% while template accuracy rises 80.3% to 90.9%; its strict A1 verdict accuracy is only 31.8% (Table 4 and Section 5, p. 6). Llama strict and abstention-accepted verdict scores both remain 95.5% while template accuracy rises 68.2% to 81.8% (Section 5, pp. 6–7). Set B reverses the dissociation: gpt-oss template stays 100.0% while verdict rises 83.3% to 100.0%; Llama template rises 50.0% to 77.8% while verdict stays 100.0% (Table 7, p. 8).
 
 ## technique 4: confusion analysis of cue-induced and cue-resistant errors
 
 what it is
 
-Instead of treating all mistakes alike, the paper classifies label-pair misroutes by condition. Cue-induced errors disappear with the cue; cue-resistant errors persist. In Set A, CRT→ring-equivalence is cue-induced, while stable-value-map→ring-structure and prime-power-fiber-specialization→ring-equivalence persist.
+Instead of treating all mistakes alike, the paper classifies label-pair misroutes by condition. Cue-induced errors disappear with the cue; cue-resistant errors persist. In Set A, CRT→ring-equivalence disappears under A2. The paper describes stable-value-map→ring-structure and prime-power-fiber-specialization→ring-equivalence as cue-resistant, with a qualification for Llama noted below.
 
-The paper reports: “The dominant failure is CRT → ring-equivalence: gpt-oss-120b misroutes 7 of 12 CRT items (58.3%) under A1 and zero under A2” (Section 5, p. 7). It explains that every CRT row is outerly a ring equivalence, but the intended finer mechanism is coprime factorization followed by `ZMod.chineseRemainder` (Section 6, p. 8).
+The paper reports: “The dominant failure is CRT → ring-equivalence: gpt-oss-120b misroutes 7 of 12 CRT items (58.3%) under A1 and zero under A2; Llama misroutes 6 of 12 (50.0%) under A1 and zero under A2.” (Section 5, p. 7). It explains that every CRT row is outerly a ring equivalence, but the intended finer mechanism is coprime factorization followed by `ZMod.chineseRemainder` (Section 6, p. 8).
 
 when to use it
 
-Use pairwise confusion analysis to decide whether to add metadata, change labels, or accept a genuine granularity boundary. Do not fix a cue-resistant error by simply repeating the same cue.
+Inference: use pairwise confusion analysis to decide whether to add metadata or reconsider label granularity. These experiments do not test whether repeating a cue would help.
 
 how to do it
 
 1. Build a confusion matrix over allowed labels plus an invalid/blank class (Section 4, p. 5)
 2. Restrict analysis to label pairs with at least one error (Table 6, p. 7)
 3. Compare counts in A1 and A2 and preserve denominators (Section 5, p. 7)
-4. Inspect the formal source to determine whether the pair differs by certificate mechanism or only surface wording (Section 6, pp. 8–9)
-5. For cross-corpus validation, repeat on a small independent module and call it an extension, not a replication (Section 5.1, p. 7)
+4. Inspect the formal source to distinguish a mechanism hidden by shared vocabulary from a genuine broad-type/fine-mechanism boundary (Section 6, pp. 8–9)
+5. Extend the evaluation to POM/CollisionKernel modules of the same formalization; treat the six-item Set B as a small extension check (Section 3, p. 4; Section 5.1, p. 7)
 
 Verus form
 
@@ -125,17 +125,17 @@ Inference: classify failures such as `map_preservation`→`invariant`, or `refin
 
 what shows it works
 
-The CRT family has four items and 12 possible predictions per condition across three runs (Table 6, p. 7). gpt-oss misroutes 7/12 (58.3%) in A1 and 0/12 in A2; Llama misroutes 6/12 (50.0%) in A1 and 0/12 in A2. In Set B, CRT-budget-bound→CRT remains 3/3 in both conditions (Section 5.1, p. 7), supporting a cue-resistant granularity pattern.
+The CRT family has four items and 12 possible predictions per condition across three runs (Table 6, p. 7). gpt-oss misroutes 7/12 (58.3%) in A1 and 0/12 in A2; Llama misroutes 6/12 (50.0%) in A1 and 0/12 in A2. In Set B, Llama’s CRT-budget-bound→CRT error remains 3/3 in both conditions (Section 5.1, p. 7). The authors interpret it as another cue-resistant granularity error (Section 5.1, p. 8).
 
 where it fails or assumes
 
-A cue can alter routing rather than produce a monotonic correctness bonus: Llama has three correct-to-wrong transitions (Table 5, p. 6). The paper’s own limitation is that cue-resistant findings have low per-cell counts (Section 7, p. 10).
+A cue can alter routing rather than produce a monotonic correctness bonus: Llama has three correct-to-wrong transitions (Table 5, p. 6). The text says: “Two label pairs produce misroutes in both conditions across both models:” (Section 5, p. 7). However, Table 6 lists Llama’s stable-value-map→ring-structure error only in A2 (3 predictions), with none listed in A1. Inference: the table does not support persistence of that pair across both conditions for Llama; it does support persistence for gpt-oss and persistence of prime-power-fiber-specialization→ring-equivalence for both models. The authors also acknowledge low per-cell counts (Section 7, p. 10).
 
 ## what is proved, trusted, and still open
 
-The Lean corpus artifacts are machine-verified, but the model outputs are classifications judged by exact matching and keyword rules; no generated proof is kernel-checked. Trusted layers include the source snapshot, declaration-to-label mapping, prompt renderer, canonicalizer, and evaluation protocol. Inference: for VL, a manifest can expose proof architecture, but it does not prove that the architecture or contract is the right product requirement.
+The paper evaluates classification of statements anchored to Lean-verified artifacts, rather than generated proofs (Section 3, p. 3). Template and verdict outputs are normalized and matched, while caveats use keyword hits (Section 4, p. 5). Inference: interpreting the results relies on the source snapshot, declaration-to-label mapping, prompt renderer, canonicalizer, and evaluation protocol. For VL, a manifest can expose proof architecture, but it does not establish that the architecture or contract is the right product requirement.
 
-The headline numbers use clear denominators: n = 66 per Set A cell, three deterministic runs of 22 items; Set B n = 18 per cell, six items × three runs (Tables 4 and 7). The paper correctly distinguishes point estimates from independent statistical samples and says the “ceiling” is operational for this fixed protocol (Section 7, p. 10). No arithmetic contradiction is apparent in the reported fractions.
+The headline numbers use clear denominators: n = 66 per Set A cell, three deterministic runs of 22 items; Set B n = 18 per cell, six items × three runs (Tables 4 and 7). The paper states: “Here “ceiling” is used operationally: it names the observed blind-routing saturation in this fixed Set A protocol, not a universal upper bound for the model family.” (Section 7, p. 10). Inference: the reported fractions and rounded percentages are arithmetically consistent.
 
 Inference: threat to agent-written verified Rust is moderate to high at proof planning time. Verus may reject a wrong mechanism, but an agent can waste search on the wrong abstraction or choose a stronger, easier contract. VL should keep source anchors, distinguish broad property from certificate family, and measure routing before proof generation. Existing work already does machine-checked Lean artifact anchoring and paired mechanism-cue evaluation; VL should adapt those ideas to Rust contracts and invariants instead of repeating a natural-language classifier without kernel evidence.
 
@@ -145,4 +145,4 @@ Inference: threat to agent-written verified Rust is moderate to high at proof pl
 - paired cue ablation — compare blind and mechanism-metadata conditions on the same item, model, and run
 - separated routing metrics — score mechanism template, truth verdict, and caveat evidence independently
 - cue-induced confusion analysis — distinguish errors fixed by metadata from errors caused by label granularity
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In paired terms, gpt-oss-120b has 7 wrong-to-correct transitions and no correct-to-wrong transitions; all 7 improvements are CRT rows."): checked every quotation, number, section/page reference, technique step, and source-versus-inference distinction; corrected the label-count expansion, quotations, references, unsupported recommendations, and Llama persistence claim; did not inspect the repository, rerun model evaluations, or independently verify Lean artifacts.

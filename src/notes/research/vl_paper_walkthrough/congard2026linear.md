@@ -4,7 +4,7 @@ Tag: `congard2026linear`, [paper](https://doi.org/10.1007/978-3-032-22720-1_8)
 
 ## scope and result
 
-Congard, Munch-Maccagnoni, and Douence develop linear and ordered call-by-push-value calculi for allocation, exceptions, and destructor-like cleanup. The paper's abstract says: “We analyse the problem of combining linearity, effects, and exceptions, in abstract models of programming languages, as the issue of providing some kind of strength for a monad T (− ⊕ E) in a linear setting.” (Abstract, p. 195). Their concrete resource model treats a free list of resources as state. The two basic operations are “new : I ⊸ R ⊕ I acquires a resource, or fails if there are no resources available” and “delete : R ⊸ I releases the given resource without fail.” (Section 1.5, p. 195). The result is a type-directed safety theorem: closed programs returning a resource-free positive value return the original free list up to permutation in the linear calculus, and exactly unchanged in the ordered calculus. The authors then add exceptions, chosen destructors, and an effectful move operation, translating the richer calculus into the proven core.
+Congard, Munch-Maccagnoni, and Douence develop linear and ordered call-by-push-value calculi for allocation, exceptions, and destructor-like cleanup. The paper's abstract says: “We analyse the problem of combining linearity, effects, and exceptions, in abstract models of programming languages, as the issue of providing some kind of strength for a monad T (− ⊕ E) in a linear setting.” (Abstract, p. 190). Their concrete resource model treats a free list of resources as state. The two basic operations are “new : I ⊸ R ⊕ I acquires a resource, or fails if there are no resources available” and “delete : R ⊸ I releases the given resource without fail.” (Section 1.5, p. 195). The result is a type-directed safety theorem: terminating closed programs returning a purely positive, resource-free value return the original free list up to permutation in the linear calculus, and exactly unchanged in the ordered calculus. The authors then add exceptions, chosen destructors, and an effectful move operation, translating the richer calculus into the proven core.
 
 Inference: the paper is a semantic design and proof blueprint for resource protocols; it is not a Rust or Verus implementation benchmark, and it gives no empirical denominator such as program count or runtime.
 
@@ -12,19 +12,19 @@ Inference: the paper is a semantic design and proof blueprint for resource proto
 
 what it is: represent available resources by a list and interpret an effectful computation as a linear state transformer. The paper defines “T A = [R] ⊸ A ⊗ [R]” (Section 1.5, p. 196). `new` pops a resource or returns an error when the list is empty; `delete` pushes a resource and cannot fail. A closed computation receives an initial free list and produces a value plus a final list.
 
-when to use: use this model when the property of interest is allocation, release, and no double release, while resource contents are intentionally abstract. The paper explicitly says, “we are only interested in observing resource-safety properties of the program state arising from the (correct) use of new and delete.” (Section 1.5, p. 195).
+when to use: Inference: use this model when the property of interest is allocation, release, and no double release, while resource contents are intentionally abstract. The paper explicitly says, “we are only interested in observing resource-safety properties of the program state arising from the (correct) use of new and delete.” (Section 1.5, p. 196).
 
 how to do it:
 
-1. choose an atomic resource type `R` and a list `[R]` as allocator state (Section 1.5, p. 196)
+1. choose an atomic resource type `R` and use a list `[R]` as allocator state (Section 1.5, pp. 195–196)
 2. define `T A` as the linear state transformer ` [R] ⊸ A ⊗ [R]` (Section 1.5, p. 196)
 3. define `new` to pop the head, returning `ι1 r`, or `ι2 ()` on `Nil`; define `delete` to push `r` (Sections 1.5 and 2.4, pp. 196, 200)
 4. run a closed program with an arbitrary initial list and inspect the final list (Section 1.5, p. 196)
-5. for a positive result type with no `R`, prove the final list is a permutation of the initial list; in the ordered fragment prove identity (Section 3, pp. 201–204)
+5. for a purely positive result type with no `R`, prove the final list is a permutation of the initial list; in the ordered fragment prove identity (Section 3, pp. 201–204)
 
-Verus form. Inference: model the free list as an executable `Seq<R>` or a ghost sequence, and expose allocator transitions through a verified API. Use `requires` to require that `delete` receives an owned live resource and `ensures` to state that it adds exactly that resource; use a `spec fn` to state permutation or multiset equality of initial and final ghost lists. A Verus `proof fn` can establish preservation lemmas for push/pop, while executable Rust owns the actual resource handle. Inference: Verus does not automatically provide the paper's linear type discipline, so the API must prevent copying handles and make invalid states unrepresentable or explicitly assumed.
+Verus form. Inference: model the free list as a ghost sequence and expose allocator transitions through an ownership API. Specify that release consumes one live handle and adds its resource to the free list. Prove sequence equality for ordered cleanup or multiset equality when order is irrelevant. This would be an additional encoding and proof, not a result established by the paper.
 
-evidence and limits: the evidence is a formal definition and theorems, not experiments. The paper states that resource safety means “all allocated resources are released by the end of the program,” “only previously-allocated resources are released,” and “no resource has been released twice” (Section 3, p. 202). The model abstracts away operations that use a resource and assumes the only observable action is release; it therefore does not prove functional correctness of resource contents.
+evidence and limits: the evidence is a formal definition and theorems, not experiments. The paper states that resource safety means “all allocated resources are released by the end of the program,” “only previously-allocated resources are released,” and “no resource has been released twice” (Section 3, p. 202). The model supplies no operation for using resources between allocation and release; it therefore does not prove functional correctness of resource contents.
 
 ## technique 2: ordered contexts for LIFO safety
 
@@ -36,15 +36,15 @@ how to do it:
 2. shape a context as `Θ = Γ ; L ; Δ`, where `L` is the ordered resource list and variables occur around it (Section 3.1, p. 202)
 3. define `LR(t)` as the resource list recorded by the typing derivation and define context concatenation only in the three well-formed cases given by the paper (Section 3.1, p. 202)
 4. prove left and right substitution lemmas preserving concatenated resource lists (Lemma 8, p. 203)
-5. prove reduction preserves the list (Theorem 9, p. 203), then conclude that a closed resource-free positive program has final list exactly equal to its initial list (Proposition 6, p. 202)
+5. prove reduction preserves the list (Theorem 9, p. 203), then conclude that a terminating closed program returning a purely positive, resource-free value has final list exactly equal to its initial list (Proposition 6, p. 202)
 
-Verus form. Inference: represent an ordered ownership stack as a ghost `Seq<HandleId>` and make each proof operation preserve its exact sequence. Use `requires` for a stack-shape invariant and `ensures` for equality of the post-state sequence; loop invariants or `proof fn` lemmas can mirror Theorem 9. Rust's borrow checker enforces lexical borrowing constraints but does not by itself prove arbitrary destructor order, so the order claim remains a Verus specification.
+Verus form. Inference: represent ordered ownership as a ghost sequence of handle identifiers. Give operations contracts describing their effect on the sequence, and prove that completed cleanup restores the initial free list. These contracts would require a separate Verus proof.
 
-evidence and limits: Proposition 6 states “if ⟨t | ⋆ | l⟩ ⇝∗ ⟨v | ⋆ | l′ ⟩ then l′ = l.” (Section 3.1, p. 202). The guarantee relies on no exchange and on a resource-free positive result. It is specifically LIFO; adding unrestricted exchange weakens the result to permutation.
+evidence and limits: Proposition 6 states that a terminating run of a closed expression of purely positive, resource-free type in `O` leaves the free list identical to its initial value (Section 3.1, p. 202). The guarantee relies on no exchange and on a purely positive, resource-free result. It is specifically LIFO; adding unrestricted exchange weakens the result to permutation.
 
 ## technique 3: test a proposed rule with a typed counterexample
 
-what it is: reject right functions in the ordered calculus by constructing a well-typed term that reverses two resources. This is a reusable method for checking whether an apparently harmless language feature breaks a safety invariant.
+what it is: reject right functions in the ordered calculus by constructing a well-typed term that reverses two resources. Inference: this is a reusable method for checking whether a proposed language feature breaks a safety invariant.
 
 how to do it:
 
@@ -53,7 +53,7 @@ how to do it:
 3. follow the operational reductions from initial list `r0 :: r1 :: l`
 4. observe the final list `r1 :: r0 :: l`, contradicting LIFO (Section 3.2, p. 204)
 
-Verus form. Inference: encode the intended stack order as a ghost sequence and write a small executable test whose postcondition requires equality with the original sequence. A `proof fn` should show that every allowed operation preserves order; the counterexample should fail verification when the API exposes an operation equivalent to right application. Do not model `invariant(...)` as a call; use loop invariants only where a loop exists.
+Verus form. Inference: encode the intended stack order as a ghost sequence and model the counterexample’s allocation and release steps. The final sequence differs from the initial sequence, exposing why an API that permits this trace cannot promise exact restoration.
 
 evidence and limits: the paper gives a concrete derivation and reduction, not a statistical test. It proves a language-design incompatibility under the stated ordered semantics, not that all right-function implementations are unsafe in every language.
 
@@ -63,15 +63,15 @@ what it is: establish the core calculus's operational soundness before resource 
 
 how to do it:
 
-1. define typing for expressions, stacks, and commands, including an axiom typing each runtime resource `r_n : R` (Section 2.5, p. 200)
-2. prove substitution (Lemma 3, p. 200)
-3. prove subject reduction: every reduction preserves the command typing (Theorem 4, p. 200)
-4. prove progress: every well-typed command reduces unless it is a final value with an empty stack (Theorem 5, p. 200)
-5. combine these with the resource-list invariant to obtain safety for terminating runs; the theorem does not require termination (Sections 2.5 and 3, pp. 200–201)
+1. define typing for expressions, stacks, and commands, including an axiom typing each runtime resource `r_n : R` (Section 2.5, p. 201)
+2. prove substitution (Lemma 3, p. 201)
+3. prove subject reduction: every reduction preserves the command typing (Theorem 4, p. 201)
+4. prove progress: every well-typed command reduces unless it is a final value with an empty stack (Theorem 5, p. 201)
+5. combine these with the resource-list invariant to obtain safety for terminating runs; the theorem does not require termination (Sections 2.5 and 3, pp. 201–204)
 
-Verus form. Inference: use `spec fn` predicates for well-typed machine states, `requires`/`ensures` on transition functions, and `proof fn` lemmas for substitution and preservation. For a loop, provide a loop invariant with Verus syntax supported by the local Verus guide; do not put `ensures` on a `spec fn` or call a proof function at runtime.
+Verus form. Inference: define predicates for well-typed machine states and prove that each transition preserves typing and the resource-accounting invariant. This would verify a model of the machine; connecting an executable resource API to it would require a separate proof.
 
-evidence and limits: Proposition 2 establishes deterministic reduction (p. 200), and Theorems 4–5 establish preservation and progress. The result permits infinite reduction, so it is a safety theorem rather than a termination theorem.
+evidence and limits: Proposition 2 establishes deterministic reduction (p. 201), and Theorems 4–5 establish preservation and progress. The proof does not rely on termination; it does not establish termination (Section 2.5, p. 201, footnote 4).
 
 ## technique 5: compile exceptions and destructors into the linear core
 
@@ -79,30 +79,30 @@ what it is: extend ordered CBPV with `new` that raises on allocation failure, `d
 
 how to do it:
 
-1. assign every positive type a chosen destructor; for example `drop_R = λr. delete r` and for a pair drop the second component before the first (Section 4.3, p. 207)
+1. assign every positive type a chosen destructor; for example `drop_R = λr. delete r` and for a pair drop the second component before the first (Section 4.3, pp. 207–208)
 2. define `drop_ctx` to drop a context right-to-left, `unwind` to clean a context while retaining an exception, and `raise` to inhabit a type after cleanup (Section 4.3, pp. 208–209)
-3. translate values to positive interpretations and expressions to linear expressions, inserting explicit coercions (Section 4.3, p. 208)
-4. translate `let` so an exception branch invokes `raise` after dropping the continuation context; translate `try` by case analysis on the computation result (Section 4.3, p. 209)
+3. give each type `A` a positive interpretation `A+` and a negative interpretation `A−`; translate values to `A+` and expressions to `⇓ A−`, where `⇓ B = B & 1` is a lazy pair; translate the context to `Γ+` and insert explicit coercions for positive values used as expressions (Section 4.3, p. 208)
+4. translate `let` by case analysis on the computation result, invoking `raise` on the exception branch to arrange cleanup of the continuation context; translate `try` by case analysis that runs the normal continuation or the exception handler (Section 4.3, p. 209)
 5. apply the core resource theorem to the translated term (Theorem 11, p. 209)
 
-Verus form. Inference: represent a destructor as a verified function with a contract that consumes an owned value and establishes cleanup. Encode exception paths with Rust `Result` and prove both `Ok` and `Err` branches clean the ghost ownership state. Use `requires`, `ensures`, `spec fn`, and `proof fn`; `external_body` should be reserved for genuinely trusted external implementations, not the function being verified.
+Verus form. Inference: specify cleanup functions that consume owned values and update a ghost ownership model. Represent error paths with `Result` and prove cleanup on both success and error branches. The paper assumes release cannot fail; an analogous encoding would need a corresponding assumption or proof.
 
 evidence and limits: Theorem 11 proves final-list permutation for the move-enabled calculus and identity when `move` is absent (p. 209). The theorem assumes the exception type is purely positive and resource-free and relies on the translation being well typed; it does not verify a real Rust panic runtime.
 
 ## technique 6: treat move as an effectful exchange
 
-what it is: expose reordering as an explicit operation whose execution can change destructor order, rather than as a pure structural exchange. The paper's example allocates `r`, `s`, and `t`, then uses `move` to change cleanup order when allocation of `t` fails (Section 4.2, pp. 207–208).
+what it is: expose reordering as an explicit operation whose execution can change destructor order, rather than as a pure structural exchange. The paper's example allocates `r`, `s`, and `t`, then uses `move` to change cleanup order when allocation of `t` fails (Section 4.2, p. 207).
 
 how to do it:
 
 1. define `move(x) in t` to place `x` on top of the stack (Section 4.1, p. 206)
-2. compare two programs that both free three resources in reverse order but differ by a `move` before cleanup (Section 4.2, p. 207)
+2. compare two programs that both free three resources in reverse order but differ by moving `r` before allocating `t` and moving `s` before explicitly dropping it (Section 4.2, p. 207)
 3. run both under an initial free list `[r0, r1]` and force allocation failure for `t`
 4. observe final lists `[r0, r1]` versus `[r1, r0]`; therefore `move` is effectful and cannot be a contextual isomorphism for arbitrary types (Section 4.2, p. 207)
 
-Verus form. Inference: model `move` as a state transition with an explicit postcondition describing the new ghost order. Do not silently use commutativity of a sequence; prove only the permutation or order property required by the API. If VL does not need observable destructor order, a simpler multiset contract may be sufficient, but that is a product decision rather than a result of this paper.
+Verus form. Inference: model `move` as a state transition with an explicit postcondition describing the new ghost order. Do not silently use commutativity of a sequence; prove only the permutation or order property required by the API. If VL needs only conservation of resources, a multiset contract may suffice; this is an application suggestion.
 
-evidence and limits: the evidence is the two reduction traces and the contextual-isomorphism argument. It assumes destructor order is observable through the free list; real Rust may hide or expose different effects.
+evidence and limits: the evidence is the two program examples, their different final free lists on allocation failure, and the contextual-isomorphism argument. It assumes destructor order is observable through the free list; real Rust may hide or expose different effects.
 
 ## technique 7: validate ordered rules with a presheaf model
 
@@ -114,17 +114,17 @@ how to do it:
 2. define tensor by splitting a list into `l1 ++ l2 = l`, and interpret the allocation state as the list presheaf `[R]` (Section 5, p. 210)
 3. use the endofunctor isomorphism `A ⊗ F B ≃ F (A ⊗ B)` to interpret the allowed ordered rules (Equation 16, p. 210)
 4. observe that a right function would require the unavailable isomorphism `F A ⊗ B ≃ F (A ⊗ B)`, exactly the resource reordering in the counterexample (Section 5, p. 210)
-5. prove substitution and semantic soundness of reduction in the model (Lemma 12 and Theorem 13, p. 210)
+5. prove substitution and show that each reduction preserves the interpretation of a command (Lemma 12 and Theorem 13, p. 210)
 
 Verus form. Inference: treat this as a specification-model check for an ownership API: define a ghost sequence model, prove that each API operation refines the model transition, and reject operations whose refinement would require exchanging sequence segments. A Verus proof of the model correspondence would be an additional assurance layer, not a replacement for executable testing.
 
-evidence and limits: Theorem 13 states, “For all L, c, c′ such that L ⊢o c and L ⊢o c′ , if c ⇝ c′ then c = c′.” (Section 5, p. 210). The model is mathematical and resource-order specific; the authors leave richer presheaf constructions for the linear and move-enabled settings as future work (Section 5.1, p. 211).
+evidence and limits: Theorem 13 establishes equality of the interpretations of a command and its reduct, not syntactic equality of the commands (Section 5, p. 210). The model is mathematical and resource-order specific; the authors leave richer presheaf constructions for the linear and move-enabled settings as future work (Section 5.1, p. 211).
 
 ## what is proved, what remains trusted, and implications for VL
 
-The paper proves determinism, substitution, subject reduction, progress, ordered list preservation, linear permutation preservation, and the translated exception/destructor theorem. It measures nothing experimentally. Trusted assumptions include the typing rules, the semantic translation, the abstract allocation monad, and the premise that a result type and exception type contain no resource. Resource contents, OS allocator behavior, Rust compiler correctness, and the adequacy of any Verus encoding remain outside the proof.
+The paper proves determinism, substitution, subject reduction, progress, ordered list preservation, linear permutation preservation, and the translated exception/destructor theorem. It reports no experimental measurements. The resource theorems concern closed programs returning purely positive, resource-free values; Theorem 11 additionally assumes a purely positive, resource-free exception type. Release is assumed never to fail. The translation is proved well typed, rather than merely assumed to preserve resource safety.
 
-Inference: the threat to agent-written verified Rust is moderate at the ownership-protocol level. The paper gives a precise recipe for specifying cleanup on success and failure, but it does not address unsafe pointer validity, concurrency, FFI, or whether a Verus contract states the product requirement. VL should not redo the paper's core calculus or its LIFO counterexample. A useful integration is a Verus library that exposes owned resource handles, explicit cleanup contracts, and a ghost sequence or multiset theorem for `Result` error paths, together with regression tests for destructor order.
+The authors state the model’s scope explicitly: “Notice that no operation is given for interacting with resources: we are only interested in observing resource-safety properties of the program state arising from the (correct) use of new and delete.” (Section 1.5, p. 196). Inference: applying these results to VL would require separate justification for the resource API, its Verus contracts, and the connection to executable Rust. A possible application is an owned-handle API with explicit cleanup contracts and a ghost sequence or multiset proof covering `Result` error paths. The paper supplies no such implementation or proof.
 
 ## techniques for the catalog
 
@@ -136,4 +136,4 @@ Inference: the threat to agent-written verified Rust is moderate at the ownershi
 - effectful move — represent ownership reordering as an explicit stateful operation
 - presheaf semantics — model ordered resource lists to validate admissible rules and sound reduction
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It is not presented as a structural rule in the traditional way: it indeed performs an effect and does not commute with other rules."): checked all quotations, page and section references, theorem assumptions, technique steps, and the DOI; corrected page references, purely-positive result restrictions, translation details, and semantic equality, and marked application suggestions as inferences; did not independently reconstruct the proofs, check cited works, or implement or verify the proposed Verus encodings.
