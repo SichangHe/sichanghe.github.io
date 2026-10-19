@@ -1,79 +1,90 @@
 # Do AI models help produce verified bug fixes?
 (authored by agents unless marked 🧑)
-Tag: `huang2025verifiedbugfixes`, [paper](http://arxiv.org/abs/2507.15822v2)
+Tag: `huang2025verifiedbugfixes`, [paper](https://arxiv.org/abs/2507.15822v2)
 
 ## what the paper measures
 
-Huang et al. study whether programmers using an LLM produce more verified bug fixes and how they use it. They randomly assign volunteers to an AI group or a no-AI group, give both the same nine buggy Eiffel classes, and require each attempted fix to pass AutoProof, an Eiffel verifier based on Hoare logic and Boogie-Z3. The AI group may use GPT-4o mini through duck.ai; the control group may use no LLM or other AI. The paper's acceptance condition is static verification against contracts, invariants, and postconditions: “no code is ever executed, no test cases are ever needed.” (Section 5, p. 3). It defines the distinction under test: “A fix is valid if it leads to a valid program (syntactically and type-wise correct, in other words able to be compiled and run) and removes the failure or failures that were observed.” (Section 2, p. 2). The study is an empirical design and workflow source for verified repair; transfer to Rust and Verus is an inference.
+Huang et al. study whether LLM access helps programmers produce verified bug fixes and how programmers use that access. Volunteers were randomly assigned to AI and no-AI groups and attempted nine buggy Eiffel classes using AutoProof. The AI group used GPT-4o mini through duck.ai. The authors state: “All participants in the LLM group used only one LLM, GPT-4o mini from Open AI, through the duck.ai interface.” (Section 7, PDF p. 6). Both groups used static verification: “no code is ever executed, no test cases are ever needed.” (Section 5, PDF p. 4).
+
+The correctness claim is relative to contracts and proof tools. The paper explicitly qualifies it: “it only expresses that the program is correct with respect to the given contracts, ignoring any other aspects; and it is dependent on the correctness of the proof tools themselves.” (Section 2, PDF p. 2). Inference: this is a methodological source for a Rust/Verus repair study, not evidence that its outcomes transfer to those tools.
 
 ## technique 1: proof-tool-backed randomized repair study
 
-what it is: define a Goal-Question-Metric (GQM) study before collecting results, randomize participants to AI and no-AI groups, and use a formal verifier for every submitted correction. The two goals are whether LLM use helps and how programmers use it. Queries cover solved-task counts, time, incorrect fixes, experience, prompt categories, and interaction patterns (Sections 2–3, pp. 2–3). The authors emphasize that their questions and metrics were fixed before running the experiment to avoid post-hoc confirmation bias (Section 3, p. 3).
+what it is: define goals, queries, and metrics before running the experiment; randomly assign LLM access; assess corrections with a formal verifier. The paper uses the GQM method and asks whether LLM use helps and how programmers use it. Its queries cover solved tasks, time, incorrect submissions, participant experience, prompts, and output use (Section 3, PDF pp. 2–3). The authors state that their research questions “were defined as we were setting up the experiments, but before running them, and we did not modify them in any way afterwards” (Section 3, PDF p. 3). This describes advance definition, not a claim of public preregistration.
 
-how to apply it:
-1. write goals, concrete questions, and numeric metrics before observing outcomes (Section 3, p. 3)
-2. recruit participants with enough language and programming knowledge; randomly assign them to AI or no-AI (Section 6, p. 4)
-3. provide identical buggy programs and a verifier-backed submission workflow (Sections 5–6, pp. 3–4)
-4. log every attempt, verification result, elapsed time, participant experience, and prompt or tool interaction (Section 6, p. 4)
-5. compare task counts and times by group while reporting the small-sample limitation (Section 7, p. 4)
+how to apply it, following the experiment:
+1. define goals, concrete queries, and numerical metrics before running sessions (Section 3, PDF pp. 2–3)
+2. recruit volunteers with programming experience and at least basic Eiffel knowledge; assign groups randomly (Section 6, PDF pp. 4–5)
+3. provide buggy programs, AutoProof access, and group-specific instructions about AI access (Sections 5–6, PDF pp. 4–5)
+4. collect questionnaires, submitted programs, and screen-sharing recordings to reconstruct attempts and interactions (Section 6, PDF p. 5)
+5. compare outcomes by group while preserving the study's small-sample limitation (Sections 7–8, PDF pp. 5–8)
 
-Verus form: Inference: replace Eiffel contracts with Verus `requires`, `ensures`, and loop `invariant` clauses; compile each patch with Verus and record pass/fail, diagnostics, and time. Randomization and GQM transfer directly. Verus acceptance must include the exact Rust build and dependency versions. A passing proof establishes only the supplied specification, as the paper itself warns for contracts.
+Verus form: Inference: replace Eiffel contracts with Verus specifications, run Verus on candidate patches, and record outcomes, diagnostics, and elapsed time. Reuse the random assignment and advance definition of metrics. Record the Verus version and build environment so results can be reproduced. These are proposed adaptations, not steps evaluated in the paper.
 
-evidence and limits: 29 people volunteered; 25 participated: 10 AI-assisted and 15 non-AI-assisted, because all four no-shows were in the AI group (Section 6, p. 4). Each session lasted at most two hours and used nine tasks of increasing difficulty (Sections 6 and 8, pp. 4–5). The authors state the sample is too small for detailed statistical analysis or sweeping generalizations (Section 7, p. 4). Their figures suggest non-AI participants solved more tasks correctly overall, while LLM help helped some easy tasks and no AI participant solved Task 9; the chart does not provide a single tabulated denominator for each task, so these observations should not be converted into exact rates.
+evidence and limits: “In all we have 10 exploitable AI-assisted results and 15 non-AI-assisted (including the one without video).” (Section 6, PDF p. 5). Of 29 volunteers, 25 participated; all four no-shows belonged to the AI group. Sessions lasted at most two hours, and one no-AI participant did not share a screen (Section 6, PDF p. 5). The paper therefore analyzes 24 recordings (Section 9, PDF p. 9). The authors state: “This article consequently refrains from any detailed statistical analysis (which the numbers do not justify) and from drawing sweeping general conclusions.” (Section 7, PDF p. 5).
+
+The overall comparison favors the no-AI group: “Non-AI-assisted programmers solve more tasks correctly and fewer tasks incorrectly!” (Section 8.1, PDF p. 7). For time on successful fixes, the authors call the evidence inconclusive, suggest some help on easier tasks and Task 8, and report that no AI-assisted participant finished Task 9 (Section 8.1, PDF p. 7). Inference: these observations do not establish a general causal effect across models, languages, or populations.
 
 ## technique 2: contract-based verified repair loop
 
-what it is: present a pre-filled buggy class, let a participant edit it, and require clicking Verify after the initial bug and after every correction attempt. AutoProof first compiles Eiffel and then checks contracts and class invariants. A program passes only when constructors establish the invariant and every exported feature preserves its precondition, postcondition, and invariant (Section 5, p. 3).
+what it is: start with a pre-filled buggy class, run Verify, edit, and verify again. AutoProof first uses the EiffelStudio compiler; only successful compilation proceeds to verification through Boogie and Z3 (Section 5, PDF p. 4). The program's constructors must establish the class invariant. Exported features are checked assuming their preconditions and the invariant, and must terminate satisfying their postconditions and the invariant. Preconditions are assumptions at entry, not properties that the feature must preserve.
 
-how to apply it:
-1. define a precise contract, including preconditions, postconditions, and class invariants (Section 5, p. 3)
-2. seed a known bug in executable code while retaining the contract (Section 6, p. 4)
-3. run the verifier on the buggy version to expose a failure (Section 6, p. 4)
-4. edit the code or ask an LLM for a candidate, then submit the complete program to the verifier (Section 6, p. 4)
-5. accept the patch only when compilation and proof succeed; retain failed diagnostics for the next repair step (Section 5, p. 3)
+how to apply it, following the experiment:
+1. provide a buggy Eiffel class with contracts; the tasks include bugs in code and in specifications (Sections 5 and 8, PDF pp. 4 and 6)
+2. click Verify on the initial version to obtain the failure messages (Section 6, PDF p. 5)
+3. attempt a correction and click Verify after each attempt (Section 6, PDF p. 5)
+4. use the compilation and verification results to assess that candidate (Section 5, PDF p. 4)
+5. submit the task's final solution even if it does not work (Section 6, PDF p. 5)
 
-Verus form: Inference: model the same loop as candidate Rust plus Verus contracts; run `verus` after each edit and feed the diagnostic text back to the agent. Use `ensures` on executable functions and `invariant` declarations inside loops. Do not use `external_body` on the function under verification, because that removes the implementation from the proof obligation.
+The task instructions say: “After each task, send your solution (working or not)” (Section 6, PDF p. 5). Submission therefore does not mean successful repair. Nor does the paper require all contracts to remain unchanged: Task 5's bug is that “the precondition of the routine set_hour incorrectly allows hour to take the value 24” (Section 8, PDF p. 6).
 
-evidence and trusted boundary: the paper distinguishes a valid fix that removes observed failures from a correct fix that removes the underlying fault; tests can overfit, while a proof checks the stated contract (Section 2, p. 2). The verifier and its libraries remain trusted, and the contract itself may omit a real requirement. Inference: in VL, specification review and dependency assumptions remain outside the verifier's guarantee.
+Verus form: Inference: use candidate Rust plus Verus specifications, invoke Verus after each correction, and retain failed diagnostics for the next attempt. Review whether a proposed specification change expresses the intended behavior. A successful proof alone cannot justify weakening that behavior. Record separately whether a candidate was submitted, compiled, or verified.
 
-## technique 3: evidence-preserving LLM collaboration
+evidence and trusted boundary: the paper distinguishes a valid fix, which removes observed failures, from a correct fix, which removes the fault (Section 2, PDF p. 2). Its proof-based assessment still depends on the given contracts and proof-tool correctness, as quoted above. Inference: Verus specifications and trusted assumptions need review separately from proof success.
 
-what it is: use the model as a collaborator that sees the candidate code and verifier output, proposes a small diff, and explains or ranks alternatives. The paper's observations distinguish seven usage patterns: independent, prejudiced, searcher, copy-paster, follower, collaborator, and quitter (Section 9.2, pp. 6–7). The collaborator pattern supplies code and/or tool output, interprets suggestions, adapts generated code, and progressively enriches prompts; the authors report it as the most successful observed pattern. The taxonomy says: “The collaborator: Uses the AI tool as a form of pair debugger.” (Section 9.2, p. 7).
+## technique 3: LLM collaboration using code and verifier output
 
-how to apply it:
-1. provide the current candidate code and the complete verifier diagnostics (Section 9.3, p. 7)
-2. ask for a diff rather than a wholesale rewrite (Section 9.3, p. 7)
-3. inspect each proposed change and keep only changes that address the diagnostic (Section 9.3, p. 7)
-4. rerun the verifier and include the new output in the next prompt (Section 9.3, p. 7)
-5. stop and restart reasoning when repeated attempts follow an unverified hypothesis (Section 9.3, p. 7)
+what it is: treat the LLM as a pair debugger whose suggestions the programmer interprets and adapts. The taxonomy says: “The collaborator: Uses the AI tool as a form of pair debugger.” (Section 9.2, PDF p. 9). The authors describe collaborators as supplying code and/or tool output, deciding whether to apply suggestions, adapting generated code, and progressively enriching prompts. Their proposed strategy is based on this observed pattern, not on a separate experiment testing that strategy.
 
-Verus form: Inference: give a VL agent the Rust diff and Verus error, ask it to modify only the relevant contract or proof, and preserve a machine-readable patch history. Require a fresh Verus run after every patch. Keep model advice separate from proof evidence; only Verus output is acceptance evidence.
+how to apply it, following the proposed strategy:
+1. “Provide both the candidate code and the verifier’s output.” (Section 9.3, PDF p. 10)
+2. “Ask not just for a proposed solution but for the “diff” (list of individual differences) with the previous version.” (Section 9.3, PDF p. 10)
+3. “Review the proposed fix.” (Section 9.3, PDF p. 10)
+4. rank suggestions rather than treating all alternatives as equally useful (Section 9.3, PDF p. 9)
+5. stop pursuing an unverified answer when further variations lack a sound basis; consider starting afresh (Section 9.3, PDF p. 10)
 
-evidence and limits: among observed prompts, 97.7% contained natural language, 48.3% code, and 43.7% AutoProof/EiffelStudio output (Section 8.2, p. 6); categories overlap, so they sum above 100%. Solved tasks used 2.8 prompts on average and unsolved tasks 3.6. Half of participants never copy-pasted an LLM answer; those who did copied less than once per task except one participant with 18 copy-pastes, and only one copied result became the final version (Section 8.2, p. 6). These figures describe 10 AI participants and are observational, not causal.
+Verus form: Inference: provide a VL agent with candidate Rust and Verus diagnostics, request a diff, review the proposed changes, and run Verus again. Keep patch history and proof outcomes distinct from model explanations. This adapts the paper's advice; it does not establish its effectiveness for VL.
+
+evidence and limits: the paper reports that 97.7% of prompts contained natural language, 48.3% code, and 43.7% tool output (Section 8.2, PDF p. 8). It explains: “The total is more than 100% since a prompt can contain elements of several kinds.” Solved tasks used 2.8 prompts on average, compared with 3.6 for unsolved tasks. Half of participants did not copy-paste from LLM answers; others did so less than once per task except one participant with 18 copy-pastes. The precise final-code observation is: “Only once was the copy-pasted result part of the final version.” (Section 8.2, PDF p. 8). This does not say that an entire copied answer became the final solution.
 
 ## technique 4: prompt and behavior taxonomy for repair risk
 
-what it is: classify prompts and user behavior from full-session recordings to expose failure modes that final code alone hides. The authors identify a hallucination loop: the model gives a plausible but wrong fix, the programmer submits it, verification fails, and the programmer keeps trying variants without understanding the cause (Section 9.1, p. 6). They also identify noisy solutions, neutrality (unranked alternatives), and timidity (small unguided variations).
+what it is: inspect full-session recordings to identify behavior that final programs alone would hide. Section 9.1 describes a hallucination loop: “The AI tool makes an incorrect guess about how to correct a bug; the programmer tries it, the result does not verify, the programmer tries to fix it, and gets into a fruitless try-verify-fail loop.” (PDF p. 9). It also describes noisy solutions containing useful and irrelevant changes, neutrality among alternatives of unequal value, and timidity in trying small variations without logical reasoning (Section 9.1, PDF p. 9).
 
-how to apply it:
-1. record the complete repair session, including prompts, edits, verifier messages, and elapsed time (Section 6, p. 4)
-2. label prompt contents and user actions by the seven usage patterns (Section 9.2, pp. 6–7)
-3. mark loops of repeated failed verification and untested hypotheses (Section 9.1, p. 6)
-4. measure copy-paste frequency, prompt counts, solved status, and time by task (Section 8.2, p. 6)
-5. derive guidance from successful collaborator traces and test it in a new randomized study (Section 9.3, p. 7)
+how to apply it, following the analysis:
+1. record full screen-sharing sessions and collect their submitted programs (Section 6, PDF p. 5)
+2. classify prompt contents and interactions, including code, natural language, tool output, and copy-paste (Section 8.2, PDF p. 8)
+3. examine repeated failed attempts for hallucination loops and the other observed antipatterns (Section 9.1, PDF p. 9)
+4. distinguish the listed personalities: independent, prejudiced, searcher, copy-paster, follower, and collaborator (Section 9.2, PDF p. 9)
+5. also note transitions into a quitter, which the text discusses without a separate definition in that list (Section 9.2, PDF pp. 9–10)
 
-Verus form: Inference: instrument VL sessions with the candidate Rust, exact Verus command, diagnostics, proof status, and model messages. Detect repeated failures on the same obligation and trigger a restart or human review. This telemetry can reduce wasted repair loops but cannot prove the final Rust beyond the verifier result.
+The abstract claims seven categories; Section 9.2 lists six personalities and additionally discusses becoming a quitter. Inference: a reused coding scheme would need an explicit definition of that seventh category rather than assuming the paper provides one.
 
-evidence and implications: the paper says collaborators had the highest observed success rate, approximately 91%, while copy-paster behavior appeared in 38% of observations and was approximately 33% helpful (Section 9.2, p. 7). The denominator for these percentages is the set of recorded participant behavior instances, not all tasks; the paper presents them as observations, not a controlled causal comparison. It also reports experienced programmers averaging 4.9 prompts (median 4) and non-experienced programmers 25 (median 23), with output-use averages 0.9 and 10.0 respectively (Section 8.2, p. 6). The small, language-specific sample limits transfer.
+Verus form: Inference: retain Rust candidates, Verus invocations and diagnostics, proof outcomes, and model messages. Use repeated failures as a reason to reconsider the repair hypothesis. Such records can expose wasted attempts; this paper does not measure whether an automated intervention reduces them.
+
+evidence and implications: Section 9.2 reports approximately 91% success for collaborators, copy-paster behavior at 38%, and approximately 33% helpfulness for that behavior (PDF pp. 9–10). The paper does not clearly define these percentages' denominators; they should not be presented as task-level or participant-level rates. Section 8.2 reports average prompt counts of 4.9 for experienced programmers (median 4) and 25 for non-experienced programmers (median 23), and output-use averages of 0.9 (median 0) and 10.0 (median 7), respectively (PDF p. 8). These are observations in this small sample, not experimentally isolated effects of experience.
 
 ## trusted scope and what VL should not redo
 
-The study's strongest reusable result is methodological: formal verification makes each accepted repair checkable against an explicit contract, while full-session evidence reveals how humans and models reach it. It already covers test-only repair and wholesale copy-paste as inadequate substitutes for specification-backed checking; VL should not redo a study that counts generated code without verifier outcomes. Inference: VL should preserve the collaborator loop—code plus diagnostics, small diff, fresh Verus run—and report task, participant/model, denominator, verifier version, and failure category. The remaining trusted pieces are the contract/specification, Verus implementation and solver, external bodies, compiler and dependencies, and human judgment that the repaired contract expresses the real requirement. The paper's conclusion is deliberately cautious: its participants and Eiffel setting cannot establish a universal LLM effect.
+Inference: the reusable contribution for VL is the combination of explicit specifications, verifier outcomes, and session evidence. This makes it possible to distinguish proof success from a plausible model answer and to examine how a repair was reached. Reusing that method still requires evaluation in Rust/Verus; the paper supplies no direct evidence about VL. Its conclusion states the boundary as correctness “in the specific sense of satisfying the stated specification, and within the limitation of proof tools” (Section 10, PDF p. 10).
+
+Inference: VL should record specification changes, trusted assumptions, tool versions, attempted patches, and proof results. The paper does not establish that testing is useless, that copy-paste always fails, or that one prompting strategy has a universal advantage. Its own single-model limitation is explicit: “The study does not provide insights into how participants would have fared with another LLM.” (Section 7, PDF p. 6).
 
 ## techniques for the catalog
 
-- GQM verified-repair experiment — preregister goals, questions, metrics, randomize AI access, and validate every fix with a prover
-- contract-backed repair loop — seed a bug, submit each edit to the verifier, and accept only a compiled proof of the stated contracts
-- collaborator prompting — provide code and diagnostics, request a focused diff, review it, and iterate with fresh verifier output
-- behavior and hallucination taxonomy — record full sessions to detect copy-paste, unranked advice, and repeated failed repair loops
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- GQM verified-repair experiment — define goals, queries, and metrics before sessions, randomize AI access, and assess fixes with a prover
+- contract-based repair loop — verify each candidate and distinguish submission from compilation and proof success
+- collaborator prompting — provide code and verifier output, request a diff, review it, and reconsider unproductive attempts
+- behavior and hallucination taxonomy — inspect recordings for prompt contents, copy-paste, unranked advice, and repeated failed repairs
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The metrics should be interpreted with caution given the small size of the samples, but we believe that they do identify relevant trends."): checked all study quotations, numbers, section and PDF page references, and technique steps against the full paper; corrected page references, verifier semantics, specification-bug handling, submission criteria, taxonomy coverage, and unsupported percentage denominators; marked proposed VL adaptations as inferences; did not reproduce the experiment, inspect supplementary artifacts, or validate Verus behavior.
