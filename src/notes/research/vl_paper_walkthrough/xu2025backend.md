@@ -1,64 +1,79 @@
 # Towards Automated Formal Verification of Backend Systems with LLMs
 (authored by agents unless marked 🧑)
-Tag: `xu2025backend`, [paper](https://www.semanticscholar.org/paper/3df025d0adddc922ca2f4f616f03e54f9999bfc0)
+Tag: `xu2025backend`, [paper](https://arxiv.org/abs/2506.10998)
 
 ## problem and pipeline
-This paper translates Scala backend systems into Lean 4, generates API and database-table theorems from documentation, and uses LLM proof search. Its central guarantee is conditional: “When a theorem is proved, the corresponding logic is guaranteed to be correct and no further testing is needed.” (Abstract, p. 1.) If the positive theorem fails, the pipeline proves its negation; a proved negation is a bug witness, while neither result is unresolved and needs a human.
+The paper translates functional Scala backends into Lean 4, generates API and database-table theorems, and uses LLM proof search. Its abstract claims: “When a theorem is proved, the corresponding logic is guaranteed to be correct and no further testing is needed.” (p. 1.) Inference: this guarantee depends on the implementation translation and theorem statement preserving the intended meaning; a Lean proof alone does not establish either correspondence.
 
-“The three stages are implementation formalization, theorem generation, and proof search.” (Figure 2 caption, p. 9.) The three stages are implementation formalization, theorem generation, and proof search (Section 4.1, p. 9). The evaluation uses four AI-generated but human-verified Scala projects with 2–25 APIs each, 2–3 injected bug variants, more than 150 API theorems, and 100 table theorems (Section 5.1, p. 16). The models are qwen-max for all tasks except DeepSeek-R1 for proving (p. 16).
+Section 4.1 lists “Implementation Formalization”, “Theorem Generation”, and “Proof Search” (p. 10; overview in Figure 2, p. 9). Its outputs include “verified theorems confirming specification compliance”, “counterexamples revealing specification violations”, and “unresolved theorems requiring manual inspection” (Section 4.1, p. 10). The implementation formalization initially uses code without behavioral documentation; theorem generation then uses specifications and the formalized implementation.
 
-## technique 1: functional formalization of an imperative backend
-The paper removes language-specific details and side effects by translating services, APIs, and schemas into pure Lean functions and dependent types (Section 4.1). Database tables become explicit function parameters and returned updated states. Monads become inductive return types. The steps are:
+The evaluation uses four Scala projects: UserAuth, BankAccount, Email, and TaxiApp, containing 2, 5, 13, and 25 APIs and 2, 3, 3, and 3 injected bug variants, respectively (Table 1, p. 16). The authors explain: “The projects were generated using an AI-based project generator to ensure well-structured code organization and were subsequently verified by human engineers.” (Section 5.1, p. 16.) They use qwen-max for tasks other than proving and DeepSeek-R1 for proving (Section 5.1, p. 16).
 
-1. Analyze table-to-table foreign-key dependencies, API-to-table reads/writes, and API-to-API calls (Section 4.2, p. 10).
-2. Formalize tables and APIs in topological dependency order (Section 4.2).
-3. Represent each table as a Lean structure and each API as a function (Section 4.2).
-4. Replace SQL side effects with a function taking old table state and returning new table state (Section 4.2).
-5. Preserve helper functions, return/error variants, and control flow in the formal function (Figure 4, pp. 10–11).
+## technique 1: functional backend formalization
+“The formalization stage consists of two phases: dependency analysis and formalization.” (Section 4.2, p. 10.) The input follows the functional backend architecture in Section 3.4, rather than being an arbitrary imperative backend. The steps are:
 
-“The formalization stage consists of two phases: dependency analysis and formalization.” (Section 4.2, p. 10.) The paper’s Withdrawal API example returns `WithdrawalResult × AccountTable × TransactionTable`; a successful withdrawal appends a negative transaction amount, while failures return unchanged tables (Figure 4, p. 11). Inference: the Verus analogue is an `exec fn` with `requires` for valid inputs and `ensures` relating old and new state; mutable Rust references can replace explicit tuple state, but the state-transition relation must remain in the postcondition. Verus does not use Lean dependent types or inductive syntax exactly as shown, so this mapping is an inference.
+1. Analyze table-to-table dependencies such as foreign keys, API-to-table reads and writes, and API-to-API calls (Section 4.2, p. 10).
+2. Formalize tables and APIs in topological order, representing tables as Lean structures and APIs as functions (Section 4.2, p. 11).
+3. Replace monads with explicit inductive return types (Section 4.2, p. 10).
+4. Translate SQL operations into operations on table structures, passing database state as input and returning updated state (Section 4.2, p. 11).
+5. Formalize helper functions, success/error return variants, and the main API logic (Section 4.2, p. 11; Figure 4, p. 12).
+
+The authors state: “To formalize APIs in a purely functional manner, we treat the database state as a function parameter, requiring each function’s output to include the updated database state.” (Section 4.2, p. 11.) Figure 4’s Withdrawal function returns `WithdrawalResult × AccountTable × TransactionTable`; success appends a transaction with a negative amount (p. 12).
+
+Inference: a Verus adaptation could describe an executable Rust function with preconditions and postconditions relating old and new state. Mutable references could replace explicit state tuples, but the state relation would still need a specification. The paper does not implement this adaptation.
 
 ## technique 2: API requirement decomposition and theorem generation
-“Then the documentation of each API is split into a list of input-output requirements.” (Section 4.3.1, p. 12.) Natural-language API documentation is split into input/output requirements, each representing one control-flow path (Section 4.3.1, p. 12). For each requirement, the LLM identifies function arguments, hypotheses, expected return values, and updated tables, then constructs a Lean theorem and compiles it for syntax checking. The paper’s Withdrawal success requirement adds premises that the amount is positive, BalanceQuery succeeds, and the resulting balance is nonnegative; the conclusion states the returned balance and appended transaction (Figure 5, pp. 12–14).
+Section 4.3 says theorems are constructed by “first generating the natural language description of the theorem and then formalizing it in Lean” (p. 12). For API theorems, the steps are:
 
-Steps:
-1. Generate detailed API documentation from the system specification (Section 4.3.1).
-2. Enumerate every control-flow path and its premises/outcomes (Section 4.3.1).
-3. Treat dependent API results as preconditions so each API theorem can be proved independently (Section 4.3.1).
-4. Translate each path into a theorem with hypotheses and a conclusion over output and state (Section 4.3.1).
-5. Compile and iteratively repair syntax errors (Section 4.3.1).
+1. Generate detailed API documentation from natural-language system specifications; the experiments supply structured API documentation (Section 4.3.1, p. 12).
+2. Split each API’s documentation into input/output requirements describing conditions, outputs, and updated tables, with each requirement representing a control-flow path (Section 4.3.1, pp. 12–13).
+3. Treat dependent API returns as preconditions to allow independent requirement generation (Section 4.3.1, p. 13).
+4. Translate arguments, conditions, and expected results into theorem parameters, hypotheses, and conclusions (Section 4.3.1, p. 13).
+5. Compile theorem statements and refine syntax errors; the proof initially uses a `sorry` placeholder (Section 4.3.1, p. 13).
 
-Inference: in Verus, each path becomes a lemma or `ensures` case over an `exec fn`; branch-specific facts are proved with `assert` and branch conditions. Verus supports `requires`/`ensures`, but the paper’s theorem statements and `sorry` placeholders are Lean-specific and do not carry over verbatim.
+The paper states: “The functional nature of our API formalization enables isolated verification by treating dependent API returns as preconditions, allowing independent requirement generation for each API, which is a significant advantage for efficiency and scalability.” (Section 4.3.1, p. 13.) Figure 5’s Withdrawal success requirement assumes a positive amount, successful BalanceQuery, and nonnegative resulting balance; its conclusion specifies the returned balance and recorded transaction (p. 14).
+
+Inference: in Verus, path-specific requirements could become lemmas or cases in postconditions. Lean theorem statements and `sorry` placeholders would need a different encoding.
 
 ## technique 3: infer table-wide properties
-For each table, the system aggregates every interacting API, summarizes properties in natural language, records which APIs maintain each property, and creates one theorem per API (Section 4.3.2, p. 13). A read-only API must preserve row count; successful Deposit increases it by one. Table theorems use fewer input restrictions and focus on state changes rather than API responses (Section 4.3.2).
+“For table properties, we intentionally avoid providing predefined documentation since these properties should be inferable from API specifications.” (Section 4.3.2, p. 13.) The system aggregates APIs interacting with a table, derives natural-language properties from their specifications, records the responsible APIs, and generates one theorem per associated API. These theorems place fewer restrictions on inputs and focus mainly on changes to tables. The authors describe this as “checking invariants by analyzing how individual API calls modify table states in a single step” (Section 4.3.2, p. 13).
 
-Inference: VL can use this as a state-invariant mining pass: collect every Rust function that mutates a collection, propose invariants such as key uniqueness or length preservation, and express them as Verus `invariant` clauses and postconditions. The property must then be checked against all mutators; generated prose alone is not evidence.
+Figure 6 illustrates preservation of Transaction record count by BalanceQuery and an increase of one after successful Deposit (p. 27; discussed on pp. 13–14). Inference: VL could collect functions that access a collection, propose state properties, and prove preservation or specified changes for each relevant operation. Establishing an invariant over executions would also require an appropriate initial-state argument.
 
 ## technique 4: compiler-guided, adaptive proof search
-The prover refines failed proofs using compiler errors and backtracking to the last correct step (Section 4.4.1, p. 15). It retrieves proved examples at three similarity levels—same API/table, same service, and whole project—and runs local theorem refinement alongside a global retry loop as the verified example pool grows (Section 4.4.1). A proved theorem validates one control-flow path.
+Section 4.4.1 uses compiler messages and “a backtracking mechanism to identify the last correct proof step with the unsolved goal” (p. 15). It retrieves proved examples at three similarity levels: “(1) same API/table, (2) same service, and (3) project-wide” (p. 15). Local refinement operates alongside a global retry mechanism as the pool of verified examples grows.
 
-Inference: Verus users can apply the same loop with verifier diagnostics and a repository of proved lemmas, but the paper provides no Verus implementation or evidence that Lean proof tactics transfer. Proof search must remain separate from runtime Rust; proof functions and lemmas are compile-time artifacts.
+Inference: a Verus implementation could use verifier diagnostics and relevant proved lemmas in the same kind of retry loop. The paper supplies no Verus implementation or evidence that Lean tactics transfer.
 
 ## technique 5: negative theorem counterexample search
-After a fixed number of failed refinement rounds, the system negates the theorem and tries to prove the opposite (Figure 2, p. 9; Section 4.4.2, p. 15). A proved negation supplies a verified input combination satisfying the hypotheses but violating the expected conclusion; failure of both positive and negative proofs is undetermined. The paper warns that positive and negative proofs use distinct formal implementations, since only one can be valid for a given implementation (Section 4.4.2).
+“For those theorems unable to be proved after the entire proof search loop, we employ LLMs to search for counterexamples by first negating the original theorem and attempting to prove its negation.” (Section 4.4.2, p. 15.) A counterexample satisfies the original hypotheses but contradicts the conclusion. If neither direction is proved, the case remains undetermined and requires human verification.
 
-Inference: in VL, bounded counterexample generation can be used to search for a witness to a negated `ensures` property, but a Verus proof of the negation would require encoding the witness relation as a separate spec/lemma and does not automatically repair the implementation.
+The UserLogin illustration uses different implementations for its positive and negative examples: “It’s important to note that the proofs of these two theorems are based on distinct formal implementations of the UserLogin API, as only one theorem can be valid for any given implementation.” (Section 4.4.2, p. 15; Figure 7, p. 28.) This statement concerns the illustrated pair, not a pipeline step that changes the implementation before checking its negation.
+
+Inference: VL could search for witnesses violating a postcondition and separately verify the witness relation. Such a result would identify a specification violation, without automatically repairing the implementation.
 
 ## evidence and denominators
-Implementation formalization achieved 100% dependency accuracy and 100% table-form accuracy over 9 tables; API formalization was 43.3/45 positive, 0.7 return-type mismatches, and 1.0 logic mismatches, or 96.2% positive (Table 2, p. 17). Theorem generation totals were 161.6 positive API theorems out of 170, 5 semantic mismatches, and 3.4 syntax errors (95.1%); table theorem formalization was 112.3 positive, 13.3 semantic mismatches, and 4.3 syntax errors (86.5%) (Table 3, p. 17). These are averages over three runs for non-proving tasks; theorem proving ran once per project (Section 5.2, p. 16).
+The authors evaluate stages separately: “To assess each pipeline stage independently, we manually validate stage inputs to eliminate potential misalignments, which means we use the best outcome out of three attempts from the last step as the input to the next step.” (Section 5.2, p. 16.) Non-proving tasks run three times and table values are averages; proving runs once per project. Inference: these stage results do not measure an unattended end-to-end success rate.
 
-Proof search proved 100/168 API theorems (59.5%) and 72/125 table theorems (57.6%) (Table 4, p. 18). Bug detection found 8 of 11 injected bugs through counterexamples (Section 5.3, p. 19), approximately 72.7%, while 3 remained hidden among unresolved theorems. The TaxiApp proof budget was five attempts with eight refinement retries per attempt; average verification cost was $2.19 per API and token cost $0.34 in that project (p. 18). The abstract’s “over 50%” claim therefore refers to these theorem denominators, not arbitrary production systems.
+Table 2 reports 100% dependency-analysis and table-formalization accuracy across nine tables and 45 APIs. API formalization averages 43.3 successful cases, 0.7 return-type mismatches, and 1.0 logic mismatches, with 96.2% accuracy (p. 17). Table 3 reports API theorem formalization totals of 161.6 successful cases, 5.0 semantic mismatches, and 3.4 syntax errors, with 95.1% accuracy; table theorem formalization totals are 112.3, 13.3, and 4.3, respectively, with 86.5% accuracy (p. 17). These are rounded reported averages.
+
+Table 4 reports 100/168 API theorems proved (59.5%) and 72/125 table theorems proved (57.6%) (p. 18). The authors acknowledge that “the successfully proven theorems are sometimes relatively simple compared to the unproven ones” (Section 5.2.3, p. 18). Inference: these theorem proportions do not establish that half of engineering work is automated.
+
+Section 5.3 says: “The experiments show that 8 out of 11 bugs are successfully detected by finding counterexamples, while the remaining 3 bugs are still hidden among the theorems that cannot be proved correct or incorrect.” (p. 19.) However, Table 5 shows eight variants detected in at least one stage: five have a successful proof-search detection, and three have a circle in that column and a theorem-generation detection (p. 20). Its caption defines the circle as “unable to detect because of misaligned theorem.” Inference: eight detections overall are supported by the table, but eight verified counterexamples are not; the prose and table conflict on that point.
+
+The proof budget is “5 attempts with 8 refinement retries per attempt” (Section 5.2.3, p. 19). For TaxiApp, the paper reports “the average token-based model cost is $0.34, with verification costs averaging $2.19 per API” (p. 19). It does not explicitly name the unit averaged for the $0.34 figure. Inference: these costs should not be generalized to arbitrary production systems.
 
 ## trust, limitations, and VL threat
-The formal guarantee trusts the translation, generated theorem statement, Lean kernel, and specification document. Semantic mismatches can compile and still describe the wrong requirement; the authors explicitly report this as an integrity risk (Section 5.2.2, p. 17). Projects are AI-generated and small (four systems, 11 injected bug variants), so scalability to production concurrency and external effects is unproved. Inference: for VL, the largest product threat is a correct Verus proof of a misformalized API requirement, followed by unresolved stateful interactions. The paper’s system already covers the generic pipeline; VL should not redo its basic decomposition or negation idea. VL-specific work is translating these ideas to Rust/Verus state, concurrency, and specification-diff review.
+The authors identify two accuracy requirements: implementation formalization must ensure semantic equivalence, and theorem generation must align formal statements with natural-language specifications (Section 6, p. 21). They warn: “Semantic mismatches produce compilable but requirement-inconsistent theorems, which undermine verification integrity.” (Section 5.2.2, p. 18.) Their discussion also proposes “pre-formalizing external services like databases as standard components in the future” (Section 6, p. 21).
+
+Inference: correctness depends on the source-to-Lean translation, theorem fidelity, specification, and proof checker. The four generated projects and injected variants do not establish production-scale concurrency or external-service equivalence. For VL, a central risk is proving a misformalized requirement. Adapting the decomposition, state-property generation, diagnostic feedback, and counterexample search to Rust/Verus would still require validating those correspondences.
 
 ## techniques for the catalog
-- pure backend formalization: translate dependencies, APIs, tables, and side effects into explicit pure state transitions
-- path-wise API theorems: split documentation into control-flow requirements and prove one theorem per path
-- table-property inference: aggregate all table APIs and prove state invariants per mutator
+- pure backend formalization: translate dependencies, APIs, tables, and effects into explicit pure state transitions
+- path-wise API theorems: split documentation into control-flow requirements and formalize each path
+- table-property inference: aggregate table APIs and check state properties per associated API
 - compiler-guided proof refinement: use diagnostics, backtracking, and similarity-ranked proved examples
-- negative theorem search: negate unresolved properties to produce verified bug witnesses
-- staged human fallback: send only unresolved or semantically mismatched cases to manual review
+- negative theorem search: negate unresolved properties and try to prove a counterexample
+- human review: inspect unresolved cases and validate formalization and theorem alignment
 
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For those theorems unable to be proved after the entire proof search loop, we employ LLMs to search for counterexamples by first negating the original theorem and attempting to prove its negation."): checked the complete paper text, study quotations, numbers, section/page references, and technique steps; corrected quotations and references, linked the paper’s arXiv identifier, qualified guarantees and stage evaluation, distinguished Table 5 detections from counterexample claims, and marked adaptations and conclusions as inferences; did not reproduce experiments, inspect implementation artifacts, or independently validate external references.

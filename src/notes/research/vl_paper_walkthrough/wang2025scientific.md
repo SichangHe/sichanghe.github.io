@@ -4,17 +4,16 @@ Tag: `wang2025scientific`, [paper](http://arxiv.org/abs/2501.05252v1)
 
 ## scope and claim
 
-This position paper proposes PROMETHEUS, a transformer-based workflow that turns a textual proof into verifiable Dafny code through staged refinement. It argues that language models are good at near one-to-one translation but poor at the low-level details that verifiers require. The authors' central proposal is: “We leverage transformers to first build a formal structure of the proof using the original text from the paper, and then to handle the tedious, low-level aspects of proofs that are often omitted by humans.” (abstract, PDF p. 1). The paper is a vision and feasibility prototype, not a general soundness or scalability evaluation.
+This position paper proposes PROMETHEUS, a transformer-based workflow that turns a textual proof into verifiable Dafny code through staged refinement. It argues that transformers suit both near one-to-one translation and generation of omitted low-level proofs, while naive prompting fails to supply those details. The authors' central proposal is: “We leverage transformers to first build a formal structure of the proof using the original text from the paper, and then to handle the tedious, low-level aspects of proofs that are often omitted by humans.” (abstract, PDF p. 1). The authors describe the evaluation as preliminary and leave a full-scale evaluation to future work (section III, PDF p. 3). The demonstrated examples generate proofs of graph properties; joint generation of algorithms and proofs is proposed as an extension (section II, PDF p. 2).
 
 ## technique: separate proof skeleton from low-level obligations
 
-Use this when a paper gives a high-level argument whose omitted details are obvious to a human but numerous in a verifier. The proposed two stages are (introduction, PDF p. 1):
+The proposed two stages are (introduction, PDF pp. 1–2):
 
-1. feed the textual proof and formal definitions to a transformer
-2. translate the proof into a high-level verification skeleton, leaving low-level proof details intentionally incomplete
-3. let the verifier check the skeleton under assumptions for those missing details
-4. generate helper lemmas and assertions for each omitted obligation
-5. compile and verify the completed code, iterating with verifier feedback
+1. translate the textual proof into a high-level verification skeleton; the verifier checks that structure assuming the omitted low-level proofs are correct
+2. generate the missing low-level proofs, including details without textual equivalents because humans regard them as obvious
+
+The prototype receives the textual proof and formal specifications, then iterates with verifier feedback (section III, PDF pp. 3–4).
 
 The paper says: “At this stage, the goal is not to complete the entire proof but to outline its structure, with many low-level details intentionally left out.” (introduction, PDF p. 1). Its handshake-lemma example creates an auxiliary set X of edge-vertex pairs and asserts that `|X|` equals both the sum of vertex degrees and twice the number of edges. The generated Dafny skeleton contains the graph precondition, set construction, and two assertions; Dafny cannot prove those assertions without further lemmas (section II, PDF pp. 2–3).
 
@@ -22,23 +21,23 @@ Inference: in Verus, use an executable Rust function plus a `requires`/`ensures`
 
 ## technique: recursive low-level helper synthesis
 
-The prototype interacts top-down. It first asks the LLM to prove the general lemma using lower-level helper lemmas, then attempts those helpers in later iterations. After each Dafny verification, it sends the generated code and verifier feedback back to the LLM together with hints for recurring issues such as induction, extension equalities, and missing preconditions (section III, PDF p. 4). This is a refinement loop: preserve the accepted skeleton, identify the next failed assertion, generate a narrowly scoped helper, verify it, and splice it into the parent proof.
+The prototype uses Claude Sonnet 3.5 and interacts top-down. It first proves the general lemma using lower-level helper lemmas, then proves those helpers in later iterations. It verifies generated code and returns verification output with high-level hints for recurring issues such as induction, extension equalities, and missing preconditions (section III, PDF pp. 3–4). The paper does not specify an assertion-selection rule, a local-patch protocol, or a requirement to preserve an accepted skeleton unchanged.
 
-The handshake example shows why helpers are needed. Definitions must be side-effect free, so a vertex-degree sum is written recursively over the vertex set. Then induction proves that adding a vertex increases both the sum and the auxiliary-set cardinality. A second induction proves that the neighbor set and its paired edge-vertex set have equal cardinality. Finally, an extension equality shows that removing and re-adding an edge yields the original set. These are paper-specific steps from section II (PDF pp. 2–4), not generic LLM assumptions.
+The handshake example shows why helpers are needed. Definitions must be side-effect free, so a vertex-degree sum is written recursively over the vertex set. Then induction proves that adding a vertex increases both the sum and the auxiliary-set cardinality. A second induction proves that the set of edges incident to a vertex and its paired edge-vertex set have equal cardinality. In that induction, Dafny needs an intermediate assertion equating the paired sets before it can prove their cardinalities equal. The authors call this an extension equality (section II, PDF pp. 2–3).
 
 Inference: Verus can follow the same dependency order with `proof fn` lemmas and explicit `requires`/`ensures`; recursive definitions may be `spec fn` where appropriate, while executable loops need invariants and `decreases`. A helper should state the exact missing relation (for example, set extensionality or a cardinality update) and be checked independently before being used by the parent. The paper's Dafny syntax does not carry over to Verus syntax (inference).
 
 ## technique: verifier-guided prompting and domain hints
 
-PROMETHEUS sends the verifier's output to the transformer and adds high-level hints for common failures. The authors describe this as iterative interaction in which the “system also verifies the code generated by the LLM, and sends both the output of the verification process alongside some hints on how to solve these problems.” (section III, PDF p. 4). Hints include induction, extension-equality reasoning, and adding missing preconditions. This keeps the model focused on one diagnostic rather than regenerating an entire proof.
+PROMETHEUS sends the verifier's output to the transformer and adds high-level hints for common failures. The authors state: “The system also verifies the code generated by the LLM, and sends both the output of the verification process alongside some hints on how to solve these problems.” (section III, PDF p. 4). Hints include induction, extension-equality reasoning, and spotting missing preconditions. The paper does not say that each iteration handles only one diagnostic.
 
 Inference: a Verus adapter should classify verifier diagnostics (failed invariant, trigger/quantifier issue, missing bound, ownership conflict), attach a short construct-specific hint, and ask for a local patch. Every patch must be rerun through Verus; natural-language confidence is not evidence (inference).
 
 ## evidence and limitations
 
-The feasibility study tests three graph lemmas: handshake, degree bounds, and even-cycle bipartite. For each, the baseline is zero-shot generation of a complete proof in one attempt. PROMETHEUS receives the textual proof and formal specifications and iterates. Over five runs per lemma, baseline success was 0/5 for all three; PROMETHEUS achieved 4/5 handshake, 3/5 degree bounds, and 3/5 bipartite (section III, PDF p. 5). The denominators are five runs for each lemma, and “success” means generated Dafny code verified completely. The paper reports no confidence intervals, cost, token counts, or independent specification audit beyond manual checking.
+The feasibility study tests three graph lemmas: handshake, degree bounds, and even-cycle bipartite. For each, the baseline is zero-shot generation of a complete proof in one attempt. PROMETHEUS receives the textual proof and formal specifications and iterates. Over five runs per lemma, baseline success was 0/5 for all three; PROMETHEUS achieved 4/5 handshake, 3/5 degree bounds, and 3/5 bipartite (section III, PDF p. 4). The denominators are five runs for each lemma. The authors report that PROMETHEUS “successfully generates a complete and verifiable proof in Dafny” (section III, PDF p. 4). The paper reports no confidence intervals, cost, token counts, or independent specification audit beyond manual checking.
 
-A central trust boundary is explicit: all graph definitions, predicates, and pre/postconditions were generated by an LLM but manually verified before use (section IV, PDF p. 5). The authors ask who verifies those specifications and state that fully automating this foundational step remains difficult. The prototype therefore demonstrates proof completion conditional on human-approved specifications, not end-to-end correctness from an unstructured paper.
+A central trust boundary is explicit: all graph definitions, predicates, and pre/postconditions were generated by an LLM but manually verified before use (section IV, PDF p. 4). The authors ask who verifies those specifications and state that fully automating this foundational step remains difficult. Inference: the prototype demonstrates proof completion conditional on manually checked specifications; it does not establish end-to-end correctness from an unstructured paper.
 
 Inference: threat to VeruLaw is high for workflow design and moderate for demonstrated capability. The two-stage skeleton-plus-helper pattern directly matches VL's paper-to-Rust goal, and verifier feedback can drive local repairs. However, the evidence is only 15 lemma runs, all Dafny graph examples, with manually trusted specifications. VL should reuse the staged decomposition and diagnostics loop rather than redo them as a concept; it must add Rust semantics, Verus ownership, unsafe boundaries, dependency contracts, and specification review. The paper does not justify claiming that a transformer understands an algorithm or that generated verified code implements the paper's intended behavior (inference).
 
@@ -46,7 +45,8 @@ Inference: threat to VeruLaw is high for workflow design and moderate for demons
 
 - proof skeleton extraction — translate textual proof structure into high-level verifier code while leaving details open
 - top-down helper synthesis — prove a parent using helper declarations, then recursively discharge each helper
-- verifier-feedback loop — compile generated code, return diagnostics and targeted hints, and patch locally
+- verifier-feedback loop — verify generated code and return verification output with high-level hints
 - induction and extensionality guidance — supply recurring hints for recursive definitions, set equalities, and cardinality facts
-- specification gate — manually validate generated definitions and contracts before treating proof success as evidence
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- specification prerequisite check — manually validate generated definitions and contracts before using them as input
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This example illustrates the importance of allowing humans to add intermediate assertions to guide the solver and its heuristics toward correct lemma verification."): checked all paper text, quotations, numbers, section and PDF page references, and technique descriptions; corrected the account of low-level proof generation and page references, removed unsupported iteration details, and marked the specification conclusion as inference; did not run PROMETHEUS, inspect its implementation or demonstration video, reproduce results, or validate the proposed Verus adaptations.

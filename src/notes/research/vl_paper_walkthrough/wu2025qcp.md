@@ -1,206 +1,206 @@
 # QCP: A Practical Separation Logic-based C Program Verification Tool
 (authored by agents unless marked 🧑)
-Tag: `wu2025qcp`, [paper](http://arxiv.org/abs/2505.12878v3)
+Tag: `wu2025qcp`, [paper](https://arxiv.org/abs/2505.12878v3)
 
-source: Wu et al. (Shanghai Jiao Tong University, Peking University), arXiv:2505.12878v3 (24 Apr 2026), 29 pages with Appendices A–F. PDF page numbers equal the printed ones.
+Source: Wu et al. (Shanghai Jiao Tong University, Peking University), arXiv:2505.12878v3, dated 24 Apr 2026 on the paper, 29 pages including Appendices A–F. References below use printed page numbers, which equal PDF page numbers. The arXiv identifier is printed on p.1.
 
 ## what QCP is
 
-QCP verifies C functions against separation-logic contracts written in comments. Separation logic describes the heap as disjoint owned pieces; `P * Q` says P and Q hold on disjoint parts. The tool runs a symbolic executor over the annotated C, turns each step that needs a logical argument into a verification condition (VC), tries each VC with its own solver, and writes the VCs it cannot solve into a Rocq file for a person to prove. Rocq is the proof assistant formerly called Coq. §2, p.3: “QCP takes annotated C code as input and generates verification conditions.”
+QCP verifies C functions against separation-logic specifications written in comments. Separation logic describes disjoint heap regions: `P * Q` asserts that P and Q hold on disjoint regions (§1, p.2). QCP symbolically executes annotated code, generates verification conditions (VCs), discharges some automatically, and exports the remaining conditions to the Rocq proof assistant for manual proof. §2, p.3: “QCP takes annotated C code as input and generates verification conditions.”
 
-The paper is a tool description. It has no LLM in it; what it offers VL is a worked design for splitting proof obligations between automation and manual proof, and several specification patterns.
+Inference: the paper describes no LLM component. Its relevance to VL is the division between automatic and manual proof, specification patterns, and feedback during development.
 
-Measured: 155 functions, 2,972 lines of C, 3,876 annotation lines, 1,964 VCs solved automatically and 679 left for manual proof (Table 1, p.12).
+Measured: 155 functions, 2,972 lines of C, 3,876 annotation lines, 1,964 automatic VCs and 679 manual VCs (Table 1, p.12).
 
-## technique 1: three-way split of obligations with a machine-checked ledger
+## technique 1: automatic and manual proofs with a checked list of obligations
 
-What it is: every VC ends in exactly one of two proof files, and a fourth file makes the proof assistant confirm nothing was dropped.
-
-When to use: any pipeline where a fast, incomplete prover handles most obligations and something slower handles the rest, and one needs a guarantee that every obligation has a proof from one of them.
+QCP generates a file containing all VCs and uses Rocq's module system to check that the automatic and manual proof files together supply their proofs. This checks coverage of the generated goals; the paper does not claim that each goal appears in exactly one proof file.
 
 Steps (§2.2, p.6–7; Appendix B, p.18–20):
 
-1. Symbolically execute the annotated function, computing the strongest postcondition, and emit VCs. §2.2, p.6: “Given an input annotated C function, QCP performs symbolic execution to compute the strongest postcondition and generates corresponding verification conditions (VCs).”
-2. Send each VC to the entailment solver (technique 6).
-3. Export the rest. §2.2, p.6: “Any remaining VCs are exported to Rocq for manual proof construction.”
-4. Write four files:
-   - `proof_goal.v`: the statements of all VCs, including those from specification derivation (technique 3)
-   - `proof_auto.v`: proofs of the VCs solved automatically
-   - `proof_manual.v`: the unsolved VCs as goals, to be completed by hand
-   - `proof_check.v`: the cross-check
-5. Make the cross-check structural. `proof_goal.v` declares a Rocq `Module Type` named `VC_Correct` with one entry per VC plus the soundness statements of the solver strategies used; `proof_check.v` declares a module of that type which includes the automatic and the manual proof files (Figures 11 and 12, p.19–20). Appendix B, p.19: “This module includes all contents from both sll_free_proof_auto.v and sll_free_proof_manual.v, thereby utilizing Rocq to ensure that every goal has a corresponding proof.”
-6. Only `proof_manual.v` is edited by the user; the other three are regenerated (§2.2, p.7).
+1. Symbolically execute the function and generate VCs. §2.2, p.6: “Given an input annotated C function, QCP performs symbolic execution to compute the strongest postcondition and generates corresponding verification conditions (VCs).”
+2. Try the entailment solver described in technique 6.
+3. Export unsolved conditions. §2.2, p.6: “Any remaining VCs are exported to Rocq for manual proof construction.”
+4. Generate four files: `proof_goal.v` contains all VC statements, including specification-derivation obligations; `proof_auto.v` contains automatic proofs; `proof_manual.v` contains goals requiring manual proofs; `proof_check.v` checks their coverage.
+5. Express the coverage check through a Rocq `Module Type` named `VC_Correct`. In the example it includes strategy-correctness requirements and the VC statements. A module of this type includes the automatic and manual proof modules (Figures 11–12, p.19–20). Appendix B, p.19: “This module includes all contents from both sll_free_proof_auto.v and sll_free_proof_manual.v, thereby utilizing Rocq to ensure that every goal has a corresponding proof.”
+6. Complete `proof_manual.v`; the other three files require no user modification (§2.2, p.7).
 
-The paper's example: `sll_free` (free a singly linked list) yields five VCs, named `entail_wit_1..3`, `return_wit_1`, `partial_solve_wit_1` (Figure 11, p.19), and its manual file stays empty.
+Figure 11 lists five VCs for `sll_free`: `entail_wit_1`, `entail_wit_2`, `entail_wit_3`, `return_wit_1`, and `partial_solve_wit_1`, each prefixed by `sll_free_`. Its manual proof file remains empty because the example verifies automatically (Appendix B, p.19).
 
-Verus form. Inference: Verus has one prover (Z3), so there is no second tier to export to. The parts that transfer are the ledger and the isolation. Ledger: a Verus run reports how many functions verified and how many errors; a VL pipeline should additionally fail the build when any `assume(...)`, `admit()` or `#[verifier::external_body]` appears outside an allowed list, which plays the role of `proof_check.v`. Isolation: an obligation Z3 cannot do inline is moved into a separate `proof fn` with its own `requires`/`ensures`, proved there with explicit `assert` steps, `assert ... by (nonlinear_arith)` or `by (bit_vector)`, and called at the use site; that `proof fn` is the counterpart of one entry of `proof_manual.v`. What does not carry over: Rocq's full higher-order logic as a fallback. A fact outside what Z3 can prove with hints has no home in Verus.
+Inference: VL could similarly check that every generated obligation has a proof and explicitly record accepted assumptions. A count of successful proofs alone would not establish that all intended obligations were generated.
 
-Evidence: the split by domain (Table 1, p.12; automatic share computed here from the Auto and Manual columns):
+Table 1 reports the following automatic/manual counts. Inference: the percentages are computed from those counts, rather than separate measurements:
 
-- arithmetic: 84 auto, 39 manual (68.3% of 123)
-- typical data structures: 716 auto, 192 manual (78.9% of 908)
-- typical algorithms: 214 auto, 101 manual (67.9% of 315)
-- QCP implementation components: 859 auto, 287 manual (75.0% of 1,146)
-- LiteOS doubly linked lists: 91 auto, 60 manual (60.3% of 151)
-- total: 1,964 auto, 679 manual (74.3% of 2,643)
+- arithmetic: 84/39, or 68.3% automatic
+- typical data structures: 716/192, or 78.9%
+- typical algorithms: 214/101, or 67.9%
+- QCP implementation components: 859/287, or 75.0%
+- LiteOS doubly linked lists: 91/60, or 60.3%
+- total: 1,964/679, or 74.3%
 
-Cost of the manual quarter, where the paper reports it (Table 6, p.22, the seven implementation files): 287 manual VCs took 4,007 lines of Rocq proof (sum of the Manual Proof column, computed here) for 755 lines of C. Inference: about 14 proof lines per manual VC and over 5 per line of C; the 74.3% automation figure counts VCs, not effort, and the remaining quarter dominates the work.
-
-Trusted. Inference: the paper proves nothing about the symbolic executor. If it emits a wrong or missing VC, the ledger is complete with respect to the wrong list. The paper contrasts itself with VST-A, of which it says (§6, p.15) “The entire system is built on CompCert, with corresponding tactics and decomposition operations formally verified for soundness in Rocq.” and makes no such claim for QCP. QCP has its own C memory model in Rocq (§4.3, p.10); a link from that model to a compiler's semantics is not in the paper.
+Inference: summing Table 6's Manual Proof column gives 4,007 Rocq proof lines for the implementation components' 287 manual VCs and 755 C lines: about 14 proof lines per manual VC and 5.3 per C line. These counts do not measure human time. They cannot establish that the manual quarter of all VCs dominates total effort.
 
 ## technique 2: module verification with declared-only functions assumed
 
-What it is: verify every function defined in one C file, taking the specification of each function that is only declared there as given. §2.1, p.3: “In other words, we can verify all functions defined in a C file against their specifications, assuming that any function merely declared in that file — but implemented elsewhere — satisfies its own specification.”
+QCP verifies the functions implemented in a C file conditionally on the contracts of functions declared there but implemented elsewhere. §2.1, p.3: “In other words, we can verify all functions defined in a C file against their specifications, assuming that any function merely declared in that file — but implemented elsewhere — satisfies its own specification.”
 
-Steps: attach at least one specification to every function, defined or declared; at a call, check the callee's precondition and add its postcondition (§1, p.2, item 3). Contract syntax, from Figure 2 (p.4): a comment `/*@ With d n Require x -> data == d && x -> next == n Ensure emp */` after the prototype, where `With` introduces logical variables shared by pre- and postcondition and `emp` is the empty heap. The file stays compilable C: “The syntax of QCP is designed to make sure that the .c file is still a legal C program that can pass typical compiler checks like gcc.” (§2.1, p.4).
+Steps (§1, p.2; §2.1, p.3–4):
 
-Verus form. Inference: the same boundary is drawn with `#[verifier::external_body]` on a wrapper carrying `requires`/`ensures`, or with `assume_specification` for a function from another crate. Both are trusted exactly as QCP's declared-only specifications are, and belong on the list of assumptions to review. `With` variables correspond to values mentioned in both `requires` and `ensures` through `old(...)` of a `&mut` parameter, or to ghost parameters.
+1. Attach at least one specification to each function, whether defined or merely declared.
+2. At a call, verify the callee's precondition and derive its postcondition for the calling context.
+3. Use the callee's specification without verifying its external implementation in this module.
 
-Limit: the result is conditional. The paper says so for its example: if `free_list_node` meets its contract then `sll_free` is correct (§2.1, p.4).
+Figure 2 uses `/*@ With d n Require x -> data == d && x -> next == n Ensure emp */` for `free_list_node`. The specification relates the field values to logical variables and requires an empty heap afterward. §2.1, p.4: “The syntax of QCP is designed to make sure that the .c file is still a legal C program that can pass typical compiler checks like gcc.”
+
+Inference: VL could treat external contracts as explicit assumptions to review. Verifying a caller against such a contract cannot establish that the external implementation meets it.
 
 ## technique 3: one primitive specification, others derived from it
 
-What it is: a function is verified once, against a low-level contract; more abstract contracts are proved to follow from it and are then usable by callers.
-
-When to use: one routine serves several roles. The paper's case is LiteOS `LOS_ListAdd`, which is both a raw four-pointer splice and the head-insert operation of a circular doubly linked list.
+A function body is verified against one primitive specification; other specifications are derived from it and can be used by callers. §2.1, p.4: “To handle this, QCP mandates that each function be assigned one primitive function specification, which is used directly in verifying the function itself.”
 
 Steps (§2.1, p.4–6; Figure 3, p.5):
 
-1. Name the contract used to verify the body `primitive_spec`. §2.1, p.4: “To handle this, QCP mandates that each function be assigned one primitive function specification, which is used directly in verifying the function itself.”
-2. Write each further contract with a derivation mark, e.g. `head_insert_spec <= primitive_spec`, stated with the abstract predicate (`store_dll(list)` before and after).
-3. QCP emits a VC that the derived contract follows from the primitive one; prove it (automatically or in Rocq). §2.1, p.6: “QCP then requires the user to prove that head_insert_spec can be derived from primitive_spec, thereby eliminating the need for a separate, redundant verification of LOS_ListAdd against head_insert_spec.”
-4. Callers pick the contract that fits: `LOS_ListTailInsert` calls `LOS_ListAdd(list->pstPrev, node)` and is checked with the primitive one (p.6).
+1. Give `LOS_ListAdd` a low-level `primitive_spec` describing its field updates.
+2. Add `head_insert_spec <= primitive_spec`, with the abstract circular-list predicate `store_dll(list)` before and after the call.
+3. Prove the generated specification-derivation VC, automatically or manually. §2.1, p.6: “QCP then requires the user to prove that head_insert_spec can be derived from primitive_spec, thereby eliminating the need for a separate, redundant verification of LOS_ListAdd against head_insert_spec.”
+4. Use the appropriate specification in a caller. The paper says `LOS_ListTailInsert`, which calls `LOS_ListAdd(list->pstPrev,node)`, uses the primitive specification (p.6).
 
-For contracts that do not follow from each other (Appendix F, p.28–29, `swap` with equal or different addresses), the workaround is a parameterised umbrella contract `all` with a case parameter, from which `eq` and `neq` are derived; proving `all` needs a manual case split. The paper concedes that here separate, unrelated contracts would be simpler and are planned.
+For independent specifications, Appendix F (p.28–29) uses `swap` with equal or different pointer addresses. Its workaround is a specification `all` with a case parameter, from which `eq` and `neq` are derived. Proving `all` requires manual case analysis. The authors say separate specifications are more convenient here and plan to support them.
 
-Verus form. Inference: a Verus `fn` has one `requires`/`ensures` contract. The derivation becomes either a thin wrapper `fn` with the abstract contract whose body is the single call, so Verus checks the implication at that call, or a `proof fn` stating that the primitive postcondition under the abstract precondition implies the abstract postcondition. What changes: the wrapper costs a function per view; nothing is lost in strength. The pattern matters for VL because agents tend to write one contract at the abstraction of the caller they are looking at; fixing a primitive contract first avoids re-verifying a body per caller.
-
-Evidence: none separate; LiteOS files are 21 functions with 493 annotation lines for 584 code lines (Table 1).
+Inference: VL could retain a primitive contract and prove separate abstract views from it, for example through wrappers or proof lemmas. This is a proposed adaptation, not an evaluated Verus technique in this paper.
 
 ## technique 4: assertion annotations as the proof skeleton
 
-What it is: the user writes, at chosen program points, the assertion in the shape the next statements need. The tool proves that the current symbolic state entails it and continues from it. This moves predicate unfolding and folding out of proofs and into the program text.
+The user writes assertions that expose the heap structure needed by the next statement; QCP generates entailment VCs for them.
 
-Steps, on `sll_free` (Figure 2, p.4; §2.2, p.6–7):
+Steps for `sll_free` (Figure 2, p.4; §2.2, p.6–7):
 
-1. Give the loop an invariant: `/*@ Inv listrep(x) */`.
-2. Inside the loop, before reading `x->next`, state the unfolded form: `/*@ exists v n, x -> data == v && x -> next == n && listrep(n) */`. §2.2, p.7: “At line 19, the user introduces a new assertion annotation to unfold the listrep (x) predicate, ensuring that the symbolic execution of the read operation on x→next at line 19 can proceed correctly.”
-3. QCP emits the VC that `x != NULL && listrep(x)` entails that assertion, which the solver discharges.
-4. Execution continues with the fields as separate owned cells, so the read, the call to `free_list_node(x)` and the assignment go through.
+1. State the loop invariant `/*@ Inv listrep(x) */`.
+2. Before reading `x->next`, state `/*@ exists v n, x -> data == v && x -> next == n && listrep(n) */`.
+3. Generate the entailment from `x != NULL && listrep(x)` to that assertion. §2.2, p.7: “This verification condition can be automatically discharged by our entailment solver.”
+4. Continue with the field read, `free_list_node(x)`, and `x = y`.
 
-Verus form. Inference: for a recursive `spec fn` that describes a structure, the same step is an `assert` of the one-level unfolding before the access, with `reveal_with_fuel` if the definition is `opaque` or the solver needs more unfolding depth. Loop facts go in the `invariant` clause. What changes: safe Rust needs no ownership assertion for field reads at all, so most of QCP's unfold annotations disappear; they return only for pointer code that uses `PointsTo` permissions, where the permission must be `tracked` and in scope at the dereference.
+The annotation is Figure 2's line 19; the read is line 20. The prose in §2.2 incorrectly refers to a store at line 14 and a read at line 19.
 
-Evidence and cost: §5.3, p.13 states the trade openly: “It should be noted that QCP requires a larger number of annotations than VST-A.” On the VST-A benchmark QCP has 397 annotation lines against 300 (sums of Table 5, computed here), and fewer proof lines (704 against 1,426).
+§5.3, p.13 explains the cost: “It should be noted that QCP requires a larger number of annotations than VST-A.” Inference: summing Table 5 gives 397 annotation lines for QCP and 300 for VST-A, with 704 and 1,426 proof lines respectively. Line counts are the paper's effort measure, not measured writing time.
 
-## technique 5: executing incomplete programs, with a stack of exit-kind assertions
+Inference: VL could expose a recursive definition or call an unfolding lemma immediately before the proof needs its contents. The paper does not evaluate this adaptation in Verus.
 
-What it is: the front end cuts C text, finished or not, into partial statements and executes them one by one, so feedback arrives after each line.
+## technique 5: symbolic execution of incomplete programs
 
-Steps (§4.1, p.9–10; Figure 8, p.9):
+The frontend decomposes complete or incomplete C code into partial statements (§4.1, p.9). This supports intermediate-state feedback before a program is finished.
 
-1. Decompose the text into partial statements: singleton statement (assignment, increment, call), annotation, `break`/`continue`, `return`, `if (e)`/`else`, `switch`/`case`/`default`, `while (e)`/`do`/`for`, block begin, block end, variable declaration.
-2. Keep a stack of symbolic states, one node per open block. §4.1, p.9: “During execution, QCP maintains a symbolic state stack.”
-3. In each node keep up to four assertions by how control leaves: Normal, Break, Continue, Return.
-4. At loop exit merge them outward. §4.1, p.10: “Upon loop exit, the four types of inner assertions—Normal, Break, Continue, and Return—are merged with the outer assertion before symbolic execution continues with subsequent instructions.”
-5. Show the state after the current statement, and colour the source (§3, p.8): green for text that passed the preliminary checks, red where execution fails, yellow where execution passes but a VC is not solved automatically.
+Steps (§3, p.7–8; §4.1, p.9–10):
 
-The failure example (Figure 6, p.8): a variant of `sll_free` that reads `x->next` after freeing `x` stops with the message “Cannot derive the precondition of Memory Read.”
+1. Decompose code into singleton statements, annotations, control-flow statements, returns, conditional and selection statements, loop statements, block boundaries, and variable declarations (Figure 8).
+2. Maintain a stack of symbolic states. §4.1, p.9: “During execution, QCP maintains a symbolic state stack.”
+3. Track Normal, Break, Continue, and Return assertions. The example shows both a Normal assertion and a Break assertion in the inner block.
+4. Merge assertions outward on loop exit. §4.1, p.10: “Upon loop exit, the four types of inner assertions—Normal, Break, Continue, and Return—are merged with the outer assertion before symbolic execution continues with subsequent instructions.”
+5. Display symbolic states in the VS Code extension or web interface.
 
-Verus form. Inference: Verus needs a file that parses and type-checks, so a prefix is checked by closing the unfinished function with `assume(false)` after the last written statement; everything before it is verified, and the `assume(false)` must be gone at the end. The three colours map to three outcomes an agent should distinguish in Verus output: verified; a precondition or invariant fails (the state is wrong, fix code or annotation); resource limit exceeded (the state may be right, the proof needs help). What does not carry over: a displayed symbolic state. Verus shows no heap state between statements; the nearest probe is a temporary `assert` of the fact one expects.
+The colours have distinct meanings (§3, p.8). Green marks code that passed preliminary checks and is ready for symbolic execution to generate VCs. Red marks symbolic-execution failure. Yellow marks code that passes symbolic execution but cannot be fully solved automatically. Green alone therefore does not mean fully proved.
 
-Evidence: none measured; the claim of faster annotation writing (§3, p.8) has no user study.
+Figure 6 reads `x->next` after freeing `x`. Symbolic execution fails because the permission for that read is unavailable, with the message “Cannot derive the precondition of Memory Read.” The example is unfinished, yet QCP reports the error.
 
-## technique 6: entailment solver = prioritised rewrite strategies with proved soundness, then a small SMT core
+Inference: VL could distinguish failure to construct a verification state from an unresolved logical obligation. Neither outcome by itself proves that the program is incorrect. The paper provides no user study measuring the claimed improvement in annotation writing.
 
-What it is: two stages. A rule engine removes the heap part of an entailment using pattern-triggered strategies; what remains is pure arithmetic and equality for a small solver.
+## technique 6: separation-logic strategies and a small SMT solver
 
-Steps (§4.2, p.10; Appendices A and B, p.17–21):
+QCP combines a rule-based engine for spatial constraints with a lightweight SMT solver for pure constraints (§4.2, p.10). The rule engine builds on Stellis.
 
-1. Write a strategy with four parts (Figure 9, p.18): a priority; patterns that must match formulas on the left (known) and right (to prove) side, with `?x` binding pattern variables; checks, such as `left_absent(p)`, `right_absent(p)` or `infer(p)`, the last of which asks the SMT core whether a pure fact follows from the left side; and an action that adds or erases formulas on either side, introduces fresh variables, or instantiates an existential.
-2. For each strategy the framework generates a soundness lemma to be proved in Rocq. Appendix A, p.17: “For each user-defined strategy, the framework automatically generates a corresponding soundness lemma.”
-3. Apply strategies by priority until no heap formula remains.
-4. Hand the pure residue to the SMT core, which decides linear integer arithmetic and uninterpreted functions, combined by Nelson-Oppen (§4.2, p.10).
-5. Anything with a quantifier goes to the user. §4.2, p.10: “Currently, the solver does not support quantified formulas; such cases require manual user intervention.”
+Steps (§4.2, p.10; Appendix A, p.17–18):
 
-The paper's strategy (Appendix B, p.21), which makes `sll_free` fully automatic: if the left side has `listrep(?p)` and `p != NULL`, and the right side asks for the `data` or `next` field of `p`, then erase `listrep(p)` on the left and add fresh `x`, `y`, the two field cells, and `listrep(y)`. The design point is the trigger on the right side. Appendix B, p.21: “This approach ensures that the listrep predicate is expanded only when load/store is required, avoiding unnecessary operations on unrelated predicates, thereby simplifying the assertion.”
+1. Define a strategy with a priority, patterns, checks, and an action (Figure 9). Patterns identify formulas on either side of an entailment; `?x` binds a pattern variable.
+2. Check constraints such as `left_absent(p)`, `right_absent(p)`, or `infer(p)`. The last invokes the SMT solver to test whether a pure fact follows from the antecedent.
+3. Apply operations that add or erase formulas, introduce variables, or instantiate an existential.
+4. Establish strategy soundness. Appendix A, p.17: “For each user-defined strategy, the framework automatically generates a corresponding soundness lemma.” The next sentence says the strategy's validity reduces to proving this lemma.
+5. Reduce spatial and pure constraints to pure formulas for the constraint solver. The SMT component implements linear integer arithmetic and uninterpreted functions, combined through the Nelson–Oppen framework.
 
-Verus form. Inference: the nearest construct is a `broadcast proof fn`: a lemma, proved once, that the solver applies on its own when its `#[trigger]` term appears, enabled per module or function with `broadcast use`. The correspondences: strategy soundness lemma ↔ the body of the broadcast lemma, which Verus verifies; pattern ↔ trigger; demand-driven unfolding ↔ choosing as trigger the term that appears only when the fact is needed (for a list predicate, the field access, not the predicate itself). What changes: Verus's solver handles quantifiers through triggers, which QCP's does not; in return a badly chosen trigger can make Z3 loop or time out, a failure QCP's prioritised, erase-on-use rules avoid by construction. What does not carry over: priorities and the erase action; a broadcast lemma only adds facts.
+The quantifier limitation belongs to the SMT component. §4.2, p.10: “Currently, the solver does not support quantified formulas; such cases require manual user intervention.” This does not mean every VC containing an existential needs manual proof: the strategy language can introduce and instantiate existential variables.
 
-Evidence: with strategies in place six files verify with no manual VC (Table 2, p.12), among them `avl_insert`: 8 functions, 116 lines of code, 99 of annotation, 250 VCs, 2.84 s of symbolic execution.
+Appendix B's example (p.21) matches `listrep(?p)` and `p != NULL` on the left, with a demand for `p->data` or `p->next` on the right. It erases `listrep(p)` and adds fresh variables, the two field cells, and `listrep` for the tail. The authors explain: “This approach ensures that the listrep predicate is expanded only when load/store is required, avoiding unnecessary operations on unrelated predicates, thereby simplifying the assertion.”
 
-## technique 7: the manual proof recipe for a heap entailment
+Inference: a proved lemma triggered by a term that appears when its fact is needed could serve a similar purpose in VL. The paper does not establish termination of QCP's strategies, and gives no basis for claiming they prevent solver loops by construction.
 
-What it is: four tactics that finish most leftover heap VCs (§4.3, p.10–11; Appendix B, p.19–20).
+Table 2 (p.12) lists six fully automatic examples. Its `avl_insert` row has 8 functions, 116 C lines, 99 annotation lines, 250 automatic VCs, and 2.84 seconds of symbolic-execution time. The table does not isolate the contribution of individual strategies.
 
-Steps, on the VC from technique 4:
+## technique 7: a manual heap-entailment proof recipe
 
-1. `pre_process`: normalise; pure facts move to hypotheses (here `x <> 0`).
-2. `sep_apply listrep_nonzero`: rewrite the left side with a lemma; the tactic finds the lemma's left-hand heap pieces in the goal and replaces them with its right-hand side. Here it unfolds a non-null list into two fields plus a tail.
-3. `Intros y a. Exists a y.`: name the existentials now on the left; supply witnesses for those on the right.
-4. `entailer!`: cancel equal heap pieces on both sides using associativity and commutativity of `*`, and solve what is left.
+Appendix B (p.19–20) demonstrates a manual proof of a VC that QCP can also solve automatically. It is an example, not evidence that these tactics finish most remaining VCs.
 
-Verus form. Inference: the same four moves are, in order: state the hypotheses as `requires` of a `proof fn`; call the unfolding lemma (a `proof fn`) or `reveal` the definition; name witnesses with `choose` for the known existential and give them in an `assert(exists ...)` with a trigger for the one to prove; let the solver finish. Frame cancellation has no Verus step because disjointness is carried by Rust ownership and by distinct `PointsTo` values.
+Steps:
 
-## technique 8: refinement proofs by encoding a relational judgment into an ordinary contract
+1. Run `pre_process`; in the displayed goal, `x <> 0` becomes a hypothesis.
+2. Run `sep_apply listrep_nonzero` to unfold the non-null list into its data field, next field, and tail list.
+3. Run `Intros y a. Exists a y.` to name left-side existential witnesses and instantiate the right-side existentials.
+4. Run `entailer!` to finish. §4.3, p.11 describes it: “Automatically cancels common spatial predicates on both sides of the entailment by leveraging the associativity and commutativity of the separating conjunction.”
 
-What it is: functional correctness is split in two. Appendix D, p.21: “We decompose the proof of functional correctness into two parts: the correctness of the algorithm itself and the consistency of its implementation.” The algorithm is an abstract program written as a monad in Rocq (with `choice` for nondeterminism and break/continue loops); its correctness is proved in Rocq alone. The C code is then proved to refine it.
+Inference: the transferable pattern is to expose hypotheses, apply a structural lemma, supply witnesses, and let automation close the remaining goal. The concrete heap tactics are specific to QCP's Rocq library.
 
-Steps (Appendix D, p.21–22; Figures 14–15, p.23):
+## technique 8: refinement through an abstract program
 
-1. Write the abstract program, e.g. `mergesortrec` built from `split_rel`, a recursive call on each half, and `merge_rel`.
-2. State the C contract with a predicate `safeExec(P, prog, X)`, which the paper reads as: there is an initial abstract state satisfying P from which every final state of `prog` satisfies X.
-3. Precondition: `safeExec(ATrue, mergesortrec(l), X) && sll(x, l)`. Postcondition: `exists l0, safeExec(ATrue, return(l0), X) && sll(__return, l0)`. In words: the C function has consumed the whole abstract program and left only its result `l0`, which is what the returned list stores.
-4. Verify the C function against this contract as usual; the relational logic is encoded in standard Hoare logic by the method of reference [22] (§4.3, p.11).
+Appendix D, p.21: “We decompose the proof of functional correctness into two parts: the correctness of the algorithm itself and the consistency of its implementation.” The abstract algorithm is written using monads in Rocq; QCP verifies consistency of the C implementation using an encoding of relational Hoare logic into standard Hoare logic (§4.3, p.11).
 
-Verus form. Inference: for deterministic algorithms the standard Verus practice already is this split: a `spec fn` is the abstract program, the exec `fn` has `ensures` relating the view of its result to the `spec fn` applied to the view of its input, and properties (sortedness, permutation) are proved about the `spec fn` in `proof fn`s. What does not carry over: nondeterministic abstract programs (`choice`); a `spec fn` is a function, so a nondeterministic algorithm needs a relation, a `spec fn` returning `bool` over input and output.
+Steps (Appendix D, p.21–23):
 
-Evidence: used for `merge_sort` and for `thm_apply` (Appendix E, p.27–28; 4 functions, 64 code lines, 34 manual VCs, 323 manual proof lines, Table 6).
+1. Define the abstract merge-sort program `mergesortrec`, using `split_rel`, recursive calls, and `merge_rel` (Figure 14).
+2. Establish the algorithm's correctness in Rocq.
+3. Give the C function the precondition `safeExec(ATrue, mergesortrec(l), X) && sll(x, l)`.
+4. Require the postcondition `exists l0, safeExec(ATrue, return(l0), X) && sll(__return, l0)` (Figure 15).
+5. Prove this contract with QCP. The paper explains `safeExec(True, mergesortrec(l), X)` as existence of an initial state satisfying True such that every final state of the abstract computation satisfies X (p.21–22).
 
-## specification patterns from the verified components (Appendix E)
+Appendix E applies this approach to `thm_apply` (p.27–28). Table 6 reports 4 functions, 64 C lines, 34 manual VCs, and 323 manual proof lines for that component.
 
-These are contract shapes the authors used on seven files of their own tool's C code (Table 7, p.24), useful as templates:
+Inference: VL could separate a model's algorithmic properties from the implementation's agreement with that model. For a nondeterministic model, an input/output relation could describe the allowed results. This paper does not evaluate such a Verus encoding.
 
-- return-code case split: `lia_deduction` (Fourier–Motzkin elimination) has a three-way disjunctive postcondition, one disjunct per return value −1, 1, 0, each with its own heap and its own logical claim; only the value 1 carries `UNSAT(l1)` (p.25). The property proved is one-directional: “If lia_deduction says a linear arithmetic entailment is correct, it is indeed correct.” (Table 7, p.24). Verus form, inference: an `ensures` with one implication per return variant of an enum; soundness of a checker without completeness is a legitimate and much cheaper contract.
-- capacity bounds in the precondition: `prop2cnf` (Tseitin transformation) requires `SmtProp_size(prop) <= 10000` and a clause-list length bound tied to it, and ensures the output grew by at most `4 * SmtProp_size(prop)` (p.28). Verus form, inference: the same bounds as `requires` are what make index and overflow obligations provable for fixed-size buffers.
-- unchanged-parameter facts: `den == den@pre && src == src@pre` (p.27), where `@pre` is the value at entry. Verus form, inference: `old(x)` for a `&mut` parameter.
-- representation predicate per structure: `store_term(t, term1)` ties address `t` to logical value `term1`, and the result is specified as a pure function of logical values, `__return == term_alpha_eqn(term1, term2)` (p.27). Verus form, inference: a `View` implementation and `ensures r == spec_f(a@, b@)`.
+## specification patterns from the verified components
 
-## what is proved and what stays trusted
+Appendix E gives concrete specifications and verification results:
 
-- Proved, per function: all VCs in `proof_goal.v` have Rocq proofs, including strategy soundness lemmas; so the entailment solver and the SMT core need not be trusted.
-- Trusted, inference: the symbolic executor that produces `proof_goal.v`; QCP's Rocq memory model of C as a faithful model of the compiler used; Rocq; the contracts of declared-only functions; the contracts themselves.
-- Unsupported C (§5.4, p.14): floating point, function pointers, bit-fields, string literals, the comma operator, compound literals, `goto`. The paper states this as “The only non-supported control flow feature is the goto statement.” for control flow.
+- Return-code cases: `lia_deduction` has separate postcondition cases for −1, 1, and 0; only 1 establishes `UNSAT(l1)` (p.25). Table 7, p.24 states: “If lia_deduction says a linear arithmetic entailment is correct, it is indeed correct.” Inference: this is a useful checker-soundness contract without a completeness requirement.
+- Capacity bounds: `prop2cnf` requires `SmtProp_size(prop) <= 10000`, bounds its initial clause count, and bounds the increase by `4 * SmtProp_size(prop)` (p.28). Inference: explicit capacity assumptions can make fixed-buffer obligations manageable.
+- Entry values: `subst_term` ensures `den == den@pre && src == src@pre` (p.27). Inference: retaining entry values in a specification can express which pointers remain unchanged.
+- Representation predicates: `alpha_equiv` relates stored terms to logical values through `store_term` and ensures `__return == term_alpha_eqn(term1, term2)` (p.27). Inference: this separates memory representation from the pure operation being implemented.
 
-## numbers that do not add up
+## what is checked and what remains assumed
 
-- §5.1, p.11 says QCP automates 74.3% of VCs, “achieving high automation in arithmetic checks”. Table 1 gives arithmetic 84 of 123 (68.3%), below the overall rate and below data structures (78.9%).
-- §5.1, p.11 gives the fully automatic examples “an average code-to-annotation ratio of 1:0.5”. Table 2 sums to 539 code and 314 annotation lines, which is 1:0.58; the mean of the six per-file ratios is 1:0.68.
-- Table 1 labels its time columns per function. For the implementation components it gives 2.01 s symbolic execution and 16.48 s Rocq time. Table 6's seven files sum to 14.12 s and 193.00 s (computed here): per file that is 2.02 s and 27.57 s, per function (36) it is 0.39 s and 5.36 s. The first figure matches per file, the second matches neither.
-- §5.3, p.13 reports proof-line reductions of 52.8% against VST-A (457 vs. 969) and 62.3% against VST (457 vs. 1212). These are the SLL row of Table 5 only; over all four rows the sums are 704 against 1,426 (50.6%) and 1,945 (63.8%).
-- The comparison times are not from one machine as far as the text says: §5.3, p.13, “The benchmark data are sourced directly from the original publication [23].” The 95.4% time reduction (16.11 s against 349.75 s) therefore compares QCP's run with VST-A's published figure.
-- Against VeriFast (Table 3, p.12) QCP is slower on two of three programs (0.37 s vs 0.10 s; 0.14 s vs 0.10 s) and needs more annotation lines on two (33 vs 31; 31 vs 17); the text's word is comparable.
-- The strategy in Appendix B uses the action `left_exist_add`, which the grammar in Figure 9 does not list (it has `forall_add` and `right_exist_add`).
-- §2.2 says the store at line 14 and the read at line 19 of Figure 2, where line 19 is the annotation and line 20 the read; the declared function is `free_list_node` in the figure and `free_node_list` in the text. §1, p.2 says quite a few tools support (A) and (B) together where the sentence needs few.
+Appendix B's module construction checks that generated goals, including strategy-correctness requirements, have proofs. §4.3, p.10 says QCP formalizes a C memory model and builds a separation-logic library on it.
 
-## what VL should not redo
+Inference: checking proofs of the generated VCs does not establish that the symbolic executor generated every necessary VC. The paper presents no soundness proof of QCP's symbolic executor or correspondence to a compiler's semantics. By contrast, it explicitly describes VST-A's formal soundness in §6, p.15: “The entire system is built on CompCert, with corresponding tactics and decomposition operations formally verified for soundness in Rocq.” External function contracts remain assumptions in module verification.
 
-Inference: a second proving tier in a proof assistant is a different product; Verus-based VL should not build one. What is already worked out here and can be adopted: the obligation ledger (every obligation accounted for, mechanically), primitive-plus-derived contracts, demand-triggered unfolding, and the checker-soundness contract shape. The interactive state view is specific to a symbolic executor and has no Verus counterpart to copy.
+Unsupported C features (§5.4, p.14) include floating-point types, function pointers, bit-fields, string literals, the comma operator, compound literals, and `goto`. The paper calls compound literals compound operators and gives `(int [ ]){2, 4}` as its example.
 
-## threat to a product of agent-written verified Rust
+## numerical and textual limits
 
-Inference: low and indirect. QCP is for C, needs a person fluent in Rocq for a quarter of the obligations at about 14 proof lines each, and has no agent in the loop. It competes for the same goal (verified systems code) only where the code must stay in C. The numbers are a useful baseline for effort: about 1.3 annotation lines per line of C overall (3,876 / 2,972), and 2.3 for the hardest set, before manual proofs.
+Inference: the following calculations and cautions qualify the reported results:
+
+- §5.1, p.11 reports 74.3% automation overall while “achieving high automation in arithmetic checks”. Arithmetic's 84 of 123 VCs yield 68.3%, below the overall rate and the data-structure rate of 78.9%.
+- §5.1 describes the fully automatic examples as having “an average code-to-annotation ratio of 1:0.5”. Table 2 totals 539 code and 314 annotation lines, or 1:0.58; the mean of its six individual annotation/code ratios is approximately 0.68.
+- Table 1's caption defines times per function. For QCP implementation components it reports 2.01 seconds symbolic execution and 16.48 seconds Rocq checking. Table 6's times sum to 14.12 and 193.00 seconds. Dividing by seven files gives 2.02 and 27.57; dividing by 36 functions gives 0.39 and 5.36. The tables do not explain the discrepancy.
+- §5.3, p.13 reports proof-line reductions of 52.8% versus VST-A (457 versus 969) and 62.3% versus VST (457 versus 1,212). Those are the SLL row alone. All four rows total 704 versus 1,426 and 1,945, giving reductions of 50.6% and 63.8%.
+- §5.3 says: “The benchmark data are sourced directly from the original publication [23].” It does not establish whether every comparison time was rerun on the same machine. The quoted SLL time reductions should not be treated as a controlled hardware comparison without that information.
+- Table 3 has QCP slower than VeriFast on two of three programs: 0.37 versus 0.10 seconds and 0.14 versus 0.10 seconds. It uses more annotations on those two: 33 versus 31 and 31 versus 17. The paper describes their verification times as comparable (§5.2, p.12).
+- Appendix B's strategy uses `left_exist_add`, absent from Figure 9's grammar, which lists `forall_add` and `right_exist_add`.
+- §2.2's Figure 2 line references are inconsistent with the code, as noted in technique 4. The prose also uses `free_node_list` where the figure declares `free_list_node`. These are inconsistencies in the paper, not distinct verified routines.
+
+## implications for VL
+
+Inference: the most transferable designs are explicit coverage of generated obligations, primitive and derived contracts, unfolding only when needed, and checker-soundness contracts. The paper supplies no evidence that a Verus-based product needs a second proof assistant or that QCP's symbolic-state display can be copied directly into it.
+
+Inference: QCP is an indirect comparison for agent-written verified Rust: it targets C and permits manual Rocq proofs. Its 74.3% automation rate counts VCs, not programmer effort. Annotation counts provide a limited baseline: 3,876 / 2,972 is about 1.3 annotation lines per C line overall; 1,757 / 755 is about 2.3 for implementation components, before manual proofs. These data do not establish relative productivity or competitive impact.
 
 ## techniques for the catalog
 
-- obligation ledger — list every verification condition in one generated file and make the checker confirm each has an automatic or a manual proof
-- auto-then-manual split — try each obligation with fast incomplete automation and export only the leftovers as isolated goals
-- assumed declared-only contracts — verify a module against the stated contracts of functions implemented elsewhere, and track those as assumptions
-- primitive and derived contracts — verify a body once against a low-level contract and prove each abstract contract follows from it
-- annotation-driven unfolding — assert the unfolded form of a predicate just before the statement that needs it, so the prover only checks an entailment
-- partial-statement execution — check an unfinished function prefix statement by statement, keeping Normal, Break, Continue and Return assertions per open block
-- three-outcome feedback — distinguish verified, state-is-wrong, and state-may-be-right-but-unproved, and react differently to each
-- demand-triggered strategy with soundness lemma — a user rewrite rule that fires only when the goal needs a field, each rule backed by a proved lemma
-- heap entailment in four moves — normalise, apply an unfolding lemma, introduce and instantiate existentials, cancel the frame
-- refinement through an abstract program — prove the algorithm on a pure model and prove the code consumes that model, leaving only its result
-- checker soundness contract — for a decision procedure, prove only that a positive answer is correct, with one postcondition case per return code
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- checked obligation coverage — require proofs for every goal in the generated VC module type
+- automatic then manual proof — try automation and export unresolved conditions to Rocq
+- assumed external contracts — verify defined functions conditionally on specifications of declared-only functions
+- primitive and derived specifications — verify the body once and prove other specifications follow
+- assertion-driven unfolding — state the heap structure required by the next statement
+- partial-statement execution — execute incomplete C while tracking Normal, Break, Continue, and Return assertions
+- distinct feedback states — distinguish preliminary-check success, symbolic-execution failure, and unresolved proof obligations
+- demand-triggered strategies — unfold a structure when a goal requires its field, with strategy soundness proved separately
+- heap proof recipe — preprocess, apply a structural lemma, instantiate existentials, and cancel common heap predicates
+- refinement through an abstract program — prove the algorithm in Rocq and its implementation's consistency through an encoded relational contract
+- checker-soundness contract — require a positive answer to be correct without requiring a conclusive answer on every input
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In contrast, QCP only requires users to prove specific VCs while leveraging entailment solvers to automatically resolve others."): read the complete paper and study; checked quotations, counts, calculations, page and section references, technique steps, and catalog entries; corrected proof-coverage claims, quantifier scope, feedback meanings, timing interpretation, and unsupported generalizations; marked VL adaptations and derived conclusions as inferences; did not run QCP, inspect its implementation, validate Verus behavior, or independently reproduce experiments.

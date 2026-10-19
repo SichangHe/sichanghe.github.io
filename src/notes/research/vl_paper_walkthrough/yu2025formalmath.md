@@ -1,83 +1,76 @@
 # FormalMATH: Benchmarking Formal Mathematical Reasoning of Large Language Models
 (authored by agents unless marked 🧑)
-Tag: `yu2025formalmath`, [paper](https://doi.org/10.48550/arxiv.2505.02735)
+Tag: `yu2025formalmath`, [paper](https://arxiv.org/abs/2505.02735)
 
-FormalMATH is a Lean4 benchmark and a reproducible filtering workflow for turning informal mathematics into checked theorem statements. It contains 5,560 formally verified problems from high-school Olympiad to undergraduate mathematics. The paper's abstract states: “To mitigate the inefficiency of manual formalization, we introduce a novel human-in-the-loop autoformalization pipeline that integrates: (1) specialized large language models (LLMs) for statement autoformalization, (2) multi-LLM semantic verification, and (3) negation-based disproof filtering strategies using off-the-shelf LLM-based provers.” (Abstract, p. 1) The retained-statement rate before manual review is 72.09% at the last filtering stage, while only 21.7% of all collected statements survive complete filtering and expert review (Section 3.2, p. 6; Table 2, p. 6).
+FormalMATH contains 5,560 Lean4 mathematical statements spanning high-school Olympiad and undergraduate problems. Its construction combines autoformalization, automated filtering, and expert review. The abstract states: “To mitigate the inefficiency of manual formalization, we introduce a novel human-in-the-loop autoformalization pipeline that integrates: (1) specialized large language models (LLMs) for statement autoformalization, (2) multi-LLM semantic verification, and (3) negation-based disproof filtering strategies using off-the-shelf LLM-based provers.” (p. 1) These are verified statement formalizations, not a collection of completed Lean proofs: Section 2 places FormalMATH among benchmarks “requiring new proof completion” (p. 4).
 
 ## compile-and-filter training data
 
-What it is and when to use it. The authors first create paired natural/formal examples for autoformalizer training. A general-purpose LLM translates natural-language statements to Lean4; each candidate is sent to the Lean compiler and only type-checked statements are kept. This is useful when formalization data are scarce and a compiler can cheaply reject syntax and type errors.
+The authors generate natural-language/Lean4 training pairs using a general-purpose LLM, such as GPT-4, to iteratively translate statements. Each candidate goes through the Lean compiler; only type-checked statements survive. The resulting 9,260 pairs train autoformalizers based on coding-specialized and pretrained theorem-proving LLMs (Section 3.2, pp. 4–5).
 
-How to do it. (1) Generate candidate Lean4 statements from natural-language problems. (2) Compile each candidate. (3) Discard statements that fail syntax or type checking. (4) Fine-tune coding-specialized and theorem-proving LLMs on the surviving pairs. The paper reports 9,260 paired training examples from this “compile-and-filter” process (Section 3.2, p. 5). The compiler checks well-formedness, not that the statement means the source problem.
+The steps are: (1) translate a natural-language statement into Lean4, (2) compile the candidate, (3) retain type-checked pairs, and (4) fine-tune the autoformalizers on those pairs. The paper calls this a “compile-and-filter” strategy (p. 5). It does not report a held-out semantic quality score for this training corpus.
 
-Inference: For Verus, the corresponding data loop generates Rust specifications and proof skeletons, runs Verus, and retains only code that verifies. A passing `ensures` clause still may be too weak, so a separate semantic comparison to the requirement is required. Verus proof functions and lemmas must use supported syntax; proof code is erased and is not a run-time test.
-
-Evidence and limits. The paper does not give a held-out quality score for the 9,260 training pairs. Compilation is therefore a necessary filter, not evidence of semantic fidelity.
+Inference: Compilation checks whether a statement is well formed; it does not establish equivalence to the source problem. For Verus, a corresponding data loop could generate Rust contracts and check them with Verus, while separately comparing their meaning with the requirement. Requiring complete proofs would be an additional filter beyond the statement type checking described here.
 
 ## ensemble autoformalization with best-of-N
 
-What it is and when to use it. For each problem, K autoformalizer LLMs independently sample N Lean statements. Sampling multiple candidates is useful because one model may omit an assumption or choose an ill-typed encoding while another preserves the intended statement.
+For each of K autoformalizer LLMs, the pipeline samples N candidate statements per problem. It then checks every candidate with Lean4 and passes syntactically valid statements to semantic verification (Section 3.2, p. 5). The paper states: “Only syntactically valid statements are preserved for subsequent semantic verification.” (p. 5)
 
-How to do it. (1) Run each of K models and collect N candidates `T_n^(k)`. (2) Compile every candidate. (3) Pass only syntactically valid candidates to semantic verification. The formal statement shown in Figure 1 illustrates the required explicit hypotheses, such as `ConvexOn` and a boundedness witness, instead of relying on an informal phrase.
+The steps are: (1) sample N candidates from each of K models, (2) compile the candidates, and (3) send the survivors to the next filter. Figure 1 illustrates formalizing convexity, boundedness above, and continuity using explicit Lean hypotheses (p. 2). The paper does not specify numerical K and N values for this autoformalization procedure, so its aggregate results do not give an exact sampling configuration.
 
-The paper says: “All candidate statements Tn^(k) are first validated for syntactic correctness using the Lean4 compiler. Only syntactically valid statements are preserved for subsequent semantic verification.” (Section 3.2, p. 5)
-
-Inference: In VL, sample several candidate `requires`/`ensures` contracts for a Rust function, compile each in Verus, then retain candidates that express the same API behavior. Best-of-N cannot decide semantic equivalence by itself; it only increases the chance of a good candidate.
-
-Evidence and limits. The paper's final benchmark comprises 5,560 statements, but it does not report K, N, or per-model candidate recall in the main text. The method therefore cannot be reproduced exactly from the reported aggregate alone.
+Inference: In VL, several candidate `requires`/`ensures` contracts could be generated for the same Rust function. Compiler acceptance would be a prerequisite check before semantic comparison. Sampling increases the available alternatives; it does not select the contract that expresses the intended API behavior.
 
 ## multi-LLM semantic verification by back-translation
 
-What it is and when to use it. Lean compilation does not ensure that a formal statement matches its natural-language source. Multiple general-purpose LLMs independently back-translate each Lean statement to natural language, compare that description with the original, and return aligned/misaligned judgments. Use this after syntax checking and before human review.
+Multiple general-purpose LLMs, with o1-mini and Claude 3.5 Sonnet given as examples, check alignment between a source problem and its formalization. Appendix G says the semantic prompt is provided to five LLMs (p. 29). Each checker is instructed to (1) back-translate Lean into English, (2) compare the translation with the original problem, and (3) return True or False. The prompt requests only the binary answer, rather than a visible explanation.
 
-How to do it. (1) Give each checker the original problem and candidate Lean statement. (2) Ask it to translate the Lean statement back into natural language. (3) Compare the reconstructed description with the original problem. (4) Keep a statement only if every semantic checker says aligned. The authors chose this direction because they judge Lean-to-English understanding easier than English-to-Lean generation. The paper reports that this stage filters out 60.7% of syntactically correct but semantically misaligned statements, reducing the preservation rate from 92.4% to 32.7% (Section 3.2, p. 5).
+Acceptance requires unanimity: “Importantly, only Lean4 statements that passed semantic verification performed by all the LLMs would be collected.” (Section 3.2, p. 5) The authors motivate back-translation by claiming Lean-to-natural-language translation is easier than the reverse. They report around 30% unanimous agreement for high-school competition problems and 4.63% on HardMath (p. 5).
 
-The paper states: “Importantly, only Lean4 statements that passed semantic verification performed by all the LLMs would be collected.” (Section 3.2, p. 5)
+The preservation figures are internally inconsistent. Section 3.2 says: “Overall, this procedure filters out 60.7% of syntactically correct but semantically misaligned statements (i.e., from 92.4% to 32.7%).” (p. 5) Figure 2b instead shows 31.7% after semantic verification (p. 3). Inference: The study cannot resolve this discrepancy from the paper alone; these figures should not be presented as a consistent conditional rejection rate.
 
-Inference: For Verus, back-translate a generated contract into plain language and compare it with the product requirement. Run several independent checkers and require unanimous alignment for automatic acceptance; send disagreement to human review. This checker is trusted process evidence, not a Verus theorem.
-
-Evidence and limits. Agreement is domain-sensitive: the paper reports around 30% unanimous agreement for high-school competition problems and 4.63% on HardMath (Section 3.2, p. 5). The sharp drop means unanimous filtering can discard many useful undergraduate candidates. LLM semantic judgments themselves are not formally verified.
+Inference: For Verus, checkers could back-translate a generated contract and compare it with the requirement. Unanimous acceptance remains a process judgment, not a theorem proving that the contract captures the requirement. The paper does not establish how many useful candidates unanimity rejects.
 
 ## negation-based disproof filtering
 
-What it is and when to use it. Some autoformalized statements are syntactically valid but false or unprovable. The pipeline constructs a logical negation and asks an LLM prover to prove that negation in Lean. A successful proof of the negation rejects the original statement. This is useful for finding counterexamples that semantic similarity checks miss.
+The pipeline constructs the logical negation of a formal statement, using transformations such as De Morgan dualization, and asks an off-the-shelf LLM prover, such as DeepSeek-Prover-V1.5, to prove it in Lean4 (Section 3.2, p. 6). If the negation is proved, the original statement is rejected.
 
-How to do it. (1) Transform `T` into `¬T`, applying De Morgan rules where needed. (2) Submit `¬T` to an off-the-shelf Lean prover. (3) If Lean proves the negation, discard `T`. (4) In the paper's example, simplify the negated set equality, introduce a witness `7`, destruct the resulting conjunction, enumerate bounded `k` and `l` with `interval_cases`, and close contradictions using `simp_all` (Example 3.2, p. 5). The paper says: “A successful proof of ¬Tn^(k) implies that the original statement Tn^(k) cannot hold on S.” (Section 3.2, p. 6)
+Example 3.2 negates a set equality in a number-theory problem (pp. 5–6). Its proof (1) simplifies the defining predicate and set equality, (2) specializes the asserted equality at 7, (3) extracts bounded witnesses k and l, and (4) uses `interval_cases` and `simp_all` to obtain a contradiction. The paper reports: “This strategy has filtered out a few unprovable statements, accounting for 1.6% of the total statements.” (p. 6)
 
-Inference: For Verus, negate a generated postcondition as a separate ghost proposition and search for a concrete counterexample state with Verus-compatible lemmas. Verus does not provide this Lean tactic pipeline; counterexample search may require bounded testing or an external SMT/model-checking layer. Never weaken the original contract merely to make the negation hard to prove.
-
-Evidence and limits. Negation filtering removed 1.6% of total statements (Section 3.2, p. 6). The method catches disproved statements when the prover finds the negation; failure to prove `¬T` does not prove `T`.
+Inference: Failure to prove a negation does not establish the original statement. For a Rust contract, a separate counterexample attempt could expose a false claim, provided the input assumptions are preserved. The paper does not supply a Verus implementation of this Lean procedure.
 
 ## expert verification and preservation accounting
 
-What it is and when to use it. The final semantic check is manual review by domain experts. FormalMATH uses 12 IMO-medalist-level annotators to inspect alignment. Human review is needed because compiler success, LLM agreement, and negation failure each leave different gaps.
+The authors recruited 12 International Mathematical Olympiad medalist-level experts to check semantic alignment manually (Section 3.2, p. 6). Figure 2b reports preservation relative to the source collection: 100% initially, 92.4% after compilation, 31.7% after semantic verification, 30.1% after negation filtering, and 21.7% after manual verification (p. 3). The 31.7% value differs from the prose figure noted above.
 
-How to do it. (1) Present the original natural-language problem and surviving Lean statement. (2) Have an expert check semantic fidelity and revise or reject it. (3) Record the denominator and preservation rate at each funnel stage. The reported funnel is 100% source statements, 92.4% after Lean syntax, 31.7% after multi-LLM semantic verification, 30.1% after negation disproof, and 21.7% after manual verification (Figure 2b, p. 3; Table 2, p. 6). The paper reports $6.89 per statement and 22 days for the annotation stage, with 72.09% retained from the last automated stage (Table 2, p. 6).
+Table 2 reports 72.09% preservation during expert verification, $6.89 per statement, and 22 days (p. 6). Thus 72.09% is the fraction surviving manual review of the last automated stage, not the fraction of all collected problems accepted before manual review. The final 21.7% uses the original source collection as its denominator. The paper describes experts checking alignment; it does not give a detailed revision protocol for rejected statements.
 
-Inference: VL should retain the requirement, generated contract, checker reports, Verus output, and human disposition as an auditable record. A single final pass/fail bit loses which filter rejected a candidate.
-
-Evidence and limits. The paper's percentages use different denominators, so they must not be compared as one success rate. The 21.7% figure is of all collected statements; 72.09% is the fraction retained from the last automated stage. Human review remains a trusted boundary and can misread a formal statement.
+Inference: VL could record each requirement, candidate contract, checker outcome, and human decision. Keeping stage-specific counts and denominators would distinguish compiler rejection, semantic disagreement, disproof, and expert rejection.
 
 ## benchmark proving methods and verification scaling
 
-FormalMATH evaluates two families. Best-first tree search expands proof states with a heuristic and samples tactics; single-pass generation emits complete proofs and uses Pass@K. The paper defines Pass@K as the fraction of problems with at least one valid proof among K attempts (Section 4.1, p. 6). Lean compiler checks reject invalid tactics. To reduce repeated Mathlib import overhead, the authors put the import in a parent thread and run proof checks in child threads (Figure 4, p. 7).
+Section 4.1 evaluates best-first tree search and single-pass generation (pp. 6–8). Search prioritizes intermediate proof states and proposes tactics at each expansion. Its budget is N × S × T: search attempts, tactics per expansion, and expansion iterations. Single-pass generation samples complete proof trajectories. Pass@K measures the fraction of problems with at least one valid proof among K attempts (pp. 6–7).
 
-The strongest full-benchmark result is 16.46% for Kimina-Prover at Pass@32; BFS-Prover reaches 11.13% at a sampling budget of `1×32×100` (Abstract and Section 1, pp. 1–2). FormalMATH-Lite results in Table 3 use different budgets and denominators, so they should not be conflated with the full-set scores. The paper reports domain bias toward algebra and applied mathematics, with weaker calculus performance, and notes that adding natural-language solutions to chain-of-thought can reduce success.
+The verifier centralizes the expensive Mathlib4 import in a parent thread and processes individual proofs through child threads in parallel (Figure 4 and Section 4.1, p. 8). This is an implementation for reducing repeated import overhead; the paper gives no numerical speedup for it.
 
-Inference: For Verus agents, the practical lesson is to provide compiler feedback and bounded search over proof steps, while measuring Pass@K under a stated time budget. A successful proof is evidence only for the exact Verus contract and toolchain version.
+On the full benchmark, Kimina-Prover achieves 16.46% at Pass@32, while BFS-Prover achieves 11.13% with a `1×32×100` budget (Section 4.1, p. 8). FormalMATH-Lite is a selected 425-problem subset, comprising 359 high-school and 66 undergraduate problems. Selection balances solvable and unsolvable problems using DeepSeek-V1.5-RL and stratifies by domain (Section 4.2, p. 9). Its scores should be identified separately from the full-benchmark scores.
+
+On Lite, STP rises from 48.59% at Pass@32 to 53.17% at Pass@3200, a 4.58 percentage-point increase (Table 3, p. 7; Section 4.2, p. 10). The paper also reports domain bias and compares naive chain-of-thought, natural-language-augmented chain-of-thought, and vanilla generation. At K = 3200, Section 4.3 reports DeepSeek-V1.5-SFT scores of 50.6%, 49.2%, and 47.0%, respectively, and RL scores of 51.7%, 51.2%, and 49.8% (p. 11). Adding a natural-language solution hurts relative to naive chain-of-thought in this comparison, while still outperforming vanilla generation. These prose vanilla values differ from Table 3's 46.82% and 50.35% at the same budget; the paper does not reconcile them.
+
+Inference: Verus experiments should state the problem subset, sampling budget, and contract being checked. The paper supports testing whether comments help proof generation; it does not establish that natural-language guidance always hurts.
 
 ## what is proved, trusted, and risky for VL
 
-Lean proves the retained theorem statements and candidate proofs against the specified Lean4/Mathlib environment. The benchmark measures prover success, not correctness of the original informal problem beyond the expert alignment process. Trusted components include autoformalizer outputs, semantic LLM judgments, negation transformation, expert review, Lean's kernel and Mathlib assumptions, and the benchmark's source-to-formal mapping.
+The compiler validates generated Lean proofs. Statement construction separately relies on semantic LLM judgments and expert review to align the Lean proposition with its informal source. FormalMATH supplies formalized statements requiring proof completion, so inclusion in the benchmark does not mean the authors have proved every statement (Section 2, p. 4).
 
-Inference: The threat to agent-written verified Rust is high at the specification boundary. FormalMATH demonstrates that syntax-valid formalizations can be semantically wrong and that automated disproof catches only a small fraction. VL should reuse this paper's staged funnel and denominator accounting; it should not redo a benchmark-only claim that compiler acceptance alone establishes requirement fidelity. A product needs contract back-translation, counterexample attempts, human review for disagreements, and explicit trusted-dependency records.
+Inference: For VL, this separates two obligations: establish that the contract expresses the requirement, then establish that the program satisfies the contract. A successful verifier result addresses the encoded statement under the verifier's assumptions. It does not by itself validate the source-to-contract translation. Back-translation, negation attempts, and expert review are candidate checks for that translation; the paper evaluates them in Lean mathematics, not verified Rust.
 
 ## techniques for the catalog
 
-- compile-and-filter autoformalization: generate formal statements and retain only candidates accepted by the formal compiler
+- compile-and-filter autoformalization: generate statement pairs and retain candidates accepted by the formal compiler
 - best-of-N ensemble translation: sample candidates from multiple autoformalizers before semantic filtering
-- back-translation semantic checking: translate formal statements to natural language and require alignment with the source
-- negation-based disproof: prove a transformed negation to reject false or unprovable formalizations
-- expert funnel review: record preservation rates and have domain experts approve the final formal statements
-- parallel proof verification: centralize expensive library imports and check independent proof states concurrently
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- back-translation semantic checking: translate formal statements to natural language and require unanimous alignment judgments
+- negation-based disproof: prove a transformed negation to reject the original formalization
+- expert funnel review: check statement alignment manually and record preservation with explicit denominators
+- parallel proof verification: centralize expensive library imports and check proofs concurrently
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each prover, we randomly sampled 100 failed proofs from a variety of Lean 4 statements and processed them through our two-stage diagnosis and classification pipeline."): checked the entire paper, quotations, numbers, section and page references, and technique steps; corrected preservation accounting, unsupported reproducibility and review claims, mathematical quotations, example and verifier page references, and the distinction between formalized statements and completed proofs; noted inconsistent preservation and vanilla-generation figures; did not reproduce experiments, inspect released code or data, or independently validate Lean or Verus behavior.

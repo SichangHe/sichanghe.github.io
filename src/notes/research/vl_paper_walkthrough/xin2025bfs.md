@@ -1,17 +1,17 @@
 # BFS-Prover: Scalable Best-First Tree Search for LLM-based Automatic Theorem Proving
 (authored by agents unless marked 🧑)
-Tag: `xin2025bfs`, [paper](http://arxiv.org/abs/2502.03438v3)
+Tag: `xin2025bfs`, [paper](https://arxiv.org/abs/2502.03438v3)
 ## scope and result
 
 BFS-Prover is a Lean4 theorem-proving system built around best-first tree search (BFS), expert iteration, supervised fine-tuning (SFT), and direct preference optimization (DPO). The paper's abstract states: “We present BFS-Prover, a scalable expert iteration framework, featuring three key innovations.” Those innovations are strategic filtering of easy statements, DPO from compiler errors, and length normalization. The reported result is 72.95% on the MiniF2F test set. The paper says: “BFS-Prover achieves a state-of-the-art score of 72.95% on the MiniF2F test set”. The denominator is the MiniF2F test set; the paper does not state its item count in this paper. The result is accumulated over several search configurations, whereas the fixed-budget result is 70.83% ± 0.89% (Table 1).
 
-The method is relevant to VeruLaw because both systems ask a language model to propose proof steps and use a compiler or verifier to reject invalid steps. Inference: the transferable unit is a verifier-in-the-loop search controller, while Lean tactic syntax, LeanDojo state representation, and Lean-specific training data must be replaced for Verus.
+Inference: the method is relevant to VeruLaw because both systems ask a language model to propose proof steps and use a compiler or verifier to reject invalid steps. Inference: the transferable unit is a verifier-in-the-loop search controller, while Lean tactic syntax, LeanDojo state representation, and Lean-specific training data must be replaced for Verus.
 
 ## technique 1: LeanDojo as a verifier-backed environment
 
 What it is. LeanDojo is the Python interface between the policy model and Lean4. Section 2.1 says: “We adopt LeanDojo (Yang et al., 2024c) as an interactive Python interface for Lean4 integration within BFS-Prover.” It turns theorem proving into state transitions: the policy emits a tactic, LeanDojo executes it in Lean, and the result is returned. The paper specifies that an unexecutable tactic produces a compiler error that is retained as feedback.
 
-When to use it. Use this pattern when a proof assistant can expose the current proof state, execute a candidate step, and return either a new state, a completed proof, or a structured error. The verifier must be the authority for whether a proposed step is valid.
+When to use it. Inference: use this pattern when a proof assistant can expose the current proof state, execute a candidate step, and return either a new state, a completed proof, or a structured error. The verifier must be the authority for whether a proposed step is valid.
 
 How to do it.
 
@@ -32,15 +32,15 @@ What it is. BFS maintains a priority queue of proof states. Without normalizatio
 
 Here `s_t` is the state, `a_t` is the tactic, `L` is path length, and `alpha` is in [0,1]. The paper says: “This scoring mechanism, combined with a tunable node expansion width, enables BFS to dynamically allocate computational resources across the proof space, balancing the trade-off between exploration and exploitation.” Increasing alpha and/or reducing expansion width favors deeper paths.
 
-When to use it. Use it when ranking model-generated proof branches by accumulated likelihood systematically suppresses long proofs that are necessary for the theorem. Set alpha to zero for ordinary cumulative log probability, and increase it when deeper exploration is needed.
+When to use it. Inference: use it when ranking model-generated proof branches by accumulated likelihood systematically suppresses long proofs that are necessary for the theorem. Set alpha to zero for ordinary cumulative log probability, and increase it when deeper exploration is needed.
 
 How to do it.
 
-1. At the root, put the initial proof state in a priority queue.
+1. Inference: initialize the root separately; the paper does not define its queue score at depth zero.
 2. For a node at depth `L`, compute the sum of the model log probabilities of its tactics.
-3. Divide by `L^alpha` and use this value as the queue priority.
+3. For `L > 0`, divide by `L^alpha` and use this value as the queue priority.
 4. Pop the highest-priority node, sample a configured number of tactics, execute them in Lean, and enqueue valid child states.
-5. Stop when a proof-finish node is found or the search budget is exhausted.
+5. Return a completed proof when found. Inference: stop unsuccessfully when the configured search budget is exhausted.
 6. Repeat with different alpha values when accumulating results. The paper used `{0.0, 0.5, 1.0}` for its accumulative MiniF2F result.
 
 Verus form. Inference: store each candidate Verus proof fragment with its verifier state and model log probability, then rank branches by the same arithmetic expression. A Rust driver can call `verus` for each candidate and retain only branches whose resulting obligations are accepted. Inference: the score is search metadata and need not appear in verified Rust; the verified artifact remains the selected Rust program and its contracts. The paper does not specify branch-state serialization for Verus.
@@ -51,7 +51,7 @@ Evidence and limits. Under a fixed budget, BFS-Prover used temperature 1.1, expa
 
 What it is. Expert iteration repeatedly searches, collects verifier-confirmed traces, and retrains the policy. Its first step deliberately removes statements solved by deterministic beam search. Section 2.3 lists: “Formal statements that can be proved through BFS with beam search node expansions are identified. These statements are then removed from the corpus and their corresponding proof data, although new, is deliberately not added to the cumulative training dataset.” The reason given is that beam search selects high-confidence tactics and therefore identifies relatively simple problems; filtering concentrates later data on harder statements.
 
-When to use it. Use this curriculum when the initial corpus contains easy and hard obligations and training on easy successes would crowd out rare hard reasoning patterns.
+When to use it. Inference: use this curriculum when the initial corpus contains easy and hard obligations and training on easy successes would crowd out rare hard reasoning patterns.
 
 How to do it.
 
@@ -67,7 +67,7 @@ Evidence and limits. The paper reports that proof length mean increased from 10.
 
 ## technique 4: temperature-sampled trace collection and SFT
 
-What it is. After filtering, the system searches remaining statements with stochastic expansions and collects state-tactic pairs from successful paths. The second and third expert-iteration steps are: “We then perform BFS with temperature-based sampling expansions to search for proofs of the remaining unproved formal statements in the corpus” and “After each data collection phase, a new policy LLM is trained by performing SFT on a base model using the full accumulated training data corpus.” Invalid tactics are retained separately for DPO.
+What it is. After filtering, the system searches remaining statements with stochastic expansions and collects state-tactic pairs from successful paths. Section 3.1 sets alpha to 0.0 throughout expert iteration, unlike the evaluation setting of 0.5. Section 3.4 evaluates a checkpoint trained by SFT on pairs accumulated through 10 expert-iteration rounds, followed by one additional DPO round. The second and third expert-iteration steps are: “We then perform BFS with temperature-based sampling expansions to search for proofs of the remaining unproved formal statements in the corpus” and “After each data collection phase, a new policy LLM is trained by performing SFT on a base model using the full accumulated training data corpus.” Invalid tactics are retained separately for DPO.
 
 How to do it.
 
@@ -83,25 +83,25 @@ Evidence and limits. The formal-statement corpus contains approximately 900,000 
 
 ## technique 5: DPO from verifier/compiler errors
 
-What it is. DPO turns an accepted tactic and an error-causing tactic from the same state into a preference pair. Section 2.3 says: “for a state s on a proof path, we may form pairs (a_w, a_l) where a_w is the tactic on the proof path and a_l is an error-causing tactic expanded from s if exists.” It optimizes
+What it is. DPO pairs a tactic on a successful proof path with an error-causing tactic expanded from the same state. Section 2.3 says: “Along the proof path, certain generated tactics, expanded from a proof state but not part of the verified proof path, result in Lean compiler errors.” It optimizes
 
 `-E[log sigma(beta (r_theta(s,a_w) - r_theta(s,a_l)))]`,
 
-where `r_theta(s,a) = log p_theta(a|s) - log p_ref(a|s)`, beta is the KL regularization parameter, and sigma is sigmoid. DPO therefore teaches the policy to increase the accepted tactic's relative probability while controlling departure from a reference model.
+where `r_theta(s,a) = log p_theta(a|s) - log p_ref(a|s)`, beta is the KL regularization parameter, and sigma is sigmoid. Inference: this objective favors the successful proof-path tactic over the error tactic relative to a reference model.
 
-When to use it. Use it when the verifier produces reliable, state-specific failures and successful alternatives are available from the same proof state. It is especially useful when a new positive trace is scarce but many negative attempts were sampled.
+When to use it. Inference: use it when the verifier produces reliable, state-specific failures and successful alternatives are available from the same proof state. It is especially useful when a new positive trace is scarce but many negative attempts were sampled.
 
 How to do it.
 
 1. During BFS, retain the proof-path tactic at each state.
-2. Save every sibling tactic that produces a compiler error.
-3. Pair the proof-path tactic as `a_w` with each available error tactic as `a_l`.
+2. Record sampled sibling tactics that produce compiler errors.
+3. Form preference pairs with the proof-path tactic as `a_w` and an available error tactic from that state as `a_l`; the paper does not specify exhaustive pairing.
 4. Train one DPO epoch on these tuples, using beta 10, learning-rate cosine decay from `5 × 10^-6` to `5 × 10^-7`, and global batch size 16 (Section 3.1).
 5. Choose DPO in iterations with limited new positive data; choose SFT when substantial new data exists.
 
-Verus form. Inference: pair a Verus-accepted proof command with a rejected command from the identical obligation state, preserving the verifier diagnostic. Train the policy with the same preference objective or an equivalent ranking loss. Inference: diagnostics should be normalized carefully so that an environment timeout is not mislabeled as a logically invalid command. The paper does not address Verus diagnostics or timeout classification.
+Verus form. Inference: pair a Verus-accepted proof command with a rejected command from the identical obligation state, preserving the verifier diagnostic. Train the policy with the same preference objective. Inference: diagnostics should be normalized carefully so that an environment timeout is not mislabeled as a logically invalid command. The paper does not address Verus diagnostics or timeout classification.
 
-Evidence and limits. On MiniF2F, SFT rises from 64.58% to 70.38% and SFT+DPO from 64.98% to 70.83% as passes increase from 64 to 2048 (Figure 4; each percentage is success rate over the MiniF2F test set at that pass count). The paper says both methods show logarithmic scaling and that DPO consistently outperforms SFT. The plotted min-max ranges are about 3–4 percentage points, but the paper does not give their denominators beyond repeated pass@64 samples. Inference: DPO's advantage is evidence for useful negative signals in this Lean setup, not proof that every compiler diagnostic is a useful preference label.
+Evidence and limits. On MiniF2F, SFT rises from 64.58% to 70.38% and SFT+DPO from 64.98% to 70.83% as passes increase from 64 to 2048 (Figure 4; each percentage is success rate over the MiniF2F test set at that pass count). The paper says both methods show logarithmic scaling and that DPO consistently outperforms SFT. The paper describes the min-max ranges as “around 3-4% range” (Section 3.4.2) and says the intermediate bands are “computed by sampling multiple pass@64 runs”; it does not give the number of sampled runs. Inference: DPO's advantage is evidence for useful negative signals in this Lean setup, not proof that every compiler diagnostic is a useful preference label.
 
 ## technique 6: distributed verifier search
 
@@ -115,23 +115,23 @@ How to do it.
 4. Execute model calls and verifier calls asynchronously.
 5. Set explicit inference and tactic-execution timeouts.
 
-Verus form. Inference: a Verus search service can use one model worker per GPU and many isolated verifier workers per CPU, with theorem-level partitioning and asynchronous request queues. Inference: each verifier worker must use an isolated build directory and dependency configuration to prevent cross-job state from changing results. The paper reports near-linear scaling for its infrastructure, but does not provide a scaling denominator or a Verus implementation.
+Verus form. Inference: a Verus search service can use one model worker per GPU and many isolated verifier workers per CPU, with theorem-level partitioning and asynchronous request queues. Inference: each verifier worker must use an isolated build directory and dependency configuration to prevent cross-job state from changing results. The paper claims that the infrastructure “achieves near-linear scaling” (Section 3.2), but provides no machine-count scaling measurements or Verus implementation.
 
 ## what is proved, measured, and trusted
 
 The proof assistant checks Lean proof terms generated during search. The measured outcomes are MiniF2F test success rates, pass-count curves, proof-length distributions, tactic-token distributions, and comparisons under listed tactic-generation budgets. The appendix gives five generated Lean proofs for IMO problems, including number theory, inequalities, and square-root reasoning; for example, the paper prints a complete `imo_1964_p2` proof using `nlinarith [sq_nonneg ...]`.
 
-The following remain trusted or assumed by the paper: Lean4 and LeanDojo implementation, the policy/model code, data autoformalization tools, distributed infrastructure, benchmark formalizations, and the correspondence between a Lean theorem and the intended mathematics. Inference: for Verus, add the Verus verifier, Rust compiler and libraries, external-body assumptions, specification adequacy, and the search adapter to this trust boundary. A passing Verus proof establishes the stated contract under those assumptions; it does not establish that the contract captures the product requirement.
+Inference: Lean4 and the correspondence between the formalized theorem and the intended mathematics affect the meaning of a checked proof. LeanDojo, the model, autoformalization tools, and distributed infrastructure affect search and data collection; the paper does not give a formal account of which components must be trusted for proof correctness. Inference: applying this analysis to Verus would require checking its verifier assumptions, any external-body assumptions, and specification adequacy. Search code can affect which proof is found; whether it affects proof correctness depends on how the final artifact is checked.
 
 ## contradictions, accounting, and failure modes
 
-The paper calls 72.95% state of the art, but Table 1 labels it “accumulative” rather than a fixed tactic budget. The fixed-budget 70.83% ± 0.89% result uses `2048 × 2 × 600`; DeepSeek's whole-proof budget is decomposed “for ease of comparison,” so the budgets are not identical measures of work. The paper reports approximately 900,000 formal statements but gives no denominator for how many were proved in expert iteration. The 72.95% percentage is not accompanied by a confidence interval or an item count in the paper.
+The paper calls 72.95% state of the art, but Table 1 labels it “accumulative” rather than a fixed tactic budget. The fixed-budget 70.83% ± 0.89% result uses `2048 × 2 × 600`; DeepSeek's whole-proof budget is decomposed “for ease of comparison” (Table 1 caption). Inference: the listed tactic-generation budgets do not establish equal wall time or total computational cost, particularly across whole-proof and tactic-step methods and systems with critic models. The paper reports approximately 900,000 formal statements but gives no denominator for how many were proved in expert iteration. The 72.95% percentage is not accompanied by a confidence interval or an item count in the paper.
 
-The principal stated limitation is the 7B policy model: larger models may reason better but consume more memory and latency, reducing explored states; long proof states may exceed the 7B context window (Section 4, “Limitations”). Inference: VeruLaw faces an additional failure mode because Rust and Verus specifications can include ownership, lifetimes, quantified invariants, and external APIs absent from MiniF2F. Search can spend its budget on syntactically plausible but semantically irrelevant candidates, and verifier errors may conflate syntax, missing lemmas, resource limits, and real counterexamples.
+The principal stated limitation is the 7B policy model: larger models may reason better but consume more memory and latency, reducing explored states; long proof states may exceed the 7B context window (“Limitations,” PDF pages 8–9). Inference: VeruLaw faces an additional failure mode because Rust and Verus specifications can include ownership, lifetimes, quantified invariants, and external APIs absent from MiniF2F. Search can spend its budget on syntactically plausible but semantically irrelevant candidates, and verifier errors may conflate syntax, missing lemmas, resource limits, and real counterexamples.
 
 ## transfer notes for VL implementation
 
-The reusable ideas are verifier-backed state transitions, length-normalized best-first ranking, filtering easy obligations from later training rounds, retaining accepted traces plus rejected siblings, and DPO or another preference objective over verifier feedback. The paper has already demonstrated this combination for Lean; VL should not redo a generic claim that simple BFS can scale in theorem proving. Inference: a useful VL experiment would instead measure these controls on a fixed Verus systems benchmark, with proof success, verifier calls, wall time, repair cost, and diagnostic categories as denominators.
+Inference: the reusable ideas are verifier-backed state transitions, length-normalized best-first ranking, filtering easy obligations from later training rounds, retaining accepted traces plus rejected siblings, and DPO or another preference objective over verifier feedback. The paper demonstrates this combination for Lean. Inference: a useful VL experiment would instead measure these controls on a fixed Verus systems benchmark, with proof success, verifier calls, wall time, repair cost, and diagnostic categories as denominators.
 
 Product relevance for xin2025bfs. Inference: the threat is material for proof-authoring throughput because the system could generate and prioritize Verus proof steps automatically, reducing manual search. It does not directly threaten the product's runtime safety when Verus checks the final artifact. The residual product threat is specification drift: an agent can produce a proof for a weak or incorrectly modeled contract, and search success does not detect that mismatch. The paper supplies no evidence about Rust code generation, ownership proofs, concurrency, or production deployment.
 
@@ -146,5 +146,5 @@ Product relevance for xin2025bfs. Inference: the threat is material for proof-au
 
 ## evidence references
 
-The title and abstract are on PDF page 1. LeanDojo, the normalized score and branch outcomes are in Sections 2.1–2.2, PDF pages 2–3. Expert iteration and DPO construction are in Section 2.3, PDF page 3. Hardware, data, schedules, and BFS parameters are in Sections 3.1–3.2, PDF pages 4–5. MiniF2F comparisons and scaling are in Section 3.4, PDF pages 6–7 and Table 1. Conclusions and limitations are in Section 4, PDF page 7. The generated proof examples are in the appendix, PDF pages 9–11.
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+The title and abstract are on PDF page 1. LeanDojo, the normalized score and branch outcomes are in Sections 2.1–2.2, PDF pages 2–4. Expert iteration and DPO construction are in Section 2.3, PDF page 4. Hardware, data, schedules, and BFS parameters are in Sections 3.1–3.2, PDF pages 4–5. MiniF2F comparisons and scaling are in Section 3.4, PDF pages 6–9, with Table 1 on page 8 and Figure 4 on page 9. The conclusion is in Section 4, PDF page 8; the separate Limitations section spans pages 8–9. The appendix begins on PDF page 10; generated proof examples are on pages 11–12.
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We define proof length as the number of tactics found by a system to complete a proof."): checked all quotations, numerical claims, technique steps, section and PDF page references against the full text, including references and appendix; corrected page references, clarified training versus evaluation settings and DPO pairing, and marked transfer and trust conclusions as inferences; did not reproduce experiments, inspect implementation code, or validate Verus transfer claims.

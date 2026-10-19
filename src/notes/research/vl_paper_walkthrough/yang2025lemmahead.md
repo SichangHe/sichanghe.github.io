@@ -1,61 +1,85 @@
 # LemmaHead: RAG Assisted Proof Generation Using Large Language Models
 (authored by agents unless marked 🧑)
-Tag: `yang2025lemmahead`, [paper](https://doi.org/10.32388/rfa8le)
+Tag: `yang2025lemmahead`, [paper](https://arxiv.org/abs/2501.15797)
 
 ## scope and measured setup
 
-LemmaHead tests whether retrieved textbook context helps GPT-4 produce machine-checked Lean proofs. The authors define the goal as “enable LLMs to generate formal proofs from mathematical problems while ensuring correctness through validation.” Their control directly prompts GPT-4 for Lean; three experimental pipelines add a retrieval-augmented generation (RAG) knowledge base: basic retrieval, enhanced query generation (EQG), and iterative proof augmentation (IPA). Every generated proof is run in Lean, and the headline metric is single-attempt correctness (Pass@1).
+LemmaHead tests whether retrieved textbook context helps GPT-4 produce machine-checked Lean proofs. Section 1 states: “Our goal is to enable LLMs to generate formal proofs from mathematical problems while ensuring correctness through validation.” The control directly prompts GPT-4 for Lean proofs; three experimental pipelines add basic retrieval, enhanced query generation (EQG), or iterative proof augmentation (IPA). Section 4 says: “In the control group, we directly prompt GPT-4 to generate formal proofs in the Lean language, before running the generated code in Lean to verify its correctness.”
 
-The benchmark is MiniF2F’s 488 informal statements from AIME, AMC, IMO, high-school, and undergraduate mathematics, split equally into validation and test sets. The paper reports the following percentages, each over the corresponding full validation or test set: validation—GPT-4 9.4%, basic RAG 2.3%, RAG+EQG 25.2%, RAG+IPA 40.0%, human-guided GPT-4 11.5%, and GPT-f 23.9%; test—GPT-4 9.0%, basic RAG 2.5%, RAG+EQG 27.6%, RAG+IPA 32.4%, human-guided GPT-4 8.6%, and GPT-f 24.6%. The tables do not print the integer denominators, only the MiniF2F split definition; the percentages therefore cannot be independently checked for rounding from the paper alone.
+Section 4.1 describes MiniF2F as 488 informal problem statements from AIME, AMC, IMO, and high-school and undergraduate mathematics, divided equally into validation and test sets. Section 5 states: “We measure the Pass@1 rate of each model, which is the correctness rate of the generated formal Lean proof after only 1 attempt by the model.” Tables 1 and 2 report these percentages, respectively:
+
+- validation: GPT-4 9.4%, basic RAG 2.3%, RAG+EQG 25.2%, RAG+IPA 40.0%, human-guided GPT-4 11.5%, GPT-f 23.9%
+- test: GPT-4 9.0%, basic RAG 2.5%, RAG+EQG 27.6%, RAG+IPA 32.4%, human-guided GPT-4 8.6%, GPT-f 24.6%
+
+Section 5 attributes the comparison models to references [6] and [7]. The tables give percentages without integer success counts. Inference: the paper does not provide enough counting detail to reconstruct how every percentage was calculated.
 
 ## technique 1: build a mathematical RAG corpus that preserves proof context
 
-What it is. Populate a vector database with authoritative textbook material on inequalities, number theory, algebra, and functional equations. The distinctive engineering choice is to keep each problem with its solution instead of splitting them. Section 4.2.2 says: “Rather than separating problems from their corresponding solutions—a fragmentation that could dilute the contextual integrity—we preserved these pairs within the same chunk.”
+What it is. Section 4.2 describes a textbook corpus covering inequalities, number theory, algebra, and functional equations. Section 4.2.2 explains the chunking choice: “Rather than separating problems from their corresponding solutions—a fragmentation that could dilute the contextual integrity—we preserved these pairs within the same chunk.”
 
-How to apply it.
+How to apply it, following §§4.2–4.2.3:
 
-1. Select textbooks containing definitions, results, examples, and solutions relevant to the target domain (paper §4.2)
-2. Render each PDF page as an image so diagrams, equations, and notation survive extraction (§4.2.1)
-3. Use GPT-based image recognition to transcribe each page into LaTeX (§4.2.1)
-4. Prompt a parser to split the LaTeX into logically distinct, self-contained chunks while preserving problem–solution pairs (§4.2.2)
-5. Embed each chunk with GPT-based embedding functions and store vectors in CHROMA (§4.2.3)
-6. At inference, retrieve the top semantically similar chunks for the new problem and place them in the model prompt (§4.2.3)
+1. Select textbooks containing relevant problem statements, theoretical results, example solutions, and methodological insights
+2. Segment PDFs into individual page images
+3. Use GPT-based image recognition to transcribe the pages into LaTeX
+4. Use system prompts for a GPT-based parser to split the text at thematic boundaries, retaining problem–solution pairs and coherent theoretical expositions
+5. Embed the chunks with GPT-based embedding functions and store their vectors in CHROMA
+6. Retrieve semantically relevant segments for a new problem and incorporate them into the prompt
 
-The paper’s extraction method is explicit: “First, we segmented the PDFs into individual page images... Next, we utilized a GPT-based image recognition capability to read each page image and transcribe the content into a LaTeX-formatted text.”
+Section 4.2.1 states: “Next, we utilized a GPT-based image recognition capability to read each page image and transcribe the content into a LaTeX-formatted text.” Section 4.2.3 states: “These embeddings, stored in the CHROMA database, serve as the backbone of our retrieval process.”
 
-When to use it. Use this when the model lacks access to stable domain lemmas or repeatedly loses the relationship between a problem and its worked proof. Do not assume retrieval helps by default: in the reported experiment, unenhanced RAG is worse than no RAG because irrelevant context can distract the model.
+When to use it. Inference: this could help when relevant lemmas and worked solutions are available but the model does not recall them reliably. The experiment does not isolate the effect of preserving problem–solution pairs. Basic RAG performs worse than the GPT-4 control in both reported splits; the paper offers poor querying as a possible explanation, not an established cause.
 
-Verus form. Inference: index Verus specifications, verified lemmas, API contracts, and worked proof patterns as chunks, retaining each lemma with its assumptions and proof sketch. A Rust service can retrieve chunks and inject them into an agent prompt; Verus then checks all generated `requires`, `ensures`, loop invariants, and proof blocks. The retrieval database is trusted only as a suggestion source: its text, embeddings, and ranking do not establish a theorem, and `external_body` should not be used to bypass verification.
+Verus form. Inference: index Verus specifications, verified lemmas, API contracts, and worked proof patterns, retaining assumptions with each proof. Retrieve these chunks for an agent, then check the generated code with Verus. Retrieved text and ranking provide suggestions rather than proof of correctness. This adaptation is not evaluated in the paper.
 
-Evidence and limits. The paper uses GPT-based OCR and embeddings, but it does not report corpus size, retrieval precision, top-k, embedding model details, or ablations for chunk boundaries. Its vector database can therefore be difficult to reproduce exactly. The proposed benefit is measured only on MiniF2F and GPT-4.
+Evidence and limits. Inference from the full paper: reproduction is limited by the absence of corpus size, textbook titles, retrieval precision, top-k, specific embedding models, and chunk-boundary ablations. Evaluation covers GPT-4 on MiniF2F.
 
 ## technique 2: enhanced query generation (EQG)
 
-What it is. Ask GPT-4 to turn the problem into a retrieval query containing mathematical concepts, theorems, lemmas, and propositions. Section 4.3.1 states: “we first prompt GPT-4 to generate a list of keywords of mathematical concepts, theorems, lemmas, and propositions needed to solve the problem as described by the informal problem statement.” Those keywords are then used to query LemmaHead rather than querying directly with the raw problem.
+What it is. Section 4.3.1 states: “In the RAG pipeline with EQG, we first prompt GPT-4 to generate a list of keywords of mathematical concepts, theorems, lemmas, and propositions needed to solve the problem as described by the informal problem statement.” It then says: “Using these keywords, we produce an enhanced query to LemmaHead that targets mathematical knowledge relevant to the problem.”
 
-Steps from the paper are: (1) supply the informal MiniF2F statement to GPT-4; (2) generate the keyword list; (3) query the CHROMA database with those keywords; (4) combine the original statement and retrieved context; (5) ask GPT-4 for an informal proof, then ask it to convert that proof into Lean; and (6) run Lean verification (§4.3 and §4.3.1). The validation Pass@1 rises from 9.4% for GPT-4 to 25.2% with EQG; test rises from 9.0% to 27.6%. These are the table percentages over the respective MiniF2F split denominators.
+Steps from §§4.3 and 4.3.1:
 
-Verus form. Inference: have an agent first produce a structured list of candidate Rust/Verus API names and lemma concepts, retrieve matching contracts, and then generate code. Keep retrieval and code generation separate so the verifier can reject nonexistent names. Query terms should include types, preconditions, postconditions, and resource protocols; this is a product adaptation, not a technique evaluated in the paper.
+1. Supply the informal problem statement to GPT-4
+2. Generate the keyword list and use it to form the retrieval query
+3. Retrieve mathematical context from LemmaHead
+4. Combine the original statement with the retrieved context
+5. Ask GPT-4 for an informal proof, then ask it to convert that proof into Lean
+6. Run the formal proof in Lean to check correctness
 
-Failure mode. Basic RAG gives 2.3% validation and 2.5% test, below the 9.4% and 9.0% GPT-4 controls. The authors explain: “This may be due to poor querying of LemmaHead resulting in unrelated context being extracted, demonstrating that RAG can actually be detrimental to the performance of LLM proof generators if context retrieval is not handled properly.”
+Tables 1 and 2 report 25.2% validation and 27.6% test Pass@1 for EQG, compared with 9.4% and 9.0% for GPT-4. Basic RAG obtains 2.3% and 2.5%. Section 5 explains: “This may be due to poor querying of LemmaHead resulting in unrelated context being extracted, demonstrating that RAG can actually be detrimental to the performance of LLM proof generators if context retrieval is not handled properly.”
+
+Verus form. Inference: ask an agent for candidate API names and lemma concepts, retrieve matching contracts, and then generate code. Query terms could include types, preconditions, and postconditions. Verus must check the resulting proof; the paper does not evaluate this adaptation.
 
 ## technique 3: iterative proof augmentation (IPA)
 
-What it is. Re-query after seeing a draft proof, so retrieval reflects the model’s attempted reasoning. The paper says: “Each time after generating an informal proof, we perform EQG by prompting GPT-4 again to generate a list of keywords ... with both the original informal problems statement and the newly generated informal proof as context.” The retrieved context is used to write an improved informal proof, and the cycle repeats for σ iterations.
+What it is. Re-query using a draft proof as additional context. Section 4.3.2 states: “Each time after generating an informal proof, we perform EQG by prompting GPT-4 again to generate a list of keywords of mathematical concepts, theorems, lemmas, and propositions needed to solve the problem, with both the original informal problems statement and the newly generated informal proof as context.” It continues: “These keywords are then used to query LemmaHead to provide higher quality context, which is further used by the LLM to write an improved version of the informal proof.”
 
-Steps are: (1) retrieve context and generate an initial informal proof; (2) provide the original problem plus that proof to GPT-4; (3) generate an enhanced keyword query; (4) retrieve new textbook chunks; (5) generate an improved informal proof; (6) after the chosen number of cycles, convert the final informal proof to Lean; and (7) run Lean’s verifier (paper §4.3.2 and Figure 3). The experiment sets σ = 5 “arbitrarily” and reports 40.0% validation and 32.4% test Pass@1. The paper says the rates seem to increase with more iterations but does not provide a per-iteration curve or cost table.
+Steps from §4.3.2 and Figure 3:
 
-Verus form. Inference: iterate a Verus agent over a fixed budget, feeding verifier diagnostics and the current proof attempt into each new retrieval query. Keep the final candidate subject to ordinary Verus verification; iteration cannot turn an unproved claim into evidence. Measure wall-clock and token cost because the paper explicitly notes that IPA multiplies inference time by the number of iterations.
+1. Retrieve context and generate an informal proof
+2. Give GPT-4 the original problem and the newly generated informal proof
+3. Generate an enhanced keyword query and retrieve context
+4. Use the retrieved context to improve the informal proof
+5. Repeat the informal-proof refinement for σ iterations
+6. Convert the informal proof into Lean and verify it
+
+The authors state: “In our experiments, we arbitrarily set σ = 5 and observed significant improvements in the quality and correctness of both informal and formal generated proofs.” Tables 1 and 2 report 40.0% validation and 32.4% test Pass@1 for IPA. Section 6 says the rates seem to increase with more iterations; the paper supplies no per-iteration curve or cost table. Section 6 also states: “To address these limitations, we proposed IPA, but this technique multiplies the inference time of the model by the number of iterations.”
+
+Verus form. Inference: use a fixed iteration budget to retrieve relevant contracts and revise a Verus proof attempt. Adding verifier diagnostics to retrieval queries would extend the paper's method, which uses the original problem and an informal proof. Measure time and token cost, and require final Verus verification.
 
 ## what is proved, trusted, and relevant to VL
 
-Lean compilation is the correctness gate for each reported proof, and Pass@1 prevents retry selection from inflating the score. The authors do not prove that retrieved textbook passages are relevant, that OCR preserved every formula, or that GPT-4’s informal proof is mathematically sound before Lean checks the final script. They also tested only GPT-4, one small benchmark, and five IPA iterations. The conclusion acknowledges that “IPA ... multiplies the inference time of the model by the number of iterations.”
+The reported correctness check runs generated formal proofs in Lean (§§4 and 4.3). Section 5 says: “Thus, no model can try multiple times to generate a proof.” Inference: this restriction concerns the scored formal-proof attempt; IPA still includes repeated informal-proof refinement. Pass@1 therefore does not imply equal inference cost across pipelines.
 
-Inference: the threat to a Verus-writing product is moderate and operational: retrieval can improve access to contracts but can also inject irrelevant or stale APIs, while iterative repair can consume disproportionate inference time. VL should retain the paper’s verifier-gated Pass@1 discipline and add denominator-explicit reporting, retrieval-ablation tests, and checks that every retrieved Verus lemma compiles in the project revision. What is already done here is the basic RAG, query expansion, and iterative proof-retrieval pattern; VL should not present those as new ideas.
+Inference from the full paper: the experiments do not establish that every retrieved passage is relevant, that OCR preserves every formula, or that each informal proof is sound. They evaluate GPT-4 on MiniF2F and use five IPA iterations. The observed improvement does not by itself establish the same benefit for Verus.
+
+Inference: VL could reuse context-preserving retrieval, keyword query generation, and iterative proof refinement while checking final candidates with Verus. Report final-proof attempts and refinement cost separately. Retrieval ablations and checks that retrieved lemmas exist in the current project would help assess this adaptation. These are proposed checks, not experiments in the paper.
 
 ## techniques for the catalog
 
-- context-preserving RAG corpus — OCR authoritative sources, chunk complete problem–solution units, embed them, and retrieve top semantic matches
-- enhanced query generation — ask the model for theorem and lemma keywords before vector retrieval
-- iterative proof augmentation — regenerate queries and proofs from the current draft for a fixed iteration budget, then verify once
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- context-preserving RAG corpus — transcribe textbook pages into LaTeX, chunk complete problem–solution units, embed them, and retrieve semantic matches
+- enhanced query generation — ask the model for mathematical concept and theorem keywords before retrieval
+- iterative proof augmentation — regenerate retrieval queries using the problem and informal draft, refine the draft for a fixed iteration budget, then produce and verify a formal proof
+
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each problem in the MiniF2F dataset, we obtain its informal problem statement (in LaTex) and use it to generate a query to LemmaHead."): checked all quotations, reported numbers, section and figure references, technique steps, and link against the full paper; replaced shortened quotations, restored uncertainty about basic RAG's failure, clarified Pass@1 versus informal refinement, changed the link to the paper's arXiv identifier, and marked adaptations and conclusions as inferences; did not reproduce experiments or inspect implementation code.
