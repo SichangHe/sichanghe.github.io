@@ -4,25 +4,25 @@ Tag: `akinfaderin2026fregelogic`, [paper](http://arxiv.org/abs/2604.18328v1)
 
 ## system and measured result
 
-FregeLogic combines five LLM classifiers with a Z3 first-order-logic checker. It uses Z3 only when the five votes split 3–2. The paper states: “The central hypothesis is that LLM disagreement within the ensemble signals likely content-biased errors, where real-world believability interferes with logical judgment.” (Abstract, p. 1)
+FregeLogic combines five LLM classifiers with a Z3 first-order-logic checker. It uses the Z3 verdict when the five votes split 3–2 and a verdict is available; otherwise it returns the ensemble majority (Section 3.3, p. 4). The paper states: “The central hypothesis is that LLM disagreement within the ensemble signals likely content-biased errors, where real-world believability interferes with logical judgment.” (Abstract, p. 1)
 
-The dataset has N=960 syllogisms, balanced into valid-believable (240), valid-unbelievable (240), invalid-believable (234), and invalid-unbelievable (246) groups (Section 4, p. 5). Nested five-fold cross-validation uses 768 instances for calibration and 192 for evaluation in each outer fold; a 200-sample inner subset selects among 12 model/prompt configurations (Section 4, p. 5). The tiebreaker obtains 94.3% accuracy, content effect 2.85, and combined score 41.88, compared with 93.4%, 3.39, and 39.12 for the pure ensemble (Table 1, p. 5). These percentages are averages across five outer folds, with the table reporting mean ± standard deviation.
+The dataset has N=960 syllogisms, divided into valid-believable (240), valid-unbelievable (240), invalid-believable (234), and invalid-unbelievable (246) groups (Section 4, p. 4). Nested five-fold cross-validation uses 768 instances for calibration and 192 for evaluation in each outer fold; a 200-sample inner subset selects among 12 model/prompt configurations (Section 4, p. 4). The tiebreaker obtains 94.3% accuracy, content effect 2.85, and combined score 41.88, compared with 93.4%, 3.39, and 39.12 for the pure ensemble (Table 1, p. 4). Table 1 reports mean ± standard deviation across five outer folds.
 
 ## technique 1: diversify an LLM ensemble and route disagreement
 
-What it is. Select five model/prompt pairs from three model families and four prompting styles, then majority-vote their binary validity predictions. Models are Llama 4 Maverick, Llama 4 Scout, and Qwen3-32B; prompts are zero-shot, few-shot, few-shot chain-of-thought, and simple chain-of-thought (Section 3.1, pp. 2–3). Calls use temperature 0.0 and responses pass through regex parsing; parse failures default to invalid (Section 3.1, p. 3).
+What it is. Select five model/prompt pairs from three models and four prompting styles, then majority-vote their binary validity predictions. Models are Llama 4 Maverick, Llama 4 Scout, and Qwen3-32B; prompts are zero-shot, few-shot, few-shot chain-of-thought, and simple chain-of-thought (Section 3.1, pp. 2–3). Calls use temperature 0.0 and responses pass through regex parsing; parse failures default to invalid (Section 3.1, p. 3).
 
 How to do it.
 
-1. Score all 12 model/prompt pairs on a 200-example inner set inside each training fold.
-2. Keep the top five by the task’s combined score, preserving model and prompt diversity (Section 4, p. 5).
+1. Score all 12 model/prompt pairs on a 200-example inner set inside each outer calibration fold.
+2. Keep the top five by the task’s combined score (Section 4, p. 4).
 3. Ask each selected classifier for a binary valid/invalid result. The majority is valid when more than 2 of 5 votes are valid (Section 3.1, p. 3).
 4. Compute the vote margin m=|2Σvi−5|. For five voters, m is 5 for 5–0, 3 for 4–1, and 1 for 3–2 (Section 3.3, p. 4).
-5. Invoke the formal checker only at m≤1; otherwise return the ensemble majority.
+5. Use the formal checker’s verdict at m≤1 if it is available; otherwise return the ensemble majority. This restricts decision fusion, rather than the reported computation: Appendix G describes an extraction call and a Z3 solve for each syllogism (p. 9).
 
 Evidence. The 3–2 split occurred in 76/960 cases (7.9%); Z3 overrode the majority in 30, with 19 correct flips and 11 wrong flips, a net gain of eight correct predictions (Table 3, p. 5). The tiebreaker’s subgroup accuracies were 95.6% valid-believable, 93.8% valid-unbelievable, 94.5% invalid-believable, and 93.5% invalid-unbelievable (Table 2, p. 5).
 
-Verus form. Inference: represent each classifier result as an enum and prove a deterministic vote function with `ensures` that its result equals the count-based majority. Represent the routing rule as an executable function whose postcondition says Z3 is consulted exactly when the margin is 1. The model’s statistical claim that disagreement predicts content bias is external evidence, not a Verus theorem.
+Verus form. Inference: represent each classifier result as an enum and prove a deterministic vote function with `ensures` that its result equals the count-based majority. Represent the routing rule as an executable function whose postcondition selects an available Z3 verdict exactly when the margin is 1, falling back to the majority otherwise. The model’s statistical claim that disagreement predicts content bias is external evidence, not a Verus theorem.
 
 ## technique 2: structured extraction into first-order logic
 
@@ -31,42 +31,42 @@ What it is. An LLM extracts exact term strings, proposition types, two premises,
 How to do it.
 
 1. Prompt for three terms, each premise, and the conclusion, with each proposition labeled A (universal affirmative), E (universal negative), I (particular affirmative), or O (particular negative).
-2. Require terms to be copied exactly from the input text. The Appendix B prompt specifies a JSON object with `terms`, `premise1`, `premise2`, and `conclusion` fields (Appendix B, p. 9).
-3. Encode each proposition over a declared sort `Thing` with unary predicates for terms. The paper’s Aristotelian encoding is: A = ∀x(S→P) ∧ ∃x S; E = ∀x(S→¬P) ∧ ∃x S; I = ∃x(S∧P); O = ∃x(S∧¬P) (Section 3.2, pp. 3–4).
+2. Require terms to be copied exactly from the input text. The Appendix B prompt specifies a JSON object with `terms`, `premise1`, `premise2`, and `conclusion` fields (Appendix B, pp. 8–9).
+3. Encode each proposition over a declared sort `Thing` with unary predicates for terms. The paper’s Aristotelian encoding is: A = ∀x(S→P) ∧ ∃x S; E = ∀x(S→¬P) ∧ ∃x S; I = ∃x(S∧P); O = ∃x(S∧¬P) (Section 3.2, p. 3).
 4. Preserve a three-valued solver result: valid, invalid, or undefined (⊥) for malformed extraction or timeout.
 
-Verus form. Inference: define a Rust enum for A/E/I/O and a typed `Proposition` struct, then use a `spec fn` to map each constructor to a logical predicate over a ghost domain. An executable parser can return `Option<Proposition>`; a proof function can show that well-formed constructors satisfy the intended predicate. The LLM extraction remains trusted input generation unless its parser is independently verified.
+Verus form. Inference: define a Rust enum for A/E/I/O and a typed `Proposition` struct, then use a `spec fn` to map each constructor to a logical predicate over a ghost domain. An executable parser can return `Option<Proposition>` and carry a proof that successful parsing produces well-formed data. Parser verification alone does not prove that the extracted proposition preserves the input text’s meaning; that correspondence remains a separate obligation.
 
-Evidence and failure. Extraction failures were 0.0% for valid-believable, invalid-believable, and invalid-unbelievable groups, and 0.4% (1/241) for valid-unbelievable (Section 5.5, p. 6). The paper gives concrete errors: “Double negative,” a compound term boundary (“class of birds”), and a non-standard quantifier (“Under no circumstances”) (Figure 2, p. 6). All 11 wrong flips came from extraction errors and falsely rejected valid syllogisms; the paper says the solver was correct for the extracted, but wrong, structure (Section 5.5, p. 6).
+Evidence and failure. Extraction failures were 0.0% for valid-believable, invalid-believable, and invalid-unbelievable groups, and 0.4% (1/241) for valid-unbelievable (Section 5.5, p. 6). The paper prints “1 of 241 cases” here, although Section 4 lists 240 valid-unbelievable instances; it does not explain this discrepancy. The paper gives concrete errors: “Double negative,” a compound term boundary (“class of birds”), and a non-standard quantifier (“Under no circumstances”) (Figure 2, p. 6). All 11 wrong flips came from extraction errors and falsely rejected valid syllogisms; the paper says the solver was correct for the extracted, but wrong, structure (Section 5.5, p. 6).
 
 ## technique 3: two-step Z3 satisfiability validity checking
 
-What it is. First reject inconsistent premises; then test whether premises plus the negated conclusion are unsatisfiable. The paper gives the rule: “valid(S) ⇐⇒ (P1 ∧P2 is SAT) ∧ (P1 ∧P2 ∧ ¬C is UNSAT)” (Equation 1, Section 3.2, p. 4).
+What it is. First return undefined for inconsistent premises; then test whether premises plus the negated conclusion are unsatisfiable. Equation 1 requires both satisfiable premises and an unsatisfiable conjunction of premises with the negated conclusion (Section 3.2, p. 3).
 
 How to do it.
 
-1. Check P1∧P2. If UNSAT, return ⊥ and defer to the ensemble, preventing ex contradictione quodlibet.
+1. Check P1∧P2. If UNSAT, return ⊥ and defer to the ensemble, preventing an inconsistent premise set from making every conclusion count as valid.
 2. Check P1∧P2∧¬C. Return valid on UNSAT and invalid on SAT.
-3. Return ⊥ on UNKNOWN after the 5000 ms timeout or on malformed structure (Section 3.2, p. 4).
+3. Return ⊥ on UNKNOWN after the 5000 ms timeout or on malformed structure (Section 3.2, p. 3).
 4. Apply the result only to the low-margin 3–2 cases.
 
-Evidence. Z3-only accuracy was 74.7% with content effect 26.28, while the selective tiebreaker reached 94.3% and 2.85 (Table 1, p. 5). Z3-only accuracy was 50.5% and 53.9% on valid groups but 98.0% and 97.2% on invalid groups (Table 2, p. 5). The authors attribute this invalidity bias to extraction errors that break valid entailment chains.
+Evidence. Z3-only accuracy was 74.7% with content effect 26.28, while the selective tiebreaker reached 94.3% and 2.85 (Table 1, p. 4). Z3-only accuracy was 50.5% and 53.9% on valid groups but 98.0% and 97.2% on invalid groups (Table 2, p. 5). The authors attribute this invalidity bias to extraction errors: “When the LLM misidentifies a proposition type or term boundary in a valid syllogism,” the encoding “breaks the entailment chain” (Section 5.4, p. 5).
 
-Verus form. Inference: encode the two satisfiability checks as specifications over a finite ghost model and prove that a returned `Valid` record implies consistency and entailment. Verus can prove the encoding and finite-domain lemmas, but it cannot establish completeness of an external SMT solver or correctness of an LLM’s proposition classification without a verified parser and a trusted solver model.
+Verus form. Inference: specify the two satisfiability checks and prove that the decision function returns `Valid` only when the first result is SAT and the second is UNSAT. Deriving semantic validity additionally requires assumptions or proofs about the encoding, solver, and correspondence between extracted propositions and the input text. The paper reports no Verus implementation.
 
 ## technique 4: nested cross-validation and cost accounting
 
-Nested selection prevents the five-model ensemble and threshold from being tuned on the outer test fold. The paper states: “While our approach involves no parameter updates, model and prompt selection, fusion strategy selection, and the tiebreaker threshold (τ =1) were all tuned via nested cross-validation on the provided dataset; no independent test set was used.” (Limitations, p. 6)
+The paper describes per-fold ensemble selection on the inner subset (Section 4, p. 4). It states: “While our approach involves no parameter updates, model and prompt selection, fusion strategy selection, and the tiebreaker threshold (τ =1) were all tuned via nested cross-validation on the provided dataset; no independent test set was used.” (Limitations, p. 6)
 
-The full run made 18,722 API calls. Each syllogism used five ensemble calls, one extraction call, and one Z3 solve; Z3 took 960 calls in 8.5 seconds total, median 7 ms (Appendix G, p. 10). The limitation is substantial: there was no independent test set, and the 12.1-second sequential latency per instance includes approximately 4,300 tokens (Limitations, p. 6).
+Appendix G reports “18,722 API calls across model selection and evaluation phases” (p. 9). Table 7 includes 960 Z3 solver calls in its 18,722 total (p. 10). Inference: this total should not be treated as an unambiguous count of LLM API requests. Each syllogism requires five ensemble calls, one extraction call, and one Z3 solve; 960 Z3 solves take 8.5 seconds total, median 7 ms (Appendix G, p. 9). The paper reports approximately 4,300 tokens and 12.1 seconds of sequential latency per instance, or 2.8 seconds with parallel ensemble calls (Limitations, p. 6).
 
 Inference: VL should keep model-selection data separate from an untouched evaluation corpus and should treat extraction, solver, and threshold choices as part of the system specification. The product threat is concentrated at the natural-language-to-structure boundary: a formally correct Z3 or Verus check can validate the wrong structure. The paper’s selective routing is reusable for verified Rust agents when disagreement identifies an expensive proof path, but its reported accuracy does not transfer to Rust or Verus without new measurements.
 
 ## techniques for the catalog
 
-- disagreement-triggered formal routing: send only narrow ensemble votes to a formal checker
+- disagreement-triggered formal routing: use a formal checker’s available verdict only on narrow ensemble votes
 - schema-constrained extraction: force typed logical structure with JSON output and fallback models
 - Aristotelian FOL encoding: encode A/E/I/O propositions with explicit existence axioms
-- consistency-then-entailment checking: reject inconsistent premises before testing premises plus negated conclusion
-- nested evaluation: select models, prompts, and thresholds inside inner folds and report outer-fold results
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
+- consistency-then-entailment checking: defer to the ensemble on inconsistent premises before testing premises plus negated conclusion
+- nested evaluation: select model/prompt pairs on inner subsets and report outer-fold results
+Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In each, the Z3 solver produces a correct verdict given the (incorrectly) extracted structure, confirming that the bottleneck is extraction fidelity, not logical encoding."): checked all paper text, study quotations, numbers, section and page references, technique steps, and the arXiv identifier; corrected page references, selective verdict use versus per-instance computation, unsupported diversity and threshold-selection claims, and inconsistent reported counts; did not reproduce experiments, inspect code, or verify the proposed Verus adaptations.
