@@ -1,5 +1,61 @@
 # Unstructured Reading Notes
 
+- Photoreal Worlds at Scale - From Capture to Generation, Haithem Turki,
+    CS department lecture
+    - need to use differentiable rendering (e.g.
+        NeRF/3DGS) vs generative based on use case
+    - SimULi: real-time camera + LiDAR reconstruction
+        - resimulation for OEM review
+        - NeRF way too slow bc ray casting + MLP eval
+        - 3DGS does not handle distorted camera input
+            - 3DGUT: use 7 sigma points instead
+        - use elevation angle to rasterize LiDAR input
+            - each bin has similar #rays
+        - camera/LiDAR disagree
+            - separately render, then fuse
+        - faster rendering than competitors
+        - can view in arbitrary viewpoint
+            - hallucinate horribly for positions not filmed
+    - ArtiFixer: 3D reconstruction enhancement
+        - prior: Difix3D: frame-wise fixing via diffusion
+        - use video model
+            - usually flow-matching model
+            - give rendering, camera info, opacity, reference image
+        - using Gaussian noise as input and degraded image as
+            condition gives semantic inconsistency
+        - starting from degraded image as input cannot handle blocked scene
+        - solution: hybrid: Gaussian noise only for blocked scene
+        - use fixed-window attention s.t.
+            can generate 100s instead of 10s of frames each time
+        - slower than direct 3D rendering
+        - GPU-costly to curate training scene data for model
+            - may use faster feed-forward 3DGS in the future
+    - Deja View: reuse transformer block for 3D geometry predictor
+        - pass through same block in a loop
+            - can adjust by changing #iterations
+            - too many iterations: degrade
+        - intuition: gradual attention focus
+    - directions: combine advancements: quality, speed
+    - agents can do lots of iteration w/ ok judgement
+- Say the Same, Act Differently: Diagnosing and
+    Steering Text—Action Divergence in Reasoning VLAs, Zihao Feng, NSL meeting
+    - VLA: do not predict trajectory, assume model can reason&generalize
+    - 10hz, 6.4s worth of waypoints
+    - input from camera + prompt + its previous actions (ego history)
+    - flow-matching decoder
+    - human-readable text output ⇒ good for explainability&monitoring
+        - keyword matching to detect attack
+        - reasoning helps to achieve better action
+    - text rationale explain >80% of action
+    - but \~36% of the time, same rationale, different action
+        - because text is discrete space, action from cross-attention
+        - also called unfaithful reasoning and can be reduced by RL
+    - text-neutral action subspace (TNAS)
+        - can estimate from gradient from perturbation
+        - use KL divergence on text
+        - can change action a lot while not changing text
+    - messing with camera input can cause different action ⇒ crash
+    - same thing for VLA robotic arm
 - Continuously Updated 3D Maps, Haodong Wang, NSL meeting
     - for 3DGS, if scene change
         - quality may drop a lot
