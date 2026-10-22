@@ -17,6 +17,8 @@ Carefully think about your audience before writing. Who are they?
 What do they know? What would they assume?
 What phrasing would they best understand?
 What should you to tell them vs keep to yourself?
+After writing, pretend you are the audience: how would they read this,
+would they understand?
 
 Avoid dumping everything in your responses when
 your audience could ask followups, and
