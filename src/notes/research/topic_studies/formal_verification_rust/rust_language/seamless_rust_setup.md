@@ -10,6 +10,7 @@ The [local study tree](seamless_rust_setup/index.md) contains the findings. The 
 - [interactive debugging with edited files](https://github.com/SichangHe/seamless_rust_setup/blob/main/docs/interactive.md)
 - [hot reload while retaining state](https://github.com/SichangHe/seamless_rust_setup/blob/main/docs/hot-reload.md)
 - [asynchronous task inspection and cancellation](https://github.com/SichangHe/seamless_rust_setup/blob/main/docs/task-monitor.md)
+- [integrated file and task control, including repeated edit measurements](https://github.com/SichangHe/seamless_rust_setup/blob/main/docs/agent-dev.md)
 - [smaller dependencies and binaries](https://github.com/SichangHe/seamless_rust_setup/blob/main/docs/dependency-bloat.md)
 
 These are research prototypes. The local study tree is a snapshot of the published documentation; its experiment links point to the public repository.
