@@ -24,7 +24,6 @@ short version
   - 2. an independent stress test for runtimes that let several agents write the same state
     - same contended workloads, injected worker deaths, a checker that reads the history
   - 3. make workers hand back evidence the harness can check, and measure how many false "done" reports a manager then accepts
-    - the human's own manager and worker logs are data nobody else has
 
 what the topic is, in plain words
 
@@ -57,10 +56,6 @@ relationship to the human's notes
 - specialized_agents.md (local source: `../../../specialized_agents.md`; not published in this study) reads JARVIS as a specialized system, not as proof that roles help
   - its words: “the paper does not isolate a causal benefit from multiple agents versus one controller running the same pipeline”
   - inference: still true of every specialization paper I opened
-- the human's manager instructions already encode two findings below
-  - “Give workers the smallest task-specific context they need”
-  - “The human's instructions MUST remain the absolute source of truth”
-  - inference: the first matches the finding that what reaches the worker matters more than how many workers there are; the second guards against the brief losing rules, which [policy_following.md](policy_following.md) studies
 - sibling files I do not repeat
   - [policy_following.md](policy_following.md): rules lost when a manager briefs a subagent
   - [recovery.md](recovery.md): what to do after an action whose result is unknown
@@ -347,7 +342,6 @@ research we can do
   - convincing result: a curve of success per dollar against size and coupling that shows where each arm wins, with intervals that do not overlap at the ends; "the restart arm gets most of the gain" would be a clean and useful negative result for teams
   - cost: I guess a few thousand dollars of API use and 4 to 6 weeks for one person, mostly harness work
   - closest work that could scoop it: Kim et al. (add coding tasks at scale), Geng and Neubig (add cost matching), OrchBench (already models information loss in a simulator)
-  - why us: the human runs the restart arm and the manager arm daily, so the harness knowledge is there
 - 2. an independent stress test for shared-state agent runtimes
   - question: under the same contended workloads and injected faults, which runtime keeps the final state correct, and what does each cost in tokens and time?
   - why open: see the second gap; every runtime paper grades itself
@@ -368,18 +362,16 @@ research we can do
     - evidence here means things like the test command and its output hash, the diff, the file paths, which the harness re-runs or re-reads itself
   - why open: see the third gap
   - first experiment
-    - part A, measurement: take the human's own manager and worker logs, sample finished tasks, and check each "done" against the repository and test state at that time; label with the MAST modes
-    - part B, control: on a coding benchmark with hidden tests, plant workers that return a wrong result with a confident report; compare a manager that reads the summary, a manager that reads the full trace, a model judge, and a harness that re-runs the evidence
+    - on a coding benchmark with hidden tests, plant workers that return a wrong result with a confident report; compare a manager that reads the summary, a manager that reads the full trace, a model judge, and a harness that re-runs the evidence
     - measure false accepts, false rejects, and tokens the manager spends on review
-  - convincing result: a false accept rate from real use with an interval, and an intervention that cuts it by a large factor at under, say, 10% extra tokens
-  - cost: part A is a few weeks and nearly free; part B a few hundred dollars
+  - convincing result: a false accept rate on the coding benchmark with an interval, and an intervention that cuts it by a large factor at under, say, 10% extra tokens
+  - estimated cost: a few hundred dollars for the benchmark experiment
   - closest work that could scoop it: Advani's false success study (extend to workers), OrchestraBench (extend to real workloads), TraceElephant
-  - limits: one user's logs are a case study, and the logs may hold private text, so the human decides what leaves the machine
+  - limits: planted failures on one coding benchmark do not establish performance on naturally occurring failures
 - 4. smaller: escalate on a sound checker
   - question: when a compiler or proof checker decides pass or fail, what is the cheapest rule for moving from a cheap model to a strong one, and does handing the strong model the cheap model's failed attempts help or hurt?
   - first experiment: Verus or Lean proof tasks; arms are strong only, cheap only, cheap then strong with and without the failed attempts, and SWE-Router's learned rule
   - closest work: SWE-Router, AgentRouter, AgentCARD, the verify and repair paper; the formal verification group in this study may cover the same ground from the prover side
-- my order: 3A first because it is cheap and uses data only we have, then 1, then 2 if a fresh search still shows no shared benchmark
 
 ChatGPT's opinion
 

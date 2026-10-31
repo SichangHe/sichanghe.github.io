@@ -7,7 +7,7 @@ A person says, in a few vague sentences, what they want guaranteed. An agent wor
 
 A proof checker only tells you the proof matches the statement it was given. It does not tell you the statement is what the person meant. Most checks below are about that gap, plus the ways an agent can fake a pass.
 
-The checks come from the literature review and from audits of earlier results in this project. The sources are in [agent_evaluation_procedure_sources_20261012.md](agent_evaluation_procedure_sources_20261012.md), keyed by check id. You do not need that file to follow the procedure.
+The checks combine literature review with proposed evaluation methods. The sources are in [agent_evaluation_procedure_sources_20261012.md](agent_evaluation_procedure_sources_20261012.md), keyed by check id. You do not need that file to follow the procedure.
 
 What the five labels tell a reader who must decide whether to trust the result:
 - valid: every claim holds as the person's words say, with no limit to list. You can rely on it as stated.
@@ -67,11 +67,12 @@ Verdict words
 
 1. Make a new empty folder for your own files, call it `W`, and work only there. Copy the result into `$W/copy` and work only on the copy. `cp -rL` follows links. `ROOT` is the folder that holds `verify.sh`; `dk` mounts it. If the result has several, set `ROOT` to the one the report names.
 ```
+VERIFIER_IMAGE=<image containing the required verifiers>
 RES=<absolute path of the result>
 W=<absolute path of a new empty folder>
 mkdir -p "$W/copy" && cp -rL "$RES"/. "$W/copy/"
 ROOT=$(dirname "$(find "$W/copy" -name verify.sh | head -1)"); [ -f "$ROOT/verify.sh" ] || ROOT="$W/copy"
-dk() { docker run --rm --network none --cpus 4 --memory 16g --user "$(id -u):$(id -g)" -v "$ROOT:/work" -w /work vd-bench "$@"; }
+dk() { docker run --rm --network none --cpus 4 --memory 16g --user "$(id -u):$(id -g)" -v "$ROOT:/work" -w /work "$VERIFIER_IMAGE" "$@"; }
 ```
 2. Keep one file, `evaluation.md`. For every check write one line: id, outcome, evidence (file:line quote, command and exit code, or log lines). Put logs in `$W`.
 3. Do the steps in order. Each step uses only what earlier steps produced.
@@ -107,7 +108,7 @@ dk verus --version; docker --version
 ```
 A log counts as yours only if you made it from these files. A log from the result's own run is a lead on where to look. It never gives a pass.
 
-S5. Find a verifier. Run `which verus tlc dafny lean coqc tlapm`. This project's Docker image `vd-bench` holds Verus at `/opt/verus/verus` and TLC at `/opt/tla/tlc`; the `dk` function above runs inside it. If the result uses another tool that you cannot find, every check that needs it is cannot tell, and you still run all the reading checks.
+S5. Find a verifier. Run `which verus tlc dafny lean coqc tlapm`. Configure the `dk` function above with an image containing the required tools. If the result uses another tool that you cannot find, every check that needs it is cannot tell, and you still run all the reading checks.
 ```
 dk verus --crate-type=lib <file>.rs
 dk /opt/tla/tlc -config M.cfg M.tla
@@ -205,7 +206,6 @@ Pass (grade stays same or stronger): the strongest natural reading, or stronger.
 Pass with a condition (grade becomes "same with a condition"): a weaker natural reading that the result states. Condition: say which reading and what it leaves out.
 Also pass with a condition: the strongest natural reading is impossible to meet together with the other claims (M5, M10). Write the clash, ask the person, and treat the result's stated reading as the weaker one.
 Fail (grade stays weaker): a reading that is not natural for the words, or a weaker reading the result does not state.
-Test cases from this project: "keep making progress" read as "a leader exists" (fail: not natural). "One leader at a time" proved per term only (weaker natural reading: pass with a condition if stated, otherwise fail). "A majority of non-crashed nodes" read as a majority of all nodes (pass with a condition if stated and the stronger reading cannot be met safely, otherwise fail).
 
 ### M3. Not narrowed [C]
 Look at: theorem signatures, constants, config files, initial states.
@@ -295,7 +295,7 @@ Do: read the premises of each safety theorem. Quote the full premise list.
 Pass: no fairness, no "eventually", no timing or quiet-client premise. Fail: any of those. n/a: no theorem.
 
 ### L5. Could a real system provide it [cond]
-Do: for each assumption the agent added, ask whether a real scheduler, network or timer could make it true using only what a process can see and control. Example from this project: "a node times out only when no message in the group is on the way". No node can see that.
+Do: for each assumption the agent added, ask whether a real scheduler, network or timer could make it true using only what a process can see and control.
 Condition: one for each assumption that is not realizable.
 
 ### L6. Drop each assumption [C]
@@ -417,14 +417,14 @@ Not covered, because they belong to whoever designs the task or compares agents:
 
 Grep these in K2 (switch-offs) and K3 (trusted facts). Entries marked untested were not run here.
 
-- Verus (tested). Switch-offs: `assume(`, `admit(`, `requires false`, `ensures true` in place of a real postcondition, `--no-verify`. Trusted: `external_body`, `assume_specification`, `external_fn_specification`, `#[verifier::external`, `axiom`, `opens_invariants`. Strict mode: `--no-cheating` (without it `assume` and `admit` are accepted). Success line: `N verified, 0 errors`.
+- Verus. Switch-offs: `assume(`, `admit(`, `requires false`, `ensures true` in place of a real postcondition, `--no-verify`. Trusted: `external_body`, `assume_specification`, `external_fn_specification`, `#[verifier::external`, `axiom`, `opens_invariants`. Strict mode: `--no-cheating` (without it `assume` and `admit` are accepted). Success line: `N verified, 0 errors`.
 - Dafny (untested). Switch-offs: `assume`, `{:verify false}`. Trusted: `{:axiom}`, `{:extern}`, bodiless methods. Success line: `N verified, 0 errors`.
 - Coq (untested). Switch-offs: `Admitted`, `admit`. Trusted: `Axiom`, `Parameter`, `Hypothesis`. Audit command: `Print Assumptions <theorem>` must say "Closed under the global context". Success: `coqc` exit 0.
 - Lean (untested). Switch-offs: `sorry`, `native_decide`. Trusted: `axiom`, `implemented_by`, `unsafe`. Audit command: `#print axioms <theorem>` must list only the standard axioms and no `sorryAx`. Success: exit 0 with no `sorry` warning.
 - Isabelle (untested). Switch-offs: `sorry`, `oops`. Trusted: `axiomatization`.
 - TLAPS (untested). Switch-offs: `OMITTED`, `PROOF OMITTED`. Trusted: `AXIOM`, `ASSUME` on facts that are not constants. Success: all obligations proved.
 - Ivy (untested). Trusted: `axiom`, `trusted` isolates, unchecked isolates.
-- TLC (tested here). Success line: `Model checking completed. No error has been found.` A pass at small sizes is evidence level 2.
+- TLC. Success line: `Model checking completed. No error has been found.` A pass at small sizes is evidence level 2.
 - Names for any tool: a verify script that ignores errors; a flag that checks fewer functions; a changed checker or timeout wrapper; a stale receipt; a notation or instance trick that changes what a goal means; code moved to a file the script skips; `SPARK_Mode => Off`; `pragma Assume`.
 
 ## Appendix B. Wrong behaviors to try (S3, W1, T6)
@@ -444,7 +444,7 @@ Grep these in K2 (switch-offs) and K3 (trusted facts). Entries marked untested w
 
 ## Appendix C. Verifier negative controls (R1)
 
-Three files for Verus (tested on 13 Oct 2026). For another verifier, write the same three: a lemma with a false postcondition, a lemma that depends on a helper holding a hidden "assume false" (or `sorry`, `Admitted`), and a tiny correct one. Expect rejection of the first two under the tool's strict mode.
+Three example files for Verus. For another verifier, write the same three: a lemma with a false postcondition, a lemma that depends on a helper holding a hidden "assume false" (or `sorry`, `Admitted`), and a tiny correct one. Expect rejection of the first two under the tool's strict mode.
 ```
 // bad1.rs: must be rejected
 use vstd::prelude::*;
@@ -463,10 +463,9 @@ verus! { fn good(x: u32) -> (r: u32) ensures r == x { x } }
 ```
 Put them in `$W/ctl/`, then:
 ```
-dkc() { docker run --rm --network none --user "$(id -u):$(id -g)" -v "$W/ctl:/work" -w /work vd-bench "$@"; }
+dkc() { docker run --rm --network none --user "$(id -u):$(id -g)" -v "$W/ctl:/work" -w /work "$VERIFIER_IMAGE" "$@"; }
 dkc verus --crate-type=lib bad1.rs; dkc verus --crate-type=lib --no-cheating bad2.rs; dkc verus --crate-type=lib good.rs
 ```
-In this project's image bad1 prints `0 verified, 1 errors`, bad2 prints `2 verified, 0 errors` by default and is rejected with `--no-cheating`, and good prints `1 verified, 0 errors`.
 
 ## Appendix D. Faults to look for in the model (M11)
 

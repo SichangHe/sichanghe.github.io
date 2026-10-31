@@ -22,11 +22,6 @@ judged; the benchmark is narrow; and the public archive is inspectable rather
 than demonstrated here as a fully reproducible, ASE-evaluated artifact.
 [LP-RQ2] [LP-SPLIT] [LP-INTENT] [LP-VALIDITY] [ART-AUDIT] [ASE-ARTIFACT]
 
-The recommendation preserves the human's decision: keep improving one CLI on a
-development partition, then freeze it and evaluate only two publication arms,
-`E0_NO_CLI` and `E1_CLI`. Dataset partitions and repeated seeds are not extra
-arms. There should be no third standing treatment.
-
 ### the inherited pieces
 
 LeetProof does not invent Lean, Plausible, SMT tactics, interactive proving,
@@ -244,14 +239,3 @@ part of that package, but evaluation alone is not the contribution.
     “three reviews”; “one day or less”
   - uncertainty: the 2026 artifact process was still ongoing on the retrieval
     date; no artifact badge or evaluation outcome is inferred for LeetProof
-
-## review record
-
-- round two gave each reviewer the integrated findings and asked for
-  cross-review. Material corrections were to distinguish ASE's category-specific
-  and cross-category criteria; separate lifecycle task records from durable
-  research evidence; add the real-project and corpus-provenance sources; define
-  the opportunity-level estimand and data hierarchy; treat 30 and 100 as planning
-  floors; isolate sessions and releases; and require current-manager routing plus
-  fresh human launch approval.
-- those corrections are incorporated in this note, the concise handoff, the ASE

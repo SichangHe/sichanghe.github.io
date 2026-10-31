@@ -13,10 +13,6 @@ short version
     - Cormack 2011 did it once on a frozen 2009 collection with TREC judges
     - the recorded searches found no matched academic evaluation of uBlacklist, Kagi, Brave Goggles, and Marginalia
       - a missed evaluation could change the proposed contribution
-- strongest research ideas, agent ranking
-  1. does blocking spam fix search? run existing blocklists and quality classifiers as filters over real results and measure what users gain and lose (idea 1 below)
-  2. do answer engines cite generated sites more than organic search does? a field version of the lab finding that rankers prefer LLM text, reusing the human's DeGenTWeb detector (idea 2)
-  3. who runs the slop and who pays them? cluster generated search-result sites by ad and affiliate identifiers (idea 3)
 - these are agent opinions; no prototype or novelty check beyond the searches recorded below
 
 human's words and scope
@@ -34,12 +30,6 @@ human's words and scope
   - deeper notes on search quality, evidence checking, and 2026 RAG poisoning papers: [sibling search quality study](../../../topic_studies/web_llm_detection/web_user/seo_search_quality/index.md)
     - that study recommends a pilot on version-specific technical claims; I do not repeat it here
   - how much of the web is AI text: [sibling measurement review](../../../topic_studies/web_llm_detection/llm_provenance/generated_web_measurement.md)
-- the human's own ongoing work: DeGenTWeb draft for IMC 2026
-  - decides per website whether most of its prose pages look LLM-written
-    - scores pages with Binoculars, a zero-shot LLM-text detector, then combines 20 pages per site
-    - false-positive rate measured on sites crawled entirely before ChatGPT
-  - draft abstract reports Common Crawl sites 6.0% LLM-dominant, Bing how-to result sites 16.4%, "a measurable subset of LLM-dominant search-result sites are mass-produced from shared templates"
-  - ideas 1, 2, 3, and 5 below reuse this pipeline
 
 what "spam" means here
 
@@ -134,14 +124,13 @@ literature 3: content farms and SEO in mainstream results
   - three scenarios they test: engines losing, engines winning, or "repeated breathing patterns"; "it seems like (3) is the most likely scenario"
   - "the line between benign content and spam in the form of content and link farms becomes increasingly blurry—a situation that will surely worsen in the wake of generative AI"
   - future work: "evaluate how we can better build and evaluate truly robust web IR systems in competitive environments"
-  - [code and data](https://github.com/webis-de/ECIR-24); the human's DeGenTWeb draft already uses a "retrospective multi-engine SERP archive" (SERP: a search result page)
+  - [code and data](https://github.com/webis-de/ECIR-24)
   - limits: product reviews only, English only, no AI-text measurement, Bing and DuckDuckGo share an index
 - Kollnig, [The enshittification of online search?](https://arxiv.org/abs/2512.03793), arXiv Dec 2025
   - 1,467 coding queries, Oct 2023; "the quality of coding advice -- as measured by the average rank of Stack Overflow -- was highest on Bing"
   - crude proxy, but shows programming queries are an easy stratum with a natural ground truth
 - Geraci, [Identification of Web Spam through Clustering of Website Structures](https://dl.acm.org/doi/10.1145/2740908.2742127), WWW 2015 companion, full text read
   - parked domains "hosted by the same service provider tend to have similar look-and-feel"; clusters by page structure
-  - inference: template similarity is a cheap operator signal, matching the DeGenTWeb template finding
 
 literature 4: the LLM era
 
@@ -152,7 +141,6 @@ literature 4: the LLM era
   - Pew, [How Much of the Internet Is Written With AI?](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/), Aug 2026: "35% of pages in the July 2026 crawl with post-ChatGPT publication dates show signs of AI authorship", about 1 in 10 of all pages
   - Graphite, [More Articles Are Now Created by AI Than Humans](https://graphite.io/five-percent/more-articles-are-now-created-by-ai-than-humans), Oct 2025: "In November 2024, the quantity of AI-generated articles being published on the web surpassed the quantity of human-written articles"; 65,000 Common Crawl article URLs, Surfer detector
   - Ahrefs, [900k new pages](https://ahrefs.com/blog/what-percentage-of-new-content-is-ai-generated/), May 2025: 74.2% contain some AI text, 2.5% pure AI
-  - DeGenTWeb draft: 6.0% of Common Crawl sites LLM-dominant, 28.6% of sites first seen in 2025H1
 - content farms specifically
   - NewsGuard [AI Tracking Center](https://www.newsguardtech.com/special-reports/ai-tracking-center/): 3,749 "AI Content Farm" news sites in 16 languages as of 23 June 2026; was 49 in May 2023, 840 in June 2024 (Puccetti et al. cite those)
     - "the revenue model for these websites is programmatic advertising"
@@ -175,10 +163,6 @@ literature 4: the LLM era
   - inference: if half of new articles are AI but 14% of ranking pages are, ranking already filters hard
     - weak: the two samples differ in page age and detector, so this is a hint, not a measurement
 - Ahrefs, [AI Overviews cite AI content](https://ahrefs.com/blog/ai-overviews-cite-ai-generated-content-more-than-human-writing/), July 2025: top-3 citations 3.6% pure AI, 8.6% pure human, 87.8% mixed
-- DeGenTWeb draft: Bing how-to result sites 16.4% LLM-dominant, "a 10.4-percentage-point gap above the open-web baseline on the same classifier"
-- takeaway: result-side numbers come from detector vendors, except the human's draft and Allaham's single snapshot (below)
-  - we found no peer-reviewed longitudinal measurement of generated text in results
-  - the human's draft is the closest; it is one engine, one query genre, and looks backward
 
 4c. ranking systems prefer generated text in the lab
 
@@ -192,7 +176,7 @@ literature 4: the LLM era
   - injected SEO-style AI pages into retrieval pools; 67% pool contamination gave over 80% exposure contamination
   - BM25 exposed about 19% harmful content under adversarial injection; LLM rankers suppressed it better
 - limits shared by all three: synthetic corpora, lab retrievers, no real engine
-  - inference: whether Google, Bing, or answer engines show source bias in the field is unmeasured; idea 2 below
+  - inference: whether Google, Bing, or answer engines show source bias in the field is unmeasured
 
 4d. answer engines and what they cite
 
@@ -291,121 +275,7 @@ candidate questions and closest-work checks
 - Bevendorff names "robust web IR systems in competitive environments" as future work
   - a later paper may already have addressed it
 
-idea 1: does blocking spam fix search?
-
-- question: when you exclude what today's tools call spam, do results answer the query more often, and what do you lose?
-- why this is the direct answer to "search engine exclude spam"
-  - the tools exist, so the research is the measurement, not the engine
-  - popular: uBlacklist, Kagi, Brave users already do this; a quotable number sells itself
-  - easy to implement for the list and classifier arms: a [SearXNG](https://github.com/searxng/searxng) metasearch plug-in that drops or reranks results after the engine returns them
-    - not reproducible as a post-filter: Brave's own Goggles ranking, Kagi's per-user ranking, Marginalia's secret seeds
-    - treat those as whole-engine arms instead: query Brave with a Goggle, query Kagi, query Marginalia, compare their top 10 directly
-- filters to compare
-  - crowd lists: uBlacklist subscription lists; Kagi's most-blocked leaderboard as a list
-  - classifiers: FineWeb-Edu score, DCLM fastText score, Ntoulas-style content statistics as the 2006 baseline
-  - the human's DeGenTWeb verdict, applied to the result page's site
-    - DeGenTWeb judges sites, results are pages; a page inherits its site's verdict, and this must be said in the paper
-  - affiliate-link density from Bevendorff's code
-  - Cormack 2011 style content classifier trained on a small labeled set, the closest prior art
-- query panel, stratified
-  - how-to (reuse DeGenTWeb's Bing how-to panel), programming, product review (Bevendorff's `best <category>` form), health
-  - size: 100 queries per stratum, 400 total
-  - freeze the panel; scrape Google, Bing, Brave weekly for 12 weeks, top 30 per query so filtered lists can be refilled to 10
-  - archive every result page as WARC (the web archive file format), with fetch time
-  - scraping risk: Google blocks scrapers and personalizes; use one fixed vantage, no account, and scrape each query twice per week to measure the noise floor
-- measurements
-  - share of top 10 removed per filter and per stratum
-  - agreement between filters (pairwise overlap); hypothesis: low, which itself is a finding
-  - lag: days between a domain's first top-10 appearance and its entry into a crowd list
-    - uBlacklist lists live in git, so the entry date is the commit date; Kagi's leaderboard has no history, so lag is measured on uBlacklist only
-    - hypothesis: Bevendorff's campaign domains appear and vanish within months, so lists may arrive too late
-  - usefulness: do the top 5 answer the query
-    - 2 annotators judge 40 queries per stratum, blind to filter condition, report agreement
-    - programming stratum has checkable answers, the objective anchor
-    - an LLM judge is used only after it matches the humans on those labels, and its own bias toward fluent text is reported
-  - collateral: good sites removed
-    - ground truth is the annotator's "answers the query" label on removed pages
-    - also count removed pages from domains outside the top 10,000 by Tranco, as a proxy for small sites
-    - hypothesis: FineWeb-Edu's format bias removes personal blogs
-  - cost: latency of each filter at query time
-- baselines
-  - unfiltered results
-  - random removal of the same share, to separate "removing anything" from "removing spam"
-  - one page per domain; exact and near-duplicate removal
-  - whole alternative engines (Kagi, Marginalia, Brave with a Goggle) on the same panel
-- expected quotable results, either way
-  - "crowd blocklists remove X% of Google's top 10 for how-to queries but list a new spam domain only after Y days"
-  - "the LLM-text filter and the affiliate filter disagree on Z% of removed pages"
-- most dangerous objection: usefulness judgments are subjective
-  - pre-empt: human labels first, report agreement, objective programming stratum, random-removal baseline
-- second objection: Google already filters hard, so there is no headroom
-  - pre-empt: that is a result, not a failure; report the removal share per stratum and the usefulness delta with confidence intervals
-- third objection: using DeGenTWeb both as a filter and as the measure of harm is circular
-  - pre-empt: harm is the annotator's usefulness label only; DeGenTWeb is one filter among many
-- stop rule: if after 4 weeks every filter removes under 5% of the top 10 in every stratum and usefulness does not move beyond the noise floor, write it up as a short null result and lead with idea 2
-  - the 5% is a guess at where the effect stops being worth a paper
-
-idea 2: do answer engines cite generated sites more than organic search does?
-
-- question: for the same query, is the LLM-dominant share among AI Overview, Perplexity, and ChatGPT search citations higher than among Google's and Bing's organic top 10, and does the gap grow over months?
-- why new
-  - the preference of rankers for LLM text is shown only on lab retrievers (Dai 2024, Chen 2024, Yu 2026)
-  - 2026 audits (Xu IMC, Grossman SIGIR, Aral) measure credibility and overlap, not generated text
-  - Allaham AIES 2026 measured generated citations once, no organic comparison, detector error not reported
-  - the human already has the detector and the Bing how-to result, so the new work is the answer-engine side plus time
-- design
-  - the question-form subset of idea 1's panel, because AI Overviews trigger on 64.7% of question-form queries and 13.7% overall (Xu)
-  - weekly, from a US vantage; answer engines are nondeterministic, so run each query 3 times and keep the union and the intersection of citations
-  - collect organic top 10 from Google and Bing, AI Overview citations, Perplexity citations, ChatGPT search citations
-  - run DeGenTWeb on every cited and ranked site; archive everything as WARC
-  - record whether each cited page is in the organic top 10 (Xu: 29.8% of cited domains are not)
-- measurements
-  - LLM-dominant share: organic vs cited, per engine, per stratum, per week, computed at the page level with the site verdict, and again at the domain level so Wikipedia-size domains do not dominate
-  - the control is the organic top 10 for the same query, not the Common Crawl base rate, which is not conditioned on the query
-  - persistence: does a generated site that gets cited stay cited longer than a human one
-  - claim check on a small subset: are the generated citations the ones carrying unsupported claims (Xu's claim-by-claim method, costly, 50 queries)
-- quotable either way
-  - "answer engines cite generated sites twice as often as organic search" is a headline
-  - "answer engines cite generated sites less than organic search" contradicts the retrieval-collapse story and is equally a headline
-- confounds to state
-  - engines have different indexes; a citation gap is a difference in exposure, not a proof of a ranker preference
-  - citations are few per query against 10 organic slots, so compare shares, not counts, and report per-query paired differences
-- most dangerous objection: detector drift
-  - DeGenTWeb's false-positive rate is measured on pre-ChatGPT sites; its recall falls to 0.58 on sites generated by 2025 frontier models
-  - so misses, not false alarms, are the problem, and misses may differ between the organic and cited arms
-  - pre-empt: re-calibrate monthly on a fresh synthetic set, report the gap under the measured recall as a range, add template and monetization signals that do not depend on text statistics
-- feasibility: Perplexity and ChatGPT search access terms may forbid automated querying; use their APIs where offered and record the terms
-- stop rule: if cited and organic shares match within the noise floor after 8 weeks, fold the result into idea 1's paper as one section
-
-idea 3: follow the money
-
-- question: who operates the generated sites in search results, how concentrated is it, and how much search exposure do they get?
-  - dollars are out of reach without ad-network data; exposure (how often they appear in top 10) is measurable
-- why new
-  - Papadogiannakis et al. ([WWW 2023](https://arxiv.org/abs/2202.05079), [WWW 2022](https://arxiv.org/abs/2202.05074)) cluster sites by AdSense and analytics IDs, but for fake news, not search spam
-  - Bevendorff found Amazon Associates dominates affiliate spam but did not cluster operators
-  - the human's draft already finds "a narrow entry-level monetization signature" and shared templates; this makes it an operator study
-  - NewsGuard and ANA numbers are vendor or industry; we found no academic estimate
-- design
-  - start from the LLM-dominant sites found in ideas 1 and 2 plus the Common Crawl sample
-  - extract AdSense publisher IDs (the `ca-pub-` strings in page source), analytics IDs, Amazon Associates tags, shared page templates (Geraci-style structure hashes), shared hosting and DNS
-  - cluster into operators
-    - agencies, ad networks, and CMS themes can share IDs across operators
-      - one operator can also use several IDs
-      - clusters can therefore merge distinct operators or split one operator
-      - require independent corroborating signals and report uncertain attribution
-    - control: run the same clustering on a matched set of human-written sites from the same result panels, so concentration can be compared
-  - estimate each cluster's exposure from the weekly panels; public traffic estimates are unreliable for small sites, so use them only as a secondary check
-  - check whether Google's ad network serves ads on the pages Google ranks: NewsGuard found 90% of brand ads on AI news farms were served by Google
-- quotable either way
-  - "N operators run M% of the generated sites in top-10 results" with a concentration curve
-  - "Google's ad network serves ads on X% of the generated pages Google ranks"; inference: this is the number a policy argument would use
-- most dangerous objection: IDs are visible for only part of the sites, so clusters undercount
-  - pre-empt: report the covered fraction; validate clusters on the template clusters DeGenTWeb already found and on the affiliate campaigns in the ECIR-24 data, which are a partial check, not ground truth
-- ethics: name operators only in aggregate; publish cluster statistics, not a list of people
-- feasibility: parsing IDs is cheap; the clustering validation and the human-site control are the real work; it depends on idea 1 or 2 having produced the site set
-
-idea 4: crowd feedback as a ranking signal
+crowd feedback as a ranking signal
 
 - the human's idea: "ranking based on user feedback"
 - what exists: Google's 2011 blocklist experiment, Kagi's votes, and the leaked click attributes
@@ -414,26 +284,14 @@ idea 4: crowd feedback as a ranking signal
   - effectiveness needs outcome evidence as well as resistance to collusion
   - needs users or a simulation with planted colluders, so it is not easy to implement
   - SybilGuard is already in the human's notes
-- recommendation: use the Kagi leaderboard as one list in idea 1 now, and leave collusion resistance for later
-
-idea 5: is Google getting slopier?
-
-- forward-looking, multi-engine, multi-genre version of Bevendorff with the human's detector
-- partly done: the human's draft covers Bing how-to plus the retrospective search-result archive; Originality.ai publishes a vendor version every two months
-- inference: alone it is an incremental measurement; it is the backbone that ideas 1 and 2 share, so build it once and report it inside them
-
-what I would do first
-
-- build the weekly panel scraper and archive once; ideas 1, 2, 3, and 5 all read from it
-- run DeGenTWeb and the cheap filters over the first four weeks
-- decide after week 4 which of ideas 1 and 2 has the larger effect and lead with it
+- recommendation: compare the Kagi leaderboard with other filtering methods
 
 review limits
 
-- sources read in full: Bevendorff ECIR 2024, Puccetti ACL 2024, McCreadie CIKM 2012, Geraci WWW 2015, the DeGenTWeb draft abstract
+- sources read in full: Bevendorff ECIR 2024, Puccetti ACL 2024, McCreadie CIKM 2012, Geraci WWW 2015
 - other quotes come from abstracts and pages fetched on 7 Oct 2026 by three search subagents; items marked "snippet only" were not verified against the source
 - not found despite searching: an academic study of users appending "reddit" to queries; an academic measurement of made-for-advertising sites; a peer-reviewed study of expired-domain SEO abuse; any evaluation of blocklists or pretraining filters on search usefulness
-- ideas 1 to 3 remain candidate experiments
+- proposed experiments need further evaluation
   - unsuccessful searches do not establish novelty
   - check the closest prior methods and evaluations before claiming a contribution
 - numbers from Originality.ai, Graphite, Ahrefs, NewsGuard, and Google are vendor or self-reported and are not comparable with each other

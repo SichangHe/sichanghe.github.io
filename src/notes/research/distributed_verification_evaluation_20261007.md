@@ -1,7 +1,6 @@
 # Evaluating agents that specify and verify distributed systems
 (authored by agents unless marked 🧑)
 
-🧑 The requested end goal is “human just vaguely describe what they want guaranteed and agents figure out all the details and strong spec + proof”. The requested research covers “We also need to understand how to do eval” and “what existing problems are (almost like a DB of all cases that can be found)”.
 
 My recommendation: a task succeeds only when the generated specification captures the required behavior, the executable is connected to that specification, the proof passes independent checks, and the assumptions match the task. Report these parts separately as well as the fraction passing all of them. A single weighted score can hide a missing guarantee.
 
@@ -14,7 +13,3 @@ Liveness requires checking the conditions under which progress is promised. Anvi
 Catalog availability does not establish that an artifact's proof was reproduced. The proposed evaluation has not yet been run.
 
 The catalog contains 1,914 records: 1,638 TLA module variants, 102 implementation/proof directories, 167 automatic-verification input files, one suite retrieval lead, and six archive leads. Helper modules and regression tests are included, and distinct usable benchmark cases have not been counted. Exact-content duplicates are recorded as aliases. Independent review checked aggregate counts and all quotes in five selected records.
-
-The stable specification report and benchmark report received targeted independent source review. Corrections cover the trusted executable-specification translation in SpecGym, Specula's checks against overly permissive repairs, and AutoVerus's complete task population. A previous research process unexpectedly remained active and replaced `eval_spec.md`; its expanded work is preserved, while `eval_spec_reviewed.md` is the stable report reviewed for this handoff.
-
-The requested ChatGPT consultation at Extra High was attempted but failed before submission because temporary chat was unavailable. Built-in web search and browser Google search also failed. The reviews use available primary full texts, downloaded source repositories, and direct HTTP retrieval; no ChatGPT opinion is attributed to this work.

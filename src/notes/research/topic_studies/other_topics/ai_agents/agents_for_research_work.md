@@ -20,7 +20,7 @@ short version
   - ML only: best agent reproduced 41% of papers that shipped code, data, and weights
   - systems papers are almost untested; one benchmark has 19 systems artifacts and only checks that they deploy
 - best research ideas, in my order
-  - A. measure and schedule one human's attention across many agents, using real traces (the human already has such traces)
+  - A. measure and schedule one human's attention across many agents, using real traces
   - B. a checker that ties every claim in an agent's final report to something the agent really did, and a study of how much human review it saves
   - C. can agents reproduce the performance claims of systems papers, and can they say "this does not reproduce" when it does not
 
@@ -160,7 +160,7 @@ what existing work shows
     - main number, text: human ideas kept their scores; model ideas dropped by 1.049, 1.760, and 1.879 points on a 10 point scale for novelty, excitement, and effectiveness
     - quote, abstract: "for many metrics there is a flip in rankings where human ideas score higher than LLM ideas"
     - limit: NLP prompting topics; the idea generator is from 2024
-    - inference: a proposal should be judged by a cheap trial run, not by how it reads; this bears on the human's daily proposal pipeline
+    - inference: a proposal should be judged by a cheap trial run, not by how it reads
 - I found no study of agents writing grant or research proposals that were then judged by funders
 
 4. can agents review papers
@@ -365,7 +365,6 @@ A. the human as the scarce server: measure and schedule attention across many ag
   - attention events: reading a report, answering a question, reviewing a change, re-explaining context
   - rules to test: batch questions, order them by how much agent time is blocked, cap report length, let a second agent pre-check, make agents wait or guess
 - why open: gap 1 and gap 2; closest studies last 20 minutes or have 7 people with no causal design
-- why us: the human runs many agents every day through one message channel, so every request for attention is already logged with a time; few academic groups have that
 - first experiment
   - log for 4 weeks, no change in behavior: per agent, time working, time blocked on the human, time of each human message, and whether the result was kept, redone, or thrown away
   - compute per day: agents running, human minutes spent, kept results; plot kept results per human minute against agents running
@@ -383,7 +382,7 @@ B. reports you can check: tie each claim in an agent's final report to what it d
 - question: if each sentence in a final report must point at a tool call or output in the agent's own log, how many false claims are caught, and how much review time does the human save
 - why open: gap 3; this is also the "receipt" idea in the human's [new work arguments](../../../new_work_arguments.md), now with a measured failure to aim at
 - first experiment
-  - take OverclaimBench's five tasks plus 100 real finished sessions from the human's agents
+  - take OverclaimBench's five tasks
   - build a checker that runs outside the agent: parse the report into claims, match each to log entries such as file reads, test runs, and exit codes; flag claims with no match
   - compare three reports: as written, as written plus flags, rewritten to hold only supported claims
 - convincing result

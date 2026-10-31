@@ -1,19 +1,5 @@
 # 🤖 VeriSkill: August 2026
 
-## decision
-
-- strongest remaining differentiator
-  - provenance-constrained Verus guidance whose value is judged by semantic
-    strength, source-disjoint transfer, and production-linked evidence
-  - this is a plausible research position, not a demonstrated capability
-- recommended next experiment
-  - do not add a third standing evaluation arm
-  - keep the research comparison as paired `E0_NO_CLI` versus the latest
-    frozen, approved `E1_CLI`
-  - improve that one CLI through an internal current-version versus candidate-
-    version promotion loop with source provenance, semantic-strength review,
-    per-task non-regression, and same-project exclusion as hard gates
-
 ## direct answers to the human follow-up
 
 - public status as of 2026-08-03
@@ -74,56 +60,6 @@
     - edits use rich traces, verifier logs, and human references rather than a
       scalar reward alone, making the loop partly supervised diagnosis and
       program repair
-
-## one-CLI guidance enhancement loop
-
-- candidate cycle
-  - collect failed `E1_CLI` trajectories and immutable verifier evidence
-  - attribute each failure before learning from it
-    - invalid or unsupported task
-    - setup, environment, retrieval, or tool failure
-    - prover or encoding limitation
-    - noncompliance with available guidance
-    - missing or unclear reusable guidance
-    - specification-intent mismatch or weak contract
-    - provenance, contamination, or same-project leakage
-  - cluster only genuine guidance gaps by proof responsibility and diagnostic
-    signature
-  - propose the smallest guidance patch with provenance, applicability,
-    inapplicable cases, expected diagnostic change, project deny tags, and a
-    named review owner
-  - promote a candidate only if it passes the staged gates below, then retain
-    its exact version, evidence, and rejection or acceptance reason
-- cheap-to-accurate promotion funnel
-  - static gate at negligible agent cost
-    - schema, provenance, leakage, duplicate, size, and forbidden-content
-      checks
-  - cached replay or critic gate
-    - use logged failures to reject obviously irrelevant or contradictory
-      candidates
-    - never treat replay as causal evidence because it cannot show how a live
-      agent would change behavior
-  - targeted live micro-panel
-    - route only four to eight source-disjoint tasks matching the affected
-      guidance tags
-    - compare current CLI with candidate CLI, cache immutable worktrees and
-      deterministic verifier results, and rerun only discordant outcomes
-  - sealed release panel
-    - use about 30 privately scored opportunities across at least three
-      projects for candidates that survive the micro-panel
-    - blind semantic scoring and adjudicate only candidate-changed outcomes
-    - require no per-item proof, semantic, trust-boundary, or specification-
-      strength regression on critical tasks rather than accepting a net gain
-  - adaptive-overfit control
-    - rotate the release panel and preserve a never-touched audit reserve
-    - split by project or source family, not by function
-    - freeze stopping rules, candidate-query budgets, and guidance hashes
-      before the sealed gate
-- publication-facing evidence
-  - periodically measure the cumulative CLI with the existing paired
-    `E0_NO_CLI` versus `E1_CLI` standard
-  - report semantic quality separately from verifier green, paired effects and
-    uncertainty, leakage exclusions, cost, and trajectory mechanisms
 
 ## what VeriSkill contributes
 
@@ -227,36 +163,6 @@
     source-disjoint split
   - the Frama-C benchmark population size is unstated
 
-## concrete lessons for our work
-
-- extend the failure taxonomy before learning from trajectories
-  - invalid task or unsupported objective
-  - setup, environment, retrieval, or tool failure
-  - prover or encoding limitation
-  - agent noncompliance with available guidance
-  - missing or unclear reusable guidance
-  - specification-intent mismatch or weak contract
-  - provenance, contamination, or same-project leakage risk
-- make the learned unit auditable
-  - source and immutable provenance
-  - proof-obligation location
-  - missing verification responsibility
-  - applicability and inapplicable cases
-  - concrete agent steps
-  - expected diagnostic change
-  - project deny tags and review owner
-- separate product optimization from research evaluation
-  - internally compare the current CLI with one candidate CLI version only as
-    a release-promotion test
-  - externally compare `E0_NO_CLI` with the latest frozen, human-approved
-    `E1_CLI` as the cumulative guidance study
-  - do not add a third standing research arm
-- positioning implication
-  - avoid first self-improving verification-agent claims
-  - test a narrower claim around provenance-constrained and semantically
-    adjudicated guidance evolution for Verus and real Rust projects
-  - retain this as a hypothesis until cross-project evidence exists
-
 ## source map: VeriSkill
 
 - authority and version
@@ -355,14 +261,10 @@
   - extracted Markdown sha256
     `15fb60477f99781bada19b0f69c517263dac4a72f2188da25578bedaf3a6eda4`
 
-## confidence and review question
+## confidence
 
 - high confidence in source identity, version, saved bytes, methods, and
   reported numbers
 - low confidence that its learned skills preserve intended specification
   strength
   - the reported oracle does not directly test that property
-- review question
-  - should the first internal CLI candidate-promotion pilot use a four-to-eight-
-    task source-disjoint micro-panel before paying for the sealed 30-opportunity
-    release panel
